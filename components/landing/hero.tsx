@@ -38,7 +38,7 @@ export function Hero() {
             <div className="flex flex-col gap-3 min-[400px]:flex-row w-full sm:w-auto pt-2">
               <Button size="lg" className="h-12 px-8 bg-white text-slate-900 hover:bg-white/90 font-bold" asChild>
                 <Link href="/basla">
-                  Ücretsiz Başla <ArrowRight className="ml-2 h-4 w-4" />
+                  Start Playing <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button size="lg" variant="outline" className="h-12 px-8 border-white/20 hover:bg-white/10" asChild>
