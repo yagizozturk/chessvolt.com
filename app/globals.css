@@ -9,51 +9,41 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* YENİ: CTA Renklerini Tailwind Temasına Tanıtıyoruz */
-  --color-cta: var(--cta);
-  --color-cta-foreground: var(--cta-foreground);
-  --color-cta-shadow: var(--cta-shadow);
-  
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
+  --background: #ffffff;
+  --foreground: #1e1f26;
 
-  /* CTA Renk Değerleri (Light Mode) */
-  --cta: oklch(0.88 0.21 110);
-  --cta-foreground: oklch(0.15 0.02 280);
-  --cta-shadow: oklch(0.80 0.21 110);
+  --primary: #fcc800;
+  --secondary: #1e1f26;
+
+  --border: #e6e6ea;
+  --input: #e6e6ea;
+  --ring: #a8a8b3;
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --primary: oklch(0.92 0.004 286.32);
-  --primary-foreground: oklch(0.21 0.006 285.885);
+  --background: #1e1f26;
+  --foreground: #fafafa;
 
-  /* CTA Renk Değerleri (Dark Mode) - Test için red demiştin, kalsın görelim */
-  --cta: oklch(0.88 0.21 110); /* İstersen burayı red yapabilirsin tekrar */
-  --cta-foreground: oklch(0.15 0.02 280);
-  --cta-shadow: oklch(0.80 0.21 110);
+  --primary: #e8c547;
+  --secondary: #2e2f38;
 }
 
 @layer base {
-  * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground; }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
