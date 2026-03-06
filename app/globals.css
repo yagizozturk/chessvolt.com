@@ -10,6 +10,7 @@
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -25,6 +26,7 @@
 
   --primary: #fcc800;
   --secondary: #1e1f26;
+  --tertiary: #fafafa;
 
   --border: #e6e6ea;
   --input: #e6e6ea;

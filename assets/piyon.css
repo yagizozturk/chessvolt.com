@@ -1,0 +1,6 @@
+.board-wrapper {
+  width: min(60vh, 90vw);
+  height: min(60vh, 90vw);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
