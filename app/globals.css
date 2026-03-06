@@ -13,7 +13,6 @@
   --color-tertiary: var(--tertiary);
   --color-border: var(--border);
   --color-input: var(--input);
-  --color-ring: var(--ring);
 
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
@@ -22,7 +21,7 @@
 :root {
   --radius: 0.625rem;
   --background: #121f25;
-  --foreground: #fff;
+  --foreground: #f8f7ff;
 
   --primary: #fcc800;
   --secondary: #1e1f26;
@@ -30,7 +29,6 @@
 
   --border: #37464f;
   --input: #e6e6ea;
-  --ring: #a8a8b3;
 }
 
 .dark {

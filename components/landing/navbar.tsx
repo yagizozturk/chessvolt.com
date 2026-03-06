@@ -29,6 +29,9 @@ export function Navbar() {
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-3 md:flex">
           <Button variant="vghost" size="sm" asChild>
+            <Link href="/storybook">Storybook</Link>
+          </Button>
+          <Button variant="vghost" size="sm" asChild>
             <Link href="/login">Login</Link>
           </Button>
           <Button variant="vghost" size="sm" asChild>
