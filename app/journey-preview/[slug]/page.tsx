@@ -19,9 +19,9 @@ export default async function JourneyPage({ params }: Params) {
   const gameRiddles = await getGameRiddlesByGameType(supabase, gameType);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#1a1147] to-[#0f0a28]">
+    <main className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#1a1147]/95 backdrop-blur supports-[backdrop-filter]:bg-[#1a1147]/80">
+      <header className="sticky top-0 z-50 w-full border-b border-white/10">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-4">
             <Button

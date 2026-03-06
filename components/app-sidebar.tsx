@@ -3,90 +3,114 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Home,
   LayoutDashboard,
   Map,
   Puzzle,
   Zap,
   LogIn,
   UserPlus,
-  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const navItems = [
-  { href: "/", label: "Home", icon: Zap },
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/journey", label: "Journey", icon: Map },
-  { href: "/puzzle", label: "Puzzles", icon: Puzzle },
+  { href: "/", label: "Home", icon: Home, color: "text-[#14b8a6]" },
+  {
+    href: "/dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    color: "text-[#00B3FF]",
+  },
+  {
+    href: "/journey/magnus-plays",
+    label: "Journey",
+    icon: Map,
+    color: "text-[#22c55e]",
+  },
+  { href: "/puzzle", label: "Puzzles", icon: Puzzle, color: "text-[#a855f7]" },
 ];
 
 const authItems = [
-  { href: "/login", label: "Log in", icon: LogIn },
-  { href: "/signup", label: "Sign up", icon: UserPlus },
+  { href: "/login", label: "Log in", icon: LogIn, color: "text-[#3b82f6]" },
+  {
+    href: "/signup",
+    label: "Sign up",
+    icon: UserPlus,
+    color: "text-[#ec4899]",
+  },
 ];
 
 export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-white/10 bg-[#1a1147]/95">
-      <div className="flex h-16 items-center gap-2 border-b border-white/10 px-6">
+    <aside className="border-border flex h-screen w-72 shrink-0 flex-col border-2 border-r">
+      <div className="flex h-20 items-center px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 font-semibold text-white"
+          className="flex items-center gap-2 font-bold tracking-tight text-white"
         >
-          <Zap className="h-5 w-5 text-[#FFB800]" />
-          chessvolt
+          <Zap className="h-8 w-8 text-[#fcc800]" />
+          <span className="text-xl">chessvolt</span>
         </Link>
       </div>
-      <ScrollArea className="flex-1 px-3 py-4">
-        <nav className="space-y-1">
+      <ScrollArea className="flex-1 px-4 py-6">
+        <nav className="space-y-2">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
               (item.href !== "/" && pathname.startsWith(item.href));
             return (
-              <Button
+              <Link
                 key={item.href}
-                variant="ghost"
+                href={item.href}
                 className={cn(
-                  "w-full justify-start gap-3 text-white hover:bg-white/10 hover:text-white",
-                  isActive && "bg-white/10 text-[#FFB800]"
+                  "flex w-full items-center gap-4 rounded-xl px-4 py-4 transition-colors",
+                  "hover:bg-white/5",
+                  isActive
+                    ? "border-2 border-[#00B3FF] bg-[#2C4F5A]/80 text-[#00B3FF]"
+                    : "border-2 border-transparent text-[#C8C8C8]",
                 )}
-                asChild
               >
-                <Link href={item.href} className="flex w-full items-center gap-3">
-                  <item.icon className="h-4 w-4 shrink-0" />
-                  <span className="flex-1">{item.label}</span>
-                  <ChevronRight className="h-4 w-4 shrink-0 opacity-50" />
-                </Link>
-              </Button>
+                <item.icon
+                  className={cn(
+                    "h-7 w-7 shrink-0",
+                    isActive ? "text-[#00B3FF]" : item.color,
+                  )}
+                />
+                <span className="text-base font-bold tracking-wide uppercase">
+                  {item.label}
+                </span>
+              </Link>
             );
           })}
         </nav>
-        <Separator className="my-4 bg-white/20" />
-        <nav className="space-y-1">
+        <nav className="mt-2 space-y-2">
           {authItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Button
+              <Link
                 key={item.href}
-                variant="ghost"
+                href={item.href}
                 className={cn(
-                  "w-full justify-start gap-3 text-white hover:bg-white/10 hover:text-white",
-                  isActive && "bg-white/10 text-[#FFB800]"
+                  "flex w-full items-center gap-4 rounded-xl px-4 py-4 transition-colors",
+                  "hover:bg-white/5",
+                  isActive
+                    ? "border-2 border-[#00B3FF] bg-[#2C4F5A]/80 text-[#00B3FF]"
+                    : "border-2 border-transparent text-[#C8C8C8]",
                 )}
-                asChild
               >
-                <Link href={item.href} className="flex w-full items-center gap-3">
-                  <item.icon className="h-4 w-4 shrink-0" />
-                  <span className="flex-1">{item.label}</span>
-                  <ChevronRight className="h-4 w-4 shrink-0 opacity-50" />
-                </Link>
-              </Button>
+                <item.icon
+                  className={cn(
+                    "h-7 w-7 shrink-0",
+                    isActive ? "text-[#00B3FF]" : item.color,
+                  )}
+                />
+                <span className="text-base font-bold tracking-wide uppercase">
+                  {item.label}
+                </span>
+              </Link>
             );
           })}
         </nav>

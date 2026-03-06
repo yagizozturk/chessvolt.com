@@ -18,7 +18,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   // All other pages: sidebar + content
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-[#1a1147] to-[#0f0a28]">
+    <div className="flex min-h-screen bg-background">
       <AppSidebar />
       <main className="flex-1 overflow-auto">{children}</main>
     </div>

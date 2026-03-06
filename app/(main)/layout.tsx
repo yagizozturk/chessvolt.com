@@ -7,9 +7,5 @@ export default async function MainLayout({
 }) {
   await getAuthenticatedUser();
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a1147] to-[#0f0a28]">
-      {children}
-    </div>
-  );
+  return <div className="min-h-screen bg-background">{children}</div>;
 }
