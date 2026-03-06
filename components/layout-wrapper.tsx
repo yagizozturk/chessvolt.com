@@ -11,6 +11,15 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
+  // Auth pages: no sidebar
+  if (
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/forgot-password"
+  ) {
+    return <>{children}</>;
+  }
+
   // Auth callback: no sidebar (redirect route)
   if (pathname?.startsWith("/auth/")) {
     return <>{children}</>;
