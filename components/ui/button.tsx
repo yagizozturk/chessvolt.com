@@ -19,6 +19,7 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        cta: "relative bg-cta text-cta-foreground border-b-[4px] border-cta-shadow rounded-xl font-extrabold tracking-wider transition-all duration-100 active:border-b-0 active:translate-y-[4px] hover:brightness-110",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -62,3 +63,10 @@ function Button({
 }
 
 export { Button, buttonVariants }
+
+{/* CTA Tasarım Notları:
+  1. Renk Teorisi: Koyu mor/lacivert zemin üzerinde Neon Sarı (oklch 110) zıtlık (contrast) sayesinde maksimum görünürlük sağlar.
+  2. 3D Mekanik: 'border-b-4' ve 'active:translate-y-[4px]' kombinasyonu, butona basılabilir plastik hissi (Duolingo style) verir.
+  3. Pozisyonlama: 'relative' kullanımı, buton çökerken sayfa akışını korur ve ileride eklenecek parlama (shimmer) efektlerini buton içine hapseder.
+  4. v4 Uyumu: Renkler globals.css içindeki @theme bloğunda tanımlanarak Tailwind sınıflarına (bg-cta) bağlanmıştır.
+*/}

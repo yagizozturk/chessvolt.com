@@ -1,71 +1,61 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/navigation-menu";
+import { cn } from "@/lib/utils";
 
 export function Navbar() {
   return (
-    <header className="w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <header className="absolute top-4 left-0 right-0 z-50 w-full bg-transparent">
+      <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-2">
-          <Link href="/" className="font-bold text-xl tracking-tight">
-            MarkaLogo
+          <Link
+            href="/"
+            className="font-bold text-2xl tracking-tight text-white"
+          >
+            chessvolt
           </Link>
         </div>
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              {/* ÖNEMLİ: asChild kullanarak Link'i içeriye alıyoruz */}
-              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link href="/hakkimizda">
-                  Hakkımızda
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link href="/hizmetler">
-                  Hizmetler
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
 
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link href="/iletisim">
-                  İletişim
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/login">Giriş Yap</Link>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white hover:bg-white/10 hover:text-white"
+            asChild
+          >
+            <Link href="/login">Register</Link>
           </Button>
-          <Button size="sm" asChild>
-            <Link href="/register">Başla</Link>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white hover:bg-white/10 hover:text-white"
+            asChild
+          >
+            <Link href="/login">Login</Link>
+          </Button>
+          <Button variant="default" size="sm" asChild>
+            <Link href="/register">START PLAYING</Link>
           </Button>
         </div>
       </div>
     </header>
-  )
+  );
 }
 
 {
-    /** Notlar:
-     * 1. "use client": Dosyanın en tepesine ekledik. NavigationMenu, tarayıcıda çalışan JavaScript'e ihtiyaç duyar.
-       2. asChild Kullanımı: asChild prop'u verdik. Bu sayede Radix UI, kendi <a> etiketini render etmek yerine içindeki Next.js Link bileşenini ana element olarak kabul eder. Bu, az önce aldığın hatayı (Server Component/Legacy Link hatası) tamamen çözer.
-       3. Sticky Olmayan Yapı: header etiketinde sadece w-full ve border-b kullandık. fixed veya sticky sınıflarını eklemediğimiz için sayfa aşağı kayınca navbar yukarıda kalacaktır.
-       4. Butonlarda asChild: Aynı mantığı butonlar için de uyguladık. Button içine Link koyarken asChild kullanmak her zaman en sağlıklı yoldur.
-     */
+  /** Notes:
+   * 1. Positioning: "absolute top-0" kullanarak Navbar'ı Hero'nun üzerine bindirdik, böylece gradient sayfanın 0 noktasından başlar.
+   * 2. Transparency: "bg-transparent" ve border'sız yapı sayesinde Hero ile kusursuz bir görsel bütünlük sağlandı.
+   * 3. Z-Index: "z-50" vererek Navbar'ın Hero içeriğinin ve o parlamaların (glow) üstünde kalmasını garanti altına aldık.
+   * 4. Spacing: Navbar yüksekliğini "h-20" yaparak içeriğe daha geniş ve ferah bir alan bıraktık.
+   */
 }
