@@ -16,7 +16,5 @@ export default async function PuzzleDetailPage({ params }: Params) {
     notFound();
   }
 
-  return (
-    <PuzzleController puzzle={puzzle} />
-  );
+  return <PuzzleController puzzle={puzzle} />;
 }

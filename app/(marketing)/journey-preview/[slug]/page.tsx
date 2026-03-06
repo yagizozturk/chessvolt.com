@@ -122,7 +122,6 @@ export default async function JourneyPage({ params }: Params) {
                       </div>
 
                       <div className="flex items-center gap-4">
-                        {/* Status (Unauth olduğu için şimdilik sadece yönlendirme oku) */}
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/20 transition-all group-hover:bg-[#FFB800] group-hover:text-black">
                           <ChevronRight size={20} />
                         </div>
@@ -138,11 +137,3 @@ export default async function JourneyPage({ params }: Params) {
     </main>
   );
 }
-
-/** * JOURNEY ARCHITECTURE NOTES:
- * 1. Unauthenticated Access: getAuthenticatedUser kaldırıldı. Artık sayfa girişi için login zorunlu değil.
- * 2. Component Structure: Veriler artık basit bir <ul> yerine Shadcn Card bileşenleri içinde, daha interaktif bir yapıda sunuluyor.
- * 3. Tactile Feel: Kartlara "group-active:scale-[0.98]" ekleyerek buton gibi basılma hissi verildi.
- * 4. Visual Hierarchy: Level numaraları "Tactile" turuncu kutular içine alınarak oyunlaştırma (gamification) sağlandı.
- * 5. Data Fetching: userGameRiddleRepo bağımlılığı unauth yapıda devre dışı bırakıldı (kullanıcı bazlı ilerleme anonim session veya localstorage ile eklenebilir).
- */

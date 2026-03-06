@@ -52,7 +52,6 @@ export default async function JourneyPage({ params }: Params) {
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_320px]">
         {/* Left: Journey (header + riddles) */}
         <div>
-          {/* Header - only in left column */}
           <div className="mb-12 flex flex-col gap-2 text-center md:text-left">
             <Badge className="w-fit self-center border-[#F69E0B]/30 bg-[#F69E0B]/20 text-[#FFB800] md:self-start">
               CHESS ADVENTURE
@@ -141,7 +140,6 @@ export default async function JourneyPage({ params }: Params) {
           )}
         </div>
 
-        {/* Right: Stats Cards - starts from top */}
         <div className="space-y-4">
           <Card className="border-white/10 bg-white/5">
             <CardHeader>

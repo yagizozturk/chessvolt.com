@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 export default async function PuzzlePage() {
   const { user, supabase } = await getAuthenticatedUser();
-  const nextPuzzle = await getNextPuzzleForUser(supabase, user.id); // Server component interact with directly to the services folder
+  const nextPuzzle = await getNextPuzzleForUser(supabase, user.id);
 
   if (!nextPuzzle) {
     return (
