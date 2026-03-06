@@ -167,7 +167,7 @@ export default function RiddleBoard({
         style={{ width, height }}
       >
         <p className="text-muted-foreground">
-          {!initialFen ? "Geçersiz PGN veya ply" : "Çözüm hamleleri bulunamadı"}
+          {!initialFen ? "Invalid PGN or ply" : "Solution moves not found"}
         </p>
       </div>
     );

@@ -50,7 +50,7 @@ export default async function JourneyPage({ params }: Params) {
               className="text-white hover:bg-white/10 hover:text-white"
               asChild
             >
-              <Link href="/login">Giriş</Link>
+              <Link href="/login">Log in</Link>
             </Button>
             <Button
               variant="default"
@@ -58,7 +58,7 @@ export default async function JourneyPage({ params }: Params) {
               className="bg-[#F69E0B] text-black hover:bg-[#FFB800]"
               asChild
             >
-              <Link href="/signup">Kayıt Ol</Link>
+              <Link href="/signup">Sign up</Link>
             </Button>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default async function JourneyPage({ params }: Params) {
         {gameRiddles.length === 0 ? (
           <Card className="border-dashed border-white/10 bg-white/5">
             <CardContent className="py-12 text-center text-white/40">
-              Bu journey için henüz bir riddle eklenmemiş. Çok yakında!
+              No riddles added to this journey yet. Coming soon!
             </CardContent>
           </Card>
         ) : (

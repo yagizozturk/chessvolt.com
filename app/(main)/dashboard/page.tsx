@@ -12,7 +12,6 @@ const exampleChapters = [
 export default function DashboardPage() {
   return (
     <div className="min-h-screen">
-      <GameNavbar />
       <div className="container mx-auto px-4 py-6">
         <div className="flex">
           <div className="flex-1 rounded-lg border p-4">

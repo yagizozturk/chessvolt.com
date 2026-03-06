@@ -9,7 +9,7 @@ export const GameNavbar = () => {
           chessvolt
         </Link>
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/">Çıkış</Link>
+          <Link href="/">Log out</Link>
         </Button>
       </div>
     </header>

@@ -43,7 +43,7 @@ export default async function JourneyPage({ params }: Params) {
       {gameRiddles.length === 0 ? (
         <Card className="border-dashed border-white/10 bg-white/5">
           <CardContent className="py-12 text-center text-white/40">
-            Bu journey için henüz bir riddle eklenmemiş. Çok yakında!
+            No riddles added to this journey yet. Coming soon!
           </CardContent>
         </Card>
       ) : (
@@ -91,7 +91,7 @@ export default async function JourneyPage({ params }: Params) {
                         {isAttempted && isCorrect === true && (
                           <div
                             className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/20 text-green-400"
-                            aria-label="Doğru"
+                            aria-label="Correct"
                           >
                             <CheckCircle size={24} />
                           </div>
@@ -99,7 +99,7 @@ export default async function JourneyPage({ params }: Params) {
                         {isAttempted && isCorrect === false && (
                           <div
                             className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/20 text-red-400"
-                            aria-label="Yanlış"
+                            aria-label="Incorrect"
                           >
                             <XCircle size={24} />
                           </div>
