@@ -11,7 +11,8 @@ type RiddleControllerProps = {
 
 export default function RiddleController({ riddle, game }: RiddleControllerProps) {
   return (
-    <div className="flex gap-8">
+    <div className="container mx-auto max-w-5xl px-4 py-8">
+      <div className="flex gap-8">
       <RiddleBoard
         gameRiddleId={riddle.id}
         pgn={game.pgn}
@@ -26,6 +27,7 @@ export default function RiddleController({ riddle, game }: RiddleControllerProps
         <div className="mt-4 grid grid-cols-2 gap-4"></div>
         <div className="mt-4"></div>
       </div>
+    </div>
     </div>
   );
 }
