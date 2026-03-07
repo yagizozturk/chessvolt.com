@@ -41,7 +41,7 @@ export function Hero() {
                   className="h-12 px-8 text-base"
                   asChild
                 >
-                  <Link href="/signup">
+                  <Link href="/journey/legend_games">
                     Start Playing <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
