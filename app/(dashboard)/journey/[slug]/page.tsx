@@ -1,15 +1,4 @@
-import Link from "next/link";
-import {
-  CheckCircle,
-  XCircle,
-  Sword,
-  Star,
-  ChevronRight,
-  Target,
-  Trophy,
-  XOctagon,
-  TrendingUp,
-} from "lucide-react";
+import { Target, Trophy, XOctagon, TrendingUp } from "lucide-react";
 import { getGameRiddlesByGameType } from "@/lib/services/game-riddle";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import * as userGameRiddleRepo from "@/lib/repositories/user-game-riddle.repository";
@@ -21,6 +10,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  JourneySnakeMap,
+  type JourneyCheckpoint,
+} from "@/components/journey/journey-snake-map";
 
 type Params = {
   params: Promise<{ slug: string }>;
@@ -40,6 +33,29 @@ export default async function JourneyPage({ params }: Params) {
     attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
   );
 
+  let foundCurrent = false;
+  const checkpoints: JourneyCheckpoint[] = gameRiddles.map((riddle, index) => {
+    const isCorrect = attemptByRiddleId[riddle.id];
+    const isAttempted = riddle.id in attemptByRiddleId;
+
+    let status: JourneyCheckpoint["status"] = "locked";
+    if (!foundCurrent) {
+      if (isAttempted && isCorrect) {
+        status = "complete";
+      } else {
+        status = "current";
+        foundCurrent = true;
+      }
+    }
+
+    return {
+      id: riddle.id,
+      title: riddle.title,
+      status,
+      index,
+    };
+  });
+
   const total = gameRiddles.length;
   const correct = attemptedRiddles.filter((a) => a.isCorrect).length;
   const incorrect = attemptedRiddles.filter((a) => !a.isCorrect).length;
@@ -53,158 +69,86 @@ export default async function JourneyPage({ params }: Params) {
         {/* Left: Journey (header + riddles) */}
         <div>
           <div className="mb-12 flex flex-col gap-2 text-center md:text-left">
-            <Badge className="w-fit self-center border-[#F69E0B]/30 bg-[#F69E0B]/20 text-[#FFB800] md:self-start">
-              CHESS ADVENTURE
-            </Badge>
-            <h1 className="text-4xl font-black capitalize tracking-tight text-white md:text-5xl">
+            <h1 className="text-foreground text-4xl font-black tracking-tight capitalize md:text-5xl">
               {slug.replace(/-/g, " ")} Journey
             </h1>
-            <p className="text-lg text-white/50">
+            <p className="text-muted-foreground text-lg">
               Master the tactics and unlock the secrets of this kingdom.
             </p>
           </div>
 
           {gameRiddles.length === 0 ? (
-            <Card className="border-dashed border-white/10 bg-white/5">
-              <CardContent className="py-12 text-center text-white/40">
+            <Card className="border-border bg-card/50 border-dashed">
+              <CardContent className="text-muted-foreground py-12 text-center">
                 No riddles added to this journey yet. Coming soon!
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4">
-              {gameRiddles.map((riddle, index) => {
-                const isCorrect = attemptByRiddleId[riddle.id];
-                const isAttempted = riddle.id in attemptByRiddleId;
-
-                return (
-                  <Link
-                    key={riddle.id}
-                    href={`/game-riddle/${riddle.id}`}
-                    className="group no-underline"
-                  >
-                    <Card className="overflow-hidden border-white/10 bg-white/5 transition-all duration-300 group-active:scale-[0.98] hover:border-white/20 hover:bg-white/10">
-                      <CardContent className="p-0">
-                        <div className="flex items-center justify-between p-6">
-                          <div className="flex items-center gap-6">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#F69E0B] text-xl font-black text-white shadow-[0_4px_0_0_#b45309]">
-                              {index + 1}
-                            </div>
-                            <div>
-                              <h3 className="text-xl font-bold text-white transition-colors group-hover:text-[#FFB800]">
-                                {riddle.title}
-                              </h3>
-                              <div className="mt-1 flex items-center gap-4">
-                                {riddle.rating && (
-                                  <div className="flex items-center gap-1 text-sm text-white/40">
-                                    <Star size={14} className="text-[#FFB800]" />
-                                    <span>Rating: {riddle.rating}</span>
-                                  </div>
-                                )}
-                                <div className="flex items-center gap-1 text-sm text-white/40">
-                                  <Sword size={14} />
-                                  <span>Tactical Puzzle</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-4">
-                            {isAttempted && isCorrect === true && (
-                              <div
-                                className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/20 text-green-400"
-                                aria-label="Correct"
-                              >
-                                <CheckCircle size={24} />
-                              </div>
-                            )}
-                            {isAttempted && isCorrect === false && (
-                              <div
-                                className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/20 text-red-400"
-                                aria-label="Incorrect"
-                              >
-                                <XCircle size={24} />
-                              </div>
-                            )}
-                            {!isAttempted && (
-                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/20 transition-all group-hover:bg-[#FFB800] group-hover:text-black">
-                                <ChevronRight size={20} />
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                );
-              })}
+            <div className="flex justify-center">
+              <JourneySnakeMap checkpoints={checkpoints} />
             </div>
           )}
         </div>
 
         <div className="space-y-4">
-          <Card className="border-white/10 bg-white/5">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Target className="h-5 w-5 text-[#FFB800]" />
+              <CardTitle className="flex items-center gap-2">
+                <Target className="text-primary h-5 w-5" />
                 Progress
               </CardTitle>
-              <CardDescription className="text-white/60">
-                Your journey stats
-              </CardDescription>
+              <CardDescription>Your journey stats</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3">
-                <span className="text-sm text-white/60">Total</span>
-                <span className="font-bold text-white">{total}</span>
+              <div className="border-border bg-muted/50 flex items-center justify-between rounded-lg border px-4 py-3">
+                <span className="text-muted-foreground text-sm">Total</span>
+                <span className="text-foreground font-bold">{total}</span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3">
-                <span className="text-sm text-white/60">Remaining</span>
-                <span className="font-bold text-white">{remaining}</span>
+              <div className="border-border bg-muted/50 flex items-center justify-between rounded-lg border px-4 py-3">
+                <span className="text-muted-foreground text-sm">Remaining</span>
+                <span className="text-foreground font-bold">{remaining}</span>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-white/10 bg-white/5">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Trophy className="h-5 w-5 text-green-400" />
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="text-primary h-5 w-5" />
                 Solved
               </CardTitle>
-              <CardDescription className="text-white/60">
-                Correct answers
-              </CardDescription>
+              <CardDescription>Correct answers</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-green-400">{correct}</div>
+              <div className="text-primary text-3xl font-bold">{correct}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-white/10 bg-white/5">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <XOctagon className="h-5 w-5 text-red-400" />
+              <CardTitle className="flex items-center gap-2">
+                <XOctagon className="text-destructive h-5 w-5" />
                 Failed
               </CardTitle>
-              <CardDescription className="text-white/60">
-                Incorrect attempts
-              </CardDescription>
+              <CardDescription>Incorrect attempts</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-red-400">{incorrect}</div>
+              <div className="text-destructive text-3xl font-bold">
+                {incorrect}
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="border-white/10 bg-white/5">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <TrendingUp className="h-5 w-5 text-[#FFB800]" />
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="text-primary h-5 w-5" />
                 Solve Rate
               </CardTitle>
-              <CardDescription className="text-white/60">
-                Success percentage
-              </CardDescription>
+              <CardDescription>Success percentage</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-[#FFB800]">
+              <div className="text-primary text-3xl font-bold">
                 {solveRate}%
               </div>
             </CardContent>

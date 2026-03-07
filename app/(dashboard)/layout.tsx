@@ -1,5 +1,5 @@
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import { AppSidebar } from "@/components/app-sidebar";
+import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar";
 
 export default async function DashboardLayout({
   children,
@@ -9,8 +9,8 @@ export default async function DashboardLayout({
   await getAuthenticatedUser();
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <AppSidebar />
+    <div className="flex min-h-screen flex-col bg-background">
+      <DashboardNavbar />
       <main className="flex-1 overflow-auto">{children}</main>
     </div>
   );
