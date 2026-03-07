@@ -4,16 +4,19 @@ import Link from "next/link";
 import {
   User,
   Calendar,
-  Trophy,
   BookOpen,
   ExternalLink,
   Flag,
   Circle,
   Lightbulb,
   ChevronRight,
+  Flame,
+  Zap,
+  Heart,
 } from "lucide-react";
 import type { GameRiddle } from "@/lib/model/game-riddle";
 import type { Game } from "@/lib/model/game";
+import { usePuzzleStore } from "@/stores/puzzle-store";
 import RiddleBoard from "@/components/riddle-board/riddle-board";
 import {
   Card,
@@ -49,6 +52,9 @@ export default function RiddleController({
   game,
 }: RiddleControllerProps) {
   const turn = riddle.ply % 2 === 0 ? "White" : "Black";
+  const streak = usePuzzleStore((state) => state.streak);
+  const lives = usePuzzleStore((state) => state.lives);
+  const xp = 0;
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
@@ -64,18 +70,39 @@ export default function RiddleController({
           />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/50 p-3">
+              <Flame className="h-5 w-5 text-primary" />
+              <span className="text-2xl font-bold text-foreground">{streak}</span>
+              <span className="text-muted-foreground text-xs">Streak</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/50 p-3">
+              <Zap className="h-5 w-5 text-primary" />
+              <span className="text-2xl font-bold text-foreground">{xp}</span>
+              <span className="text-muted-foreground text-xs">XP</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/50 p-3">
+              <Heart className="h-5 w-5 text-primary" />
+              <span className="text-2xl font-bold text-foreground">{lives}</span>
+              <span className="text-muted-foreground text-xs">Lives</span>
+            </div>
+          </div>
+
           <Card>
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl font-bold">
                 {riddle.title}
               </CardTitle>
-              <CardDescription>
-                The game this puzzle is based on
-              </CardDescription>
-              <div className="flex items-center gap-2 pt-2">
-                <Trophy className="text-primary h-4 w-4" />
-                <span className="text-muted-foreground text-sm font-medium">
-                  Game Info
+              <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 pt-2 text-sm">
+                {game.event && (
+                  <span className="flex items-center gap-1.5">
+                    <Flag className="text-primary h-3.5 w-3.5" />
+                    {game.event}
+                  </span>
+                )}
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="text-primary h-3.5 w-3.5" />
+                  {formatDate(game.playedAt)}
                 </span>
               </div>
             </CardHeader>
@@ -119,42 +146,9 @@ export default function RiddleController({
                 </div>
               </div>
 
-              <Separator />
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Trophy className="h-3.5 w-3.5" />
-                    Result
-                  </span>
-                  <Badge
-                    variant="outline"
-                    className="border-primary/30 bg-primary/20 text-primary"
-                  >
-                    {game.result}
-                  </Badge>
-                </div>
-                {game.event && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground flex items-center gap-2">
-                      <Flag className="h-3.5 w-3.5" />
-                      Event
-                    </span>
-                    <span className="text-foreground truncate font-medium">
-                      {game.event}
-                    </span>
-                  </div>
-                )}
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-2">
-                    <Calendar className="h-3.5 w-3.5" />
-                    Date
-                  </span>
-                  <span className="text-foreground font-medium">
-                    {formatDate(game.playedAt)}
-                  </span>
-                </div>
-                {game.opening && (
+              {game.opening && (
+                <>
+                  <Separator />
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground flex items-center gap-2">
                       <BookOpen className="h-3.5 w-3.5" />
@@ -164,8 +158,8 @@ export default function RiddleController({
                       {game.opening}
                     </span>
                   </div>
-                )}
-              </div>
+                </>
+              )}
 
               {game.url && (
                 <>

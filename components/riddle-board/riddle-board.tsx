@@ -58,6 +58,8 @@ export default function RiddleBoard({
   const { play: playMoveSound } = useSound("/audio/move.wav", 0.5);
 
   const setStoreStreak = usePuzzleStore((state) => state.setStreak);
+  const decrementLives = usePuzzleStore((state) => state.decrementLives);
+  const initRiddleLives = usePuzzleStore((state) => state.initRiddleLives);
 
   const { analyze } = useChessEngine({
     difficulty: "Expert",
@@ -68,7 +70,8 @@ export default function RiddleBoard({
     setCurrentStep(0);
     setIsRiddleOver(false);
     currentStepRef.current = 0;
-  }, [gameRiddleId]);
+    initRiddleLives();
+  }, [gameRiddleId, initRiddleLives]);
 
   useEffect(() => {
     if (!boardRef.current || !game.current || !initialFen) return;
@@ -125,8 +128,12 @@ export default function RiddleBoard({
     if (userUci !== expectedUci) {
       playMoveSound();
       updateBoard();
-      setStoreStreak(0);
-      updateRiddleAnswerHandler(false);
+      decrementLives();
+      const newLives = usePuzzleStore.getState().lives;
+      if (newLives <= 0) {
+        setStoreStreak(0);
+        updateRiddleAnswerHandler(false);
+      }
       return;
     }
 
