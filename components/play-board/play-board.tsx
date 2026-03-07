@@ -279,7 +279,11 @@ export default function PlayBoard() {
   return (
     <>
       <div className="board-wrapper">
-        <div ref={boardRef} className="cardinal turq" />
+        <div
+          ref={boardRef}
+          style={{ width: 620, height: 620 }}
+          className="cardinal turq"
+        />
       </div>
     </>
   );

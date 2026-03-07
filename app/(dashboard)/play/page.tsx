@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import GameController from "@/components/controller/game-controller";
 
 export default function PlayPage() {
-  redirect("/dashboard");
+  return <GameController />;
 }
