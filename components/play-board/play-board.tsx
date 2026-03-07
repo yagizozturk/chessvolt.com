@@ -288,7 +288,7 @@ export default function PlayBoard() {
         />
       </div>
       <div className="board-wrapper">
-        <div ref={boardRef} className="cardinal turq" />
+        <div ref={boardRef} className="cardinal blue" />
       </div>
     </>
   );

@@ -181,6 +181,6 @@ export default function RiddleBoard({
   }
 
   return (
-    <div ref={boardRef} className="cardinal turq" style={{ width, height }} />
+    <div ref={boardRef} className="cardinal blue" style={{ width, height }} />
   );
 }

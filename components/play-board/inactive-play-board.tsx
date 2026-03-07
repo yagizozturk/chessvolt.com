@@ -35,7 +35,7 @@ export default function InactivePlayBoard() {
 
   return (
     <div className="board-wrapper">
-      <div ref={boardRef} className="cardinal turq" />
+      <div ref={boardRef} className="cardinal blue" />
     </div>
   );
 }

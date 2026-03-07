@@ -10,7 +10,7 @@ export function useOneChessground(
   boardRef: RefObject<HTMLDivElement | null>,
   game: RefObject<Chess>,
   playerColor: "white" | "black",
-  onMove: (from: string, to: string) => void
+  onMove: (from: string, to: string) => void,
 ) {
   const ground = useRef<ReturnType<typeof Chessground> | null>(null);
 
@@ -89,10 +89,10 @@ export function useOneChessground(
         uniqueIndex === 0
           ? "custom-suggestion-one"
           : uniqueIndex === 1
-          ? "custom-suggestion-two"
-          : uniqueIndex === 2
-          ? "custom-suggestion-three"
-          : "custom-suggestion";
+            ? "custom-suggestion-two"
+            : uniqueIndex === 2
+              ? "custom-suggestion-three"
+              : "custom-suggestion";
       custom.set(square as Key, className);
 
       uniqueIndex++;
@@ -116,7 +116,7 @@ export function useOneChessground(
     const turn = game.current.turn() === "w" ? "white" : "black";
     const isCheck = game.current.isCheck();
 
-    if(isCheck) { 
+    if (isCheck) {
       console.log("check");
     }
 
