@@ -4,10 +4,7 @@ import type { Puzzle } from "@/lib/model/puzzle";
 import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 import { getNextTurnFromFen } from "@/lib/chess-board/getTurn";
 import { usePuzzleStore } from "@/stores/puzzle-store";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Zap, Circle, BarChart3, Tag } from "lucide-react";
 
@@ -34,14 +31,16 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
         {/* Right: Stats & Info */}
         <div className="flex min-w-0 flex-col gap-4">
           <div className="grid grid-cols-2 gap-2">
-            <div className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/50 p-3">
-              <Flame className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold text-foreground">{streak}</span>
+            <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
+              <Flame className="text-primary h-5 w-5" />
+              <span className="text-foreground text-2xl font-bold">
+                {streak}
+              </span>
               <span className="text-muted-foreground text-xs">Streak</span>
             </div>
-            <div className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/50 p-3">
-              <Zap className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold text-foreground">{xp}</span>
+            <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
+              <Zap className="text-primary h-5 w-5" />
+              <span className="text-foreground text-2xl font-bold">{xp}</span>
               <span className="text-muted-foreground text-xs">XP</span>
             </div>
           </div>
@@ -55,25 +54,25 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
                   variant="outline"
                   className="border-primary/30 bg-primary/20 text-primary"
                 >
-                  {turnText ?? "—"} to move
+                  {turnText ?? "—"}
                 </Badge>
               </div>
 
               {(puzzle.rating != null || puzzle.ratingDeviation != null) && (
                 <div className="flex flex-wrap gap-2">
                   {puzzle.rating != null && (
-                    <div className="flex items-center gap-1.5 rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
+                    <div className="border-border bg-muted/50 flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm">
                       <BarChart3 className="text-primary h-3.5 w-3.5" />
                       <span className="text-muted-foreground">Rating</span>
-                      <span className="font-semibold text-foreground">
+                      <span className="text-foreground font-semibold">
                         {puzzle.rating}
                       </span>
                     </div>
                   )}
                   {puzzle.ratingDeviation != null && (
-                    <div className="flex items-center gap-1.5 rounded-md border border-border bg-muted/50 px-3 py-2 text-sm">
+                    <div className="border-border bg-muted/50 flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm">
                       <span className="text-muted-foreground">±</span>
-                      <span className="font-semibold text-foreground">
+                      <span className="text-foreground font-semibold">
                         {puzzle.ratingDeviation}
                       </span>
                     </div>

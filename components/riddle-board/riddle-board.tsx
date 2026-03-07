@@ -170,7 +170,7 @@ export default function RiddleBoard({
   if (!initialFen || movesArray.length === 0) {
     return (
       <div
-        className="flex items-center justify-center bg-gray-100 rounded-lg"
+        className="flex items-center justify-center rounded-lg bg-gray-100"
         style={{ width, height }}
       >
         <p className="text-muted-foreground">

@@ -103,6 +103,7 @@ export default function PuzzleBoard({
 
     ground.current = Chessground(boardRef.current, {
       fen: game.current.fen(),
+      orientation: game.current.turn() === "w" ? "white" : "black",
       viewOnly: viewOnly,
       turnColor: game.current.turn() === "w" ? "white" : "black",
       movable: {
@@ -129,6 +130,7 @@ export default function PuzzleBoard({
 
     ground.current.set({
       fen: game.current.fen(),
+      orientation: game.current.turn() === "w" ? "white" : "black",
       turnColor: game.current.turn() === "w" ? "white" : "black",
       movable: {
         free: false,
@@ -169,8 +171,6 @@ export default function PuzzleBoard({
     const step = currentStepRef.current;
     const expectedUci = movesArray[step];
     const userUci = from + to;
-
-    
 
     // Wrong move
     if (userUci !== expectedUci) {
