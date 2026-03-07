@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 
 export type CheckpointStatus = "complete" | "current" | "locked";
 
-export type JourneyCheckpoint = {
+export type JourneyChapter = {
   id: string;
   title: string;
   status: CheckpointStatus;
@@ -13,7 +13,7 @@ export type JourneyCheckpoint = {
 };
 
 type Props = {
-  checkpoints: JourneyCheckpoint[];
+  checkpoints: JourneyChapter[];
   baseHref?: string;
 };
 

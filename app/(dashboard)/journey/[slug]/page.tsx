@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import {
   JourneySnakeMap,
-  type JourneyCheckpoint,
+  type JourneyChapter,
 } from "@/components/journey/journey-snake-map";
 
 type Params = {
@@ -34,11 +34,11 @@ export default async function JourneyPage({ params }: Params) {
   );
 
   let foundCurrent = false;
-  const checkpoints: JourneyCheckpoint[] = gameRiddles.map((riddle, index) => {
+  const checkpoints: JourneyChapter[] = gameRiddles.map((riddle, index) => {
     const isCorrect = attemptByRiddleId[riddle.id];
     const isAttempted = riddle.id in attemptByRiddleId;
 
-    let status: JourneyCheckpoint["status"] = "locked";
+    let status: JourneyChapter["status"] = "locked";
     if (!foundCurrent) {
       if (isAttempted && isCorrect) {
         status = "complete";
