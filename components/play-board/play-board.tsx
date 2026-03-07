@@ -10,11 +10,10 @@ import { useCoachStore } from "@/stores/coach-store";
 import { useSound } from "@/hooks/use-sound";
 import { createMoveObjectsFromMultiPvs } from "@/lib/chess-board/createMoveObjectsFromMultiPvs";
 import { createMoveObjectFromUci } from "@/lib/chess-board/createMoveFromUci";
-import CheckmateModal from "@/components/game-status-modal/game-status-modal";
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
 import "@/assets/chessground.css";
-import "@/assets/piyon.css";
+import "@/assets/volt.css";
 import "@/assets/theme/theme.css";
 
 export default function PlayBoard() {
@@ -44,22 +43,22 @@ export default function PlayBoard() {
   const setFen = useCoachStore((state) => state.setFen);
   const setBestMove = useCoachStore((state) => state.setBestMove);
   const setAlternativeMoves = useCoachStore(
-    (state) => state.setAlternativeMoves
+    (state) => state.setAlternativeMoves,
   );
   const resetAlternativeMoves = useCoachStore(
-    (state) => state.resetAlternativeMoves
+    (state) => state.resetAlternativeMoves,
   );
   const setIsSquareHintsShown = useCoachStore(
-    (state) => state.setIsSquareHintsShown
+    (state) => state.setIsSquareHintsShown,
   );
   const setIsMoveHintsShown = useCoachStore(
-    (state) => state.setIsMoveHintsShown
+    (state) => state.setIsMoveHintsShown,
   );
   const setShowFirstHintButton = useCoachStore(
-    (state) => state.setShowFirstHintButton
+    (state) => state.setShowFirstHintButton,
   );
   const setShowSecondHintButton = useCoachStore(
-    (state) => state.setShowSecondHintButton
+    (state) => state.setShowSecondHintButton,
   );
   const resetCoach = useCoachStore((state) => state.resetCoach);
 
@@ -96,7 +95,7 @@ export default function PlayBoard() {
         (move) => ({
           ...move,
           san: convertUciToSan(move.uci!), // Add SAN from hook
-        })
+        }),
       );
       // ************************************************************************
 
@@ -147,7 +146,7 @@ export default function PlayBoard() {
         analyze(fen(), 8);
       }
     },
-    [makeMove, analyze, fen, turn, playerColor, getGameStatus, setGameStatus]
+    [makeMove, analyze, fen, turn, playerColor, getGameStatus, setGameStatus],
   );
 
   // ============================================================================
@@ -158,7 +157,7 @@ export default function PlayBoard() {
     boardRef,
     game,
     playerColor,
-    onPlayerMove
+    onPlayerMove,
   );
 
   // ============================================================================
@@ -204,7 +203,7 @@ export default function PlayBoard() {
     const move = makeMove(
       engineBestMove.slice(0, 2),
       engineBestMove.slice(2, 4),
-      "q"
+      "q",
     );
 
     if (!move) return; // Stockfish can return a null after makeMove method. So we control it.
@@ -279,14 +278,6 @@ export default function PlayBoard() {
 
   return (
     <>
-      <div className="relative">
-        <CheckmateModal
-          visible={isCheckmate}
-          winner={winner}
-          onRestart={handleRestart}
-          onClose={handleClose}
-        />
-      </div>
       <div className="board-wrapper">
         <div ref={boardRef} className="cardinal turq" />
       </div>

@@ -12,7 +12,7 @@ import { useChessOne } from "@/hooks/use-chess";
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
 import "@/assets/chessground.css";
-import "@/assets/piyon.css";
+import "@/assets/volt.css";
 import "@/assets/theme/theme.css";
 
 type PuzzleBoardProps = {
