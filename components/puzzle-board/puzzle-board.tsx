@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Chessground } from "@lichess-org/chessground";
+import type { Key } from "@lichess-org/chessground/types";
 import { toDests } from "@/lib/chess-board/toDests";
 import { useUpdatePuzzleAnswer } from "@/hooks/use-update-puzzle";
 import { useSound } from "@/hooks/use-sound";
@@ -45,6 +46,7 @@ export default function PuzzleBoard({
   const [currentStep, setCurrentStep] = useState(0);
   const currentStepRef = useRef(0);
   const [isPuzzleOver, setIsPuzzleOver] = useState(false);
+  const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
 
   const { updatePuzzleAnswerHook } = useUpdatePuzzleAnswer();
   const movesArray = moves
@@ -91,6 +93,7 @@ export default function PuzzleBoard({
     setCurrentStep(0);
     setIsPuzzleOver(false);
     currentStepRef.current = 0;
+    lastMoveRef.current = undefined;
   }, [puzzleId]);
 
   // ============================================================================
@@ -106,6 +109,7 @@ export default function PuzzleBoard({
       orientation: game.current.turn() === "w" ? "white" : "black",
       viewOnly: viewOnly,
       turnColor: game.current.turn() === "w" ? "white" : "black",
+      lastMove: lastMoveRef.current ?? undefined,
       movable: {
         free: false,
         color: game.current.turn() === "w" ? "white" : "black",
@@ -132,6 +136,7 @@ export default function PuzzleBoard({
       fen: game.current.fen(),
       orientation: game.current.turn() === "w" ? "white" : "black",
       turnColor: game.current.turn() === "w" ? "white" : "black",
+      lastMove: lastMoveRef.current ?? undefined,
       movable: {
         free: false,
         color: game.current.turn() === "w" ? "white" : "black",
@@ -146,7 +151,10 @@ export default function PuzzleBoard({
     if (!game.current || !ground.current) return;
 
     const initialMove = movesArray[0];
-    makeMove(initialMove.slice(0, 2), initialMove.slice(2, 4), "q");
+    const from = initialMove.slice(0, 2);
+    const to = initialMove.slice(2, 4);
+    makeMove(from, to, "q");
+    lastMoveRef.current = [from as Key, to as Key];
     handleStepChange();
     updateBoard();
     setStoreFen(game.current.fen()); // After the first move, fen changes and is set in the store.
@@ -182,6 +190,7 @@ export default function PuzzleBoard({
     }
 
     makeMove(from, to, "q");
+    lastMoveRef.current = [from as Key, to as Key];
     playCorrectSound();
     handleStepChange();
     updateBoard();
@@ -196,7 +205,10 @@ export default function PuzzleBoard({
     }
 
     const opponentUci = movesArray[step + 1];
-    makeMove(opponentUci.slice(0, 2), opponentUci.slice(2, 4), "q");
+    const oppFrom = opponentUci.slice(0, 2);
+    const oppTo = opponentUci.slice(2, 4);
+    makeMove(oppFrom, oppTo, "q");
+    lastMoveRef.current = [oppFrom as Key, oppTo as Key];
     handleStepChange();
     updateBoard();
     setStoreFen(game.current.fen());
