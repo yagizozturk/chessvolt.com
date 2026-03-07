@@ -10,6 +10,7 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -28,6 +29,7 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-3 md:flex">
+          <ThemeToggle />
           <Button variant="vghost" size="sm" asChild>
             <Link href="/storybook">Storybook</Link>
           </Button>
@@ -63,7 +65,7 @@ export function Navbar() {
               side="right"
               className="border-white/10 bg-slate-950/95 px-8 text-white backdrop-blur-md"
             >
-              <SheetTitle className="mb-8 text-left text-white">
+              <SheetTitle className="mb-8 flex items-center justify-between text-left text-white">
                 <div
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-2 text-xl font-bold"
@@ -71,6 +73,7 @@ export function Navbar() {
                   <Zap className="text-primary h-5 w-5" />
                   <span>chessvolt</span>
                 </div>
+                <ThemeToggle />
               </SheetTitle>
 
               <nav className="flex flex-col gap-6">

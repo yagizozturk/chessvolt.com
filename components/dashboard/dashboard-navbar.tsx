@@ -11,6 +11,7 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -36,6 +37,7 @@ export function DashboardNavbar() {
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
+          <ThemeToggle />
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
@@ -58,7 +60,8 @@ export function DashboardNavbar() {
           })}
         </nav>
 
-        <div className="md:hidden">
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -98,6 +101,9 @@ export function DashboardNavbar() {
                   );
                 })}
               </nav>
+              <div className="mt-4 border-t border-border pt-4">
+                <ThemeToggle />
+              </div>
             </SheetContent>
           </Sheet>
         </div>
