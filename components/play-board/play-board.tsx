@@ -10,6 +10,7 @@ import { useCoachStore } from "@/stores/coach-store";
 import { useSound } from "@/hooks/use-sound";
 import { createMoveObjectsFromMultiPvs } from "@/lib/chess-board/createMoveObjectsFromMultiPvs";
 import { createMoveObjectFromUci } from "@/lib/chess-board/createMoveFromUci";
+import CheckmateModal from "@/components/game-status-modal/game-status-modal";
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
 import "@/assets/chessground.css";
@@ -278,6 +279,14 @@ export default function PlayBoard() {
 
   return (
     <>
+      <div className="relative">
+        <CheckmateModal
+          visible={isCheckmate}
+          winner={winner}
+          onRestart={handleRestart}
+          onClose={handleClose}
+        />
+      </div>
       <div className="board-wrapper">
         <div ref={boardRef} className="cardinal turq" />
       </div>
