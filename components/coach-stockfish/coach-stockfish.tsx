@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
+import { Bot, User, HelpCircle } from "lucide-react";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import { useCoachStore } from "@/stores/coach-store";
 import {
@@ -11,6 +11,7 @@ import {
   CardAction,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default function CoachStockfish() {
   const initialMessage = `Hi, I am your Chess coach. Click 2 hint buttons to get help. Click the question mark icon for explanation.`;
@@ -105,7 +106,7 @@ export default function CoachStockfish() {
     <div className="flex flex-col h-full max-h-[600px]">
       <div
         ref={scrollRef}
-        className="chat-scroll flex-1 overflow-y-auto px-3 py-5 space-y-6 bg-secondary mb-3"
+        className="chat-scroll flex-1 overflow-y-auto space-y-6 rounded-lg border border-border bg-muted/30 px-3 py-5 mb-3"
       >
         {messages.map((msg, idx) => (
           <div
@@ -115,17 +116,16 @@ export default function CoachStockfish() {
             }`}
           >
             {msg.role !== "user" && (
-              <img
-                src="/images/icons/icon-ai.png"
-                className="w-10 h-10 rounded-full"
-              />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
+                <Bot className="h-5 w-5 text-muted-foreground" />
+              </div>
             )}
             <div
               className={`max-w-sm px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap
                 ${
                   msg.role === "user"
-                    ? "bg-emerald-600 text-white rounded-tr-none"
-                    : "bg-primary-background text-black rounded-tl-none"
+                    ? "bg-primary text-primary-foreground rounded-tr-none"
+                    : "bg-muted rounded-tl-none text-foreground"
                 }`}
             >
               {msg.content === "" && isLoading && idx === messages.length - 1
@@ -134,10 +134,9 @@ export default function CoachStockfish() {
             </div>
 
             {msg.role === "user" && (
-              <img
-                src="/images/icons/icon-user.png"
-                className="w-10 h-10 rounded-full"
-              />
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
+                <User className="h-5 w-5 text-muted-foreground" />
+              </div>
             )}
           </div>
         ))}
@@ -145,27 +144,27 @@ export default function CoachStockfish() {
           <div className="flex gap-3 justify-end items-start">
             <div className="flex flex-col gap-2 items-end">
               {showFirstHintButton && (
-                <button
+                <Button
                   onClick={handleFirstHintClick}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition shadow-lg w-fit cursor-pointer"
+                  variant="secondary"
+                  className="w-fit"
                 >
                   Which pieces can I move for best?
-                </button>
+                </Button>
               )}
               {showSecondHintButton && (
-                <button
+                <Button
                   onClick={handleSecondHintClick}
-                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition shadow-lg w-fit cursor-pointer"
+                  variant="default"
+                  className="w-fit"
                 >
                   I need a move hint
-                </button>
+                </Button>
               )}
             </div>
-            <img
-              src="/images/icons/icon-user.png"
-              className="w-10 h-10 rounded-full flex-shrink-0"
-              alt="User"
-            />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
+              <User className="h-5 w-5 text-muted-foreground" />
+            </div>
           </div>
         )}
       </div>
@@ -174,12 +173,9 @@ export default function CoachStockfish() {
         <div className="grid grid-cols-3 gap-4 mt-auto mt-4">
           <Card className="rounded-lg border-border bg-muted/50">
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-2">
-              <Image
-                src="/images/icons/icon-first.png"
-                alt=""
-                width={24}
-                height={24}
-              />
+              <Badge variant="secondary" className="h-8 w-8 shrink-0 p-0 justify-center text-sm font-bold">
+                1
+              </Badge>
               <CardAction>
                 <Button
                   variant="ghost"
@@ -190,12 +186,7 @@ export default function CoachStockfish() {
                   }
                   aria-label="Explain move"
                 >
-                  <Image
-                    src="/images/icons/icon-question-mark.png"
-                    alt=""
-                    width={18}
-                    height={18}
-                  />
+                  <HelpCircle className="h-4 w-4" />
                 </Button>
               </CardAction>
             </CardHeader>
@@ -207,12 +198,9 @@ export default function CoachStockfish() {
           </Card>
           <Card className="rounded-lg border-border bg-muted/50">
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-2">
-              <Image
-                src="/images/icons/icon-second.png"
-                alt=""
-                width={24}
-                height={24}
-              />
+              <Badge variant="secondary" className="h-8 w-8 shrink-0 p-0 justify-center text-sm font-bold">
+                2
+              </Badge>
               <CardAction>
                 <Button
                   variant="ghost"
@@ -223,12 +211,7 @@ export default function CoachStockfish() {
                   }
                   aria-label="Explain move"
                 >
-                  <Image
-                    src="/images/icons/icon-question-mark.png"
-                    alt=""
-                    width={18}
-                    height={18}
-                  />
+                  <HelpCircle className="h-4 w-4" />
                 </Button>
               </CardAction>
             </CardHeader>
@@ -240,12 +223,9 @@ export default function CoachStockfish() {
           </Card>
           <Card className="rounded-lg border-border bg-muted/50">
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-2">
-              <Image
-                src="/images/icons/icon-third.png"
-                alt=""
-                width={24}
-                height={24}
-              />
+              <Badge variant="secondary" className="h-8 w-8 shrink-0 p-0 justify-center text-sm font-bold">
+                3
+              </Badge>
               <CardAction>
                 <Button
                   variant="ghost"
@@ -256,12 +236,7 @@ export default function CoachStockfish() {
                   }
                   aria-label="Explain move"
                 >
-                  <Image
-                    src="/images/icons/icon-question-mark.png"
-                    alt=""
-                    width={18}
-                    height={18}
-                  />
+                  <HelpCircle className="h-4 w-4" />
                 </Button>
               </CardAction>
             </CardHeader>
