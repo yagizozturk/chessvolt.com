@@ -45,7 +45,7 @@ export function GamificationFeatures() {
                       </div>
                       <span className={`font-medium ${user.current ? "text-primary" : ""}`}>{user.name}</span>
                     </div>
-                    <span className="font-mono font-bold text-orange-600">{user.xp}</span>
+                    <span className="font-mono font-bold text-primary">{user.xp}</span>
                   </div>
                 ))}
               </CardContent>

@@ -55,7 +55,6 @@ export default function StorybookPage() {
               { name: "foreground", class: "bg-foreground", hex: "#F8F7FF" },
               { name: "primary", class: "bg-primary", hex: "#fcc800" },
               { name: "secondary", class: "bg-secondary", hex: "#1e1f26" },
-              { name: "tertiary", class: "bg-tertiary", hex: "#fafafa" },
               { name: "border", class: "bg-border", hex: "#37464f" },
               { name: "input", class: "bg-input", hex: "#e6e6ea" },
               {

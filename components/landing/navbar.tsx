@@ -43,7 +43,7 @@ export function Navbar() {
             className="shadow-primary/20 shadow-lg"
             asChild
           >
-            <Link href="/signup">Start Playing</Link>
+            <Link href="/journey">Start Playing</Link>
           </Button>
         </nav>
 

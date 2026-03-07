@@ -16,7 +16,7 @@ export const JourneyMap = ({ chapters }: Props) => {
           className={`flex items-center gap-3 rounded-lg px-4 py-3 ${
             chapter.completed
               ? "bg-green-500/20 text-green-400"
-              : "bg-tertiary/5 text-secondary/60"
+              : "bg-foreground/5 text-secondary/60"
           }`}
         >
           <span className="w-6 font-bold">{index + 1}</span>

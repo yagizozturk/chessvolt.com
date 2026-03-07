@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, BookOpen, Trophy, Lock } from "lucide-react";
+import { Check, Star, BookOpen, Trophy, Lock, Map } from "lucide-react";
 import Link from "next/link";
 
 export function JourneyPreview() {
@@ -16,7 +16,7 @@ export function JourneyPreview() {
       type: "current",
       icon: <BookOpen className="h-6 w-6" />,
       offset: "40px",
-      label: "START",
+      label: "Magnus Carlsen vs Ediz Gürel",
     },
     {
       id: 3,
@@ -49,6 +49,13 @@ export function JourneyPreview() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center">
           <div className="mb-12 text-center">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/10 text-primary mb-6 inline-flex gap-2 rounded-full px-6 py-2 text-base backdrop-blur-md [&_svg]:size-5"
+            >
+              <Map />
+              Yol Haritası
+            </Badge>
             <h2 className="text-3xl font-bold tracking-tight">
               Eğitim Yolculuğun
             </h2>
