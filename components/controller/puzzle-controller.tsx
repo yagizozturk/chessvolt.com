@@ -4,6 +4,7 @@ import type { Puzzle } from "@/lib/model/puzzle";
 import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 import { getNextTurnFromFen } from "@/lib/chess-board/getTurn";
 import { useStatsStore } from "@/stores/stats-store";
+import { useUpdatePuzzleAnswer } from "@/hooks/use-update-puzzle";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Zap, Circle, BarChart3, Tag } from "lucide-react";
@@ -12,6 +13,7 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
   const turnText = getNextTurnFromFen(puzzle.fen);
   const streak = useStatsStore((state) => state.streak);
   const xp = 0;
+  const { updatePuzzleAnswerHook } = useUpdatePuzzleAnswer();
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
@@ -25,6 +27,9 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
             width={620}
             height={620}
             viewOnly={false}
+            onPuzzleSolved={(isCorrect) =>
+              updatePuzzleAnswerHook(puzzle.id, isCorrect)
+            }
           />
         </div>
 

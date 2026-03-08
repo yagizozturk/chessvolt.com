@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Chessground } from "@lichess-org/chessground";
 import type { Key } from "@lichess-org/chessground/types";
 import { toDests } from "@/lib/chess-board/toDests";
-import { useUpdatePuzzleAnswer } from "@/hooks/use-update-puzzle";
 import { useSound } from "@/hooks/use-sound";
 import { useStatsStore } from "@/stores/stats-store";
 import { useCoachStore } from "@/stores/coach-store";
@@ -28,6 +27,8 @@ type PuzzleBoardProps = {
     to: string;
     fen: string;
   }) => void;
+  /** Called when puzzle is solved (correct or wrong). Controller handles DB persistence. */
+  onPuzzleSolved?: (isCorrect: boolean) => void;
 };
 
 export default function PuzzleBoard({
@@ -38,6 +39,7 @@ export default function PuzzleBoard({
   height = 620,
   viewOnly = false,
   onGameStateChange,
+  onPuzzleSolved,
 }: PuzzleBoardProps) {
   const boardRef = useRef<HTMLDivElement>(null);
   const { game, makeMove, fen } = useChessOne(initialFen);
@@ -48,7 +50,6 @@ export default function PuzzleBoard({
   const [isPuzzleOver, setIsPuzzleOver] = useState(false);
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
 
-  const { updatePuzzleAnswerHook } = useUpdatePuzzleAnswer();
   const movesArray = moves
     .trim()
     .split(/\s+/)
@@ -189,7 +190,7 @@ export default function PuzzleBoard({
       updateBoard();
       decrementLives();
       setStoreStreak(0);
-      updatePuzzleAnswerHandler(false);
+      onPuzzleSolved?.(false);
       return;
     }
 
@@ -204,7 +205,7 @@ export default function PuzzleBoard({
     if (step === movesArray.length - 1) {
       setIsPuzzleOver(true);
       setStoreStreak(useStatsStore.getState().streak + 1);
-      updatePuzzleAnswerHandler(true);
+      onPuzzleSolved?.(true);
       return;
     }
 
@@ -223,17 +224,6 @@ export default function PuzzleBoard({
       to,
       fen: game.current.fen(),
     });
-  }
-
-  // ============================================================================
-  // Db Communication for next puzzle
-  // ============================================================================
-  async function updatePuzzleAnswerHandler(isCorrect: boolean) {
-    if (!puzzleId) {
-      return;
-    }
-
-    await updatePuzzleAnswerHook(puzzleId, isCorrect);
   }
 
   return (
