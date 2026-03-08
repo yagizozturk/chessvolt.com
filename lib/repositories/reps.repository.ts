@@ -5,11 +5,10 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Repartoire } from "@/lib/model/reps";
+import type { Rep } from "@/lib/model/reps";
+import { toRep } from "@/lib/mappers/reps";
 
-export async function findAll(
-  supabase: SupabaseClient
-): Promise<Repartoire[]> {
+export async function findAll(supabase: SupabaseClient): Promise<Rep[]> {
   const { data: reps, error } = await supabase.from("reps").select("*");
 
   if (error) {
@@ -17,13 +16,13 @@ export async function findAll(
     return [];
   }
 
-  return (reps ?? []) as Repartoire[];
+  return (reps ?? []).map(toRep);
 }
 
 export async function findById(
   supabase: SupabaseClient,
   id: string
-): Promise<Repartoire | null> {
+): Promise<Rep | null> {
   const { data, error } = await supabase
     .from("reps")
     .select("*")
@@ -39,5 +38,5 @@ export async function findById(
 
   if (!data) return null;
 
-  return data as Repartoire;
+  return toRep(data);
 }

@@ -36,7 +36,6 @@ import { useStatsStore } from "@/stores/stats-store";
 import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
-  { href: "/", label: "Home", icon: Home },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/journey/magnus-plays", label: "Journey", icon: Map },
   { href: "/puzzle", label: "Puzzles", icon: Puzzle },
@@ -59,7 +58,7 @@ export function DashboardNavbar() {
   const rightSection = (
     <div className="flex items-center gap-2">
       {/* XP */}
-      <div className="hidden items-center gap-1.5 rounded-lg bg-muted/60 px-2.5 py-1.5 sm:flex">
+      <div className="bg-muted/60 hidden items-center gap-1.5 rounded-lg px-2.5 py-1.5 sm:flex">
         <Sparkles className="h-4 w-4 text-amber-500" />
         <span className="text-sm font-semibold tabular-nums">
           {profile?.xp ?? "—"}
@@ -67,7 +66,7 @@ export function DashboardNavbar() {
       </div>
 
       {/* Streak */}
-      <div className="hidden items-center gap-1.5 rounded-lg bg-muted/60 px-2.5 py-1.5 sm:flex">
+      <div className="bg-muted/60 hidden items-center gap-1.5 rounded-lg px-2.5 py-1.5 sm:flex">
         <Flame className="h-4 w-4 text-orange-500" />
         <span className="text-sm font-semibold tabular-nums">{streak}</span>
       </div>
@@ -76,8 +75,8 @@ export function DashboardNavbar() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="rounded-full">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-              <User className="h-4 w-4 text-primary" />
+            <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
+              <User className="text-primary h-4 w-4" />
             </div>
             <span className="sr-only">Profil menüsü</span>
           </Button>
@@ -87,7 +86,7 @@ export function DashboardNavbar() {
             <p className="text-sm font-medium">
               {profile?.username ?? "Kullanıcı"}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {profile?.xp ?? 0} XP
             </p>
           </div>
@@ -122,14 +121,14 @@ export function DashboardNavbar() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
+    <header className="border-border bg-background sticky top-0 z-50 w-full border-b">
       <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4 md:px-6">
         {/* Left: Logo */}
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2 text-xl font-bold tracking-tighter text-foreground transition-opacity hover:opacity-90"
+          className="text-foreground flex shrink-0 items-center gap-2 text-xl font-bold tracking-tighter transition-opacity hover:opacity-90"
         >
-          <Zap className="h-6 w-6 fill-primary text-primary" />
+          <Zap className="fill-primary text-primary h-6 w-6" />
           <span>chessvolt</span>
         </Link>
 
@@ -176,7 +175,7 @@ export function DashboardNavbar() {
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-2 text-xl font-bold"
                 >
-                  <Zap className="h-5 w-5 fill-primary text-primary" />
+                  <Zap className="fill-primary text-primary h-5 w-5" />
                   <span>chessvolt</span>
                 </Link>
               </SheetTitle>
@@ -206,15 +205,15 @@ export function DashboardNavbar() {
                   <Link
                     href="/admin"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-amber-600 transition-colors hover:bg-accent hover:text-accent-foreground dark:text-amber-400"
+                    className="hover:bg-accent hover:text-accent-foreground flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-amber-600 transition-colors dark:text-amber-400"
                   >
                     <Shield className="h-5 w-5 shrink-0" />
                     Admin Panel
                   </Link>
                 )}
               </nav>
-              <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
-                <div className="flex items-center justify-between rounded-lg bg-muted/60 px-4 py-3">
+              <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4">
+                <div className="bg-muted/60 flex items-center justify-between rounded-lg px-4 py-3">
                   <span className="flex items-center gap-2 text-sm">
                     <Sparkles className="h-4 w-4 text-amber-500" />
                     XP
@@ -223,7 +222,7 @@ export function DashboardNavbar() {
                     {profile?.xp ?? "—"}
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded-lg bg-muted/60 px-4 py-3">
+                <div className="bg-muted/60 flex items-center justify-between rounded-lg px-4 py-3">
                   <span className="flex items-center gap-2 text-sm">
                     <Flame className="h-4 w-4 text-orange-500" />
                     Streak

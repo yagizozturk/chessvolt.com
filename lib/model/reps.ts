@@ -1,8 +1,8 @@
-export type Repartoire = {
+/** Repertoire (opening repertoire) model - matches public.reps table */
+export type Rep = {
   id: string;
-  title: string;
-  pgn: string;
-  fen: string;
+  fen: string | null;
   moves: string;
-  opening_tags?: string[];
+  openingTags: string[] | null;
+  title: string;
 };

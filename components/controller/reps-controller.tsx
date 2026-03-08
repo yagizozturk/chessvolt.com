@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import { useRepsStore } from "@/stores/reps-store";
-import type { Repartoire } from "@/lib/model/reps";
+import type { Rep } from "@/lib/model/reps";
 import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-export default function RepsController({ rep }: { rep: Repartoire }) {
+export default function RepsController({ rep }: { rep: Rep }) {
   const isRepsStarted = useRepsStore((state) => state.isRepsStarted);
 
   return (
@@ -14,7 +14,7 @@ export default function RepsController({ rep }: { rep: Repartoire }) {
       <div key={rep.id}>
         <PuzzleBoard
           puzzleId={rep.id}
-          initialFen={rep.fen}
+          initialFen={rep.fen ?? undefined}
           moves={rep.moves}
           width={620}
           height={620}
@@ -22,10 +22,10 @@ export default function RepsController({ rep }: { rep: Repartoire }) {
         />
       </div>
       {!isRepsStarted && (
-        <div className="flex-1 gap-4 ml-4">
+        <div className="ml-4 flex-1 gap-4">
           <div className="p-4">
             <div className="grid grid-cols-2 gap-4">
-              <Card className="rounded-lg border-border bg-muted/50">
+              <Card className="border-border bg-muted/50 rounded-lg">
                 <CardHeader className="flex flex-row items-center gap-2 p-4 pb-2">
                   <Image
                     src="/images/icons/icon-crown.png"
@@ -34,8 +34,8 @@ export default function RepsController({ rep }: { rep: Repartoire }) {
                     height={24}
                   />
                 </CardHeader>
-                <CardContent className="px-4 pb-4 pt-0">
-                  <p className="font-semibold text-foreground">Test</p>
+                <CardContent className="px-4 pt-0 pb-4">
+                  <p className="text-foreground font-semibold">Test</p>
                 </CardContent>
               </Card>
             </div>
