@@ -16,12 +16,11 @@ import {
 } from "lucide-react";
 import type { GameRiddle } from "@/lib/model/game-riddle";
 import type { Game } from "@/lib/model/game";
-import { usePuzzleStore } from "@/stores/puzzle-store";
+import { useStatsStore } from "@/stores/stats-store";
 import RiddleBoard from "@/components/riddle-board/riddle-board";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -52,8 +51,8 @@ export default function RiddleController({
   game,
 }: RiddleControllerProps) {
   const turn = riddle.ply % 2 === 0 ? "White" : "Black";
-  const streak = usePuzzleStore((state) => state.streak);
-  const lives = usePuzzleStore((state) => state.lives);
+  const streak = useStatsStore((state) => state.streak);
+  const lives = useStatsStore((state) => state.lives);
   const xp = 0;
 
   return (

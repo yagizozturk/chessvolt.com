@@ -1,8 +1,8 @@
 import { create } from "zustand";
 
-const MAX_LIVES = 3;
+const MAX_LIVES = 5;
 
-type PuzzleStore = {
+type StatsStore = {
   streak: number;
   lives: number;
   setStreak: (streak: number) => void;
@@ -12,7 +12,7 @@ type PuzzleStore = {
   initRiddleLives: () => void;
 };
 
-export const usePuzzleStore = create<PuzzleStore>((set) => ({
+export const useStatsStore = create<StatsStore>((set) => ({
   streak: 0,
   lives: MAX_LIVES,
   setStreak: (streak: number) => set({ streak }),

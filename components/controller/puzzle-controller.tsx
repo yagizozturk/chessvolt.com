@@ -3,14 +3,14 @@
 import type { Puzzle } from "@/lib/model/puzzle";
 import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 import { getNextTurnFromFen } from "@/lib/chess-board/getTurn";
-import { usePuzzleStore } from "@/stores/puzzle-store";
+import { useStatsStore } from "@/stores/stats-store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Zap, Circle, BarChart3, Tag } from "lucide-react";
 
 export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
   const turnText = getNextTurnFromFen(puzzle.fen);
-  const streak = usePuzzleStore((state) => state.streak);
+  const streak = useStatsStore((state) => state.streak);
   const xp = 0;
 
   return (

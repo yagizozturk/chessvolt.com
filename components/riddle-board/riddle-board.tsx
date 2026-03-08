@@ -6,7 +6,7 @@ import { toDests } from "@/lib/chess-board/toDests";
 import { getFenFromPgnAtPly } from "@/lib/chess-board/getFenFromPgnAtPly";
 import { useUpdateGameRiddleAnswer } from "@/hooks/use-update-game-riddle";
 import { useSound } from "@/hooks/use-sound";
-import { usePuzzleStore } from "@/stores/puzzle-store";
+import { useStatsStore } from "@/stores/stats-store";
 import { useChessEngine } from "@/hooks/use-stockfish-engine";
 import { useChessOne } from "@/hooks/use-chess";
 import "@lichess-org/chessground/assets/chessground.base.css";
@@ -57,9 +57,9 @@ export default function RiddleBoard({
   const { play: playCorrectSound } = useSound("/audio/correct.mp3", 1);
   const { play: playMoveSound } = useSound("/audio/move.wav", 0.5);
 
-  const setStoreStreak = usePuzzleStore((state) => state.setStreak);
-  const decrementLives = usePuzzleStore((state) => state.decrementLives);
-  const initRiddleLives = usePuzzleStore((state) => state.initRiddleLives);
+  const setStoreStreak = useStatsStore((state) => state.setStreak);
+  const decrementLives = useStatsStore((state) => state.decrementLives);
+  const initRiddleLives = useStatsStore((state) => state.initRiddleLives);
 
   const { analyze } = useChessEngine({
     difficulty: "Expert",
@@ -129,7 +129,7 @@ export default function RiddleBoard({
       playMoveSound();
       updateBoard();
       decrementLives();
-      const newLives = usePuzzleStore.getState().lives;
+      const newLives = useStatsStore.getState().lives;
       if (newLives <= 0) {
         setStoreStreak(0);
         updateRiddleAnswerHandler(false);
@@ -144,7 +144,7 @@ export default function RiddleBoard({
 
     if (step === movesArray.length - 1) {
       setIsRiddleOver(true);
-      setStoreStreak(usePuzzleStore.getState().streak + 1);
+      setStoreStreak(useStatsStore.getState().streak + 1);
       updateRiddleAnswerHandler(true);
       return;
     }

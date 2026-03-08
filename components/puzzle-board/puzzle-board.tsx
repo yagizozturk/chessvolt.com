@@ -6,7 +6,7 @@ import type { Key } from "@lichess-org/chessground/types";
 import { toDests } from "@/lib/chess-board/toDests";
 import { useUpdatePuzzleAnswer } from "@/hooks/use-update-puzzle";
 import { useSound } from "@/hooks/use-sound";
-import { usePuzzleStore } from "@/stores/puzzle-store";
+import { useStatsStore } from "@/stores/stats-store";
 import { useCoachStore } from "@/stores/coach-store";
 import { useChessEngine } from "@/hooks/use-stockfish-engine";
 import { useChessOne } from "@/hooks/use-chess";
@@ -59,7 +59,7 @@ export default function PuzzleBoard({
   // ============================================================================
   // Puzzle Store updates
   // ============================================================================
-  const setStoreStreak = usePuzzleStore((state) => state.setStreak);
+  const setStoreStreak = useStatsStore((state) => state.setStreak);
 
   // ============================================================================
   // Coach Store updates
@@ -199,7 +199,7 @@ export default function PuzzleBoard({
 
     if (step === movesArray.length - 1) {
       setIsPuzzleOver(true);
-      setStoreStreak(usePuzzleStore.getState().streak + 1);
+      setStoreStreak(useStatsStore.getState().streak + 1);
       updatePuzzleAnswerHandler(true);
       return;
     }

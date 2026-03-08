@@ -158,7 +158,7 @@
 ├── stores
 │   ├── coach-store.ts
 │   ├── game-store.ts
-│   ├── puzzle-store.ts
+│   ├── stats-store.ts
 │   ├── reps-store.ts
 │   └── test-store.ts
 ├── supabase
