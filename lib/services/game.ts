@@ -22,22 +22,11 @@ export async function getGameById(
   return gameRepo.findById(supabase, id);
 }
 
-export async function getGamesByUser(
-  supabase: SupabaseClient,
-  userId: string
-): Promise<Game[]> {
-  return gameRepo.findByCreatedBy(supabase, userId);
-}
-
 export async function createGame(
   supabase: SupabaseClient,
-  input: gameRepo.CreateGameInput,
-  createdBy: string
+  input: gameRepo.CreateGameInput
 ): Promise<Game | null> {
-  return gameRepo.create(supabase, {
-    ...input,
-    createdBy,
-  });
+  return gameRepo.create(supabase, input);
 }
 
 export async function updateGame(

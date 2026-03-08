@@ -136,6 +136,13 @@ export function GameDetail({ game }: Props) {
                   <FieldLabel>Opening</FieldLabel>
                   <Input name="opening" defaultValue={game.opening ?? ""} />
                 </Field>
+                <Field>
+                  <FieldLabel>Description</FieldLabel>
+                  <Input
+                    name="description"
+                    defaultValue={game.description ?? ""}
+                  />
+                </Field>
               </FieldGroup>
               <Button type="submit">
                 <Save className="h-4 w-4" />
@@ -181,6 +188,10 @@ export function GameDetail({ game }: Props) {
               <div>
                 <dt className="font-medium text-muted-foreground">Opening</dt>
                 <dd>{game.opening ?? "—"}</dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">Description</dt>
+                <dd>{game.description ?? "—"}</dd>
               </div>
             </dl>
           )}

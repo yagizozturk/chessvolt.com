@@ -9,9 +9,9 @@ type DbGame = {
   played_at: string;
   url: string | null;
   created_at: string;
-  created_by: string | null;
   event: string | null;
   opening: string | null;
+  description: string | null;
 };
 
 export function toGame(db: DbGame): Game {
@@ -24,8 +24,8 @@ export function toGame(db: DbGame): Game {
     playedAt: db.played_at,
     url: db.url,
     createdAt: db.created_at,
-    createdBy: db.created_by,
     event: db.event,
     opening: db.opening,
+    description: db.description ?? null,
   };
 }

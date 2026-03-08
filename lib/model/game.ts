@@ -7,7 +7,7 @@ export type Game = {
   playedAt: string;
   url: string | null;
   createdAt: string;
-  createdBy: string | null;
   event: string | null;
   opening: string | null;
+  description: string | null;
 };

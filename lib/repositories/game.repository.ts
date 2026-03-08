@@ -46,24 +46,6 @@ export async function findById(
   return toGame(data);
 }
 
-export async function findByCreatedBy(
-  supabase: SupabaseClient,
-  userId: string
-): Promise<Game[]> {
-  const { data: games, error } = await supabase
-    .from("games")
-    .select("*")
-    .eq("created_by", userId)
-    .order("played_at", { ascending: false });
-
-  if (error) {
-    console.error("game.repository.findByCreatedBy error:", error);
-    return [];
-  }
-
-  return (games ?? []).map(toGame);
-}
-
 export type CreateGameInput = {
   whitePlayer: string;
   blackPlayer: string;
@@ -71,9 +53,9 @@ export type CreateGameInput = {
   result: string;
   playedAt: string;
   url?: string | null;
-  createdBy?: string | null;
   event?: string | null;
   opening?: string | null;
+  description?: string | null;
 };
 
 export async function create(
@@ -89,9 +71,9 @@ export async function create(
       result: input.result,
       played_at: input.playedAt,
       url: input.url ?? null,
-      created_by: input.createdBy ?? null,
       event: input.event ?? null,
       opening: input.opening ?? null,
+      description: input.description ?? null,
     })
     .select()
     .single();
@@ -113,6 +95,7 @@ export type UpdateGameInput = {
   url?: string | null;
   event?: string | null;
   opening?: string | null;
+  description?: string | null;
 };
 
 export async function update(
@@ -129,6 +112,7 @@ export async function update(
   if (input.url !== undefined) updates.url = input.url;
   if (input.event !== undefined) updates.event = input.event;
   if (input.opening !== undefined) updates.opening = input.opening;
+  if (input.description !== undefined) updates.description = input.description;
 
   const { data, error } = await supabase
     .from("games")

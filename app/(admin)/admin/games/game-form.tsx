@@ -59,6 +59,10 @@ export function GameForm() {
           <FieldLabel>Opening</FieldLabel>
           <Input name="opening" placeholder="Opsiyonel" />
         </Field>
+        <Field>
+          <FieldLabel>Description</FieldLabel>
+          <Input name="description" placeholder="Opsiyonel" />
+        </Field>
       </FieldGroup>
       <Button type="submit">Oluştur</Button>
     </form>

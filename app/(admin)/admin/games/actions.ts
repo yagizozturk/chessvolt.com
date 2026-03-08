@@ -11,7 +11,7 @@ import {
 import type { CreateGameInput } from "@/lib/repositories/game.repository";
 
 export async function createGameAction(formData: FormData) {
-  const { supabase, user } = await getAdminUser();
+  const { supabase } = await getAdminUser();
 
   const whitePlayer = formData.get("whitePlayer") as string;
   const blackPlayer = formData.get("blackPlayer") as string;
@@ -21,23 +21,31 @@ export async function createGameAction(formData: FormData) {
   const url = (formData.get("url") as string) || null;
   const event = (formData.get("event") as string) || null;
   const opening = (formData.get("opening") as string) || null;
+  const description = (formData.get("description") as string) || null;
 
   if (!whitePlayer || !blackPlayer || !pgn || !result || !playedAt) {
     redirect("/admin/games/new?error=eksik_alan");
   }
 
+  // Normalize result for DB constraint (1-0, 0-1, 1/2-1/2)
+  const normalizedResult =
+    result === "1-0" || result === "0-1" || result === "1/2-1/2"
+      ? result
+      : "1/2-1/2";
+
   const input: CreateGameInput = {
     whitePlayer,
     blackPlayer,
     pgn,
-    result,
-    playedAt,
+    result: normalizedResult,
+    playedAt: playedAt.length === 16 ? `${playedAt}:00` : playedAt,
     url: url || null,
     event: event || null,
     opening: opening || null,
+    description: description || null,
   };
 
-  const game = await createGame(supabase, input, user.id);
+  const game = await createGame(supabase, input);
   if (!game) {
     redirect("/admin/games/new?error=olusturulamadi");
   }
@@ -57,16 +65,23 @@ export async function updateGameAction(id: string, formData: FormData) {
   const url = (formData.get("url") as string) || null;
   const event = (formData.get("event") as string) || null;
   const opening = (formData.get("opening") as string) || null;
+  const description = (formData.get("description") as string) || null;
+
+  const normalizedResult =
+    result === "1-0" || result === "0-1" || result === "1/2-1/2"
+      ? result
+      : "1/2-1/2";
 
   const input: Record<string, unknown> = {};
   if (whitePlayer) input.whitePlayer = whitePlayer;
   if (blackPlayer) input.blackPlayer = blackPlayer;
   if (pgn) input.pgn = pgn;
-  if (result) input.result = result;
-  if (playedAt) input.playedAt = playedAt;
+  if (result) input.result = normalizedResult;
+  if (playedAt) input.playedAt = playedAt.length === 16 ? `${playedAt}:00` : playedAt;
   if (url !== undefined) input.url = url;
   if (event !== undefined) input.event = event;
   if (opening !== undefined) input.opening = opening;
+  if (description !== undefined) input.description = description;
 
   const game = await updateGame(supabase, id, input);
   if (!game) {
