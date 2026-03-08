@@ -3,7 +3,17 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Zap, Menu, LayoutDashboard, ArrowLeft, LogOut } from "lucide-react";
+import {
+  Zap,
+  Menu,
+  LayoutDashboard,
+  ArrowLeft,
+  LogOut,
+  Users,
+  Puzzle,
+  Gamepad2,
+  HelpCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -17,6 +27,10 @@ import { createClient } from "@/lib/supabase/client";
 
 const adminNavItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/puzzles", label: "Puzzles", icon: Puzzle },
+  { href: "/admin/games", label: "Games", icon: Gamepad2 },
+  { href: "/admin/game-riddles", label: "Game Riddles", icon: HelpCircle },
 ];
 
 export function AdminNavbar() {
@@ -48,8 +62,9 @@ export function AdminNavbar() {
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
           {adminNavItems.map((item) => {
             const isActive =
-              pathname === item.href ||
-              (item.href !== "/admin" && pathname.startsWith(item.href));
+              item.href === "/admin"
+                ? pathname === "/admin"
+                : pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Button
                 key={item.href}
@@ -108,8 +123,10 @@ export function AdminNavbar() {
               <nav className="flex flex-col gap-1">
                 {adminNavItems.map((item) => {
                   const isActive =
-                    pathname === item.href ||
-                    (item.href !== "/admin" && pathname.startsWith(item.href));
+                    item.href === "/admin"
+                      ? pathname === "/admin"
+                      : pathname === item.href ||
+                        pathname.startsWith(item.href + "/");
                   return (
                     <Link
                       key={item.href}

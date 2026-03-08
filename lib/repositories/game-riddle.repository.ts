@@ -99,3 +99,90 @@ export async function findByGameType(
 
   return (riddles ?? []).map(toGameRiddle);
 }
+
+export type CreateGameRiddleInput = {
+  gameId: string;
+  ply: number;
+  title: string;
+  fen?: string | null;
+  moves?: string | null;
+  gameType?: string | null;
+  createdBy?: string | null;
+};
+
+export async function create(
+  supabase: SupabaseClient,
+  input: CreateGameRiddleInput
+): Promise<GameRiddle | null> {
+  const { data, error } = await supabase
+    .from("game_riddles")
+    .insert({
+      game_id: input.gameId,
+      ply: input.ply,
+      title: input.title,
+      fen: input.fen ?? null,
+      moves: input.moves ?? null,
+      game_type: input.gameType ?? null,
+      created_by: input.createdBy ?? null,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("game-riddle.repository.create error:", error);
+    return null;
+  }
+
+  return toGameRiddle(data);
+}
+
+export type UpdateGameRiddleInput = {
+  gameId?: string;
+  ply?: number;
+  title?: string;
+  fen?: string | null;
+  moves?: string | null;
+  gameType?: string | null;
+};
+
+export async function update(
+  supabase: SupabaseClient,
+  id: string,
+  input: UpdateGameRiddleInput
+): Promise<GameRiddle | null> {
+  const updates: Record<string, unknown> = {};
+  if (input.gameId !== undefined) updates.game_id = input.gameId;
+  if (input.ply !== undefined) updates.ply = input.ply;
+  if (input.title !== undefined) updates.title = input.title;
+  if (input.fen !== undefined) updates.fen = input.fen;
+  if (input.moves !== undefined) updates.moves = input.moves;
+  if (input.gameType !== undefined) updates.game_type = input.gameType;
+
+  const { data, error } = await supabase
+    .from("game_riddles")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("game-riddle.repository.update error:", error);
+    return null;
+  }
+
+  return toGameRiddle(data);
+}
+
+export async function remove(
+  supabase: SupabaseClient,
+  id: string
+): Promise<boolean> {
+  const { error } = await supabase.from("game_riddles").delete().eq("id", id);
+
+  if (error) {
+    console.error("game-riddle.repository.remove error:", error);
+    return false;
+  }
+
+  return true;
+}

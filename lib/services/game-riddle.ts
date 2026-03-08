@@ -42,3 +42,29 @@ export async function getGameRiddlesByGameType(
 ): Promise<GameRiddle[]> {
   return gameRiddleRepo.findByGameType(supabase, gameType);
 }
+
+export async function createGameRiddle(
+  supabase: SupabaseClient,
+  input: gameRiddleRepo.CreateGameRiddleInput,
+  createdBy: string
+): Promise<GameRiddle | null> {
+  return gameRiddleRepo.create(supabase, {
+    ...input,
+    createdBy,
+  });
+}
+
+export async function updateGameRiddle(
+  supabase: SupabaseClient,
+  id: string,
+  input: gameRiddleRepo.UpdateGameRiddleInput
+): Promise<GameRiddle | null> {
+  return gameRiddleRepo.update(supabase, id, input);
+}
+
+export async function deleteGameRiddle(
+  supabase: SupabaseClient,
+  id: string
+): Promise<boolean> {
+  return gameRiddleRepo.remove(supabase, id);
+}
