@@ -11,7 +11,7 @@ import {
 import type { CreateGameRiddleInput } from "@/lib/repositories/game-riddle.repository";
 
 export async function createGameRiddleAction(formData: FormData) {
-  const { supabase, user } = await getAdminUser();
+  const { supabase } = await getAdminUser();
 
   const gameId = formData.get("gameId") as string;
   const ply = parseInt(formData.get("ply") as string, 10);
@@ -33,7 +33,7 @@ export async function createGameRiddleAction(formData: FormData) {
     gameType: gameType || null,
   };
 
-  const riddle = await createGameRiddle(supabase, input, user.id);
+  const riddle = await createGameRiddle(supabase, input);
   if (!riddle) {
     redirect("/admin/game-riddles/new?error=olusturulamadi");
   }

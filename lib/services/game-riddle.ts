@@ -29,13 +29,6 @@ export async function getGameRiddlesByGameId(
   return gameRiddleRepo.findByGameId(supabase, gameId);
 }
 
-export async function getGameRiddlesByUser(
-  supabase: SupabaseClient,
-  userId: string
-): Promise<GameRiddle[]> {
-  return gameRiddleRepo.findByCreatedBy(supabase, userId);
-}
-
 export async function getGameRiddlesByGameType(
   supabase: SupabaseClient,
   gameType: string
@@ -45,13 +38,9 @@ export async function getGameRiddlesByGameType(
 
 export async function createGameRiddle(
   supabase: SupabaseClient,
-  input: gameRiddleRepo.CreateGameRiddleInput,
-  createdBy: string
+  input: gameRiddleRepo.CreateGameRiddleInput
 ): Promise<GameRiddle | null> {
-  return gameRiddleRepo.create(supabase, {
-    ...input,
-    createdBy,
-  });
+  return gameRiddleRepo.create(supabase, input);
 }
 
 export async function updateGameRiddle(

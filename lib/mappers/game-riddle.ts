@@ -9,7 +9,6 @@ type DbGameRiddle = {
   moves: string | null;
   game_type: string | null;
   created_at: string;
-  created_by: string | null;
 };
 
 export function toGameRiddle(db: DbGameRiddle): GameRiddle {
@@ -22,6 +21,5 @@ export function toGameRiddle(db: DbGameRiddle): GameRiddle {
     moves: db.moves,
     gameType: db.game_type,
     createdAt: db.created_at,
-    createdBy: db.created_by,
   };
 }

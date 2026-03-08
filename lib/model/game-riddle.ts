@@ -7,5 +7,4 @@ export type GameRiddle = {
   moves: string | null;
   gameType: string | null;
   createdAt: string;
-  createdBy: string | null;
 };

@@ -64,24 +64,6 @@ export async function findByGameId(
   return (riddles ?? []).map(toGameRiddle);
 }
 
-export async function findByCreatedBy(
-  supabase: SupabaseClient,
-  userId: string
-): Promise<GameRiddle[]> {
-  const { data: riddles, error } = await supabase
-    .from("game_riddles")
-    .select("*")
-    .eq("created_by", userId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("game-riddle.repository.findByCreatedBy error:", error);
-    return [];
-  }
-
-  return (riddles ?? []).map(toGameRiddle);
-}
-
 export async function findByGameType(
   supabase: SupabaseClient,
   gameType: string
@@ -107,7 +89,6 @@ export type CreateGameRiddleInput = {
   fen?: string | null;
   moves?: string | null;
   gameType?: string | null;
-  createdBy?: string | null;
 };
 
 export async function create(
@@ -123,7 +104,6 @@ export async function create(
       fen: input.fen ?? null,
       moves: input.moves ?? null,
       game_type: input.gameType ?? null,
-      created_by: input.createdBy ?? null,
     })
     .select()
     .single();
