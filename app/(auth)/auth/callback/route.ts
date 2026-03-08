@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import { type NextRequest } from 'next/server'
 import { cookies } from 'next/headers'
+import * as profileRepo from '@/lib/repositories/profile.repository'
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
@@ -37,6 +38,12 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error('Error exchanging code for session:', error)
       return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(error.message)}`, request.url))
+    }
+
+    // Ensure profile exists (fallback for users created before trigger, or OAuth)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      await profileRepo.ensureProfileExists(supabase, user)
     }
   }
 

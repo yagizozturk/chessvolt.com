@@ -1,4 +1,5 @@
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import * as profileRepo from "@/lib/repositories/profile.repository";
 import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar";
 
 export default async function DashboardLayout({
@@ -6,7 +7,8 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await getAuthenticatedUser();
+  const { user, supabase } = await getAuthenticatedUser();
+  await profileRepo.ensureProfileExists(supabase, user);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
