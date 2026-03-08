@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import type { Game } from "@/lib/model/game";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,12 +10,32 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createGameRiddleAction } from "./actions";
+import { extractMovesFromPgn } from "@/lib/utils/pgn";
+import { cn } from "@/lib/utils";
 
 type Props = {
   games: Game[];
 };
 
 export function GameRiddleForm({ games }: Props) {
+  const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
+
+  const [gameId, setGameId] = useState("");
+  const [ply, setPly] = useState("0");
+  const [moveCountForAnswer, setMoveCountForAnswer] = useState("");
+  const [moves, setMoves] = useState("");
+
+  useEffect(() => {
+    if (!gameId || !moveCountForAnswer) return;
+    const game = gameMap[gameId];
+    if (!game?.pgn) return;
+    const plyNum = parseInt(ply, 10);
+    const moveCount = parseInt(moveCountForAnswer, 10);
+    if (isNaN(plyNum) || isNaN(moveCount) || moveCount <= 0) return;
+    const uci = extractMovesFromPgn(game.pgn, plyNum, moveCount);
+    if (uci) setMoves(uci);
+  }, [gameId, ply, moveCountForAnswer, gameMap]);
+
   return (
     <form action={createGameRiddleAction} className="space-y-4">
       <FieldGroup>
@@ -23,7 +44,12 @@ export function GameRiddleForm({ games }: Props) {
           <select
             name="gameId"
             required
-            className="border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            value={gameId}
+            onChange={(e) => setGameId(e.target.value)}
+            className={cn(
+              "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            )}
           >
             <option value="">Seçin...</option>
             {games.map((g) => (
@@ -35,7 +61,27 @@ export function GameRiddleForm({ games }: Props) {
         </Field>
         <Field>
           <FieldLabel>Ply</FieldLabel>
-          <Input name="ply" type="number" required defaultValue={0} />
+          <Input
+            name="ply"
+            type="number"
+            required
+            value={ply}
+            onChange={(e) => setPly(e.target.value)}
+          />
+        </Field>
+        <Field>
+          <FieldLabel>Move Count For Answer</FieldLabel>
+          <Input
+            type="number"
+            min={1}
+            placeholder="PGN'den UCI çıkarmak için (DB'ye yazılmaz)"
+            value={moveCountForAnswer}
+            onChange={(e) => setMoveCountForAnswer(e.target.value)}
+            className={cn(
+              "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            )}
+          />
         </Field>
         <Field>
           <FieldLabel>Title</FieldLabel>
@@ -47,7 +93,12 @@ export function GameRiddleForm({ games }: Props) {
         </Field>
         <Field>
           <FieldLabel>Moves</FieldLabel>
-          <Input name="moves" placeholder="Opsiyonel, UCI format" />
+          <Input
+            name="moves"
+            value={moves}
+            onChange={(e) => setMoves(e.target.value)}
+            placeholder="UCI format veya Move Count ile otomatik doldur"
+          />
         </Field>
         <Field>
           <FieldLabel>Game Type</FieldLabel>

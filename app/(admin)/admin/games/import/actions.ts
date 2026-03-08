@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createGame } from "@/lib/services/game";
-import { parsePgn, splitPgnGames, validatePgn } from "@/lib/pgn/parse";
+import { parsePgn, splitPgnGames, validatePgn } from "@/lib/utils/pgn";
 
 export async function importPgnAction(formData: FormData) {
   const { supabase } = await getAdminUser();
