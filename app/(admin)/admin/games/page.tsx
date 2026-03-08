@@ -25,15 +25,15 @@ export default async function AdminGamesPage({ searchParams }: SearchParams) {
     <div className="container mx-auto px-4 py-8">
       {imported && (
         <div className="mb-4 rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-2 text-sm text-green-600 dark:text-green-400">
-          {imported} oyun başarıyla import edildi.
-          {errors && ` (${errors} hata)`}
+          {imported} game(s) imported successfully.
+          {errors && ` (${errors} error(s))`}
         </div>
       )}
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Games</h1>
           <p className="text-muted-foreground">
-            {games.length} oyun listeleniyor
+            {games.length} game(s) listed
           </p>
         </div>
         <div className="flex gap-2">
@@ -49,7 +49,7 @@ export default async function AdminGamesPage({ searchParams }: SearchParams) {
           <Button asChild>
             <Link href="/admin/games/new" className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
-              Yeni Ekle
+              Add New
             </Link>
           </Button>
         </div>
@@ -57,9 +57,9 @@ export default async function AdminGamesPage({ searchParams }: SearchParams) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Liste</CardTitle>
+          <CardTitle>List</CardTitle>
           <CardDescription>
-            Satıra tıklayarak detay sayfasına gidebilirsiniz
+            Click a row to go to the detail page
           </CardDescription>
         </CardHeader>
         <CardContent>

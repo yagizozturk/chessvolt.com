@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type CountdownTimerProps = {
-  /** Başlangıç dakikası - bu değerden 0'a doğru geri sayar */
+  /** Starting minutes - counts down from this value to 0 */
   minutes: number;
-  /** Geri sayım bittiğinde çağrılır */
+  /** Called when countdown finishes */
   onComplete?: () => void;
-  /** Ek CSS sınıfları */
+  /** Additional CSS classes */
   className?: string;
-  /** Saniye formatı: "mm:ss" veya "ss" */
+  /** Seconds format: "mm:ss" or "ss" */
   format?: "mm:ss" | "ss";
 };
 
@@ -34,7 +34,7 @@ export function CountdownTimer({
   const [secondsLeft, setSecondsLeft] = useState(minutes * 60);
   const [isRunning, setIsRunning] = useState(true);
 
-  // minutes prop değiştiğinde süreyi sıfırla
+  // Reset timer when minutes prop changes
   useEffect(() => {
     setSecondsLeft(minutes * 60);
     setIsRunning(true);

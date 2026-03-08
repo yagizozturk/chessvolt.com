@@ -59,7 +59,7 @@ export function RepForm() {
           <Input
             type="number"
             min={1}
-            placeholder="PGN'den UCI çıkarmak için (DB'ye yazılmaz)"
+            placeholder="To extract UCI from PGN (not saved to DB)"
             value={moveCountForAnswer}
             onChange={(e) => setMoveCountForAnswer(e.target.value)}
             className={cn(
@@ -70,11 +70,11 @@ export function RepForm() {
         </Field>
         <Field>
           <FieldLabel>Title</FieldLabel>
-          <Input name="title" placeholder="Repertoire başlığı" />
+          <Input name="title" placeholder="Repertoire title" />
         </Field>
         <Field>
           <FieldLabel>Opening Name</FieldLabel>
-          <Input name="openingName" placeholder="örn: Sicilian Defense" />
+          <Input name="openingName" placeholder="e.g. Sicilian Defense" />
         </Field>
         <Field>
           <FieldLabel>Moves (UCI)</FieldLabel>
@@ -83,11 +83,11 @@ export function RepForm() {
             required
             value={moves}
             onChange={(e) => setMoves(e.target.value)}
-            placeholder="e2e4 e7e5 g1f3 ... veya Move Count ile otomatik doldur"
+            placeholder="e2e4 e7e5 g1f3 ... or auto-fill with Move Count"
           />
         </Field>
       </FieldGroup>
-      <Button type="submit">Oluştur</Button>
+      <Button type="submit">Create</Button>
     </form>
   );
 }

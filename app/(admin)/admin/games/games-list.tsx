@@ -14,14 +14,14 @@ export function GamesList({ games }: Props) {
   async function handleDelete(e: React.MouseEvent, id: string) {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("Bu oyun silinecek. Emin misiniz?")) return;
+    if (!confirm("This game will be deleted. Are you sure?")) return;
     await deleteGameAction(id);
   }
 
   if (games.length === 0) {
     return (
       <p className="py-8 text-center text-muted-foreground">
-        Henüz oyun yok.
+        No games yet.
       </p>
     );
   }
@@ -50,7 +50,7 @@ export function GamesList({ games }: Props) {
             size="icon"
             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
             onClick={(e) => handleDelete(e, g.id)}
-            title="Sil"
+            title="Delete"
           >
             <Trash2 className="h-4 w-4" />
           </Button>

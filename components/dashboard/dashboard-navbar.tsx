@@ -80,13 +80,13 @@ export function DashboardNavbar() {
             <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
               <User className="text-primary h-4 w-4" />
             </div>
-            <span className="sr-only">Profil menüsü</span>
+            <span className="sr-only">Profile menu</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <div className="px-2 py-2">
             <p className="text-sm font-medium">
-              {profile?.username ?? "Kullanıcı"}
+              {profile?.username ?? "User"}
             </p>
             <p className="text-muted-foreground text-xs">
               {profile?.xp ?? 0} XP
@@ -115,12 +115,12 @@ export function DashboardNavbar() {
             className="cursor-pointer"
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Çıkış yap
+            Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Dark mode - en sağda, yuvarlak */}
+      {/* Dark mode - right side, rounded */}
       <ThemeToggle className="rounded-full" />
     </div>
   );

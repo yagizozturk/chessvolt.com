@@ -13,48 +13,48 @@ import {
 export function GameModes() {
   const modes = [
     {
-      title: "Hızlı Eşleştirme",
+      title: "Quick Match",
       description:
-        "Kelime ve anlamlarını zamanla yarışarak eşleştir, reflekslerini geliştir.",
+        "Match words and meanings in a race against time, improve your reflexes.",
       icon: <Zap className="h-8 w-8 text-amber-500" />,
       color: "bg-amber-500/15",
       accent: "border-l-4 border-l-amber-500",
     },
     {
-      title: "Boşluk Doldurma",
+      title: "Fill in the Blanks",
       description:
-        "Cümle yapısını anlamak için doğru kelimeleri yerlerine yerleştir.",
+        "Place the right words to understand sentence structure.",
       icon: <Type className="h-8 w-8 text-sky-500" />,
       color: "bg-sky-500/15",
       accent: "border-l-4 border-l-sky-500",
     },
     {
-      title: "Dinle ve Yaz",
+      title: "Listen and Write",
       description:
-        "Duyduğun cümleleri hatasız yazarak telaffuz ve dinleme yetini güçlendir.",
+        "Strengthen your pronunciation and listening by writing sentences you hear flawlessly.",
       icon: <Headphones className="h-8 w-8 text-violet-500" />,
       color: "bg-violet-500/15",
       accent: "border-l-4 border-l-violet-500",
     },
     {
-      title: "Sürükle Bırak",
+      title: "Drag and Drop",
       description:
-        "Karmaşık kelimeleri sürükleyerek doğru cümle dizilimini oluştur.",
+        "Create the correct sentence order by dragging complex words.",
       icon: <MousePointer2 className="h-8 w-8 text-emerald-500" />,
       color: "bg-emerald-500/15",
       accent: "border-l-4 border-l-emerald-500",
     },
     {
-      title: "Diyalog Simülasyonu",
+      title: "Dialogue Simulation",
       description:
-        "Yapay zeka ile gerçekçi senaryolarda karşılıklı konuşma pratiği yap.",
+        "Practice conversational dialogue in realistic scenarios with AI.",
       icon: <MessageSquare className="h-8 w-8 text-orange-500" />,
       color: "bg-orange-500/15",
       accent: "border-l-4 border-l-orange-500",
     },
     {
-      title: "Zeka Bulmacaları",
-      description: "Dil mantığını çözen zorlu bulmacalarla seviye atla.",
+      title: "Brain Teasers",
+      description: "Level up with challenging puzzles that test your logic.",
       icon: <Puzzle className="h-8 w-8 text-rose-500" />,
       color: "bg-rose-500/15",
       accent: "border-l-4 border-l-rose-500",
@@ -70,14 +70,14 @@ export function GameModes() {
             className="border-primary/20 bg-primary/10 text-primary mb-6 inline-flex gap-2 rounded-full px-6 py-2 text-base backdrop-blur-md [&_svg]:size-5"
           >
             <Sparkles />
-            Çeşitli ve Eğlenceli Modlar
+            Varied and Fun Modes
           </Badge>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-            Sıkılmaya Vakit Yok
+            No Time to Get Bored
           </h2>
           <p className="text-muted-foreground mt-4 max-w-2xl text-lg">
-            Her seviyeye uygun farklı oyun modları ile öğrenme sürecini bir
-            maceraya dönüştürün.
+            Turn your learning journey into an adventure with different
+            game modes for every level.
           </p>
         </div>
 
@@ -107,10 +107,10 @@ export function GameModes() {
 }
 
 {
-  /** Notlar:
-   * 1. Renk Paleti: Her oyun modu için farklı bir soft arka plan (bg-color/10) kullanarak görsel çeşitlilik sağladık.
-   * 2. İkon Tasarımı: Lucide ikonlarını 2xl boyutunda ve yuvarlatılmış kutular (rounded-2xl) içinde kullanarak oyunsu (playful) bir hava kattık.
-   * 3. Hover Efektleri: Kartlara hafif bir arka plan değişimi ekleyerek kullanıcının etkileşimde olduğunu hissettirdik.
-   * 4. Düzen: Grid yapısı sayesinde 6 farklı oyun modunu ekranda dengeli bir şekilde dağıttık.
+  /** Notes:
+   * 1. Color Palette: Visual variety with different soft backgrounds (bg-color/10) per game mode.
+   * 2. Icon Design: Playful feel using Lucide icons in 2xl size and rounded boxes (rounded-2xl).
+   * 3. Hover Effects: Light background change on cards to indicate user interaction.
+   * 4. Layout: Grid distributes 6 game modes evenly on screen.
    */
 }

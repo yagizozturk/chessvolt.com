@@ -22,22 +22,22 @@ export default async function AdminRepsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Reps</h1>
           <p className="text-muted-foreground">
-            {reps.length} repertoire listeleniyor
+            {reps.length} repertoire(s) listed
           </p>
         </div>
         <Button asChild>
           <Link href="/admin/reps/new" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
-            Yeni Ekle
+            Add New
           </Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Liste</CardTitle>
+          <CardTitle>List</CardTitle>
           <CardDescription>
-            Satıra tıklayarak detay sayfasına gidebilirsiniz
+            Click a row to go to the detail page
           </CardDescription>
         </CardHeader>
         <CardContent>

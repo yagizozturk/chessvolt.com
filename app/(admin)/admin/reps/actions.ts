@@ -76,7 +76,7 @@ export async function deleteRepAction(id: string): Promise<void> {
 
   const ok = await deleteRep(supabase, id);
   if (!ok) {
-    redirect("/admin/reps?error=silinemedi");
+    redirect("/admin/reps?error=delete_failed");
   }
 
   revalidatePath("/admin/reps");

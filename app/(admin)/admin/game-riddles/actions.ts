@@ -71,7 +71,7 @@ export async function deleteGameRiddleAction(id: string): Promise<void> {
 
   const ok = await deleteGameRiddle(supabase, id);
   if (!ok) {
-    redirect("/admin/game-riddles?error=silinemedi");
+    redirect("/admin/game-riddles?error=delete_failed");
   }
 
   revalidatePath("/admin/game-riddles");

@@ -22,22 +22,22 @@ export default async function AdminGameRiddlesPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Game Riddles</h1>
           <p className="text-muted-foreground">
-            {riddles.length} game riddle listeleniyor
+            {riddles.length} game riddle(s) listed
           </p>
         </div>
         <Button asChild>
           <Link href="/admin/game-riddles/new" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
-            Yeni Ekle
+            Add New
           </Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Liste</CardTitle>
+          <CardTitle>List</CardTitle>
           <CardDescription>
-            Satıra tıklayarak detay sayfasına gidebilirsiniz
+            Click a row to go to the detail page
           </CardDescription>
         </CardHeader>
         <CardContent>

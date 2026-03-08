@@ -52,9 +52,9 @@ export default function RiddleController({
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
 
   // ===================================================================
-  // Riddle doğru cevaplandığında tekrar kullanıcıyı journey
-  // sayfasına yönlendiriyorum. gameType bilgisi zaten riddle ın içinde
-  // var. Nereden geldiğini biliyorum. Bu trafiği Controller ayarlıyor
+  // When riddle is answered correctly, redirect user back to journey
+  // page. gameType is already in the riddle. I know where they came from.
+  // Controller handles this flow
   // ===================================================================
   const journeySlug = riddle.gameType?.replace(/_/g, "-");
   const handleSolved = async (isCorrect: boolean) => {

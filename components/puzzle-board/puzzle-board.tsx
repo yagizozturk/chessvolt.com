@@ -19,13 +19,13 @@ import "@/assets/theme/theme.css";
 export type BoardMode = "puzzle" | "riddle";
 
 export type PuzzleBoardProps = {
-  /** puzzleId, riddleId veya repId - değişince board resetlenir */
+  /** puzzleId, riddleId or repId - board resets when changed */
   sourceId: string;
   mode: BoardMode;
   moves: string;
-  /** Pozisyon: varsa kullanılır, yoksa pgn+ply'den üretilir */
+  /** Position: used if provided, otherwise derived from pgn+ply */
   initialFen?: string | null;
-  /** initialFen yoksa pgn+ply ile pozisyon üretilir */
+  /** If no initialFen, position is derived from pgn+ply */
   pgn?: string;
   ply?: number;
   width?: number;

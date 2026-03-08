@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, PlayCircle } from "lucide-react";
-import { MotionWrapper } from "./hero-content"; // Yukarıdaki client component
+import { MotionWrapper } from "./hero-content"; // Client component above
 
 export function Hero() {
   return (
@@ -17,7 +17,7 @@ export function Hero() {
                 variant="outline"
                 className="border-primary/20 bg-primary/10 text-primary rounded-full px-4 py-1 backdrop-blur-md"
               >
-                v2.0 Artık Yayında!
+                v2.0 Now Live!
               </Badge>
 
               <div className="space-y-6 text-white">
@@ -29,8 +29,8 @@ export function Hero() {
                   <br /> With Games
                 </h1>
                 <p className="text-muted-foreground max-w-[600px] text-lg leading-relaxed md:text-xl">
-                  Satranç stratejilerinizi oyunun içinde kalarak geliştirin.
-                  Gerçek zamanlı analizlerle hatalarınızı fırsata çevirin.
+                  Improve your chess strategies while playing.
+                  Turn your mistakes into opportunities with real-time analysis.
                 </p>
               </div>
 
@@ -52,7 +52,7 @@ export function Hero() {
                   asChild
                 >
                   <Link href="/demo">
-                    <PlayCircle className="mr-2 h-4 w-4" /> Demoyu İzle
+                    <PlayCircle className="mr-2 h-4 w-4" /> Watch Demo
                   </Link>
                 </Button>
               </div>
@@ -61,7 +61,7 @@ export function Hero() {
                 <div>
                   <dt className="text-2xl font-bold text-white">10k+</dt>
                   <dd className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase">
-                    Kullanıcı
+                    Users
                   </dd>
                 </div>
                 <div className="h-10 w-px bg-white/10" />

@@ -15,7 +15,7 @@ function RepsList({ reps }: { reps: Rep[] }) {
   if (reps.length === 0) {
     return (
       <p className="py-8 text-center text-muted-foreground">
-        Henüz repertoire yok.
+        No repertoires yet.
       </p>
     );
   }
@@ -29,7 +29,7 @@ function RepsList({ reps }: { reps: Rep[] }) {
           className="flex items-center justify-between rounded-lg border px-4 py-3 transition-colors hover:bg-accent"
         >
           <div className="flex items-center gap-4">
-            <span className="font-medium">{r.title || "İsimsiz Repertoire"}</span>
+            <span className="font-medium">{r.title || "Untitled Repertoire"}</span>
             {r.openingName && (
               <span className="rounded bg-muted px-2 py-0.5 text-xs">
                 {r.openingName}
@@ -52,15 +52,15 @@ export default async function RepsPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight">Repertoire</h1>
         <p className="text-muted-foreground">
-          {reps.length} repertoire listeleniyor
+          {reps.length} repertoire(s) listed
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Liste</CardTitle>
+          <CardTitle>List</CardTitle>
           <CardDescription>
-            Satıra tıklayarak detay sayfasına gidebilirsiniz
+            Click a row to go to the detail page
           </CardDescription>
         </CardHeader>
         <CardContent>

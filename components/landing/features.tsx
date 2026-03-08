@@ -22,7 +22,7 @@ export function Features() {
     {
       title: "Journey",
       description:
-        "Yol haritasıyla adım adım ilerleyin. Magnus’tan oyunları öğrenin ve pratik yapın.",
+        "Progress step by step with the roadmap. Learn games from Magnus and practice.",
       badge: "Journey",
       icon: Map,
       image: "/images/hero/landing_page_1.png",
@@ -46,13 +46,13 @@ export function Features() {
             className="border-primary/20 bg-primary/10 text-primary mb-6 inline-flex gap-2 rounded-full px-6 py-2 text-base backdrop-blur-md [&_svg]:size-5"
           >
             <Gamepad2 />
-            Oyun Bölümü
+            Game Section
           </Badge>
           <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-            Oyun Modları
+            Game Modes
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-[700px] md:text-lg">
-            Satranç becerilerinizi farklı oyunlarla geliştirin.
+            Improve your chess skills with different games.
           </p>
         </div>
 

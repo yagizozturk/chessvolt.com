@@ -47,7 +47,7 @@ export function GameRiddleForm({ games }: Props) {
               "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
             )}
           >
-            <option value="">Seçin...</option>
+            <option value="">Select...</option>
             {games.map((g) => (
               <option key={g.id} value={g.id}>
                 {g.whitePlayer} vs {g.blackPlayer} ({g.result})
@@ -70,7 +70,7 @@ export function GameRiddleForm({ games }: Props) {
           <Input
             type="number"
             min={1}
-            placeholder="PGN'den UCI çıkarmak için (DB'ye yazılmaz)"
+            placeholder="To extract UCI from PGN (not saved to DB)"
             value={moveCountForAnswer}
             onChange={(e) => setMoveCountForAnswer(e.target.value)}
             className={cn(
@@ -81,7 +81,7 @@ export function GameRiddleForm({ games }: Props) {
         </Field>
         <Field>
           <FieldLabel>Title</FieldLabel>
-          <Input name="title" required placeholder="Örn: Find the best move" />
+          <Input name="title" required placeholder="e.g. Find the best move" />
         </Field>
         <Field>
           <FieldLabel>Moves</FieldLabel>
@@ -89,15 +89,15 @@ export function GameRiddleForm({ games }: Props) {
             name="moves"
             value={moves}
             onChange={(e) => setMoves(e.target.value)}
-            placeholder="UCI format veya Move Count ile otomatik doldur"
+            placeholder="UCI format or auto-fill with Move Count"
           />
         </Field>
         <Field>
           <FieldLabel>Game Type</FieldLabel>
-          <Input name="gameType" placeholder="örn: legend_games" />
+          <Input name="gameType" placeholder="e.g. legend_games" />
         </Field>
       </FieldGroup>
-      <Button type="submit">Oluştur</Button>
+      <Button type="submit">Create</Button>
     </form>
   );
 }

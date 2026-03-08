@@ -26,7 +26,7 @@ export function ImportPgnForm() {
 
       <FieldGroup>
         <Field>
-          <FieldLabel>Dosyadan Yükle</FieldLabel>
+          <FieldLabel>Upload from File</FieldLabel>
           <div className="flex gap-2">
             <input
               ref={fileInputRef}
@@ -42,19 +42,19 @@ export function ImportPgnForm() {
               className="flex items-center gap-2"
             >
               <Upload className="h-4 w-4" />
-              PGN Dosyası Seç
+              Select PGN File
             </Button>
             {pgn && (
               <span className="text-muted-foreground flex items-center gap-1 text-sm">
                 <FileText className="h-4 w-4" />
-                {pgn.split("\n").length} satır yüklendi
+                {pgn.split("\n").length} lines loaded
               </span>
             )}
           </div>
         </Field>
 
         <Field>
-          <FieldLabel>veya PGN Yapıştır</FieldLabel>
+          <FieldLabel>or Paste PGN</FieldLabel>
           <textarea
             value={pgn}
             onChange={(e) => setPgn(e.target.value)}
@@ -77,7 +77,7 @@ export function ImportPgnForm() {
       </FieldGroup>
 
       <Button type="submit" disabled={!pgn.trim()}>
-        Import Et
+        Import
       </Button>
     </form>
   );

@@ -16,7 +16,7 @@ export function JourneyPreview() {
       type: "current",
       icon: <BookOpen className="h-6 w-6" />,
       offset: "40px",
-      label: "Magnus Carlsen vs Ediz Gürel",
+      label: "Magnus Carlsen vs Fabiano Caruana",
     },
     {
       id: 3,
@@ -54,13 +54,13 @@ export function JourneyPreview() {
               className="border-primary/20 bg-primary/10 text-primary mb-6 inline-flex gap-2 rounded-full px-6 py-2 text-base backdrop-blur-md [&_svg]:size-5"
             >
               <Map />
-              Yol Haritası
+              Roadmap
             </Badge>
             <h2 className="text-3xl font-bold tracking-tight">
-              Eğitim Yolculuğun
+              Your Learning Journey
             </h2>
             <p className="text-muted-foreground mt-2">
-              Kaldığın yerden devam et ve yeni rozetler kazan.
+              Continue where you left off and earn new badges.
             </p>
           </div>
 
@@ -94,13 +94,13 @@ export function JourneyPreview() {
               </div>
             ))}
 
-            {/* Arka Planda Yol Çizgisi (Opsiyonel) */}
+            {/* Background path line (optional) */}
             <div className="absolute top-0 bottom-0 -z-10 w-1 rounded-full bg-slate-100" />
           </div>
 
           <div className="mt-16">
             <Button variant="outline" size="lg" asChild>
-              <Link href="/journey">Tam Haritayı Gör</Link>
+              <Link href="/journey">View Full Map</Link>
             </Button>
           </div>
         </div>
@@ -110,10 +110,10 @@ export function JourneyPreview() {
 }
 
 {
-  /** Notlar:
-   * 1. Dinamik Offset: "offset" değerleri ile Duolingo'nun o meşhur sağa-sola kavisli yapısını simüle ettik.
-   * 2. Görsel Hiyerarşi: Tamamlanan ve aktif olan seviyeler için turuncu tonlarını, kilitli olanlar için gri tonlarını kullandık.
-   * 3. Buton Tasarımı: "border-b-4" kullanarak Duolingo'nun o meşhur 3D/kabartmalı buton efektini verdik.
-   * 4. Etkileşim: Aktif seviye (current) için "animate-bounce" ile dikkat çeken bir label ekledik.
+  /** Notes:
+   * 1. Dynamic Offset: Simulates Duolingo's curved left-right layout with "offset" values.
+   * 2. Visual Hierarchy: Orange tones for completed and active levels, gray for locked ones.
+   * 3. Button Design: Duolingo's 3D/embossed button effect using "border-b-4".
+   * 4. Interaction: Attention-grabbing label with "animate-bounce" for active level (current).
    */
 }

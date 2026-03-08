@@ -16,29 +16,29 @@ export function Pricing() {
     {
       name: "Free",
       price: "0",
-      description: "Temel özellikleri keşfetmek ve öğrenmeye başlamak için.",
+      description: "To discover basic features and start learning.",
       features: [
-        "Tüm temel derslere erişim",
-        "Günlük 5 can sınırı",
-        "Liderlik tablolarına katılım",
-        "Standart başarı rozetleri",
+        "Access to all basic lessons",
+        "5 lives per day limit",
+        "Leaderboard participation",
+        "Standard achievement badges",
       ],
-      buttonText: "Ücretsiz Başla",
+      buttonText: "Start Free",
       variant: "outline" as const,
       popular: false,
     },
     {
       name: "Volt Member",
       price: "99",
-      description: "Hız kesmeden öğrenmek isteyenler için efsanevi özellikler.",
+      description: "Legendary features for those who want to learn without stopping.",
       features: [
-        "Sınırsız can ile kesintisiz dersler",
-        "Reklamsız deneyim",
-        "Volt özel başarı rozetleri",
-        "Kişiselleştirilmiş hata analizi",
-        "Öncelikli destek",
+        "Unlimited lives for uninterrupted lessons",
+        "Ad-free experience",
+        "Volt exclusive achievement badges",
+        "Personalized error analysis",
+        "Priority support",
       ],
-      buttonText: "Volt'a Yükselt",
+      buttonText: "Upgrade to Volt",
       variant: "default" as const,
       popular: true,
     },
@@ -49,11 +49,10 @@ export function Pricing() {
       <div className="container mx-auto px-4">
         <div className="mb-16 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-            Sana En Uygun Planı Seç
+            Choose the Plan That Fits You
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-2xl text-lg">
-            İster ücretsiz devam et, ister Volt Member ile öğrenme hızını ikiye
-            katla.
+            Continue for free or double your learning speed with Volt Member.
           </p>
         </div>
 
@@ -69,7 +68,7 @@ export function Pricing() {
             >
               {plan.popular && (
                 <div className="bg-primary text-secondary absolute -top-4 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full px-4 py-1 text-sm font-bold shadow-lg">
-                  <Zap className="h-3 w-3 fill-current" /> EN POPÜLER
+                  <Zap className="h-3 w-3 fill-current" /> MOST POPULAR
                 </div>
               )}
 
@@ -79,7 +78,7 @@ export function Pricing() {
                 </CardTitle>
                 <div className="mt-4 flex items-baseline justify-center gap-1">
                   <span className="text-4xl font-extrabold">₺{plan.price}</span>
-                  <span className="text-muted-foreground text-sm">/ay</span>
+                  <span className="text-muted-foreground text-sm">/month</span>
                 </div>
                 <CardDescription className="mt-2 min-h-[40px]">
                   {plan.description}
@@ -125,10 +124,10 @@ export function Pricing() {
 }
 
 {
-  /** Notlar:
-   * 1. Check Hatası Çözümü: npx ile kurulmaya çalışılan "check" yerine doğrudan Lucide-React'ten gelen "Check" ikonu kullanıldı.
-   * 2. Volt Member Vurgusu: "EN POPÜLER" etiketi ve hafif ölçeklendirme (scale-105) ile premium plan öne çıkarıldı.
-   * 3. Tasarım Uyumu: Shadcn'in Card yapısına sadık kalarak border, shadow ve padding dengeleri sağlandı.
-   * 4. Responsive Grid: Mobilde tek sütun, orta ve büyük ekranlarda yan yana iki sütun olacak şekilde yapılandırıldı.
+  /** Notes:
+   * 1. Check Fix: Used "Check" icon from Lucide-React instead of npx-installed "check".
+   * 2. Volt Member Emphasis: Premium plan highlighted with "MOST POPULAR" label and scale-105.
+   * 3. Design Consistency: Border, shadow and padding balanced with Shadcn Card structure.
+   * 4. Responsive Grid: Single column on mobile, two columns side-by-side on medium and large screens.
    */
 }

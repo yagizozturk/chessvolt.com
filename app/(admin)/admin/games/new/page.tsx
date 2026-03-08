@@ -20,15 +20,15 @@ export default async function AdminGameNewPage() {
         <Button variant="ghost" size="sm" asChild>
           <Link href="/admin/games" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Listeye Dön
+            Back to list
           </Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Yeni Oyun</CardTitle>
-          <CardDescription>Yeni bir oyun ekleyin</CardDescription>
+<CardTitle>New Game</CardTitle>
+        <CardDescription>Add a new game</CardDescription>
         </CardHeader>
         <CardContent>
           <GameForm />

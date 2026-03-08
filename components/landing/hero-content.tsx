@@ -11,7 +11,7 @@ export function MotionWrapper({
 }: any) {
   const shouldReduceMotion = useReducedMotion();
 
-  // Kullanıcı hareket istemiyorsa animasyonları kapat
+  // Disable animations if user prefers reduced motion
   const animateProps = shouldReduceMotion
     ? { opacity: 1, x: 0, y: 0 }
     : { opacity: 1, x: 0, y: float ? [0, -20, 0] : 0 };

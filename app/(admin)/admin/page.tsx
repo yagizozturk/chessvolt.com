@@ -10,20 +10,20 @@ export default async function AdminDashboardPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
         <p className="text-muted-foreground">
-          Hoş geldin, {user.email ?? "Admin"}
+          Welcome, {user.email ?? "Admin"}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Genel Bakış</CardTitle>
+            <CardTitle className="text-sm font-medium">Overview</CardTitle>
             <LayoutDashboard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Admin paneli hazır. Kullanıcılar, puzzle'lar ve game riddle'lar
-              için yönetim ekranları ekleyebilirsin.
+              Admin panel is ready. You can add management screens for
+              users, puzzles, and game riddles.
             </p>
           </CardContent>
         </Card>

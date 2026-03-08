@@ -36,7 +36,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
         <Button variant="ghost" size="sm" asChild>
           <Link href="/admin/game-riddles" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Listeye Dön
+            Back to list
           </Link>
         </Button>
       </div>
@@ -53,22 +53,22 @@ export function GameRiddleDetail({ riddle, game }: Props) {
           <div className="flex gap-2">
             {!isEditing ? (
               <Button variant="outline" onClick={() => setIsEditing(true)}>
-                Düzenle
+                Edit
               </Button>
             ) : (
               <Button variant="ghost" onClick={() => setIsEditing(false)}>
-                İptal
+                Cancel
               </Button>
             )}
             <Button
               variant="destructive"
               onClick={async () => {
-                if (!confirm("Bu game riddle silinecek. Emin misiniz?")) return;
+                if (!confirm("This game riddle will be deleted. Are you sure?")) return;
                 await deleteGameRiddleAction(riddle.id);
               }}
             >
               <Trash2 className="h-4 w-4" />
-              Sil
+              Delete
             </Button>
           </div>
         </CardHeader>
@@ -107,13 +107,13 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                   <Input
                     name="gameType"
                     defaultValue={riddle.gameType ?? ""}
-                    placeholder="örn: legend_games"
+                    placeholder="e.g. legend_games"
                   />
                 </Field>
               </FieldGroup>
               <Button type="submit">
                 <Save className="h-4 w-4" />
-                Kaydet
+                Save
               </Button>
             </form>
           ) : (

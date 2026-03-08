@@ -20,16 +20,16 @@ export default async function AdminRepNewPage() {
         <Button variant="ghost" size="sm" asChild>
           <Link href="/admin/reps" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Listeye Dön
+            Back to list
           </Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Yeni Repertoire</CardTitle>
+          <CardTitle>New Repertoire</CardTitle>
           <CardDescription>
-            Yeni bir repertoire ekleyin
+            Add a new repertoire
           </CardDescription>
         </CardHeader>
         <CardContent>

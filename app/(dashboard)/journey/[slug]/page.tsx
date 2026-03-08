@@ -26,7 +26,7 @@ export default async function JourneyPage({ params }: Params) {
   const gameType = slug.replace(/-/g, "_");
 
   // ===============================================================
-  // gameRiddles bana o gameType da ki oyunları veriyor.
+  // gameRiddles gives me the games for that gameType.
   // ===============================================================
   const [gameRiddles, attemptedRiddles] = await Promise.all([
     getGameRiddlesByGameType(supabase, gameType),

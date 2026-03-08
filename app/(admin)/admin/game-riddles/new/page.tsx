@@ -25,16 +25,16 @@ export default async function AdminGameRiddleNewPage() {
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Listeye Dön
+            Back to list
           </Link>
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Yeni Game Riddle</CardTitle>
+          <CardTitle>New Game Riddle</CardTitle>
           <CardDescription>
-            Yeni bir game riddle ekleyin
+            Add a new game riddle
           </CardDescription>
         </CardHeader>
         <CardContent>

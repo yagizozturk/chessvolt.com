@@ -22,9 +22,8 @@ export const StatItem = ({ icon, value, colorClassName }: StatItemProps) => {
   );
 };
 
-/* CN FONKSİYONU NOTU:
-  cn fonksiyonu, clsx ve tailwind-merge kütüphanelerini birleştirir. 
-  1. isActive && "bg-blue-500" gibi koşullu sınıfları temiz yönetmeyi sağlar. 
-  2. Tailwind sınıfları çakıştığında (örneğin p-2 ve p-4 aynı anda gelirse) 
-     en sondaki sınıfın geçerli olmasını sağlayarak stil hatalarını önler.
+/* CN FUNCTION NOTE:
+  The cn function combines clsx and tailwind-merge libraries.
+  1. Enables clean management of conditional classes like isActive && "bg-blue-500".
+  2. When Tailwind classes conflict (e.g. p-2 and p-4 together), ensures the last class wins to prevent style errors.
 */

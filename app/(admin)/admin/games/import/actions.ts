@@ -24,13 +24,13 @@ export async function importPgnAction(formData: FormData) {
 
   for (const gamePgn of games) {
     if (!validatePgn(gamePgn)) {
-      errors.push("Geçersiz hamle: " + gamePgn.slice(0, 50) + "...");
+      errors.push("Invalid move: " + gamePgn.slice(0, 50) + "...");
       continue;
     }
 
     const parsed = parsePgn(gamePgn);
     if (!parsed) {
-      errors.push("Parse hatası");
+      errors.push("Parse error");
       continue;
     }
 
@@ -49,7 +49,7 @@ export async function importPgnAction(formData: FormData) {
     if (game) {
       inserted.push(game.id);
     } else {
-      errors.push(`${parsed.whitePlayer} vs ${parsed.blackPlayer} eklenemedi`);
+      errors.push(`${parsed.whitePlayer} vs ${parsed.blackPlayer} could not be added`);
     }
   }
 

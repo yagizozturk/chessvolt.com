@@ -98,7 +98,7 @@ export async function deleteGameAction(id: string): Promise<void> {
 
   const ok = await deleteGame(supabase, id);
   if (!ok) {
-    redirect("/admin/games?error=silinemedi");
+    redirect("/admin/games?error=delete_failed");
   }
 
   revalidatePath("/admin/games");

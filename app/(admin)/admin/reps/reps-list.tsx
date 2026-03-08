@@ -14,14 +14,14 @@ export function RepsList({ reps }: Props) {
   async function handleDelete(e: React.MouseEvent, id: string) {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("Bu repertoire silinecek. Emin misiniz?")) return;
+    if (!confirm("This repertoire will be deleted. Are you sure?")) return;
     await deleteRepAction(id);
   }
 
   if (reps.length === 0) {
     return (
       <p className="py-8 text-center text-muted-foreground">
-        Henüz repertoire yok.
+        No repertoires yet.
       </p>
     );
   }
@@ -35,7 +35,7 @@ export function RepsList({ reps }: Props) {
           className="flex items-center justify-between rounded-lg border px-4 py-3 transition-colors hover:bg-accent"
         >
           <div className="flex items-center gap-4">
-            <span className="font-medium">{r.title || "İsimsiz Repertoire"}</span>
+            <span className="font-medium">{r.title || "Untitled Repertoire"}</span>
             {r.openingName && (
               <span className="rounded bg-muted px-2 py-0.5 text-xs">
                 {r.openingName}
@@ -47,7 +47,7 @@ export function RepsList({ reps }: Props) {
             size="icon"
             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
             onClick={(e) => handleDelete(e, r.id)}
-            title="Sil"
+            title="Delete"
           >
             <Trash2 className="h-4 w-4" />
           </Button>

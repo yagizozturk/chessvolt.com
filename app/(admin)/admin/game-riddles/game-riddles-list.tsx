@@ -14,14 +14,14 @@ export function GameRiddlesList({ riddles }: Props) {
   async function handleDelete(e: React.MouseEvent, id: string) {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("Bu game riddle silinecek. Emin misiniz?")) return;
+    if (!confirm("This game riddle will be deleted. Are you sure?")) return;
     await deleteGameRiddleAction(id);
   }
 
   if (riddles.length === 0) {
     return (
       <p className="py-8 text-center text-muted-foreground">
-        Henüz game riddle yok.
+        No game riddles yet.
       </p>
     );
   }
@@ -48,7 +48,7 @@ export function GameRiddlesList({ riddles }: Props) {
             size="icon"
             className="text-destructive hover:bg-destructive/10 hover:text-destructive"
             onClick={(e) => handleDelete(e, r.id)}
-            title="Sil"
+            title="Delete"
           >
             <Trash2 className="h-4 w-4" />
           </Button>

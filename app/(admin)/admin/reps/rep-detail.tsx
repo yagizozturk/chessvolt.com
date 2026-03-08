@@ -33,7 +33,7 @@ export function RepDetail({ rep }: Props) {
         <Button variant="ghost" size="sm" asChild>
           <Link href="/admin/reps" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
-            Listeye Dön
+            Back to list
           </Link>
         </Button>
       </div>
@@ -41,7 +41,7 @@ export function RepDetail({ rep }: Props) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>{rep.title || "İsimsiz Repertoire"}</CardTitle>
+            <CardTitle>{rep.title || "Untitled Repertoire"}</CardTitle>
             <CardDescription>
               {rep.openingName ?? "—"} • Ply: {rep.ply ?? "—"}
             </CardDescription>
@@ -49,22 +49,22 @@ export function RepDetail({ rep }: Props) {
           <div className="flex gap-2">
             {!isEditing ? (
               <Button variant="outline" onClick={() => setIsEditing(true)}>
-                Düzenle
+                Edit
               </Button>
             ) : (
               <Button variant="ghost" onClick={() => setIsEditing(false)}>
-                İptal
+                Cancel
               </Button>
             )}
             <Button
               variant="destructive"
               onClick={async () => {
-                if (!confirm("Bu repertoire silinecek. Emin misiniz?")) return;
+                if (!confirm("This repertoire will be deleted. Are you sure?")) return;
                 await deleteRepAction(rep.id);
               }}
             >
               <Trash2 className="h-4 w-4" />
-              Sil
+              Delete
             </Button>
           </div>
         </CardHeader>
@@ -111,7 +111,7 @@ export function RepDetail({ rep }: Props) {
               </FieldGroup>
               <Button type="submit">
                 <Save className="h-4 w-4" />
-                Kaydet
+                Save
               </Button>
             </form>
           ) : (

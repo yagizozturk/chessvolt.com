@@ -5,7 +5,7 @@ import { ChevronRight, Zap } from "lucide-react";
 export default function StorybookPage() {
   return (
     <div className="flex min-h-full">
-      {/* Sol kolon - Bölüm listesi */}
+      {/* Left column - Section list */}
       <aside className="border-border w-56 shrink-0 border-r p-6">
         <Link
           href="/"
@@ -39,14 +39,14 @@ export default function StorybookPage() {
         </nav>
       </aside>
 
-      {/* Sağ kolon - Önizleme alanı */}
+      {/* Right column - Preview area */}
       <main className="flex-1 overflow-auto p-8">
-        {/* Backgrounds bölümü */}
+        {/* Backgrounds section */}
         <section id="backgrounds" className="mb-16 space-y-8">
           <div>
             <h3 className="text-2xl font-bold tracking-tight">Backgrounds</h3>
             <p className="text-muted-foreground mt-1">
-              Arka plan renkleri (globals.css)
+              Background colors (globals.css)
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -78,12 +78,12 @@ export default function StorybookPage() {
           </div>
         </section>
 
-        {/* Texts bölümü */}
+        {/* Texts section */}
         <section id="texts" className="mb-16 space-y-8">
           <div>
             <h3 className="text-2xl font-bold tracking-tight">Texts</h3>
             <p className="text-muted-foreground mt-1">
-              Metin renkleri (globals.css)
+              Text colors (globals.css)
             </p>
           </div>
           <div className="border-border space-y-4 rounded-lg border p-6">
@@ -92,19 +92,19 @@ export default function StorybookPage() {
                 name: "foreground",
                 class: "text-foreground",
                 hex: "#fff",
-                sample: "Ana metin rengi",
+                sample: "Main text color",
               },
               {
                 name: "primary",
                 class: "text-primary",
                 hex: "#fcc800",
-                sample: "Vurgu ve CTA metni",
+                sample: "Accent and CTA text",
               },
               {
                 name: "muted-foreground",
                 class: "text-muted-foreground",
                 hex: "var(--muted-foreground)",
-                sample: "İkincil, açıklama metni",
+                sample: "Secondary, description text",
               },
             ].map(({ name, class: className, hex, sample }) => (
               <div key={name} className="flex flex-col gap-1">
@@ -117,12 +117,12 @@ export default function StorybookPage() {
           </div>
         </section>
 
-        {/* Buttons bölümü */}
+        {/* Buttons section */}
         <section id="buttons" className="space-y-8">
           <div>
             <h3 className="text-2xl font-bold tracking-tight">Buttons</h3>
             <p className="text-muted-foreground mt-1">
-              Tüm buton varyantları ve boyutları
+              All button variants and sizes
             </p>
           </div>
 
@@ -160,7 +160,7 @@ export default function StorybookPage() {
                 </Button>
                 <Button variant={variant} size="sm">
                   <ChevronRight className="mr-2 h-4 w-4" />
-                  İkonlu
+                  With icon
                 </Button>
               </div>
             </div>
@@ -192,7 +192,7 @@ export default function StorybookPage() {
               </Button>
               <Button variant="vghost" size="sm">
                 <ChevronRight className="mr-2 h-4 w-4" />
-                İkonlu
+                With icon
               </Button>
             </div>
           </div>

@@ -68,10 +68,10 @@ function Button({
 export { Button, buttonVariants };
 
 {
-  /* CTA Tasarım Notları:
-  1. Renk Teorisi: Koyu mor/lacivert zemin üzerinde Neon Sarı (oklch 110) zıtlık (contrast) sayesinde maksimum görünürlük sağlar.
-  2. 3D Mekanik: 'border-b-4' ve 'active:translate-y-[4px]' kombinasyonu, butona basılabilir plastik hissi (Duolingo style) verir.
-  3. Pozisyonlama: 'relative' kullanımı, buton çökerken sayfa akışını korur ve ileride eklenecek parlama (shimmer) efektlerini buton içine hapseder.
-  4. v4 Uyumu: Renkler globals.css içindeki @theme bloğunda tanımlanarak Tailwind sınıflarına (bg-cta) bağlanmıştır.
+  /* CTA Design Notes:
+  1. Color Theory: Neon Yellow (oklch 110) on dark purple/navy background provides maximum visibility through contrast.
+  2. 3D Mechanics: 'border-b-4' and 'active:translate-y-[4px]' combination gives the button a pressable plastic feel (Duolingo style).
+  3. Positioning: 'relative' usage preserves page flow when button collapses and keeps future shimmer effects contained within the button.
+  4. v4 Compatibility: Colors are defined in the @theme block in globals.css and linked to Tailwind classes (bg-cta).
 */
 }

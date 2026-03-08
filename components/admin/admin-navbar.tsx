@@ -89,14 +89,14 @@ export function AdminNavbar() {
           <Button variant="outline" size="sm" asChild>
             <Link href="/dashboard" className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Ana Uygulama</span>
+              <span className="hidden sm:inline">Main App</span>
             </Link>
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={handleLogout}
-            title="Çıkış yap"
+            title="Sign out"
           >
             <LogOut className="h-4 w-4" />
           </Button>
@@ -155,7 +155,7 @@ export function AdminNavbar() {
                     className="flex items-center gap-2"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    Ana Uygulama
+                    Main App
                   </Link>
                 </Button>
               </div>
