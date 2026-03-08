@@ -3,11 +3,7 @@
 import { useState, useEffect } from "react";
 import type { Game } from "@/lib/model/game";
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createGameRiddleAction } from "./actions";
 import { extractMovesFromPgn } from "@/lib/utils/pgn";
@@ -48,7 +44,7 @@ export function GameRiddleForm({ games }: Props) {
             onChange={(e) => setGameId(e.target.value)}
             className={cn(
               "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
             )}
           >
             <option value="">Seçin...</option>
@@ -79,7 +75,7 @@ export function GameRiddleForm({ games }: Props) {
             onChange={(e) => setMoveCountForAnswer(e.target.value)}
             className={cn(
               "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
             )}
           />
         </Field>
@@ -98,10 +94,7 @@ export function GameRiddleForm({ games }: Props) {
         </Field>
         <Field>
           <FieldLabel>Game Type</FieldLabel>
-          <Input
-            name="gameType"
-            placeholder="örn: magnus_plays"
-          />
+          <Input name="gameType" placeholder="örn: legend_games" />
         </Field>
       </FieldGroup>
       <Button type="submit">Oluştur</Button>

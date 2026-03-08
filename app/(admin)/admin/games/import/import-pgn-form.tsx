@@ -2,11 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { FileText, Upload } from "lucide-react";
 import { importPgnAction } from "./actions";
 import { cn } from "@/lib/utils";
@@ -49,7 +45,7 @@ export function ImportPgnForm() {
               PGN Dosyası Seç
             </Button>
             {pgn && (
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
+              <span className="text-muted-foreground flex items-center gap-1 text-sm">
                 <FileText className="h-4 w-4" />
                 {pgn.split("\n").length} satır yüklendi
               </span>
@@ -73,8 +69,8 @@ export function ImportPgnForm() {
             rows={12}
             className={cn(
               "border-input w-full rounded-md border bg-transparent px-3 py-2 font-mono text-sm",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              "placeholder:text-muted-foreground"
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
+              "placeholder:text-muted-foreground",
             )}
           />
         </Field>

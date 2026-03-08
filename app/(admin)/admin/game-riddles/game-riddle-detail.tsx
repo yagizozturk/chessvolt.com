@@ -83,11 +83,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
               <FieldGroup>
                 <Field>
                   <FieldLabel>Game ID</FieldLabel>
-                  <Input
-                    name="gameId"
-                    defaultValue={riddle.gameId}
-                    required
-                  />
+                  <Input name="gameId" defaultValue={riddle.gameId} required />
                 </Field>
                 <Field>
                   <FieldLabel>Ply</FieldLabel>
@@ -100,11 +96,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                 </Field>
                 <Field>
                   <FieldLabel>Title</FieldLabel>
-                  <Input
-                    name="title"
-                    defaultValue={riddle.title}
-                    required
-                  />
+                  <Input name="title" defaultValue={riddle.title} required />
                 </Field>
                 <Field>
                   <FieldLabel>Moves</FieldLabel>
@@ -115,7 +107,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                   <Input
                     name="gameType"
                     defaultValue={riddle.gameType ?? ""}
-                    placeholder="örn: magnus_plays"
+                    placeholder="örn: legend_games"
                   />
                 </Field>
               </FieldGroup>
@@ -127,29 +119,29 @@ export function GameRiddleDetail({ riddle, game }: Props) {
           ) : (
             <dl className="grid gap-2 text-sm">
               <div>
-                <dt className="font-medium text-muted-foreground">ID</dt>
+                <dt className="text-muted-foreground font-medium">ID</dt>
                 <dd className="font-mono text-xs">{riddle.id}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Game ID</dt>
+                <dt className="text-muted-foreground font-medium">Game ID</dt>
                 <dd>{riddle.gameId}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Ply</dt>
+                <dt className="text-muted-foreground font-medium">Ply</dt>
                 <dd>{riddle.ply}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Title</dt>
+                <dt className="text-muted-foreground font-medium">Title</dt>
                 <dd>{riddle.title}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Moves</dt>
-                <dd className="break-all font-mono text-xs">
+                <dt className="text-muted-foreground font-medium">Moves</dt>
+                <dd className="font-mono text-xs break-all">
                   {riddle.moves ?? "—"}
                 </dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Game Type</dt>
+                <dt className="text-muted-foreground font-medium">Game Type</dt>
                 <dd>{riddle.gameType ?? "—"}</dd>
               </div>
             </dl>

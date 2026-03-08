@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   Map,
   Puzzle,
+  BookOpen,
   User,
   LogOut,
   Flame,
@@ -37,8 +38,9 @@ import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/journey/magnus-plays", label: "Journey", icon: Map },
+  { href: "/journey/legend_games", label: "Journey", icon: Map },
   { href: "/puzzle", label: "Puzzles", icon: Puzzle },
+  { href: "/reps", label: "Reps", icon: BookOpen },
 ];
 
 export function DashboardNavbar() {
@@ -94,7 +96,10 @@ export function DashboardNavbar() {
             <Link href="/dashboard">Dashboard</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/journey/magnus-plays">Journey</Link>
+            <Link href="/journey/legend_games">Journey</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/reps">Reps</Link>
           </DropdownMenuItem>
           {profile?.role === "admin" && (
             <DropdownMenuItem asChild>
