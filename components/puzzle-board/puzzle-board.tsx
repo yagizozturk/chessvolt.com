@@ -226,7 +226,7 @@ export default function PuzzleBoard({
   }
 
   // ============================================================================
-  // Db Communication
+  // Db Communication for next puzzle
   // ============================================================================
   async function updatePuzzleAnswerHandler(isCorrect: boolean) {
     if (!puzzleId) {

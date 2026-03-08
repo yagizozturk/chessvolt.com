@@ -204,22 +204,12 @@ export default function RiddleBoard({
     });
   }
 
+  // ============================================================================
+  // Db Communication for next riddle
+  // ============================================================================
   async function updateRiddleAnswerHandler(isCorrect: boolean) {
     if (!gameRiddleId) return;
     await updateGameRiddleAnswerHook(gameRiddleId, isCorrect);
-  }
-
-  if (!initialFen || movesArray.length === 0) {
-    return (
-      <div
-        className="flex items-center justify-center rounded-lg bg-gray-100"
-        style={{ width, height }}
-      >
-        <p className="text-muted-foreground">
-          {!initialFen ? "Invalid PGN or ply" : "Solution moves not found"}
-        </p>
-      </div>
-    );
   }
 
   return (
