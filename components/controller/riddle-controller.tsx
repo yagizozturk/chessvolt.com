@@ -10,9 +10,6 @@ import {
   Flag,
   Circle,
   Lightbulb,
-  ChevronRight,
-  Flame,
-  Zap,
   Heart,
   Clock,
 } from "lucide-react";
@@ -50,9 +47,7 @@ export default function RiddleController({
 }: RiddleControllerProps) {
   const router = useRouter();
   const turn = riddle.ply % 2 === 0 ? "White" : "Black";
-  const streak = useStatsStore((state) => state.streak);
   const lives = useStatsStore((state) => state.lives);
-  const xp = 0;
 
   // ===================================================================
   // Riddle doğru cevaplandığında tekrar kullanıcıyı journey
@@ -81,25 +76,20 @@ export default function RiddleController({
           />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="grid grid-cols-3 gap-2">
-            <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
-              <Flame className="text-primary h-5 w-5" />
-              <span className="text-foreground text-2xl font-bold">
-                {streak}
-              </span>
-              <span className="text-muted-foreground text-xs">Streak</span>
-            </div>
-            <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
-              <Zap className="text-primary h-5 w-5" />
-              <span className="text-foreground text-2xl font-bold">{xp}</span>
-              <span className="text-muted-foreground text-xs">XP</span>
-            </div>
-            <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
+          <div className="flex items-center justify-center gap-6 rounded-lg border border-border bg-muted/50 p-4">
+            <div className="flex items-center gap-2">
               <Heart className="text-primary h-5 w-5" />
-              <span className="text-foreground text-2xl font-bold">
-                {lives}
-              </span>
-              <span className="text-muted-foreground text-xs">Lives</span>
+              <span className="text-foreground text-2xl font-bold">{lives}</span>
+              <span className="text-muted-foreground text-sm">Lives</span>
+            </div>
+            <div className="bg-border h-10 w-px shrink-0" />
+            <div className="flex items-center gap-2">
+              <Clock className="text-primary h-5 w-5" />
+              <CountdownTimer
+                minutes={5}
+                className="text-foreground text-2xl font-bold"
+              />
+              <span className="text-muted-foreground text-sm">Time</span>
             </div>
           </div>
 
@@ -132,12 +122,12 @@ export default function RiddleController({
                   {turn} to move
                 </Badge>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="border-border bg-muted/50 flex items-center gap-3 rounded-lg border p-3">
+              <div className="flex flex-col gap-3">
+                <div className="border-border bg-muted/50 flex w-full items-center gap-3 rounded-lg border p-3">
                   <div className="bg-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-md">
                     <User className="text-primary h-4 w-4" />
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="text-muted-foreground text-xs font-medium">
                       White
                     </p>
@@ -146,11 +136,11 @@ export default function RiddleController({
                     </p>
                   </div>
                 </div>
-                <div className="border-border bg-muted/50 flex items-center gap-3 rounded-lg border p-3">
+                <div className="border-border bg-muted/50 flex w-full items-center gap-3 rounded-lg border p-3">
                   <div className="bg-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-md">
                     <User className="text-primary h-4 w-4" />
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="text-muted-foreground text-xs font-medium">
                       Black
                     </p>
@@ -193,19 +183,10 @@ export default function RiddleController({
             </CardContent>
           </Card>
 
-          <Button variant="outline" size="lg" className="w-full">
+          <Button variant="default" size="lg" className="w-full">
             <Lightbulb className="mr-2 h-4 w-4" />
             Hint
           </Button>
-
-          <div className="border-border bg-muted/50 flex flex-col items-center justify-center gap-2 rounded-lg border p-6">
-            <Clock className="text-primary h-8 w-8" />
-            <CountdownTimer
-              minutes={5}
-              className="text-foreground text-5xl font-bold"
-            />
-            <span className="text-muted-foreground text-sm">Time</span>
-          </div>
         </div>
       </div>
     </div>

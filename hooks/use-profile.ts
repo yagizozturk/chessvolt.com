@@ -29,10 +29,10 @@ export function useProfile() {
         .from("profiles")
         .select("xp, username")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
-        console.error("useProfile fetch error:", error);
+        console.error("useProfile fetch error:", error.message ?? error.code ?? error);
         setProfile(null);
       } else {
         setProfile({
