@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sword, Star, ChevronRight, Zap, ArrowLeft } from "lucide-react";
+import { Sword, ChevronRight, Zap, ArrowLeft } from "lucide-react";
 import { getGameRiddlesByGameType } from "@/lib/services/game-riddle";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
@@ -107,12 +107,6 @@ export default async function JourneyPage({ params }: Params) {
                             {riddle.title}
                           </h3>
                           <div className="mt-1 flex items-center gap-4">
-                            {riddle.rating && (
-                              <div className="flex items-center gap-1 text-sm text-white/40">
-                                <Star size={14} className="text-[#FFB800]" />
-                                <span>Rating: {riddle.rating}</span>
-                              </div>
-                            )}
                             <div className="flex items-center gap-1 text-sm text-white/40">
                               <Sword size={14} />
                               <span>Tactical Puzzle</span>
