@@ -14,6 +14,7 @@ import {
   Flame,
   Zap,
   Heart,
+  Clock,
 } from "lucide-react";
 import type { GameRiddle } from "@/lib/model/game-riddle";
 import type { Game } from "@/lib/model/game";
@@ -23,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
 
 type RiddleControllerProps = {
   riddle: GameRiddle;
@@ -195,6 +197,15 @@ export default function RiddleController({
             <Lightbulb className="mr-2 h-4 w-4" />
             Hint
           </Button>
+
+          <div className="border-border bg-muted/50 flex flex-col items-center justify-center gap-2 rounded-lg border p-6">
+            <Clock className="text-primary h-8 w-8" />
+            <CountdownTimer
+              minutes={5}
+              className="text-foreground text-5xl font-bold"
+            />
+            <span className="text-muted-foreground text-sm">Time</span>
+          </div>
         </div>
       </div>
     </div>
