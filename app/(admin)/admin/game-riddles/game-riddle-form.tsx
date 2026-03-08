@@ -88,10 +88,6 @@ export function GameRiddleForm({ games }: Props) {
           <Input name="title" required placeholder="Örn: Find the best move" />
         </Field>
         <Field>
-          <FieldLabel>FEN</FieldLabel>
-          <Input name="fen" placeholder="Opsiyonel" />
-        </Field>
-        <Field>
           <FieldLabel>Moves</FieldLabel>
           <Input
             name="moves"

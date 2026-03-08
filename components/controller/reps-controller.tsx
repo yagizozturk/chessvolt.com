@@ -13,7 +13,8 @@ export default function RepsController({ rep }: { rep: Rep }) {
     <div className="flex">
       <div key={rep.id}>
         <PuzzleBoard
-          puzzleId={rep.id}
+          sourceId={rep.id}
+          mode="puzzle"
           initialFen={rep.fen ?? undefined}
           moves={rep.moves}
           width={620}

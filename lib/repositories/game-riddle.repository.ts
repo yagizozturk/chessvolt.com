@@ -86,7 +86,6 @@ export type CreateGameRiddleInput = {
   gameId: string;
   ply: number;
   title: string;
-  fen?: string | null;
   moves?: string | null;
   gameType?: string | null;
 };
@@ -101,7 +100,6 @@ export async function create(
       game_id: input.gameId,
       ply: input.ply,
       title: input.title,
-      fen: input.fen ?? null,
       moves: input.moves ?? null,
       game_type: input.gameType ?? null,
     })
@@ -120,7 +118,6 @@ export type UpdateGameRiddleInput = {
   gameId?: string;
   ply?: number;
   title?: string;
-  fen?: string | null;
   moves?: string | null;
   gameType?: string | null;
 };
@@ -134,7 +131,6 @@ export async function update(
   if (input.gameId !== undefined) updates.game_id = input.gameId;
   if (input.ply !== undefined) updates.ply = input.ply;
   if (input.title !== undefined) updates.title = input.title;
-  if (input.fen !== undefined) updates.fen = input.fen;
   if (input.moves !== undefined) updates.moves = input.moves;
   if (input.gameType !== undefined) updates.game_type = input.gameType;
 

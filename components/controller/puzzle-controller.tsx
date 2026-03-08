@@ -21,13 +21,14 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
         {/* Left: Puzzle Board */}
         <div>
           <PuzzleBoard
-            puzzleId={puzzle.id}
+            sourceId={puzzle.id}
+            mode="puzzle"
             initialFen={puzzle.fen}
             moves={puzzle.moves}
             width={620}
             height={620}
             viewOnly={false}
-            onPuzzleSolved={(isCorrect) =>
+            onSolved={(isCorrect) =>
               updatePuzzleAnswerHook(puzzle.id, isCorrect)
             }
           />

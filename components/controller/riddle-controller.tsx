@@ -16,7 +16,8 @@ import {
 import type { GameRiddle } from "@/lib/model/game-riddle";
 import type { Game } from "@/lib/model/game";
 import { useStatsStore } from "@/stores/stats-store";
-import RiddleBoard from "@/components/riddle-board/riddle-board";
+import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
+import { useUpdateGameRiddleAnswer } from "@/hooks/use-update-game-riddle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,7 @@ export default function RiddleController({
   const router = useRouter();
   const turn = riddle.ply % 2 === 0 ? "White" : "Black";
   const lives = useStatsStore((state) => state.lives);
+  const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
 
   // ===================================================================
   // Riddle doğru cevaplandığında tekrar kullanıcıyı journey
@@ -55,8 +57,9 @@ export default function RiddleController({
   // var. Nereden geldiğini biliyorum. Bu trafiği Controller ayarlıyor
   // ===================================================================
   const journeySlug = riddle.gameType?.replace(/_/g, "-");
-  const handleRiddleSuccess = () => {
-    if (journeySlug) {
+  const handleSolved = async (isCorrect: boolean) => {
+    await updateGameRiddleAnswerHook(riddle.id, isCorrect);
+    if (isCorrect && journeySlug) {
       router.push(`/journey/${journeySlug}`);
     }
   };
@@ -65,21 +68,24 @@ export default function RiddleController({
     <div className="container mx-auto max-w-5xl px-4 py-8">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
         <div className="min-w-0">
-          <RiddleBoard
-            gameRiddleId={riddle.id}
+          <PuzzleBoard
+            sourceId={riddle.id}
+            mode="riddle"
             pgn={game.pgn}
             ply={riddle.ply}
             moves={riddle.moves ?? ""}
             width={610}
             height={610}
-            onSuccess={handleRiddleSuccess}
+            onSolved={handleSolved}
           />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="flex items-center justify-center gap-6 rounded-lg border border-border bg-muted/50 p-4">
+          <div className="border-border bg-muted/50 flex items-center justify-center gap-6 rounded-lg border p-4">
             <div className="flex items-center gap-2">
               <Heart className="text-primary h-5 w-5" />
-              <span className="text-foreground text-2xl font-bold">{lives}</span>
+              <span className="text-foreground text-2xl font-bold">
+                {lives}
+              </span>
               <span className="text-muted-foreground text-sm">Lives</span>
             </div>
             <div className="bg-border h-10 w-px shrink-0" />

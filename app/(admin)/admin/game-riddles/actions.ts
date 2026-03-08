@@ -16,7 +16,6 @@ export async function createGameRiddleAction(formData: FormData) {
   const gameId = formData.get("gameId") as string;
   const ply = parseInt(formData.get("ply") as string, 10);
   const title = formData.get("title") as string;
-  const fen = (formData.get("fen") as string) || null;
   const moves = (formData.get("moves") as string) || null;
   const gameType = (formData.get("gameType") as string) || null;
 
@@ -28,7 +27,6 @@ export async function createGameRiddleAction(formData: FormData) {
     gameId,
     ply,
     title,
-    fen: fen || null,
     moves: moves || null,
     gameType: gameType || null,
   };
@@ -48,7 +46,6 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
   const gameId = formData.get("gameId") as string;
   const ply = formData.get("ply");
   const title = formData.get("title") as string;
-  const fen = (formData.get("fen") as string) || null;
   const moves = (formData.get("moves") as string) || null;
   const gameType = (formData.get("gameType") as string) || null;
 
@@ -56,7 +53,6 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
   if (gameId) input.gameId = gameId;
   if (ply !== undefined) input.ply = parseInt(ply as string, 10);
   if (title) input.title = title;
-  if (fen !== undefined) input.fen = fen;
   if (moves !== undefined) input.moves = moves;
   if (gameType !== undefined) input.gameType = gameType;
 

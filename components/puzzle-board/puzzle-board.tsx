@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Chessground } from "@lichess-org/chessground";
 import type { Key } from "@lichess-org/chessground/types";
 import { toDests } from "@/lib/chess-board/toDests";
+import { getFenFromPgnAtPly } from "@/lib/chess-board/getFenFromPgnAtPly";
 import { useSound } from "@/hooks/use-sound";
 import { useStatsStore } from "@/stores/stats-store";
 import { useCoachStore } from "@/stores/coach-store";
@@ -15,10 +16,18 @@ import "@/assets/chessground.css";
 import "@/assets/volt.css";
 import "@/assets/theme/theme.css";
 
-type PuzzleBoardProps = {
-  puzzleId: string;
-  initialFen?: string;
+export type BoardMode = "puzzle" | "riddle";
+
+export type PuzzleBoardProps = {
+  /** puzzleId, riddleId veya repId - değişince board resetlenir */
+  sourceId: string;
+  mode: BoardMode;
   moves: string;
+  /** Pozisyon: varsa kullanılır, yoksa pgn+ply'den üretilir */
+  initialFen?: string | null;
+  /** initialFen yoksa pgn+ply ile pozisyon üretilir */
+  pgn?: string;
+  ply?: number;
   width?: number;
   height?: number;
   viewOnly?: boolean;
@@ -27,27 +36,36 @@ type PuzzleBoardProps = {
     to: string;
     fen: string;
   }) => void;
-  /** Called when puzzle is solved (correct or wrong). Controller handles DB persistence. */
-  onPuzzleSolved?: (isCorrect: boolean) => void;
+  /** Called when puzzle/riddle is solved (correct or wrong). Controller handles DB persistence. */
+  onSolved?: (isCorrect: boolean) => void;
 };
 
-export default function PuzzleBoard({
-  puzzleId,
-  initialFen,
-  moves,
-  width = 620,
-  height = 620,
-  viewOnly = false,
-  onGameStateChange,
-  onPuzzleSolved,
-}: PuzzleBoardProps) {
+export default function PuzzleBoard(props: PuzzleBoardProps) {
+  const {
+    sourceId,
+    mode,
+    moves,
+    width = 620,
+    height = 620,
+    viewOnly = false,
+    onGameStateChange,
+    onSolved,
+  } = props;
+
+  const initialFen =
+    props.initialFen != null && props.initialFen !== ""
+      ? props.initialFen
+      : props.pgn != null && props.ply != null
+        ? getFenFromPgnAtPly(props.pgn, props.ply) ?? undefined
+        : undefined;
+
   const boardRef = useRef<HTMLDivElement>(null);
-  const { game, makeMove, fen } = useChessOne(initialFen);
+  const { game, makeMove } = useChessOne(initialFen);
   const ground = useRef<ReturnType<typeof Chessground> | null>(null);
 
   const [currentStep, setCurrentStep] = useState(0);
   const currentStepRef = useRef(0);
-  const [isPuzzleOver, setIsPuzzleOver] = useState(false);
+  const [isOver, setIsOver] = useState(false);
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
 
   const movesArray = moves
@@ -68,7 +86,7 @@ export default function PuzzleBoard({
   // Coach Store updates
   // ============================================================================
   const setStoreFen = useCoachStore((state) => state.setFen);
-  const setStoreBestMove = useCoachStore((state) => state.setBestMove);
+  //const setStoreBestMove = useCoachStore((state) => state.setBestMove); //*
   //const setStoreBestMoveSan = useCoachStore((state) => state.setBestMoveSan); //*
 
   // ============================================================================
@@ -94,11 +112,11 @@ export default function PuzzleBoard({
   // ============================================================================
   useEffect(() => {
     setCurrentStep(0);
-    setIsPuzzleOver(false);
+    setIsOver(false);
     currentStepRef.current = 0;
     initLives();
     lastMoveRef.current = undefined;
-  }, [puzzleId, initLives]);
+  }, [sourceId, initLives]);
 
   // ============================================================================
   // Initialize Chessground
@@ -123,12 +141,14 @@ export default function PuzzleBoard({
     });
 
     // At the start of the puzzle, apply the first move of the opponent.
-    applyInitialMove();
+    if (mode === "puzzle" && movesArray.length > 0) {
+      applyInitialMove();
+    }
 
     return () => {
       ground.current?.destroy();
     };
-  }, [puzzleId]);
+  }, [sourceId]);
 
   // ============================================================================
   // Helper Functions
@@ -152,17 +172,17 @@ export default function PuzzleBoard({
 
   // Apply first opponent move to understand the puzzle what was the last move
   function applyInitialMove() {
-    if (!game.current || !ground.current) return;
+    if (!game.current || !ground.current || movesArray.length === 0) return;
 
-    const initialMove = movesArray[0];
-    const from = initialMove.slice(0, 2);
-    const to = initialMove.slice(2, 4);
+    const oppMove = movesArray[0];
+    const from = oppMove.slice(0, 2);
+    const to = oppMove.slice(2, 4);
     makeMove(from, to, "q");
     lastMoveRef.current = [from as Key, to as Key];
     handleStepChange();
     updateBoard();
     setStoreFen(game.current.fen()); // After the first move, fen changes and is set in the store.
-    analyze(game.current.fen(), 8); // Analyze the first move of the player.
+    analyze(game.current.fen(), 8);
   }
 
   // Understanding the step of the solution. If final step is played, puzzle over
@@ -184,13 +204,12 @@ export default function PuzzleBoard({
     const expectedUci = movesArray[step];
     const userUci = from + to;
 
-    // Wrong move
     if (userUci !== expectedUci) {
       playMoveSound();
       updateBoard();
       decrementLives();
       setStoreStreak(0);
-      onPuzzleSolved?.(false);
+      onSolved?.(false);
       return;
     }
 
@@ -203,9 +222,9 @@ export default function PuzzleBoard({
     useCoachStore.setState({ fen: game.current.fen() });
 
     if (step === movesArray.length - 1) {
-      setIsPuzzleOver(true);
+      setIsOver(true);
       setStoreStreak(useStatsStore.getState().streak + 1);
-      onPuzzleSolved?.(true);
+      onSolved?.(true);
       return;
     }
 
@@ -217,7 +236,7 @@ export default function PuzzleBoard({
     handleStepChange();
     updateBoard();
     setStoreFen(game.current.fen());
-    analyze(game.current.fen(), 8); // Analyze the next best move.
+    analyze(game.current.fen(), 8);
 
     onGameStateChange?.({
       from,

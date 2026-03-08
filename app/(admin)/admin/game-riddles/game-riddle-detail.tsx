@@ -107,10 +107,6 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                   />
                 </Field>
                 <Field>
-                  <FieldLabel>FEN</FieldLabel>
-                  <Input name="fen" defaultValue={riddle.fen ?? ""} />
-                </Field>
-                <Field>
                   <FieldLabel>Moves</FieldLabel>
                   <Input name="moves" defaultValue={riddle.moves ?? ""} />
                 </Field>
@@ -145,12 +141,6 @@ export function GameRiddleDetail({ riddle, game }: Props) {
               <div>
                 <dt className="font-medium text-muted-foreground">Title</dt>
                 <dd>{riddle.title}</dd>
-              </div>
-              <div>
-                <dt className="font-medium text-muted-foreground">FEN</dt>
-                <dd className="break-all font-mono text-xs">
-                  {riddle.fen ?? "—"}
-                </dd>
               </div>
               <div>
                 <dt className="font-medium text-muted-foreground">Moves</dt>
