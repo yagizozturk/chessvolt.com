@@ -24,6 +24,10 @@ export default async function JourneyPage({ params }: Params) {
   const { user, supabase } = await getAuthenticatedUser();
 
   const gameType = slug.replace(/-/g, "_");
+
+  // ===============================================================
+  // gameRiddles bana o gameType da ki oyunları veriyor.
+  // ===============================================================
   const [gameRiddles, attemptedRiddles] = await Promise.all([
     getGameRiddlesByGameType(supabase, gameType),
     userGameRiddleRepo.findAttemptedGameRiddleAttempts(supabase, user.id),
@@ -34,7 +38,7 @@ export default async function JourneyPage({ params }: Params) {
   );
 
   let foundCurrent = false;
-  const checkpoints: JourneyChapter[] = gameRiddles.map((riddle, index) => {
+  const chapters: JourneyChapter[] = gameRiddles.map((riddle, index) => {
     const isCorrect = attemptByRiddleId[riddle.id];
     const isAttempted = riddle.id in attemptByRiddleId;
 
@@ -85,7 +89,7 @@ export default async function JourneyPage({ params }: Params) {
             </Card>
           ) : (
             <div className="flex justify-center">
-              <JourneySnakeMap checkpoints={checkpoints} />
+              <JourneySnakeMap chapters={chapters} />
             </div>
           )}
         </div>

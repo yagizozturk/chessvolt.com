@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   User,
   Calendar,
@@ -18,12 +19,7 @@ import type { GameRiddle } from "@/lib/model/game-riddle";
 import type { Game } from "@/lib/model/game";
 import { useStatsStore } from "@/stores/stats-store";
 import RiddleBoard from "@/components/riddle-board/riddle-board";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -50,10 +46,23 @@ export default function RiddleController({
   riddle,
   game,
 }: RiddleControllerProps) {
+  const router = useRouter();
   const turn = riddle.ply % 2 === 0 ? "White" : "Black";
   const streak = useStatsStore((state) => state.streak);
   const lives = useStatsStore((state) => state.lives);
   const xp = 0;
+
+  // ===================================================================
+  // Riddle doğru cevaplandığında tekrar kullanıcıyı journey
+  // sayfasına yönlendiriyorum. gameType bilgisi zaten riddle ın içinde
+  // var. Nereden geldiğini biliyorum. Bu trafiği Controller ayarlıyor
+  // ===================================================================
+  const journeySlug = riddle.gameType?.replace(/_/g, "-");
+  const handleRiddleSuccess = () => {
+    if (journeySlug) {
+      router.push(`/journey/${journeySlug}`);
+    }
+  };
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
@@ -66,23 +75,28 @@ export default function RiddleController({
             moves={riddle.moves ?? ""}
             width={610}
             height={610}
+            onSuccess={handleRiddleSuccess}
           />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
           <div className="grid grid-cols-3 gap-2">
-            <div className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/50 p-3">
-              <Flame className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold text-foreground">{streak}</span>
+            <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
+              <Flame className="text-primary h-5 w-5" />
+              <span className="text-foreground text-2xl font-bold">
+                {streak}
+              </span>
               <span className="text-muted-foreground text-xs">Streak</span>
             </div>
-            <div className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/50 p-3">
-              <Zap className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold text-foreground">{xp}</span>
+            <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
+              <Zap className="text-primary h-5 w-5" />
+              <span className="text-foreground text-2xl font-bold">{xp}</span>
               <span className="text-muted-foreground text-xs">XP</span>
             </div>
-            <div className="flex flex-col items-center gap-1 rounded-lg border border-border bg-muted/50 p-3">
-              <Heart className="h-5 w-5 text-primary" />
-              <span className="text-2xl font-bold text-foreground">{lives}</span>
+            <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
+              <Heart className="text-primary h-5 w-5" />
+              <span className="text-foreground text-2xl font-bold">
+                {lives}
+              </span>
               <span className="text-muted-foreground text-xs">Lives</span>
             </div>
           </div>
@@ -180,11 +194,6 @@ export default function RiddleController({
           <Button variant="outline" size="lg" className="w-full">
             <Lightbulb className="mr-2 h-4 w-4" />
             Hint
-          </Button>
-
-          <Button variant="outline" size="lg" className="w-full" disabled>
-            Next Chapter
-            <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>

@@ -30,6 +30,7 @@ type RiddleBoardProps = {
     to: string;
     fen: string;
   }) => void;
+  onSuccess?: () => void;
 };
 
 export default function RiddleBoard({
@@ -41,6 +42,7 @@ export default function RiddleBoard({
   height = 620,
   viewOnly = false,
   onGameStateChange,
+  onSuccess,
 }: RiddleBoardProps) {
   const boardRef = useRef<HTMLDivElement>(null);
   const initialFen = getFenFromPgnAtPly(pgn, ply);
@@ -210,6 +212,9 @@ export default function RiddleBoard({
   async function updateRiddleAnswerHandler(isCorrect: boolean) {
     if (!gameRiddleId) return;
     await updateGameRiddleAnswerHook(gameRiddleId, isCorrect);
+    if (isCorrect) {
+      onSuccess?.();
+    }
   }
 
   return (

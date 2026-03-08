@@ -13,7 +13,7 @@ export type JourneyChapter = {
 };
 
 type Props = {
-  checkpoints: JourneyChapter[];
+  chapters: JourneyChapter[];
   baseHref?: string;
 };
 
@@ -23,23 +23,23 @@ function getOffset(index: number): string {
   return `${SNAKE_OFFSETS[index % SNAKE_OFFSETS.length]}px`;
 }
 
-export function JourneySnakeMap({ checkpoints, baseHref = "/game-riddle" }: Props) {
+export function JourneySnakeMap({ chapters, baseHref = "/game-riddle" }: Props) {
   return (
     <div className="relative flex w-full max-w-[400px] flex-col items-center gap-8">
-      {checkpoints.map((checkpoint) => {
-        const isLocked = checkpoint.status === "locked";
-        const isComplete = checkpoint.status === "complete";
-        const isCurrent = checkpoint.status === "current";
+      {chapters.map((chapter) => {
+        const isLocked = chapter.status === "locked";
+        const isComplete = chapter.status === "complete";
+        const isCurrent = chapter.status === "current";
 
         const node = (
           <div
-            key={checkpoint.id}
+            key={chapter.id}
             className="relative transition-transform hover:scale-110"
-            style={{ transform: `translateX(${getOffset(checkpoint.index)})` }}
+            style={{ transform: `translateX(${getOffset(chapter.index)})` }}
           >
             {isCurrent && (
               <Badge className="bg-primary text-primary-foreground absolute -top-10 left-1/2 -translate-x-1/2 animate-bounce px-3 py-1">
-                {checkpoint.title}
+                {chapter.title}
               </Badge>
             )}
 
@@ -60,7 +60,7 @@ export function JourneySnakeMap({ checkpoints, baseHref = "/game-riddle" }: Prop
                   <Lock className="h-6 w-6" />
                 </span>
               ) : (
-                <Link href={`${baseHref}/${checkpoint.id}`}>
+                <Link href={`${baseHref}/${chapter.id}`}>
                   {isComplete ? (
                     <Check className="h-6 w-6" />
                   ) : (
