@@ -20,7 +20,7 @@ async function handlePOST(req: Request, { params }: RouteParams) {
     auth.supabase,
     auth.user.id,
     gameRiddleId,
-    isCorrect
+    isCorrect,
   );
 
   return successResponse({ success: true });

@@ -9,7 +9,7 @@ export function useUpdateGameRiddleAnswer() {
 
   const updateGameRiddleAnswerHook = async (
     gameRiddleId: string,
-    isCorrect: boolean
+    isCorrect: boolean,
   ) => {
     setIsLoading(true);
     setError(null);

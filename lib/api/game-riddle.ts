@@ -6,10 +6,10 @@ export type UpdateGameRiddleAnswerResponse = {
 
 export async function updateGameRiddleAnswer(
   gameRiddleId: string,
-  data: { isCorrect: boolean }
+  data: { isCorrect: boolean },
 ): Promise<{ data: UpdateGameRiddleAnswerResponse }> {
   return await apiClient.post<{ data: UpdateGameRiddleAnswerResponse }>(
     `/game-riddle/${gameRiddleId}/solve`,
-    data
+    data,
   );
 }
