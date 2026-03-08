@@ -13,6 +13,7 @@ import {
   Puzzle,
   Gamepad2,
   HelpCircle,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +32,7 @@ const adminNavItems = [
   { href: "/admin/puzzles", label: "Puzzles", icon: Puzzle },
   { href: "/admin/games", label: "Games", icon: Gamepad2 },
   { href: "/admin/game-riddles", label: "Game Riddles", icon: HelpCircle },
+  { href: "/admin/reps", label: "Reps", icon: BookOpen },
 ];
 
 export function AdminNavbar() {

@@ -19,3 +19,25 @@ export async function getRepById(
 ): Promise<Rep | null> {
   return repsRepo.findById(supabase, id);
 }
+
+export async function createRep(
+  supabase: SupabaseClient,
+  input: repsRepo.CreateRepInput
+): Promise<Rep | null> {
+  return repsRepo.create(supabase, input);
+}
+
+export async function updateRep(
+  supabase: SupabaseClient,
+  id: string,
+  input: repsRepo.UpdateRepInput
+): Promise<Rep | null> {
+  return repsRepo.update(supabase, id, input);
+}
+
+export async function deleteRep(
+  supabase: SupabaseClient,
+  id: string
+): Promise<boolean> {
+  return repsRepo.remove(supabase, id);
+}
