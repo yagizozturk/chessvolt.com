@@ -8,6 +8,7 @@ import { getFenFromPgnAtPly } from "@/lib/chess-board/getFenFromPgnAtPly";
 import { useUpdateGameRiddleAnswer } from "@/hooks/use-update-game-riddle";
 import { useSound } from "@/hooks/use-sound";
 import { useStatsStore } from "@/stores/stats-store";
+import { useCoachStore } from "@/stores/coach-store";
 import { useChessEngine } from "@/hooks/use-stockfish-engine";
 import { useChessOne } from "@/hooks/use-chess";
 import "@lichess-org/chessground/assets/chessground.base.css";
@@ -59,13 +60,35 @@ export default function RiddleBoard({
   const { play: playCorrectSound } = useSound("/audio/correct.mp3", 1);
   const { play: playMoveSound } = useSound("/audio/move.wav", 0.5);
 
+  // ============================================================================
+  // Stats Store updates
+  // ============================================================================
   const setStoreStreak = useStatsStore((state) => state.setStreak);
   const decrementLives = useStatsStore((state) => state.decrementLives);
-  const initRiddleLives = useStatsStore((state) => state.initRiddleLives);
+  const initLives = useStatsStore((state) => state.initLives);
 
+  // ============================================================================
+  // Coach Store updates
+  // ============================================================================
+  const setStoreFen = useCoachStore((state) => state.setFen);
+  const setStoreBestMove = useCoachStore((state) => state.setBestMove);
+
+  // ============================================================================
+  // Chess Engine Init
+  // ============================================================================
   const { analyze } = useChessEngine({
     difficulty: "Expert",
-    onBestMove: () => {},
+    onBestMove: (uci) => {
+      // Opponent move is automatic so the turn is always for the player
+      //setStoreBestMove(uci); // Getting best move from the engine and set for the coach store. //*
+      try {
+        //const sanMove = convertUciToSan(game.current!, uci);
+        //setStoreBestMoveSan(sanMove); //*
+      } catch (error) {
+        console.error("Error converting UCI to SAN:", error);
+        //setStoreBestMoveSan(uci);
+      }
+    },
   });
 
   useEffect(() => {
@@ -73,9 +96,12 @@ export default function RiddleBoard({
     setIsRiddleOver(false);
     currentStepRef.current = 0;
     lastMoveRef.current = undefined;
-    initRiddleLives();
-  }, [gameRiddleId, initRiddleLives]);
+    initLives();
+  }, [gameRiddleId, initLives]);
 
+  // ============================================================================
+  // Initialize Chessground
+  // ============================================================================
   useEffect(() => {
     if (!boardRef.current || !game.current || !initialFen) return;
 
@@ -83,6 +109,7 @@ export default function RiddleBoard({
 
     ground.current = Chessground(boardRef.current, {
       fen: game.current.fen(),
+      orientation: game.current.turn() === "w" ? "white" : "black",
       viewOnly: viewOnly,
       turnColor: game.current.turn() === "w" ? "white" : "black",
       lastMove: lastMoveRef.current ?? undefined,
@@ -104,6 +131,7 @@ export default function RiddleBoard({
 
     ground.current.set({
       fen: game.current.fen(),
+      orientation: game.current.turn() === "w" ? "white" : "black",
       turnColor: game.current.turn() === "w" ? "white" : "black",
       lastMove: lastMoveRef.current ?? undefined,
       movable: {
@@ -115,6 +143,7 @@ export default function RiddleBoard({
     });
   }
 
+  // Understanding the step of the solution. If final step is played, puzzle over
   function handleStepChange() {
     setCurrentStep((prev) => {
       const newStep = prev + 1;
@@ -123,6 +152,9 @@ export default function RiddleBoard({
     });
   }
 
+  // ============================================================================
+  // Events
+  // ============================================================================
   function handleMove(from: string, to: string) {
     if (!game.current || !ground.current) return;
 
@@ -130,15 +162,13 @@ export default function RiddleBoard({
     const expectedUci = movesArray[step];
     const userUci = from + to;
 
+    // Wrong move
     if (userUci !== expectedUci) {
       playMoveSound();
       updateBoard();
       decrementLives();
-      const newLives = useStatsStore.getState().lives;
-      if (newLives <= 0) {
-        setStoreStreak(0);
-        updateRiddleAnswerHandler(false);
-      }
+      setStoreStreak(0);
+      updateRiddleAnswerHandler(false);
       return;
     }
 
@@ -147,6 +177,8 @@ export default function RiddleBoard({
     playCorrectSound();
     handleStepChange();
     updateBoard();
+    setStoreFen(game.current.fen());
+    useCoachStore.setState({ fen: game.current.fen() });
 
     if (step === movesArray.length - 1) {
       setIsRiddleOver(true);
@@ -162,6 +194,7 @@ export default function RiddleBoard({
     lastMoveRef.current = [oppFrom as Key, oppTo as Key];
     handleStepChange();
     updateBoard();
+    setStoreFen(game.current.fen());
     analyze(game.current.fen(), 8);
 
     onGameStateChange?.({

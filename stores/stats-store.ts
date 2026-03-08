@@ -9,7 +9,7 @@ type StatsStore = {
   setLives: (lives: number) => void;
   decrementLives: () => void;
   resetPuzzle: () => void;
-  initRiddleLives: () => void;
+  initLives: () => void;
 };
 
 export const useStatsStore = create<StatsStore>((set) => ({
@@ -20,5 +20,5 @@ export const useStatsStore = create<StatsStore>((set) => ({
   decrementLives: () =>
     set((state) => ({ lives: Math.max(0, state.lives - 1) })),
   resetPuzzle: () => set({ streak: 0 }),
-  initRiddleLives: () => set({ lives: MAX_LIVES }),
+  initLives: () => set({ lives: MAX_LIVES }),
 }));

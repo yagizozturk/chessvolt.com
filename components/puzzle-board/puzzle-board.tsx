@@ -57,9 +57,11 @@ export default function PuzzleBoard({
   const { play: playMoveSound } = useSound("/audio/move.wav", 0.5);
 
   // ============================================================================
-  // Puzzle Store updates
+  // Stats Store updates
   // ============================================================================
   const setStoreStreak = useStatsStore((state) => state.setStreak);
+  const decrementLives = useStatsStore((state) => state.decrementLives);
+  const initLives = useStatsStore((state) => state.initLives);
 
   // ============================================================================
   // Coach Store updates
@@ -93,8 +95,9 @@ export default function PuzzleBoard({
     setCurrentStep(0);
     setIsPuzzleOver(false);
     currentStepRef.current = 0;
+    initLives();
     lastMoveRef.current = undefined;
-  }, [puzzleId]);
+  }, [puzzleId, initLives]);
 
   // ============================================================================
   // Initialize Chessground
@@ -184,6 +187,7 @@ export default function PuzzleBoard({
     if (userUci !== expectedUci) {
       playMoveSound();
       updateBoard();
+      decrementLives();
       setStoreStreak(0);
       updatePuzzleAnswerHandler(false);
       return;
