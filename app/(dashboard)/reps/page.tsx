@@ -30,22 +30,10 @@ function RepsList({ reps }: { reps: Rep[] }) {
         >
           <div className="flex items-center gap-4">
             <span className="font-medium">{r.title || "İsimsiz Repertoire"}</span>
-            {r.openingTags && r.openingTags.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {r.openingTags.slice(0, 3).map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded bg-muted px-2 py-0.5 text-xs"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                {r.openingTags.length > 3 && (
-                  <span className="text-xs text-muted-foreground">
-                    +{r.openingTags.length - 3}
-                  </span>
-                )}
-              </div>
+            {r.openingName && (
+              <span className="rounded bg-muted px-2 py-0.5 text-xs">
+                {r.openingName}
+              </span>
             )}
           </div>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
