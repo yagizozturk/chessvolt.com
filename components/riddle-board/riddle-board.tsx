@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Chessground } from "@lichess-org/chessground";
+import type { Key } from "@lichess-org/chessground/types";
 import { toDests } from "@/lib/chess-board/toDests";
 import { getFenFromPgnAtPly } from "@/lib/chess-board/getFenFromPgnAtPly";
 import { useUpdateGameRiddleAnswer } from "@/hooks/use-update-game-riddle";
@@ -48,6 +49,7 @@ export default function RiddleBoard({
   const [currentStep, setCurrentStep] = useState(0);
   const currentStepRef = useRef(0);
   const [isRiddleOver, setIsRiddleOver] = useState(false);
+  const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
 
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
   const movesArray = (moves ?? "")
@@ -70,6 +72,7 @@ export default function RiddleBoard({
     setCurrentStep(0);
     setIsRiddleOver(false);
     currentStepRef.current = 0;
+    lastMoveRef.current = undefined;
     initRiddleLives();
   }, [gameRiddleId, initRiddleLives]);
 
@@ -82,6 +85,7 @@ export default function RiddleBoard({
       fen: game.current.fen(),
       viewOnly: viewOnly,
       turnColor: game.current.turn() === "w" ? "white" : "black",
+      lastMove: lastMoveRef.current ?? undefined,
       movable: {
         free: false,
         color: game.current.turn() === "w" ? "white" : "black",
@@ -101,6 +105,7 @@ export default function RiddleBoard({
     ground.current.set({
       fen: game.current.fen(),
       turnColor: game.current.turn() === "w" ? "white" : "black",
+      lastMove: lastMoveRef.current ?? undefined,
       movable: {
         free: false,
         color: game.current.turn() === "w" ? "white" : "black",
@@ -138,6 +143,7 @@ export default function RiddleBoard({
     }
 
     makeMove(from, to, "q");
+    lastMoveRef.current = [from as Key, to as Key];
     playCorrectSound();
     handleStepChange();
     updateBoard();
@@ -150,7 +156,10 @@ export default function RiddleBoard({
     }
 
     const opponentUci = movesArray[step + 1];
-    makeMove(opponentUci.slice(0, 2), opponentUci.slice(2, 4), "q");
+    const oppFrom = opponentUci.slice(0, 2);
+    const oppTo = opponentUci.slice(2, 4);
+    makeMove(oppFrom, oppTo, "q");
+    lastMoveRef.current = [oppFrom as Key, oppTo as Key];
     handleStepChange();
     updateBoard();
     analyze(game.current.fen(), 8);
