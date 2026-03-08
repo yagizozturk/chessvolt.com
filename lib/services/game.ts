@@ -28,3 +28,29 @@ export async function getGamesByUser(
 ): Promise<Game[]> {
   return gameRepo.findByCreatedBy(supabase, userId);
 }
+
+export async function createGame(
+  supabase: SupabaseClient,
+  input: gameRepo.CreateGameInput,
+  createdBy: string
+): Promise<Game | null> {
+  return gameRepo.create(supabase, {
+    ...input,
+    createdBy,
+  });
+}
+
+export async function updateGame(
+  supabase: SupabaseClient,
+  id: string,
+  input: gameRepo.UpdateGameInput
+): Promise<Game | null> {
+  return gameRepo.update(supabase, id, input);
+}
+
+export async function deleteGame(
+  supabase: SupabaseClient,
+  id: string
+): Promise<boolean> {
+  return gameRepo.remove(supabase, id);
+}
