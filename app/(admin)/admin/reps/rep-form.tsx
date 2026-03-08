@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { createRepAction } from "./actions";
 import { Button } from "@/components/ui/button";
-import { extractMovesFromPgn } from "@/lib/utils/pgn";
+import { extractMovesFromPgn } from "@/lib/chess-board/extractMovesFromPgn";
 import { cn } from "@/lib/utils";
 
 export function RepForm() {

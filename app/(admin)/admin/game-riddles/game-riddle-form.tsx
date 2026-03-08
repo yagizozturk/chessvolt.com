@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createGameRiddleAction } from "./actions";
-import { extractMovesFromPgn } from "@/lib/utils/pgn";
+import { extractMovesFromPgn } from "@/lib/chess-board/extractMovesFromPgn";
 import { cn } from "@/lib/utils";
 
 type Props = {
