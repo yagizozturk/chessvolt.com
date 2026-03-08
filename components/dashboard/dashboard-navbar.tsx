@@ -14,6 +14,7 @@ import {
   LogOut,
   Flame,
   Sparkles,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -96,6 +97,14 @@ export function DashboardNavbar() {
           <DropdownMenuItem asChild>
             <Link href="/journey/magnus-plays">Journey</Link>
           </DropdownMenuItem>
+          {profile?.role === "admin" && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Admin Panel
+              </Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             variant="destructive"
             onClick={handleLogout}
@@ -193,6 +202,16 @@ export function DashboardNavbar() {
                     </Link>
                   );
                 })}
+                {profile?.role === "admin" && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-amber-600 transition-colors hover:bg-accent hover:text-accent-foreground dark:text-amber-400"
+                  >
+                    <Shield className="h-5 w-5 shrink-0" />
+                    Admin Panel
+                  </Link>
+                )}
               </nav>
               <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
                 <div className="flex items-center justify-between rounded-lg bg-muted/60 px-4 py-3">

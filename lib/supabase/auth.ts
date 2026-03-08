@@ -23,3 +23,30 @@ export async function getAuthenticatedUser() {
   return { user, supabase };
 }
 
+/**
+ * Get authenticated admin user - throws redirect if not authenticated or not admin
+ * Use this in admin layout and admin pages
+ */
+export async function getAdminUser() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (error || profile?.role !== 'admin') {
+    redirect('/dashboard');
+  }
+
+  return { user, supabase };
+}
+

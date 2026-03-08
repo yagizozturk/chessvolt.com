@@ -8,6 +8,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 
+/** Profile role type */
+export type ProfileRole = "user" | "admin";
+
 /** Ensures a profile exists for the user. Creates one if missing (xp defaults to 0 in DB). */
 export async function ensureProfileExists(
   supabase: SupabaseClient,
@@ -66,4 +69,26 @@ export async function incrementXp(
   }
 
   return newXp;
+}
+
+/** Get profile by user ID. Returns null if not found. */
+export async function getProfile(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<{ xp: number; username: string | null; role: ProfileRole } | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("xp, username, role")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return {
+    xp: data.xp ?? 0,
+    username: data.username ?? null,
+    role: (data.role as ProfileRole) ?? "user",
+  };
 }

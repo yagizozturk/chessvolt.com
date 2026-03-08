@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 type Profile = {
   xp: number;
   username: string | null;
+  role: "user" | "admin";
 } | null;
 
 export function useProfile() {
@@ -27,7 +28,7 @@ export function useProfile() {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("xp, username")
+        .select("xp, username, role")
         .eq("id", user.id)
         .maybeSingle();
 
@@ -38,6 +39,7 @@ export function useProfile() {
         setProfile({
           xp: data?.xp ?? 0,
           username: data?.username ?? null,
+          role: (data?.role as "user" | "admin") ?? "user",
         });
       }
       setIsLoading(false);
