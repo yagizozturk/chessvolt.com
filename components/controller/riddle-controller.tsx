@@ -74,8 +74,9 @@ export default function RiddleController({
             pgn={game.pgn}
             ply={riddle.ply}
             moves={riddle.moves ?? ""}
-            width={610}
-            height={610}
+            width={600}
+            height={600}
+            className="border-muted rounded-xl border-4"
             onSolved={handleSolved}
           />
         </div>

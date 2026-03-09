@@ -10,6 +10,7 @@ import { useStatsStore } from "@/stores/stats-store";
 import { useCoachStore } from "@/stores/coach-store";
 import { useChessEngine } from "@/hooks/use-stockfish-engine";
 import { useChessOne } from "@/hooks/use-chess";
+import { cn } from "@/lib/utils";
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
 import "@/assets/chessground.css";
@@ -30,6 +31,8 @@ export type PuzzleBoardProps = {
   ply?: number;
   width?: number;
   height?: number;
+  /** Additional CSS classes, e.g. "border-2 border-primary" for border */
+  className?: string;
   viewOnly?: boolean;
   onGameStateChange?: (state: {
     from: string;
@@ -47,6 +50,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     moves,
     width = 620,
     height = 620,
+    className,
     viewOnly = false,
     onGameStateChange,
     onSolved,
@@ -246,6 +250,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   }
 
   return (
-    <div ref={boardRef} className="cardinal blue" style={{ width, height }} />
+    <div className={cn("w-fit", className)}>
+      <div ref={boardRef} className="cardinal blue" style={{ width, height }} />
+    </div>
   );
 }

@@ -34,11 +34,27 @@ function gameTypeToSlug(gameType: string): string {
   return gameType.replace(/_/g, "-").replace(/\s+/g, "-").toLowerCase();
 }
 
+/** Fisher-Yates shuffle - returns new array with random order */
+function shuffle<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j]!, result[i]!];
+  }
+  return result;
+}
+
 export default async function ChallengePage() {
   const { supabase } = await getAuthenticatedUser();
 
   const allRiddles = await getAllGameRiddles(supabase);
   const groups = groupRiddlesByGameType(allRiddles);
+
+  // Shuffle each group and take max 6 riddles per group
+  const shuffledGroups: Record<string, GameRiddle[]> = {};
+  for (const key of Object.keys(groups)) {
+    shuffledGroups[key] = shuffle(groups[key]!);
+  }
 
   // Fetch games for riddles (unique gameIds)
   const gameIds = [...new Set(allRiddles.map((r) => r.gameId))];
@@ -67,7 +83,7 @@ export default async function ChallengePage() {
       ) : (
         <div className="space-y-6">
           {sortedGroupKeys.map((gameType) => {
-            const riddles = groups[gameType] ?? [];
+            const riddles = shuffledGroups[gameType] ?? [];
             const slug = gameTypeToSlug(gameType);
             const displayName = formatGameType(gameType);
 
@@ -96,7 +112,7 @@ export default async function ChallengePage() {
                 <div className="grid gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
                   {riddles
                     .filter((r) => gameMap[r.gameId]?.pgn)
-                    .slice(0, 3)
+                    .slice(0, 6)
                     .map((riddle, index) => {
                       const game = gameMap[riddle.gameId]!;
                       const num = index + 1;
@@ -104,9 +120,12 @@ export default async function ChallengePage() {
                         "text-primary",
                         "text-chart-2",
                         "text-chart-4",
+                        "text-chart-1",
+                        "text-chart-3",
+                        "text-chart-5",
                       ];
                       const numColorClass =
-                        numColorClasses[index % 3] ?? numColorClasses[0];
+                        numColorClasses[index % 6] ?? numColorClasses[0];
 
                       return (
                         <Link
@@ -138,6 +157,7 @@ export default async function ChallengePage() {
                               moves={riddle.moves ?? ""}
                               width={280}
                               height={280}
+                              className="border-muted rounded-xl border-4"
                               viewOnly
                             />
                             <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 rounded-lg bg-black/60 opacity-0 transition-opacity duration-200 group-hover/board:opacity-100">
