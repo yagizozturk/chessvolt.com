@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { Puzzle } from "@/lib/model/puzzle";
 import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 import { getNextTurnFromFen } from "@/lib/chess-board/getTurn";
 import { useStatsStore } from "@/stores/stats-store";
 import { useUpdatePuzzleAnswer } from "@/hooks/use-update-puzzle";
 import { addReward } from "@/lib/api/profile";
+import { calculatePointsFromTime } from "@/lib/utils/reward";
+import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Flame, Zap, Circle, BarChart3, Tag } from "lucide-react";
+import { Flame, Zap, Circle, BarChart3, Tag, Clock } from "lucide-react";
 
 export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
   const turnText = getNextTurnFromFen(puzzle.fen);
@@ -19,9 +21,12 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
   const setStreak = useStatsStore((state) => state.setStreak);
   const xp = 0;
   const { updatePuzzleAnswerHook } = useUpdatePuzzleAnswer();
+  const startTimeRef = useRef<number>(Date.now());
+  const TOTAL_SECONDS = 5 * 60;
 
   useEffect(() => {
     initLives();
+    startTimeRef.current = Date.now();
   }, [puzzle.id, initLives]);
 
   const handleSolved = async (isCorrect: boolean) => {
@@ -33,7 +38,9 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
     }
     await updatePuzzleAnswerHook(puzzle.id, isCorrect);
     if (isCorrect) {
-      await addReward().catch(() => {});
+      const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
+      const points = calculatePointsFromTime(elapsedSeconds, TOTAL_SECONDS);
+      await addReward(points).catch(() => {});
     }
   };
 
@@ -56,6 +63,15 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
 
         {/* Right: Stats & Info */}
         <div className="flex min-w-0 flex-col gap-4">
+          <div className="border-border bg-muted/50 flex items-center justify-center gap-6 rounded-lg border p-4">
+            <div className="flex items-center gap-2">
+              <Clock className="text-primary h-5 w-5" />
+              <CountdownTimer
+                minutes={5}
+                className="text-foreground text-2xl font-bold"
+              />
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-2">
             <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
               <Flame className="text-primary h-5 w-5" />

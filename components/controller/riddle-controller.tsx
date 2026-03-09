@@ -11,6 +11,7 @@ import PuzzleBoard, {
 import { useStatsStore } from "@/stores/stats-store";
 import { useUpdateGameRiddleAnswer } from "@/hooks/use-update-game-riddle";
 import { addReward } from "@/lib/api/profile";
+import { calculatePointsFromTime } from "@/lib/utils/reward";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -47,10 +48,13 @@ export default function RiddleController({
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
   const boardRef = useRef<PuzzleBoardHandle>(null);
   const [hintCount, setHintCount] = useState(0);
+  const startTimeRef = useRef<number>(Date.now());
+  const TOTAL_SECONDS = 5 * 60;
 
   useEffect(() => {
     initLives();
     setHintCount(0);
+    startTimeRef.current = Date.now();
   }, [riddle.id, initLives]);
 
   // ===================================================================
@@ -68,7 +72,9 @@ export default function RiddleController({
     }
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
     if (isCorrect) {
-      await addReward().catch(() => {});
+      const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
+      const points = calculatePointsFromTime(elapsedSeconds, TOTAL_SECONDS);
+      await addReward(points).catch(() => {});
       if (challengeSlug) router.push(`/challenge/${challengeSlug}`);
     }
   };

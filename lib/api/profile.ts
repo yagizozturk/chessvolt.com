@@ -4,8 +4,10 @@ export type RewardResponse = {
   success: boolean;
 };
 
-export async function addReward(): Promise<{
+export async function addReward(points?: number): Promise<{
   data: RewardResponse;
 }> {
-  return await apiClient.post<{ data: RewardResponse }>("/profile/reward");
+  return await apiClient.post<{ data: RewardResponse }>("/profile/reward", {
+    points,
+  });
 }
