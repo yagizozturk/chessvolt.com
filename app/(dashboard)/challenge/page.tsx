@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Map, ChevronRight } from "lucide-react";
+import { Map, ChevronRight, Sword } from "lucide-react";
 import { getAllGameRiddles } from "@/lib/services/game-riddle";
 import { getGameById } from "@/lib/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
@@ -87,7 +87,7 @@ export default async function ChallengePage() {
                   </div>
                   <Link
                     href={`/challenge/${slug}`}
-                    className="bg-muted/50 hover:bg-muted flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
                   >
                     See All
                     <ChevronRight className="h-4 w-4" />
@@ -129,7 +129,7 @@ export default async function ChallengePage() {
                             </span>
                             <p className="truncate text-lg">{riddle.title}</p>
                           </div>
-                          <div className="mt-2 flex justify-center">
+                          <div className="group/board relative mt-2 inline-flex justify-center">
                             <PuzzleBoard
                               sourceId={riddle.id}
                               mode="riddle"
@@ -140,6 +140,14 @@ export default async function ChallengePage() {
                               height={280}
                               viewOnly
                             />
+                            <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 rounded-lg bg-black/60 opacity-0 transition-opacity duration-200 group-hover/board:opacity-100">
+                              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary">
+                                <Sword className="h-7 w-7 text-primary-foreground" />
+                              </div>
+                              <span className="font-semibold text-white">
+                                Play
+                              </span>
+                            </div>
                           </div>
                         </Link>
                       );
