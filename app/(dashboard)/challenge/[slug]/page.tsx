@@ -127,7 +127,7 @@ export default async function ChallengePage({ params }: Params) {
                       </div>
                       <div className="group/board relative mt-2 inline-flex justify-center">
                         {isComplete && (
-                          <div className="absolute right-2 top-2 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 shadow-md">
+                          <div className="absolute top-2 right-2 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 shadow-md">
                             <Check className="h-4 w-4 text-white" />
                           </div>
                         )}
@@ -143,12 +143,10 @@ export default async function ChallengePage({ params }: Params) {
                           viewOnly
                         />
                         <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-2 rounded-lg bg-black/60 opacity-0 transition-opacity duration-200 group-hover/board:opacity-100">
-                          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary">
+                          <div className="bg-primary flex h-14 w-14 items-center justify-center rounded-full">
                             <Sword className="text-primary-foreground h-7 w-7" />
                           </div>
-                          <span className="font-semibold text-white">
-                            Play
-                          </span>
+                          <span className="font-semibold text-white">Play</span>
                         </div>
                       </div>
                       <div className="mt-3 flex w-full">
@@ -197,11 +195,15 @@ export default async function ChallengePage({ params }: Params) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="border-border bg-muted/50 flex items-center justify-between rounded-lg border px-4 py-3">
-                <span className="text-muted-foreground text-sm">Total</span>
+                <span className="text-muted-foreground text-sm">
+                  Total Solved
+                </span>
                 <span className="text-foreground font-bold">{total}</span>
               </div>
               <div className="border-border bg-muted/50 flex items-center justify-between rounded-lg border px-4 py-3">
-                <span className="text-muted-foreground text-sm">Remaining</span>
+                <span className="text-muted-foreground text-sm">
+                  Remaining Challenges
+                </span>
                 <span className="text-foreground font-bold">{remaining}</span>
               </div>
             </CardContent>
