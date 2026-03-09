@@ -1,27 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  User,
-  Calendar,
-  BookOpen,
-  ExternalLink,
-  Flag,
-  Circle,
-  Lightbulb,
-  Heart,
-  Clock,
-} from "lucide-react";
+import { User, Calendar, Flag, Circle, Lightbulb, Clock } from "lucide-react";
 import type { GameRiddle } from "@/lib/model/game-riddle";
 import type { Game } from "@/lib/model/game";
-import { useStatsStore } from "@/stores/stats-store";
 import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 import { useUpdateGameRiddleAnswer } from "@/hooks/use-update-game-riddle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
 
 type RiddleControllerProps = {
@@ -48,7 +35,6 @@ export default function RiddleController({
 }: RiddleControllerProps) {
   const router = useRouter();
   const turn = riddle.ply % 2 === 0 ? "White" : "Black";
-  const lives = useStatsStore((state) => state.lives);
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
 
   // ===================================================================
@@ -83,20 +69,11 @@ export default function RiddleController({
         <div className="flex min-w-0 flex-col gap-4">
           <div className="border-border bg-muted/50 flex items-center justify-center gap-6 rounded-lg border p-4">
             <div className="flex items-center gap-2">
-              <Heart className="text-primary h-5 w-5" />
-              <span className="text-foreground text-2xl font-bold">
-                {lives}
-              </span>
-              <span className="text-muted-foreground text-sm">Lives</span>
-            </div>
-            <div className="bg-border h-10 w-px shrink-0" />
-            <div className="flex items-center gap-2">
               <Clock className="text-primary h-5 w-5" />
               <CountdownTimer
                 minutes={5}
                 className="text-foreground text-2xl font-bold"
               />
-              <span className="text-muted-foreground text-sm">Time</span>
             </div>
           </div>
 
@@ -157,36 +134,6 @@ export default function RiddleController({
                   </div>
                 </div>
               </div>
-
-              {game.opening && (
-                <>
-                  <Separator />
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground flex items-center gap-2">
-                      <BookOpen className="h-3.5 w-3.5" />
-                      Opening
-                    </span>
-                    <span className="text-foreground truncate text-right font-medium">
-                      {game.opening}
-                    </span>
-                  </div>
-                </>
-              )}
-
-              {game.url && (
-                <>
-                  <Separator />
-                  <Link
-                    href={game.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary flex items-center gap-2 text-sm font-medium hover:underline"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    View game
-                  </Link>
-                </>
-              )}
             </CardContent>
           </Card>
 
