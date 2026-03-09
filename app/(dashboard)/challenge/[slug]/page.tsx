@@ -126,6 +126,11 @@ export default async function ChallengePage({ params }: Params) {
                         <p className="truncate text-lg">{riddle.title}</p>
                       </div>
                       <div className="group/board relative mt-2 inline-flex justify-center">
+                        {isComplete && (
+                          <div className="absolute right-2 top-2 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 shadow-md">
+                            <Check className="h-4 w-4 text-white" />
+                          </div>
+                        )}
                         <PuzzleBoard
                           sourceId={riddle.id}
                           mode="riddle"
@@ -137,20 +142,12 @@ export default async function ChallengePage({ params }: Params) {
                           className="border-muted rounded-xl border-4"
                           viewOnly
                         />
-                        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 rounded-lg bg-black/60 opacity-0 transition-opacity duration-200 group-hover/board:opacity-100">
-                          <div
-                            className={`flex h-14 w-14 items-center justify-center rounded-full ${
-                              isComplete ? "bg-green-500" : "bg-primary"
-                            }`}
-                          >
-                            {isComplete ? (
-                              <Check className="h-7 w-7 text-white" />
-                            ) : (
-                              <Sword className="text-primary-foreground h-7 w-7" />
-                            )}
+                        <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-2 rounded-lg bg-black/60 opacity-0 transition-opacity duration-200 group-hover/board:opacity-100">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary">
+                            <Sword className="text-primary-foreground h-7 w-7" />
                           </div>
                           <span className="font-semibold text-white">
-                            {isComplete ? "Solved" : "Play"}
+                            Play
                           </span>
                         </div>
                       </div>
