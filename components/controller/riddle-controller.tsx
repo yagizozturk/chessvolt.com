@@ -52,15 +52,15 @@ export default function RiddleController({
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
 
   // ===================================================================
-  // When riddle is answered correctly, redirect user back to journey
+  // When riddle is answered correctly, redirect user back to challenge
   // page. gameType is already in the riddle. I know where they came from.
   // Controller handles this flow
   // ===================================================================
-  const journeySlug = riddle.gameType?.replace(/_/g, "-");
+  const challengeSlug = riddle.gameType?.replace(/_/g, "-");
   const handleSolved = async (isCorrect: boolean) => {
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
-    if (isCorrect && journeySlug) {
-      router.push(`/journey/${journeySlug}`);
+    if (isCorrect && challengeSlug) {
+      router.push(`/challenge/${challengeSlug}`);
     }
   };
 

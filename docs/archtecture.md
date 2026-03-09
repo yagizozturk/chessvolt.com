@@ -9,12 +9,12 @@
 │   ├── (dashboard)
 │   │   ├── dashboard
 │   │   ├── game-riddle
-│   │   ├── journey
+│   │   ├── challenge
 │   │   ├── layout.tsx
 │   │   ├── play
 │   │   └── puzzle
 │   ├── (marketing)
-│   │   ├── journey-preview
+│   │   ├── challenge-preview
 │   │   ├── layout.tsx
 │   │   └── page.tsx
 │   ├── favicon.ico
@@ -46,15 +46,13 @@
 │   │   ├── navbar.tsx
 │   │   ├── stat-item.tsx
 │   │   └── user-stats.tsx
-│   ├── journey
-│   │   └── journey-map.tsx
 │   ├── landing
 │   │   ├── features.tsx
 │   │   ├── footer.tsx
 │   │   ├── game-modes.tsx
 │   │   ├── gamification-features.tsx
 │   │   ├── hero.tsx
-│   │   ├── journey-preview.tsx
+│   │   ├── challenge-preview.tsx
 │   │   ├── navbar.tsx (mobildeki buttonlar kaldı ❌)
 │   │   └── pricing.tsx
 │   ├── play-board

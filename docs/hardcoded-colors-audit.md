@@ -9,9 +9,9 @@ Projede tema değiştiğinde güncellenmeyen sabit renk kullanımları. Tema tut
 | Dosya | Sorun | Öneri |
 |-------|-------|-------|
 | **components/app-sidebar.tsx** | `text-[#14b8a6]`, `text-[#00B3FF]`, `text-[#fcc800]`, `bg-[#2C4F5A]` vb. | `text-primary`, `bg-primary/20` |
-| **components/landing/journey-preview.tsx** | `border-orange-700`, `bg-orange-400`, `bg-slate-200` | `border-primary`, `bg-primary`, `bg-muted` |
-| **app/(dashboard)/journey/[slug]/page.tsx** | `#F69E0B`, `#FFB800` (altın/amber) | `text-primary`, `bg-primary` |
-| **app/(marketing)/journey-preview/[slug]/page.tsx** | Aynı hex renkler | `text-primary`, `bg-primary` |
+| **components/landing/challenge-preview.tsx** | `border-orange-700`, `bg-orange-400`, `bg-slate-200` | `border-primary`, `bg-primary`, `bg-muted` |
+| **app/(dashboard)/challenge/[slug]/page.tsx** | `#F69E0B`, `#FFB800` (altın/amber) | `text-primary`, `bg-primary` |
+| **app/(marketing)/challenge-preview/[slug]/page.tsx** | Aynı hex renkler | `text-primary`, `bg-primary` |
 | **components/controller/puzzle-controller.tsx** | `text-[#FFB800]`, `text-orange-400` | `text-primary` |
 | **components/controller/riddle-controller.tsx** | `text-[#FFB800]`, `bg-[#F69E0B]/20` | `text-primary`, `bg-primary/20` |
 | **app/storybook/page.tsx** | `text-[#fcc800]` (Zap ikonu) | `text-primary` |
@@ -25,8 +25,8 @@ Projede tema değiştiğinde güncellenmeyen sabit renk kullanımları. Tema tut
 |-------|----------|-----|
 | **components/auth/signup-form.tsx** | `bg-green-500/10 text-green-600` (başarı mesajı) | `bg-primary/10 text-primary` veya ayrı `success` değişkeni |
 | **app/(auth)/forgot-password/page.tsx** | Aynı yeşil başarı stili | Aynı öneri |
-| **components/journey/journey-map.tsx** | `bg-green-500/20 text-green-400` (tamamlanan) | `bg-primary/20 text-primary` veya `success` |
-| **app/(dashboard)/journey/[slug]/page.tsx** | `green` (doğru), `red` (yanlış) | `text-primary` / `text-destructive` |
+| **components/challenge/challenge-map.tsx** | `bg-green-500/20 text-green-400` (tamamlanan) | `bg-primary/20 text-primary` veya `success` |
+| **app/(dashboard)/challenge/[slug]/page.tsx** | `green` (doğru), `red` (yanlış) | `text-primary` / `text-destructive` |
 
 ---
 
@@ -43,8 +43,8 @@ Projede tema değiştiğinde güncellenmeyen sabit renk kullanımları. Tema tut
 ## Öncelikli Düzeltmeler
 
 1. **app-sidebar.tsx** — Tüm hex renkleri tema değişkenlerine taşı
-2. **journey-preview.tsx** — Seviye butonları için `primary` / `muted`
-3. **journey/[slug]** ve **journey-preview/[slug]** — `#F69E0B` / `#FFB800` → `primary`
+2. **challenge-preview.tsx** — Seviye butonları için `primary` / `muted`
+3. **challenge/[slug]** ve **challenge-preview/[slug]** — `#F69E0B` / `#FFB800` → `primary`
 4. **puzzle-controller** ve **riddle-controller** — `#FFB800` → `primary`
 5. **gamification-features.tsx** — `bg-slate-*` → `bg-muted`
 

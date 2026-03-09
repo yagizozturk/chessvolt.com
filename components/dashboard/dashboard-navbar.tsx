@@ -37,7 +37,7 @@ import { useStatsStore } from "@/stores/stats-store";
 import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
-  { href: "/journey/legend_games", label: "Play Like Legends", icon: Map },
+  { href: "/challenge", label: "Challenges", icon: Map },
   { href: "/reps", label: "Opening Crusher", icon: BookOpen },
   { href: "/puzzle", label: "Puzzles", icon: Puzzle },
 ];

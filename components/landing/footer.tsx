@@ -34,7 +34,7 @@ export function Footer() {
             <h3 className="font-semibold text-sm mb-4">Learn</h3>
             <ul className="space-y-3 text-sm">
               <li><Link href="/courses" className="text-muted-foreground hover:text-foreground">Courses</Link></li>
-              <li><Link href="/journey" className="text-muted-foreground hover:text-foreground">Roadmap</Link></li>
+              <li><Link href="/challenge" className="text-muted-foreground hover:text-foreground">Roadmap</Link></li>
               <li><Link href="/leaderboard" className="text-muted-foreground hover:text-foreground">Ranking</Link></li>
             </ul>
           </div>

@@ -76,7 +76,7 @@ export function GameModes() {
             No Time to Get Bored
           </h2>
           <p className="text-muted-foreground mt-4 max-w-2xl text-lg">
-            Turn your learning journey into an adventure with different
+            Turn your learning challenge into an adventure with different
             game modes for every level.
           </p>
         </div>

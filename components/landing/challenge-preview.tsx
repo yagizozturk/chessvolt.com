@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Star, BookOpen, Trophy, Lock, Map } from "lucide-react";
 import Link from "next/link";
 
-export function JourneyPreview() {
+export function ChallengePreview() {
   const levels = [
     {
       id: 1,
@@ -57,7 +57,7 @@ export function JourneyPreview() {
               Roadmap
             </Badge>
             <h2 className="text-3xl font-bold tracking-tight">
-              Your Learning Journey
+              Your Learning Challenge
             </h2>
             <p className="text-muted-foreground mt-2">
               Continue where you left off and earn new badges.
@@ -100,20 +100,11 @@ export function JourneyPreview() {
 
           <div className="mt-16">
             <Button variant="outline" size="lg" asChild>
-              <Link href="/journey">View Full Map</Link>
+              <Link href="/challenge">View Full Map</Link>
             </Button>
           </div>
         </div>
       </div>
     </section>
   );
-}
-
-{
-  /** Notes:
-   * 1. Dynamic Offset: Simulates Duolingo's curved left-right layout with "offset" values.
-   * 2. Visual Hierarchy: Orange tones for completed and active levels, gray for locked ones.
-   * 3. Button Design: Duolingo's 3D/embossed button effect using "border-b-4".
-   * 4. Interaction: Attention-grabbing label with "animate-bounce" for active level (current).
-   */
 }

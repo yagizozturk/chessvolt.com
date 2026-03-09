@@ -20,10 +20,10 @@ export function Features() {
       image: "/images/hero/landing_page_1.png",
     },
     {
-      title: "Journey",
+      title: "Challenge",
       description:
         "Progress step by step with the roadmap. Learn games from Magnus and practice.",
-      badge: "Journey",
+      badge: "Challenge",
       icon: Map,
       image: "/images/hero/landing_page_1.png",
     },

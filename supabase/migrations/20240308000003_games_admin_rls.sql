@@ -1,5 +1,5 @@
 -- RLS for games
--- SELECT: public (game-riddle page, journey)
+-- SELECT: public (game-riddle page, challenge)
 -- INSERT, UPDATE, DELETE: admin only
 
 ALTER TABLE games ENABLE ROW LEVEL SECURITY;
@@ -14,7 +14,7 @@ BEGIN
   END LOOP;
 END $$;
 
--- Anyone can read games (for game-riddle, journey pages)
+-- Anyone can read games (for game-riddle, challenge pages)
 CREATE POLICY "Public can select games"
   ON games FOR SELECT
   USING (true);

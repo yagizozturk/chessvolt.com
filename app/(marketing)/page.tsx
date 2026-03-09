@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/landing/navbar";
 import { Hero } from "@/components/landing/hero";
 import { Features } from "@/components/landing/features";
-import { JourneyPreview } from "@/components/landing/journey-preview";
+import { ChallengePreview } from "@/components/landing/challenge-preview";
 import { GamificationFeatures } from "@/components/landing/gamification-features";
 import { Pricing } from "@/components/landing/pricing";
 import { Footer } from "@/components/landing/footer";
@@ -14,7 +14,7 @@ export default function Home() {
       <Hero />
       <Features />
       <GameModes />
-      <JourneyPreview />
+      <ChallengePreview />
       <GamificationFeatures />
       <Pricing />
       <Footer />

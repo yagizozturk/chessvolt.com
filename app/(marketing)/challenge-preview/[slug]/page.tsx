@@ -11,7 +11,7 @@ type Params = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function JourneyPage({ params }: Params) {
+export default async function ChallengePage({ params }: Params) {
   const { slug } = await params;
 
   const supabase = await createClient();
@@ -71,7 +71,7 @@ export default async function JourneyPage({ params }: Params) {
             CHESS ADVENTURE
           </Badge>
           <h1 className="text-4xl font-black tracking-tight text-white capitalize md:text-5xl">
-            {slug.replace(/-/g, " ")} Journey
+            {slug.replace(/-/g, " ")} Challenge
           </h1>
           <p className="text-lg text-white/50">
             Master the tactics and unlock the secrets of this kingdom.
@@ -82,7 +82,7 @@ export default async function JourneyPage({ params }: Params) {
         {gameRiddles.length === 0 ? (
           <Card className="border-dashed border-white/10 bg-white/5">
             <CardContent className="py-12 text-center text-white/40">
-              No riddles added to this journey yet. Coming soon!
+              No riddles added to this challenge yet. Coming soon!
             </CardContent>
           </Card>
         ) : (

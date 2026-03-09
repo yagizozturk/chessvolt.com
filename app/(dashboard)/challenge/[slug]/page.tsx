@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 
 type ChapterStatus = "complete" | "current" | "locked";
 
-type JourneyChapter = {
+type ChallengeChapter = {
   id: string;
   title: string;
   status: ChapterStatus;
@@ -26,7 +26,7 @@ type Params = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function JourneyPage({ params }: Params) {
+export default async function ChallengePage({ params }: Params) {
   const { slug } = await params;
   const { user, supabase } = await getAuthenticatedUser();
 
@@ -45,11 +45,11 @@ export default async function JourneyPage({ params }: Params) {
   );
 
   let foundCurrent = false;
-  const chapters: JourneyChapter[] = gameRiddles.map((riddle, index) => {
+  const chapters: ChallengeChapter[] = gameRiddles.map((riddle, index) => {
     const isCorrect = attemptByRiddleId[riddle.id];
     const isAttempted = riddle.id in attemptByRiddleId;
 
-    let status: JourneyChapter["status"] = "locked";
+    let status: ChallengeChapter["status"] = "locked";
     if (!foundCurrent) {
       if (isAttempted && isCorrect) {
         status = "complete";
@@ -77,11 +77,11 @@ export default async function JourneyPage({ params }: Params) {
   return (
     <div className="container mx-auto max-w-6xl px-6 pt-12 pb-16">
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_320px]">
-        {/* Left: Journey (header + riddles) */}
+        {/* Left: Challenge (header + riddles) */}
         <div>
           <div className="mb-12 flex flex-col gap-2 text-center md:text-left">
             <h1 className="text-foreground text-4xl font-black tracking-tight capitalize md:text-5xl">
-              {slug.replace(/-/g, " ")} Journey
+              {slug.replace(/-/g, " ")} Challenge
             </h1>
             <p className="text-muted-foreground text-lg">
               Master the tactics and unlock the secrets of this kingdom.
@@ -91,7 +91,7 @@ export default async function JourneyPage({ params }: Params) {
           {gameRiddles.length === 0 ? (
             <Card className="border-border bg-card/50 border-dashed">
               <CardContent className="text-muted-foreground py-12 text-center">
-                No riddles added to this journey yet. Coming soon!
+                No riddles added to this challenge yet. Coming soon!
               </CardContent>
             </Card>
           ) : (
@@ -151,7 +151,7 @@ export default async function JourneyPage({ params }: Params) {
                 <Target className="text-primary h-5 w-5" />
                 Progress
               </CardTitle>
-              <CardDescription>Your journey stats</CardDescription>
+              <CardDescription>Your challenge stats</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="border-border bg-muted/50 flex items-center justify-between rounded-lg border px-4 py-3">
