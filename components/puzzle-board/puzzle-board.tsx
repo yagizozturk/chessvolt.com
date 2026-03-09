@@ -78,6 +78,8 @@ const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(function Puz
   const [isOver, setIsOver] = useState(false);
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
   const hintCountRef = useRef(0);
+  /** Fixed orientation from player's perspective - never flips when turn changes */
+  const playerOrientationRef = useRef<"white" | "black">("white");
 
   const movesArray = moves
     .trim()
@@ -156,9 +158,22 @@ const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(function Puz
 
     if (ground.current) ground.current.destroy();
 
+    // Fix orientation from player's perspective - never flip when turn changes
+    if (mode === "puzzle" && movesArray.length > 0) {
+      // Puzzle: initial position has opponent to move, player is the other color
+      playerOrientationRef.current =
+        game.current.turn() === "w" ? "black" : "white";
+    } else {
+      // Riddle: initial position has player to move
+      playerOrientationRef.current =
+        game.current.turn() === "w" ? "white" : "black";
+    }
+
+    const orientation = playerOrientationRef.current;
+
     ground.current = Chessground(boardRef.current, {
       fen: game.current.fen(),
-      orientation: game.current.turn() === "w" ? "white" : "black",
+      orientation,
       viewOnly: viewOnly,
       turnColor: game.current.turn() === "w" ? "white" : "black",
       lastMove: lastMoveRef.current ?? undefined,
@@ -188,7 +203,7 @@ const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(function Puz
 
     ground.current.set({
       fen: game.current.fen(),
-      orientation: game.current.turn() === "w" ? "white" : "black",
+      orientation: playerOrientationRef.current,
       turnColor: game.current.turn() === "w" ? "white" : "black",
       lastMove: lastMoveRef.current ?? undefined,
       movable: {
