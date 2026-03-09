@@ -6,6 +6,7 @@ import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 import { getNextTurnFromFen } from "@/lib/chess-board/getTurn";
 import { useStatsStore } from "@/stores/stats-store";
 import { useUpdatePuzzleAnswer } from "@/hooks/use-update-puzzle";
+import { addReward } from "@/lib/api/profile";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Flame, Zap, Circle, BarChart3, Tag } from "lucide-react";
@@ -23,14 +24,17 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
     initLives();
   }, [puzzle.id, initLives]);
 
-  const handleSolved = (isCorrect: boolean) => {
+  const handleSolved = async (isCorrect: boolean) => {
     if (isCorrect) {
       setStreak(streak + 1);
     } else {
       decrementLives();
       setStreak(0);
     }
-    updatePuzzleAnswerHook(puzzle.id, isCorrect);
+    await updatePuzzleAnswerHook(puzzle.id, isCorrect);
+    if (isCorrect) {
+      await addReward().catch(() => {});
+    }
   };
 
   return (

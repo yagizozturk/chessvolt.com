@@ -10,6 +10,7 @@ import PuzzleBoard, {
 } from "@/components/puzzle-board/puzzle-board";
 import { useStatsStore } from "@/stores/stats-store";
 import { useUpdateGameRiddleAnswer } from "@/hooks/use-update-game-riddle";
+import { addReward } from "@/lib/api/profile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -66,8 +67,9 @@ export default function RiddleController({
       setStreak(0);
     }
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
-    if (isCorrect && challengeSlug) {
-      router.push(`/challenge/${challengeSlug}`);
+    if (isCorrect) {
+      await addReward().catch(() => {});
+      if (challengeSlug) router.push(`/challenge/${challengeSlug}`);
     }
   };
 
