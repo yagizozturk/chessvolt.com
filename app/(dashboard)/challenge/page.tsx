@@ -1,24 +1,10 @@
-/**
- * Todo:
- * - Sayfa tam olarak büyüyecek ve ilk 6 puzzle board olarak gösterilicek
- * - Eğlenceli ve görsel olarka güzel göstermek için, tepesinde white_player logosu, altta diğeri olabilirmi
- * - belki board un üzerine gelince bir animasyon çıkar, oyna diye.
- *
- *
- */
-
 import Link from "next/link";
 import { Map, ChevronRight } from "lucide-react";
 import { getAllGameRiddles } from "@/lib/services/game-riddle";
+import { getGameById } from "@/lib/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 import type { GameRiddle } from "@/lib/model/game-riddle";
 
 function groupRiddlesByGameType(
@@ -54,6 +40,17 @@ export default async function ChallengePage() {
   const allRiddles = await getAllGameRiddles(supabase);
   const groups = groupRiddlesByGameType(allRiddles);
 
+  // Fetch games for riddles (unique gameIds)
+  const gameIds = [...new Set(allRiddles.map((r) => r.gameId))];
+  const games = await Promise.all(
+    gameIds.map((id) => getGameById(supabase, id)),
+  );
+  const gameMap = Object.fromEntries(
+    games
+      .filter((g): g is NonNullable<typeof g> => g != null)
+      .map((g) => [g.id, g]),
+  );
+
   // Filter out uncategorized if empty or sort: put uncategorized last
   const sortedGroupKeys = Object.keys(groups).sort((a: string, b: string) => {
     if (a === "uncategorized") return 1;
@@ -63,28 +60,10 @@ export default async function ChallengePage() {
 
   return (
     <div className="container mx-auto max-w-5xl px-6 pt-12 pb-16">
-      <div className="mb-12 flex flex-col gap-2 text-center md:text-left">
-        <Badge
-          variant="outline"
-          className="border-primary/20 bg-primary/10 text-primary w-fit gap-2 rounded-full px-4 py-1.5 backdrop-blur-md"
-        >
-          <Map className="h-4 w-4" />
-          Challenges
-        </Badge>
-        <h1 className="text-foreground text-4xl font-black tracking-tight md:text-5xl">
-          All Challenges
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Master tactics by game type. Pick a challenge and start solving.
-        </p>
-      </div>
-
       {sortedGroupKeys.length === 0 ? (
-        <Card className="border-border bg-card/50 border-dashed">
-          <CardContent className="text-muted-foreground py-12 text-center">
-            No challenges added yet. Coming soon!
-          </CardContent>
-        </Card>
+        <div className="text-muted-foreground py-12 text-center">
+          No challenges added yet. Coming soon!
+        </div>
       ) : (
         <div className="space-y-6">
           {sortedGroupKeys.map((gameType) => {
@@ -93,51 +72,80 @@ export default async function ChallengePage() {
             const displayName = formatGameType(gameType);
 
             return (
-              <Card
-                key={gameType}
-                className="hover:border-primary/30 overflow-hidden border-2 transition-all hover:shadow-md"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <CardTitle className="flex items-center gap-2 text-xl">
-                        {displayName}
-                        <Badge variant="secondary" className="font-normal">
-                          {riddles.length} riddles
-                        </Badge>
-                      </CardTitle>
-                      <CardDescription className="mt-1">
-                        Master the tactics in this collection.
-                      </CardDescription>
-                    </div>
-                    <Link
-                      href={`/challenge/${slug}`}
-                      className="border-border bg-muted/50 hover:bg-muted flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
-                    >
-                      See All
-                      <ChevronRight className="h-4 w-4" />
-                    </Link>
+              <div key={gameType} className="overflow-hidden">
+                <div className="flex items-center justify-between gap-4 px-4 py-3">
+                  <div>
+                    <h2 className="flex items-center gap-2 text-2xl font-semibold">
+                      {displayName}
+                      <Badge variant="default" className="font-normal">
+                        {riddles.length} riddles
+                      </Badge>
+                    </h2>
+                    <p className="text-muted-foreground mt-1 text-sm">
+                      Master the tactics in this collection.
+                    </p>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    {riddles.map((riddle) => (
-                      <Link
-                        key={riddle.id}
-                        href={`/game-riddle/${riddle.id}`}
-                        className="border-border bg-muted/30 hover:bg-muted/50 flex items-center gap-3 rounded-lg border px-3 py-2 transition-colors"
-                      >
-                        <span className="text-muted-foreground text-xs font-medium">
-                          #{riddle.ply}
-                        </span>
-                        <span className="truncate text-sm font-medium">
-                          {riddle.title}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                  <Link
+                    href={`/challenge/${slug}`}
+                    className="bg-muted/50 hover:bg-muted flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                  >
+                    See All
+                    <ChevronRight className="h-4 w-4" />
+                  </Link>
+                </div>
+                <div className="grid gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {riddles
+                    .filter((r) => gameMap[r.gameId]?.pgn)
+                    .slice(0, 3)
+                    .map((riddle, index) => {
+                      const game = gameMap[riddle.gameId]!;
+                      const num = index + 1;
+                      const numColorClasses = [
+                        "text-primary",
+                        "text-chart-2",
+                        "text-chart-4",
+                      ];
+                      const numColorClass =
+                        numColorClasses[index % 3] ?? numColorClasses[0];
+
+                      return (
+                        <Link
+                          key={riddle.id}
+                          href={`/game-riddle/${riddle.id}`}
+                          className="group flex flex-col"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="flex shrink-0 items-baseline gap-0.5">
+                              <span
+                                className={`text-sm font-medium ${numColorClass}`}
+                              >
+                                #
+                              </span>
+                              <span
+                                className={`text-4xl font-bold ${numColorClass}`}
+                              >
+                                {num}
+                              </span>
+                            </span>
+                            <p className="truncate text-lg">{riddle.title}</p>
+                          </div>
+                          <div className="mt-2 flex justify-center">
+                            <PuzzleBoard
+                              sourceId={riddle.id}
+                              mode="riddle"
+                              pgn={game.pgn}
+                              ply={riddle.ply}
+                              moves={riddle.moves ?? ""}
+                              width={280}
+                              height={280}
+                              viewOnly
+                            />
+                          </div>
+                        </Link>
+                      );
+                    })}
+                </div>
+              </div>
             );
           })}
         </div>

@@ -56,7 +56,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     props.initialFen != null && props.initialFen !== ""
       ? props.initialFen
       : props.pgn != null && props.ply != null
-        ? getFenFromPgnAtPly(props.pgn, props.ply) ?? undefined
+        ? (getFenFromPgnAtPly(props.pgn, props.ply) ?? undefined)
         : undefined;
 
   const boardRef = useRef<HTMLDivElement>(null);
