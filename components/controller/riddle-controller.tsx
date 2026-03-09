@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { User, Calendar, Flag, Circle, Lightbulb, Clock } from "lucide-react";
 import type { GameRiddle } from "@/lib/model/game-riddle";
 import type { Game } from "@/lib/model/game";
 import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
+import { useStatsStore } from "@/stores/stats-store";
 import { useUpdateGameRiddleAnswer } from "@/hooks/use-update-game-riddle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +37,15 @@ export default function RiddleController({
 }: RiddleControllerProps) {
   const router = useRouter();
   const turn = riddle.ply % 2 === 0 ? "White" : "Black";
+  const streak = useStatsStore((state) => state.streak);
+  const initLives = useStatsStore((state) => state.initLives);
+  const decrementLives = useStatsStore((state) => state.decrementLives);
+  const setStreak = useStatsStore((state) => state.setStreak);
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
+
+  useEffect(() => {
+    initLives();
+  }, [riddle.id, initLives]);
 
   // ===================================================================
   // When riddle is answered correctly, redirect user back to challenge
@@ -44,6 +54,12 @@ export default function RiddleController({
   // ===================================================================
   const challengeSlug = riddle.gameType?.replace(/_/g, "-");
   const handleSolved = async (isCorrect: boolean) => {
+    if (isCorrect) {
+      setStreak(streak + 1);
+    } else {
+      decrementLives();
+      setStreak(0);
+    }
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
     if (isCorrect && challengeSlug) {
       router.push(`/challenge/${challengeSlug}`);

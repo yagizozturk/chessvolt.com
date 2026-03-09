@@ -6,7 +6,6 @@ import type { Key } from "@lichess-org/chessground/types";
 import { toDests } from "@/lib/chess-board/toDests";
 import { getFenFromPgnAtPly } from "@/lib/chess-board/getFenFromPgnAtPly";
 import { useSound } from "@/hooks/use-sound";
-import { useStatsStore } from "@/stores/stats-store";
 import { useCoachStore } from "@/stores/coach-store";
 import { useChessEngine } from "@/hooks/use-stockfish-engine";
 import { useChessOne } from "@/hooks/use-chess";
@@ -80,13 +79,6 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   const { play: playMoveSound } = useSound("/audio/move.wav", 0.5);
 
   // ============================================================================
-  // Stats Store updates
-  // ============================================================================
-  const setStoreStreak = useStatsStore((state) => state.setStreak);
-  const decrementLives = useStatsStore((state) => state.decrementLives);
-  const initLives = useStatsStore((state) => state.initLives);
-
-  // ============================================================================
   // Coach Store updates
   // ============================================================================
   const setStoreFen = useCoachStore((state) => state.setFen);
@@ -118,9 +110,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setCurrentStep(0);
     setIsOver(false);
     currentStepRef.current = 0;
-    initLives();
     lastMoveRef.current = undefined;
-  }, [sourceId, initLives]);
+  }, [sourceId]);
 
   // ============================================================================
   // Initialize Chessground
@@ -211,8 +202,6 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     if (userUci !== expectedUci) {
       playMoveSound();
       updateBoard();
-      decrementLives();
-      setStoreStreak(0);
       onSolved?.(false);
       return;
     }
@@ -227,7 +216,6 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
 
     if (step === movesArray.length - 1) {
       setIsOver(true);
-      setStoreStreak(useStatsStore.getState().streak + 1);
       onSolved?.(true);
       return;
     }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import type { Puzzle } from "@/lib/model/puzzle";
 import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 import { getNextTurnFromFen } from "@/lib/chess-board/getTurn";
@@ -12,8 +13,25 @@ import { Flame, Zap, Circle, BarChart3, Tag } from "lucide-react";
 export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
   const turnText = getNextTurnFromFen(puzzle.fen);
   const streak = useStatsStore((state) => state.streak);
+  const initLives = useStatsStore((state) => state.initLives);
+  const decrementLives = useStatsStore((state) => state.decrementLives);
+  const setStreak = useStatsStore((state) => state.setStreak);
   const xp = 0;
   const { updatePuzzleAnswerHook } = useUpdatePuzzleAnswer();
+
+  useEffect(() => {
+    initLives();
+  }, [puzzle.id, initLives]);
+
+  const handleSolved = (isCorrect: boolean) => {
+    if (isCorrect) {
+      setStreak(streak + 1);
+    } else {
+      decrementLives();
+      setStreak(0);
+    }
+    updatePuzzleAnswerHook(puzzle.id, isCorrect);
+  };
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
@@ -28,9 +46,7 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
             width={620}
             height={620}
             viewOnly={false}
-            onSolved={(isCorrect) =>
-              updatePuzzleAnswerHook(puzzle.id, isCorrect)
-            }
+            onSolved={handleSolved}
           />
         </div>
 
