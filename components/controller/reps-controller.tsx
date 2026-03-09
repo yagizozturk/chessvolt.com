@@ -1,13 +1,20 @@
 "use client";
 
-import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useRepsStore } from "@/stores/reps-store";
 import type { Rep } from "@/lib/model/reps";
 import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardHeader } from "@/components/ui/card";
 
 export default function RepsController({ rep }: { rep: Rep }) {
+  const router = useRouter();
   const isRepsStarted = useRepsStore((state) => state.isRepsStarted);
+
+  const handleSolved = (isCorrect: boolean) => {
+    if (isCorrect) {
+      router.push("/reps");
+    }
+  };
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
@@ -23,6 +30,7 @@ export default function RepsController({ rep }: { rep: Rep }) {
             width={620}
             height={620}
             viewOnly={false}
+            onSolved={handleSolved}
           />
         </div>
 
@@ -31,17 +39,16 @@ export default function RepsController({ rep }: { rep: Rep }) {
           <div className="flex min-w-0 flex-col gap-4">
             <div className="grid grid-cols-2 gap-2">
               <Card className="border-border bg-muted/50 rounded-lg">
-                <CardHeader className="flex flex-row items-center gap-2 p-4 pb-2">
-                  <Image
-                    src="/images/icons/icon-crown.png"
-                    alt="Turn"
-                    width={24}
-                    height={24}
-                  />
+                <CardHeader className="p-4 pb-2">
+                  <p className="text-foreground font-semibold">
+                    {rep.title || "Untitled Repertoire"}
+                  </p>
+                  {rep.openingName && (
+                    <p className="text-muted-foreground text-sm">
+                      {rep.openingName}
+                    </p>
+                  )}
                 </CardHeader>
-                <CardContent className="px-4 pt-0 pb-4">
-                  <p className="text-foreground font-semibold">Test</p>
-                </CardContent>
               </Card>
             </div>
           </div>
