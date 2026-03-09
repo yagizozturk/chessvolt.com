@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Map, ChevronRight, Sword } from "lucide-react";
+import { Map, ChevronRight, Sword, Circle } from "lucide-react";
 import { getAllGameRiddles } from "@/lib/services/game-riddle";
 import { getGameById } from "@/lib/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
@@ -141,12 +141,29 @@ export default async function ChallengePage() {
                               viewOnly
                             />
                             <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 rounded-lg bg-black/60 opacity-0 transition-opacity duration-200 group-hover/board:opacity-100">
-                              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary">
-                                <Sword className="h-7 w-7 text-primary-foreground" />
+                              <div className="bg-primary flex h-14 w-14 items-center justify-center rounded-full">
+                                <Sword className="text-primary-foreground h-7 w-7" />
                               </div>
                               <span className="font-semibold text-white">
                                 Play
                               </span>
+                            </div>
+                          </div>
+                          <div className="mt-3 flex items-center justify-center">
+                            <div className="flex items-center gap-2 px-3 py-1.5">
+                              <Circle className="stroke-border h-3.5 w-3.5 fill-white" />
+                              <span className="max-w-[110px] truncate text-sm font-medium">
+                                {game.whitePlayer}
+                              </span>
+                            </div>
+                            <span className="text-muted-foreground text-sm font-medium">
+                              vs
+                            </span>
+                            <div className="flex items-center gap-2 px-3 py-1.5">
+                              <span className="max-w-[110px] truncate text-sm font-medium">
+                                {game.blackPlayer}
+                              </span>
+                              <Circle className="fill-primary stroke-primary h-3.5 w-3.5" />
                             </div>
                           </div>
                         </Link>
