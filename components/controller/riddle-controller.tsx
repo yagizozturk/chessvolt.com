@@ -2,7 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { User, Calendar, Flag, Circle, Lightbulb, Clock } from "lucide-react";
+import {
+  User,
+  Calendar,
+  Flag,
+  Circle,
+  Lightbulb,
+  Clock,
+  CheckCircle2,
+} from "lucide-react";
 import type { GameRiddle } from "@/lib/model/game-riddle";
 import type { Game } from "@/lib/model/game";
 import PuzzleBoard, {
@@ -48,6 +56,9 @@ export default function RiddleController({
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
   const boardRef = useRef<PuzzleBoardHandle>(null);
   const [hintCount, setHintCount] = useState(0);
+  const [showCorrect, setShowCorrect] = useState(false);
+  const [earnedPoints, setEarnedPoints] = useState(0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const startTimeRef = useRef<number>(Date.now());
   const TOTAL_SECONDS = 5 * 60;
 
@@ -72,17 +83,47 @@ export default function RiddleController({
     }
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
     if (isCorrect) {
-      const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
-      const points = calculatePointsFromTime(elapsedSeconds, TOTAL_SECONDS);
+      const elapsed = (Date.now() - startTimeRef.current) / 1000;
+      const points = calculatePointsFromTime(elapsed, TOTAL_SECONDS);
       await addReward(points).catch(() => {});
-      if (challengeSlug) router.push(`/challenge/${challengeSlug}`);
+      setElapsedSeconds(Math.round(elapsed));
+      setEarnedPoints(points);
+      setShowCorrect(true);
+      setTimeout(() => {
+        if (challengeSlug) router.push(`/challenge/${challengeSlug}`);
+      }, 1500);
     }
   };
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
-        <div className="min-w-0">
+        <div className="relative min-w-0">
+          {showCorrect && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/50 backdrop-blur-sm">
+              <Card className="animate-in zoom-in-95 fade-in-0 duration-200 min-w-[280px] border-emerald-500/40 bg-emerald-50/95 shadow-xl dark:bg-emerald-950/95 dark:border-emerald-400/30">
+                <CardContent className="flex flex-col items-center gap-6 px-12 py-8">
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/20">
+                    <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="space-y-3 text-center">
+                    <p className="text-3xl font-semibold text-emerald-800 dark:text-emerald-200">
+                      Doğru!
+                    </p>
+                    <p className="text-muted-foreground text-sm">
+                      {elapsedSeconds} saniyede çözdün
+                    </p>
+                    <Badge
+                      variant="secondary"
+                      className="border-emerald-500/30 bg-emerald-500/20 px-4 py-1.5 text-base font-semibold text-emerald-700 dark:text-emerald-300"
+                    >
+                      +{earnedPoints} puan
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
           <PuzzleBoard
             ref={boardRef}
             sourceId={riddle.id}
