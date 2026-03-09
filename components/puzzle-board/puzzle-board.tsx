@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Chessground } from "@lichess-org/chessground";
 import type { Key } from "@lichess-org/chessground/types";
 import { toDests } from "@/lib/chess-board/toDests";
@@ -40,9 +40,15 @@ export type PuzzleBoardProps = {
   }) => void;
   /** Called when puzzle/riddle is solved (correct or wrong). Controller handles DB persistence. */
   onSolved?: (isCorrect: boolean) => void;
+  /** Called when hint is used. hintCount: 1 = first hint (square), 2 = second hint (arrow), then button should disable. */
+  onHintUsed?: (hintCount: number) => void;
 };
 
-export default function PuzzleBoard(props: PuzzleBoardProps) {
+export type PuzzleBoardHandle = {
+  showHint: () => void;
+};
+
+const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(function PuzzleBoard(props, ref) {
   const {
     sourceId,
     mode,
@@ -53,6 +59,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     viewOnly = false,
     onGameStateChange,
     onSolved,
+    onHintUsed,
   } = props;
 
   const initialFen =
@@ -70,6 +77,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   const currentStepRef = useRef(0);
   const [isOver, setIsOver] = useState(false);
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
+  const hintCountRef = useRef(0);
 
   const movesArray = moves
     .trim()
@@ -104,6 +112,32 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   });
 
   // ============================================================================
+  // Hint (drawable shapes) - exposed via ref
+  // ============================================================================
+  useImperativeHandle(
+    ref,
+    () => ({
+      showHint() {
+        if (!ground.current || isOver) return;
+        if (hintCountRef.current >= 2) return;
+        const step = currentStepRef.current;
+        const expectedUci = movesArray[step];
+        if (!expectedUci || expectedUci.length < 4) return;
+        const orig = expectedUci.slice(0, 2) as Key;
+        const dest = expectedUci.slice(2, 4) as Key;
+        hintCountRef.current += 1;
+        if (hintCountRef.current === 1) {
+          ground.current.setAutoShapes([{ orig, brush: "green" }]);
+        } else {
+          ground.current.setAutoShapes([{ orig, dest, brush: "green" }]);
+        }
+        onHintUsed?.(hintCountRef.current);
+      },
+    }),
+    [isOver, onHintUsed]
+  );
+
+  // ============================================================================
   // Initialize Fen
   // ============================================================================
   useEffect(() => {
@@ -111,6 +145,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setIsOver(false);
     currentStepRef.current = 0;
     lastMoveRef.current = undefined;
+    hintCountRef.current = 0;
   }, [sourceId]);
 
   // ============================================================================
@@ -201,6 +236,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
 
     if (userUci !== expectedUci) {
       playMoveSound();
+      ground.current?.setAutoShapes([]);
       updateBoard();
       onSolved?.(false);
       return;
@@ -209,6 +245,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     makeMove(from, to, "q");
     lastMoveRef.current = [from as Key, to as Key];
     playCorrectSound();
+    ground.current?.setAutoShapes([]);
     handleStepChange();
     updateBoard();
     setStoreFen(game.current.fen());
@@ -242,4 +279,6 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
       <div ref={boardRef} className="cardinal blue" style={{ width, height }} />
     </div>
   );
-}
+});
+
+export default PuzzleBoard;

@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { User, Calendar, Flag, Circle, Lightbulb, Clock } from "lucide-react";
 import type { GameRiddle } from "@/lib/model/game-riddle";
 import type { Game } from "@/lib/model/game";
-import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
+import PuzzleBoard, {
+  type PuzzleBoardHandle,
+} from "@/components/puzzle-board/puzzle-board";
 import { useStatsStore } from "@/stores/stats-store";
 import { useUpdateGameRiddleAnswer } from "@/hooks/use-update-game-riddle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,9 +44,12 @@ export default function RiddleController({
   const decrementLives = useStatsStore((state) => state.decrementLives);
   const setStreak = useStatsStore((state) => state.setStreak);
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
+  const boardRef = useRef<PuzzleBoardHandle>(null);
+  const [hintCount, setHintCount] = useState(0);
 
   useEffect(() => {
     initLives();
+    setHintCount(0);
   }, [riddle.id, initLives]);
 
   // ===================================================================
@@ -71,6 +76,7 @@ export default function RiddleController({
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
         <div className="min-w-0">
           <PuzzleBoard
+            ref={boardRef}
             sourceId={riddle.id}
             mode="riddle"
             pgn={game.pgn}
@@ -80,6 +86,7 @@ export default function RiddleController({
             height={600}
             className="border-muted rounded-xl border-4"
             onSolved={handleSolved}
+            onHintUsed={setHintCount}
           />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
@@ -153,7 +160,13 @@ export default function RiddleController({
             </CardContent>
           </Card>
 
-          <Button variant="default" size="lg" className="w-full">
+          <Button
+            variant="default"
+            size="lg"
+            className="w-full"
+            disabled={hintCount >= 2}
+            onClick={() => boardRef.current?.showHint()}
+          >
             <Lightbulb className="mr-2 h-4 w-4" />
             Hint
           </Button>
