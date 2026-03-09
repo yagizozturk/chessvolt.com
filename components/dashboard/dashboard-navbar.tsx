@@ -37,10 +37,9 @@ import { useStatsStore } from "@/stores/stats-store";
 import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/journey/legend_games", label: "Journey", icon: Map },
+  { href: "/journey/legend_games", label: "Play Like Legends", icon: Map },
+  { href: "/reps", label: "Opening Crusher", icon: BookOpen },
   { href: "/puzzle", label: "Puzzles", icon: Puzzle },
-  { href: "/reps", label: "Reps", icon: BookOpen },
 ];
 
 export function DashboardNavbar() {
@@ -83,23 +82,16 @@ export function DashboardNavbar() {
             <span className="sr-only">Profile menu</span>
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="end" className="w-48">
           <div className="px-2 py-2">
-            <p className="text-sm font-medium">
-              {profile?.username ?? "User"}
-            </p>
+            <p className="text-sm font-medium">{profile?.username ?? "User"}</p>
             <p className="text-muted-foreground text-xs">
               {profile?.xp ?? 0} XP
             </p>
           </div>
           <DropdownMenuItem asChild>
             <Link href="/dashboard">Dashboard</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/journey/legend_games">Journey</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/reps">Reps</Link>
           </DropdownMenuItem>
           {profile?.role === "admin" && (
             <DropdownMenuItem asChild>
