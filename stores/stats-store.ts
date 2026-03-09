@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 const MAX_LIVES = 5;
 
@@ -12,13 +13,18 @@ type StatsStore = {
   initLives: () => void;
 };
 
-export const useStatsStore = create<StatsStore>((set) => ({
-  streak: 0,
-  lives: MAX_LIVES,
-  setStreak: (streak: number) => set({ streak }),
-  setLives: (lives: number) => set({ lives }),
-  decrementLives: () =>
-    set((state) => ({ lives: Math.max(0, state.lives - 1) })),
-  resetPuzzle: () => set({ streak: 0 }),
-  initLives: () => set({ lives: MAX_LIVES }),
-}));
+export const useStatsStore = create<StatsStore>()(
+  persist(
+    (set) => ({
+      streak: 0,
+      lives: MAX_LIVES,
+      setStreak: (streak: number) => set({ streak }),
+      setLives: (lives: number) => set({ lives }),
+      decrementLives: () =>
+        set((state) => ({ lives: Math.max(0, state.lives - 1) })),
+      resetPuzzle: () => set({ streak: 0 }),
+      initLives: () => set({ lives: MAX_LIVES }),
+    }),
+    { name: "chessvolt-stats" },
+  ),
+);
