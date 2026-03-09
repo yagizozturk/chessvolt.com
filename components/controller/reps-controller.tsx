@@ -10,23 +10,26 @@ export default function RepsController({ rep }: { rep: Rep }) {
   const isRepsStarted = useRepsStore((state) => state.isRepsStarted);
 
   return (
-    <div className="flex">
-      <div key={rep.id}>
-        <PuzzleBoard
-          sourceId={rep.id}
-          mode="riddle"
-          pgn={rep.pgn ?? undefined}
-          ply={rep.ply ?? 0}
-          moves={rep.moves}
-          width={620}
-          height={620}
-          viewOnly={false}
-        />
-      </div>
-      {!isRepsStarted && (
-        <div className="ml-4 flex-1 gap-4">
-          <div className="p-4">
-            <div className="grid grid-cols-2 gap-4">
+    <div className="container mx-auto max-w-5xl px-4 py-8">
+      <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
+        {/* Left: Board */}
+        <div key={rep.id}>
+          <PuzzleBoard
+            sourceId={rep.id}
+            mode="riddle"
+            pgn={rep.pgn ?? undefined}
+            ply={rep.ply ?? 0}
+            moves={rep.moves}
+            width={620}
+            height={620}
+            viewOnly={false}
+          />
+        </div>
+
+        {/* Right: Stats & Info */}
+        {!isRepsStarted && (
+          <div className="flex min-w-0 flex-col gap-4">
+            <div className="grid grid-cols-2 gap-2">
               <Card className="border-border bg-muted/50 rounded-lg">
                 <CardHeader className="flex flex-row items-center gap-2 p-4 pb-2">
                   <Image
@@ -42,8 +45,8 @@ export default function RepsController({ rep }: { rep: Rep }) {
               </Card>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
