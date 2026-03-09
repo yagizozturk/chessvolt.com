@@ -87,7 +87,7 @@ export function AdminNavbar() {
 
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" asChild>
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/challenge" className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Main App</span>
             </Link>
@@ -150,7 +150,7 @@ export function AdminNavbar() {
               <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
                 <Button variant="outline" asChild>
                   <Link
-                    href="/dashboard"
+                    href="/challenge"
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-2"
                   >

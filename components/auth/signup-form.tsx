@@ -52,7 +52,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       password,
       options: {
         data: { full_name: name },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/challenge`,
       },
     })
 
@@ -73,7 +73,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     // Supabase may require email confirmation - check auth config
     if (data.session) {
       router.refresh()
-      router.push("/dashboard")
+      router.push("/challenge")
     } else {
       setSuccess(true)
     }
@@ -85,7 +85,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=/challenge` },
     })
 
     if (error) {

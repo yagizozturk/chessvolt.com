@@ -91,7 +91,7 @@ export function DashboardNavbar() {
             </p>
           </div>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/challenge">Challenges</Link>
           </DropdownMenuItem>
           {profile?.role === "admin" && (
             <DropdownMenuItem asChild>

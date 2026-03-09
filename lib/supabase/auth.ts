@@ -44,7 +44,7 @@ export async function getAdminUser() {
     .single();
 
   if (error || profile?.role !== 'admin') {
-    redirect('/dashboard');
+    redirect('/challenge');
   }
 
   return { user, supabase };
