@@ -1,6 +1,15 @@
 import Link from "next/link";
-import { Target, Trophy, XOctagon, TrendingUp, Check, BookOpen, Lock } from "lucide-react";
+import {
+  Target,
+  Trophy,
+  XOctagon,
+  TrendingUp,
+  Check,
+  Sword,
+  Circle,
+} from "lucide-react";
 import { getGameRiddlesByGameType } from "@/lib/services/game-riddle";
+import { getGameById } from "@/lib/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import * as userGameRiddleRepo from "@/lib/repositories/user-game-riddle.repository";
 import {
@@ -10,17 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-
-type ChapterStatus = "complete" | "current" | "locked";
-
-type ChallengeChapter = {
-  id: string;
-  title: string;
-  status: ChapterStatus;
-  index: number;
-};
+import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
 
 type Params = {
   params: Promise<{ slug: string }>;
@@ -40,32 +39,20 @@ export default async function ChallengePage({ params }: Params) {
     userGameRiddleRepo.findAttemptedGameRiddleAttempts(supabase, user.id),
   ]);
 
+  // Fetch games for boards
+  const gameIds = [...new Set(gameRiddles.map((r) => r.gameId))];
+  const games = await Promise.all(
+    gameIds.map((id) => getGameById(supabase, id)),
+  );
+  const gameMap = Object.fromEntries(
+    games
+      .filter((g): g is NonNullable<typeof g> => g != null)
+      .map((g) => [g.id, g]),
+  );
+
   const attemptByRiddleId = Object.fromEntries(
     attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
   );
-
-  let foundCurrent = false;
-  const chapters: ChallengeChapter[] = gameRiddles.map((riddle, index) => {
-    const isCorrect = attemptByRiddleId[riddle.id];
-    const isAttempted = riddle.id in attemptByRiddleId;
-
-    let status: ChallengeChapter["status"] = "locked";
-    if (!foundCurrent) {
-      if (isAttempted && isCorrect) {
-        status = "complete";
-      } else {
-        status = "current";
-        foundCurrent = true;
-      }
-    }
-
-    return {
-      id: riddle.id,
-      title: riddle.title,
-      status,
-      index,
-    };
-  });
 
   const total = gameRiddles.length;
   const correct = attemptedRiddles.filter((a) => a.isCorrect).length;
@@ -95,51 +82,109 @@ export default async function ChallengePage({ params }: Params) {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {chapters.map((chapter) => {
-                const isLocked = chapter.status === "locked";
-                const isComplete = chapter.status === "complete";
-                const isCurrent = chapter.status === "current";
+            <div className="grid gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
+              {gameRiddles
+                .map((riddle, index) => {
+                  const game = gameMap[riddle.gameId];
+                  if (!game?.pgn) return null;
+                  return { riddle, game, index };
+                })
+                .filter((x): x is NonNullable<typeof x> => x != null)
+                .map(({ riddle, game, index }) => {
+                  const isComplete = attemptByRiddleId[riddle.id] === true;
+                  const num = index + 1;
+                  const numColorClasses = [
+                    "text-primary",
+                    "text-chart-2",
+                    "text-chart-4",
+                    "text-chart-1",
+                    "text-chart-3",
+                    "text-chart-5",
+                  ];
+                  const numColorClass =
+                    numColorClasses[index % 6] ?? numColorClasses[0];
 
-                return (
-                  <div key={chapter.id} className="relative">
-                    {isCurrent && (
-                      <Badge className="bg-primary text-primary-foreground absolute -top-2 left-1/2 -translate-x-1/2 animate-bounce px-3 py-1 text-xs">
-                        Current
-                      </Badge>
-                    )}
-                    <Button
-                      size="icon"
-                      variant={isLocked ? "ghost" : "default"}
-                      className={`h-14 w-14 rounded-full border-b-4 transition-all active:border-b-0 ${
-                        isComplete
-                          ? "border-primary/80 bg-primary hover:bg-primary/90"
-                          : isCurrent
-                            ? "border-primary bg-primary shadow-lg hover:bg-primary/90"
-                            : "pointer-events-none border-border bg-muted text-muted-foreground"
-                      }`}
-                      asChild={!isLocked}
+                  return (
+                    <Link
+                      key={riddle.id}
+                      href={`/game-riddle/${riddle.id}`}
+                      className="group flex flex-col"
                     >
-                      {isLocked ? (
-                        <span>
-                          <Lock className="h-6 w-6" />
+                      <div className="flex items-center gap-3">
+                        <span className="flex shrink-0 items-baseline gap-0.5">
+                          <span
+                            className={`text-sm font-medium ${numColorClass}`}
+                          >
+                            #
+                          </span>
+                          <span
+                            className={`text-4xl font-bold ${numColorClass}`}
+                          >
+                            {num}
+                          </span>
                         </span>
-                      ) : (
-                        <Link href={`/game-riddle/${chapter.id}`}>
-                          {isComplete ? (
-                            <Check className="h-6 w-6" />
-                          ) : (
-                            <BookOpen className="h-6 w-6" />
-                          )}
-                        </Link>
-                      )}
-                    </Button>
-                    <p className="text-muted-foreground mt-2 truncate text-center text-sm">
-                      {chapter.title}
-                    </p>
-                  </div>
-                );
-              })}
+                        <p className="truncate text-lg">{riddle.title}</p>
+                      </div>
+                      <div className="group/board relative mt-2 inline-flex justify-center">
+                        <PuzzleBoard
+                          sourceId={riddle.id}
+                          mode="riddle"
+                          pgn={game.pgn}
+                          ply={riddle.ply}
+                          moves={riddle.moves ?? ""}
+                          width={220}
+                          height={220}
+                          className="border-muted rounded-xl border-4"
+                          viewOnly
+                        />
+                        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 rounded-lg bg-black/60 opacity-0 transition-opacity duration-200 group-hover/board:opacity-100">
+                          <div
+                            className={`flex h-14 w-14 items-center justify-center rounded-full ${
+                              isComplete ? "bg-green-500" : "bg-primary"
+                            }`}
+                          >
+                            {isComplete ? (
+                              <Check className="h-7 w-7 text-white" />
+                            ) : (
+                              <Sword className="text-primary-foreground h-7 w-7" />
+                            )}
+                          </div>
+                          <span className="font-semibold text-white">
+                            {isComplete ? "Solved" : "Play"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-3 flex w-full">
+                        <div className="flex w-1/2 min-w-0 shrink-0 items-center gap-2">
+                          <Circle className="stroke-border h-3.5 w-3.5 shrink-0 fill-white" />
+                          <div className="min-w-0 flex-1 overflow-hidden">
+                            <div className="truncate text-sm font-medium">
+                              {game.whitePlayer.split(" ")[0]}
+                            </div>
+                            {game.whitePlayer.includes(" ") && (
+                              <div className="text-muted-foreground truncate text-xs">
+                                {game.whitePlayer.split(" ").slice(1).join(" ")}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex w-1/2 min-w-0 shrink-0 items-center justify-end gap-2">
+                          <div className="min-w-0 flex-1 overflow-hidden text-right">
+                            <div className="truncate text-sm font-medium">
+                              {game.blackPlayer.split(" ")[0]}
+                            </div>
+                            {game.blackPlayer.includes(" ") && (
+                              <div className="text-muted-foreground truncate text-xs">
+                                {game.blackPlayer.split(" ").slice(1).join(" ")}
+                              </div>
+                            )}
+                          </div>
+                          <Circle className="fill-primary stroke-primary h-3.5 w-3.5 shrink-0" />
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
             </div>
           )}
         </div>
