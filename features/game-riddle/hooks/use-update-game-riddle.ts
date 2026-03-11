@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateGameRiddleAnswer } from "@/api-client/game-riddle";
+import { updateGameRiddleAnswer } from "@/features/game-riddle/api/game-riddle";
 
 export function useUpdateGameRiddleAnswer() {
   const [isLoading, setIsLoading] = useState(false);

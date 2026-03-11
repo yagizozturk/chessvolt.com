@@ -1,5 +1,5 @@
 import { getAdminUser } from "@/lib/supabase/auth";
-import * as gameRepo from "@/features/game-riddle/repository/game.repository";
+import * as gameRepo from "@/features/game/repository/game.repository";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {

@@ -7,7 +7,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Rep } from "@/features/reps/types/reps";
-import * as repsRepo from "@/features/reps/reps.repository";
+import * as repsRepo from "@/features/reps/repository/reps.repository";
 
 export async function getAllReps(supabase: SupabaseClient): Promise<Rep[]> {
   return repsRepo.findAll(supabase);

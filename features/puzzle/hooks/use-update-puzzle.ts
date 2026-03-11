@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   updatePuzzleAnswer,
   type UpdatePuzzleAnswerResponse,
-} from "@/api-client/puzzle";
+} from "@/features/puzzle/api/puzzle";
 
 export function useUpdatePuzzleAnswer() {
   const router = useRouter();

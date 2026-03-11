@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { createGame } from "@/features/game-riddle/services/game";
+import { createGame } from "@/features/game/service/game";
 import { parsePgn, splitPgnGames, validatePgn } from "@/lib/chess/parsePgn";
 
 export async function importPgnAction(formData: FormData) {

@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiClient } from "../../../api-client/client";
 
 export type UpdateGameRiddleAnswerResponse = {
   success: boolean;

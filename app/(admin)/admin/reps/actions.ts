@@ -7,7 +7,7 @@ import { createRep, updateRep, deleteRep } from "@/features/reps/services/reps";
 import type {
   CreateRepInput,
   UpdateRepInput,
-} from "@/features/reps/reps.repository";
+} from "@/features/reps/repository/reps.repository";
 
 export async function createRepAction(formData: FormData) {
   const { supabase } = await getAdminUser();

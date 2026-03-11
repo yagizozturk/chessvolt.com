@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Map, ChevronRight, Sword, Circle } from "lucide-react";
 import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
-import { getGameById } from "@/features/game-riddle/services/game";
+import { getGameById } from "@/features/game/service/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { Badge } from "@/components/ui/badge";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";

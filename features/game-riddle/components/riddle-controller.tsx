@@ -18,7 +18,7 @@ import PuzzleBoard, {
 } from "@/features/puzzle/components/puzzle-board";
 import { useStatsStore } from "@/features/home/store/stats-store";
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
-import { addReward } from "@/api-client/profile";
+import { addReward } from "@/features/profile/api/profile";
 import { calculatePointsFromTime } from "@/lib/utilities/reward";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

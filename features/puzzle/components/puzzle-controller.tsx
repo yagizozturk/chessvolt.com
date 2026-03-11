@@ -6,7 +6,7 @@ import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 import { getNextTurnFromFen } from "@/lib/chess/getTurn";
 import { useStatsStore } from "@/features/home/store/stats-store";
 import { useUpdatePuzzleAnswer } from "@/features/puzzle/hooks/use-update-puzzle";
-import { addReward } from "@/api-client/profile";
+import { addReward } from "@/features/profile/api/profile";
 import { calculatePointsFromTime } from "@/lib/utilities/reward";
 import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
 import { Card, CardContent } from "@/components/ui/card";

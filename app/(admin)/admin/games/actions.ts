@@ -7,8 +7,8 @@ import {
   createGame,
   updateGame,
   deleteGame,
-} from "@/features/game-riddle/services/game";
-import type { CreateGameInput } from "@/features/game-riddle/repository/game.repository";
+} from "@/features/game/service/game";
+import type { CreateGameInput } from "@/features/game/repository/game.repository";
 
 export async function createGameAction(formData: FormData) {
   const { supabase } = await getAdminUser();
