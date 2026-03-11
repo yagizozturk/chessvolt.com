@@ -1,5 +1,5 @@
 import { getAdminUser } from "@/lib/supabase/auth";
-import { getAllGames } from "@/features/game/service/game";
+import { getAllGames } from "@/features/game/services/game";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {

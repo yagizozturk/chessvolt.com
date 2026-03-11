@@ -9,7 +9,7 @@ import {
   Circle,
 } from "lucide-react";
 import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle";
-import { getGameById } from "@/features/game/service/game";
+import { getGameById } from "@/features/game/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import {

@@ -7,7 +7,7 @@ import {
   createGame,
   updateGame,
   deleteGame,
-} from "@/features/game/service/game";
+} from "@/features/game/services/game";
 import type { CreateGameInput } from "@/features/game/repository/game.repository";
 
 export async function createGameAction(formData: FormData) {

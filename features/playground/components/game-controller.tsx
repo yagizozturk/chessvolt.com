@@ -4,7 +4,7 @@ import PieceColorSelector from "@/features/playground/components/piece-color-sel
 import InactivePlayBoard from "@/features/playground/components/board/inactive-play-board";
 import PlayBoard from "@/features/playground/components/board/play-board";
 import CoachStockfish from "@/features/coach/components/coach-stockfish";
-import { useGameStore } from "@/features/game-riddle/store/game-store";
+import { useGameStore } from "@/features/game/store/game-store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DifficultySelector from "@/features/playground/components/difficulty-selector/difficulty-selector";

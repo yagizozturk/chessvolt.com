@@ -1,4 +1,4 @@
-import type { Game } from "@/lib/shared/types/game";
+import type { Game } from "@/features/game/types/game";
 
 type DbGame = {
   id: string;

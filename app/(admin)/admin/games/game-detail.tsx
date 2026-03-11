@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { Game } from "@/lib/shared/types/game";
+import type { Game } from "@/features/game/types/game";
 import { Button } from "@/components/ui/button";
 import {
   Card,

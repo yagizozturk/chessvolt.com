@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Bot, User, HelpCircle } from "lucide-react";
-import { useChatStream } from "@/hooks/use-chat-stream";
+import { useChatStream } from "@/features/chat/hooks/use-chat-stream";
 import { useCoachStore } from "@/lib/shared/store/coach-store";
 import {
   Card,

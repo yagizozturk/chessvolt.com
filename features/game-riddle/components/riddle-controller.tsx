@@ -12,7 +12,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
-import type { Game } from "@/lib/shared/types/game";
+import type { Game } from "@/features/game/types/game";
 import PuzzleBoard, {
   type PuzzleBoardHandle,
 } from "@/features/puzzle/components/puzzle-board";

@@ -5,7 +5,7 @@ import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { useOneChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { useChessEngine } from "@/lib/engine/hooks/use-stockfish-engine";
 import { SkillLevel } from "@/lib/shared/types/game-difficulty";
-import { useGameStore } from "@/features/game-riddle/store/game-store";
+import { useGameStore } from "@/features/game/store/game-store";
 import { useCoachStore } from "@/lib/shared/store/coach-store";
 import { useSound } from "@/lib/shared/hooks/use-sound";
 import { createMoveObjectsFromMultiPvs } from "@/lib/chess/createMoveObjectsFromMultiPvs";

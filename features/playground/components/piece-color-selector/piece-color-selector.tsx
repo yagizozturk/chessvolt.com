@@ -1,7 +1,7 @@
 "use client";
 
 import { Sun, Moon } from "lucide-react";
-import { useGameStore } from "@/features/game-riddle/store/game-store";
+import { useGameStore } from "@/features/game/store/game-store";
 import GroupSelection from "../group-selection/group-selection";
 
 const COLOR_ITEMS = [

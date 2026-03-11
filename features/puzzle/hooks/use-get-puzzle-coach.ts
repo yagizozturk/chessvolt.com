@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { getPuzzleCoach } from "@/lib/api/puzzle";
+import { getPuzzleCoach } from "@/features/puzzle/api/puzzle";
 
 export function useGetPuzzleCoach() {
   const [isLoading, setLoading] = useState(false);
@@ -28,6 +28,6 @@ export function useGetPuzzleCoach() {
     getPuzzleCoachHook,
     coachResponse,
     isLoading,
-    error
+    error,
   };
 }

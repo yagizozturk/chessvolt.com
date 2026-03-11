@@ -1,7 +1,7 @@
 "use client";
 
 import { GraduationCap, Target, Zap, Crown } from "lucide-react";
-import { useGameStore } from "@/features/game-riddle/store/game-store";
+import { useGameStore } from "@/features/game/store/game-store";
 import {
   DIFFICULTIES,
   SKILL_LEVEL_MAP,

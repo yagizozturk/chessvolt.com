@@ -5,8 +5,8 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Game } from "@/lib/shared/types/game";
-import { toGame } from "@/features/game-riddle/mapper/game.mapper";
+import type { Game } from "@/features/game/types/game";
+import { toGame } from "@/features/game/mapper/game.mapper";
 
 export async function findAll(supabase: SupabaseClient): Promise<Game[]> {
   const { data: games, error } = await supabase

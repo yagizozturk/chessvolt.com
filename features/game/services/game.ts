@@ -6,7 +6,7 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Game } from "@/lib/shared/types/game";
+import type { Game } from "@/features/game/types/game";
 import * as gameRepo from "@/features/game/repository/game.repository";
 
 export async function getAllGames(supabase: SupabaseClient): Promise<Game[]> {
