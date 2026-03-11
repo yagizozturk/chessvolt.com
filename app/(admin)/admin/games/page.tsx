@@ -1,5 +1,5 @@
 import { getAdminUser } from "@/lib/supabase/auth";
-import { getAllGames } from "@/lib/services/game";
+import { getAllGames } from "@/features/game-riddle/services/game";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,9 +32,7 @@ export default async function AdminGamesPage({ searchParams }: SearchParams) {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Games</h1>
-          <p className="text-muted-foreground">
-            {games.length} game(s) listed
-          </p>
+          <p className="text-muted-foreground">{games.length} game(s) listed</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>

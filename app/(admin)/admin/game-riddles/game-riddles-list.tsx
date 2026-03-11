@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { GameRiddle } from "@/lib/model/game-riddle";
+import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { deleteGameRiddleAction } from "./actions";
@@ -20,7 +20,7 @@ export function GameRiddlesList({ riddles }: Props) {
 
   if (riddles.length === 0) {
     return (
-      <p className="py-8 text-center text-muted-foreground">
+      <p className="text-muted-foreground py-8 text-center">
         No game riddles yet.
       </p>
     );
@@ -32,13 +32,13 @@ export function GameRiddlesList({ riddles }: Props) {
         <Link
           key={r.id}
           href={`/admin/game-riddles/${r.id}`}
-          className="flex items-center justify-between rounded-lg border px-4 py-3 transition-colors hover:bg-accent"
+          className="hover:bg-accent flex items-center justify-between rounded-lg border px-4 py-3 transition-colors"
         >
           <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">Ply {r.ply}</span>
+            <span className="text-muted-foreground text-sm">Ply {r.ply}</span>
             <span className="font-medium">{r.title}</span>
             {r.gameType && (
-              <span className="rounded bg-muted px-2 py-0.5 text-xs">
+              <span className="bg-muted rounded px-2 py-0.5 text-xs">
                 {r.gameType}
               </span>
             )}

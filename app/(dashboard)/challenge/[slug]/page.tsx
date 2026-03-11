@@ -8,10 +8,10 @@ import {
   Sword,
   Circle,
 } from "lucide-react";
-import { getGameRiddlesByGameType } from "@/lib/services/game-riddle";
-import { getGameById } from "@/lib/services/game";
+import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle";
+import { getGameById } from "@/features/game-riddle/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import * as userGameRiddleRepo from "@/lib/repositories/user-game-riddle.repository";
+import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
+import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 
 type Params = {
   params: Promise<{ slug: string }>;

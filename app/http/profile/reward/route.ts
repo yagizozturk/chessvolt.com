@@ -3,8 +3,8 @@ import {
   requireAuth,
   successResponse,
   withErrorHandler,
-} from "@/lib/api/route-handler";
-import * as profileRepo from "@/lib/repositories/profile.repository";
+} from "@/api-client/route-handler";
+import * as profileRepo from "@/features/profile/repository/profile.repository";
 
 const XP_REWARD_DEFAULT = 10;
 

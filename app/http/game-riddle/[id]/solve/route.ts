@@ -2,8 +2,8 @@ import {
   requireAuth,
   successResponse,
   withErrorHandler,
-} from "@/lib/api/route-handler";
-import * as userGameRiddleRepo from "@/lib/repositories/user-game-riddle.repository";
+} from "@/api-client/route-handler";
+import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 
 type RouteParams = {
   params: Promise<{ id: string }>;

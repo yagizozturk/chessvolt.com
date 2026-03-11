@@ -1,6 +1,6 @@
 import { getAdminUser } from "@/lib/supabase/auth";
-import { getGameRiddleById } from "@/lib/services/game-riddle";
-import { getGameById } from "@/lib/services/game";
+import { getGameRiddleById } from "@/features/game-riddle/services/game-riddle";
+import { getGameById } from "@/features/game-riddle/services/game";
 import { notFound } from "next/navigation";
 import { GameRiddleDetail } from "../game-riddle-detail";
 

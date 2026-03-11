@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { GameRiddle } from "@/lib/model/game-riddle";
-import type { Game } from "@/lib/model/game";
+import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import type { Game } from "@/lib/shared/types/game";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -63,7 +63,8 @@ export function GameRiddleDetail({ riddle, game }: Props) {
             <Button
               variant="destructive"
               onClick={async () => {
-                if (!confirm("This game riddle will be deleted. Are you sure?")) return;
+                if (!confirm("This game riddle will be deleted. Are you sure?"))
+                  return;
                 await deleteGameRiddleAction(riddle.id);
               }}
             >

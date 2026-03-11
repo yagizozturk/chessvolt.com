@@ -7,8 +7,8 @@ import {
   createGame,
   updateGame,
   deleteGame,
-} from "@/lib/services/game";
-import type { CreateGameInput } from "@/lib/repositories/game.repository";
+} from "@/features/game-riddle/services/game";
+import type { CreateGameInput } from "@/features/game-riddle/repository/game.repository";
 
 export async function createGameAction(formData: FormData) {
   const { supabase } = await getAdminUser();
@@ -77,7 +77,8 @@ export async function updateGameAction(id: string, formData: FormData) {
   if (blackPlayer) input.blackPlayer = blackPlayer;
   if (pgn) input.pgn = pgn;
   if (result) input.result = normalizedResult;
-  if (playedAt) input.playedAt = playedAt.length === 16 ? `${playedAt}:00` : playedAt;
+  if (playedAt)
+    input.playedAt = playedAt.length === 16 ? `${playedAt}:00` : playedAt;
   if (url !== undefined) input.url = url;
   if (event !== undefined) input.event = event;
   if (opening !== undefined) input.opening = opening;

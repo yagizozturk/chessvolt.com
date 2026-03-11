@@ -1,9 +1,9 @@
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import { getAllReps } from "@/lib/services/reps";
+import { getAllReps } from "@/features/reps/services/reps";
 import Link from "next/link";
 import { Sword, BookOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
+import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 
 export default async function RepsPage() {
   const { supabase } = await getAuthenticatedUser();

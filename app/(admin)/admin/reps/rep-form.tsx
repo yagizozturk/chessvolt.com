@@ -1,16 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createRepAction } from "./actions";
 import { Button } from "@/components/ui/button";
-import { extractMovesFromPgn } from "@/lib/chess-board/extractMovesFromPgn";
-import { cn } from "@/lib/utils";
+import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
+import { cn } from "@/lib/utilities/cn";
 
 export function RepForm() {
   const [pgn, setPgn] = useState("");
@@ -39,8 +35,8 @@ export function RepForm() {
             placeholder="1. e4 e5 2. Nf3 ..."
             rows={4}
             className={cn(
-              "border-input w-full rounded-md border bg-transparent px-3 py-2 text-sm font-mono shadow-xs",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              "border-input w-full rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs",
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
             )}
           />
         </Field>
@@ -64,7 +60,7 @@ export function RepForm() {
             onChange={(e) => setMoveCountForAnswer(e.target.value)}
             className={cn(
               "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
             )}
           />
         </Field>

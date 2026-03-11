@@ -2,11 +2,11 @@ import {
   requireAuth,
   successResponse,
   withErrorHandler,
-} from "@/lib/api/route-handler";
+} from "@/api-client/route-handler";
 import {
   updatePuzzleAnswer,
   getNextPuzzleForUser,
-} from "@/lib/services/puzzle";
+} from "@/features/puzzle/services/puzzle";
 
 // Next.js 15+ requires params to be awaited
 type RouteParams = {

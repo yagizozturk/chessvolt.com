@@ -1,5 +1,5 @@
 import { getAdminUser } from "@/lib/supabase/auth";
-import { getRepById } from "@/lib/services/reps";
+import { getRepById } from "@/features/reps/services/reps";
 import { notFound } from "next/navigation";
 import { RepDetail } from "../rep-detail";
 

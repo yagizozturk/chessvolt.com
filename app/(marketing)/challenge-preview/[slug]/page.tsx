@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Sword, ChevronRight, Zap, ArrowLeft } from "lucide-react";
-import { getGameRiddlesByGameType } from "@/lib/services/game-riddle";
+import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

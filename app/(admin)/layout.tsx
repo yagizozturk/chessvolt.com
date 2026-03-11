@@ -1,5 +1,5 @@
 import { getAdminUser } from "@/lib/supabase/auth";
-import { AdminNavbar } from "@/components/admin/admin-navbar";
+import { AdminNavbar } from "@/features/admin/components/admin-navbar";
 
 export default async function AdminLayout({
   children,
@@ -9,7 +9,7 @@ export default async function AdminLayout({
   await getAdminUser();
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="bg-background flex min-h-screen flex-col">
       <AdminNavbar />
       <main className="flex-1 overflow-auto">{children}</main>
     </div>

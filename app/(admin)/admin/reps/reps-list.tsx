@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { Rep } from "@/lib/model/reps";
+import type { Rep } from "@/features/reps/types/reps";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { deleteRepAction } from "./actions";
@@ -20,7 +20,7 @@ export function RepsList({ reps }: Props) {
 
   if (reps.length === 0) {
     return (
-      <p className="py-8 text-center text-muted-foreground">
+      <p className="text-muted-foreground py-8 text-center">
         No repertoires yet.
       </p>
     );
@@ -32,12 +32,14 @@ export function RepsList({ reps }: Props) {
         <Link
           key={r.id}
           href={`/admin/reps/${r.id}`}
-          className="flex items-center justify-between rounded-lg border px-4 py-3 transition-colors hover:bg-accent"
+          className="hover:bg-accent flex items-center justify-between rounded-lg border px-4 py-3 transition-colors"
         >
           <div className="flex items-center gap-4">
-            <span className="font-medium">{r.title || "Untitled Repertoire"}</span>
+            <span className="font-medium">
+              {r.title || "Untitled Repertoire"}
+            </span>
             {r.openingName && (
-              <span className="rounded bg-muted px-2 py-0.5 text-xs">
+              <span className="bg-muted rounded px-2 py-0.5 text-xs">
                 {r.openingName}
               </span>
             )}

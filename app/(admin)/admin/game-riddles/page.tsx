@@ -1,5 +1,5 @@
 import { getAdminUser } from "@/lib/supabase/auth";
-import { getAllGameRiddles } from "@/lib/services/game-riddle";
+import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +26,10 @@ export default async function AdminGameRiddlesPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/admin/game-riddles/new" className="flex items-center gap-2">
+          <Link
+            href="/admin/game-riddles/new"
+            className="flex items-center gap-2"
+          >
             <Plus className="h-4 w-4" />
             Add New
           </Link>

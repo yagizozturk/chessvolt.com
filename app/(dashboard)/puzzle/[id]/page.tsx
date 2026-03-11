@@ -1,7 +1,7 @@
-import { getPuzzleById } from "@/lib/services/puzzle";
+import { getPuzzleById } from "@/features/puzzle/services/puzzle";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
-import PuzzleController from "@/components/controller/puzzle-controller";
+import PuzzleController from "@/features/puzzle/components/puzzle-controller";
 
 type Params = {
   params: Promise<{ id: string }>;

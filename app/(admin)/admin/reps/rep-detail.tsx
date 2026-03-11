@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { Rep } from "@/lib/model/reps";
+import type { Rep } from "@/features/reps/types/reps";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,11 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Trash2, Save } from "lucide-react";
 import { updateRepAction, deleteRepAction } from "./actions";
@@ -59,7 +55,8 @@ export function RepDetail({ rep }: Props) {
             <Button
               variant="destructive"
               onClick={async () => {
-                if (!confirm("This repertoire will be deleted. Are you sure?")) return;
+                if (!confirm("This repertoire will be deleted. Are you sure?"))
+                  return;
                 await deleteRepAction(rep.id);
               }}
             >
@@ -117,33 +114,37 @@ export function RepDetail({ rep }: Props) {
           ) : (
             <dl className="grid gap-2 text-sm">
               <div>
-                <dt className="font-medium text-muted-foreground">ID</dt>
+                <dt className="text-muted-foreground font-medium">ID</dt>
                 <dd className="font-mono text-xs">{rep.id}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Title</dt>
+                <dt className="text-muted-foreground font-medium">Title</dt>
                 <dd>{rep.title || "—"}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Opening Name</dt>
+                <dt className="text-muted-foreground font-medium">
+                  Opening Name
+                </dt>
                 <dd>{rep.openingName ?? "—"}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Ply</dt>
+                <dt className="text-muted-foreground font-medium">Ply</dt>
                 <dd>{rep.ply ?? "—"}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Moves</dt>
-                <dd className="break-all font-mono text-xs">{rep.moves}</dd>
+                <dt className="text-muted-foreground font-medium">Moves</dt>
+                <dd className="font-mono text-xs break-all">{rep.moves}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">PGN</dt>
-                <dd className="break-all font-mono text-xs max-h-32 overflow-y-auto">
+                <dt className="text-muted-foreground font-medium">PGN</dt>
+                <dd className="max-h-32 overflow-y-auto font-mono text-xs break-all">
                   {rep.pgn ?? "—"}
                 </dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Created At</dt>
+                <dt className="text-muted-foreground font-medium">
+                  Created At
+                </dt>
                 <dd>{rep.createdAt}</dd>
               </div>
             </dl>

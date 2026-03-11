@@ -7,8 +7,8 @@ import {
   createGameRiddle,
   updateGameRiddle,
   deleteGameRiddle,
-} from "@/lib/services/game-riddle";
-import type { CreateGameRiddleInput } from "@/lib/repositories/game-riddle.repository";
+} from "@/features/game-riddle/services/game-riddle";
+import type { CreateGameRiddleInput } from "@/features/game-riddle/repository/game-riddle.repository";
 
 export async function createGameRiddleAction(formData: FormData) {
   const { supabase } = await getAdminUser();

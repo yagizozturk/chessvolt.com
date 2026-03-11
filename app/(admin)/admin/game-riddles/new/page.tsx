@@ -1,5 +1,5 @@
 import { getAdminUser } from "@/lib/supabase/auth";
-import * as gameRepo from "@/lib/repositories/game.repository";
+import * as gameRepo from "@/features/game-riddle/repository/game.repository";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,10 +20,7 @@ export default async function AdminGameRiddleNewPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <Button variant="ghost" size="sm" asChild>
-          <Link
-            href="/admin/game-riddles"
-            className="flex items-center gap-2"
-          >
+          <Link href="/admin/game-riddles" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to list
           </Link>
@@ -33,9 +30,7 @@ export default async function AdminGameRiddleNewPage() {
       <Card>
         <CardHeader>
           <CardTitle>New Game Riddle</CardTitle>
-          <CardDescription>
-            Add a new game riddle
-          </CardDescription>
+          <CardDescription>Add a new game riddle</CardDescription>
         </CardHeader>
         <CardContent>
           <GameRiddleForm games={games} />

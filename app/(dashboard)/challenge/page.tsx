@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Map, ChevronRight, Sword, Circle } from "lucide-react";
-import { getAllGameRiddles } from "@/lib/services/game-riddle";
-import { getGameById } from "@/lib/services/game";
+import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
+import { getGameById } from "@/features/game-riddle/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { Badge } from "@/components/ui/badge";
-import PuzzleBoard from "@/components/puzzle-board/puzzle-board";
-import type { GameRiddle } from "@/lib/model/game-riddle";
+import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
+import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 
 function groupRiddlesByGameType(
   riddles: GameRiddle[],

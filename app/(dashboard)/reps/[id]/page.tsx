@@ -1,7 +1,7 @@
-import { getRepById } from "@/lib/services/reps";
+import { getRepById } from "@/features/reps/services/reps";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
-import RepsController from "@/components/controller/reps-controller";
+import RepsController from "@/features/reps/components/reps-controller";
 
 type Params = {
   params: Promise<{ id: string }>;

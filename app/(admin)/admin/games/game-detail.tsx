@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { Game } from "@/lib/model/game";
+import type { Game } from "@/lib/shared/types/game";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,15 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Trash2, Save } from "lucide-react";
 import { updateGameAction, deleteGameAction } from "./actions";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utilities/cn";
 
 type Props = {
   game: Game;
@@ -60,7 +56,8 @@ export function GameDetail({ game }: Props) {
             <Button
               variant="destructive"
               onClick={async () => {
-                if (!confirm("This game will be deleted. Are you sure?")) return;
+                if (!confirm("This game will be deleted. Are you sure?"))
+                  return;
                 await deleteGameAction(game.id);
               }}
             >
@@ -120,7 +117,7 @@ export function GameDetail({ game }: Props) {
                     rows={8}
                     className={cn(
                       "border-input w-full rounded-md border bg-transparent px-3 py-2 text-sm",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
                     )}
                   />
                 </Field>
@@ -152,45 +149,47 @@ export function GameDetail({ game }: Props) {
           ) : (
             <dl className="grid gap-2 text-sm">
               <div>
-                <dt className="font-medium text-muted-foreground">ID</dt>
+                <dt className="text-muted-foreground font-medium">ID</dt>
                 <dd className="font-mono text-xs">{game.id}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">White</dt>
+                <dt className="text-muted-foreground font-medium">White</dt>
                 <dd>{game.whitePlayer}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Black</dt>
+                <dt className="text-muted-foreground font-medium">Black</dt>
                 <dd>{game.blackPlayer}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Result</dt>
+                <dt className="text-muted-foreground font-medium">Result</dt>
                 <dd>{game.result}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Played At</dt>
+                <dt className="text-muted-foreground font-medium">Played At</dt>
                 <dd>{game.playedAt}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">PGN</dt>
-                <dd className="max-h-32 overflow-auto break-all font-mono text-xs">
+                <dt className="text-muted-foreground font-medium">PGN</dt>
+                <dd className="max-h-32 overflow-auto font-mono text-xs break-all">
                   {game.pgn}
                 </dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">URL</dt>
+                <dt className="text-muted-foreground font-medium">URL</dt>
                 <dd className="break-all">{game.url ?? "—"}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Event</dt>
+                <dt className="text-muted-foreground font-medium">Event</dt>
                 <dd>{game.event ?? "—"}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Opening</dt>
+                <dt className="text-muted-foreground font-medium">Opening</dt>
                 <dd>{game.opening ?? "—"}</dd>
               </div>
               <div>
-                <dt className="font-medium text-muted-foreground">Description</dt>
+                <dt className="text-muted-foreground font-medium">
+                  Description
+                </dt>
                 <dd>{game.description ?? "—"}</dd>
               </div>
             </dl>

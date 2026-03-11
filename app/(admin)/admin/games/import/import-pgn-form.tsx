@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { FileText, Upload } from "lucide-react";
 import { importPgnAction } from "./actions";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utilities/cn";
 
 export function ImportPgnForm() {
   const [pgn, setPgn] = useState("");

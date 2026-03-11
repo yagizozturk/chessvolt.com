@@ -1,14 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createGameAction } from "./actions";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utilities/cn";
 
 export function GameForm() {
   return (
@@ -16,19 +12,23 @@ export function GameForm() {
       <FieldGroup>
         <Field>
           <FieldLabel>White Player</FieldLabel>
-          <Input name="whitePlayer" required placeholder="e.g. Magnus Carlsen" />
+          <Input
+            name="whitePlayer"
+            required
+            placeholder="e.g. Magnus Carlsen"
+          />
         </Field>
         <Field>
           <FieldLabel>Black Player</FieldLabel>
-          <Input name="blackPlayer" required placeholder="e.g. Fabiano Caruana" />
+          <Input
+            name="blackPlayer"
+            required
+            placeholder="e.g. Fabiano Caruana"
+          />
         </Field>
         <Field>
           <FieldLabel>Result</FieldLabel>
-          <Input
-            name="result"
-            required
-            placeholder="e.g. 1-0, 0-1, 1/2-1/2"
-          />
+          <Input name="result" required placeholder="e.g. 1-0, 0-1, 1/2-1/2" />
         </Field>
         <Field>
           <FieldLabel>Played At</FieldLabel>
@@ -43,7 +43,7 @@ export function GameForm() {
             placeholder="Game PGN format"
             className={cn(
               "border-input w-full rounded-md border bg-transparent px-3 py-2 text-sm",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
             )}
           />
         </Field>

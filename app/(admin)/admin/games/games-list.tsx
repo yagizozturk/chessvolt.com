@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { Game } from "@/lib/model/game";
+import type { Game } from "@/lib/shared/types/game";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { deleteGameAction } from "./actions";
@@ -20,9 +20,7 @@ export function GamesList({ games }: Props) {
 
   if (games.length === 0) {
     return (
-      <p className="py-8 text-center text-muted-foreground">
-        No games yet.
-      </p>
+      <p className="text-muted-foreground py-8 text-center">No games yet.</p>
     );
   }
 
@@ -32,17 +30,17 @@ export function GamesList({ games }: Props) {
         <Link
           key={g.id}
           href={`/admin/games/${g.id}`}
-          className="flex items-center justify-between rounded-lg border px-4 py-3 transition-colors hover:bg-accent"
+          className="hover:bg-accent flex items-center justify-between rounded-lg border px-4 py-3 transition-colors"
         >
           <div className="flex items-center gap-4">
             <span className="font-medium">
               {g.whitePlayer} vs {g.blackPlayer}
             </span>
-            <span className="rounded bg-muted px-2 py-0.5 text-xs">
+            <span className="bg-muted rounded px-2 py-0.5 text-xs">
               {g.result}
             </span>
             {g.event && (
-              <span className="text-sm text-muted-foreground">{g.event}</span>
+              <span className="text-muted-foreground text-sm">{g.event}</span>
             )}
           </div>
           <Button

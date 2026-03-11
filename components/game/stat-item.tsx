@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utilities/cn";
 
 interface StatItemProps {
   icon: React.ReactNode;
@@ -9,13 +9,13 @@ interface StatItemProps {
 export const StatItem = ({ icon, value, colorClassName }: StatItemProps) => {
   return (
     <div className="flex items-center gap-1.5 px-2 py-1 transition-all">
-      <div className="shrink-0">
-        {icon}
-      </div>
-      <span className={cn(
-        "text-[17px] font-black tracking-tight font-fredoka",
-        colorClassName || "text-white"
-      )}>
+      <div className="shrink-0">{icon}</div>
+      <span
+        className={cn(
+          "font-fredoka text-[17px] font-black tracking-tight",
+          colorClassName || "text-white",
+        )}
+      >
         {value}
       </span>
     </div>

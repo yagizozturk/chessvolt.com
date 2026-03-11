@@ -3,15 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/supabase/auth";
-import {
-  createRep,
-  updateRep,
-  deleteRep,
-} from "@/lib/services/reps";
+import { createRep, updateRep, deleteRep } from "@/features/reps/services/reps";
 import type {
   CreateRepInput,
   UpdateRepInput,
-} from "@/lib/repositories/reps.repository";
+} from "@/features/reps/reps.repository";
 
 export async function createRepAction(formData: FormData) {
   const { supabase } = await getAdminUser();
