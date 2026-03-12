@@ -7,7 +7,7 @@ import { MotionWrapper } from "./hero-content"; // Client component above
 
 export function Hero() {
   return (
-    <section className="bg-background relative w-full overflow-hidden py-20 lg:py-20">
+    <section className="bg-background relative w-full overflow-hidden pt-32 pb-20">
       <div className="absolute inset-0 z-0" />
       <div className="relative z-10 container mx-auto px-4 md:px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -49,7 +49,7 @@ export function Hero() {
                 <div>
                   <dt className="text-2xl font-bold text-white">1k+</dt>
                   <dd className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase">
-                    Games
+                    Riddles
                   </dd>
                 </div>
                 <div className="h-10 w-px bg-white/10" />
