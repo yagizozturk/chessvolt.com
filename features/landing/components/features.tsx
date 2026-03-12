@@ -57,7 +57,7 @@ export function Features() {
   return (
     <section className="relative w-full overflow-visible py-20 lg:py-20">
       <div className="relative container mx-auto px-4 md:px-6">
-        <div className="flex flex-col gap-24">
+        <div className="flex flex-col gap-12">
           {gameTypes.map((game, index) => {
             const imageOnLeft = index % 2 === 0;
 
@@ -83,7 +83,8 @@ export function Features() {
                 <div
                   className={cn(
                     "grid gap-12 py-20 lg:grid-cols-2 lg:items-center",
-                    !imageOnLeft && "lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1",
+                    !imageOnLeft &&
+                      "lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1",
                   )}
                 >
                   {/* Resim */}
@@ -107,8 +108,13 @@ export function Features() {
                   </div>
 
                   {/* Features içeriği */}
-                  <div className={cn(!imageOnLeft && "lg:flex lg:justify-start")}>
-                    <MotionWrapper x={imageOnLeft ? 40 : -40} className="lg:max-w-[500px]">
+                  <div
+                    className={cn(!imageOnLeft && "lg:flex lg:justify-start")}
+                  >
+                    <MotionWrapper
+                      x={imageOnLeft ? 40 : -40}
+                      className="lg:max-w-[500px]"
+                    >
                       <ul className="flex w-full flex-col gap-6">
                         {game.features.map((feature, featureIndex) => (
                           <li
