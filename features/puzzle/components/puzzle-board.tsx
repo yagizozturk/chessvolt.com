@@ -92,7 +92,10 @@ const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(
       .trim()
       .split(/\s+/)
       .filter((m) => m.length > 0); // Get array of uci moves
-    const { play: playCorrectSound } = useSound("/audio/correct.mp3", 1);
+    const { play: playCorrectSound } = useSound(
+      "/audio/piece-move-sound.mp3",
+      1,
+    );
     const { play: playMoveSound } = useSound("/audio/move.wav", 0.5);
 
     // ============================================================================

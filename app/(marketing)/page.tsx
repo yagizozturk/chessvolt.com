@@ -1,11 +1,11 @@
-import { Navbar } from "@/components/landing/navbar";
-import { Hero } from "@/components/landing/hero";
-import { Features } from "@/components/landing/features";
-import { ChallengePreview } from "@/components/landing/challenge-preview";
-import { GamificationFeatures } from "@/components/landing/gamification-features";
-import { Pricing } from "@/components/landing/pricing";
-import { Footer } from "@/components/landing/footer";
-import { GameModes } from "@/components/landing/game-modes";
+import { Navbar } from "@/features/landing/components/navbar";
+import { Hero } from "@/features/landing/components/hero";
+import { Features } from "@/features/landing/components/features";
+import { ChallengePreview } from "@/features/landing/components/challenge-preview";
+import { GamificationFeatures } from "@/features/landing/components/gamification-features";
+import { Pricing } from "@/features/landing/components/pricing";
+import { Footer } from "@/features/landing/components/footer";
+import { GameModes } from "@/features/landing/components/game-modes";
 
 export default function Home() {
   return (
