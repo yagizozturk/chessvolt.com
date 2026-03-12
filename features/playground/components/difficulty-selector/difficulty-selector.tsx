@@ -6,7 +6,7 @@ import {
   DIFFICULTIES,
   SKILL_LEVEL_MAP,
 } from "@/lib/shared/types/game-difficulty";
-import GroupSelection from "../../features/playground/components/group-selection/group-selection";
+import GroupSelection from "../group-selection/group-selection";
 
 const DIFFICULTY_ICONS = {
   Beginner: GraduationCap,

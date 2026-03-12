@@ -1,16 +1,7 @@
 "use client";
 
-import * as React from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  type CarouselApi,
-} from "@/components/ui/carousel";
 import { cn } from "@/lib/utilities/cn";
 import { ChessPawn, Puzzle, Map, Lightbulb, Swords } from "lucide-react";
 import { MotionWrapper } from "./hero-content";
@@ -63,27 +54,16 @@ const gameTypes = [
 ];
 
 export function Features() {
-  const [api, setApi] = React.useState<CarouselApi>();
-  const [current, setCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (!api) return;
-    setCurrent(api.selectedScrollSnap());
-    api.on("select", () => setCurrent(api.selectedScrollSnap()));
-  }, [api]);
-
   return (
     <section className="relative w-full overflow-visible py-20 lg:py-20">
       <div className="relative container mx-auto px-4 md:px-6">
-        <Carousel
-          opts={{ align: "start", loop: true }}
-          setApi={setApi}
-          className="w-full"
-        >
-          <CarouselContent>
-            {gameTypes.map((game) => (
-              <CarouselItem key={game.id} className="px-4">
-                {/* Başlık - sayfa üstünde ortalı */}
+        <div className="flex flex-col gap-24">
+          {gameTypes.map((game, index) => {
+            const imageOnLeft = index % 2 === 0;
+
+            return (
+              <div key={game.id} className="flex flex-col">
+                {/* Başlık - her game için ortalı */}
                 <div className="flex flex-col items-center text-center">
                   <Badge
                     variant="outline"
@@ -100,9 +80,19 @@ export function Features() {
                   </p>
                 </div>
 
-                <div className="grid gap-12 py-20 lg:grid-cols-2 lg:items-center">
-                  {/* Sol: Büyük resim */}
-                  <div className="relative order-2 flex justify-center lg:order-1 lg:justify-start">
+                <div
+                  className={cn(
+                    "grid gap-12 py-20 lg:grid-cols-2 lg:items-center",
+                    !imageOnLeft && "lg:[&>*:first-child]:order-2 lg:[&>*:last-child]:order-1",
+                  )}
+                >
+                  {/* Resim */}
+                  <div
+                    className={cn(
+                      "relative flex justify-center",
+                      imageOnLeft ? "lg:justify-start" : "lg:justify-end",
+                    )}
+                  >
                     <div className="bg-primary/10 pointer-events-none absolute top-1/2 left-1/2 h-[100%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[50px]" />
                     <MotionWrapper delay={0.3} float={true}>
                       <Image
@@ -116,13 +106,13 @@ export function Features() {
                     </MotionWrapper>
                   </div>
 
-                  {/* Sağ: Features içeriği */}
-                  <div className="order-1 lg:order-2">
-                    <MotionWrapper x={40}>
+                  {/* Features içeriği */}
+                  <div className={cn(!imageOnLeft && "lg:flex lg:justify-start")}>
+                    <MotionWrapper x={imageOnLeft ? 40 : -40} className="lg:max-w-[500px]">
                       <ul className="flex w-full flex-col gap-6">
-                        {game.features.map((feature, index) => (
+                        {game.features.map((feature, featureIndex) => (
                           <li
-                            key={index}
+                            key={featureIndex}
                             className="group hover:border-primary/20 hover:bg-primary/5 flex gap-4 rounded-lg border border-transparent p-4 transition-all"
                           >
                             <div className="bg-primary/10 text-primary group-hover:bg-primary/20 flex h-12 w-12 shrink-0 items-center justify-center rounded-lg transition-colors [&_svg]:size-6">
@@ -148,28 +138,10 @@ export function Features() {
                     </MotionWrapper>
                   </div>
                 </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="top-1/2 -left-2 lg:-left-12" />
-          <CarouselNext className="top-1/2 -right-2 lg:-right-12" />
-          <div className="mt-12 flex justify-center gap-2">
-            {gameTypes.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => api?.scrollTo(index)}
-                className={cn(
-                  "h-2 w-2 rounded-full transition-all",
-                  current === index
-                    ? "bg-primary w-6"
-                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50",
-                )}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
-        </Carousel>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
