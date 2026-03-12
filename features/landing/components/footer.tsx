@@ -1,81 +1,60 @@
-import Link from "next/link"
-import { Facebook, Instagram, Twitter, Youtube, Github } from "lucide-react"
+import Link from "next/link";
+import { Zap, Map, Puzzle, BookOpen, LogIn } from "lucide-react";
 
 export function Footer() {
+  const links = [
+    { href: "/challenge", label: "Challenges", icon: Map },
+    { href: "/puzzle", label: "Puzzles", icon: Puzzle },
+    { href: "/reps", label: "Opening Crusher", icon: BookOpen },
+  ];
+
   return (
-    <footer className="w-full border-t bg-background">
+    <footer className="bg-background border-border/40 w-full border-t">
       <div className="container mx-auto px-4 py-12 md:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
-          
+        <div className="flex flex-col items-center gap-10 md:flex-row md:items-start md:justify-between">
           {/* Logo ve Motto */}
-          <div className="col-span-2 lg:col-span-2">
-            <Link href="/" className="font-bold text-2xl tracking-tighter text-primary">
-              VOLT
+          <div className="flex flex-col items-center text-center md:items-start md:text-left">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-white transition-opacity hover:opacity-90"
+            >
+              <Zap className="fill-primary text-primary h-6 w-6" />
+              <span>chessvolt</span>
             </Link>
-            <p className="mt-4 text-muted-foreground max-w-xs text-sm leading-relaxed">
-              A gamified, community-focused, and modern learning platform. 
-              Push your limits, shine with Volt.
+            <p className="text-muted-foreground mt-4 max-w-xs text-sm leading-relaxed">
+              A gamified, community-focused, and modern learning platform. Push
+              your limits, shine with Volt.
             </p>
-            <div className="mt-6 flex gap-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Instagram className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Github className="h-5 w-5" />
-              </Link>
-            </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold text-sm mb-4">Learn</h3>
-            <ul className="space-y-3 text-sm">
-              <li><Link href="/courses" className="text-muted-foreground hover:text-foreground">Courses</Link></li>
-              <li><Link href="/challenge" className="text-muted-foreground hover:text-foreground">Roadmap</Link></li>
-              <li><Link href="/leaderboard" className="text-muted-foreground hover:text-foreground">Ranking</Link></li>
-            </ul>
-          </div>
-
-          {/* Kurumsal */}
-          <div>
-            <h3 className="font-semibold text-sm mb-4">Company</h3>
-            <ul className="space-y-3 text-sm">
-              <li><Link href="/about" className="text-muted-foreground hover:text-foreground">About</Link></li>
-              <li><Link href="/blog" className="text-muted-foreground hover:text-foreground">Blog</Link></li>
-              <li><Link href="/contact" className="text-muted-foreground hover:text-foreground">Contact</Link></li>
-            </ul>
-          </div>
-
-          {/* Yasal */}
-          <div>
-            <h3 className="font-semibold text-sm mb-4">Legal</h3>
-            <ul className="space-y-3 text-sm">
-              <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</Link></li>
-              <li><Link href="/terms" className="text-muted-foreground hover:text-foreground">Terms</Link></li>
-              <li><Link href="/cookies" className="text-muted-foreground hover:text-foreground">Cookies</Link></li>
-            </ul>
+          {/* Links */}
+          <div className="flex flex-col items-center gap-6 md:items-end">
+            <nav className="flex flex-wrap justify-center gap-x-8 gap-y-1 md:justify-end">
+              {links.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-muted-foreground hover:text-primary flex items-center gap-2 text-sm transition-colors"
+                >
+                  <Icon className="h-4 w-4" />
+                  {label}
+                </Link>
+              ))}
+            </nav>
+            <Link
+              href="/login"
+              className="text-primary hover:text-primary/80 flex items-center gap-2 text-sm font-medium transition-colors"
+            >
+              <LogIn className="h-4 w-4" />
+              Sign in
+            </Link>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <p>© 2026 VOLT Learning Inc. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link href="#" className="hover:underline text-balance tracking-tight">English (EN)</Link>
-          </div>
+        <div className="text-muted-foreground/80 mt-14 flex justify-center pt-8 text-[11px] tracking-wide">
+          <span>© 2026 VOLT Learning Inc.</span>
         </div>
       </div>
     </footer>
-  )
-}
-
-{
-    /** Notes:
-     * 1. Grid Layout: Responsive with 2 columns on mobile, 4-5 on desktop.
-     * 2. Social Icons: Standard social media area using Lucide-react icons.
-     * 3. Color Balance: "text-muted-foreground" keeps side menus less dominant than main content.
-     * 4. Footer: Copyright and language selection at bottom, separated by a thin line.
-     */
+  );
 }

@@ -84,7 +84,7 @@ export function Features() {
             {gameTypes.map((game) => (
               <CarouselItem key={game.id} className="px-4">
                 {/* Başlık - sayfa üstünde ortalı */}
-                <div className="mb-16 flex flex-col items-center text-center">
+                <div className="flex flex-col items-center text-center">
                   <Badge
                     variant="outline"
                     className="border-primary/20 bg-primary/10 text-primary mb-6 inline-flex gap-2 rounded-full px-4 py-2 backdrop-blur-md [&_svg]:size-5"
@@ -100,7 +100,7 @@ export function Features() {
                   </p>
                 </div>
 
-                <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+                <div className="grid gap-12 py-20 lg:grid-cols-2 lg:items-center">
                   {/* Sol: Büyük resim */}
                   <div className="relative order-2 flex justify-center lg:order-1 lg:justify-start">
                     <div className="bg-primary/10 pointer-events-none absolute top-1/2 left-1/2 h-[100%] w-[75%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[50px]" />
