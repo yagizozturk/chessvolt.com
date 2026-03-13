@@ -19,6 +19,7 @@ export async function createOpeningAction(formData: FormData) {
   const name = (formData.get("name") as string)?.trim();
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const description = (formData.get("description") as string) || null;
+  const fen = (formData.get("fen") as string) || null;
 
   if (!name) {
     redirect("/admin/openings?error=eksik_alan");
@@ -28,6 +29,7 @@ export async function createOpeningAction(formData: FormData) {
     name,
     ecoCode: ecoCode || null,
     description: description || null,
+    fen: fen || null,
     createdBy: user?.id ?? null,
   };
 
@@ -49,11 +51,13 @@ export async function updateOpeningAction(
   const name = (formData.get("name") as string)?.trim();
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const description = (formData.get("description") as string) || null;
+  const fen = (formData.get("fen") as string) || null;
 
   const input: UpdateOpeningInput = {};
   if (name !== undefined) input.name = name;
   if (ecoCode !== undefined) input.ecoCode = ecoCode;
   if (description !== undefined) input.description = description;
+  if (fen !== undefined) input.fen = fen || null;
 
   const opening = await updateOpening(supabase, id, input);
   if (!opening) {

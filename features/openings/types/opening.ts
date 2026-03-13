@@ -4,6 +4,7 @@ export type Opening = {
   name: string;
   ecoCode: string | null;
   description: string | null;
+  fen: string | null;
   createdAt: string;
   createdBy: string | null;
 };

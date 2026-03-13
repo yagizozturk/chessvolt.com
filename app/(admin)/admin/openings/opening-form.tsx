@@ -28,6 +28,14 @@ export function OpeningForm() {
             placeholder="Optional description"
           />
         </Field>
+        <Field>
+          <FieldLabel>FEN</FieldLabel>
+          <Input
+            name="fen"
+            placeholder="e.g. rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
+            className="font-mono text-sm"
+          />
+        </Field>
       </FieldGroup>
       <Button type="submit">Add Opening</Button>
     </form>

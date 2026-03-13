@@ -42,6 +42,15 @@ export function OpeningEditForm({ opening }: Props) {
             placeholder="Optional description"
           />
         </Field>
+        <Field>
+          <FieldLabel>FEN</FieldLabel>
+          <Input
+            name="fen"
+            defaultValue={opening.fen ?? ""}
+            placeholder="e.g. rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
+            className="font-mono text-sm"
+          />
+        </Field>
       </FieldGroup>
       <Button type="submit">Save</Button>
     </form>

@@ -11,6 +11,7 @@ type DbOpening = {
   name: string;
   eco_code: string | null;
   description: string | null;
+  fen: string | null;
   created_at: string;
   created_by: string | null;
 };
@@ -21,6 +22,7 @@ function toOpening(db: DbOpening): Opening {
     name: db.name,
     ecoCode: db.eco_code,
     description: db.description,
+    fen: db.fen,
     createdAt: db.created_at,
     createdBy: db.created_by,
   };
@@ -31,7 +33,7 @@ export async function findAll(
 ): Promise<Opening[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, eco_code, description, created_at, created_by")
+    .select("id, name, eco_code, description, fen, created_at, created_by")
     .order("name", { ascending: true });
 
   if (error) {
@@ -48,7 +50,7 @@ export async function findById(
 ): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, eco_code, description, created_at, created_by")
+    .select("id, name, eco_code, description, fen, created_at, created_by")
     .eq("id", id)
     .maybeSingle();
 
@@ -60,6 +62,7 @@ export type CreateOpeningInput = {
   name: string;
   ecoCode?: string | null;
   description?: string | null;
+  fen?: string | null;
   createdBy?: string | null;
 };
 
@@ -73,6 +76,7 @@ export async function create(
       name: input.name.trim(),
       eco_code: input.ecoCode ?? null,
       description: input.description ?? null,
+      fen: input.fen ?? null,
       created_by: input.createdBy ?? null,
     })
     .select()
@@ -90,6 +94,7 @@ export type UpdateOpeningInput = {
   name?: string;
   ecoCode?: string | null;
   description?: string | null;
+  fen?: string | null;
 };
 
 export async function update(
@@ -101,6 +106,7 @@ export async function update(
   if (input.name !== undefined) updates.name = input.name.trim();
   if (input.ecoCode !== undefined) updates.eco_code = input.ecoCode;
   if (input.description !== undefined) updates.description = input.description;
+  if (input.fen !== undefined) updates.fen = input.fen;
 
   const { data, error } = await supabase
     .from("openings")
