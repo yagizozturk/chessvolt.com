@@ -1,17 +1,19 @@
 import Link from "next/link";
 import {
+  ChevronRight,
   Target,
   Trophy,
   XOctagon,
   TrendingUp,
-  Check,
-  Sword,
-  Circle,
 } from "lucide-react";
 import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle";
 import { getGameById } from "@/features/game/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
+import {
+  formatGameType,
+  getGameTypeCopy,
+} from "@/lib/shared/constants/game-type-copy";
 import {
   Card,
   CardContent,
@@ -19,7 +21,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
+import { CollectionHeader } from "@/components/collection/collection-header";
+import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
 
 type Params = {
   params: Promise<{ slug: string }>;
@@ -55,6 +58,7 @@ export default async function ChallengePage({ params }: Params) {
   );
 
   const total = gameRiddles.length;
+  const copy = getGameTypeCopy(gameType);
   const correct = attemptedRiddles.filter((a) => a.isCorrect).length;
   const incorrect = attemptedRiddles.filter((a) => !a.isCorrect).length;
   const attempted = correct + incorrect;
@@ -63,16 +67,20 @@ export default async function ChallengePage({ params }: Params) {
 
   return (
     <div className="container mx-auto max-w-6xl px-6 pt-12 pb-16">
-      <div className="grid items-start gap-8 lg:grid-cols-[1fr_320px]">
+      <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
         {/* Left: Challenge (header + riddles) */}
         <div>
-          <div className="mb-12 flex flex-col gap-2 text-center md:text-left">
-            <h1 className="text-foreground text-4xl font-black tracking-tight capitalize md:text-5xl">
-              {slug.replace(/-/g, " ")} Challenge
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Master the tactics and unlock the secrets of this kingdom.
-            </p>
+          <div className="mb-8 flex items-center justify-between gap-4 px-2 py-3">
+            <CollectionHeader
+              title={`${formatGameType(gameType)} Challenge`}
+              imageSrc="/images/challanges/magnus_plays.png"
+              imageAlt={formatGameType(gameType)}
+              description={copy.description}
+              quote={copy.quote}
+              author={copy.author}
+              itemCount={gameRiddles.length}
+              itemLabel="riddles"
+            />
           </div>
 
           {gameRiddles.length === 0 ? (
@@ -91,7 +99,6 @@ export default async function ChallengePage({ params }: Params) {
                 })
                 .filter((x): x is NonNullable<typeof x> => x != null)
                 .map(({ riddle, game, index }) => {
-                  const isComplete = attemptByRiddleId[riddle.id] === true;
                   const num = index + 1;
                   const numColorClasses = [
                     "text-primary",
@@ -105,79 +112,16 @@ export default async function ChallengePage({ params }: Params) {
                     numColorClasses[index % 6] ?? numColorClasses[0];
 
                   return (
-                    <Link
+                    <PuzzleCard
                       key={riddle.id}
-                      href={`/game-riddle/${riddle.id}`}
-                      className="group flex flex-col"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="flex shrink-0 items-baseline gap-0.5">
-                          <span
-                            className={`text-sm font-medium ${numColorClass}`}
-                          >
-                            #
-                          </span>
-                          <span
-                            className={`text-4xl font-bold ${numColorClass}`}
-                          >
-                            {num}
-                          </span>
-                        </span>
-                        <p className="truncate text-lg">{riddle.title}</p>
-                      </div>
-                      <div className="group/board relative mt-2 inline-flex justify-center">
-                        {isComplete && (
-                          <div className="absolute top-2 right-2 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 shadow-md">
-                            <Check className="h-4 w-4 text-white" />
-                          </div>
-                        )}
-                        <PuzzleBoard
-                          sourceId={riddle.id}
-                          mode="riddle"
-                          pgn={game.pgn}
-                          ply={riddle.ply}
-                          moves={riddle.moves ?? ""}
-                          width={220}
-                          height={220}
-                          className="border-muted rounded-xl border-4"
-                          viewOnly
-                        />
-                        <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-2 rounded-lg bg-black/60 opacity-0 transition-opacity duration-200 group-hover/board:opacity-100">
-                          <div className="bg-primary flex h-14 w-14 items-center justify-center rounded-full">
-                            <Sword className="text-primary-foreground h-7 w-7" />
-                          </div>
-                          <span className="font-semibold text-white">Play</span>
-                        </div>
-                      </div>
-                      <div className="mt-3 flex w-full">
-                        <div className="flex w-1/2 min-w-0 shrink-0 items-center gap-2">
-                          <Circle className="stroke-border h-3.5 w-3.5 shrink-0 fill-white" />
-                          <div className="min-w-0 flex-1 overflow-hidden">
-                            <div className="truncate text-sm font-medium">
-                              {game.whitePlayer.split(" ")[0]}
-                            </div>
-                            {game.whitePlayer.includes(" ") && (
-                              <div className="text-muted-foreground truncate text-xs">
-                                {game.whitePlayer.split(" ").slice(1).join(" ")}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex w-1/2 min-w-0 shrink-0 items-center justify-end gap-2">
-                          <div className="min-w-0 flex-1 overflow-hidden text-right">
-                            <div className="truncate text-sm font-medium">
-                              {game.blackPlayer.split(" ")[0]}
-                            </div>
-                            {game.blackPlayer.includes(" ") && (
-                              <div className="text-muted-foreground truncate text-xs">
-                                {game.blackPlayer.split(" ").slice(1).join(" ")}
-                              </div>
-                            )}
-                          </div>
-                          <Circle className="fill-primary stroke-primary h-3.5 w-3.5 shrink-0" />
-                        </div>
-                      </div>
-                    </Link>
+                      riddle={riddle}
+                      game={game}
+                      num={num}
+                      numColorClass={numColorClass}
+                      width={250}
+                      height={250}
+                      isComplete={attemptByRiddleId[riddle.id] === true}
+                    />
                   );
                 })}
             </div>

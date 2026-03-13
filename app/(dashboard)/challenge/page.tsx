@@ -1,12 +1,15 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, Target } from "lucide-react";
 import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
 import { getGameById } from "@/features/game/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import { DEFAULT_QUOTE, GAME_TYPE_QUOTES } from "@/lib/shared/constants/quote";
+import {
+  formatGameType,
+  getGameTypeCopy,
+  gameTypeToSlug,
+} from "@/lib/shared/constants/game-type-copy";
 import { shuffle } from "@/lib/utilities/shuffle";
-import { Badge } from "@/components/ui/badge";
+import { CollectionHeader } from "@/components/collection/collection-header";
 import { Card } from "@/components/ui/card";
 import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
@@ -32,36 +35,6 @@ function groupRiddlesByGameType(
   }
 
   return groups;
-}
-
-function formatGameType(slug: string): string {
-  return slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function gameTypeToSlug(gameType: string): string {
-  return gameType.replace(/_/g, "-").replace(/\s+/g, "-").toLowerCase();
-}
-
-type GameTypeCopy = {
-  description: string;
-  quote: string;
-  author: string;
-};
-
-const GAME_TYPE_DESCRIPTIONS: Record<string, string> = {
-  legend_games:
-    "Replay historic games from chess legends. Find their moves and learn to think.",
-  opening_crusher:
-    "Master your repertoire with Opening Crusher. Step into the shoes of the greats and dominate from move one.",
-};
-
-const DEFAULT_DESCRIPTION =
-  "Master the tactics in this collection and sharpen your chess intuition.";
-
-function getGameTypeCopy(gameType: string): GameTypeCopy {
-  const quote = GAME_TYPE_QUOTES[gameType] ?? DEFAULT_QUOTE;
-  const description = GAME_TYPE_DESCRIPTIONS[gameType] ?? DEFAULT_DESCRIPTION;
-  return { description, quote: quote.quote, author: quote.author };
 }
 
 export default async function ChallengePage() {
@@ -124,37 +97,19 @@ export default async function ChallengePage() {
             return (
               <div key={gameType} className="overflow-hidden">
                 <div className="flex items-center justify-between gap-4 px-2 py-3">
-                  <div className="flex items-center gap-4">
-                    <Image
-                      src="/images/challanges/magnus_plays.png"
-                      alt={displayName}
-                      width={156}
-                      height={100}
-                      className="rounded-lg object-cover"
-                    />
-                    <div className="min-w-0 flex-1 space-y-2">
-                      <h2 className="flex items-center gap-2 text-2xl font-semibold">
-                        {displayName}
-                        <Badge variant="default" className="font-normal">
-                          {riddles.length} riddles
-                        </Badge>
-                      </h2>
-                      <p className="text-muted-foreground text-sm">
-                        {copy.description}
-                      </p>
-                      <blockquote className="border-primary/30 border-l-2 pl-3">
-                        <p className="text-muted-foreground italic">
-                          &ldquo;{copy.quote}&rdquo;
-                        </p>
-                        <cite className="text-muted-foreground/80 mt-0.5 block text-xs not-italic">
-                          — {copy.author}
-                        </cite>
-                      </blockquote>
-                    </div>
-                  </div>
+                  <CollectionHeader
+                    title={displayName}
+                    imageSrc="/images/challanges/magnus_plays.png"
+                    imageAlt={displayName}
+                    description={copy.description}
+                    quote={copy.quote}
+                    author={copy.author}
+                    itemCount={riddles.length}
+                    itemLabel="riddles"
+                  />
                   <Link
                     href={`/challenge/${slug}`}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 flex shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
                   >
                     See All
                     <ChevronRight className="h-4 w-4" />

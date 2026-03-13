@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Circle, Sword } from "lucide-react";
+import { Check, Circle, Sword } from "lucide-react";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
@@ -12,6 +12,7 @@ type PuzzleCardProps = {
   numColorClass: string;
   width?: number;
   height?: number;
+  isComplete?: boolean;
 };
 
 export function PuzzleCard({
@@ -21,6 +22,7 @@ export function PuzzleCard({
   numColorClass,
   width = 200,
   height = 200,
+  isComplete = false,
 }: PuzzleCardProps) {
   return (
     <Link href={`/game-riddle/${riddle.id}`} className="group flex flex-col">
@@ -33,6 +35,11 @@ export function PuzzleCard({
         <p className="text-md truncate">{riddle.title}</p>
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
+        {isComplete && (
+          <div className="absolute top-2 right-2 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 shadow-md">
+            <Check className="h-4 w-4 text-white" />
+          </div>
+        )}
         <PuzzleBoard
           sourceId={riddle.id}
           mode="riddle"
