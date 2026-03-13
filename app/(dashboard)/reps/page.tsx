@@ -12,7 +12,7 @@ export default async function RepsPage() {
   const repsWithPgn = reps.filter((r) => r.pgn);
 
   return (
-    <div className="container mx-auto max-w-5xl px-6 pt-12 pb-16">
+    <div className="container mx-auto max-w-6xl px-6 pt-12 pb-16">
       {reps.length === 0 ? (
         <div className="text-muted-foreground py-12 text-center">
           No repertoires yet.

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  ChevronRight,
+  ChevronLeft,
   Target,
   Trophy,
   XOctagon,
@@ -70,19 +70,6 @@ export default async function ChallengePage({ params }: Params) {
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
         {/* Left: Challenge (header + riddles) */}
         <div>
-          <div className="mb-8 flex items-center justify-between gap-4 px-2 py-3">
-            <CollectionHeader
-              title={`${formatGameType(gameType)} Challenge`}
-              imageSrc="/images/challanges/magnus_plays.png"
-              imageAlt={formatGameType(gameType)}
-              description={copy.description}
-              quote={copy.quote}
-              author={copy.author}
-              itemCount={gameRiddles.length}
-              itemLabel="riddles"
-            />
-          </div>
-
           {gameRiddles.length === 0 ? (
             <Card className="border-border bg-card/50 border-dashed">
               <CardContent className="text-muted-foreground py-12 text-center">
@@ -90,7 +77,7 @@ export default async function ChallengePage({ params }: Params) {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 px-4 sm:grid-cols-2 lg:grid-cols-3">
               {gameRiddles
                 .map((riddle, index) => {
                   const game = gameMap[riddle.gameId];
