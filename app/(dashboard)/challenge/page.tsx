@@ -1,26 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Target } from "lucide-react";
 import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
 import { getGameById } from "@/features/game/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import {
-  DEFAULT_QUOTE,
-  GAME_TYPE_QUOTES,
-} from "@/lib/shared/constants/quote";
+import { DEFAULT_QUOTE, GAME_TYPE_QUOTES } from "@/lib/shared/constants/quote";
 import { shuffle } from "@/lib/utilities/shuffle";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 
+// ======================================================================
+// Grouping Riddles by game type column value
+// ======================================================================
 function groupRiddlesByGameType(
   riddles: GameRiddle[],
 ): Record<string, GameRiddle[]> {
@@ -71,11 +65,13 @@ function getGameTypeCopy(gameType: string): GameTypeCopy {
 }
 
 export default async function ChallengePage() {
+  // Getting data
   const { user, supabase } = await getAuthenticatedUser();
   const [allRiddles, attemptedRiddles] = await Promise.all([
     getAllGameRiddles(supabase),
     userGameRiddleRepo.findAttemptedGameRiddleAttempts(supabase, user.id),
   ]);
+
   const groups = groupRiddlesByGameType(allRiddles);
   const attemptByRiddleId = Object.fromEntries(
     attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
@@ -194,26 +190,24 @@ export default async function ChallengePage() {
                         );
                       })}
                   </div>
-                  <Card className="m-4 w-48 shrink-0">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Progress
-                      </CardTitle>
-                      <CardDescription>Finished riddles</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-bold">
-                          {percentage}%
-                        </span>
+                  <Card className="m-4 mt-14 w-44 shrink-0 self-start p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-lg">
+                        <Target className="text-primary h-5 w-5" />
                       </div>
-                      <div className="bg-muted h-2 overflow-hidden rounded-full">
-                        <div
-                          className="bg-primary h-full rounded-full transition-all"
-                          style={{ width: `${percentage}%` }}
-                        />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-muted-foreground text-xs">
+                          Finished riddles
+                        </p>
+                        <p className="text-xl font-bold">{percentage}%</p>
                       </div>
-                    </CardContent>
+                    </div>
+                    <div className="bg-muted mt-3 h-2 overflow-hidden rounded-full">
+                      <div
+                        className="bg-primary h-full rounded-full transition-all"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
                   </Card>
                 </div>
               </div>

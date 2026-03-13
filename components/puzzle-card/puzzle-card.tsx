@@ -51,15 +51,19 @@ export function PuzzleCard({
           <span className="font-semibold text-white">Play</span>
         </div>
       </div>
-      <div className="flex p-5">
-        <div>
+      <div className="bg-muted/50 border-muted mt-4 flex rounded-lg p-3">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <Circle className="h-4 w-4 fill-white" />
-            <span className="text-sm font-medium">{game.whitePlayer}</span>
+            <Circle className="h-4 w-4 shrink-0 fill-white" />
+            <span className="truncate text-sm font-medium">
+              {game.whitePlayer}
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <Circle className="h-4 w-4 fill-black" />
-            <span className="text-sm font-medium">{game.blackPlayer}</span>
+            <Circle className="h-4 w-4 shrink-0 fill-black" />
+            <span className="truncate text-sm font-medium">
+              {game.blackPlayer}
+            </span>
           </div>
         </div>
       </div>
