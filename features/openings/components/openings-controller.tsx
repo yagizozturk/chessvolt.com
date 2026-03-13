@@ -1,33 +1,39 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useRepsStore } from "@/features/reps/store/reps-store";
-import type { Rep } from "@/features/reps/types/reps";
+import { useOpeningsStore } from "@/features/openings/store/openings-store";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import { getPgnFromVariant } from "@/features/openings/mapper/opening-variant.mapper";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 import { Card, CardHeader } from "@/components/ui/card";
 
-export default function RepsController({ rep }: { rep: Rep }) {
+export default function OpeningsController({
+  variant,
+}: {
+  variant: OpeningVariant;
+}) {
   const router = useRouter();
-  const isRepsStarted = useRepsStore((state) => state.isRepsStarted);
+  const isStarted = useOpeningsStore((state) => state.isStarted);
 
   const handleSolved = (isCorrect: boolean) => {
     if (isCorrect) {
-      router.push("/reps");
+      router.push("/openings");
     }
   };
+
+  const pgn = getPgnFromVariant(variant);
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
-        {/* Left: Board */}
-        <div key={rep.id}>
+        <div key={variant.id}>
           <PuzzleBoard
-            sourceId={rep.id}
+            sourceId={variant.id}
             mode="riddle"
-            initialFen={rep.displayFen}
-            pgn={rep.pgn ?? undefined}
-            ply={rep.ply ?? 0}
-            moves={rep.moves}
+            initialFen={variant.fen ?? undefined}
+            pgn={pgn}
+            ply={variant.ply}
+            moves={variant.moves}
             width={620}
             height={620}
             viewOnly={false}
@@ -35,18 +41,17 @@ export default function RepsController({ rep }: { rep: Rep }) {
           />
         </div>
 
-        {/* Right: Stats & Info */}
-        {!isRepsStarted && (
+        {!isStarted && (
           <div className="flex min-w-0 flex-col gap-4">
             <div className="grid grid-cols-2 gap-2">
               <Card className="border-border bg-muted/50 rounded-lg">
                 <CardHeader className="p-4 pb-2">
                   <p className="text-foreground font-semibold">
-                    {rep.title || "Untitled Repertoire"}
+                    {variant.title || "Untitled Variant"}
                   </p>
-                  {(rep.openingType || rep.openingName) && (
+                  {variant.ecoCode && (
                     <p className="text-muted-foreground text-sm">
-                      {[rep.openingType, rep.openingName].filter(Boolean).join(" • ")}
+                      {variant.ecoCode}
                     </p>
                   )}
                 </CardHeader>

@@ -1,39 +1,39 @@
 import Link from "next/link";
 import { ChevronLeft, Target } from "lucide-react";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import { getRepsByOpeningType } from "@/features/reps/services/reps";
+import { getOpeningVariantsByOpeningId } from "@/features/openings/services/openings";
+import * as openingRepo from "@/features/openings/repository/opening.repository";
+import { getPgnFromVariant } from "@/features/openings/mapper/opening-variant.mapper";
 import { GAME_TYPE_QUOTES } from "@/lib/shared/constants/quote";
-import {
-  formatOpeningType,
-  slugToOpeningType,
-} from "@/lib/shared/constants/opening-type-copy";
 import { CollectionHeader } from "@/components/collection/collection-header";
 import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
 import { Card, CardContent } from "@/components/ui/card";
-import type { Rep } from "@/features/reps/types/reps";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import { notFound } from "next/navigation";
 
-function repToRiddleAndGame(rep: Rep) {
+function variantToRiddleAndGame(variant: OpeningVariant) {
+  const pgn = getPgnFromVariant(variant);
   return {
     riddle: {
-      id: rep.id,
-      gameId: rep.id,
-      ply: rep.ply ?? 0,
-      title: rep.title || "Untitled Repertoire",
-      moves: rep.moves,
+      id: variant.id,
+      gameId: variant.id,
+      ply: variant.ply,
+      title: variant.title || "Untitled Variant",
+      moves: variant.moves,
       gameType: null,
-      createdAt: rep.createdAt,
+      createdAt: variant.createdAt,
     },
     game: {
-      id: rep.id,
-      pgn: rep.pgn ?? "",
-      whitePlayer: rep.openingName ?? "White",
+      id: variant.id,
+      pgn,
+      whitePlayer: variant.ecoCode ?? "White",
       blackPlayer: "Black",
       result: "",
       playedAt: "",
       url: null,
-      createdAt: rep.createdAt,
+      createdAt: variant.createdAt,
       event: null,
-      opening: rep.openingName,
+      opening: variant.title,
       description: null,
     },
   };
@@ -43,13 +43,19 @@ type Params = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function RepsByOpeningPage({ params }: Params) {
+export default async function OpeningsBySlugPage({ params }: Params) {
   const { slug } = await params;
   const { supabase } = await getAuthenticatedUser();
 
-  const openingType = slugToOpeningType(slug);
-  const reps = await getRepsByOpeningType(supabase, openingType);
-  const repsWithPgn = reps.filter((r) => r.pgn);
+  const opening = await openingRepo.findBySlug(supabase, slug);
+  if (!opening) {
+    notFound();
+  }
+
+  const variants = await getOpeningVariantsByOpeningId(
+    supabase,
+    opening.id,
+  );
 
   const openingQuote = GAME_TYPE_QUOTES.opening_crusher ?? {
     quote:
@@ -57,42 +63,42 @@ export default async function RepsByOpeningPage({ params }: Params) {
     author: "Rudolf Spielmann",
   };
 
-  const displayName = formatOpeningType(openingType);
+  const displayName = opening.name ?? opening.slug;
 
   return (
     <div className="container mx-auto max-w-6xl px-6 pt-12 pb-16">
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
         <div>
           <Link
-            href="/reps"
+            href="/openings"
             className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 text-sm transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back to Repertoires
+            Back to Openings
           </Link>
           <div className="mb-8 flex items-center justify-between gap-4 px-2 py-3">
             <CollectionHeader
-              title={`${displayName} Repertoires`}
+              title={`${displayName} Variants`}
               imageSrc="/images/challanges/magnus_plays.png"
               imageAlt={displayName}
               description="Study and practice your opening repertoires. Build your arsenal and dominate from move one."
               quote={openingQuote.quote}
               author={openingQuote.author}
-              itemCount={reps.length}
-              itemLabel={reps.length === 1 ? "repertoire" : "repertoires"}
+              itemCount={variants.length}
+              itemLabel={variants.length === 1 ? "variant" : "variants"}
             />
           </div>
 
-          {repsWithPgn.length === 0 ? (
+          {variants.length === 0 ? (
             <Card className="border-border bg-card/50 border-dashed">
               <CardContent className="text-muted-foreground py-12 text-center">
-                No repertoires in this opening type yet. Coming soon!
+                No variants in this opening yet. Coming soon!
               </CardContent>
             </Card>
           ) : (
             <div className="grid gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
-              {repsWithPgn.map((rep, index) => {
-                const { riddle, game } = repToRiddleAndGame(rep);
+              {variants.map((variant, index) => {
+                const { riddle, game } = variantToRiddleAndGame(variant);
                 const num = index + 1;
                 const numColorClasses = [
                   "text-primary",
@@ -107,15 +113,15 @@ export default async function RepsByOpeningPage({ params }: Params) {
 
                 return (
                   <PuzzleCard
-                    key={rep.id}
+                    key={variant.id}
                     riddle={riddle}
                     game={game}
                     num={num}
                     numColorClass={numColorClass}
                     width={220}
                     height={220}
-                    href={`/reps/${rep.id}`}
-                    initialFen={rep.displayFen}
+                    href={`/openings/${variant.id}`}
+                    initialFen={variant.fen}
                   />
                 );
               })}
@@ -130,8 +136,8 @@ export default async function RepsByOpeningPage({ params }: Params) {
                 <Target className="text-primary h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-muted-foreground text-xs">Repertoires</p>
-                <p className="text-xl font-bold">{reps.length}</p>
+                <p className="text-muted-foreground text-xs">Variants</p>
+                <p className="text-xl font-bold">{variants.length}</p>
               </div>
             </div>
           </Card>

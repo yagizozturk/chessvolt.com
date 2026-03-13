@@ -5,7 +5,7 @@ export function Footer() {
   const links = [
     { href: "/challenge", label: "Challenges", icon: Map },
     { href: "/puzzle", label: "Puzzles", icon: Puzzle },
-    { href: "/reps", label: "Opening Crusher", icon: BookOpen },
+    { href: "/openings", label: "Opening Crusher", icon: BookOpen },
   ];
 
   return (

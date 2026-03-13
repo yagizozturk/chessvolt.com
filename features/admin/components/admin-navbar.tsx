@@ -32,7 +32,7 @@ const adminNavItems = [
   { href: "/admin/puzzles", label: "Puzzles", icon: Puzzle },
   { href: "/admin/games", label: "Games", icon: Gamepad2 },
   { href: "/admin/game-riddles", label: "Game Riddles", icon: HelpCircle },
-  { href: "/admin/reps", label: "Reps", icon: BookOpen },
+  { href: "/admin/openings", label: "Openings", icon: BookOpen },
 ];
 
 export function AdminNavbar() {

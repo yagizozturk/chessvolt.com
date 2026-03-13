@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { Rep } from "@/features/reps/types/reps";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,20 +14,23 @@ import {
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Trash2, Save } from "lucide-react";
-import { updateRepAction, deleteRepAction } from "./actions";
+import {
+  updateOpeningVariantAction,
+  deleteOpeningVariantAction,
+} from "./actions";
 
 type Props = {
-  rep: Rep;
+  variant: OpeningVariant;
 };
 
-export function RepDetail({ rep }: Props) {
+export function VariantDetail({ variant }: Props) {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/admin/reps" className="flex items-center gap-2">
+          <Link href="/admin/openings" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to list
           </Link>
@@ -37,11 +40,10 @@ export function RepDetail({ rep }: Props) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>{rep.title || "Untitled Repertoire"}</CardTitle>
+            <CardTitle>{variant.title || "Untitled Variant"}</CardTitle>
             <CardDescription>
-              {[rep.openingType, rep.openingName].filter(Boolean).join(" • ") ||
-                "—"}{" "}
-              • Ply: {rep.ply ?? "—"}
+              {variant.ecoCode && `${variant.ecoCode} • `}
+              Opening: {variant.openingId} • Ply: {variant.ply}
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -57,9 +59,9 @@ export function RepDetail({ rep }: Props) {
             <Button
               variant="destructive"
               onClick={async () => {
-                if (!confirm("This repertoire will be deleted. Are you sure?"))
+                if (!confirm("This variant will be deleted. Are you sure?"))
                   return;
-                await deleteRepAction(rep.id);
+                await deleteOpeningVariantAction(variant.id);
               }}
             >
               <Trash2 className="h-4 w-4" />
@@ -71,56 +73,48 @@ export function RepDetail({ rep }: Props) {
           {isEditing ? (
             <form
               action={async (formData) => {
-                await updateRepAction(rep.id, formData);
+                await updateOpeningVariantAction(variant.id, formData);
               }}
               className="space-y-4"
             >
               <FieldGroup>
                 <Field>
                   <FieldLabel>Title</FieldLabel>
-                  <Input name="title" defaultValue={rep.title} />
-                </Field>
-                <Field>
-                  <FieldLabel>Opening Type</FieldLabel>
                   <Input
-                    name="openingType"
-                    defaultValue={rep.openingType ?? ""}
+                    name="title"
+                    defaultValue={variant.title ?? ""}
                   />
                 </Field>
                 <Field>
-                  <FieldLabel>Opening Name</FieldLabel>
+                  <FieldLabel>ECO Code</FieldLabel>
                   <Input
-                    name="openingName"
-                    defaultValue={rep.openingName ?? ""}
+                    name="ecoCode"
+                    defaultValue={variant.ecoCode ?? ""}
                   />
                 </Field>
                 <Field>
-                  <FieldLabel>Moves (UCI)</FieldLabel>
-                  <Input name="moves" defaultValue={rep.moves} required />
+                  <FieldLabel>Moves (SAN)</FieldLabel>
+                  <Input
+                    name="moves"
+                    defaultValue={variant.moves}
+                    required
+                    className="font-mono text-sm"
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel>FEN</FieldLabel>
+                  <Input
+                    name="fen"
+                    defaultValue={variant.fen ?? ""}
+                    className="font-mono text-sm"
+                  />
                 </Field>
                 <Field>
                   <FieldLabel>Ply</FieldLabel>
                   <Input
                     name="ply"
                     type="number"
-                    defaultValue={rep.ply ?? ""}
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel>PGN</FieldLabel>
-                  <Input
-                    name="pgn"
-                    defaultValue={rep.pgn ?? ""}
-                    className="font-mono text-sm"
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel>Display FEN</FieldLabel>
-                  <Input
-                    name="displayFen"
-                    defaultValue={rep.displayFen ?? ""}
-                    placeholder="Override position for board display"
-                    className="font-mono text-sm"
+                    defaultValue={variant.ply}
                   />
                 </Field>
               </FieldGroup>
@@ -133,51 +127,41 @@ export function RepDetail({ rep }: Props) {
             <dl className="grid gap-2 text-sm">
               <div>
                 <dt className="text-muted-foreground font-medium">ID</dt>
-                <dd className="font-mono text-xs">{rep.id}</dd>
+                <dd className="font-mono text-xs">{variant.id}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">
+                  Opening ID
+                </dt>
+                <dd className="font-mono text-xs">{variant.openingId}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Title</dt>
-                <dd>{rep.title || "—"}</dd>
+                <dd>{variant.title ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">
-                  Opening Type
-                </dt>
-                <dd>{rep.openingType ?? "—"}</dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground font-medium">
-                  Opening Name
-                </dt>
-                <dd>{rep.openingName ?? "—"}</dd>
+                <dt className="text-muted-foreground font-medium">ECO Code</dt>
+                <dd>{variant.ecoCode ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Ply</dt>
-                <dd>{rep.ply ?? "—"}</dd>
+                <dd>{variant.ply}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Moves</dt>
-                <dd className="font-mono text-xs break-all">{rep.moves}</dd>
+                <dd className="font-mono break-all text-xs">{variant.moves}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">PGN</dt>
-                <dd className="max-h-32 overflow-y-auto font-mono text-xs break-all">
-                  {rep.pgn ?? "—"}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground font-medium">
-                  Display FEN
-                </dt>
-                <dd className="font-mono text-xs break-all">
-                  {rep.displayFen ?? "—"}
+                <dt className="text-muted-foreground font-medium">FEN</dt>
+                <dd className="font-mono break-all text-xs">
+                  {variant.fen ?? "—"}
                 </dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">
                   Created At
                 </dt>
-                <dd>{rep.createdAt}</dd>
+                <dd>{variant.createdAt}</dd>
               </div>
             </dl>
           )}
