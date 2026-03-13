@@ -30,7 +30,7 @@ export function PuzzleCard({
         >
           {num}
         </span>
-        <p className="truncate text-lg">{riddle.title}</p>
+        <p className="text-md truncate">{riddle.title}</p>
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
         <PuzzleBoard

@@ -4,9 +4,21 @@ import { ChevronRight } from "lucide-react";
 import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
 import { getGameById } from "@/features/game/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import {
+  DEFAULT_QUOTE,
+  GAME_TYPE_QUOTES,
+} from "@/lib/shared/constants/quote";
 import { shuffle } from "@/lib/utilities/shuffle";
 import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
+import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 
 function groupRiddlesByGameType(
@@ -42,37 +54,32 @@ type GameTypeCopy = {
   author: string;
 };
 
-const GAME_TYPE_COPY: Record<string, GameTypeCopy> = {
-  legend_games: {
-    description:
-      "Replay historic games from chess legends. Find their moves and learn to think.",
-    quote: "Chess is life in miniature.",
-    author: "Garry Kasparov",
-  },
-  opening_crusher: {
-    description:
-      "Master your repertoire with Opening Crusher. Step into the shoes of the greats and dominate from move one.",
-    quote:
-      "Play the opening like a book, the middlegame like a magician, and the endgame like a machine.",
-    author: "Rudolf Spielmann",
-  },
+const GAME_TYPE_DESCRIPTIONS: Record<string, string> = {
+  legend_games:
+    "Replay historic games from chess legends. Find their moves and learn to think.",
+  opening_crusher:
+    "Master your repertoire with Opening Crusher. Step into the shoes of the greats and dominate from move one.",
 };
 
-const DEFAULT_COPY: GameTypeCopy = {
-  description:
-    "Master the tactics in this collection and sharpen your chess intuition.",
-  quote: "Chess is the gymnasium of the mind.",
-  author: "Blaise Pascal",
-};
+const DEFAULT_DESCRIPTION =
+  "Master the tactics in this collection and sharpen your chess intuition.";
 
 function getGameTypeCopy(gameType: string): GameTypeCopy {
-  return GAME_TYPE_COPY[gameType] ?? DEFAULT_COPY;
+  const quote = GAME_TYPE_QUOTES[gameType] ?? DEFAULT_QUOTE;
+  const description = GAME_TYPE_DESCRIPTIONS[gameType] ?? DEFAULT_DESCRIPTION;
+  return { description, quote: quote.quote, author: quote.author };
 }
 
 export default async function ChallengePage() {
-  const { supabase } = await getAuthenticatedUser();
-  const allRiddles = await getAllGameRiddles(supabase);
+  const { user, supabase } = await getAuthenticatedUser();
+  const [allRiddles, attemptedRiddles] = await Promise.all([
+    getAllGameRiddles(supabase),
+    userGameRiddleRepo.findAttemptedGameRiddleAttempts(supabase, user.id),
+  ]);
   const groups = groupRiddlesByGameType(allRiddles);
+  const attemptByRiddleId = Object.fromEntries(
+    attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
+  );
 
   // Shuffle each group and take max 4 riddles per group
   const shuffledGroups: Record<string, GameRiddle[]> = {};
@@ -99,7 +106,7 @@ export default async function ChallengePage() {
   });
 
   return (
-    <div className="container mx-auto max-w-6xl px-6 pt-12 pb-16">
+    <div className="container mx-auto max-w-6xl px-4 pt-12 pb-16">
       {sortedGroupKeys.length === 0 ? (
         <div className="text-muted-foreground py-12 text-center">
           No challenges added yet. Coming soon!
@@ -111,10 +118,16 @@ export default async function ChallengePage() {
             const slug = gameTypeToSlug(gameType);
             const displayName = formatGameType(gameType);
             const copy = getGameTypeCopy(gameType);
+            const completed = riddles.filter(
+              (r) => attemptByRiddleId[r.id] === true,
+            ).length;
+            const total = riddles.length;
+            const percentage =
+              total > 0 ? Math.round((completed / total) * 100) : 0;
 
             return (
               <div key={gameType} className="overflow-hidden">
-                <div className="flex items-center justify-between gap-4 px-4 py-3">
+                <div className="flex items-center justify-between gap-4 px-2 py-3">
                   <div className="flex items-center gap-4">
                     <Image
                       src="/images/challanges/magnus_plays.png"
@@ -152,7 +165,7 @@ export default async function ChallengePage() {
                   </Link>
                 </div>
                 <div className="flex">
-                  <div className="grid grid-cols-4 gap-6 p-4">
+                  <div className="grid grid-cols-4 gap-6 px-2 py-3">
                     {riddles
                       .filter((r) => gameMap[r.gameId]?.pgn)
                       .slice(0, 4)
@@ -181,7 +194,27 @@ export default async function ChallengePage() {
                         );
                       })}
                   </div>
-                  <div>test</div>
+                  <Card className="m-4 w-48 shrink-0">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">
+                        Progress
+                      </CardTitle>
+                      <CardDescription>Finished riddles</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-bold">
+                          {percentage}%
+                        </span>
+                      </div>
+                      <div className="bg-muted h-2 overflow-hidden rounded-full">
+                        <div
+                          className="bg-primary h-full rounded-full transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
             );
