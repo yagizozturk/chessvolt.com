@@ -20,9 +20,9 @@ export default async function AdminGamesImportPage({ searchParams }: SearchParam
   const { error } = await searchParams;
 
   const errorMessages: Record<string, string> = {
-    eksik_pgn: "PGN text is empty.",
-    gecersiz_pgn: "No valid PGN found.",
-    hic_eklenemedi: "No games could be added.",
+    eksik_pgn: "PGN metni boş.",
+    gecersiz_pgn: "Geçerli PGN bulunamadı.",
+    hic_eklenemedi: "Hiçbir oyun eklenemedi.",
   };
 
   return (
@@ -40,11 +40,11 @@ export default async function AdminGamesImportPage({ searchParams }: SearchParam
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
-            Import PGN
+            Toplu PGN İçe Aktar
           </CardTitle>
           <CardDescription>
-            You can upload a PGN file or paste PGN text directly.
-            If there are multiple games, all will be imported.
+            Paste toplu PGN metnini veya dosya yükleyin. Oyunlar boş satırlarla
+            ayrılmış olmalı. Birden fazla oyun varsa hepsi tek seferde eklenir.
           </CardDescription>
           {error && (
             <p className="text-sm text-destructive">

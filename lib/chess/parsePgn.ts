@@ -91,12 +91,13 @@ export function parsePgn(pgn: string): ParsedPgn | null {
 /**
  * Split multi-game PGN into individual games.
  * Games are typically separated by blank lines and a new [Event tag.
+ * Also handles format where games are separated by double newline.
  */
 export function splitPgnGames(pgn: string): string[] {
   const trimmed = pgn.trim();
   if (!trimmed) return [];
 
-  // Split on blank line followed by [Event (lookahead to preserve it)
+  // Split on blank line(s) followed by [Event (lookahead to preserve it)
   const parts = trimmed.split(/\n\s*\n(?=\[Event)/);
 
   return parts
