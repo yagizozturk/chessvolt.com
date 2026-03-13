@@ -27,6 +27,14 @@ export function OpeningEditForm({ opening }: Props) {
           />
         </Field>
         <Field>
+          <FieldLabel>Slug (URL)</FieldLabel>
+          <Input
+            name="slug"
+            defaultValue={opening.slug ?? ""}
+            placeholder="e.g. sicilian-defense"
+          />
+        </Field>
+        <Field>
           <FieldLabel>ECO Code</FieldLabel>
           <Input
             name="ecoCode"

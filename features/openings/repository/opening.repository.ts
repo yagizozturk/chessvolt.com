@@ -5,10 +5,16 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Opening } from "@/features/openings/types/opening";
+import { slugify } from "@/lib/utilities/slugify";
+
+function slugFromName(name: string): string {
+  return slugify(name) || "opening";
+}
 
 type DbOpening = {
   id: string;
   name: string;
+  slug: string | null;
   eco_code: string | null;
   description: string | null;
   fen: string | null;
@@ -20,6 +26,7 @@ function toOpening(db: DbOpening): Opening {
   return {
     id: db.id,
     name: db.name,
+    slug: db.slug,
     ecoCode: db.eco_code,
     description: db.description,
     fen: db.fen,
@@ -33,7 +40,7 @@ export async function findAll(
 ): Promise<Opening[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, eco_code, description, fen, created_at, created_by")
+    .select("id, name, slug, eco_code, description, fen, created_at, created_by")
     .order("name", { ascending: true });
 
   if (error) {
@@ -44,22 +51,45 @@ export async function findAll(
   return (data ?? []).map(toOpening);
 }
 
+export async function findBySlug(
+  supabase: SupabaseClient,
+  slug: string,
+): Promise<Opening | null> {
+  const { data, error } = await supabase
+    .from("openings")
+    .select("id, name, slug, eco_code, description, fen, created_at, created_by")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) {
+    console.error("opening.repository.findBySlug error:", error);
+    return null;
+  }
+  if (!data) return null;
+  return toOpening(data);
+}
+
 export async function findById(
   supabase: SupabaseClient,
   id: string,
 ): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, eco_code, description, fen, created_at, created_by")
+    .select("id, name, slug, eco_code, description, fen, created_at, created_by")
     .eq("id", id)
     .maybeSingle();
 
-  if (error || !data) return null;
+  if (error) {
+    console.error("opening.repository.findById error:", error);
+    return null;
+  }
+  if (!data) return null;
   return toOpening(data);
 }
 
 export type CreateOpeningInput = {
   name: string;
+  slug?: string | null;
   ecoCode?: string | null;
   description?: string | null;
   fen?: string | null;
@@ -74,6 +104,7 @@ export async function create(
     .from("openings")
     .insert({
       name: input.name.trim(),
+      slug: input.slug ?? slugFromName(input.name),
       eco_code: input.ecoCode ?? null,
       description: input.description ?? null,
       fen: input.fen ?? null,
@@ -92,6 +123,7 @@ export async function create(
 
 export type UpdateOpeningInput = {
   name?: string;
+  slug?: string | null;
   ecoCode?: string | null;
   description?: string | null;
   fen?: string | null;
@@ -104,6 +136,7 @@ export async function update(
 ): Promise<Opening | null> {
   const updates: Record<string, unknown> = {};
   if (input.name !== undefined) updates.name = input.name.trim();
+  if (input.slug !== undefined) updates.slug = input.slug;
   if (input.ecoCode !== undefined) updates.eco_code = input.ecoCode;
   if (input.description !== undefined) updates.description = input.description;
   if (input.fen !== undefined) updates.fen = input.fen;

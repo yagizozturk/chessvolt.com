@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { ChevronLeft, Target } from "lucide-react";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import { getOpeningVariantsByOpeningId } from "@/features/openings/services/openings";
-import * as openingRepo from "@/features/openings/repository/opening.repository";
+import {
+  getOpeningBySlug,
+  getOpeningById,
+  getOpeningVariantsByOpeningId,
+} from "@/features/openings/services/openings";
 import { getPgnFromVariant } from "@/features/openings/mapper/opening-variant.mapper";
 import { GAME_TYPE_QUOTES } from "@/lib/shared/constants/quote";
 import { CollectionHeader } from "@/components/collection/collection-header";
@@ -40,14 +43,19 @@ function variantToRiddleAndGame(variant: OpeningVariant) {
 }
 
 type Params = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 };
 
-export default async function OpeningsByIdPage({ params }: Params) {
-  const { id: openingId } = await params;
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export default async function OpeningBySlugPage({ params }: Params) {
+  const { slug } = await params;
   const { supabase } = await getAuthenticatedUser();
 
-  const opening = await openingRepo.findById(supabase, openingId);
+  const opening =
+    (await getOpeningBySlug(supabase, slug)) ??
+    (UUID_REGEX.test(slug) ? await getOpeningById(supabase, slug) : null);
   if (!opening) {
     notFound();
   }
@@ -63,8 +71,6 @@ export default async function OpeningsByIdPage({ params }: Params) {
     author: "Rudolf Spielmann",
   };
 
-  const displayName = opening.name;
-
   return (
     <div className="container mx-auto max-w-6xl px-6 pt-12 pb-16">
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
@@ -78,9 +84,9 @@ export default async function OpeningsByIdPage({ params }: Params) {
           </Link>
           <div className="mb-8 flex items-center justify-between gap-4 px-2 py-3">
             <CollectionHeader
-              title={`${displayName} Variants`}
+              title={`${opening.name} Variants`}
               imageSrc="/images/challanges/magnus_plays.png"
-              imageAlt={displayName}
+              imageAlt={opening.name}
               description="Study and practice your opening repertoires. Build your arsenal and dominate from move one."
               quote={openingQuote.quote}
               author={openingQuote.author}
@@ -120,7 +126,7 @@ export default async function OpeningsByIdPage({ params }: Params) {
                     numColorClass={numColorClass}
                     width={220}
                     height={220}
-                    href={`/openings/${variant.id}`}
+                    href={`/openings/variant/${variant.id}`}
                     initialFen={variant.fen}
                   />
                 );

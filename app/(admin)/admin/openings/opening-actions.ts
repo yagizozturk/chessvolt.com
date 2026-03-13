@@ -17,6 +17,7 @@ export async function createOpeningAction(formData: FormData) {
   const { supabase, user } = await getAdminUser();
 
   const name = (formData.get("name") as string)?.trim();
+  const slug = (formData.get("slug") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const description = (formData.get("description") as string) || null;
   const fen = (formData.get("fen") as string) || null;
@@ -27,6 +28,7 @@ export async function createOpeningAction(formData: FormData) {
 
   const input: CreateOpeningInput = {
     name,
+    slug: slug || null,
     ecoCode: ecoCode || null,
     description: description || null,
     fen: fen || null,
@@ -49,12 +51,14 @@ export async function updateOpeningAction(
   const { supabase } = await getAdminUser();
 
   const name = (formData.get("name") as string)?.trim();
+  const slug = (formData.get("slug") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const description = (formData.get("description") as string) || null;
   const fen = (formData.get("fen") as string) || null;
 
   const input: UpdateOpeningInput = {};
   if (name !== undefined) input.name = name;
+  if (slug !== undefined) input.slug = slug || null;
   if (ecoCode !== undefined) input.ecoCode = ecoCode;
   if (description !== undefined) input.description = description;
   if (fen !== undefined) input.fen = fen || null;

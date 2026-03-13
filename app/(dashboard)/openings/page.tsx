@@ -1,5 +1,6 @@
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { getAllOpenings } from "@/features/openings/services/openings";
+import { slugify } from "@/lib/utilities/slugify";
 import { GAME_TYPE_QUOTES } from "@/lib/shared/constants/quote";
 import { CollectionHeader } from "@/components/collection/collection-header";
 import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
@@ -85,7 +86,7 @@ export default async function OpeningsPage() {
                   game={game}
                   num={num}
                   numColorClass={numColorClass}
-                  href={`/openings/opening/${opening.id}`}
+                  href={`/openings/${opening.slug ?? slugify(opening.name)}`}
                   initialFen={opening.fen}
                 />
               );

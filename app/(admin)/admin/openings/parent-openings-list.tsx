@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { Opening } from "@/features/openings/types/opening";
+import { slugify } from "@/lib/utilities/slugify";
 import { deleteOpeningAction } from "./opening-actions";
 import { Button } from "@/components/ui/button";
 
@@ -49,7 +50,10 @@ export function ParentOpeningsList({ openings }: Props) {
                 Edit
               </Button>
             </Link>
-            <Link href={`/openings/opening/${o.id}`} target="_blank">
+            <Link
+              href={`/openings/${o.slug ?? slugify(o.name)}`}
+              target="_blank"
+            >
               <Button variant="ghost" size="sm">
                 View
               </Button>

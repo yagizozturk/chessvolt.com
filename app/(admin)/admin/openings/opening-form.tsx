@@ -18,6 +18,13 @@ export function OpeningForm() {
           />
         </Field>
         <Field>
+          <FieldLabel>Slug (URL)</FieldLabel>
+          <Input
+            name="slug"
+            placeholder="e.g. sicilian-defense (auto from name if empty)"
+          />
+        </Field>
+        <Field>
           <FieldLabel>ECO Code</FieldLabel>
           <Input name="ecoCode" placeholder="e.g. B20" />
         </Field>
