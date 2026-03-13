@@ -20,6 +20,13 @@ export async function getGameById(
   return gameRepo.findById(supabase, id);
 }
 
+export async function getGamesByIds(
+  supabase: SupabaseClient,
+  ids: string[],
+): Promise<Game[]> {
+  return gameRepo.findByIds(supabase, ids);
+}
+
 export async function createGame(
   supabase: SupabaseClient,
   input: gameRepo.CreateGameInput,

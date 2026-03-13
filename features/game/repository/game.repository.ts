@@ -44,6 +44,25 @@ export async function findById(
   return toGame(data);
 }
 
+export async function findByIds(
+  supabase: SupabaseClient,
+  ids: string[],
+): Promise<Game[]> {
+  if (ids.length === 0) return [];
+
+  const { data: games, error } = await supabase
+    .from("games")
+    .select("*")
+    .in("id", ids);
+
+  if (error) {
+    console.error("game.repository.findByIds error:", error);
+    return [];
+  }
+
+  return (games ?? []).map(toGame);
+}
+
 export type CreateGameInput = {
   whitePlayer: string;
   blackPlayer: string;

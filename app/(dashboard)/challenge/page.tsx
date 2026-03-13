@@ -1,20 +1,19 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
-import { getGameById } from "@/features/game/services/game";
+import { getGamesByIds } from "@/features/game/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import {
   formatGameType,
   getGameTypeCopy,
   gameTypeToSlug,
-} from "@/lib/shared/constants/game-type-copy";
+} from "@/features/game-riddle/utilities/game-type-copy";
 import { groupBy } from "@/lib/utilities/groupBy";
-import { shuffle } from "@/lib/utilities/shuffle";
 import { CollectionHeader } from "@/components/collection/collection-header";
 import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
 import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
 
 export default async function ChallengePage() {
   // ========================================================================
@@ -23,8 +22,15 @@ export default async function ChallengePage() {
   const { user, supabase } = await getAuthenticatedUser();
   const [allRiddles, attemptedRiddles] = await Promise.all([
     getAllGameRiddles(supabase),
-    userGameRiddleRepo.findAttemptedGameRiddleAttempts(supabase, user.id),
+    userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id),
   ]);
+
+  // ========================================================================
+  // Mapping. FromEntries example return: { "riddle-101": true }
+  // ========================================================================
+  const attemptByRiddleId = Object.fromEntries(
+    attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
+  );
 
   // ========================================================================
   // Grouping data by gameType in riddles. (gameType is required; filter legacy nulls)
@@ -33,54 +39,31 @@ export default async function ChallengePage() {
   const riddleGameTypeGroups = groupBy(riddlesWithGameType, (r) =>
     r.gameType!.trim(),
   );
-  const attemptByRiddleId = Object.fromEntries(
-    attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
-  );
+
+  const groupKeys = Object.keys(riddleGameTypeGroups);
 
   // ========================================================================
-  // Shuffle each group and take max 4 riddles per group
-  // ========================================================================
-  const shuffledGroups: Record<string, GameRiddle[]> = {};
-  for (const key of Object.keys(riddleGameTypeGroups)) {
-    shuffledGroups[key] = shuffle(riddleGameTypeGroups[key]!);
-  }
-
-  // ========================================================================
-  // Fetch games for riddles (unique gameIds)
+  // Fetch games for riddles (unique gameIds) - single query
+  // new Set(...) eliminates same values. [... ] converts it to array
   // ========================================================================
   const gameIds = [...new Set(allRiddles.map((r) => r.gameId))];
-  const games = await Promise.all(
-    gameIds.map((id) => getGameById(supabase, id)),
-  );
-  const gameMap = Object.fromEntries(
-    games
-      .filter((g): g is NonNullable<typeof g> => g != null)
-      .map((g) => [g.id, g]),
-  );
-
-  const sortedGroupKeys = Object.keys(riddleGameTypeGroups).sort((a, b) =>
-    a.localeCompare(b),
-  );
+  const games = await getGamesByIds(supabase, gameIds);
+  const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-12 pb-16">
-      {sortedGroupKeys.length === 0 ? (
+      {groupKeys.length === 0 ? (
         <div className="text-muted-foreground py-12 text-center">
           No challenges added yet. Coming soon!
         </div>
       ) : (
         <div className="space-y-6">
-          {sortedGroupKeys.map((gameType) => {
-            const riddles = shuffledGroups[gameType] ?? [];
+          {groupKeys.map((gameType) => {
+            const riddles = riddleGameTypeGroups[gameType] ?? [];
             const slug = gameTypeToSlug(gameType);
             const displayName = formatGameType(gameType);
             const copy = getGameTypeCopy(gameType);
-            const completed = riddles.filter(
-              (r) => attemptByRiddleId[r.id] === true,
-            ).length;
-            const total = riddles.length;
-            const percentage =
-              total > 0 ? Math.round((completed / total) * 100) : 0;
+            const stats = getGroupStats(riddles, attemptByRiddleId);
 
             return (
               <div key={gameType} className="overflow-hidden">
@@ -125,7 +108,7 @@ export default async function ChallengePage() {
                       })}
                   </div>
                   <ProgressStatsCard
-                    percentage={percentage}
+                    percentage={stats.percentage}
                     className="m-4 mt-14"
                   />
                 </div>

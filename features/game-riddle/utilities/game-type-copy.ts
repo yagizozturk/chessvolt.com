@@ -1,4 +1,7 @@
-import { DEFAULT_QUOTE, GAME_TYPE_QUOTES } from "./quote";
+import {
+  DEFAULT_QUOTE,
+  GAME_TYPE_QUOTES,
+} from "../../../lib/shared/constants/quote";
 
 export type GameTypeCopy = {
   description: string;
@@ -29,7 +32,6 @@ export function gameTypeToSlug(gameType: string): string {
 
 export function getGameTypeCopy(gameType: string): GameTypeCopy {
   const quote = GAME_TYPE_QUOTES[gameType] ?? DEFAULT_QUOTE;
-  const description =
-    GAME_TYPE_DESCRIPTIONS[gameType] ?? DEFAULT_DESCRIPTION;
+  const description = GAME_TYPE_DESCRIPTIONS[gameType] ?? DEFAULT_DESCRIPTION;
   return { description, quote: quote.quote, author: quote.author };
 }

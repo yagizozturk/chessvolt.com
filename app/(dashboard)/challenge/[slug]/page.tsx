@@ -13,7 +13,7 @@ import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game
 import {
   formatGameType,
   getGameTypeCopy,
-} from "@/lib/shared/constants/game-type-copy";
+} from "@/features/game-riddle/utilities/game-type-copy";
 import {
   Card,
   CardContent,
@@ -39,7 +39,7 @@ export default async function ChallengePage({ params }: Params) {
   // ===============================================================
   const [gameRiddles, attemptedRiddles] = await Promise.all([
     getGameRiddlesByGameType(supabase, gameType),
-    userGameRiddleRepo.findAttemptedGameRiddleAttempts(supabase, user.id),
+    userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id),
   ]);
 
   // Fetch games for boards

@@ -9,7 +9,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AttemptedGameRiddle } from "@/features/game-riddle/types/user-game-riddle";
 
 /** Returns game riddle attempts with correct/incorrect status */
-export async function findAttemptedGameRiddleAttempts(
+export async function findGameRiddleAttempts(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<AttemptedGameRiddle[]> {
@@ -20,7 +20,7 @@ export async function findAttemptedGameRiddleAttempts(
 
   if (error) {
     console.error(
-      "user-game-riddle.repository.findAttemptedGameRiddleAttempts error:",
+      "user-game-riddle.repository.findGameRiddleAttempts error:",
       error,
     );
     return [];
