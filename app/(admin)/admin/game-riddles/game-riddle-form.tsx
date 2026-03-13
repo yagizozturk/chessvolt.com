@@ -94,7 +94,11 @@ export function GameRiddleForm({ games }: Props) {
         </Field>
         <Field>
           <FieldLabel>Game Type</FieldLabel>
-          <Input name="gameType" placeholder="e.g. legend_games" />
+          <Input
+            name="gameType"
+            required
+            placeholder="e.g. legend_games"
+          />
         </Field>
       </FieldGroup>
       <Button type="submit">Create</Button>

@@ -87,16 +87,6 @@ export default async function ChallengePage({ params }: Params) {
                 .filter((x): x is NonNullable<typeof x> => x != null)
                 .map(({ riddle, game, index }) => {
                   const num = index + 1;
-                  const numColorClasses = [
-                    "text-primary",
-                    "text-chart-2",
-                    "text-chart-4",
-                    "text-chart-1",
-                    "text-chart-3",
-                    "text-chart-5",
-                  ];
-                  const numColorClass =
-                    numColorClasses[index % 6] ?? numColorClasses[0];
 
                   return (
                     <PuzzleCard
@@ -104,7 +94,6 @@ export default async function ChallengePage({ params }: Params) {
                       riddle={riddle}
                       game={game}
                       num={num}
-                      numColorClass={numColorClass}
                       width={250}
                       height={250}
                       isComplete={attemptByRiddleId[riddle.id] === true}

@@ -106,16 +106,6 @@ export default async function OpeningBySlugPage({ params }: Params) {
               {variants.map((variant, index) => {
                 const { riddle, game } = variantToRiddleAndGame(variant);
                 const num = index + 1;
-                const numColorClasses = [
-                  "text-primary",
-                  "text-chart-2",
-                  "text-chart-4",
-                  "text-chart-1",
-                  "text-chart-3",
-                  "text-chart-5",
-                ];
-                const numColorClass =
-                  numColorClasses[index % 6] ?? numColorClasses[0];
 
                 return (
                   <PuzzleCard
@@ -123,7 +113,6 @@ export default async function OpeningBySlugPage({ params }: Params) {
                     riddle={riddle}
                     game={game}
                     num={num}
-                    numColorClass={numColorClass}
                     width={220}
                     height={220}
                     href={`/openings/variant/${variant.id}`}

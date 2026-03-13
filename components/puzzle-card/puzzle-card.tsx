@@ -9,7 +9,6 @@ type PuzzleCardProps = {
   riddle: GameRiddle;
   game: Game;
   num: number;
-  numColorClass: string;
   width?: number;
   height?: number;
   isComplete?: boolean;
@@ -21,7 +20,6 @@ export function PuzzleCard({
   riddle,
   game,
   num,
-  numColorClass,
   width = 200,
   height = 200,
   isComplete = false,
@@ -35,7 +33,7 @@ export function PuzzleCard({
     >
       <div className="flex items-center gap-3">
         <span
-          className={`flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-current text-sm font-bold ${numColorClass}`}
+          className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-current text-sm font-bold text-primary"
         >
           {num}
         </span>

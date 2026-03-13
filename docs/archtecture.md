@@ -1,5 +1,11 @@
 ├── README.md
+├── api-client
+│   ├── client.ts
+│   └── route-handler.ts
 ├── app
+│   ├── (admin)
+│   │   ├── admin
+│   │   └── layout.tsx
 │   ├── (auth)
 │   │   ├── auth
 │   │   ├── forgot-password
@@ -7,10 +13,10 @@
 │   │   ├── login
 │   │   └── signup
 │   ├── (dashboard)
-│   │   ├── dashboard
-│   │   ├── game-riddle
 │   │   ├── challenge
+│   │   ├── game-riddle
 │   │   ├── layout.tsx
+│   │   ├── openings
 │   │   ├── play
 │   │   └── puzzle
 │   ├── (marketing)
@@ -22,46 +28,32 @@
 │   ├── http
 │   │   ├── chat
 │   │   ├── game-riddle
+│   │   ├── profile
 │   │   └── puzzle
-│   └── layout.tsx ✅
+│   ├── layout.tsx
+│   └── storybook
+│   └── page.tsx
 ├── assets
 │   ├── chessground.css
 │   ├── images
 │   │   ├── board
 │   │   └── pieces
-│   ├── piyon.css
-│   └── theme
-│   └── theme.css
+│   ├── theme
+│   │   └── theme.css
+│   └── volt.css
 ├── components
-│   ├── app-sidebar.tsx
-│   ├── auth
-│   │   ├── login-form.tsx
-│   │   └── signup-form.tsx
-│   ├── controller
-│   │   ├── game-controller.tsx
-│   │   ├── puzzle-controller.tsx
-│   │   ├── reps-controller.tsx
-│   │   └── riddle-controller.tsx
+│   ├── collection
+│   │   └── collection-header.tsx
+│   ├── countdown-timer
+│   │   └── countdown-timer.tsx
 │   ├── game
 │   │   ├── navbar.tsx
 │   │   ├── stat-item.tsx
 │   │   └── user-stats.tsx
-│   ├── landing
-│   │   ├── features.tsx
-│   │   ├── footer.tsx
-│   │   ├── game-modes.tsx
-│   │   ├── gamification-features.tsx
-│   │   ├── hero.tsx
-│   │   ├── challenge-preview.tsx
-│   │   ├── navbar.tsx (mobildeki buttonlar kaldı ❌)
-│   │   └── pricing.tsx
-│   ├── play-board
-│   │   ├── inactive-play-board.tsx
-│   │   └── play-board.tsx
-│   ├── puzzle-board
-│   │   └── puzzle-board.tsx
-│   ├── riddle-board
-│   │   └── riddle-board.tsx
+│   ├── puzzle-card
+│   │   └── puzzle-card.tsx
+│   ├── theme-provider
+│   │   └── theme-provider.tsx
 │   └── ui
 │   ├── badge.tsx
 │   ├── button.tsx
@@ -73,94 +65,132 @@
 │   ├── navigation-menu.tsx
 │   ├── scroll-area.tsx
 │   ├── separator.tsx
-│   └── tabs.tsx
+│   ├── sheet.tsx
+│   ├── tabs.tsx
+│   └── theme-toggle.tsx
 ├── components.json
 ├── docs
-│   └── archtecture.md
+│   ├── archtecture.md
+│   └── hardcoded-colors-audit.md
 ├── eslint.config.mjs
-├── hooks
-│   ├── use-chat-stream.ts
-│   ├── use-chess.ts
-│   ├── use-chessgroud.ts
-│   ├── use-counter.ts
-│   ├── use-get-puzzle-coach.ts
-│   ├── use-mobile.ts
-│   ├── use-sound.ts
-│   ├── use-stockfish-engine.ts
-│   ├── use-update-game-riddle.ts
-│   └── use-update-puzzle.ts
-├── lib
+├── features
+│   ├── admin
+│   │   └── components
+│   ├── auth
+│   │   └── components
+│   ├── chat
+│   │   ├── api
+│   │   ├── hooks
+│   │   └── types
+│   ├── coach
+│   │   └── components
+│   ├── game
+│   │   ├── mapper
+│   │   ├── repository
+│   │   ├── services
+│   │   ├── store
+│   │   └── types
+│   ├── game-riddle
+│   │   ├── api
+│   │   ├── components
+│   │   ├── hooks
+│   │   ├── mapper
+│   │   ├── repository
+│   │   ├── services
+│   │   └── types
+│   ├── home
+│   │   ├── components
+│   │   └── store
+│   ├── landing
+│   │   └── components
+│   ├── openings
+│   │   ├── components
+│   │   ├── mapper
+│   │   ├── repository
+│   │   ├── services
+│   │   ├── store
+│   │   └── types
+│   ├── playground
+│   │   └── components
+│   ├── profile
+│   │   ├── api
+│   │   ├── components
+│   │   ├── hooks
+│   │   ├── repository
+│   │   ├── services
+│   │   ├── store
+│   │   └── types
+│   └── puzzle
 │   ├── api
-│   │   ├── chat.ts
-│   │   ├── client.ts
-│   │   ├── game-riddle.ts
-│   │   ├── puzzle.ts
-│   │   └── route-handler.ts
-│   ├── chess-board
+│   ├── components
+│   ├── hooks
+│   ├── mapper
+│   ├── repository
+│   ├── services
+│   ├── store
+│   └── types
+├── hooks
+│   └── use-counter.ts
+├── lib
+│   ├── chess
 │   │   ├── createMoveFromUci.ts
 │   │   ├── createMoveObjectsFromMultiPvs.ts
+│   │   ├── extractMovesFromPgn.ts
 │   │   ├── getFenFromPgnAtPly.ts
 │   │   ├── getTurn.ts
+│   │   ├── hooks
+│   │   ├── movesToPgn.ts
+│   │   ├── parsePgn.ts
 │   │   └── toDests.ts
-│   ├── mappers
-│   │   ├── game-riddle.ts
-│   │   ├── game.ts
-│   │   └── puzzle.ts
-│   ├── model
-│   │   ├── engine-info.ts
-│   │   ├── game-riddle.ts
-│   │   ├── game-status.ts
-│   │   ├── game.ts
-│   │   ├── move.ts
-│   │   ├── puzzle.ts
-│   │   ├── reps.ts
-│   │   └── user-game-riddle.ts
-│   ├── open-ai.ts
-│   ├── prompt
-│   │   ├── ai.config.ts
-│   │   └── concate-prompt.ts
-│   ├── repositories
-│   │   ├── game-riddle.repository.ts
-│   │   ├── game.repository.ts
-│   │   ├── puzzle.repository.ts
-│   │   ├── reps.repository.ts
-│   │   ├── user-game-riddle.repository.ts
-│   │   └── user-puzzle.repository.ts
-│   ├── services
-│   │   ├── game-riddle.ts
-│   │   ├── game.ts
-│   │   ├── puzzle.ts
-│   │   └── reps.ts
-│   ├── stockfish
+│   ├── chessground
+│   │   └── hooks
+│   ├── engine
 │   │   ├── createEngine.ts
+│   │   ├── hooks
 │   │   └── parseEngine.ts
+│   ├── open-ai
+│   │   ├── ai.config.ts
+│   │   ├── concate-prompt.ts
+│   │   └── open-ai.ts
+│   ├── shared
+│   │   ├── constants
+│   │   ├── hooks
+│   │   ├── store
+│   │   └── types
 │   ├── supabase
 │   │   ├── auth.ts
 │   │   ├── client.ts
 │   │   ├── middleware.ts
 │   │   └── server.ts
-│   └── utils.ts
+│   └── utilities
+│   ├── cn.ts
+│   ├── reward.ts
+│   ├── shuffle.ts
+│   └── slugify.ts
 ├── next-env.d.ts
 ├── next.config.ts
 ├── package-lock.json
 ├── package.json
 ├── postcss.config.mjs
 ├── public
+│   ├── audio
+│   │   ├── correct.mp3
+│   │   ├── move.wav
+│   │   ├── piece-move-sound.mp3
+│   │   └── piece-move.mp3
 │   ├── file.svg
 │   ├── globe.svg
 │   ├── images
+│   │   ├── challanges
+│   │   ├── features
 │   │   └── hero
 │   ├── next.svg
+│   ├── stockfish.js
 │   ├── vercel.svg
 │   └── window.svg
-├── stores
-│   ├── coach-store.ts
-│   ├── game-store.ts
-│   ├── stats-store.ts
-│   ├── reps-store.ts
-│   └── test-store.ts
 ├── supabase
 │   └── migrations
-├── tsconfig.json
-└── types
-└── game.ts
+│   └── 20250313000000_add_slug_to_openings.sql
+└── tsconfig.json
+
+117 directories, 78 files

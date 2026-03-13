@@ -107,6 +107,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                   <FieldLabel>Game Type</FieldLabel>
                   <Input
                     name="gameType"
+                    required
                     defaultValue={riddle.gameType ?? ""}
                     placeholder="e.g. legend_games"
                   />

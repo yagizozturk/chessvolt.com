@@ -17,9 +17,9 @@ export async function createGameRiddleAction(formData: FormData) {
   const ply = parseInt(formData.get("ply") as string, 10);
   const title = formData.get("title") as string;
   const moves = (formData.get("moves") as string) || null;
-  const gameType = (formData.get("gameType") as string) || null;
+  const gameType = (formData.get("gameType") as string)?.trim() || null;
 
-  if (!gameId || !title || isNaN(ply)) {
+  if (!gameId || !title || !gameType || isNaN(ply)) {
     redirect("/admin/game-riddles/new?error=eksik_alan");
   }
 
@@ -28,7 +28,7 @@ export async function createGameRiddleAction(formData: FormData) {
     ply,
     title,
     moves: moves || null,
-    gameType: gameType || null,
+    gameType,
   };
 
   const riddle = await createGameRiddle(supabase, input);
@@ -47,14 +47,19 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
   const ply = formData.get("ply");
   const title = formData.get("title") as string;
   const moves = (formData.get("moves") as string) || null;
-  const gameType = (formData.get("gameType") as string) || null;
+  const gameType = (formData.get("gameType") as string)?.trim() || null;
 
   const input: Record<string, unknown> = {};
   if (gameId) input.gameId = gameId;
   if (ply !== undefined) input.ply = parseInt(ply as string, 10);
   if (title) input.title = title;
   if (moves !== undefined) input.moves = moves;
-  if (gameType !== undefined) input.gameType = gameType;
+  if (gameType !== undefined) {
+    if (!gameType) {
+      redirect(`/admin/game-riddles/${id}?error=eksik_alan`);
+    }
+    input.gameType = gameType;
+  }
 
   const riddle = await updateGameRiddle(supabase, id, input);
   if (!riddle) {
