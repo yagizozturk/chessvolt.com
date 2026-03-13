@@ -4,9 +4,10 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createOpeningVariantAction } from "./actions";
 import { Button } from "@/components/ui/button";
+import type { Opening } from "@/features/openings/types/opening";
 
 type Props = {
-  openings: { id: string; slug: string; name: string | null }[];
+  openings: Opening[];
 };
 
 export function VariantForm({ openings }: Props) {
@@ -23,7 +24,8 @@ export function VariantForm({ openings }: Props) {
             <option value="">Select opening...</option>
             {openings.map((o) => (
               <option key={o.id} value={o.id}>
-                {o.name ?? o.slug} ({o.slug})
+                {o.name}
+                {o.ecoCode ? ` (${o.ecoCode})` : ""}
               </option>
             ))}
           </select>

@@ -1,12 +1,49 @@
 /**
  * Openings Service
  *
- * Responsibility: Opening variant business logic.
+ * Responsibility: Opening and opening variant business logic.
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Opening } from "@/features/openings/types/opening";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import * as openingRepo from "@/features/openings/repository/opening.repository";
 import * as openingVariantRepo from "@/features/openings/repository/opening-variant.repository";
+
+export async function getAllOpenings(
+  supabase: SupabaseClient,
+): Promise<Opening[]> {
+  return openingRepo.findAll(supabase);
+}
+
+export async function getOpeningById(
+  supabase: SupabaseClient,
+  id: string,
+): Promise<Opening | null> {
+  return openingRepo.findById(supabase, id);
+}
+
+export async function createOpening(
+  supabase: SupabaseClient,
+  input: openingRepo.CreateOpeningInput,
+): Promise<Opening | null> {
+  return openingRepo.create(supabase, input);
+}
+
+export async function updateOpening(
+  supabase: SupabaseClient,
+  id: string,
+  input: openingRepo.UpdateOpeningInput,
+): Promise<Opening | null> {
+  return openingRepo.update(supabase, id, input);
+}
+
+export async function deleteOpening(
+  supabase: SupabaseClient,
+  id: string,
+): Promise<boolean> {
+  return openingRepo.remove(supabase, id);
+}
 
 export async function getAllOpeningVariants(
   supabase: SupabaseClient,

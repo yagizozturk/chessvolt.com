@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getAdminUser } from "@/lib/supabase/auth";
-import * as openingRepo from "@/features/openings/repository/opening.repository";
+import { getAllOpenings } from "@/features/openings/services/openings";
 import {
   Card,
   CardContent,
@@ -13,7 +13,7 @@ import { VariantForm } from "../variant-form";
 
 export default async function AdminOpeningsNewPage() {
   const { supabase } = await getAdminUser();
-  const openings = await openingRepo.findAll(supabase);
+  const openings = await getAllOpenings(supabase);
 
   return (
     <div className="space-y-6">

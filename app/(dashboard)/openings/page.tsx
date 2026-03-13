@@ -49,7 +49,7 @@ function groupVariantsByOpening(
 
   for (const v of variants) {
     const opening = openingMap.get(v.openingId);
-    const key = opening?.slug ?? v.openingId;
+    const key = v.openingId;
     if (!groups[key]) groups[key] = [];
     groups[key].push(v);
   }
@@ -59,11 +59,6 @@ function groupVariantsByOpening(
   }
 
   return groups;
-}
-
-function getDisplayName(key: string, openings: Opening[]): string {
-  const opening = openings.find((o) => o.slug === key);
-  return opening?.name ?? opening?.slug ?? key;
 }
 
 export default async function OpeningsPage() {
@@ -79,10 +74,11 @@ export default async function OpeningsPage() {
     shuffledGroups[key] = shuffle(groups[key]!);
   }
 
+  const openingMap = new Map(openings.map((o) => [o.id, o]));
   const sortedGroupKeys = Object.keys(groups).sort((a, b) => {
-    const aOpening = openings.find((o) => o.slug === a);
-    const bOpening = openings.find((o) => o.slug === b);
-    return (aOpening?.slug ?? a).localeCompare(bOpening?.slug ?? b);
+    const aOpening = openingMap.get(a);
+    const bOpening = openingMap.get(b);
+    return (aOpening?.name ?? a).localeCompare(bOpening?.name ?? b);
   });
 
   const openingQuote = GAME_TYPE_QUOTES.opening_crusher ?? {
@@ -99,13 +95,13 @@ export default async function OpeningsPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {sortedGroupKeys.map((groupKey) => {
-            const groupVariants = shuffledGroups[groupKey] ?? [];
-            const slug = groupKey;
-            const displayName = getDisplayName(groupKey, openings);
+          {sortedGroupKeys.map((openingId) => {
+            const groupVariants = shuffledGroups[openingId] ?? [];
+            const opening = openingMap.get(openingId);
+            const displayName = opening?.name ?? openingId;
 
             return (
-              <div key={groupKey} className="overflow-hidden">
+              <div key={openingId} className="overflow-hidden">
                 <div className="flex items-center justify-between gap-4 px-2 py-3">
                   <CollectionHeader
                     title={displayName}
@@ -120,7 +116,7 @@ export default async function OpeningsPage() {
                     }
                   />
                   <Link
-                    href={`/openings/opening/${slug}`}
+                    href={`/openings/opening/${openingId}`}
                     className="bg-primary text-primary-foreground hover:bg-primary/90 flex shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
                   >
                     See All

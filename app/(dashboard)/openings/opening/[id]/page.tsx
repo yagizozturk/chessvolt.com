@@ -40,14 +40,14 @@ function variantToRiddleAndGame(variant: OpeningVariant) {
 }
 
 type Params = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 };
 
-export default async function OpeningsBySlugPage({ params }: Params) {
-  const { slug } = await params;
+export default async function OpeningsByIdPage({ params }: Params) {
+  const { id: openingId } = await params;
   const { supabase } = await getAuthenticatedUser();
 
-  const opening = await openingRepo.findBySlug(supabase, slug);
+  const opening = await openingRepo.findById(supabase, openingId);
   if (!opening) {
     notFound();
   }
@@ -63,7 +63,7 @@ export default async function OpeningsBySlugPage({ params }: Params) {
     author: "Rudolf Spielmann",
   };
 
-  const displayName = opening.name ?? opening.slug;
+  const displayName = opening.name;
 
   return (
     <div className="container mx-auto max-w-6xl px-6 pt-12 pb-16">
