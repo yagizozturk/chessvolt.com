@@ -7,5 +7,6 @@ export type Rep = {
   title: string;
   ply: number | null;
   pgn: string | null;
+  displayFen: string | null;
   createdAt: string;
 };

@@ -19,6 +19,7 @@ export async function createRepAction(formData: FormData) {
   const plyStr = formData.get("ply") as string;
   const ply = plyStr ? parseInt(plyStr, 10) : null;
   const pgn = (formData.get("pgn") as string) || null;
+  const displayFen = (formData.get("displayFen") as string) || null;
 
   if (!moves?.trim()) {
     redirect("/admin/reps/new?error=eksik_alan");
@@ -31,6 +32,7 @@ export async function createRepAction(formData: FormData) {
     title: title || null,
     ply: isNaN(ply as number) ? null : ply,
     pgn,
+    displayFen,
   };
 
   const rep = await createRep(supabase, input);
@@ -52,6 +54,7 @@ export async function updateRepAction(id: string, formData: FormData) {
   const plyStr = formData.get("ply") as string;
   const ply = plyStr ? parseInt(plyStr, 10) : null;
   const pgn = (formData.get("pgn") as string) || null;
+  const displayFen = (formData.get("displayFen") as string) || null;
 
   const input: UpdateRepInput = {};
   if (moves !== undefined) input.moves = moves;
@@ -60,6 +63,7 @@ export async function updateRepAction(id: string, formData: FormData) {
   if (title !== undefined) input.title = title;
   if (plyStr !== undefined) input.ply = isNaN(ply as number) ? null : ply;
   if (pgn !== undefined) input.pgn = pgn;
+  if (displayFen !== undefined) input.displayFen = displayFen;
 
   const rep = await updateRep(supabase, id, input);
   if (!rep) {

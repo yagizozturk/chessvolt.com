@@ -92,6 +92,7 @@ export default async function RepsByOpeningPage({ params }: Params) {
           ) : (
             <div className="grid gap-6 p-4 sm:grid-cols-2 lg:grid-cols-3">
               {repsWithPgn.map((rep, index) => {
+                const { riddle, game } = repToRiddleAndGame(rep);
                 const num = index + 1;
                 const numColorClasses = [
                   "text-primary",
@@ -105,13 +106,16 @@ export default async function RepsByOpeningPage({ params }: Params) {
                   numColorClasses[index % 6] ?? numColorClasses[0];
 
                 return (
-                  <RepCard
+                  <PuzzleCard
                     key={rep.id}
-                    rep={rep}
+                    riddle={riddle}
+                    game={game}
                     num={num}
                     numColorClass={numColorClass}
                     width={220}
                     height={220}
+                    href={`/reps/${rep.id}`}
+                    initialFen={rep.displayFen}
                   />
                 );
               })}

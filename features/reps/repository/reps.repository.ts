@@ -48,6 +48,7 @@ export type CreateRepInput = {
   title?: string | null;
   ply?: number | null;
   pgn?: string | null;
+  displayFen?: string | null;
 };
 
 export async function create(
@@ -63,6 +64,7 @@ export async function create(
       title: input.title ?? "",
       ply: input.ply ?? null,
       pgn: input.pgn ?? null,
+      display_fen: input.displayFen ?? null,
     })
     .select()
     .single();
@@ -82,6 +84,7 @@ export type UpdateRepInput = {
   title?: string;
   ply?: number | null;
   pgn?: string | null;
+  displayFen?: string | null;
 };
 
 export async function update(
@@ -96,6 +99,7 @@ export async function update(
   if (input.title !== undefined) updates.title = input.title;
   if (input.ply !== undefined) updates.ply = input.ply;
   if (input.pgn !== undefined) updates.pgn = input.pgn;
+  if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 
   const { data, error } = await supabase
     .from("reps")

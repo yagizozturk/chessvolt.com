@@ -8,6 +8,7 @@ type DbRep = {
   title: string;
   ply: number | null;
   pgn: string | null;
+  display_fen: string | null;
   created_at: string;
 };
 
@@ -20,6 +21,7 @@ export function toRep(db: DbRep): Rep {
     title: db.title,
     ply: db.ply,
     pgn: db.pgn,
+    displayFen: db.display_fen,
     createdAt: db.created_at,
   };
 }

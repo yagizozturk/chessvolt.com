@@ -22,7 +22,7 @@ import "@/assets/chessground.css";
 import "@/assets/volt.css";
 import "@/assets/theme/theme.css";
 
-export type BoardMode = "puzzle" | "riddle";
+export type BoardMode = "puzzle" | "riddle" | "repertoire";
 
 export type PuzzleBoardProps = {
   /** puzzleId, riddleId or repId - board resets when changed */

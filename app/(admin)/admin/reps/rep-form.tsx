@@ -77,6 +77,14 @@ export function RepForm() {
           <Input name="openingName" placeholder="e.g. Sicilian Defense" />
         </Field>
         <Field>
+          <FieldLabel>Display FEN</FieldLabel>
+          <Input
+            name="displayFen"
+            placeholder="e.g. rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
+            className="font-mono text-sm"
+          />
+        </Field>
+        <Field>
           <FieldLabel>Moves (UCI)</FieldLabel>
           <Input
             name="moves"

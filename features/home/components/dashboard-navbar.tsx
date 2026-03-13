@@ -39,7 +39,6 @@ import { createClient } from "@/lib/supabase/client";
 const navItems = [
   { href: "/challenge", label: "Challenges", icon: Map },
   { href: "/reps", label: "Opening Crusher", icon: BookOpen },
-  { href: "/puzzle", label: "Puzzles", icon: Puzzle },
 ];
 
 export function DashboardNavbar() {

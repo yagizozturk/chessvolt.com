@@ -9,9 +9,36 @@ import {
 } from "@/lib/shared/constants/opening-type-copy";
 import { shuffle } from "@/lib/utilities/shuffle";
 import { CollectionHeader } from "@/components/collection/collection-header";
-import { RepCard } from "@/components/rep-card/rep-card";
 import { Card } from "@/components/ui/card";
+import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
 import type { Rep } from "@/features/reps/types/reps";
+
+function repToRiddleAndGame(rep: Rep) {
+  return {
+    riddle: {
+      id: rep.id,
+      gameId: rep.id,
+      ply: rep.ply ?? 0,
+      title: rep.title || "Untitled Repertoire",
+      moves: rep.moves,
+      gameType: null,
+      createdAt: rep.createdAt,
+    },
+    game: {
+      id: rep.id,
+      pgn: rep.pgn ?? "",
+      whitePlayer: rep.openingName ?? "White",
+      blackPlayer: "Black",
+      result: "",
+      playedAt: "",
+      url: null,
+      createdAt: rep.createdAt,
+      event: null,
+      opening: rep.openingName,
+      description: null,
+    },
+  };
+}
 
 function groupRepsByOpeningType(reps: Rep[]): Record<string, Rep[]> {
   const groups: Record<string, Rep[]> = {};
@@ -91,6 +118,7 @@ export default async function RepsPage() {
                 <div className="flex">
                   <div className="grid grid-cols-2 gap-6 px-2 py-3 sm:grid-cols-4">
                     {groupReps.slice(0, 4).map((rep, index) => {
+                      const { riddle, game } = repToRiddleAndGame(rep);
                       const num = index + 1;
                       const numColorClasses = [
                         "text-primary",
@@ -104,11 +132,14 @@ export default async function RepsPage() {
                         numColorClasses[index % 6] ?? numColorClasses[0];
 
                       return (
-                        <RepCard
+                        <PuzzleCard
                           key={rep.id}
-                          rep={rep}
+                          riddle={riddle}
+                          game={game}
                           num={num}
                           numColorClass={numColorClass}
+                          href={`/reps/${rep.id}`}
+                          initialFen={rep.displayFen}
                         />
                       );
                     })}

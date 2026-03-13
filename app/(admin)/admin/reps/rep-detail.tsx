@@ -114,6 +114,15 @@ export function RepDetail({ rep }: Props) {
                     className="font-mono text-sm"
                   />
                 </Field>
+                <Field>
+                  <FieldLabel>Display FEN</FieldLabel>
+                  <Input
+                    name="displayFen"
+                    defaultValue={rep.displayFen ?? ""}
+                    placeholder="Override position for board display"
+                    className="font-mono text-sm"
+                  />
+                </Field>
               </FieldGroup>
               <Button type="submit">
                 <Save className="h-4 w-4" />
@@ -154,6 +163,14 @@ export function RepDetail({ rep }: Props) {
                 <dt className="text-muted-foreground font-medium">PGN</dt>
                 <dd className="max-h-32 overflow-y-auto font-mono text-xs break-all">
                   {rep.pgn ?? "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">
+                  Display FEN
+                </dt>
+                <dd className="font-mono text-xs break-all">
+                  {rep.displayFen ?? "—"}
                 </dd>
               </div>
               <div>

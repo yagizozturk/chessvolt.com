@@ -14,6 +14,7 @@ type PuzzleCardProps = {
   height?: number;
   isComplete?: boolean;
   href?: string;
+  initialFen?: string | null;
 };
 
 export function PuzzleCard({
@@ -25,6 +26,7 @@ export function PuzzleCard({
   height = 200,
   isComplete = false,
   href,
+  initialFen,
 }: PuzzleCardProps) {
   return (
     <Link
@@ -48,6 +50,7 @@ export function PuzzleCard({
         <PuzzleBoard
           sourceId={riddle.id}
           mode="riddle"
+          initialFen={initialFen}
           pgn={game.pgn}
           ply={riddle.ply}
           moves={riddle.moves ?? ""}

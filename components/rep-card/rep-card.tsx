@@ -33,6 +33,7 @@ export function RepCard({
         <PuzzleBoard
           sourceId={rep.id}
           mode="riddle"
+          initialFen={rep.displayFen}
           pgn={rep.pgn ?? ""}
           ply={rep.ply ?? 0}
           moves={rep.moves}

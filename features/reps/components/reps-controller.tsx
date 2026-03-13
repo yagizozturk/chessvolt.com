@@ -24,6 +24,7 @@ export default function RepsController({ rep }: { rep: Rep }) {
           <PuzzleBoard
             sourceId={rep.id}
             mode="riddle"
+            initialFen={rep.displayFen}
             pgn={rep.pgn ?? undefined}
             ply={rep.ply ?? 0}
             moves={rep.moves}
