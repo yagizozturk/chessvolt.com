@@ -69,6 +69,10 @@ export function RepForm() {
           <Input name="title" placeholder="Repertoire title" />
         </Field>
         <Field>
+          <FieldLabel>Opening Type</FieldLabel>
+          <Input name="openingType" placeholder="e.g. e4, d4, c4" />
+        </Field>
+        <Field>
           <FieldLabel>Opening Name</FieldLabel>
           <Input name="openingName" placeholder="e.g. Sicilian Defense" />
         </Field>

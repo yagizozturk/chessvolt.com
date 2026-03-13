@@ -44,6 +44,7 @@ export async function findById(
 export type CreateRepInput = {
   moves: string;
   openingName?: string | null;
+  openingType?: string | null;
   title?: string | null;
   ply?: number | null;
   pgn?: string | null;
@@ -58,6 +59,7 @@ export async function create(
     .insert({
       moves: input.moves,
       opening_name: input.openingName ?? null,
+      opening_type: input.openingType ?? null,
       title: input.title ?? "",
       ply: input.ply ?? null,
       pgn: input.pgn ?? null,
@@ -76,6 +78,7 @@ export async function create(
 export type UpdateRepInput = {
   moves?: string;
   openingName?: string | null;
+  openingType?: string | null;
   title?: string;
   ply?: number | null;
   pgn?: string | null;
@@ -89,6 +92,7 @@ export async function update(
   const updates: Record<string, unknown> = {};
   if (input.moves !== undefined) updates.moves = input.moves;
   if (input.openingName !== undefined) updates.opening_name = input.openingName;
+  if (input.openingType !== undefined) updates.opening_type = input.openingType;
   if (input.title !== undefined) updates.title = input.title;
   if (input.ply !== undefined) updates.ply = input.ply;
   if (input.pgn !== undefined) updates.pgn = input.pgn;

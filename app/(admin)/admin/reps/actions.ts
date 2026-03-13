@@ -14,6 +14,7 @@ export async function createRepAction(formData: FormData) {
 
   const moves = formData.get("moves") as string;
   const openingName = (formData.get("openingName") as string) || null;
+  const openingType = (formData.get("openingType") as string) || null;
   const title = (formData.get("title") as string) || "";
   const plyStr = formData.get("ply") as string;
   const ply = plyStr ? parseInt(plyStr, 10) : null;
@@ -26,6 +27,7 @@ export async function createRepAction(formData: FormData) {
   const input: CreateRepInput = {
     moves: moves.trim(),
     openingName,
+    openingType,
     title: title || null,
     ply: isNaN(ply as number) ? null : ply,
     pgn,
@@ -45,6 +47,7 @@ export async function updateRepAction(id: string, formData: FormData) {
 
   const moves = formData.get("moves") as string;
   const openingName = (formData.get("openingName") as string) || null;
+  const openingType = (formData.get("openingType") as string) || null;
   const title = formData.get("title") as string;
   const plyStr = formData.get("ply") as string;
   const ply = plyStr ? parseInt(plyStr, 10) : null;
@@ -53,6 +56,7 @@ export async function updateRepAction(id: string, formData: FormData) {
   const input: UpdateRepInput = {};
   if (moves !== undefined) input.moves = moves;
   if (openingName !== undefined) input.openingName = openingName;
+  if (openingType !== undefined) input.openingType = openingType;
   if (title !== undefined) input.title = title;
   if (plyStr !== undefined) input.ply = isNaN(ply as number) ? null : ply;
   if (pgn !== undefined) input.pgn = pgn;

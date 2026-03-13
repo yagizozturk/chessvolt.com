@@ -39,7 +39,9 @@ export function RepDetail({ rep }: Props) {
           <div>
             <CardTitle>{rep.title || "Untitled Repertoire"}</CardTitle>
             <CardDescription>
-              {rep.openingName ?? "—"} • Ply: {rep.ply ?? "—"}
+              {[rep.openingType, rep.openingName].filter(Boolean).join(" • ") ||
+                "—"}{" "}
+              • Ply: {rep.ply ?? "—"}
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -77,6 +79,13 @@ export function RepDetail({ rep }: Props) {
                 <Field>
                   <FieldLabel>Title</FieldLabel>
                   <Input name="title" defaultValue={rep.title} />
+                </Field>
+                <Field>
+                  <FieldLabel>Opening Type</FieldLabel>
+                  <Input
+                    name="openingType"
+                    defaultValue={rep.openingType ?? ""}
+                  />
                 </Field>
                 <Field>
                   <FieldLabel>Opening Name</FieldLabel>
@@ -120,6 +129,12 @@ export function RepDetail({ rep }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">Title</dt>
                 <dd>{rep.title || "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">
+                  Opening Type
+                </dt>
+                <dd>{rep.openingType ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">

@@ -4,6 +4,7 @@ type DbRep = {
   id: string;
   moves: string;
   opening_name: string | null;
+  opening_type: string | null;
   title: string;
   ply: number | null;
   pgn: string | null;
@@ -15,6 +16,7 @@ export function toRep(db: DbRep): Rep {
     id: db.id,
     moves: db.moves,
     openingName: db.opening_name,
+    openingType: db.opening_type,
     title: db.title,
     ply: db.ply,
     pgn: db.pgn,

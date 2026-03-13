@@ -38,9 +38,9 @@ export function RepsList({ reps }: Props) {
             <span className="font-medium">
               {r.title || "Untitled Repertoire"}
             </span>
-            {r.openingName && (
+            {(r.openingType || r.openingName) && (
               <span className="bg-muted rounded px-2 py-0.5 text-xs">
-                {r.openingName}
+                {[r.openingType, r.openingName].filter(Boolean).join(" • ")}
               </span>
             )}
           </div>

@@ -13,6 +13,7 @@ type PuzzleCardProps = {
   width?: number;
   height?: number;
   isComplete?: boolean;
+  href?: string;
 };
 
 export function PuzzleCard({
@@ -23,9 +24,13 @@ export function PuzzleCard({
   width = 200,
   height = 200,
   isComplete = false,
+  href,
 }: PuzzleCardProps) {
   return (
-    <Link href={`/game-riddle/${riddle.id}`} className="group flex flex-col">
+    <Link
+      href={href ?? `/game-riddle/${riddle.id}`}
+      className="group flex flex-col"
+    >
       <div className="flex items-center gap-3">
         <span
           className={`flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-current text-sm font-bold ${numColorClass}`}

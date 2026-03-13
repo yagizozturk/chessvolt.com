@@ -43,9 +43,9 @@ export default function RepsController({ rep }: { rep: Rep }) {
                   <p className="text-foreground font-semibold">
                     {rep.title || "Untitled Repertoire"}
                   </p>
-                  {rep.openingName && (
+                  {(rep.openingType || rep.openingName) && (
                     <p className="text-muted-foreground text-sm">
-                      {rep.openingName}
+                      {[rep.openingType, rep.openingName].filter(Boolean).join(" • ")}
                     </p>
                   )}
                 </CardHeader>

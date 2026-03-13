@@ -13,6 +13,17 @@ export async function getAllReps(supabase: SupabaseClient): Promise<Rep[]> {
   return repsRepo.findAll(supabase);
 }
 
+export async function getRepsByOpeningType(
+  supabase: SupabaseClient,
+  openingType: string,
+): Promise<Rep[]> {
+  const all = await repsRepo.findAll(supabase);
+  const normalized = openingType.trim().toLowerCase();
+  return all.filter(
+    (r) => r.openingType?.trim().toLowerCase() === normalized,
+  );
+}
+
 export async function getRepById(
   supabase: SupabaseClient,
   id: string,
