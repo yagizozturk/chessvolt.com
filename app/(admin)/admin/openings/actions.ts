@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/supabase/auth";
+import { movesToPgn } from "@/lib/chess/movesToPgn";
 import {
   createOpeningVariant,
   updateOpeningVariant,
@@ -31,6 +32,7 @@ export async function createOpeningVariantAction(formData: FormData) {
     title: title || null,
     ecoCode: ecoCode || null,
     moves: moves.trim(),
+    pgn: movesToPgn(moves.trim()),
     fen: fen || null,
   };
 
@@ -57,7 +59,10 @@ export async function updateOpeningVariantAction(
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
   if (ecoCode !== undefined) input.ecoCode = ecoCode;
-  if (moves !== undefined) input.moves = moves;
+  if (moves !== undefined) {
+    input.moves = moves;
+    input.pgn = movesToPgn(moves);
+  }
   if (fen !== undefined) input.fen = fen;
 
   const variant = await updateOpeningVariant(supabase, id, input);

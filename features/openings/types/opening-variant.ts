@@ -5,6 +5,7 @@ export type OpeningVariant = {
   title: string | null;
   ecoCode: string | null;
   moves: string;
+  pgn: string;
   fen: string;
   createdAt: string;
 };

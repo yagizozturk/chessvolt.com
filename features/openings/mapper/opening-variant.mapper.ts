@@ -1,5 +1,4 @@
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { movesToPgn } from "@/lib/chess/movesToPgn";
 
 type DbOpeningVariant = {
   id: string;
@@ -8,6 +7,7 @@ type DbOpeningVariant = {
   title: string | null;
   eco_code: string | null;
   moves: string;
+  pgn: string;
   fen: string | null;
   created_at: string;
 };
@@ -20,12 +20,13 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     title: db.title,
     ecoCode: db.eco_code,
     moves: db.moves,
+    pgn: db.pgn,
     fen: db.fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     createdAt: db.created_at,
   };
 }
 
-/** Derives PGN from moves for display. Opening variants store moves, not PGN. */
+/** Returns PGN for display. */
 export function getPgnFromVariant(variant: OpeningVariant): string {
-  return movesToPgn(variant.moves);
+  return variant.pgn;
 }

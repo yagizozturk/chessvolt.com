@@ -70,6 +70,7 @@ export type CreateOpeningVariantInput = {
   title?: string | null;
   ecoCode?: string | null;
   moves: string;
+  pgn: string;
   fen?: string | null;
 };
 
@@ -85,6 +86,7 @@ export async function create(
       title: input.title ?? null,
       eco_code: input.ecoCode ?? null,
       moves: input.moves,
+      pgn: input.pgn,
       fen: input.fen ?? null,
     })
     .select()
@@ -103,6 +105,7 @@ export type UpdateOpeningVariantInput = {
   title?: string | null;
   ecoCode?: string | null;
   moves?: string;
+  pgn?: string;
   fen?: string | null;
 };
 
@@ -117,6 +120,7 @@ export async function update(
   if (input.title !== undefined) updates.title = input.title;
   if (input.ecoCode !== undefined) updates.eco_code = input.ecoCode;
   if (input.moves !== undefined) updates.moves = input.moves;
+  if (input.pgn !== undefined) updates.pgn = input.pgn;
   if (input.fen !== undefined) updates.fen = input.fen;
 
   const { data, error } = await supabase

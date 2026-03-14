@@ -27,7 +27,7 @@ export function VariantDetail({ variant }: Props) {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto max-w-6xl space-y-6 px-4 py-8">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/admin/openings" className="flex items-center gap-2">
@@ -138,6 +138,10 @@ export function VariantDetail({ variant }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">Moves</dt>
                 <dd className="font-mono break-all text-xs">{variant.moves}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">PGN</dt>
+                <dd className="font-mono break-all text-xs">{variant.pgn}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">FEN</dt>
