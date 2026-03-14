@@ -16,6 +16,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Trash2, Save } from "lucide-react";
 import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
+import { getPlyFromPgnAtFen } from "@/lib/chess/getFenFromPgnAtPly";
 import { updateGameRiddleAction, deleteGameRiddleAction } from "./actions";
 import { cn } from "@/lib/utilities/cn";
 
@@ -32,20 +33,21 @@ function getMoveCountFromMoves(moves: string | null): string {
 
 export function GameRiddleDetail({ riddle, game }: Props) {
   const [isEditing, setIsEditing] = useState(false);
-  const [ply, setPly] = useState(String(riddle.ply));
+  const [displayFen, setDisplayFen] = useState(riddle.displayFen ?? "");
   const [moveCountForAnswer, setMoveCountForAnswer] = useState(() =>
     getMoveCountFromMoves(riddle.moves),
   );
   const [moves, setMoves] = useState(riddle.moves ?? "");
 
   useEffect(() => {
-    if (!game?.pgn || !moveCountForAnswer) return;
-    const plyNum = parseInt(ply, 10);
+    if (!game?.pgn || !moveCountForAnswer || !displayFen?.trim()) return;
+    const ply = getPlyFromPgnAtFen(game.pgn, displayFen.trim());
+    if (ply == null) return;
     const moveCount = parseInt(moveCountForAnswer, 10);
-    if (isNaN(plyNum) || isNaN(moveCount) || moveCount <= 0) return;
-    const uci = extractMovesFromPgn(game.pgn, plyNum, moveCount);
+    if (isNaN(moveCount) || moveCount <= 0) return;
+    const uci = extractMovesFromPgn(game.pgn, ply, moveCount);
     if (uci) setMoves(uci);
-  }, [game?.pgn, ply, moveCountForAnswer]);
+  }, [game?.pgn, displayFen, moveCountForAnswer]);
 
   return (
     <div className="space-y-6">
@@ -63,8 +65,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
           <div>
             <CardTitle>{riddle.title}</CardTitle>
             <CardDescription>
-              Ply: {riddle.ply} • Game: {game?.whitePlayer ?? "?"} vs{" "}
-              {game?.blackPlayer ?? "?"}
+              Game: {game?.whitePlayer ?? "?"} vs {game?.blackPlayer ?? "?"}
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -104,13 +105,13 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                   <Input name="gameId" defaultValue={riddle.gameId} required />
                 </Field>
                 <Field>
-                  <FieldLabel>Ply</FieldLabel>
+                  <FieldLabel>Display FEN</FieldLabel>
                   <Input
-                    name="ply"
-                    type="number"
-                    value={ply}
-                    onChange={(e) => setPly(e.target.value)}
-                    required
+                    name="displayFen"
+                    value={displayFen}
+                    onChange={(e) => setDisplayFen(e.target.value)}
+                    placeholder="Pozisyon FEN"
+                    className="font-mono text-sm"
                   />
                 </Field>
                 <Field>
@@ -170,10 +171,6 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                 <dd>{riddle.gameId}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">Ply</dt>
-                <dd>{riddle.ply}</dd>
-              </div>
-              <div>
                 <dt className="text-muted-foreground font-medium">Title</dt>
                 <dd>{riddle.title}</dd>
               </div>
@@ -186,6 +183,12 @@ export function GameRiddleDetail({ riddle, game }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">Game Type</dt>
                 <dd>{riddle.gameType ?? "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">Display FEN</dt>
+                <dd className="font-mono break-all text-xs">
+                  {riddle.displayFen ?? "—"}
+                </dd>
               </div>
             </dl>
           )}

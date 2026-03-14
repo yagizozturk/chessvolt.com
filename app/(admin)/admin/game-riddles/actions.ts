@@ -8,6 +8,8 @@ import {
   updateGameRiddle,
   deleteGameRiddle,
 } from "@/features/game-riddle/services/game-riddle";
+import * as gameRepo from "@/features/game/repository/game.repository";
+import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import type { CreateGameRiddleInput } from "@/features/game-riddle/repository/game-riddle.repository";
 
 export async function createGameRiddleAction(formData: FormData) {
@@ -19,16 +21,20 @@ export async function createGameRiddleAction(formData: FormData) {
   const moves = (formData.get("moves") as string) || null;
   const gameType = (formData.get("gameType") as string)?.trim() || null;
 
-  if (!gameId || !title || !gameType || isNaN(ply)) {
+  if (!gameId || !title || !gameType || isNaN(ply) || ply < 0) {
     redirect("/admin/game-riddles/new?error=eksik_alan");
   }
 
+  const game = await gameRepo.findById(supabase, gameId);
+  const displayFen =
+    game?.pgn != null ? getFenFromPgnAtPly(game.pgn, ply) : null;
+
   const input: CreateGameRiddleInput = {
     gameId,
-    ply,
     title,
     moves: moves || null,
     gameType,
+    displayFen,
   };
 
   const riddle = await createGameRiddle(supabase, input);
@@ -44,14 +50,13 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const gameId = formData.get("gameId") as string;
-  const ply = formData.get("ply");
   const title = formData.get("title") as string;
   const moves = (formData.get("moves") as string) || null;
   const gameType = (formData.get("gameType") as string)?.trim() || null;
+  const displayFenForm = (formData.get("displayFen") as string)?.trim() || null;
 
   const input: Record<string, unknown> = {};
   if (gameId) input.gameId = gameId;
-  if (ply !== undefined) input.ply = parseInt(ply as string, 10);
   if (title) input.title = title;
   if (moves !== undefined) input.moves = moves;
   if (gameType !== undefined) {
@@ -60,6 +65,7 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
     }
     input.gameType = gameType;
   }
+  input.displayFen = displayFenForm;
 
   const riddle = await updateGameRiddle(supabase, id, input);
   if (!riddle) {

@@ -20,10 +20,10 @@ function variantToRiddleAndGame(variant: OpeningVariant) {
     riddle: {
       id: variant.id,
       gameId: variant.id,
-      ply: variant.ply,
       title: variant.title || "Untitled Variant",
       moves: variant.moves,
       gameType: null,
+      displayFen: variant.fen,
       createdAt: variant.createdAt,
     },
     game: {

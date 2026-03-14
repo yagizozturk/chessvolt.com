@@ -9,10 +9,10 @@ function openingToRiddleAndGame(opening: Opening) {
     riddle: {
       id: opening.id,
       gameId: opening.id,
-      ply: 0,
       title: opening.name,
       moves: "",
       gameType: null,
+      displayFen: opening.displayFen,
       createdAt: opening.createdAt,
     },
     game: {

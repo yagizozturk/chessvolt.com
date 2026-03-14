@@ -7,6 +7,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createGameRiddleAction } from "./actions";
 import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
+import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { cn } from "@/lib/utilities/cn";
 
 type Props = {
@@ -20,6 +21,7 @@ export function GameRiddleForm({ games }: Props) {
   const [ply, setPly] = useState("0");
   const [moveCountForAnswer, setMoveCountForAnswer] = useState("");
   const [moves, setMoves] = useState("");
+  const [displayFen, setDisplayFen] = useState<string | null>(null);
 
   useEffect(() => {
     if (!gameId || !moveCountForAnswer) return;
@@ -31,6 +33,25 @@ export function GameRiddleForm({ games }: Props) {
     const uci = extractMovesFromPgn(game.pgn, plyNum, moveCount);
     if (uci) setMoves(uci);
   }, [gameId, ply, moveCountForAnswer, gameMap]);
+
+  useEffect(() => {
+    if (!gameId) {
+      setDisplayFen(null);
+      return;
+    }
+    const game = gameMap[gameId];
+    if (!game?.pgn) {
+      setDisplayFen(null);
+      return;
+    }
+    const plyNum = parseInt(ply, 10);
+    if (isNaN(plyNum) || plyNum < 0) {
+      setDisplayFen(null);
+      return;
+    }
+    const fen = getFenFromPgnAtPly(game.pgn, plyNum);
+    setDisplayFen(fen);
+  }, [gameId, ply, gameMap]);
 
   return (
     <form action={createGameRiddleAction} className="space-y-4">
@@ -65,6 +86,16 @@ export function GameRiddleForm({ games }: Props) {
             onChange={(e) => setPly(e.target.value)}
           />
         </Field>
+        {displayFen && (
+          <Field>
+            <FieldLabel>Pozisyon (PGN + PLY ile hesaplanan FEN)</FieldLabel>
+            <Input
+              readOnly
+              value={displayFen}
+              className="font-mono text-sm"
+            />
+          </Field>
+        )}
         <Field>
           <FieldLabel>Move Count For Answer</FieldLabel>
           <Input

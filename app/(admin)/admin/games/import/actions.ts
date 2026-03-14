@@ -6,6 +6,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import { createGame } from "@/features/game/services/game";
 import { createGameRiddle } from "@/features/game-riddle/services/game-riddle";
 import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
+import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { parsePgn, splitPgnGames, validatePgn } from "@/lib/chess/parsePgn";
 
 const DEFAULT_GAME_TYPE = "legend_games";
@@ -61,13 +62,14 @@ export async function importPgnAction(formData: FormData) {
       const defaultTitle =
         parsed.description?.trim() ||
         `Find the first move - ${parsed.whitePlayer} vs ${parsed.blackPlayer}`;
+      const displayFen = getFenFromPgnAtPly(parsed.pgn, 0);
 
       await createGameRiddle(supabase, {
         gameId: game.id,
-        ply: 0,
         title: defaultTitle,
         moves: movesAtPly0 ?? "",
         gameType,
+        displayFen,
       });
     } else {
       errors.push(

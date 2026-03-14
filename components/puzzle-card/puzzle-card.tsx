@@ -50,7 +50,6 @@ export function PuzzleCard({
           mode="riddle"
           initialFen={initialFen}
           pgn={game.pgn}
-          ply={riddle.ply}
           moves={riddle.moves ?? ""}
           width={width}
           height={height}

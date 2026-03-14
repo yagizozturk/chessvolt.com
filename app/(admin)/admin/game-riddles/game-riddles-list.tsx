@@ -35,7 +35,6 @@ export function GameRiddlesList({ riddles }: Props) {
           className="hover:bg-accent flex items-center justify-between rounded-lg border px-4 py-3 transition-colors"
         >
           <div className="flex items-center gap-4">
-            <span className="text-muted-foreground text-sm">Ply {r.ply}</span>
             <span className="font-medium">{r.title}</span>
             {r.gameType && (
               <span className="bg-muted rounded px-2 py-0.5 text-xs">

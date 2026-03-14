@@ -48,7 +48,8 @@ export default function RiddleController({
   game,
 }: RiddleControllerProps) {
   const router = useRouter();
-  const turn = riddle.ply % 2 === 0 ? "White" : "Black";
+  const turn =
+    riddle.displayFen?.includes(" w ") ?? true ? "White" : "Black";
   const streak = useStatsStore((state) => state.streak);
   const initLives = useStatsStore((state) => state.initLives);
   const decrementLives = useStatsStore((state) => state.decrementLives);
@@ -128,8 +129,8 @@ export default function RiddleController({
             ref={boardRef}
             sourceId={riddle.id}
             mode="riddle"
+            initialFen={riddle.displayFen}
             pgn={game.pgn}
-            ply={riddle.ply}
             moves={riddle.moves ?? ""}
             width={600}
             height={600}

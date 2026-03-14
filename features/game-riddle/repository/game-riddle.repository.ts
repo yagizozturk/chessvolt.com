@@ -12,7 +12,7 @@ export async function findAll(supabase: SupabaseClient): Promise<GameRiddle[]> {
   const { data: riddles, error } = await supabase
     .from("game_riddles")
     .select("*")
-    .order("ply", { ascending: true });
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.error("game-riddle.repository.findAll error:", error);
@@ -52,7 +52,7 @@ export async function findByGameId(
     .from("game_riddles")
     .select("*")
     .eq("game_id", gameId)
-    .order("ply", { ascending: true });
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.error("game-riddle.repository.findByGameId error:", error);
@@ -70,7 +70,7 @@ export async function findByGameType(
     .from("game_riddles")
     .select("*")
     .eq("game_type", gameType)
-    .order("ply", { ascending: true });
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.error("game-riddle.repository.findByGameType error:", error);
@@ -82,10 +82,10 @@ export async function findByGameType(
 
 export type CreateGameRiddleInput = {
   gameId: string;
-  ply: number;
   title: string;
   moves?: string | null;
   gameType?: string | null;
+  displayFen?: string | null;
 };
 
 export async function create(
@@ -96,10 +96,10 @@ export async function create(
     .from("game_riddles")
     .insert({
       game_id: input.gameId,
-      ply: input.ply,
       title: input.title,
       moves: input.moves ?? null,
       game_type: input.gameType ?? null,
+      display_fen: input.displayFen ?? null,
     })
     .select()
     .single();
@@ -114,10 +114,10 @@ export async function create(
 
 export type UpdateGameRiddleInput = {
   gameId?: string;
-  ply?: number;
   title?: string;
   moves?: string | null;
   gameType?: string | null;
+  displayFen?: string | null;
 };
 
 export async function update(
@@ -127,10 +127,10 @@ export async function update(
 ): Promise<GameRiddle | null> {
   const updates: Record<string, unknown> = {};
   if (input.gameId !== undefined) updates.game_id = input.gameId;
-  if (input.ply !== undefined) updates.ply = input.ply;
   if (input.title !== undefined) updates.title = input.title;
   if (input.moves !== undefined) updates.moves = input.moves;
   if (input.gameType !== undefined) updates.game_type = input.gameType;
+  if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 
   const { data, error } = await supabase
     .from("game_riddles")
