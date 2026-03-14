@@ -27,7 +27,7 @@ export function ChallengeDataList({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid w-full grid-cols-2 gap-6 px-2 py-3 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-6 px-2 py-3 sm:grid-cols-3 lg:grid-cols-4">
         {visibleRiddles.map((riddle, index) => {
           const game = gameMap[riddle.gameId]!;
           const num = index + 1;
