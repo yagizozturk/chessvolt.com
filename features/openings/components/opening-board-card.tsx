@@ -10,8 +10,8 @@ type OpeningBoardCardProps = {
   width?: number;
   height?: number;
   isComplete?: boolean;
-  href?: string;
-  displayFen?: string | null;
+  href: string;
+  displayFen: string;
 };
 
 export function OpeningBoardCard({
@@ -25,7 +25,7 @@ export function OpeningBoardCard({
   displayFen,
 }: OpeningBoardCardProps) {
   return (
-    <Link href={href ?? `/game-riddle/1`} className="group flex flex-col">
+    <Link href={href} className="group flex flex-col">
       <div className="flex items-center gap-3">
         <span className="text-primary flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-current text-sm font-bold">
           {num}

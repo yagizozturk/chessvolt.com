@@ -21,7 +21,8 @@ export default async function OpeningsPage() {
             return (
               <OpeningBoardCard
                 key={opening.id}
-                opening={opening}
+                id={opening.id}
+                name={opening.name}
                 num={num}
                 width={250}
                 height={250}

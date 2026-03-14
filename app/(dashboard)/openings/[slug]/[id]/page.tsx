@@ -51,7 +51,8 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 return (
                   <OpeningBoardCard
                     key={variant.id}
-                    name={variant.title}
+                    id={variant.id}
+                    name={variant.title ?? ""}
                     num={num}
                     width={220}
                     height={220}
