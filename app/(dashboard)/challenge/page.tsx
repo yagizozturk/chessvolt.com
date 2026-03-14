@@ -49,42 +49,36 @@ export default async function ChallengePage() {
 
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-12 pb-16">
-      {groupKeys.length === 0 ? (
-        <div className="text-muted-foreground py-12 text-center">
-          No challenges added yet. Coming soon!
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {groupKeys.map((gameType) => {
-            const riddles = riddleGameTypeGroups[gameType] ?? [];
-            const displayName = formatGameType(gameType);
-            const copy = getGameTypeCopy(gameType);
-            const stats = getGroupStats(riddles, attemptByRiddleId);
+      <div className="space-y-6">
+        {groupKeys.map((gameType) => {
+          const riddles = riddleGameTypeGroups[gameType] ?? [];
+          const displayName = formatGameType(gameType);
+          const copy = getGameTypeCopy(gameType);
+          const stats = getGroupStats(riddles, attemptByRiddleId);
 
-            return (
-              <div key={gameType} className="overflow-hidden">
-                <div className="flex items-center justify-between gap-4 px-2 py-3">
-                  <CollectionHeader
-                    title={displayName}
-                    imageSrc={`/images/challanges/${gameType}2.png`}
-                    imageAlt={displayName}
-                    description={copy.description}
-                    quote={copy.quote}
-                    author={copy.author}
-                    itemCount={riddles.length}
-                    itemLabel="riddles"
-                  />
-                  <ProgressStatsCard
-                    percentage={stats.percentage}
-                    className="shrink-0"
-                  />
-                </div>
-                <ChallengeDataList riddles={riddles} gameMap={gameMap} />
+          return (
+            <div key={gameType} className="overflow-hidden">
+              <div className="flex items-center justify-between gap-4 px-2 py-3">
+                <CollectionHeader
+                  title={displayName}
+                  imageSrc={`/images/challanges/${gameType}2.png`}
+                  imageAlt={displayName}
+                  description={copy.description}
+                  quote={copy.quote}
+                  author={copy.author}
+                  itemCount={riddles.length}
+                  itemLabel="riddles"
+                />
+                <ProgressStatsCard
+                  percentage={stats.percentage}
+                  className="shrink-0"
+                />
               </div>
-            );
-          })}
-        </div>
-      )}
+              <ChallengeDataList riddles={riddles} gameMap={gameMap} />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
