@@ -5,7 +5,7 @@ export type Opening = {
   slug: string | null;
   ecoCode: string | null;
   description: string | null;
-  fen: string | null;
+  displayFen: string | null;
   createdAt: string;
   createdBy: string | null;
 };

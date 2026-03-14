@@ -17,7 +17,7 @@ type DbOpening = {
   slug: string | null;
   eco_code: string | null;
   description: string | null;
-  fen: string | null;
+  display_fen: string | null;
   created_at: string;
   created_by: string | null;
 };
@@ -29,7 +29,7 @@ function toOpening(db: DbOpening): Opening {
     slug: db.slug,
     ecoCode: db.eco_code,
     description: db.description,
-    fen: db.fen,
+    displayFen: db.display_fen,
     createdAt: db.created_at,
     createdBy: db.created_by,
   };
@@ -40,7 +40,7 @@ export async function findAll(
 ): Promise<Opening[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, fen, created_at, created_by")
+    .select("id, name, slug, eco_code, description, display_fen, created_at, created_by")
     .order("name", { ascending: true });
 
   if (error) {
@@ -57,7 +57,7 @@ export async function findBySlug(
 ): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, fen, created_at, created_by")
+    .select("id, name, slug, eco_code, description, display_fen, created_at, created_by")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -75,7 +75,7 @@ export async function findById(
 ): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, fen, created_at, created_by")
+    .select("id, name, slug, eco_code, description, display_fen, created_at, created_by")
     .eq("id", id)
     .maybeSingle();
 
@@ -92,7 +92,7 @@ export type CreateOpeningInput = {
   slug?: string | null;
   ecoCode?: string | null;
   description?: string | null;
-  fen?: string | null;
+  displayFen?: string | null;
   createdBy?: string | null;
 };
 
@@ -107,7 +107,7 @@ export async function create(
       slug: input.slug ?? slugFromName(input.name),
       eco_code: input.ecoCode ?? null,
       description: input.description ?? null,
-      fen: input.fen ?? null,
+      display_fen: input.displayFen ?? null,
       created_by: input.createdBy ?? null,
     })
     .select()
@@ -126,7 +126,7 @@ export type UpdateOpeningInput = {
   slug?: string | null;
   ecoCode?: string | null;
   description?: string | null;
-  fen?: string | null;
+  displayFen?: string | null;
 };
 
 export async function update(
@@ -139,7 +139,7 @@ export async function update(
   if (input.slug !== undefined) updates.slug = input.slug;
   if (input.ecoCode !== undefined) updates.eco_code = input.ecoCode;
   if (input.description !== undefined) updates.description = input.description;
-  if (input.fen !== undefined) updates.fen = input.fen;
+  if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 
   const { data, error } = await supabase
     .from("openings")

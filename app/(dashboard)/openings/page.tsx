@@ -56,7 +56,7 @@ export default async function OpeningsPage() {
                 width={250}
                 height={250}
                 href={`/openings/${opening.slug ?? slugify(opening.name)}`}
-                initialFen={opening.fen}
+                initialFen={opening.displayFen}
               />
             );
           })}

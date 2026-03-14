@@ -20,7 +20,7 @@ export async function createOpeningAction(formData: FormData) {
   const slug = (formData.get("slug") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const description = (formData.get("description") as string) || null;
-  const fen = (formData.get("fen") as string) || null;
+  const displayFen = (formData.get("displayFen") as string) || null;
 
   if (!name) {
     redirect("/admin/openings?error=eksik_alan");
@@ -31,7 +31,7 @@ export async function createOpeningAction(formData: FormData) {
     slug: slug || null,
     ecoCode: ecoCode || null,
     description: description || null,
-    fen: fen || null,
+    displayFen: displayFen || null,
     createdBy: user?.id ?? null,
   };
 
@@ -54,14 +54,14 @@ export async function updateOpeningAction(
   const slug = (formData.get("slug") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const description = (formData.get("description") as string) || null;
-  const fen = (formData.get("fen") as string) || null;
+  const displayFen = (formData.get("displayFen") as string) || null;
 
   const input: UpdateOpeningInput = {};
   if (name !== undefined) input.name = name;
   if (slug !== undefined) input.slug = slug || null;
   if (ecoCode !== undefined) input.ecoCode = ecoCode;
   if (description !== undefined) input.description = description;
-  if (fen !== undefined) input.fen = fen || null;
+  if (displayFen !== undefined) input.displayFen = displayFen || null;
 
   const opening = await updateOpening(supabase, id, input);
   if (!opening) {

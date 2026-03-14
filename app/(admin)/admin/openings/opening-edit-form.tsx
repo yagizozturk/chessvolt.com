@@ -51,10 +51,10 @@ export function OpeningEditForm({ opening }: Props) {
           />
         </Field>
         <Field>
-          <FieldLabel>FEN</FieldLabel>
+          <FieldLabel>Display FEN</FieldLabel>
           <Input
-            name="fen"
-            defaultValue={opening.fen ?? ""}
+            name="displayFen"
+            defaultValue={opening.displayFen ?? ""}
             placeholder="e.g. rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
             className="font-mono text-sm"
           />
