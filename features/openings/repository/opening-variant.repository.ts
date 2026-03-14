@@ -71,7 +71,6 @@ export type CreateOpeningVariantInput = {
   ecoCode?: string | null;
   moves: string;
   fen?: string | null;
-  moveCount?: number | null;
 };
 
 export async function create(
@@ -87,7 +86,6 @@ export async function create(
       eco_code: input.ecoCode ?? null,
       moves: input.moves,
       fen: input.fen ?? null,
-      move_count: input.moveCount ?? null,
     })
     .select()
     .single();
@@ -106,7 +104,6 @@ export type UpdateOpeningVariantInput = {
   ecoCode?: string | null;
   moves?: string;
   fen?: string | null;
-  moveCount?: number | null;
 };
 
 export async function update(
@@ -121,7 +118,6 @@ export async function update(
   if (input.ecoCode !== undefined) updates.eco_code = input.ecoCode;
   if (input.moves !== undefined) updates.moves = input.moves;
   if (input.fen !== undefined) updates.fen = input.fen;
-  if (input.moveCount !== undefined) updates.move_count = input.moveCount;
 
   const { data, error } = await supabase
     .from("opening_variants")

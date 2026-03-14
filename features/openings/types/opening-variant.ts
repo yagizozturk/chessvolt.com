@@ -1,4 +1,3 @@
-/** Opening variant model - matches public.opening_variants table */
 export type OpeningVariant = {
   id: string;
   openingId: string;
@@ -7,6 +6,5 @@ export type OpeningVariant = {
   ecoCode: string | null;
   moves: string;
   fen: string;
-  moveCount: number | null;
   createdAt: string;
 };

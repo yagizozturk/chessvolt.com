@@ -9,7 +9,6 @@ type DbOpeningVariant = {
   eco_code: string | null;
   moves: string;
   fen: string | null;
-  move_count: number | null;
   created_at: string;
 };
 
@@ -22,7 +21,6 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     ecoCode: db.eco_code,
     moves: db.moves,
     fen: db.fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-    moveCount: db.move_count,
     createdAt: db.created_at,
   };
 }
