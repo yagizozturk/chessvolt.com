@@ -16,7 +16,10 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Trash2, Save } from "lucide-react";
 import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
-import { getPlyFromPgnAtFen } from "@/lib/chess/getFenFromPgnAtPly";
+import {
+  getFenFromPgnAtPly,
+  getPlyFromPgnAtFen,
+} from "@/lib/chess/getFenFromPgnAtPly";
 import { updateGameRiddleAction, deleteGameRiddleAction } from "./actions";
 import { cn } from "@/lib/utilities/cn";
 
@@ -33,21 +36,31 @@ function getMoveCountFromMoves(moves: string | null): string {
 
 export function GameRiddleDetail({ riddle, game }: Props) {
   const [isEditing, setIsEditing] = useState(false);
-  const [displayFen, setDisplayFen] = useState(riddle.displayFen ?? "");
+  const [ply, setPly] = useState(() => {
+    if (game?.pgn && riddle.displayFen?.trim()) {
+      const p = getPlyFromPgnAtFen(game.pgn, riddle.displayFen.trim());
+      return p != null ? String(p) : "0";
+    }
+    return "0";
+  });
   const [moveCountForAnswer, setMoveCountForAnswer] = useState(() =>
     getMoveCountFromMoves(riddle.moves),
   );
   const [moves, setMoves] = useState(riddle.moves ?? "");
+  const [displayFen, setDisplayFen] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!game?.pgn || !moveCountForAnswer || !displayFen?.trim()) return;
-    const ply = getPlyFromPgnAtFen(game.pgn, displayFen.trim());
-    if (ply == null) return;
+    if (!game?.pgn) return;
+    const plyNum = parseInt(ply, 10);
     const moveCount = parseInt(moveCountForAnswer, 10);
-    if (isNaN(moveCount) || moveCount <= 0) return;
-    const uci = extractMovesFromPgn(game.pgn, ply, moveCount);
-    if (uci) setMoves(uci);
-  }, [game?.pgn, displayFen, moveCountForAnswer]);
+    if (isNaN(plyNum) || plyNum < 0) return;
+    const fen = getFenFromPgnAtPly(game.pgn, plyNum);
+    setDisplayFen(fen);
+    if (!isNaN(moveCount) && moveCount > 0) {
+      const uci = extractMovesFromPgn(game.pgn, plyNum, moveCount);
+      setMoves(uci ?? "");
+    }
+  }, [game?.pgn, ply, moveCountForAnswer]);
 
   return (
     <div className="space-y-6">
@@ -105,18 +118,19 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                   <Input name="gameId" defaultValue={riddle.gameId} required />
                 </Field>
                 <Field>
-                  <FieldLabel>Display FEN</FieldLabel>
+                  <FieldLabel>Ply</FieldLabel>
                   <Input
-                    name="displayFen"
-                    value={displayFen}
-                    onChange={(e) => setDisplayFen(e.target.value)}
-                    placeholder="Pozisyon FEN"
-                    className="font-mono text-sm"
+                    name="ply"
+                    type="number"
+                    required
+                    value={ply}
+                    onChange={(e) => setPly(e.target.value)}
                   />
                 </Field>
                 <Field>
                   <FieldLabel>Move Count For Answer</FieldLabel>
                   <Input
+                    name="moveCountForAnswer"
                     type="number"
                     min={1}
                     placeholder="PGN'den UCI çıkarmak için"
@@ -128,6 +142,16 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                     )}
                   />
                 </Field>
+                {displayFen && (
+                  <Field>
+                    <FieldLabel>Pozisyon (PLY ile hesaplanan FEN)</FieldLabel>
+                    <Input
+                      readOnly
+                      value={displayFen}
+                      className="font-mono text-sm"
+                    />
+                  </Field>
+                )}
                 <Field>
                   <FieldLabel>Title</FieldLabel>
                   <Input name="title" defaultValue={riddle.title} required />
@@ -138,7 +162,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                     name="moves"
                     value={moves}
                     onChange={(e) => setMoves(e.target.value)}
-                    placeholder="UCI format veya Move Count ile otomatik"
+                    placeholder="PLY + Move Count ile otomatik"
                     className={cn(
                       "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
                       "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",

@@ -9,6 +9,7 @@ import {
   deleteGameRiddle,
 } from "@/features/game-riddle/services/game-riddle";
 import * as gameRepo from "@/features/game/repository/game.repository";
+import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import type { CreateGameRiddleInput } from "@/features/game-riddle/repository/game-riddle.repository";
 
@@ -50,22 +51,41 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const gameId = formData.get("gameId") as string;
+  const ply = parseInt(formData.get("ply") as string, 10);
+  const moveCountForAnswer = parseInt(
+    formData.get("moveCountForAnswer") as string,
+    10,
+  );
   const title = formData.get("title") as string;
-  const moves = (formData.get("moves") as string) || null;
   const gameType = (formData.get("gameType") as string)?.trim() || null;
-  const displayFenForm = (formData.get("displayFen") as string)?.trim() || null;
 
-  const input: Record<string, unknown> = {};
-  if (gameId) input.gameId = gameId;
-  if (title) input.title = title;
-  if (moves !== undefined) input.moves = moves;
-  if (gameType !== undefined) {
-    if (!gameType) {
-      redirect(`/admin/game-riddles/${id}?error=eksik_alan`);
-    }
-    input.gameType = gameType;
+  if (
+    !gameId ||
+    !title?.trim() ||
+    !gameType ||
+    isNaN(ply) ||
+    ply < 0 ||
+    isNaN(moveCountForAnswer) ||
+    moveCountForAnswer < 1
+  ) {
+    redirect(`/admin/game-riddles/${id}?error=eksik_alan`);
   }
-  input.displayFen = displayFenForm;
+
+  const game = await gameRepo.findById(supabase, gameId);
+  const displayFen =
+    game?.pgn != null ? getFenFromPgnAtPly(game.pgn, ply) : null;
+  const moves =
+    game?.pgn != null
+      ? extractMovesFromPgn(game.pgn, ply, moveCountForAnswer) ?? null
+      : null;
+
+  const input: Record<string, unknown> = {
+    gameId,
+    title,
+    gameType,
+    displayFen,
+    moves,
+  };
 
   const riddle = await updateGameRiddle(supabase, id, input);
   if (!riddle) {
