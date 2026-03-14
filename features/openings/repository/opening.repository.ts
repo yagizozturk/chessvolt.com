@@ -19,7 +19,6 @@ type DbOpening = {
   description: string | null;
   display_fen: string | null;
   created_at: string;
-  created_by: string | null;
 };
 
 function toOpening(db: DbOpening): Opening {
@@ -29,9 +28,8 @@ function toOpening(db: DbOpening): Opening {
     slug: db.slug,
     ecoCode: db.eco_code,
     description: db.description,
-    displayFen: db.display_fen,
+    displayFen: db.display_fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     createdAt: db.created_at,
-    createdBy: db.created_by,
   };
 }
 
@@ -40,7 +38,7 @@ export async function findAll(
 ): Promise<Opening[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, display_fen, created_at, created_by")
+    .select("id, name, slug, eco_code, description, display_fen, created_at")
     .order("name", { ascending: true });
 
   if (error) {
@@ -57,7 +55,7 @@ export async function findBySlug(
 ): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, display_fen, created_at, created_by")
+    .select("id, name, slug, eco_code, description, display_fen, created_at")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -75,7 +73,7 @@ export async function findById(
 ): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, display_fen, created_at, created_by")
+    .select("id, name, slug, eco_code, description, display_fen, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -93,7 +91,6 @@ export type CreateOpeningInput = {
   ecoCode?: string | null;
   description?: string | null;
   displayFen?: string | null;
-  createdBy?: string | null;
 };
 
 export async function create(
@@ -108,7 +105,6 @@ export async function create(
       eco_code: input.ecoCode ?? null,
       description: input.description ?? null,
       display_fen: input.displayFen ?? null,
-      created_by: input.createdBy ?? null,
     })
     .select()
     .single();

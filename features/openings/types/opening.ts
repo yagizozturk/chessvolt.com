@@ -7,5 +7,4 @@ export type Opening = {
   description: string | null;
   displayFen: string;
   createdAt: string;
-  createdBy: string | null;
 };

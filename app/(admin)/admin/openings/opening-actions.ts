@@ -14,7 +14,7 @@ import type {
 } from "@/features/openings/repository/opening.repository";
 
 export async function createOpeningAction(formData: FormData) {
-  const { supabase, user } = await getAdminUser();
+  const { supabase } = await getAdminUser();
 
   const name = (formData.get("name") as string)?.trim();
   const slug = (formData.get("slug") as string) || null;
@@ -32,7 +32,6 @@ export async function createOpeningAction(formData: FormData) {
     ecoCode: ecoCode || null,
     description: description || null,
     displayFen: displayFen || null,
-    createdBy: user?.id ?? null,
   };
 
   const opening = await createOpening(supabase, input);

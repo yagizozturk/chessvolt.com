@@ -26,7 +26,7 @@ export default function OpeningsController({
         <div key={variant.id}>
           <PuzzleBoard
             sourceId={variant.id}
-            mode="riddle"
+            mode="repertoire"
             initialFen={variant.fen ?? undefined}
             moves={variant.moves}
             width={620}
