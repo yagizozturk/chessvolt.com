@@ -86,7 +86,7 @@ export default async function ChallengePage({ params }: Params) {
                       width={250}
                       height={250}
                       isComplete={attemptByRiddleId[riddle.id] === true}
-                      initialFen={riddle.displayFen}
+                      displayFen={riddle.displayFen}
                     />
                   );
                 })}

@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useOpeningsStore } from "@/features/openings/store/openings-store";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { getPgnFromVariant } from "@/features/openings/mapper/opening-variant.mapper";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 import { Card, CardHeader } from "@/components/ui/card";
 
@@ -21,8 +20,6 @@ export default function OpeningsController({
     }
   };
 
-  const pgn = getPgnFromVariant(variant);
-
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
@@ -31,8 +28,6 @@ export default function OpeningsController({
             sourceId={variant.id}
             mode="riddle"
             initialFen={variant.fen ?? undefined}
-            pgn={pgn}
-            ply={variant.ply}
             moves={variant.moves}
             width={620}
             height={620}

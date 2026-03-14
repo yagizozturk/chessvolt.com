@@ -39,7 +39,7 @@ export function ChallengeDataList({
               num={num}
               width={250}
               height={250}
-              initialFen={riddle.displayFen}
+              displayFen={riddle.displayFen}
             />
           );
         })}

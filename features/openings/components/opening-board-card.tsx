@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { Check, Circle, Sword } from "lucide-react";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
-import type { Game } from "@/features/game/types/game";
+import { Opening } from "../types/opening";
 
-type PuzzleCardProps = {
-  riddle: GameRiddle;
-  game: Game;
+type OpeningBoardCardProps = {
+  id: string;
+  name: string;
   num: number;
   width?: number;
   height?: number;
@@ -15,26 +14,23 @@ type PuzzleCardProps = {
   displayFen?: string | null;
 };
 
-export function PuzzleCard({
-  riddle,
-  game,
+export function OpeningBoardCard({
+  id,
+  name,
   num,
   width = 200,
   height = 200,
   isComplete = false,
   href,
   displayFen,
-}: PuzzleCardProps) {
+}: OpeningBoardCardProps) {
   return (
-    <Link
-      href={href ?? `/game-riddle/${riddle.id}`}
-      className="group flex flex-col"
-    >
+    <Link href={href ?? `/game-riddle/1`} className="group flex flex-col">
       <div className="flex items-center gap-3">
         <span className="text-primary flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-current text-sm font-bold">
           {num}
         </span>
-        <p className="text-md truncate">{riddle.title}</p>
+        <p className="text-md truncate">{name}</p>
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
         {isComplete && (
@@ -43,10 +39,10 @@ export function PuzzleCard({
           </div>
         )}
         <PuzzleBoard
-          sourceId={riddle.id}
-          mode="riddle"
+          sourceId={id}
+          mode="repertoire"
           initialFen={displayFen}
-          moves={riddle.moves ?? ""}
+          moves={""}
           width={width}
           height={height}
           className="border-muted rounded-xl border-4"
@@ -57,22 +53,6 @@ export function PuzzleCard({
             <Sword className="text-primary-foreground h-7 w-7" />
           </div>
           <span className="font-semibold text-white">Play</span>
-        </div>
-      </div>
-      <div className="bg-muted/50 border-muted mt-4 flex rounded-lg p-3">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <Circle className="h-4 w-4 shrink-0 fill-white" />
-            <span className="truncate text-sm font-medium">
-              {game.whitePlayer}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Circle className="h-4 w-4 shrink-0 fill-black" />
-            <span className="truncate text-sm font-medium">
-              {game.blackPlayer}
-            </span>
-          </div>
         </div>
       </div>
     </Link>

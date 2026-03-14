@@ -10,7 +10,6 @@ import {
 import { Chessground } from "@lichess-org/chessground";
 import type { Key } from "@lichess-org/chessground/types";
 import { toDests } from "@/lib/chess/toDests";
-import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { useSound } from "@/lib/shared/hooks/use-sound";
 import { useCoachStore } from "@/lib/shared/store/coach-store";
 import { useChessEngine } from "@/lib/engine/hooks/use-stockfish-engine";
@@ -25,15 +24,12 @@ import "@/assets/theme/theme.css";
 export type BoardMode = "puzzle" | "riddle" | "repertoire";
 
 export type PuzzleBoardProps = {
-  /** puzzleId, riddleId or repId - board resets when changed */
+  /** puzzleId, riddleId or openingId - board resets when changed */
   sourceId: string;
   mode: BoardMode;
   moves: string;
-  /** Position: used if provided, otherwise derived from pgn+ply */
+  /** Board position (FEN) */
   initialFen?: string | null;
-  /** If no initialFen, position is derived from pgn+ply */
-  pgn?: string;
-  ply?: number;
   width?: number;
   height?: number;
   /** Additional CSS classes, e.g. "border-2 border-primary" for border */
@@ -69,15 +65,8 @@ const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(
       onHintUsed,
     } = props;
 
-    const initialFen =
-      props.initialFen != null && props.initialFen !== ""
-        ? props.initialFen
-        : props.pgn != null && props.ply != null
-          ? (getFenFromPgnAtPly(props.pgn, props.ply) ?? undefined)
-          : undefined;
-
     const boardRef = useRef<HTMLDivElement>(null);
-    const { game, makeMove } = useChessOne(initialFen);
+    const { game, makeMove } = useChessOne(props.initialFen);
     const ground = useRef<ReturnType<typeof Chessground> | null>(null);
 
     const [currentStep, setCurrentStep] = useState(0);

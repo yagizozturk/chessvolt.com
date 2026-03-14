@@ -1,35 +1,7 @@
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { getAllOpenings } from "@/features/openings/services/openings";
 import { slugify } from "@/lib/utilities/slugify";
-import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
-import type { Opening } from "@/features/openings/types/opening";
-
-function openingToRiddleAndGame(opening: Opening) {
-  return {
-    riddle: {
-      id: opening.id,
-      gameId: opening.id,
-      title: opening.name,
-      moves: "",
-      gameType: null,
-      displayFen: opening.displayFen,
-      createdAt: opening.createdAt,
-    },
-    game: {
-      id: opening.id,
-      pgn: "",
-      whitePlayer: "White",
-      blackPlayer: "Black",
-      result: "",
-      playedAt: "",
-      url: null,
-      createdAt: opening.createdAt,
-      event: null,
-      opening: opening.name,
-      description: null,
-    },
-  };
-}
+import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 
 export default async function OpeningsPage() {
   const { supabase } = await getAuthenticatedUser();
@@ -44,19 +16,17 @@ export default async function OpeningsPage() {
       ) : (
         <div className="grid grid-cols-2 gap-6 px-2 py-3 sm:grid-cols-3 lg:grid-cols-4">
           {openings.map((opening, index) => {
-            const { riddle, game } = openingToRiddleAndGame(opening);
             const num = index + 1;
 
             return (
-              <PuzzleCard
+              <OpeningBoardCard
                 key={opening.id}
-                riddle={riddle}
-                game={game}
+                opening={opening}
                 num={num}
                 width={250}
                 height={250}
-                href={`/openings/${opening.slug ?? slugify(opening.name)}`}
-                initialFen={opening.displayFen}
+                href={`/openings/${opening.slug ?? slugify(opening.name)}/${opening.id}`}
+                displayFen={opening.displayFen}
               />
             );
           })}

@@ -51,7 +51,7 @@ export function ParentOpeningsList({ openings }: Props) {
               </Button>
             </Link>
             <Link
-              href={`/openings/${o.slug ?? slugify(o.name)}`}
+              href={`/openings/${o.slug ?? slugify(o.name)}/${o.id}`}
               target="_blank"
             >
               <Button variant="ghost" size="sm">

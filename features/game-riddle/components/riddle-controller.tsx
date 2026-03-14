@@ -130,7 +130,6 @@ export default function RiddleController({
             sourceId={riddle.id}
             mode="riddle"
             initialFen={riddle.displayFen}
-            pgn={game.pgn}
             moves={riddle.moves ?? ""}
             width={600}
             height={600}
