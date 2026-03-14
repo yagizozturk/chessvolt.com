@@ -24,7 +24,7 @@ export default async function AdminOpeningsPage() {
   ]);
 
   return (
-    <div className="space-y-8">
+    <div className="container mx-auto max-w-6xl space-y-8 px-4 py-8">
       {/* Openings (parent) */}
       <section>
         <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -63,10 +63,7 @@ export default async function AdminOpeningsPage() {
               {variants.length} variant(s) listed
             </p>
           </div>
-          <Link
-            href="/admin/openings/new"
-            className="flex items-center gap-2"
-          >
+          <Link href="/admin/openings/new" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             New Variant
           </Link>

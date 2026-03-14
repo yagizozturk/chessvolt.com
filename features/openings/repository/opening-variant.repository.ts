@@ -14,7 +14,7 @@ export async function findAll(
   const { data, error } = await supabase
     .from("opening_variants")
     .select("*")
-    .order("ply", { ascending: true });
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.error("opening-variant.repository.findAll error:", error);
@@ -54,7 +54,7 @@ export async function findByOpeningId(
     .from("opening_variants")
     .select("*")
     .eq("opening_id", openingId)
-    .order("ply", { ascending: true });
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.error("opening-variant.repository.findByOpeningId error:", error);
@@ -72,7 +72,6 @@ export type CreateOpeningVariantInput = {
   moves: string;
   fen?: string | null;
   moveCount?: number | null;
-  ply?: number;
 };
 
 export async function create(
@@ -89,7 +88,6 @@ export async function create(
       moves: input.moves,
       fen: input.fen ?? null,
       move_count: input.moveCount ?? null,
-      ply: input.ply ?? 0,
     })
     .select()
     .single();
@@ -109,7 +107,6 @@ export type UpdateOpeningVariantInput = {
   moves?: string;
   fen?: string | null;
   moveCount?: number | null;
-  ply?: number;
 };
 
 export async function update(
@@ -125,7 +122,6 @@ export async function update(
   if (input.moves !== undefined) updates.moves = input.moves;
   if (input.fen !== undefined) updates.fen = input.fen;
   if (input.moveCount !== undefined) updates.move_count = input.moveCount;
-  if (input.ply !== undefined) updates.ply = input.ply;
 
   const { data, error } = await supabase
     .from("opening_variants")

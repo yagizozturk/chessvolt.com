@@ -43,7 +43,7 @@ export function VariantDetail({ variant }: Props) {
             <CardTitle>{variant.title || "Untitled Variant"}</CardTitle>
             <CardDescription>
               {variant.ecoCode && `${variant.ecoCode} • `}
-              Opening: {variant.openingId} • Ply: {variant.ply}
+              Opening: {variant.openingId}
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -109,14 +109,6 @@ export function VariantDetail({ variant }: Props) {
                     className="font-mono text-sm"
                   />
                 </Field>
-                <Field>
-                  <FieldLabel>Ply</FieldLabel>
-                  <Input
-                    name="ply"
-                    type="number"
-                    defaultValue={variant.ply}
-                  />
-                </Field>
               </FieldGroup>
               <Button type="submit">
                 <Save className="h-4 w-4" />
@@ -142,10 +134,6 @@ export function VariantDetail({ variant }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">ECO Code</dt>
                 <dd>{variant.ecoCode ?? "—"}</dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground font-medium">Ply</dt>
-                <dd>{variant.ply}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Moves</dt>

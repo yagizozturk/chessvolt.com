@@ -55,15 +55,6 @@ export function VariantForm({ openings }: Props) {
             className="font-mono text-sm"
           />
         </Field>
-        <Field>
-          <FieldLabel>Ply</FieldLabel>
-          <Input
-            name="ply"
-            type="number"
-            defaultValue="0"
-            placeholder="0"
-          />
-        </Field>
       </FieldGroup>
       <Button type="submit">Create Variant</Button>
     </form>

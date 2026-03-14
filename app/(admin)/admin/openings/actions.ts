@@ -21,8 +21,6 @@ export async function createOpeningVariantAction(formData: FormData) {
   const title = (formData.get("title") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const fen = (formData.get("fen") as string) || null;
-  const plyStr = formData.get("ply") as string;
-  const ply = plyStr ? parseInt(plyStr, 10) : 0;
 
   if (!openingId?.trim() || !moves?.trim()) {
     redirect("/admin/openings/new?error=eksik_alan");
@@ -34,7 +32,6 @@ export async function createOpeningVariantAction(formData: FormData) {
     ecoCode: ecoCode || null,
     moves: moves.trim(),
     fen: fen || null,
-    ply: isNaN(ply) ? 0 : ply,
   };
 
   const variant = await createOpeningVariant(supabase, input);
@@ -56,15 +53,12 @@ export async function updateOpeningVariantAction(
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const moves = formData.get("moves") as string;
   const fen = (formData.get("fen") as string) || null;
-  const plyStr = formData.get("ply") as string;
-  const ply = plyStr ? parseInt(plyStr, 10) : 0;
 
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
   if (ecoCode !== undefined) input.ecoCode = ecoCode;
   if (moves !== undefined) input.moves = moves;
   if (fen !== undefined) input.fen = fen;
-  if (plyStr !== undefined) input.ply = isNaN(ply) ? 0 : ply;
 
   const variant = await updateOpeningVariant(supabase, id, input);
   if (!variant) {

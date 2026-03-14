@@ -9,5 +9,4 @@ export type OpeningVariant = {
   fen: string;
   moveCount: number | null;
   createdAt: string;
-  ply: number;
 };
