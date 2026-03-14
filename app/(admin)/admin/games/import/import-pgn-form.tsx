@@ -67,6 +67,22 @@ export function ImportPgnForm() {
 
       <FieldGroup>
         <Field>
+          <FieldLabel>Game Type</FieldLabel>
+          <input
+            type="text"
+            name="gameType"
+            placeholder="e.g. legend_games, magnus_plays, opening_crusher"
+            className={cn(
+              "border-input w-full max-w-xs rounded-md border bg-transparent px-3 py-2 text-sm",
+              "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
+              "placeholder:text-muted-foreground",
+            )}
+          />
+          <p className="text-muted-foreground mt-1 text-xs">
+            Tüm oyunlara atanacak challenge tipi (boş bırakılırsa legend_games)
+          </p>
+        </Field>
+        <Field>
           <FieldLabel>Dosyadan Yükle</FieldLabel>
           <div className="flex flex-wrap items-center gap-2">
             <input

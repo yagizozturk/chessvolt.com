@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
@@ -12,23 +12,40 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldTitle,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Trash2, Save } from "lucide-react";
+import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
 import { updateGameRiddleAction, deleteGameRiddleAction } from "./actions";
+import { cn } from "@/lib/utilities/cn";
 
 type Props = {
   riddle: GameRiddle;
   game: Game | null;
 };
 
+function getMoveCountFromMoves(moves: string | null): string {
+  if (!moves?.trim()) return "1";
+  const count = moves.trim().split(/\s+/).filter(Boolean).length;
+  return String(Math.max(1, count));
+}
+
 export function GameRiddleDetail({ riddle, game }: Props) {
   const [isEditing, setIsEditing] = useState(false);
+  const [ply, setPly] = useState(String(riddle.ply));
+  const [moveCountForAnswer, setMoveCountForAnswer] = useState(() =>
+    getMoveCountFromMoves(riddle.moves),
+  );
+  const [moves, setMoves] = useState(riddle.moves ?? "");
+
+  useEffect(() => {
+    if (!game?.pgn || !moveCountForAnswer) return;
+    const plyNum = parseInt(ply, 10);
+    const moveCount = parseInt(moveCountForAnswer, 10);
+    if (isNaN(plyNum) || isNaN(moveCount) || moveCount <= 0) return;
+    const uci = extractMovesFromPgn(game.pgn, plyNum, moveCount);
+    if (uci) setMoves(uci);
+  }, [game?.pgn, ply, moveCountForAnswer]);
 
   return (
     <div className="space-y-6">
@@ -91,8 +108,23 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                   <Input
                     name="ply"
                     type="number"
-                    defaultValue={riddle.ply}
+                    value={ply}
+                    onChange={(e) => setPly(e.target.value)}
                     required
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel>Move Count For Answer</FieldLabel>
+                  <Input
+                    type="number"
+                    min={1}
+                    placeholder="PGN'den UCI çıkarmak için"
+                    value={moveCountForAnswer}
+                    onChange={(e) => setMoveCountForAnswer(e.target.value)}
+                    className={cn(
+                      "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
+                      "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
+                    )}
                   />
                 </Field>
                 <Field>
@@ -101,7 +133,16 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                 </Field>
                 <Field>
                   <FieldLabel>Moves</FieldLabel>
-                  <Input name="moves" defaultValue={riddle.moves ?? ""} />
+                  <Input
+                    name="moves"
+                    value={moves}
+                    onChange={(e) => setMoves(e.target.value)}
+                    placeholder="UCI format veya Move Count ile otomatik"
+                    className={cn(
+                      "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
+                      "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
+                    )}
+                  />
                 </Field>
                 <Field>
                   <FieldLabel>Game Type</FieldLabel>

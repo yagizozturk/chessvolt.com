@@ -8,6 +8,7 @@ import {
 import { groupBy } from "@/lib/utilities/groupBy";
 import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import { CollectionHeader } from "@/components/collection/collection-header";
+import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
 
@@ -65,7 +66,7 @@ export default async function ChallengePage() {
                 <div className="flex items-center justify-between gap-4 px-2 py-3">
                   <CollectionHeader
                     title={displayName}
-                    imageSrc="/images/challanges/magnus_plays.png"
+                    imageSrc={`/images/challanges/${gameType}2.png`}
                     imageAlt={displayName}
                     description={copy.description}
                     quote={copy.quote}
@@ -73,12 +74,12 @@ export default async function ChallengePage() {
                     itemCount={riddles.length}
                     itemLabel="riddles"
                   />
+                  <ProgressStatsCard
+                    percentage={stats.percentage}
+                    className="shrink-0"
+                  />
                 </div>
-                <ChallengeDataList
-                  riddles={riddles}
-                  gameMap={gameMap}
-                  percentage={stats.percentage}
-                />
+                <ChallengeDataList riddles={riddles} gameMap={gameMap} />
               </div>
             );
           })}

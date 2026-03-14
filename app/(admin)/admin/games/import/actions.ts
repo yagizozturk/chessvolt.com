@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { createGame } from "@/features/game/services/game";
+import { createGameRiddle } from "@/features/game-riddle/services/game-riddle";
+import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
 import { parsePgn, splitPgnGames, validatePgn } from "@/lib/chess/parsePgn";
+
+const DEFAULT_GAME_TYPE = "legend_games";
 
 export async function importPgnAction(formData: FormData) {
   const { supabase } = await getAdminUser();
@@ -13,6 +17,9 @@ export async function importPgnAction(formData: FormData) {
   if (!pgnText?.trim()) {
     redirect("/admin/games/import?error=eksik_pgn");
   }
+
+  const gameType =
+    (formData.get("gameType") as string)?.trim() || DEFAULT_GAME_TYPE;
 
   const games = splitPgnGames(pgnText);
   if (games.length === 0) {
@@ -48,6 +55,20 @@ export async function importPgnAction(formData: FormData) {
 
     if (game) {
       inserted.push(game.id);
+
+      // Default game_riddle at ply 0: title from ChapterName (description)
+      const movesAtPly0 = extractMovesFromPgn(parsed.pgn, 0, 1);
+      const defaultTitle =
+        parsed.description?.trim() ||
+        `Find the first move - ${parsed.whitePlayer} vs ${parsed.blackPlayer}`;
+
+      await createGameRiddle(supabase, {
+        gameId: game.id,
+        ply: 0,
+        title: defaultTitle,
+        moves: movesAtPly0 ?? "",
+        gameType,
+      });
     } else {
       errors.push(
         `${parsed.whitePlayer} vs ${parsed.blackPlayer} could not be added`,
