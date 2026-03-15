@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ChevronLeft, Target } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import {
   getOpeningById,
   getOpeningVariantsByOpeningId,
+  getCorrectlySolvedVariantIds,
 } from "@/features/openings/services/openings";
 import { Card, CardContent } from "@/components/ui/card";
 import { notFound } from "next/navigation";
@@ -15,7 +16,7 @@ type Params = {
 
 export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const { slug, id } = await params;
-  const { supabase } = await getAuthenticatedUser();
+  const { user, supabase } = await getAuthenticatedUser();
 
   const opening = await getOpeningById(supabase, id);
   if (!opening) {
@@ -23,6 +24,12 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   }
 
   const variants = await getOpeningVariantsByOpeningId(supabase, opening.id);
+  const variantIds = variants.map((v) => v.id);
+  const solvedVariantIds = await getCorrectlySolvedVariantIds(
+    supabase,
+    user.id,
+    variantIds,
+  );
 
   return (
     <div className="container mx-auto max-w-6xl px-6 pt-12 pb-16">
@@ -57,9 +64,8 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                     width={220}
                     height={220}
                     href={`/openings/variant/${variant.id}`}
-                    displayFen={
-                      variant.displayFen ?? variant.initialFen ?? ""
-                    }
+                    fen={variant.displayFen ?? variant.initialFen ?? ""}
+                    isComplete={solvedVariantIds.has(variant.id)}
                   />
                 );
               })}

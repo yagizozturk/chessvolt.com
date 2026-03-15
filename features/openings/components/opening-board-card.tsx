@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { Check, Circle, Sword } from "lucide-react";
+import { Check, Sword } from "lucide-react";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
-import { Opening } from "../types/opening";
 
 type OpeningBoardCardProps = {
   id: string;
@@ -11,7 +10,7 @@ type OpeningBoardCardProps = {
   height?: number;
   isComplete?: boolean;
   href: string;
-  displayFen: string;
+  fen: string;
 };
 
 export function OpeningBoardCard({
@@ -22,7 +21,7 @@ export function OpeningBoardCard({
   height = 200,
   isComplete = false,
   href,
-  displayFen,
+  fen,
 }: OpeningBoardCardProps) {
   return (
     <Link href={href} className="group flex flex-col">
@@ -41,7 +40,7 @@ export function OpeningBoardCard({
         <PuzzleBoard
           sourceId={id}
           mode="repertoire"
-          initialFen={displayFen}
+          initialFen={fen}
           moves={""}
           width={width}
           height={height}

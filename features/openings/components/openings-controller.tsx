@@ -1,10 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useOpeningsStore } from "@/features/openings/store/openings-store";
+import { Card, CardHeader } from "@/components/ui/card";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
-import { Card, CardHeader } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 
 export default function OpeningsController({
   variant,
@@ -12,9 +12,10 @@ export default function OpeningsController({
   variant: OpeningVariant;
 }) {
   const router = useRouter();
-  const isStarted = useOpeningsStore((state) => state.isStarted);
+  const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
 
-  const handleSolved = (isCorrect: boolean) => {
+  const handleSolved = async (isCorrect: boolean) => {
+    await updateOpeningVariantAnswerHook(variant.id, isCorrect);
     if (isCorrect) {
       router.push("/openings");
     }
@@ -36,24 +37,20 @@ export default function OpeningsController({
           />
         </div>
 
-        {!isStarted && (
-          <div className="flex min-w-0 flex-col gap-4">
-            <div className="grid grid-cols-2 gap-2">
-              <Card className="border-border bg-muted/50 rounded-lg">
-                <CardHeader className="p-4 pb-2">
-                  <p className="text-foreground font-semibold">
-                    {variant.title || "Untitled Variant"}
-                  </p>
-                  {variant.ecoCode && (
-                    <p className="text-muted-foreground text-sm">
-                      {variant.ecoCode}
-                    </p>
-                  )}
-                </CardHeader>
-              </Card>
-            </div>
-          </div>
-        )}
+        <div className="flex min-w-0 flex-col gap-4">
+          <Card className="border-border bg-muted/50 rounded-lg">
+            <CardHeader className="p-4 pb-2">
+              <p className="text-foreground font-semibold">
+                {variant.title || "Untitled Variant"}
+              </p>
+              {variant.ecoCode && (
+                <p className="text-muted-foreground text-sm">
+                  {variant.ecoCode}
+                </p>
+              )}
+            </CardHeader>
+          </Card>
+        </div>
       </div>
     </div>
   );

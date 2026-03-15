@@ -9,6 +9,7 @@ import type { Opening } from "@/features/openings/types/opening";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import * as openingRepo from "@/features/openings/repository/opening.repository";
 import * as openingVariantRepo from "@/features/openings/repository/opening-variant.repository";
+import * as userOpeningVariantRepo from "@/features/openings/repository/user-opening-variant.repository";
 
 export async function getAllOpenings(
   supabase: SupabaseClient,
@@ -92,4 +93,32 @@ export async function deleteOpeningVariant(
   id: string,
 ): Promise<boolean> {
   return openingVariantRepo.remove(supabase, id);
+}
+
+export async function getCorrectlySolvedVariantIds(
+  supabase: SupabaseClient,
+  userId: string,
+  openingVariantIds: string[],
+): Promise<Set<string>> {
+  return userOpeningVariantRepo.findCorrectlySolvedVariantIds(
+    supabase,
+    userId,
+    openingVariantIds,
+  );
+}
+
+export async function upsertOpeningVariantAttempt(
+  supabase: SupabaseClient,
+  userId: string,
+  openingVariantId: string,
+  isCorrect: boolean,
+  options?: { userMoveSan?: string | null; timeSpentSeconds?: number | null },
+): Promise<void> {
+  return userOpeningVariantRepo.upsert(
+    supabase,
+    userId,
+    openingVariantId,
+    isCorrect,
+    options,
+  );
 }

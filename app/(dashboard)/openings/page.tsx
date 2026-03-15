@@ -19,7 +19,7 @@ export default async function OpeningsPage() {
               width={250}
               height={250}
               href={`/openings/${opening.slug}/${opening.id}`}
-              displayFen={opening.displayFen}
+              fen={opening.displayFen}
             />
           );
         })}
