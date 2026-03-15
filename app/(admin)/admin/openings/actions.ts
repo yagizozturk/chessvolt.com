@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { movesToPgn } from "@/lib/chess/movesToPgn";
+import {
+  getUciMovesFromPgnAfterPly,
+} from "@/lib/chess/extractMovesFromPgn";
 import {
   createOpeningVariant,
   updateOpeningVariant,
@@ -18,21 +20,28 @@ export async function createOpeningVariantAction(formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const openingId = formData.get("openingId") as string;
-  const moves = formData.get("moves") as string;
+  const pgn = (formData.get("pgn") as string)?.trim();
+  const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
   const title = (formData.get("title") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const fen = (formData.get("fen") as string) || null;
 
-  if (!openingId?.trim() || !moves?.trim()) {
+  if (!openingId?.trim() || !pgn) {
     redirect("/admin/openings/new?error=eksik_alan");
+  }
+
+  const moves = getUciMovesFromPgnAfterPly(pgn, ply >= 0 ? ply : 0);
+  if (!moves) {
+    redirect("/admin/openings/new?error=gecersiz_pgn");
   }
 
   const input: CreateOpeningVariantInput = {
     openingId: openingId.trim(),
     title: title || null,
     ecoCode: ecoCode || null,
-    moves: moves.trim(),
-    pgn: movesToPgn(moves.trim()),
+    ply: ply >= 0 ? ply : 0,
+    moves,
+    pgn,
     fen: fen || null,
   };
 
@@ -53,15 +62,21 @@ export async function updateOpeningVariantAction(
 
   const title = (formData.get("title") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
-  const moves = formData.get("moves") as string;
+  const pgn = (formData.get("pgn") as string)?.trim();
+  const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
   const fen = (formData.get("fen") as string) || null;
 
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
   if (ecoCode !== undefined) input.ecoCode = ecoCode;
-  if (moves !== undefined) {
+  if (!isNaN(ply) && ply >= 0) input.ply = ply;
+  if (pgn) {
+    const moves = getUciMovesFromPgnAfterPly(pgn, ply >= 0 ? ply : 0);
+    if (!moves) {
+      redirect(`/admin/openings/${id}?error=gecersiz_pgn`);
+    }
+    input.pgn = pgn;
     input.moves = moves;
-    input.pgn = movesToPgn(moves);
   }
   if (fen !== undefined) input.fen = fen;
 

@@ -1,6 +1,50 @@
 import { Chess } from "chess.js";
 
 /**
+ * Extracts all moves from a PGN string in UCI format.
+ * @param pgn - Full PGN string
+ * @returns Space-separated UCI moves (e.g. "e2e4 e7e5") or null if invalid
+ */
+export function getUciMovesFromPgn(pgn: string): string | null {
+  try {
+    const game = new Chess();
+    game.loadPgn(pgn.trim());
+    const history = game.history();
+    const replayGame = new Chess();
+    const uciMoves: string[] = [];
+    for (const san of history) {
+      const move = replayGame.move(san);
+      if (!move) return null;
+      const uci = move.from + move.to + (move.promotion ?? "");
+      uciMoves.push(uci);
+    }
+    return uciMoves.length > 0 ? uciMoves.join(" ") : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Extracts all UCI moves from a PGN starting after the given ply.
+ * ply 0 = all moves, ply 1 = moves after first move, etc.
+ *
+ * @param pgn - Full PGN string
+ * @param ply - Move index to start from (0 = from start, 1 = skip first move)
+ * @returns Space-separated UCI moves or null if invalid
+ */
+export function getUciMovesFromPgnAfterPly(
+  pgn: string,
+  ply: number,
+): string | null {
+  const allMoves = getUciMovesFromPgn(pgn);
+  if (!allMoves || ply < 0) return null;
+  const arr = allMoves.split(" ");
+  if (ply >= arr.length) return null;
+  const extracted = arr.slice(ply);
+  return extracted.length > 0 ? extracted.join(" ") : null;
+}
+
+/**
  * Extracts the next N moves from a PGN in UCI format, starting after the given ply.
  *
  * @param pgn - Full PGN string

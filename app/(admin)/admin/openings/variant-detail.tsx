@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import {
   updateOpeningVariantAction,
   deleteOpeningVariantAction,
 } from "./actions";
+import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
 
 type Props = {
   variant: OpeningVariant;
@@ -25,6 +26,19 @@ type Props = {
 
 export function VariantDetail({ variant }: Props) {
   const [isEditing, setIsEditing] = useState(false);
+  const [pgn, setPgn] = useState(variant.pgn);
+  const [ply, setPly] = useState(String(variant.ply ?? 0));
+  const plyNum = parseInt(ply, 10) >= 0 ? parseInt(ply, 10) : 0;
+  const derivedMoves = pgn
+    ? getUciMovesFromPgnAfterPly(pgn, plyNum) ?? variant.moves
+    : variant.moves;
+
+  useEffect(() => {
+    if (!isEditing) {
+      setPgn(variant.pgn);
+      setPly(String(variant.ply ?? 0));
+    }
+  }, [isEditing, variant.pgn, variant.ply]);
 
   return (
     <div className="container mx-auto max-w-6xl space-y-6 px-4 py-8">
@@ -93,11 +107,31 @@ export function VariantDetail({ variant }: Props) {
                   />
                 </Field>
                 <Field>
-                  <FieldLabel>Moves (SAN)</FieldLabel>
+                  <FieldLabel>Ply (başlangıç hamle indeksi)</FieldLabel>
                   <Input
-                    name="moves"
-                    defaultValue={variant.moves}
+                    name="ply"
+                    type="number"
+                    min={0}
+                    value={ply}
+                    onChange={(e) => setPly(e.target.value)}
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel>PGN</FieldLabel>
+                  <textarea
+                    name="pgn"
+                    value={pgn}
+                    onChange={(e) => setPgn(e.target.value)}
                     required
+                    rows={6}
+                    className="border-input w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-base font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel>Moves (UCI)</FieldLabel>
+                  <Input
+                    readOnly
+                    value={derivedMoves}
                     className="font-mono text-sm"
                   />
                 </Field>
@@ -134,6 +168,10 @@ export function VariantDetail({ variant }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">ECO Code</dt>
                 <dd>{variant.ecoCode ?? "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">Ply</dt>
+                <dd>{variant.ply ?? 0}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Moves</dt>

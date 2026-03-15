@@ -6,6 +6,7 @@ type DbOpeningVariant = {
   parent_variant_id: string | null;
   title: string | null;
   eco_code: string | null;
+  ply: number;
   moves: string;
   pgn: string;
   fen: string | null;
@@ -19,6 +20,7 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     parentVariantId: db.parent_variant_id,
     title: db.title,
     ecoCode: db.eco_code,
+    ply: db.ply ?? 0,
     moves: db.moves,
     pgn: db.pgn,
     fen: db.fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
