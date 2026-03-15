@@ -57,7 +57,9 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                     width={220}
                     height={220}
                     href={`/openings/variant/${variant.id}`}
-                    displayFen={variant.fen}
+                    displayFen={
+                      variant.displayFen ?? variant.initialFen ?? ""
+                    }
                   />
                 );
               })}

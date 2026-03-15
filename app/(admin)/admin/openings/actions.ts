@@ -6,6 +6,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import {
   getUciMovesFromPgnAfterPly,
 } from "@/lib/chess/extractMovesFromPgn";
+import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import {
   createOpeningVariant,
   updateOpeningVariant,
@@ -24,7 +25,11 @@ export async function createOpeningVariantAction(formData: FormData) {
   const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
   const title = (formData.get("title") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
-  const fen = (formData.get("fen") as string) || null;
+  const initialFen =
+    (formData.get("initialFen") as string)?.trim() ||
+    getFenFromPgnAtPly(pgn ?? "", ply >= 0 ? ply : 0) ||
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  const displayFen = (formData.get("displayFen") as string)?.trim() || null;
 
   if (!openingId?.trim() || !pgn) {
     redirect("/admin/openings/new?error=eksik_alan");
@@ -42,7 +47,8 @@ export async function createOpeningVariantAction(formData: FormData) {
     ply: ply >= 0 ? ply : 0,
     moves,
     pgn,
-    fen: fen || null,
+    initialFen,
+    displayFen,
   };
 
   const variant = await createOpeningVariant(supabase, input);
@@ -64,7 +70,8 @@ export async function updateOpeningVariantAction(
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const pgn = (formData.get("pgn") as string)?.trim();
   const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
-  const fen = (formData.get("fen") as string) || null;
+  const initialFen = (formData.get("initialFen") as string)?.trim() || null;
+  const displayFen = (formData.get("displayFen") as string)?.trim() || null;
 
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
@@ -78,7 +85,8 @@ export async function updateOpeningVariantAction(
     input.pgn = pgn;
     input.moves = moves;
   }
-  if (fen !== undefined) input.fen = fen;
+  if (initialFen) input.initialFen = initialFen; // only when non-empty (initial_fen is NOT NULL)
+  if (displayFen !== undefined) input.displayFen = displayFen;
 
   const variant = await updateOpeningVariant(supabase, id, input);
   if (!variant) {

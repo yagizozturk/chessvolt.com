@@ -136,10 +136,18 @@ export function VariantDetail({ variant }: Props) {
                   />
                 </Field>
                 <Field>
-                  <FieldLabel>FEN</FieldLabel>
+                  <FieldLabel>Initial FEN</FieldLabel>
                   <Input
-                    name="fen"
-                    defaultValue={variant.fen ?? ""}
+                    name="initialFen"
+                    defaultValue={variant.initialFen ?? ""}
+                    className="font-mono text-sm"
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel>Display FEN</FieldLabel>
+                  <Input
+                    name="displayFen"
+                    defaultValue={variant.displayFen ?? ""}
                     className="font-mono text-sm"
                   />
                 </Field>
@@ -182,9 +190,19 @@ export function VariantDetail({ variant }: Props) {
                 <dd className="font-mono break-all text-xs">{variant.pgn}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">FEN</dt>
+                <dt className="text-muted-foreground font-medium">
+                  Initial FEN
+                </dt>
                 <dd className="font-mono break-all text-xs">
-                  {variant.fen ?? "—"}
+                  {variant.initialFen ?? "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">
+                  Display FEN
+                </dt>
+                <dd className="font-mono break-all text-xs">
+                  {variant.displayFen ?? "—"}
                 </dd>
               </div>
               <div>

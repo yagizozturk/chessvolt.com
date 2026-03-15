@@ -79,10 +79,18 @@ export function VariantForm({ openings }: Props) {
           />
         </Field>
         <Field>
-          <FieldLabel>FEN</FieldLabel>
+          <FieldLabel>Initial FEN</FieldLabel>
           <Input
-            name="fen"
-            placeholder="Position after moves (optional)"
+            name="initialFen"
+            placeholder="PGN+ply'den türetilir (opsiyonel)"
+            className="font-mono text-sm"
+          />
+        </Field>
+        <Field>
+          <FieldLabel>Display FEN</FieldLabel>
+          <Input
+            name="displayFen"
+            placeholder="Kart görüntüsü için (opsiyonel)"
             className="font-mono text-sm"
           />
         </Field>

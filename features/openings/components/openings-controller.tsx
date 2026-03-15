@@ -27,7 +27,7 @@ export default function OpeningsController({
           <PuzzleBoard
             sourceId={variant.id}
             mode="repertoire"
-            initialFen={variant.fen ?? undefined}
+            initialFen={variant.initialFen ?? undefined}
             moves={variant.moves}
             width={620}
             height={620}

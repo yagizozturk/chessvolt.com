@@ -9,7 +9,8 @@ type DbOpeningVariant = {
   ply: number;
   moves: string;
   pgn: string;
-  fen: string | null;
+  initial_fen: string;
+  display_fen: string | null;
   created_at: string;
 };
 
@@ -23,7 +24,10 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     ply: db.ply ?? 0,
     moves: db.moves,
     pgn: db.pgn,
-    fen: db.fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    initialFen:
+      db.initial_fen ??
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    displayFen: db.display_fen ?? null,
     createdAt: db.created_at,
   };
 }

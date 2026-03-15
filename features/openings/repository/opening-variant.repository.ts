@@ -72,7 +72,8 @@ export type CreateOpeningVariantInput = {
   ply: number;
   moves: string;
   pgn: string;
-  fen?: string | null;
+  initialFen?: string | null;
+  displayFen?: string | null;
 };
 
 export async function create(
@@ -89,7 +90,8 @@ export async function create(
       ply: input.ply,
       moves: input.moves,
       pgn: input.pgn,
-      fen: input.fen ?? null,
+      initial_fen: input.initialFen ?? null,
+      display_fen: input.displayFen ?? null,
     })
     .select()
     .single();
@@ -109,7 +111,8 @@ export type UpdateOpeningVariantInput = {
   ply?: number;
   moves?: string;
   pgn?: string;
-  fen?: string | null;
+  initialFen?: string | null;
+  displayFen?: string | null;
 };
 
 export async function update(
@@ -125,7 +128,8 @@ export async function update(
   if (input.ply !== undefined) updates.ply = input.ply;
   if (input.moves !== undefined) updates.moves = input.moves;
   if (input.pgn !== undefined) updates.pgn = input.pgn;
-  if (input.fen !== undefined) updates.fen = input.fen;
+  if (input.initialFen !== undefined) updates.initial_fen = input.initialFen;
+  if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 
   const { data, error } = await supabase
     .from("opening_variants")

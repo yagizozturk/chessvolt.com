@@ -7,6 +7,7 @@ export type OpeningVariant = {
   ply: number;
   moves: string;
   pgn: string;
-  fen: string;
+  initialFen: string;
+  displayFen: string | null;
   createdAt: string;
 };
