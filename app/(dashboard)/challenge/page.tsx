@@ -66,7 +66,7 @@ export default async function ChallengePage() {
               <div className="flex items-center justify-between gap-4 px-2 py-3">
                 <CollectionHeader
                   title={displayName}
-                  imageSrc={`/images/challanges/${gameType}_3.png`}
+                  imageSrc={`/images/challanges/${gameType}.png`}
                   imageAlt={displayName}
                   description={gameTypeConstants.description}
                   quote={gameTypeConstants.quote}
