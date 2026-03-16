@@ -4,7 +4,6 @@ export type OpeningVariant = {
   parentVariantId: string | null;
   title: string | null;
   description: string | null;
-  ecoCode: string | null;
   ply: number;
   moves: string;
   pgn: string;

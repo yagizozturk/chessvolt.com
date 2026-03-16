@@ -38,10 +38,8 @@ export function ParentOpeningsList({ openings }: Props) {
         >
           <div className="flex-1">
             <p className="font-medium">{o.name}</p>
-            {(o.ecoCode || o.description) && (
-              <p className="text-muted-foreground text-sm">
-                {[o.ecoCode, o.description].filter(Boolean).join(" • ")}
-              </p>
+            {o.description && (
+              <p className="text-muted-foreground text-sm">{o.description}</p>
             )}
           </div>
           <div className="flex items-center gap-2">

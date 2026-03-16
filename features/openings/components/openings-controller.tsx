@@ -43,11 +43,6 @@ export default function OpeningsController({
               <p className="text-foreground font-semibold">
                 {variant.title || "Untitled Variant"}
               </p>
-              {variant.ecoCode && (
-                <p className="text-muted-foreground text-sm">
-                  {variant.ecoCode}
-                </p>
-              )}
             </CardHeader>
           </Card>
         </div>

@@ -15,7 +15,6 @@ type DbOpening = {
   id: string;
   name: string;
   slug: string | null;
-  eco_code: string | null;
   description: string | null;
   display_fen: string | null;
   created_at: string;
@@ -26,7 +25,6 @@ function toOpening(db: DbOpening): Opening {
     id: db.id,
     name: db.name,
     slug: db.slug,
-    ecoCode: db.eco_code,
     description: db.description,
     displayFen: db.display_fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     createdAt: db.created_at,
@@ -42,7 +40,7 @@ export async function findAll(
 ): Promise<Opening[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, display_fen, created_at")
+    .select("id, name, slug, description, display_fen, created_at")
     .order("name", { ascending: true });
 
   if (error) {
@@ -60,7 +58,7 @@ export async function findAllWithVariantCount(
 ): Promise<OpeningWithVariantCount[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, display_fen, created_at, opening_variants(count)")
+    .select("id, name, slug, description, display_fen, created_at, opening_variants(count)")
     .order("name", { ascending: true });
 
   if (error) {
@@ -81,7 +79,7 @@ export async function findBySlug(
 ): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, display_fen, created_at")
+    .select("id, name, slug, description, display_fen, created_at")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -99,7 +97,7 @@ export async function findById(
 ): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, eco_code, description, display_fen, created_at")
+    .select("id, name, slug, description, display_fen, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -114,7 +112,6 @@ export async function findById(
 export type CreateOpeningInput = {
   name: string;
   slug?: string | null;
-  ecoCode?: string | null;
   description?: string | null;
   displayFen?: string | null;
 };
@@ -128,7 +125,6 @@ export async function create(
     .insert({
       name: input.name.trim(),
       slug: input.slug ?? slugFromName(input.name),
-      eco_code: input.ecoCode ?? null,
       description: input.description ?? null,
       display_fen: input.displayFen ?? null,
     })
@@ -146,7 +142,6 @@ export async function create(
 export type UpdateOpeningInput = {
   name?: string;
   slug?: string | null;
-  ecoCode?: string | null;
   description?: string | null;
   displayFen?: string | null;
 };
@@ -159,7 +154,6 @@ export async function update(
   const updates: Record<string, unknown> = {};
   if (input.name !== undefined) updates.name = input.name.trim();
   if (input.slug !== undefined) updates.slug = input.slug;
-  if (input.ecoCode !== undefined) updates.eco_code = input.ecoCode;
   if (input.description !== undefined) updates.description = input.description;
   if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 

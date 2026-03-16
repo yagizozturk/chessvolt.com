@@ -55,10 +55,7 @@ export function VariantDetail({ variant }: Props) {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>{variant.title || "Untitled Variant"}</CardTitle>
-            <CardDescription>
-              {variant.ecoCode && `${variant.ecoCode} • `}
-              Opening: {variant.openingId}
-            </CardDescription>
+            <CardDescription>Opening: {variant.openingId}</CardDescription>
           </div>
           <div className="flex gap-2">
             {!isEditing ? (
@@ -104,13 +101,6 @@ export function VariantDetail({ variant }: Props) {
                   <Input
                     name="description"
                     defaultValue={variant.description ?? ""}
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel>ECO Code</FieldLabel>
-                  <Input
-                    name="ecoCode"
-                    defaultValue={variant.ecoCode ?? ""}
                   />
                 </Field>
                 <Field>
@@ -183,10 +173,6 @@ export function VariantDetail({ variant }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">Description</dt>
                 <dd>{variant.description ?? "—"}</dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground font-medium">ECO Code</dt>
-                <dd>{variant.ecoCode ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Ply</dt>

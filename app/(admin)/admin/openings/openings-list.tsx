@@ -37,10 +37,8 @@ export function OpeningsList({ variants }: Props) {
             <p className="font-medium">
               {v.title || "Untitled Variant"}
             </p>
-            {(v.ecoCode || v.openingId) && (
-              <p className="text-muted-foreground text-sm">
-                {[v.ecoCode, v.openingId].filter(Boolean).join(" • ")}
-              </p>
+            {v.openingId && (
+              <p className="text-muted-foreground text-sm">{v.openingId}</p>
             )}
           </Link>
           <Button

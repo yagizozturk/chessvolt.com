@@ -3,7 +3,6 @@ export type Opening = {
   id: string;
   name: string;
   slug: string | null;
-  ecoCode: string | null;
   description: string | null;
   displayFen: string;
   createdAt: string;

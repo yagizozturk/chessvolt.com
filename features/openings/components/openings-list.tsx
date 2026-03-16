@@ -26,8 +26,7 @@ export function OpeningsList({ openings }: OpeningsListProps) {
     const q = normalize(query.trim());
     return openings.filter((o) => {
       const name = normalize(o.name);
-      const eco = o.ecoCode ? normalize(o.ecoCode) : "";
-      return name.includes(q) || eco.includes(q);
+      return name.includes(q);
     });
   }, [openings, query]);
 

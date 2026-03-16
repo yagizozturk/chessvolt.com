@@ -18,7 +18,6 @@ export async function createOpeningAction(formData: FormData) {
 
   const name = (formData.get("name") as string)?.trim();
   const slug = (formData.get("slug") as string) || null;
-  const ecoCode = (formData.get("ecoCode") as string) || null;
   const description = (formData.get("description") as string) || null;
   const displayFen = (formData.get("displayFen") as string) || null;
 
@@ -29,7 +28,6 @@ export async function createOpeningAction(formData: FormData) {
   const input: CreateOpeningInput = {
     name,
     slug: slug || null,
-    ecoCode: ecoCode || null,
     description: description || null,
     displayFen: displayFen || null,
   };
@@ -51,14 +49,12 @@ export async function updateOpeningAction(
 
   const name = (formData.get("name") as string)?.trim();
   const slug = (formData.get("slug") as string) || null;
-  const ecoCode = (formData.get("ecoCode") as string) || null;
   const description = (formData.get("description") as string) || null;
   const displayFen = (formData.get("displayFen") as string) || null;
 
   const input: UpdateOpeningInput = {};
   if (name !== undefined) input.name = name;
   if (slug !== undefined) input.slug = slug || null;
-  if (ecoCode !== undefined) input.ecoCode = ecoCode;
   if (description !== undefined) input.description = description;
   if (displayFen !== undefined) input.displayFen = displayFen || null;
 

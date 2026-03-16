@@ -35,14 +35,6 @@ export function OpeningEditForm({ opening }: Props) {
           />
         </Field>
         <Field>
-          <FieldLabel>ECO Code</FieldLabel>
-          <Input
-            name="ecoCode"
-            defaultValue={opening.ecoCode ?? ""}
-            placeholder="e.g. B20"
-          />
-        </Field>
-        <Field>
           <FieldLabel>Description</FieldLabel>
           <Input
             name="description"

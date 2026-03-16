@@ -121,6 +121,19 @@ export async function getCorrectlySolvedVariantIds(
   );
 }
 
+export async function getOpeningVariantAttemptsForVariants(
+  supabase: SupabaseClient,
+  userId: string,
+  openingVariantIds: string[],
+) {
+  const all = await userOpeningVariantRepo.findOpeningVariantAttempts(
+    supabase,
+    userId,
+  );
+  const idSet = new Set(openingVariantIds);
+  return all.filter((a) => idSet.has(a.openingVariantId));
+}
+
 export async function upsertOpeningVariantAttempt(
   supabase: SupabaseClient,
   userId: string,

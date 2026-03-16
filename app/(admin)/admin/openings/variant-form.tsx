@@ -33,7 +33,6 @@ export function VariantForm({ openings }: Props) {
             {openings.map((o) => (
               <option key={o.id} value={o.id}>
                 {o.name}
-                {o.ecoCode ? ` (${o.ecoCode})` : ""}
               </option>
             ))}
           </select>
@@ -45,10 +44,6 @@ export function VariantForm({ openings }: Props) {
         <Field>
           <FieldLabel>Description</FieldLabel>
           <Input name="description" placeholder="Optional variant description" />
-        </Field>
-        <Field>
-          <FieldLabel>ECO Code</FieldLabel>
-          <Input name="ecoCode" placeholder="e.g. B20" />
         </Field>
         <Field>
           <FieldLabel>Ply (başlangıç hamle indeksi, 0 = tüm hamleler)</FieldLabel>
