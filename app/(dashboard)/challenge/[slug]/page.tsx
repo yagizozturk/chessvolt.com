@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { NumberStatsCard } from "@/components/stats/number-stats-card";
-import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
+import { RiddleBoardCard } from "@/features/game-riddle/components/riddle-board-card";
 
 type Params = {
   params: Promise<{ slug: string }>;
@@ -78,7 +78,7 @@ export default async function ChallengePage({ params }: Params) {
                   const num = index + 1;
 
                   return (
-                    <PuzzleCard
+                    <RiddleBoardCard
                       key={riddle.id}
                       riddle={riddle}
                       game={game}

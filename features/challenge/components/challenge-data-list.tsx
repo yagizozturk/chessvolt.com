@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, ChevronRight, ChevronUp } from "lucide-react";
-import { PuzzleCard } from "@/components/puzzle-card/puzzle-card";
+import { RiddleBoardCard } from "@/features/game-riddle/components/riddle-board-card";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
+import { ChevronRight, ChevronUp } from "lucide-react";
+import { useState } from "react";
 
 type ChallengeDataListProps = {
   riddles: GameRiddle[];
@@ -13,12 +13,23 @@ type ChallengeDataListProps = {
 
 const INITIAL_COUNT = 4;
 
+/**
+ * Riddle lar gameId ler içinde bulunup, ilgili bilgiler döner. 4 tane döner ilk başta.
+ * VisibleRiddles ona göre gösterilir.
+ * @param riddles - O game type daki riddle lar vardır.
+ * @param gameMap - GameMap i oyunlarla ilgili ana bilgileri içerir. Black Player örneğin.
+ * @returns A list of puzzles for the given game type.
+ */
 export function ChallengeDataList({
   riddles,
   gameMap,
 }: ChallengeDataListProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  console.log("riddles", riddles);
+  console.log("gameMap", gameMap);
+
+  // Note: undefined.pgn hatası alnırsa. ?. ile bu durumda hata yerine undefined döner ve filter bu riddle’ı eler.
   const riddlesWithPgn = riddles.filter((r) => gameMap[r.gameId]?.pgn);
   const visibleRiddles = isExpanded
     ? riddlesWithPgn
@@ -32,7 +43,7 @@ export function ChallengeDataList({
           const game = gameMap[riddle.gameId]!;
           const num = index + 1;
           return (
-            <PuzzleCard
+            <RiddleBoardCard
               key={riddle.id}
               riddle={riddle}
               game={game}

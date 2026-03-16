@@ -4,7 +4,7 @@ import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 
-type RiddleCardProps = {
+type RiddleBoardCardProps = {
   riddle: GameRiddle;
   game: Game;
   num: number;
@@ -15,7 +15,7 @@ type RiddleCardProps = {
   displayFen?: string | null;
 };
 
-export function RiddleCard({
+export function RiddleBoardCard({
   riddle,
   game,
   num,
@@ -24,7 +24,7 @@ export function RiddleCard({
   isComplete = false,
   href,
   displayFen,
-}: RiddleCardProps) {
+}: RiddleBoardCardProps) {
   return (
     <Link
       href={href ?? `/game-riddle/${riddle.id}`}
