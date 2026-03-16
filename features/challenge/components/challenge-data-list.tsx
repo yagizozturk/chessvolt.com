@@ -55,27 +55,16 @@ export function ChallengeDataList({
           );
         })}
       </div>
-      <div className="px-2">
-        {hasMore && (
-          <button
-            type="button"
-            onClick={() => setIsExpanded((prev) => !prev)}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 ml-auto flex w-fit items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
-          >
-            {isExpanded ? (
-              <>
-                Show Less
-                <ChevronUp className="h-4 w-4" />
-              </>
-            ) : (
-              <>
-                Show More ({riddlesWithPgn.length})
-                <ChevronRight className="h-4 w-4" />
-              </>
-            )}
-          </button>
-        )}
-      </div>
+      {hasMore && (
+        <button
+          type="button"
+          onClick={() => setIsExpanded((p) => !p)}
+          className="bg-primary text-primary-foreground hover:bg-primary/90 ml-auto flex w-fit items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+        >
+          {isExpanded ? "Show Less" : `Show More (${riddlesWithPgn.length})`}
+          {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        </button>
+      )}
     </div>
   );
 }
