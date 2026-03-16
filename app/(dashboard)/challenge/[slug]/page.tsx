@@ -1,9 +1,4 @@
-import { Target, Trophy, XOctagon, TrendingUp } from "lucide-react";
-import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle";
-import { getGamesByIds } from "@/features/game/services/game";
-import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
-import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
+import { NumberStatsCard } from "@/components/stats/number-stats-card";
 import {
   Card,
   CardContent,
@@ -11,8 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { NumberStatsCard } from "@/components/stats/number-stats-card";
 import { RiddleBoardCard } from "@/features/game-riddle/components/riddle-board-card";
+import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
+import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle";
+import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
+import { getGamesByIds } from "@/features/game/services/game";
+import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import { Target, TrendingUp, Trophy, XOctagon } from "lucide-react";
 
 type Params = {
   params: Promise<{ slug: string }>;
@@ -55,43 +55,34 @@ export default async function ChallengePage({ params }: Params) {
   const solveRate = stats.percentage;
 
   return (
-    <div className="container mx-auto max-w-6xl px-6 pt-12 pb-16">
+    <div className="container mx-auto max-w-6xl px-4 pt-12 pb-16">
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
-        {/* Left: Challenge (header + riddles) */}
         <div>
-          {gameRiddles.length === 0 ? (
-            <Card className="border-border bg-card/50 border-dashed">
-              <CardContent className="text-muted-foreground py-12 text-center">
-                No riddles added to this challenge yet. Coming soon!
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-8 px-4 sm:grid-cols-2 lg:grid-cols-3">
-              {gameRiddles
-                .map((riddle, index) => {
-                  const game = gameMap[riddle.gameId];
-                  if (!game?.pgn) return null;
-                  return { riddle, game, index };
-                })
-                .filter((x): x is NonNullable<typeof x> => x != null)
-                .map(({ riddle, game, index }) => {
-                  const num = index + 1;
+          <div className="grid gap-8 px-4 sm:grid-cols-2 lg:grid-cols-3">
+            {gameRiddles
+              .map((riddle, index) => {
+                const game = gameMap[riddle.gameId];
+                if (!game?.pgn) return null;
+                return { riddle, game, index };
+              })
+              .filter((x): x is NonNullable<typeof x> => x != null)
+              .map(({ riddle, game, index }) => {
+                const num = index + 1;
 
-                  return (
-                    <RiddleBoardCard
-                      key={riddle.id}
-                      riddle={riddle}
-                      game={game}
-                      num={num}
-                      width={250}
-                      height={250}
-                      isComplete={attemptByRiddleId[riddle.id]}
-                      displayFen={riddle.displayFen}
-                    />
-                  );
-                })}
-            </div>
-          )}
+                return (
+                  <RiddleBoardCard
+                    key={riddle.id}
+                    riddle={riddle}
+                    game={game}
+                    num={num}
+                    width={240}
+                    height={240}
+                    isComplete={attemptByRiddleId[riddle.id]}
+                    displayFen={riddle.displayFen}
+                  />
+                );
+              })}
+          </div>
         </div>
 
         <div className="space-y-4">

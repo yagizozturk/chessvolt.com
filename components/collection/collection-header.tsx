@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 type CollectionHeaderProps = {
   title: string;
@@ -24,13 +24,15 @@ export function CollectionHeader({
 }: CollectionHeaderProps) {
   return (
     <div className="flex items-center gap-4">
-      <Image
-        src={imageSrc}
-        alt={imageAlt}
-        width={156}
-        height={100}
-        className="rounded-lg object-cover"
-      />
+      <div className="overflow-hidden rounded-lg bg-muted/30">
+        <Image
+          src={imageSrc}
+          alt={imageAlt}
+          width={150}
+          height={150}
+          className="object-cover"
+        />
+      </div>
       <div className="min-w-0 flex-1 space-y-2">
         <h2 className="flex items-center gap-2 text-2xl font-semibold">
           {title}
