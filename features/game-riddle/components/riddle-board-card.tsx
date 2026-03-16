@@ -12,6 +12,7 @@ type RiddleBoardCardProps = {
   num: number;
   width?: number;
   height?: number;
+  /** true = correct, false = wrong, undefined = not attempted */
   isComplete?: boolean;
   href?: string;
   displayFen?: string | null;
@@ -23,7 +24,7 @@ export function RiddleBoardCard({
   num,
   width = 200,
   height = 200,
-  isComplete = false,
+  isComplete,
   href,
   displayFen,
 }: RiddleBoardCardProps) {
@@ -35,12 +36,20 @@ export function RiddleBoardCard({
       <div className="flex items-center gap-3">
         <IterationBadge num={num} />
         <p className="text-md min-w-0 flex-1 truncate">{riddle.title}</p>
-        {isComplete && (
+        {isComplete === true && (
           <Badge
             variant="secondary"
             className="shrink-0 border-green-500/30 bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400"
           >
             Solved
+          </Badge>
+        )}
+        {isComplete === false && (
+          <Badge
+            variant="secondary"
+            className="shrink-0 border-red-500/30 bg-red-500/20 text-red-700 dark:bg-red-500/20 dark:text-red-400"
+          >
+            Wrong
           </Badge>
         )}
       </div>

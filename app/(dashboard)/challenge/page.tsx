@@ -79,7 +79,11 @@ export default async function ChallengePage() {
                   className="shrink-0"
                 />
               </div>
-              <ChallengeDataList riddles={riddles} gameMap={gameMap} />
+              <ChallengeDataList
+                riddles={riddles}
+                gameMap={gameMap}
+                attemptByRiddleId={attemptByRiddleId}
+              />
             </div>
           );
         })}

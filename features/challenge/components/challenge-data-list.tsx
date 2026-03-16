@@ -9,6 +9,8 @@ import { useState } from "react";
 type ChallengeDataListProps = {
   riddles: GameRiddle[];
   gameMap: Record<string, Game>;
+  /** riddleId => isCorrect. Undefined = not attempted. */
+  attemptByRiddleId: Record<string, boolean>;
 };
 
 const INITIAL_COUNT = 4;
@@ -23,11 +25,9 @@ const INITIAL_COUNT = 4;
 export function ChallengeDataList({
   riddles,
   gameMap,
+  attemptByRiddleId,
 }: ChallengeDataListProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  console.log("riddles", riddles);
-  console.log("gameMap", gameMap);
 
   // Note: undefined.pgn hatası alnırsa. ?. ile bu durumda hata yerine undefined döner ve filter bu riddle’ı eler.
   const riddlesWithPgn = riddles.filter((r) => gameMap[r.gameId]?.pgn);
@@ -51,6 +51,7 @@ export function ChallengeDataList({
               width={250}
               height={250}
               displayFen={riddle.displayFen}
+              isComplete={attemptByRiddleId[riddle.id]}
             />
           );
         })}

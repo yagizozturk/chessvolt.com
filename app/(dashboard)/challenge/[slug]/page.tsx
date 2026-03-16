@@ -85,7 +85,7 @@ export default async function ChallengePage({ params }: Params) {
                       num={num}
                       width={250}
                       height={250}
-                      isComplete={attemptByRiddleId[riddle.id] === true}
+                      isComplete={attemptByRiddleId[riddle.id]}
                       displayFen={riddle.displayFen}
                     />
                   );
