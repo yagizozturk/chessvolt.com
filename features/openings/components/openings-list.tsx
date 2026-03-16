@@ -34,7 +34,7 @@ export function OpeningsList({ openings }: OpeningsListProps) {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4 px-2 py-3">
         <CollectionHeader
-          title="Openings"
+          title="Opening Crusher"
           imageSrc="/images/challanges/legend_games2.png"
           imageAlt="Openings"
           description="Test your repertoire skills and master the openings."
@@ -44,7 +44,7 @@ export function OpeningsList({ openings }: OpeningsListProps) {
           itemLabel="openings"
         />
         <div className="relative w-full max-w-[180px] shrink-0">
-          <Search className="text-muted-foreground pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2" />
+          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2" />
           <Input
             type="search"
             placeholder="Search openings..."
