@@ -1,16 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { Zap, Menu, LogIn, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
-  SheetTrigger,
   SheetTitle,
+  SheetTrigger,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LogIn, type LucideIcon, Menu, Zap } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 const NAV_ITEMS = [
   {
@@ -20,7 +20,7 @@ const NAV_ITEMS = [
     iconPosition: "left" as const,
   },
   {
-    href: "/challenge/legend_games",
+    href: "/challenge",
     label: "Start Playing",
     isCta: true,
   },
@@ -174,7 +174,7 @@ export function Navbar() {
                   onClick={closeSheet}
                 >
                   <Link
-                    href="/challenge/legend_games"
+                    href="/challenge"
                     className="flex items-center justify-center gap-2"
                   >
                     Start Playing

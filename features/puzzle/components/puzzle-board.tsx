@@ -1,5 +1,18 @@
 "use client";
 
+import "@/assets/chessground.css";
+import "@/assets/theme/theme.css";
+import "@/assets/volt.css";
+import { useChessOne } from "@/lib/chess/hooks/use-chess";
+import { toDests } from "@/lib/chess/toDests";
+import { useChessEngine } from "@/lib/engine/hooks/use-stockfish-engine";
+import { useSound } from "@/lib/shared/hooks/use-sound";
+import { useCoachStore } from "@/lib/shared/store/coach-store";
+import { cn } from "@/lib/utilities/cn";
+import { Chessground } from "@lichess-org/chessground";
+import "@lichess-org/chessground/assets/chessground.base.css";
+import "@lichess-org/chessground/assets/chessground.brown.css";
+import type { Key } from "@lichess-org/chessground/types";
 import {
   forwardRef,
   useEffect,
@@ -7,19 +20,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { Chessground } from "@lichess-org/chessground";
-import type { Key } from "@lichess-org/chessground/types";
-import { toDests } from "@/lib/chess/toDests";
-import { useSound } from "@/lib/shared/hooks/use-sound";
-import { useCoachStore } from "@/lib/shared/store/coach-store";
-import { useChessEngine } from "@/lib/engine/hooks/use-stockfish-engine";
-import { useChessOne } from "@/lib/chess/hooks/use-chess";
-import { cn } from "@/lib/utilities/cn";
-import "@lichess-org/chessground/assets/chessground.base.css";
-import "@lichess-org/chessground/assets/chessground.brown.css";
-import "@/assets/chessground.css";
-import "@/assets/volt.css";
-import "@/assets/theme/theme.css";
 
 export type BoardMode = "puzzle" | "riddle" | "repertoire";
 

@@ -1,9 +1,12 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, ChessQueen, PlayCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, ChessQueen, PlayCircle } from "lucide-react";
-import { MotionWrapper } from "./hero-content"; // Client component above
+
+import { MotionWrapper } from "./hero-content";
+
+// Client component above
 
 export function Hero() {
   return (
@@ -40,7 +43,7 @@ export function Hero() {
                   className="h-12 px-8 text-base"
                   asChild
                 >
-                  <Link href="/challenge/legend_games">
+                  <Link href="/challenge">
                     Start Playing <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>

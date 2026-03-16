@@ -55,34 +55,32 @@ export default async function ChallengePage({ params }: Params) {
   const solveRate = stats.percentage;
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 pt-12 pb-16">
+    <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
-        <div>
-          <div className="grid gap-8 px-4 sm:grid-cols-2 lg:grid-cols-3">
-            {gameRiddles
-              .map((riddle, index) => {
-                const game = gameMap[riddle.gameId];
-                if (!game?.pgn) return null;
-                return { riddle, game, index };
-              })
-              .filter((x): x is NonNullable<typeof x> => x != null)
-              .map(({ riddle, game, index }) => {
-                const num = index + 1;
+        <div className="grid gap-6 px-2 sm:grid-cols-2 lg:grid-cols-3">
+          {gameRiddles
+            .map((riddle, index) => {
+              const game = gameMap[riddle.gameId];
+              if (!game?.pgn) return null;
+              return { riddle, game, index };
+            })
+            .filter((x): x is NonNullable<typeof x> => x != null)
+            .map(({ riddle, game, index }) => {
+              const num = index + 1;
 
-                return (
-                  <RiddleBoardCard
-                    key={riddle.id}
-                    riddle={riddle}
-                    game={game}
-                    num={num}
-                    width={240}
-                    height={240}
-                    isComplete={attemptByRiddleId[riddle.id]}
-                    displayFen={riddle.displayFen}
-                  />
-                );
-              })}
-          </div>
+              return (
+                <RiddleBoardCard
+                  key={riddle.id}
+                  riddle={riddle}
+                  game={game}
+                  num={num}
+                  width={250}
+                  height={250}
+                  isComplete={attemptByRiddleId[riddle.id]}
+                  displayFen={riddle.displayFen}
+                />
+              );
+            })}
         </div>
 
         <div className="space-y-4">

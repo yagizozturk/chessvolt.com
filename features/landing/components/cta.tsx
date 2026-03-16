@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ChessQueen } from "lucide-react";
+import Link from "next/link";
 
 export function Cta() {
   return (
@@ -24,7 +24,7 @@ export function Cta() {
             className="mt-8 h-12 px-8 text-base"
             asChild
           >
-            <Link href="/challenge/legend_games">
+            <Link href="/challenge">
               Start Playing <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
