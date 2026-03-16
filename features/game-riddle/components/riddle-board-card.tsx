@@ -1,9 +1,9 @@
+import { IterationBadge } from "@/components/number-badge/number-badge";
+import { Badge } from "@/components/ui/badge";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
-import { IterationBadge } from "@/components/number-badge/number-badge";
-import { Badge } from "@/components/ui/badge";
-import { Circle, Sword } from "lucide-react";
+import { Circle, Sword, TrophyIcon, X } from "lucide-react";
 import Link from "next/link";
 
 type RiddleBoardCardProps = {
@@ -12,7 +12,7 @@ type RiddleBoardCardProps = {
   num: number;
   width?: number;
   height?: number;
-  /** true = correct, false = wrong, undefined = not attempted */
+  /** true = correct, false = wrong, undefined = not attempted, Undefined ı tipin bir parçası yapmak için ? ni ekleriz */
   isComplete?: boolean;
   href?: string;
   displayFen?: string | null;
@@ -39,16 +39,18 @@ export function RiddleBoardCard({
         {isComplete === true && (
           <Badge
             variant="secondary"
-            className="shrink-0 border-green-500/30 bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400"
+            className="shrink-0 gap-1 border-green-500/30 bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400"
           >
+            <TrophyIcon className="h-3 w-3" />
             Solved
           </Badge>
         )}
         {isComplete === false && (
           <Badge
             variant="secondary"
-            className="shrink-0 border-red-500/30 bg-red-500/20 text-red-700 dark:bg-red-500/20 dark:text-red-400"
+            className="shrink-0 gap-1 border-red-500/30 bg-red-500/20 text-red-700 dark:bg-red-500/20 dark:text-red-400"
           >
+            <X className="h-3 w-3" />
             Wrong
           </Badge>
         )}
