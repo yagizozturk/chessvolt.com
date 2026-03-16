@@ -3,6 +3,7 @@ export type OpeningVariant = {
   openingId: string;
   parentVariantId: string | null;
   title: string | null;
+  description: string | null;
   ecoCode: string | null;
   ply: number;
   moves: string;

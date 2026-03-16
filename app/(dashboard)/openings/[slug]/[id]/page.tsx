@@ -59,6 +59,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                     isComplete={
                       solvedVariantIds.has(variant.id) ? true : undefined
                     }
+                    description={variant.description}
                   />
                 );
               })}

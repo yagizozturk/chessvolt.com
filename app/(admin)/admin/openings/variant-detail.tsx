@@ -100,6 +100,13 @@ export function VariantDetail({ variant }: Props) {
                   />
                 </Field>
                 <Field>
+                  <FieldLabel>Description</FieldLabel>
+                  <Input
+                    name="description"
+                    defaultValue={variant.description ?? ""}
+                  />
+                </Field>
+                <Field>
                   <FieldLabel>ECO Code</FieldLabel>
                   <Input
                     name="ecoCode"
@@ -172,6 +179,10 @@ export function VariantDetail({ variant }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">Title</dt>
                 <dd>{variant.title ?? "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">Description</dt>
+                <dd>{variant.description ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">ECO Code</dt>

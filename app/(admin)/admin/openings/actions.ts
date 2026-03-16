@@ -24,6 +24,7 @@ export async function createOpeningVariantAction(formData: FormData) {
   const pgn = (formData.get("pgn") as string)?.trim();
   const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
   const title = (formData.get("title") as string) || null;
+  const description = (formData.get("description") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const initialFen =
     (formData.get("initialFen") as string)?.trim() ||
@@ -43,6 +44,7 @@ export async function createOpeningVariantAction(formData: FormData) {
   const input: CreateOpeningVariantInput = {
     openingId: openingId.trim(),
     title: title || null,
+    description: description || null,
     ecoCode: ecoCode || null,
     ply: ply >= 0 ? ply : 0,
     moves,
@@ -67,6 +69,7 @@ export async function updateOpeningVariantAction(
   const { supabase } = await getAdminUser();
 
   const title = (formData.get("title") as string) || null;
+  const description = (formData.get("description") as string) || null;
   const ecoCode = (formData.get("ecoCode") as string) || null;
   const pgn = (formData.get("pgn") as string)?.trim();
   const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
@@ -75,6 +78,7 @@ export async function updateOpeningVariantAction(
 
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
+  if (description !== undefined) input.description = description;
   if (ecoCode !== undefined) input.ecoCode = ecoCode;
   if (!isNaN(ply) && ply >= 0) input.ply = ply;
   if (pgn) {

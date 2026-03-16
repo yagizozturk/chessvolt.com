@@ -1,6 +1,7 @@
 import { IterationBadge } from "@/components/number-badge/number-badge";
+import { Badge } from "@/components/ui/badge";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
-import { Book, Check, Sword } from "lucide-react";
+import { Book, Sword, TrophyIcon, X } from "lucide-react";
 import Link from "next/link";
 
 type OpeningBoardCardProps = {
@@ -13,6 +14,7 @@ type OpeningBoardCardProps = {
   href: string;
   fen: string;
   variantCount?: number;
+  description?: string | null;
 };
 
 export function OpeningBoardCard({
@@ -21,10 +23,11 @@ export function OpeningBoardCard({
   num,
   width = 200,
   height = 200,
-  isComplete = false,
+  isComplete,
   href,
   fen,
   variantCount,
+  description,
 }: OpeningBoardCardProps) {
   return (
     <Link href={href} className="group flex flex-col">
@@ -37,13 +40,26 @@ export function OpeningBoardCard({
             {variantCount}
           </span>
         )}
+        {isComplete === true && (
+          <Badge
+            variant="secondary"
+            className="shrink-0 gap-1 border-green-500/30 bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400"
+          >
+            <TrophyIcon className="h-3 w-3" />
+            Solved
+          </Badge>
+        )}
+        {isComplete === false && (
+          <Badge
+            variant="secondary"
+            className="shrink-0 gap-1 border-red-500/30 bg-red-500/20 text-red-700 dark:bg-red-500/20 dark:text-red-400"
+          >
+            <X className="h-3 w-3" />
+            Wrong
+          </Badge>
+        )}
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
-        {isComplete && (
-          <div className="absolute top-2 right-2 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 shadow-md">
-            <Check className="h-4 w-4 text-white" />
-          </div>
-        )}
         <PuzzleBoard
           sourceId={id}
           mode="repertoire"
@@ -61,6 +77,11 @@ export function OpeningBoardCard({
           <span className="font-semibold text-white">Play</span>
         </div>
       </div>
+      {description && (
+        <div className="bg-muted/50 border-muted mt-4 flex rounded-lg p-3 text-sm">
+          {description}
+        </div>
+      )}
     </Link>
   );
 }

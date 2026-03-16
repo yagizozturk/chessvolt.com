@@ -43,6 +43,10 @@ export function VariantForm({ openings }: Props) {
           <Input name="title" placeholder="e.g. Sicilian Defense" />
         </Field>
         <Field>
+          <FieldLabel>Description</FieldLabel>
+          <Input name="description" placeholder="Optional variant description" />
+        </Field>
+        <Field>
           <FieldLabel>ECO Code</FieldLabel>
           <Input name="ecoCode" placeholder="e.g. B20" />
         </Field>

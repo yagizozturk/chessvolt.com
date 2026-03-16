@@ -95,6 +95,7 @@ export type CreateOpeningVariantInput = {
   openingId: string;
   parentVariantId?: string | null;
   title?: string | null;
+  description?: string | null;
   ecoCode?: string | null;
   ply: number;
   moves: string;
@@ -113,6 +114,7 @@ export async function create(
       opening_id: input.openingId,
       parent_variant_id: input.parentVariantId ?? null,
       title: input.title ?? null,
+      description: input.description ?? null,
       eco_code: input.ecoCode ?? null,
       ply: input.ply,
       moves: input.moves,
@@ -134,6 +136,7 @@ export async function create(
 export type UpdateOpeningVariantInput = {
   parentVariantId?: string | null;
   title?: string | null;
+  description?: string | null;
   ecoCode?: string | null;
   ply?: number;
   moves?: string;
@@ -151,6 +154,7 @@ export async function update(
   if (input.parentVariantId !== undefined)
     updates.parent_variant_id = input.parentVariantId;
   if (input.title !== undefined) updates.title = input.title;
+  if (input.description !== undefined) updates.description = input.description;
   if (input.ecoCode !== undefined) updates.eco_code = input.ecoCode;
   if (input.ply !== undefined) updates.ply = input.ply;
   if (input.moves !== undefined) updates.moves = input.moves;
