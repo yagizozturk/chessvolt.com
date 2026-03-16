@@ -7,6 +7,10 @@ import { getNextTurnFromFen } from "@/lib/chess/getTurn";
 import { useStatsStore } from "@/features/home/store/stats-store";
 import { useUpdatePuzzleAnswer } from "@/features/puzzle/hooks/use-update-puzzle";
 import { addReward } from "@/features/profile/api/profile";
+import {
+  CHALLENGE_COUNTDOWN_MINUTES,
+  CHALLENGE_COUNTDOWN_SECONDS,
+} from "@/lib/shared/constants/challenge";
 import { calculatePointsFromTime } from "@/lib/utilities/reward";
 import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,7 +26,6 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
   const xp = 0;
   const { updatePuzzleAnswerHook } = useUpdatePuzzleAnswer();
   const startTimeRef = useRef<number>(Date.now());
-  const TOTAL_SECONDS = 5 * 60;
 
   useEffect(() => {
     initLives();
@@ -39,7 +42,10 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
     await updatePuzzleAnswerHook(puzzle.id, isCorrect);
     if (isCorrect) {
       const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
-      const points = calculatePointsFromTime(elapsedSeconds, TOTAL_SECONDS);
+      const points = calculatePointsFromTime(
+        elapsedSeconds,
+        CHALLENGE_COUNTDOWN_SECONDS,
+      );
       await addReward(points).catch(() => {});
     }
   };
@@ -67,7 +73,7 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
             <div className="flex items-center gap-2">
               <Clock className="text-primary h-5 w-5" />
               <CountdownTimer
-                minutes={5}
+                minutes={CHALLENGE_COUNTDOWN_MINUTES}
                 className="text-foreground text-2xl font-bold"
               />
             </div>

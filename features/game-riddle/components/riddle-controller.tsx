@@ -1,34 +1,47 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import {
-  User,
-  Calendar,
-  Flag,
-  Circle,
-  Lightbulb,
-  Clock,
-  CheckCircle2,
-} from "lucide-react";
+import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
+import { useStatsStore } from "@/features/home/store/stats-store";
+import { addReward } from "@/features/profile/api/profile";
 import PuzzleBoard, {
   type PuzzleBoardHandle,
 } from "@/features/puzzle/components/puzzle-board";
-import { useStatsStore } from "@/features/home/store/stats-store";
-import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
-import { addReward } from "@/features/profile/api/profile";
+import {
+  CHALLENGE_COUNTDOWN_MINUTES,
+  CHALLENGE_COUNTDOWN_SECONDS,
+} from "@/lib/shared/constants/challenge";
 import { calculatePointsFromTime } from "@/lib/utilities/reward";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
+import {
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Flag,
+  Lightbulb,
+  Move,
+  Puzzle,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 type RiddleControllerProps = {
   riddle: GameRiddle;
   game: Game;
 };
+
+function getMoveCount(moves: string | null): number {
+  if (!moves?.trim()) return 0;
+  const arr = moves
+    .trim()
+    .split(/\s+/)
+    .filter((m) => m.length > 0);
+  return Math.ceil(arr.length / 2);
+}
 
 function formatDate(dateStr: string) {
   try {
@@ -48,20 +61,19 @@ export default function RiddleController({
   game,
 }: RiddleControllerProps) {
   const router = useRouter();
-  const turn =
-    riddle.displayFen?.includes(" w ") ?? true ? "White" : "Black";
-  const streak = useStatsStore((state) => state.streak);
+  const boardRef = useRef<PuzzleBoardHandle>(null);
+  const turn = (riddle.displayFen?.includes(" w ") ?? true) ? "White" : "Black";
+  const moveCount = getMoveCount(riddle.moves);
   const initLives = useStatsStore((state) => state.initLives);
   const decrementLives = useStatsStore((state) => state.decrementLives);
+  const streak = useStatsStore((state) => state.streak);
   const setStreak = useStatsStore((state) => state.setStreak);
-  const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
-  const boardRef = useRef<PuzzleBoardHandle>(null);
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
   const [earnedPoints, setEarnedPoints] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const startTimeRef = useRef<number>(Date.now());
-  const TOTAL_SECONDS = 5 * 60;
+  const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
 
   useEffect(() => {
     initLives();
@@ -85,7 +97,10 @@ export default function RiddleController({
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
     if (isCorrect) {
       const elapsed = (Date.now() - startTimeRef.current) / 1000;
-      const points = calculatePointsFromTime(elapsed, TOTAL_SECONDS);
+      const points = calculatePointsFromTime(
+        elapsed,
+        CHALLENGE_COUNTDOWN_SECONDS,
+      );
       await addReward(points).catch(() => {});
       setElapsedSeconds(Math.round(elapsed));
       setEarnedPoints(points);
@@ -97,7 +112,7 @@ export default function RiddleController({
   };
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-8">
+    <div className="container mx-auto max-w-5xl px-8 py-6">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
         <div className="relative min-w-0">
           {showCorrect && (
@@ -143,22 +158,51 @@ export default function RiddleController({
             <div className="flex items-center gap-2">
               <Clock className="text-primary h-5 w-5" />
               <CountdownTimer
-                minutes={5}
+                minutes={CHALLENGE_COUNTDOWN_MINUTES}
                 className="text-foreground text-2xl font-bold"
               />
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
+              <div
+                className={`h-7 w-7 shrink-0 rounded-full border-2 ${
+                  turn === "White"
+                    ? "border-gray-300 bg-white dark:border-gray-600"
+                    : "border-gray-800 bg-black dark:border-gray-400"
+                }`}
+              />
+              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                Turn
+              </p>
+              <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
+                {turn}
+              </span>
+            </div>
+            {moveCount > 0 && (
+              <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
+                <Puzzle className="h-7 w-7 shrink-0 text-emerald-500 dark:text-emerald-400" />
+                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                  Moves To Find
+                </p>
+                <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
+                  {moveCount} {moveCount === 1 ? "move" : "moves"}
+                </span>
+              </div>
+            )}
+          </div>
+
           <Card>
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold">
+            <CardHeader className="min-w-0 overflow-hidden">
+              <CardTitle className="truncate text-2xl font-bold">
                 {riddle.title}
               </CardTitle>
-              <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 pt-2 text-sm">
+              <div className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 overflow-hidden pt-2 text-sm">
                 {game.event && (
-                  <span className="flex items-center gap-1.5">
-                    <Flag className="text-primary h-3.5 w-3.5" />
-                    {game.event}
+                  <span className="flex max-w-full min-w-0 shrink items-center gap-1.5 overflow-hidden">
+                    <Flag className="text-primary h-3.5 w-3.5 shrink-0" />
+                    <span className="min-w-0 truncate">{game.event}</span>
                   </span>
                 )}
                 <span className="flex items-center gap-1.5">
@@ -167,47 +211,34 @@ export default function RiddleController({
                 </span>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="border-border bg-muted/50 flex items-center gap-2 rounded-lg border p-3">
-                <Circle className="fill-primary text-primary h-4 w-4 shrink-0" />
-                <span className="text-muted-foreground text-sm">Turn:</span>
-                <Badge
-                  variant="outline"
-                  className="border-primary/30 bg-primary/20 text-primary"
-                >
-                  {turn} to move
-                </Badge>
-              </div>
-              <div className="flex flex-col gap-3">
-                <div className="border-border bg-muted/50 flex w-full items-center gap-3 rounded-lg border p-3">
-                  <div className="bg-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-md">
-                    <User className="text-primary h-4 w-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-muted-foreground text-xs font-medium">
-                      White
-                    </p>
-                    <p className="text-foreground truncate font-medium">
-                      {game.whitePlayer}
-                    </p>
-                  </div>
-                </div>
-                <div className="border-border bg-muted/50 flex w-full items-center gap-3 rounded-lg border p-3">
-                  <div className="bg-primary/20 flex h-9 w-9 shrink-0 items-center justify-center rounded-md">
-                    <User className="text-primary h-4 w-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-muted-foreground text-xs font-medium">
-                      Black
-                    </p>
-                    <p className="text-foreground truncate font-medium">
-                      {game.blackPlayer}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
           </Card>
+
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
+              <div className="border-border bg-muted/50 flex w-full items-center gap-3 rounded-lg border p-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white dark:border-gray-600" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-muted-foreground text-xs font-medium">
+                    White
+                  </p>
+                  <p className="text-foreground truncate font-medium">
+                    {game.whitePlayer}
+                  </p>
+                </div>
+              </div>
+              <div className="border-border bg-muted/50 flex w-full items-center gap-3 rounded-lg border p-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-gray-800 bg-black dark:border-gray-400" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-muted-foreground text-xs font-medium">
+                    Black
+                  </p>
+                  <p className="text-foreground truncate font-medium">
+                    {game.blackPlayer}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <Button
             variant="default"
