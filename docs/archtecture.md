@@ -197,7 +197,7 @@
 │   │   └── signup-form.tsx
 │   ├── challenge
 │   │   └── components
-│   │   └── challenge-data-list.tsx
+│   │   └── challenge-data-list.tsx ✅
 │   ├── chat
 │   │   ├── api
 │   │   │   └── chat.ts

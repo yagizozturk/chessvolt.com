@@ -1,8 +1,9 @@
-import Link from "next/link";
-import { Check, Circle, Sword } from "lucide-react";
-import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
+import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
+import { IterationBadge } from "@/components/number-badge/number-badge";
+import { Check, Circle, Sword } from "lucide-react";
+import Link from "next/link";
 
 type RiddleBoardCardProps = {
   riddle: GameRiddle;
@@ -31,9 +32,7 @@ export function RiddleBoardCard({
       className="group flex flex-col"
     >
       <div className="flex items-center gap-3">
-        <span className="text-primary flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-current text-sm font-bold">
-          {num}
-        </span>
+        <IterationBadge num={num} />
         <p className="text-md truncate">{riddle.title}</p>
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">

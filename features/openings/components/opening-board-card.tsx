@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Check, Sword } from "lucide-react";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
+import { IterationBadge } from "@/components/number-badge/number-badge";
 
 type OpeningBoardCardProps = {
   id: string;
@@ -26,9 +27,7 @@ export function OpeningBoardCard({
   return (
     <Link href={href} className="group flex flex-col">
       <div className="flex items-center gap-3">
-        <span className="text-primary flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-current text-sm font-bold">
-          {num}
-        </span>
+        <IterationBadge num={num} className="rounded-full" />
         <p className="text-md truncate">{name}</p>
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
