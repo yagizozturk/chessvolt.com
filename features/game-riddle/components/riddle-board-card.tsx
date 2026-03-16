@@ -2,7 +2,8 @@ import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 import { IterationBadge } from "@/components/number-badge/number-badge";
-import { Check, Circle, Sword } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Circle, Sword } from "lucide-react";
 import Link from "next/link";
 
 type RiddleBoardCardProps = {
@@ -33,14 +34,17 @@ export function RiddleBoardCard({
     >
       <div className="flex items-center gap-3">
         <IterationBadge num={num} />
-        <p className="text-md truncate">{riddle.title}</p>
+        <p className="text-md min-w-0 flex-1 truncate">{riddle.title}</p>
+        {isComplete && (
+          <Badge
+            variant="secondary"
+            className="shrink-0 border-green-500/30 bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400"
+          >
+            Solved
+          </Badge>
+        )}
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
-        {isComplete && (
-          <div className="absolute top-2 right-2 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-green-500 shadow-md">
-            <Check className="h-4 w-4 text-white" />
-          </div>
-        )}
         <PuzzleBoard
           sourceId={riddle.id}
           mode="riddle"
