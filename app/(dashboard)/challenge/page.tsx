@@ -1,17 +1,22 @@
-import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
-import { getGamesByIds } from "@/features/game/services/game";
-import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import {
-  formatGameType,
-  getGameTypeCopy,
-} from "@/features/game-riddle/utilities/game-type-copy";
-import { groupBy } from "@/lib/utilities/groupBy";
-import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import { CollectionHeader } from "@/components/collection/collection-header";
 import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
+import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
+import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
+import {
+  formatGameType,
+  getGameTypeConstants,
+} from "@/features/game-riddle/utilities/game-type-helpers";
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
+import { getGamesByIds } from "@/features/game/services/game";
+import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import { groupBy } from "@/lib/utilities/groupBy";
 
+/**
+ * Gets user, gets allRiddles, gets user attempted Riddles. Filters in allRiddles. Group them by gameType
+ * @param pgn - Full PGN string
+ * @returns Space-separated UCI moves (e.g. "e2e4 e7e5") or null if invalid
+ */
 export default async function ChallengePage() {
   // ========================================================================
   // Getting user data and riddles for games
@@ -37,7 +42,7 @@ export default async function ChallengePage() {
     r.gameType!.trim(),
   );
 
-  const groupKeys = Object.keys(riddleGameTypeGroups);
+  const groupGameTypes = Object.keys(riddleGameTypeGroups);
 
   // ========================================================================
   // Fetch games for riddles (unique gameIds) - single query
@@ -50,10 +55,10 @@ export default async function ChallengePage() {
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-12 pb-16">
       <div className="space-y-6">
-        {groupKeys.map((gameType) => {
+        {groupGameTypes.map((gameType) => {
           const riddles = riddleGameTypeGroups[gameType] ?? [];
           const displayName = formatGameType(gameType);
-          const copy = getGameTypeCopy(gameType);
+          const gameTypeConstants = getGameTypeConstants(gameType);
           const stats = getGroupStats(riddles, attemptByRiddleId);
 
           return (
@@ -61,11 +66,11 @@ export default async function ChallengePage() {
               <div className="flex items-center justify-between gap-4 px-2 py-3">
                 <CollectionHeader
                   title={displayName}
-                  imageSrc={`/images/challanges/${gameType}2.png`}
+                  imageSrc={`/images/challanges/${gameType}_3.png`}
                   imageAlt={displayName}
-                  description={copy.description}
-                  quote={copy.quote}
-                  author={copy.author}
+                  description={gameTypeConstants.description}
+                  quote={gameTypeConstants.quote}
+                  author={gameTypeConstants.author}
                   itemCount={riddles.length}
                   itemLabel="riddles"
                 />
