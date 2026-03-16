@@ -1,5 +1,5 @@
-import { getAdminUser } from "@/lib/supabase/auth";
 import { AdminNavbar } from "@/features/admin/components/admin-navbar";
+import { getAdminUser } from "@/lib/supabase/auth";
 
 export default async function AdminLayout({
   children,

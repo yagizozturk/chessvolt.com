@@ -1,40 +1,40 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  Zap,
-  Menu,
-  Home,
-  LayoutDashboard,
-  Map,
-  Puzzle,
-  BookOpen,
-  User,
-  LogOut,
-  Flame,
-  Sparkles,
-  Shield,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { cn } from "@/lib/utilities/cn";
-import { useProfile } from "@/features/profile/hooks/use-profile";
 import { useStatsStore } from "@/features/home/store/stats-store";
+import { useProfile } from "@/features/profile/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
+import { cn } from "@/lib/utilities/cn";
+import {
+  BookOpen,
+  Flame,
+  Home,
+  LayoutDashboard,
+  LogOut,
+  Map,
+  Menu,
+  Puzzle,
+  Shield,
+  Sparkles,
+  User,
+  Zap,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import * as React from "react";
 
 const navItems = [
   { href: "/challenge", label: "Challenges", icon: Map },

@@ -1,6 +1,6 @@
-import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import * as profileRepo from "@/features/profile/repository/profile.repository";
 import { DashboardNavbar } from "@/features/home/components/dashboard-navbar";
+import * as profileRepo from "@/features/profile/repository/profile.repository";
+import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export default async function DashboardLayout({
   children,
