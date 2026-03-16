@@ -56,7 +56,9 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                     height={250}
                     href={`/openings/variant/${variant.id}`}
                     fen={variant.displayFen ?? variant.initialFen ?? ""}
-                    isComplete={solvedVariantIds.has(variant.id) ? true : undefined}
+                    isComplete={
+                      solvedVariantIds.has(variant.id) ? true : undefined
+                    }
                   />
                 );
               })}

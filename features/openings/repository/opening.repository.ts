@@ -33,6 +33,10 @@ function toOpening(db: DbOpening): Opening {
   };
 }
 
+type DbOpeningWithVariantCount = DbOpening & {
+  opening_variants: [{ count: number }];
+};
+
 export async function findAll(
   supabase: SupabaseClient,
 ): Promise<Opening[]> {
@@ -47,6 +51,28 @@ export async function findAll(
   }
 
   return (data ?? []).map(toOpening);
+}
+
+export type OpeningWithVariantCount = Opening & { variantCount: number };
+
+export async function findAllWithVariantCount(
+  supabase: SupabaseClient,
+): Promise<OpeningWithVariantCount[]> {
+  const { data, error } = await supabase
+    .from("openings")
+    .select("id, name, slug, eco_code, description, display_fen, created_at, opening_variants(count)")
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("opening.repository.findAllWithVariantCount error:", error);
+    return [];
+  }
+
+  return (data ?? []).map((row) => {
+    const db = row as DbOpeningWithVariantCount;
+    const variantCount = db.opening_variants?.[0]?.count ?? 0;
+    return { ...toOpening(db), variantCount };
+  });
 }
 
 export async function findBySlug(

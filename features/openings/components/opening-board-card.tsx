@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Check, Sword } from "lucide-react";
-import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
 import { IterationBadge } from "@/components/number-badge/number-badge";
+import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
+import { Book, Check, Sword } from "lucide-react";
+import Link from "next/link";
 
 type OpeningBoardCardProps = {
   id: string;
@@ -12,6 +12,7 @@ type OpeningBoardCardProps = {
   isComplete?: boolean;
   href: string;
   fen: string;
+  variantCount?: number;
 };
 
 export function OpeningBoardCard({
@@ -23,12 +24,19 @@ export function OpeningBoardCard({
   isComplete = false,
   href,
   fen,
+  variantCount,
 }: OpeningBoardCardProps) {
   return (
     <Link href={href} className="group flex flex-col">
       <div className="flex items-center gap-3">
-        <IterationBadge num={num} className="rounded-full" />
-        <p className="text-md truncate">{name}</p>
+        <IterationBadge num={num} />
+        <p className="text-md min-w-0 flex-1 truncate">{name}</p>
+        {variantCount != null && variantCount > 0 && (
+          <span className="text-primary bg-primary/10 ml-auto flex shrink-0 items-center gap-1 rounded-md border border-current px-2 py-0.5 text-xs font-medium">
+            <Book className="size-3" />
+            {variantCount}
+          </span>
+        )}
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
         {isComplete && (

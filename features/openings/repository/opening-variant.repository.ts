@@ -46,6 +46,33 @@ export async function findById(
   return toOpeningVariant(data);
 }
 
+export async function getVariantCountsByOpeningIds(
+  supabase: SupabaseClient,
+  openingIds: string[],
+): Promise<Record<string, number>> {
+  if (openingIds.length === 0) return {};
+  const { data, error } = await supabase
+    .from("opening_variants")
+    .select("opening_id")
+    .in("opening_id", openingIds);
+
+  if (error) {
+    console.error(
+      "opening-variant.repository.getVariantCountsByOpeningIds error:",
+      error,
+    );
+    return {};
+  }
+
+  const counts: Record<string, number> = {};
+  for (const id of openingIds) counts[id] = 0;
+  for (const row of data ?? []) {
+    const oid = (row as { opening_id: string }).opening_id;
+    if (oid) counts[oid] = (counts[oid] ?? 0) + 1;
+  }
+  return counts;
+}
+
 export async function findByOpeningId(
   supabase: SupabaseClient,
   openingId: string,

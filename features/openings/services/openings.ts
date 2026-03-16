@@ -7,6 +7,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Opening } from "@/features/openings/types/opening";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import type { OpeningWithVariantCount } from "@/features/openings/repository/opening.repository";
 import * as openingRepo from "@/features/openings/repository/opening.repository";
 import * as openingVariantRepo from "@/features/openings/repository/opening-variant.repository";
 import * as userOpeningVariantRepo from "@/features/openings/repository/user-opening-variant.repository";
@@ -15,6 +16,19 @@ export async function getAllOpenings(
   supabase: SupabaseClient,
 ): Promise<Opening[]> {
   return openingRepo.findAll(supabase);
+}
+
+export async function getOpeningsWithVariantCount(
+  supabase: SupabaseClient,
+): Promise<OpeningWithVariantCount[]> {
+  return openingRepo.findAllWithVariantCount(supabase);
+}
+
+export async function getVariantCountsByOpeningIds(
+  supabase: SupabaseClient,
+  openingIds: string[],
+): Promise<Record<string, number>> {
+  return openingVariantRepo.getVariantCountsByOpeningIds(supabase, openingIds);
 }
 
 export async function getOpeningById(
