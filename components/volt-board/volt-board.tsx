@@ -154,15 +154,10 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       if (ground.current) ground.current.destroy();
 
       // Fix orientation from player's perspective - never flip when turn changes
-      if (mode === "puzzle" && movesArray.length > 0) {
-        // Puzzle: initial position has opponent to move, player is the other color
-        initialPlayerOrientation.current =
-          game.current.turn() === "w" ? "black" : "white";
-      } else {
-        // Riddle/repertoire: initial position has player to move
-        initialPlayerOrientation.current =
-          game.current.turn() === "w" ? "white" : "black";
-      }
+      initialPlayerOrientation.current = getPlayerOrientation(
+        game.current.turn(),
+        mode === "puzzle" && movesArray.length > 0,
+      );
 
       ground.current = Chessground(boardRef.current, {
         fen: game.current.fen(),
@@ -190,7 +185,20 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
 
     // ============================================================================
     // Helper Functions
+    // getPlayerOrientation: Puzzle: FEN has opponent to move → player is opposite color. Riddle/opening: player to move → same as turn
     // ============================================================================
+    function getPlayerOrientation(
+      turn: "w" | "b",
+      isOpponentToMove: boolean,
+    ): "white" | "black" {
+      const turnColor = turn === "w" ? "white" : "black";
+      return isOpponentToMove
+        ? turnColor === "white"
+          ? "black"
+          : "white"
+        : turnColor;
+    }
+
     function updateBoard() {
       if (!game.current || !ground.current) return;
 
