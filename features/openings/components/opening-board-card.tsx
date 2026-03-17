@@ -33,7 +33,9 @@ export function OpeningBoardCard({
     <Link href={href} className="group flex flex-col">
       <div className="flex items-center gap-3">
         <IterationBadge num={num} />
-        <p className="text-md min-w-0 flex-1 truncate">{name}</p>
+        <p className="line-clamp-2 min-w-0 flex-1 text-sm break-words">
+          {name}
+        </p>
         {variantCount != null && variantCount > 0 && (
           <span className="text-primary bg-primary/10 ml-auto flex shrink-0 items-center gap-1 rounded-md border border-current px-2 py-0.5 text-xs font-medium">
             <Book className="size-3" />

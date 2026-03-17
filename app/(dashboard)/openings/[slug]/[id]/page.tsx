@@ -10,8 +10,8 @@ import { OpeningBoardCard } from "@/features/openings/components/opening-board-c
 import {
   getCorrectlySolvedVariantIds,
   getOpeningById,
-  getOpeningVariantsByOpeningId,
   getOpeningVariantAttemptsForVariants,
+  getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { Target, TrendingUp, Trophy, XOctagon } from "lucide-react";

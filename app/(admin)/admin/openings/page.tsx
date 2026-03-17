@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import { getAdminUser } from "@/lib/supabase/auth";
 import {
   getAllOpenings,
@@ -63,10 +63,19 @@ export default async function AdminOpeningsPage() {
               {variants.length} variant(s) listed
             </p>
           </div>
-          <Link href="/admin/openings/new" className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            New Variant
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/openings/bulk"
+              className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors"
+            >
+              <Upload className="h-4 w-4" />
+              Toplu Variant
+            </Link>
+            <Link href="/admin/openings/new" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              New Variant
+            </Link>
+          </div>
         </div>
         <OpeningsList variants={variants} />
       </section>
