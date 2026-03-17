@@ -9,9 +9,9 @@ import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 import { useStatsStore } from "@/features/home/store/stats-store";
 import { addReward } from "@/features/profile/api/profile";
-import PuzzleBoard, {
-  type PuzzleBoardHandle,
-} from "@/features/puzzle/components/puzzle-board";
+import VoltBoard, {
+  type VoltBoardHandle,
+} from "@/components/volt-board/volt-board";
 import {
   CHALLENGE_COUNTDOWN_MINUTES,
   CHALLENGE_COUNTDOWN_SECONDS,
@@ -61,7 +61,7 @@ export default function RiddleController({
   game,
 }: RiddleControllerProps) {
   const router = useRouter();
-  const boardRef = useRef<PuzzleBoardHandle>(null);
+  const boardRef = useRef<VoltBoardHandle>(null);
   const turn = (riddle.displayFen?.includes(" w ") ?? true) ? "White" : "Black";
   const moveCount = getMoveCount(riddle.moves);
   const initLives = useStatsStore((state) => state.initLives);
@@ -140,7 +140,7 @@ export default function RiddleController({
               </Card>
             </div>
           )}
-          <PuzzleBoard
+          <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}
             mode="riddle"

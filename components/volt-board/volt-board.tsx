@@ -21,37 +21,33 @@ import {
   useState,
 } from "react";
 
-export type BoardMode = "puzzle" | "riddle" | "repertoire";
+export type BoardMode = "puzzle" | "riddle" | "opening";
 
-export type PuzzleBoardProps = {
-  /** puzzleId, riddleId or openingId - board resets when changed */
+export type VoltBoardProps = {
   sourceId: string;
   mode: BoardMode;
   moves: string;
-  /** Board position (FEN) */
-  initialFen?: string | null;
+  initialFen?: string | null; // TODO: Bu neden ? içeriyor? Bunu çağıran yerlere bak boş gönderen varmı
   width?: number;
   height?: number;
-  /** Additional CSS classes, e.g. "border-2 border-primary" for border */
   className?: string;
   viewOnly?: boolean;
+  onSolved?: (isCorrect: boolean) => void;
+  onHintUsed?: (hintCount: number) => void;
   onGameStateChange?: (state: {
     from: string;
     to: string;
     fen: string;
   }) => void;
-  /** Called when puzzle/riddle is solved (correct or wrong). Controller handles DB persistence. */
-  onSolved?: (isCorrect: boolean) => void;
-  /** Called when hint is used. hintCount: 1 = first hint (square), 2 = second hint (arrow), then button should disable. */
-  onHintUsed?: (hintCount: number) => void;
 };
 
-export type PuzzleBoardHandle = {
+export type VoltBoardHandle = {
+  // TODO: Bu ne işe yarar?
   showHint: () => void;
 };
 
-const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(
-  function PuzzleBoard(props, ref) {
+const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
+  function VoltBoard(props, ref) {
     const {
       sourceId,
       mode,
@@ -75,7 +71,7 @@ const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(
     const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
     const hintCountRef = useRef(0);
     /** Fixed orientation from player's perspective - never flips when turn changes */
-    const playerOrientationRef = useRef<"white" | "black">("white");
+    const initialPlayerOrientation = useRef<"white" | "black">("white");
 
     const movesArray = moves
       .trim()
@@ -160,19 +156,17 @@ const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(
       // Fix orientation from player's perspective - never flip when turn changes
       if (mode === "puzzle" && movesArray.length > 0) {
         // Puzzle: initial position has opponent to move, player is the other color
-        playerOrientationRef.current =
+        initialPlayerOrientation.current =
           game.current.turn() === "w" ? "black" : "white";
       } else {
-        // Riddle: initial position has player to move
-        playerOrientationRef.current =
+        // Riddle/repertoire: initial position has player to move
+        initialPlayerOrientation.current =
           game.current.turn() === "w" ? "white" : "black";
       }
 
-      const orientation = playerOrientationRef.current;
-
       ground.current = Chessground(boardRef.current, {
         fen: game.current.fen(),
-        orientation,
+        orientation: initialPlayerOrientation.current,
         viewOnly: viewOnly,
         turnColor: game.current.turn() === "w" ? "white" : "black",
         lastMove: lastMoveRef.current ?? undefined,
@@ -202,7 +196,7 @@ const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(
 
       ground.current.set({
         fen: game.current.fen(),
-        orientation: playerOrientationRef.current,
+        orientation: initialPlayerOrientation.current,
         turnColor: game.current.turn() === "w" ? "white" : "black",
         lastMove: lastMoveRef.current ?? undefined,
         movable: {
@@ -300,4 +294,4 @@ const PuzzleBoard = forwardRef<PuzzleBoardHandle, PuzzleBoardProps>(
   },
 );
 
-export default PuzzleBoard;
+export default VoltBoard;

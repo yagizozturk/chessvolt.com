@@ -1,6 +1,6 @@
 import { IterationBadge } from "@/components/number-badge/number-badge";
 import { Badge } from "@/components/ui/badge";
-import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
+import VoltBoard from "@/components/volt-board/volt-board";
 import { Book, Sword, TrophyIcon, X } from "lucide-react";
 import Link from "next/link";
 
@@ -60,9 +60,9 @@ export function OpeningBoardCard({
         )}
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
-        <PuzzleBoard
+        <VoltBoard
           sourceId={id}
-          mode="repertoire"
+          mode="opening"
           initialFen={fen}
           moves={""}
           width={width}

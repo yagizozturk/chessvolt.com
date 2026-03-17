@@ -1,10 +1,10 @@
 "use client";
 
 import { Card, CardHeader } from "@/components/ui/card";
-import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
-import { useRouter } from "next/navigation";
+import VoltBoard from "@/components/volt-board/volt-board";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import { useRouter } from "next/navigation";
 
 export default function OpeningsController({
   variant,
@@ -25,9 +25,9 @@ export default function OpeningsController({
     <div className="container mx-auto max-w-5xl px-4 py-8">
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
         <div key={variant.id}>
-          <PuzzleBoard
+          <VoltBoard
             sourceId={variant.id}
-            mode="repertoire"
+            mode="opening"
             initialFen={variant.initialFen ?? undefined}
             moves={variant.moves}
             width={620}

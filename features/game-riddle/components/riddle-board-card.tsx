@@ -2,7 +2,7 @@ import { IterationBadge } from "@/components/number-badge/number-badge";
 import { Badge } from "@/components/ui/badge";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
-import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
+import VoltBoard from "@/components/volt-board/volt-board";
 import { Circle, Sword, TrophyIcon, X } from "lucide-react";
 import Link from "next/link";
 
@@ -56,7 +56,7 @@ export function RiddleBoardCard({
         )}
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
-        <PuzzleBoard
+        <VoltBoard
           sourceId={riddle.id}
           mode="riddle"
           initialFen={displayFen}

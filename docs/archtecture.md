@@ -299,8 +299,7 @@
 │   ├── api
 │   │   └── puzzle.ts
 │   ├── components
-│   │   ├── puzzle-board.tsx
-│   │   └── puzzle-controller.tsx
+│   │   ├── │   │   └── puzzle-controller.tsx
 │   ├── hooks
 │   │   ├── use-get-puzzle-coach.ts
 │   │   └── use-update-puzzle.ts

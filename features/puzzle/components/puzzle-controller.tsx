@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
-import PuzzleBoard from "@/features/puzzle/components/puzzle-board";
+import VoltBoard from "@/components/volt-board/volt-board";
 import { getNextTurnFromFen } from "@/lib/chess/getTurn";
 import { useStatsStore } from "@/features/home/store/stats-store";
 import { useUpdatePuzzleAnswer } from "@/features/puzzle/hooks/use-update-puzzle";
@@ -55,7 +55,7 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
         {/* Left: Puzzle Board */}
         <div>
-          <PuzzleBoard
+          <VoltBoard
             sourceId={puzzle.id}
             mode="puzzle"
             initialFen={puzzle.fen}
