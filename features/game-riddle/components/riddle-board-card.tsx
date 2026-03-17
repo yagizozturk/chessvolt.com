@@ -1,9 +1,9 @@
+import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import { IterationBadge } from "@/components/number-badge/number-badge";
-import { Badge } from "@/components/ui/badge";
+import VoltBoard from "@/components/volt-board/volt-board";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
-import VoltBoard from "@/components/volt-board/volt-board";
-import { Circle, Sword, TrophyIcon, X } from "lucide-react";
+import { Circle, Sword } from "lucide-react";
 import Link from "next/link";
 
 type RiddleBoardCardProps = {
@@ -36,26 +36,10 @@ export function RiddleBoardCard({
       <div className="flex items-center gap-3">
         <IterationBadge num={num} />
         <p className="text-md min-w-0 flex-1 truncate">{riddle.title}</p>
-        {isComplete === true && (
-          <Badge
-            variant="secondary"
-            className="shrink-0 gap-1 border-green-500/30 bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400"
-          >
-            <TrophyIcon className="h-3 w-3" />
-            Solved
-          </Badge>
-        )}
-        {isComplete === false && (
-          <Badge
-            variant="secondary"
-            className="shrink-0 gap-1 border-red-500/30 bg-red-500/20 text-red-700 dark:bg-red-500/20 dark:text-red-400"
-          >
-            <X className="h-3 w-3" />
-            Wrong
-          </Badge>
-        )}
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
+        {isComplete === true && <BoardStatusIcon status="solved" />}
+        {isComplete === false && <BoardStatusIcon status="wrong" />}
         <VoltBoard
           sourceId={riddle.id}
           mode="riddle"

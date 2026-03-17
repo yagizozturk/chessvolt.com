@@ -1,7 +1,7 @@
+import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import { IterationBadge } from "@/components/number-badge/number-badge";
-import { Badge } from "@/components/ui/badge";
 import VoltBoard from "@/components/volt-board/volt-board";
-import { Book, Sword, TrophyIcon, X } from "lucide-react";
+import { Book, Sword } from "lucide-react";
 import Link from "next/link";
 
 type OpeningBoardCardProps = {
@@ -42,26 +42,10 @@ export function OpeningBoardCard({
             {variantCount}
           </span>
         )}
-        {isComplete === true && (
-          <Badge
-            variant="secondary"
-            className="shrink-0 gap-1 border-green-500/30 bg-green-500/20 text-green-700 dark:bg-green-500/20 dark:text-green-400"
-          >
-            <TrophyIcon className="h-3 w-3" />
-            Solved
-          </Badge>
-        )}
-        {isComplete === false && (
-          <Badge
-            variant="secondary"
-            className="shrink-0 gap-1 border-red-500/30 bg-red-500/20 text-red-700 dark:bg-red-500/20 dark:text-red-400"
-          >
-            <X className="h-3 w-3" />
-            Wrong
-          </Badge>
-        )}
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
+        {isComplete === true && <BoardStatusIcon status="solved" />}
+        {isComplete === false && <BoardStatusIcon status="wrong" />}
         <VoltBoard
           sourceId={id}
           mode="opening"
