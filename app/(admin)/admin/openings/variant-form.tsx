@@ -38,6 +38,15 @@ export function VariantForm({ openings }: Props) {
           </select>
         </Field>
         <Field>
+          <FieldLabel>Sort Key</FieldLabel>
+          <Input
+            name="sortKey"
+            required
+            placeholder="Sıralama için (örn: 001, 002)"
+            className="font-mono"
+          />
+        </Field>
+        <Field>
           <FieldLabel>Title</FieldLabel>
           <Input name="title" placeholder="e.g. Sicilian Defense" />
         </Field>

@@ -90,6 +90,14 @@ export function VariantDetail({ variant }: Props) {
             >
               <FieldGroup>
                 <Field>
+                  <FieldLabel>Sort Key</FieldLabel>
+                  <Input
+                    name="sortKey"
+                    defaultValue={variant.sortKey}
+                    className="font-mono"
+                  />
+                </Field>
+                <Field>
                   <FieldLabel>Title</FieldLabel>
                   <Input
                     name="title"
@@ -165,6 +173,10 @@ export function VariantDetail({ variant }: Props) {
                   Opening ID
                 </dt>
                 <dd className="font-mono text-xs">{variant.openingId}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">Sort Key</dt>
+                <dd className="font-mono text-xs">{variant.sortKey || "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Title</dt>

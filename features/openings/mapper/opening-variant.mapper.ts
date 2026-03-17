@@ -3,7 +3,7 @@ import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 type DbOpeningVariant = {
   id: string;
   opening_id: string;
-  parent_variant_id: string | null;
+  sort_key: string;
   title: string | null;
   description: string | null;
   ply: number;
@@ -18,7 +18,7 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
   return {
     id: db.id,
     openingId: db.opening_id,
-    parentVariantId: db.parent_variant_id,
+    sortKey: db.sort_key,
     title: db.title,
     description: db.description ?? null,
     ply: db.ply ?? 0,

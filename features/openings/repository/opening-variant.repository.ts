@@ -14,6 +14,7 @@ export async function findAll(
   const { data, error } = await supabase
     .from("opening_variants")
     .select("*")
+    .order("sort_key", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -81,6 +82,7 @@ export async function findByOpeningId(
     .from("opening_variants")
     .select("*")
     .eq("opening_id", openingId)
+    .order("sort_key", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -93,7 +95,7 @@ export async function findByOpeningId(
 
 export type CreateOpeningVariantInput = {
   openingId: string;
-  parentVariantId?: string | null;
+  sortKey: string;
   title?: string | null;
   description?: string | null;
   ply: number;
@@ -111,7 +113,7 @@ export async function create(
     .from("opening_variants")
     .insert({
       opening_id: input.openingId,
-      parent_variant_id: input.parentVariantId ?? null,
+      sort_key: input.sortKey,
       title: input.title ?? null,
       description: input.description ?? null,
       ply: input.ply,
@@ -132,7 +134,7 @@ export async function create(
 }
 
 export type UpdateOpeningVariantInput = {
-  parentVariantId?: string | null;
+  sortKey?: string;
   title?: string | null;
   description?: string | null;
   ply?: number;
@@ -148,8 +150,7 @@ export async function update(
   input: UpdateOpeningVariantInput,
 ): Promise<OpeningVariant | null> {
   const updates: Record<string, unknown> = {};
-  if (input.parentVariantId !== undefined)
-    updates.parent_variant_id = input.parentVariantId;
+  if (input.sortKey !== undefined) updates.sort_key = input.sortKey;
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description;
   if (input.ply !== undefined) updates.ply = input.ply;
