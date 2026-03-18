@@ -16,7 +16,7 @@ export function Cta() {
           </h2>
           <p className="text-muted-foreground mx-auto mt-4 max-w-[500px] text-lg leading-relaxed">
             Start playing now and sharpen your chess skills with our engaging
-            mini-games.
+            riddles and openings.
           </p>
           <Button
             variant="default"

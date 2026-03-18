@@ -18,6 +18,15 @@ type Params = {
   params: Promise<{ slug: string }>;
 };
 
+/**
+ * Fonksyon Bilgisi
+ * 1. İlgili gameType'da(memorable games örn.) bütün riddle lar çekilir
+ * 2. Oyunucunun bu riddle larda daha önce deneyip denemediği, doğru yanlış bilgisi çekilir
+ * 3. fromEntries riddleId, isCorrect bilgisi ile birleştirilir ve yeni objeye çevrilir.
+ * 4. gameId ler bilindiğinden bu sefer Game bilgisinin tamamı çekilir Id ler aratılarak.
+ * 5. Id ler ile game birleştirilip (fromEntries ile) listelenecek gameMap değeri çıkar
+ * 6. İstatistikler çekilen verilere göre hesaplanır
+ */
 export default async function ChallengePage({ params }: Params) {
   const { slug } = await params;
   const { user, supabase } = await getAuthenticatedUser();
@@ -25,7 +34,7 @@ export default async function ChallengePage({ params }: Params) {
   const gameType = slug.replace(/-/g, "_");
 
   // ========================================================================
-  // Getting riddles and attempts for this game type
+  // (1,2) Getting riddles and attempts for this game type 
   // ========================================================================
   const [gameRiddles, attemptedRiddles] = await Promise.all([
     getGameRiddlesByGameType(supabase, gameType),
@@ -33,19 +42,22 @@ export default async function ChallengePage({ params }: Params) {
   ]);
 
   // ========================================================================
-  // Mapping. FromEntries example return: { "riddle-101": true }
+  // (3) Mapping. FromEntries example return: { "riddle-101": true } 
   // ========================================================================
   const attemptByRiddleId = Object.fromEntries(
     attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
   );
 
   // ========================================================================
-  // Fetch games for riddles (unique gameIds) - single query
+  // (4, 5) Fetch games for riddles (unique gameIds) - single query 
   // ========================================================================
   const gameIds = [...new Set(gameRiddles.map((r) => r.gameId))];
   const games = await getGamesByIds(supabase, gameIds);
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
+  // ========================================================================
+  // (6) İstatistikler
+  // ========================================================================
   const stats = getGroupStats(gameRiddles, attemptByRiddleId);
   const total = stats.total;
   const correct = stats.completed;
@@ -54,6 +66,10 @@ export default async function ChallengePage({ params }: Params) {
   const remaining = total - attempted;
   const solveRate = stats.percentage;
 
+  // ========================================================================
+  // (7) Render -> ilgili challenge daki(memorable games) GameRiddle lar kadar dönüp
+  // onu RiddleBoard a atıcaz
+  // ========================================================================
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
@@ -61,7 +77,7 @@ export default async function ChallengePage({ params }: Params) {
           {gameRiddles
             .map((riddle, index) => {
               const game = gameMap[riddle.gameId];
-              if (!game?.pgn) return null;
+              if (!game) return null;
               return { riddle, game, index };
             })
             .filter((x): x is NonNullable<typeof x> => x != null)

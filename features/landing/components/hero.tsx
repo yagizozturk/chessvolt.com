@@ -32,8 +32,8 @@ export function Hero() {
                   <br /> With Games
                 </h1>
                 <p className="text-muted-foreground max-w-[600px] text-lg leading-relaxed md:text-xl">
-                  Sharpen your skills through engaging mini-games designed to
-                  help you predict GM moves and opening repertoires.
+                  Sharpen your skills through engaging riddles and openings
+                  designed to help you predict GM moves and opening repertoires.
                 </p>
               </div>
               <div className="flex flex-wrap gap-4 pt-2">
