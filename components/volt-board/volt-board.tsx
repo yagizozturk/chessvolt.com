@@ -283,6 +283,11 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       setStoreFen(game.current.fen());
       analyze(game.current.fen(), 8);
 
+      // Reset hint count for the next player move (2 hints per move)
+      hintCountRef.current = 0;
+      ground.current?.setAutoShapes([]);
+      onHintUsed?.(0);
+
       onGameStateChange?.({
         from,
         to,
