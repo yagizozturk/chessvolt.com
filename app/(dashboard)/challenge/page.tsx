@@ -13,7 +13,7 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { groupBy } from "@/lib/utilities/groupBy";
 
 /**
- * Fonksyon Bilgisi
+ * Fonksyon Bilgisi ✅
  * 1. Kullanıcı bilgileri alınır
  * 2. Tüm oyunlarıdaki tüm Riddle lar çekilir
  * 3. Oyunucunun çözülmeye çalıştığı game riddle ların attempt bilgisi çekilir

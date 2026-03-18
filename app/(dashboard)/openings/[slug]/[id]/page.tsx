@@ -1,6 +1,5 @@
 import { NumberStatsCard } from "@/components/stats/number-stats-card";
 import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
-import { Card, CardContent } from "@/components/ui/card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import {
   getCorrectlySolvedVariantIds,
@@ -16,15 +15,28 @@ type Params = {
   params: Promise<{ slug: string; id: string }>;
 };
 
+/**
+ * Fonksyon Bilgisi ✅
+ * 1. İlgili opening id ye göre çekilir
+ * 2. İlgili opening'ın tüm variantları çekilir
+ * 3. Oyunucunun bu variantlarda daha önce deneyip denemediği, doğru yanlış bilgisi çekilir
+ * 4. İstatistikler çekilen verilere göre hesaplanır
+ */
 export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const { slug, id } = await params;
   const { user, supabase } = await getAuthenticatedUser();
 
+  // ========================================================================
+  // 1. İlgili opening id ye göre çekilir
+  // ========================================================================
   const opening = await getOpeningById(supabase, id);
   if (!opening) {
     notFound();
   }
 
+  // ========================================================================
+  // 2-3. İlgili opening'ın tüm variantları çekilir. Doğru yanlış bilgisi çekilir
+  // ========================================================================
   const variants = await getOpeningVariantsByOpeningId(supabase, opening.id);
   const variantIds = variants.map((v) => v.id);
   const [solvedVariantIds, attempts] = await Promise.all([
@@ -32,56 +44,44 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
     getOpeningVariantAttemptsForVariants(supabase, user.id, variantIds),
   ]);
 
+  // ========================================================================
+  // 4. İstatistikler
+  // ========================================================================
   const total = variants.length;
   const correct = attempts.filter((a) => a.isCorrect).length;
   const attempted = attempts.length;
   const incorrect = attempted - correct;
-  const remaining = total - attempted;
   const solveRate = total > 0 ? Math.round((correct / total) * 100) : 0;
 
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
-        <div>
-          {variants.length === 0 ? (
-            <Card className="border-border bg-card/50 border-dashed">
-              <CardContent className="text-muted-foreground py-12 text-center">
-                No variants in this opening yet. Coming soon!
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-6 px-2 sm:grid-cols-2 lg:grid-cols-3">
-              {variants.map((variant, index) => {
-                const num = index + 1;
+        <div className="grid gap-6 px-2 sm:grid-cols-2 lg:grid-cols-3">
+          {variants.map((variant, index) => {
+            const num = index + 1;
 
-                return (
-                  <OpeningBoardCard
-                    key={variant.id}
-                    id={variant.id}
-                    name={variant.title ?? ""}
-                    num={num}
-                    width={250}
-                    height={250}
-                    href={`/openings/variant/${variant.id}`}
-                    fen={variant.displayFen ?? variant.initialFen ?? ""}
-                    isComplete={
-                      solvedVariantIds.has(variant.id) ? true : undefined
-                    }
-                    description={variant.description}
-                  />
-                );
-              })}
-            </div>
-          )}
+            return (
+              <OpeningBoardCard
+                key={variant.id}
+                id={variant.id}
+                name={variant.title ?? ""}
+                num={num}
+                width={250}
+                height={250}
+                href={`/openings/variant/${variant.id}`}
+                fen={variant.displayFen ?? variant.initialFen}
+                isComplete={solvedVariantIds.has(variant.id) ? true : undefined}
+                description={variant.description}
+              />
+            );
+          })}
         </div>
-
         <div className="space-y-4">
           <ProgressStatsCard
             percentage={solveRate}
             label="Solved variants"
             className="w-full"
           />
-
           <NumberStatsCard
             icon={Trophy}
             label="Correct answers"

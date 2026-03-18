@@ -19,7 +19,7 @@ type Params = {
 };
 
 /**
- * Fonksyon Bilgisi
+ * Fonksyon Bilgisi ✅
  * 1. İlgili gameType'da(memorable games örn.) bütün riddle lar çekilir
  * 2. Oyunucunun bu riddle larda daha önce deneyip denemediği, doğru yanlış bilgisi çekilir
  * 3. fromEntries riddleId, isCorrect bilgisi ile birleştirilir ve yeni objeye çevrilir.
