@@ -1,3 +1,4 @@
+import OpeningsController from "@/features/openings/components/openings-controller";
 import {
   getOpeningById,
   getOpeningVariantById,
@@ -5,7 +6,6 @@ import {
 } from "@/features/openings/services/openings";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
-import OpeningsController from "@/features/openings/components/openings-controller";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -20,6 +20,10 @@ export default async function OpeningVariantPage({ params }: Params) {
     notFound();
   }
 
+  // ======================================================================
+  // Get all the variants for the opening
+  // Get the next variant if it exists
+  // ======================================================================
   const variants = await getOpeningVariantsByOpeningId(
     supabase,
     variant.openingId,
@@ -30,8 +34,12 @@ export default async function OpeningVariantPage({ params }: Params) {
       ? variants[currentIndex + 1]
       : null;
 
+  // ======================================================================
+  // Get the opening
+  // Get the return URL
+  // ======================================================================
   const opening = await getOpeningById(supabase, variant.openingId);
-  const returnUrl =
+  const parentOpeningUrl =
     opening?.slug && opening?.id
       ? `/openings/${opening.slug}/${opening.id}`
       : "/openings";
@@ -40,7 +48,7 @@ export default async function OpeningVariantPage({ params }: Params) {
     <OpeningsController
       variant={variant}
       nextVariantId={nextVariant?.id ?? null}
-      returnUrl={returnUrl}
+      parentOpeningUrl={parentOpeningUrl}
     />
   );
 }

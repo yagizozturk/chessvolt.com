@@ -1,11 +1,6 @@
 import { NumberStatsCard } from "@/components/stats/number-stats-card";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
+import { Card, CardContent } from "@/components/ui/card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import {
   getCorrectlySolvedVariantIds,
@@ -14,7 +9,7 @@ import {
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
-import { Target, TrendingUp, Trophy, XOctagon } from "lucide-react";
+import { TrendingUp, Trophy, XOctagon } from "lucide-react";
 import { notFound } from "next/navigation";
 
 type Params = {
@@ -81,29 +76,11 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
         </div>
 
         <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="text-primary h-5 w-5" />
-                Progress
-              </CardTitle>
-              <CardDescription>Your opening stats</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="border-border bg-muted/50 flex items-center justify-between rounded-lg border px-4 py-3">
-                <span className="text-muted-foreground text-sm">
-                  Total Solved
-                </span>
-                <span className="text-foreground font-bold">{total}</span>
-              </div>
-              <div className="border-border bg-muted/50 flex items-center justify-between rounded-lg border px-4 py-3">
-                <span className="text-muted-foreground text-sm">
-                  Remaining Variants
-                </span>
-                <span className="text-foreground font-bold">{remaining}</span>
-              </div>
-            </CardContent>
-          </Card>
+          <ProgressStatsCard
+            percentage={solveRate}
+            label="Solved variants"
+            className="w-full"
+          />
 
           <NumberStatsCard
             icon={Trophy}

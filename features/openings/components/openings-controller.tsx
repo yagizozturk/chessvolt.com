@@ -9,11 +9,11 @@ import { useRouter } from "next/navigation";
 export default function OpeningsController({
   variant,
   nextVariantId,
-  returnUrl = "/openings",
+  parentOpeningUrl = "/openings",
 }: {
   variant: OpeningVariant;
   nextVariantId?: string | null;
-  returnUrl?: string;
+  parentOpeningUrl?: string;
 }) {
   const router = useRouter();
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
@@ -28,7 +28,7 @@ export default function OpeningsController({
       if (nextVariantId) {
         router.push(`/openings/variant/${nextVariantId}`);
       } else {
-        router.push(returnUrl);
+        router.push(parentOpeningUrl);
       }
     }
   };
