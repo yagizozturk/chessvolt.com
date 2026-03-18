@@ -39,7 +39,7 @@ export default function OpeningsController({
 }) {
   const router = useRouter();
   const turn =
-    (variant.initialFen ?? variant.displayFen)?.includes(" w ") ?? true
+    ((variant.initialFen ?? variant.displayFen)?.includes(" w ") ?? true)
       ? "White"
       : "Black";
   const moveCount = getMoveCount(variant.moves);
@@ -106,11 +106,6 @@ export default function OpeningsController({
               />
             </div>
           </div>
-          <ProgressStatsCard
-            percentage={progressPercentage}
-            label="Solved variants"
-            className="w-full"
-          />
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
@@ -140,6 +135,12 @@ export default function OpeningsController({
               </div>
             )}
           </div>
+
+          <ProgressStatsCard
+            percentage={progressPercentage}
+            label="Solved variants"
+            className="w-full"
+          />
 
           <Card>
             <CardHeader className="min-w-0 overflow-hidden">
