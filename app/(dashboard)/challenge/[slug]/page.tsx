@@ -34,7 +34,7 @@ export default async function ChallengePage({ params }: Params) {
   const gameType = slug.replace(/-/g, "_");
 
   // ========================================================================
-  // (1,2) Getting riddles and attempts for this game type 
+  // (1,2) Getting riddles and attempts for this game type
   // ========================================================================
   const [gameRiddles, attemptedRiddles] = await Promise.all([
     getGameRiddlesByGameType(supabase, gameType),
@@ -42,14 +42,14 @@ export default async function ChallengePage({ params }: Params) {
   ]);
 
   // ========================================================================
-  // (3) Mapping. FromEntries example return: { "riddle-101": true } 
+  // (3) Mapping. FromEntries example return: { "riddle-101": true }
   // ========================================================================
   const attemptByRiddleId = Object.fromEntries(
     attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
   );
 
   // ========================================================================
-  // (4, 5) Fetch games for riddles (unique gameIds) - single query 
+  // (4, 5) Fetch games for riddles (unique gameIds) - single query
   // ========================================================================
   const gameIds = [...new Set(gameRiddles.map((r) => r.gameId))];
   const games = await getGamesByIds(supabase, gameIds);
@@ -68,7 +68,8 @@ export default async function ChallengePage({ params }: Params) {
 
   // ========================================================================
   // (7) Render -> ilgili challenge daki(memorable games) GameRiddle lar kadar dönüp
-  // onu RiddleBoard a atıcaz
+  // onu RiddleBoard a atıcaz. Eğer record silinmiş ise, yani game silinmiş ise riddle
+  // silinmeden o null kontrolüne girer. (satır 81)
   // ========================================================================
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">

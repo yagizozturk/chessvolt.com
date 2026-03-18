@@ -13,13 +13,19 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { groupBy } from "@/lib/utilities/groupBy";
 
 /**
+ * Fonksyon Bilgisi
+ * 1. Kullanıcı bilgileri alınır
+ * 2. Tüm oyunlarıdaki tüm Riddle lar çekilir
+ * 3. Oyunucunun çözülmeye çalıştığı game riddle ların attempt bilgisi çekilir
+ * 4. fromEntries riddleId, isCorrect bilgisi ile birleştirilir ve yeni objeye çevrilir.
+ * 5.
  * Gets user, gets allRiddles, gets user attempted Riddles. Filters in allRiddles. Group them by gameType
- * @param pgn - Full PGN string
- * @returns Space-separated UCI moves (e.g. "e2e4 e7e5") or null if invalid
+ * Full PGN string
+ *
  */
 export default async function ChallengePage() {
   // ========================================================================
-  // Getting user data and riddles for games
+  // (1,2,3) Getting user data and riddles for games
   // ========================================================================
   const { user, supabase } = await getAuthenticatedUser();
   const [allRiddles, attemptedRiddles] = await Promise.all([
@@ -28,14 +34,14 @@ export default async function ChallengePage() {
   ]);
 
   // ========================================================================
-  // Mapping. FromEntries example return: { "riddle-101": true }
+  // 4. Mapping. FromEntries example return: { "riddle-101": true }
   // ========================================================================
   const attemptByRiddleId = Object.fromEntries(
     attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
   );
 
   // ========================================================================
-  // Grouping data by gameType in riddles. (gameType is required; filter legacy nulls)
+  // 5. Grouping data by gameType in riddles. (gameType is required; filter legacy nulls)
   // ========================================================================
   const riddlesWithGameType = allRiddles.filter((r) => r.gameType?.trim());
   const riddleGameTypeGroups = groupBy(riddlesWithGameType, (r) =>
