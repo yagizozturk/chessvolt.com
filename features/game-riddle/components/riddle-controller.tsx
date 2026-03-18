@@ -1,9 +1,9 @@
 "use client";
 
 import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
-import { Badge } from "@/components/ui/badge";
+import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
@@ -17,15 +17,7 @@ import {
   CHALLENGE_COUNTDOWN_SECONDS,
 } from "@/lib/shared/constants/challenge";
 import { calculatePointsFromTime } from "@/lib/utilities/reward";
-import {
-  Calendar,
-  CheckCircle2,
-  Clock,
-  Flag,
-  Lightbulb,
-  Move,
-  Puzzle,
-} from "lucide-react";
+import { Calendar, Clock, Flag, Lightbulb, Puzzle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -115,31 +107,11 @@ export default function RiddleController({
     <div className="container mx-auto max-w-5xl px-8 py-6">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
         <div className="relative min-w-0">
-          {showCorrect && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/50 backdrop-blur-sm">
-              <Card className="animate-in zoom-in-95 fade-in-0 min-w-[280px] border-emerald-500/40 bg-emerald-50/95 shadow-xl duration-200 dark:border-emerald-400/30 dark:bg-emerald-950/95">
-                <CardContent className="flex flex-col items-center gap-6 px-12 py-8">
-                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/20">
-                    <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <div className="space-y-3 text-center">
-                    <p className="text-3xl font-semibold text-emerald-800 dark:text-emerald-200">
-                      Doğru!
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      {elapsedSeconds} saniyede çözdün
-                    </p>
-                    <Badge
-                      variant="secondary"
-                      className="border-emerald-500/30 bg-emerald-500/20 px-4 py-1.5 text-base font-semibold text-emerald-700 dark:text-emerald-300"
-                    >
-                      +{earnedPoints} puan
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+          <SuccessOverlay
+            show={showCorrect}
+            elapsedSeconds={elapsedSeconds}
+            earnedPoints={earnedPoints}
+          />
           <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}

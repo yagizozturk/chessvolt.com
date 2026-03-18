@@ -1,5 +1,6 @@
 import OpeningsController from "@/features/openings/components/openings-controller";
 import {
+  getCorrectlySolvedVariantIds,
   getOpeningById,
   getOpeningVariantById,
   getOpeningVariantsByOpeningId,
@@ -12,7 +13,7 @@ type Params = {
 };
 
 export default async function OpeningVariantPage({ params }: Params) {
-  const { supabase } = await getAuthenticatedUser();
+  const { user, supabase } = await getAuthenticatedUser();
   const { id } = await params;
   const variant = await getOpeningVariantById(supabase, id);
 
@@ -28,6 +29,12 @@ export default async function OpeningVariantPage({ params }: Params) {
     supabase,
     variant.openingId,
   );
+  const variantIds = variants.map((v) => v.id);
+  const solvedVariantIds = await getCorrectlySolvedVariantIds(
+    supabase,
+    user.id,
+    variantIds,
+  );
   const currentIndex = variants.findIndex((v) => v.id === variant.id);
   const nextVariant =
     currentIndex >= 0 && currentIndex < variants.length - 1
@@ -36,7 +43,7 @@ export default async function OpeningVariantPage({ params }: Params) {
 
   // ======================================================================
   // Get the opening
-  // Get the return URL
+  // Get the return URL and progress stats
   // ======================================================================
   const opening = await getOpeningById(supabase, variant.openingId);
   const parentOpeningUrl =
@@ -44,11 +51,18 @@ export default async function OpeningVariantPage({ params }: Params) {
       ? `/openings/${opening.slug}/${opening.id}`
       : "/openings";
 
+  const progressPercentage =
+    variants.length > 0
+      ? Math.round((solvedVariantIds.size / variants.length) * 100)
+      : 0;
+
   return (
     <OpeningsController
       variant={variant}
+      openingName={opening?.name ?? "Opening"}
       nextVariantId={nextVariant?.id ?? null}
       parentOpeningUrl={parentOpeningUrl}
+      progressPercentage={progressPercentage}
     />
   );
 }
