@@ -1,8 +1,8 @@
+import RiddleController from "@/features/game-riddle/components/riddle-controller";
 import { getGameRiddleById } from "@/features/game-riddle/services/game-riddle";
 import { getGameById } from "@/features/game/services/game";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
-import RiddleController from "@/features/game-riddle/components/riddle-controller";
 
 type Params = {
   params: Promise<{ id: string }>;

@@ -3,10 +3,9 @@
  *
  * Responsibility: CRUD access to the opening_variants table.
  */
-
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function findAll(
   supabase: SupabaseClient,
