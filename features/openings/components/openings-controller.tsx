@@ -8,16 +8,28 @@ import { useRouter } from "next/navigation";
 
 export default function OpeningsController({
   variant,
+  nextVariantId,
+  returnUrl = "/openings",
 }: {
   variant: OpeningVariant;
+  nextVariantId?: string | null;
+  returnUrl?: string;
 }) {
   const router = useRouter();
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
 
+  // ======================================================================
+  // If there is another unsolved variant, go to that page
+  // If all the variants are solved, return to main opening page
+  // ======================================================================
   const handleSolved = async (isCorrect: boolean) => {
     await updateOpeningVariantAnswerHook(variant.id, isCorrect);
     if (isCorrect) {
-      router.push("/openings");
+      if (nextVariantId) {
+        router.push(`/openings/variant/${nextVariantId}`);
+      } else {
+        router.push(returnUrl);
+      }
     }
   };
 
