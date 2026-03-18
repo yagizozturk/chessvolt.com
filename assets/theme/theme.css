@@ -13,6 +13,10 @@
   background-image: url("../images/board/turq.jpg");
 }
 
+.green cg-board {
+  background-image: url("../images/board/green.png");
+}
+
 .merida cg-board piece.pawn.white {
   background-image: url("../images/pieces/merida/wP.svg");
 }
