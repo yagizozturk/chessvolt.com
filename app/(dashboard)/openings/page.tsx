@@ -1,9 +1,13 @@
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { getAllOpenings } from "@/features/openings/services/openings";
-import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import { getPublicUser } from "@/lib/supabase/auth";
 
+/**
+ * Fonksyon Bilgisi ✅
+ * 1. Auth olmayan ziyaretçi de her bilgiyi görebilir
+ */
 export default async function OpeningsPage() {
-  const { supabase } = await getAuthenticatedUser();
+  const { supabase } = await getPublicUser();
   const openings = await getAllOpenings(supabase);
 
   return (

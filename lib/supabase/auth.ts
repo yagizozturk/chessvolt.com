@@ -24,6 +24,23 @@ export async function getAuthenticatedUser() {
 }
 
 /**
+ * Get user for public routes - returns null if not authenticated (no redirect)
+ * Use in pages that work for both authenticated and anonymous users
+ */
+export async function getPublicUser() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { user: null, supabase };
+  }
+
+  return { user, supabase };
+}
+
+/**
  * Get authenticated admin user - throws redirect if not authenticated or not admin
  * Use this in admin layout and admin pages
  */

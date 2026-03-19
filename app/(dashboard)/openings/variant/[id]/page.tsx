@@ -5,7 +5,7 @@ import {
   getOpeningVariantById,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings";
-import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import { getPublicUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
 
 type Params = {
@@ -13,7 +13,7 @@ type Params = {
 };
 
 export default async function OpeningVariantPage({ params }: Params) {
-  const { user, supabase } = await getAuthenticatedUser();
+  const { user, supabase } = await getPublicUser();
   const { id } = await params;
   const variant = await getOpeningVariantById(supabase, id);
 
@@ -30,11 +30,9 @@ export default async function OpeningVariantPage({ params }: Params) {
     variant.openingId,
   );
   const variantIds = variants.map((v) => v.id);
-  const solvedVariantIds = await getCorrectlySolvedVariantIds(
-    supabase,
-    user.id,
-    variantIds,
-  );
+  const solvedVariantIds = user
+    ? await getCorrectlySolvedVariantIds(supabase, user.id, variantIds)
+    : new Set<string>();
   const currentIndex = variants.findIndex((v) => v.id === variant.id);
   const nextVariant =
     currentIndex >= 0 && currentIndex < variants.length - 1

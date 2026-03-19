@@ -7,7 +7,7 @@ import {
   getOpeningVariantAttemptsForVariants,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings";
-import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import { getPublicUser } from "@/lib/supabase/auth";
 import { TrendingUp, Trophy, XOctagon } from "lucide-react";
 import { notFound } from "next/navigation";
 
@@ -24,7 +24,7 @@ type Params = {
  */
 export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const { slug, id } = await params;
-  const { user, supabase } = await getAuthenticatedUser();
+  const { user, supabase } = await getPublicUser();
 
   // ========================================================================
   // 1. İlgili opening id ye göre çekilir
@@ -35,14 +35,21 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   }
 
   // ========================================================================
-  // 2-3. İlgili opening'ın tüm variantları çekilir. Doğru yanlış bilgisi çekilir
+  // 2. İlgili opening'ın tüm variantları çekilir
   // ========================================================================
   const variants = await getOpeningVariantsByOpeningId(supabase, opening.id);
   const variantIds = variants.map((v) => v.id);
-  const [solvedVariantIds, attempts] = await Promise.all([
-    getCorrectlySolvedVariantIds(supabase, user.id, variantIds),
-    getOpeningVariantAttemptsForVariants(supabase, user.id, variantIds),
-  ]);
+
+  // ========================================================================
+  // 3. Auth user için doğru/yanlış bilgisi (sadece giriş yapmışsa)
+  // Eğer giriş yapmamışsa solvedVariantIds ve attempts boş array/set olacak.
+  // ========================================================================
+  const [solvedVariantIds, attempts] = user
+    ? await Promise.all([
+        getCorrectlySolvedVariantIds(supabase, user.id, variantIds),
+        getOpeningVariantAttemptsForVariants(supabase, user.id, variantIds),
+      ])
+    : [new Set<string>(), []];
 
   // ========================================================================
   // 4. İstatistikler
