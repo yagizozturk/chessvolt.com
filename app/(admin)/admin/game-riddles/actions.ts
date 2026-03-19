@@ -1,17 +1,17 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { getAdminUser } from "@/lib/supabase/auth";
+import type { CreateGameRiddleInput } from "@/features/game-riddle/repository/game-riddle.repository";
 import {
   createGameRiddle,
-  updateGameRiddle,
   deleteGameRiddle,
-} from "@/features/game-riddle/services/game-riddle";
+  updateGameRiddle,
+} from "@/features/game-riddle/services/game-riddle.service";
 import * as gameRepo from "@/features/game/repository/game.repository";
 import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
-import type { CreateGameRiddleInput } from "@/features/game-riddle/repository/game-riddle.repository";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function createGameRiddleAction(formData: FormData) {
   const { supabase } = await getAdminUser();
@@ -76,7 +76,7 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
     game?.pgn != null ? getFenFromPgnAtPly(game.pgn, ply) : null;
   const moves =
     game?.pgn != null
-      ? extractMovesFromPgn(game.pgn, ply, moveCountForAnswer) ?? null
+      ? (extractMovesFromPgn(game.pgn, ply, moveCountForAnswer) ?? null)
       : null;
 
   const input: Record<string, unknown> = {

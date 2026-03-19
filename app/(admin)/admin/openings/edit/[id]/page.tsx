@@ -1,8 +1,3 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { getAdminUser } from "@/lib/supabase/auth";
-import { getOpeningById } from "@/features/openings/services/openings";
-import { notFound } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -10,6 +5,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getOpeningById } from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
 import { OpeningEditForm } from "../../opening-edit-form";
 
 type Params = {

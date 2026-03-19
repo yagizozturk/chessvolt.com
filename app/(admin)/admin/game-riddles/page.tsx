@@ -1,6 +1,3 @@
-import { getAdminUser } from "@/lib/supabase/auth";
-import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Plus, Trash2, ChevronRight } from "lucide-react";
+import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle.service";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { ChevronRight, Plus, Trash2 } from "lucide-react";
+import Link from "next/link";
+
 import { GameRiddlesList } from "./game-riddles-list";
 
 export default async function AdminGameRiddlesPage() {

@@ -1,7 +1,8 @@
+import { getGameRiddleById } from "@/features/game-riddle/services/game-riddle.service";
+import { getGameById } from "@/features/game/services/game.service";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { getGameRiddleById } from "@/features/game-riddle/services/game-riddle";
-import { getGameById } from "@/features/game/services/game";
 import { notFound } from "next/navigation";
+
 import { GameRiddleDetail } from "../game-riddle-detail";
 
 type Params = {

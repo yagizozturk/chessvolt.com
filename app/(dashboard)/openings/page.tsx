@@ -1,5 +1,5 @@
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
-import { getAllOpenings } from "@/features/openings/services/openings";
+import { getAllOpenings } from "@/features/openings/services/openings.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 /**

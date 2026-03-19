@@ -1,7 +1,3 @@
-import Link from "next/link";
-import { ArrowLeft, Upload } from "lucide-react";
-import { getAdminUser } from "@/lib/supabase/auth";
-import { getAllOpenings } from "@/features/openings/services/openings";
 import {
   Card,
   CardAction,
@@ -10,6 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getAllOpenings } from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { ArrowLeft, Upload } from "lucide-react";
+import Link from "next/link";
+
 import { VariantForm } from "../variant-form";
 
 export default async function AdminOpeningsNewPage() {

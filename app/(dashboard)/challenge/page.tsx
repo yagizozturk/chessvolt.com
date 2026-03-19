@@ -2,13 +2,13 @@ import { CollectionHeader } from "@/components/collection/collection-header";
 import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
 import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
-import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle";
+import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle.service";
 import {
   formatGameType,
   getGameTypeConstants,
 } from "@/features/game-riddle/utilities/game-type-helpers";
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
-import { getGamesByIds } from "@/features/game/services/game";
+import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 import { groupBy } from "@/lib/utilities/groupBy";
 
@@ -30,9 +30,7 @@ export default async function ChallengePage() {
   const { user, supabase } = await getPublicUser();
   const [allRiddles, attemptedRiddles] = await Promise.all([
     getAllGameRiddles(supabase),
-    user
-      ? userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id)
-      : [],
+    user ? userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id) : [],
   ]);
 
   // ========================================================================

@@ -8,9 +8,9 @@ import {
 } from "@/components/ui/card";
 import { RiddleBoardCard } from "@/features/game-riddle/components/riddle-board-card";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
-import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle";
+import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle.service";
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
-import { getGamesByIds } from "@/features/game/services/game";
+import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 import { Target, TrendingUp, Trophy, XOctagon } from "lucide-react";
 

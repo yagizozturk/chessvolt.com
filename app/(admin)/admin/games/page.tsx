@@ -1,6 +1,3 @@
-import { getAdminUser } from "@/lib/supabase/auth";
-import { getAllGames } from "@/features/game/services/game";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getAllGames } from "@/features/game/services/game.service";
+import { getAdminUser } from "@/lib/supabase/auth";
 import { Plus, Upload } from "lucide-react";
+import Link from "next/link";
+
 import { GamesList } from "./games-list";
 
 type SearchParams = {

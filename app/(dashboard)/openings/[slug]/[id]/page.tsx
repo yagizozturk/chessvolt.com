@@ -6,7 +6,7 @@ import {
   getOpeningById,
   getOpeningVariantAttemptsForVariants,
   getOpeningVariantsByOpeningId,
-} from "@/features/openings/services/openings";
+} from "@/features/openings/services/openings.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 import { TrendingUp, Trophy, XOctagon } from "lucide-react";
 import { notFound } from "next/navigation";

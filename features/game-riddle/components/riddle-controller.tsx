@@ -4,14 +4,14 @@ import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import VoltBoard, {
+  type VoltBoardHandle,
+} from "@/components/volt-board/volt-board";
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 import { useStatsStore } from "@/features/home/store/stats-store";
 import { addReward } from "@/features/profile/api/profile";
-import VoltBoard, {
-  type VoltBoardHandle,
-} from "@/components/volt-board/volt-board";
 import {
   CHALLENGE_COUNTDOWN_MINUTES,
   CHALLENGE_COUNTDOWN_SECONDS,
@@ -99,7 +99,7 @@ export default function RiddleController({
       setShowCorrect(true);
       setTimeout(() => {
         if (challengeSlug) router.push(`/challenge/${challengeSlug}`);
-      }, 1500);
+      }, 1000);
     }
   };
 

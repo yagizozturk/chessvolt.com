@@ -1,13 +1,13 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { getAdminUser } from "@/lib/supabase/auth";
-import { createGame } from "@/features/game/services/game";
-import { createGameRiddle } from "@/features/game-riddle/services/game-riddle";
+import { createGameRiddle } from "@/features/game-riddle/services/game-riddle.service";
+import { createGame } from "@/features/game/services/game.service";
 import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { parsePgn, splitPgnGames, validatePgn } from "@/lib/chess/parsePgn";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 const DEFAULT_GAME_TYPE = "legend_games";
 

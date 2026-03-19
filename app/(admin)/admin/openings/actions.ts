@@ -1,21 +1,19 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { getAdminUser } from "@/lib/supabase/auth";
-import {
-  getUciMovesFromPgnAfterPly,
-} from "@/lib/chess/extractMovesFromPgn";
-import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
-import {
-  createOpeningVariant,
-  updateOpeningVariant,
-  deleteOpeningVariant,
-} from "@/features/openings/services/openings";
 import type {
   CreateOpeningVariantInput,
   UpdateOpeningVariantInput,
 } from "@/features/openings/repository/opening-variant.repository";
+import {
+  createOpeningVariant,
+  deleteOpeningVariant,
+  updateOpeningVariant,
+} from "@/features/openings/services/openings.service";
+import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
+import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 type BulkVariantInput = {
   opening_id: string;
@@ -105,7 +103,10 @@ export async function bulkCreateVariantsAction(jsonData: string) {
 
     const displayFen = getFenFromPgnAtPly(item.pgn.trim(), displayPly);
     if (!displayFen) {
-      errors.push({ index: i, message: `display_ply (${displayPly}) PGN uzunluğunu aşıyor` });
+      errors.push({
+        index: i,
+        message: `display_ply (${displayPly}) PGN uzunluğunu aşıyor`,
+      });
       continue;
     }
 

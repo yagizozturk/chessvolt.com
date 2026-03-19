@@ -1,13 +1,3 @@
-import Link from "next/link";
-import { Plus, Upload } from "lucide-react";
-import { getAdminUser } from "@/lib/supabase/auth";
-import {
-  getAllOpenings,
-  getAllOpeningVariants,
-} from "@/features/openings/services/openings";
-import { ParentOpeningsList } from "./parent-openings-list";
-import { OpeningsList } from "./openings-list";
-import { OpeningForm } from "./opening-form";
 import {
   Card,
   CardContent,
@@ -15,6 +5,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  getAllOpeningVariants,
+  getAllOpenings,
+} from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { Plus, Upload } from "lucide-react";
+import Link from "next/link";
+
+import { OpeningForm } from "./opening-form";
+import { OpeningsList } from "./openings-list";
+import { ParentOpeningsList } from "./parent-openings-list";
 
 export default async function AdminOpeningsPage() {
   const { supabase } = await getAdminUser();
@@ -71,7 +72,10 @@ export default async function AdminOpeningsPage() {
               <Upload className="h-4 w-4" />
               Toplu Variant
             </Link>
-            <Link href="/admin/openings/new" className="flex items-center gap-2">
+            <Link
+              href="/admin/openings/new"
+              className="flex items-center gap-2"
+            >
               <Plus className="h-4 w-4" />
               New Variant
             </Link>

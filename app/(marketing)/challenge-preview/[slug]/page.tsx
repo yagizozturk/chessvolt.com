@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { Sword, ChevronRight, Zap, ArrowLeft } from "lucide-react";
-import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle";
-import { createClient } from "@/lib/supabase/server";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle.service";
+import { createClient } from "@/lib/supabase/server";
+import { ArrowLeft, ChevronRight, Sword, Zap } from "lucide-react";
+import Link from "next/link";
 
 type Params = {
   params: Promise<{ slug: string }>;

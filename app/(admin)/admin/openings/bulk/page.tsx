@@ -1,7 +1,3 @@
-import Link from "next/link";
-import { ArrowLeft, Upload } from "lucide-react";
-import { getAdminUser } from "@/lib/supabase/auth";
-import { getAllOpenings } from "@/features/openings/services/openings";
 import {
   Card,
   CardContent,
@@ -9,10 +5,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getAllOpenings } from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { ArrowLeft, Upload } from "lucide-react";
+import Link from "next/link";
+
 import { BulkVariantForm } from "../bulk-variant-form";
 
 type Props = {
-  searchParams: Promise<{ error?: string; created?: string; errors?: string; errorDetails?: string }>;
+  searchParams: Promise<{
+    error?: string;
+    created?: string;
+    errors?: string;
+    errorDetails?: string;
+  }>;
 };
 
 export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
@@ -36,15 +42,15 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
             Toplu Variant Gir
           </CardTitle>
           <CardDescription>
-            JSON formatında variant verisi yapıştırın. Tek obje veya obje dizisi desteklenir.
-            display_fen ve moves otomatik hesaplanır.
+            JSON formatında variant verisi yapıştırın. Tek obje veya obje dizisi
+            desteklenir. display_fen ve moves otomatik hesaplanır.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-4 rounded-md border bg-muted/30 p-4 font-mono text-xs">
+          <div className="bg-muted/30 mb-4 rounded-md border p-4 font-mono text-xs">
             <p className="mb-2 font-semibold">Örnek format:</p>
             <pre className="overflow-x-auto whitespace-pre-wrap">
-{`{
+              {`{
   "opening_id": "uuid",
   "sort_key": "02.01",
   "title": "c5 Line: Queen Check Defense",
@@ -57,7 +63,7 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
             </pre>
           </div>
           {params.error && (
-            <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="border-destructive/50 bg-destructive/10 text-destructive mb-4 rounded-md border p-3 text-sm">
               {params.error === "gecersiz_json" && "Geçersiz JSON formatı."}
             </div>
           )}

@@ -1,14 +1,14 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { getAdminUser } from "@/lib/supabase/auth";
+import type { CreateGameInput } from "@/features/game/repository/game.repository";
 import {
   createGame,
-  updateGame,
   deleteGame,
-} from "@/features/game/services/game";
-import type { CreateGameInput } from "@/features/game/repository/game.repository";
+  updateGame,
+} from "@/features/game/services/game.service";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function createGameAction(formData: FormData) {
   const { supabase } = await getAdminUser();

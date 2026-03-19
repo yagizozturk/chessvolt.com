@@ -1,17 +1,17 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { getAdminUser } from "@/lib/supabase/auth";
-import {
-  createOpening,
-  updateOpening,
-  deleteOpening,
-} from "@/features/openings/services/openings";
 import type {
   CreateOpeningInput,
   UpdateOpeningInput,
 } from "@/features/openings/repository/opening.repository";
+import {
+  createOpening,
+  deleteOpening,
+  updateOpening,
+} from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function createOpeningAction(formData: FormData) {
   const { supabase } = await getAdminUser();
@@ -41,10 +41,7 @@ export async function createOpeningAction(formData: FormData) {
   redirect("/admin/openings");
 }
 
-export async function updateOpeningAction(
-  id: string,
-  formData: FormData,
-) {
+export async function updateOpeningAction(id: string, formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const name = (formData.get("name") as string)?.trim();

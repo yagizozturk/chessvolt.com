@@ -1,6 +1,6 @@
 import RiddleController from "@/features/game-riddle/components/riddle-controller";
-import { getGameRiddleById } from "@/features/game-riddle/services/game-riddle";
-import { getGameById } from "@/features/game/services/game";
+import { getGameRiddleById } from "@/features/game-riddle/services/game-riddle.service";
+import { getGameById } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
 

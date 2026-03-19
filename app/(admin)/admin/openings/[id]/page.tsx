@@ -1,6 +1,7 @@
-import { getOpeningVariantById } from "@/features/openings/services/openings";
+import { getOpeningVariantById } from "@/features/openings/services/openings.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
+
 import { VariantDetail } from "../variant-detail";
 
 type Params = {

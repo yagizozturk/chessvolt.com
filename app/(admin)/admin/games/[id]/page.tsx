@@ -1,6 +1,7 @@
+import { getGameById } from "@/features/game/services/game.service";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { getGameById } from "@/features/game/services/game";
 import { notFound } from "next/navigation";
+
 import { GameDetail } from "../game-detail";
 
 type Params = {
