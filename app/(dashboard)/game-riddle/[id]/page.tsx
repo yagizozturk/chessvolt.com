@@ -1,7 +1,7 @@
 import RiddleController from "@/features/game-riddle/components/riddle-controller";
 import { getGameRiddleById } from "@/features/game-riddle/services/game-riddle";
 import { getGameById } from "@/features/game/services/game";
-import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import { getPublicUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
 
 type Params = {
@@ -9,7 +9,7 @@ type Params = {
 };
 
 export default async function GameRiddlePage({ params }: Params) {
-  const { supabase } = await getAuthenticatedUser();
+  const { supabase } = await getPublicUser();
   const { id } = await params;
   const riddle = await getGameRiddleById(supabase, id);
 
