@@ -20,8 +20,7 @@ type Params = {
  * 4. Oyuncu auth ise çözdüğü variantId lerine bakılır. Yoksa boş döner
  * 5. Opening bilgisi çekilip, slug bilgisi alınıp, returnUrl hesaplanır. Next variant yoksa ana opening e gider.
  * TODO: Opening i tekrar çekmeden buraya bilgi geçilebilirm?
- * 6.
- *
+ * 6. Progress percantege hesaplanır ve contoller a geçilir
  */
 export default async function OpeningVariantPage({ params }: Params) {
   const { id } = await params;

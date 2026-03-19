@@ -11,7 +11,7 @@ import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game
 import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle";
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
 import { getGamesByIds } from "@/features/game/services/game";
-import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import { getPublicUser } from "@/lib/supabase/auth";
 import { Target, TrendingUp, Trophy, XOctagon } from "lucide-react";
 
 type Params = {
@@ -21,7 +21,7 @@ type Params = {
 /**
  * Fonksyon Bilgisi ✅
  * 1. İlgili gameType'da(memorable games örn.) bütün riddle lar çekilir
- * 2. Oyunucunun bu riddle larda daha önce deneyip denemediği, doğru yanlış bilgisi çekilir
+ * 2. Oyunucunun bu riddle larda daha önce deneyip denemediği, doğru yanlış bilgisi çekilir. User auth değilse [] döner.
  * 3. fromEntries riddleId, isCorrect bilgisi ile birleştirilir ve yeni objeye çevrilir.
  * 4. gameId ler bilindiğinden bu sefer Game bilgisinin tamamı çekilir Id ler aratılarak.
  * 5. Id ler ile game birleştirilip (fromEntries ile) listelenecek gameMap değeri çıkar
@@ -29,7 +29,7 @@ type Params = {
  */
 export default async function ChallengePage({ params }: Params) {
   const { slug } = await params;
-  const { user, supabase } = await getAuthenticatedUser();
+  const { user, supabase } = await getPublicUser();
 
   const gameType = slug.replace(/-/g, "_");
 
@@ -38,7 +38,7 @@ export default async function ChallengePage({ params }: Params) {
   // ========================================================================
   const [gameRiddles, attemptedRiddles] = await Promise.all([
     getGameRiddlesByGameType(supabase, gameType),
-    userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id),
+    user ? userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id) : [],
   ]);
 
   // ========================================================================

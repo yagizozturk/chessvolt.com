@@ -9,7 +9,7 @@ import {
 } from "@/features/game-riddle/utilities/game-type-helpers";
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
 import { getGamesByIds } from "@/features/game/services/game";
-import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import { getPublicUser } from "@/lib/supabase/auth";
 import { groupBy } from "@/lib/utilities/groupBy";
 
 /**
@@ -25,12 +25,14 @@ import { groupBy } from "@/lib/utilities/groupBy";
  */
 export default async function ChallengePage() {
   // ========================================================================
-  // (1,2,3) Getting user data and riddles for games
+  // (1,2,3) Getting riddles and attempts for games
   // ========================================================================
-  const { user, supabase } = await getAuthenticatedUser();
+  const { user, supabase } = await getPublicUser();
   const [allRiddles, attemptedRiddles] = await Promise.all([
     getAllGameRiddles(supabase),
-    userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id),
+    user
+      ? userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id)
+      : [],
   ]);
 
   // ========================================================================
