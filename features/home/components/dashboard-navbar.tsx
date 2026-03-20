@@ -21,12 +21,9 @@ import { cn } from "@/lib/utilities/cn";
 import {
   BookOpen,
   Flame,
-  Home,
-  LayoutDashboard,
   LogOut,
   Map,
   Menu,
-  Puzzle,
   Shield,
   Sparkles,
   User,
@@ -89,9 +86,6 @@ export function DashboardNavbar() {
               {profile?.xp ?? 0} XP
             </p>
           </div>
-          <DropdownMenuItem asChild>
-            <Link href="/challenge">Challenges</Link>
-          </DropdownMenuItem>
           {profile?.role === "admin" && (
             <DropdownMenuItem asChild>
               <Link href="/admin" className="flex items-center gap-2">
