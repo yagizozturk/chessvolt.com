@@ -298,7 +298,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       <div className={cn("w-fit", className)}>
         <div
           ref={boardRef}
-          className="cardinal green"
+          className="cardinal deep-blue"
           style={{ width, height }}
         />
       </div>
