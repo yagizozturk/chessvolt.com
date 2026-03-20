@@ -152,8 +152,6 @@
 ├── components
 │   ├── collection
 │   │   └── collection-header.tsx
-│   ├── countdown-timer
-│   │   └── countdown-timer.tsx
 │   ├── game
 │   │   ├── navbar.tsx
 │   │   ├── stat-item.tsx

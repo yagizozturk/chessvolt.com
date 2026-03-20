@@ -7,17 +7,11 @@ import { CheckCircle2 } from "lucide-react";
 type SuccessOverlayProps = {
   /** Whether to show the overlay */
   show: boolean;
-  /** Elapsed time in seconds */
-  elapsedSeconds: number;
   /** Optional earned points to display (e.g. for riddle challenges) */
   earnedPoints?: number;
 };
 
-export function SuccessOverlay({
-  show,
-  elapsedSeconds,
-  earnedPoints,
-}: SuccessOverlayProps) {
+export function SuccessOverlay({ show, earnedPoints }: SuccessOverlayProps) {
   if (!show) return null;
 
   return (
@@ -30,9 +24,6 @@ export function SuccessOverlay({
           <div className="space-y-3 text-center">
             <p className="text-3xl font-semibold text-emerald-800 dark:text-emerald-200">
               Doğru!
-            </p>
-            <p className="text-muted-foreground text-sm">
-              {elapsedSeconds} saniyede çözdün
             </p>
             {earnedPoints !== undefined && earnedPoints > 0 && (
               <Badge

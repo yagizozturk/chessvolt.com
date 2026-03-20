@@ -1,6 +1,5 @@
 "use client";
 
-import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,12 +11,8 @@ import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 import { useStatsStore } from "@/features/home/store/stats-store";
 import { addReward } from "@/features/profile/api/profile";
-import {
-  CHALLENGE_COUNTDOWN_MINUTES,
-  CHALLENGE_COUNTDOWN_SECONDS,
-} from "@/lib/shared/constants/challenge";
-import { calculatePointsFromTime } from "@/lib/utilities/reward";
-import { Calendar, Clock, Flag, Lightbulb, Puzzle } from "lucide-react";
+import { CHALLENGE_SOLVE_REWARD_POINTS } from "@/lib/shared/constants/challenge";
+import { Calendar, Flag, Lightbulb, Puzzle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -63,14 +58,11 @@ export default function RiddleController({
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
   const [earnedPoints, setEarnedPoints] = useState(0);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const startTimeRef = useRef<number>(Date.now());
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
 
   useEffect(() => {
     initLives();
     setHintCount(0);
-    startTimeRef.current = Date.now();
   }, [riddle.id, initLives]);
 
   // ===================================================================
@@ -88,13 +80,8 @@ export default function RiddleController({
     }
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
     if (isCorrect) {
-      const elapsed = (Date.now() - startTimeRef.current) / 1000;
-      const points = calculatePointsFromTime(
-        elapsed,
-        CHALLENGE_COUNTDOWN_SECONDS,
-      );
+      const points = CHALLENGE_SOLVE_REWARD_POINTS;
       await addReward(points).catch(() => {});
-      setElapsedSeconds(Math.round(elapsed));
       setEarnedPoints(points);
       setShowCorrect(true);
       setTimeout(() => {
@@ -107,11 +94,7 @@ export default function RiddleController({
     <div className="container mx-auto max-w-5xl px-8 py-6">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
         <div className="relative min-w-0">
-          <SuccessOverlay
-            show={showCorrect}
-            elapsedSeconds={elapsedSeconds}
-            earnedPoints={earnedPoints}
-          />
+          <SuccessOverlay show={showCorrect} earnedPoints={earnedPoints} />
           <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}
@@ -127,16 +110,6 @@ export default function RiddleController({
           />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="border-border bg-muted/50 flex items-center justify-center gap-6 rounded-lg border p-4">
-            <div className="flex items-center gap-2">
-              <Clock className="text-primary h-5 w-5" />
-              <CountdownTimer
-                minutes={CHALLENGE_COUNTDOWN_MINUTES}
-                className="text-foreground text-2xl font-bold"
-              />
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
               <div

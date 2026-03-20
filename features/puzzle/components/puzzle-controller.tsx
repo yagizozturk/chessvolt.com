@@ -1,21 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 import VoltBoard from "@/components/volt-board/volt-board";
 import { getNextTurnFromFen } from "@/lib/chess/getTurn";
 import { useStatsStore } from "@/features/home/store/stats-store";
 import { useUpdatePuzzleAnswer } from "@/features/puzzle/hooks/use-update-puzzle";
 import { addReward } from "@/features/profile/api/profile";
-import {
-  CHALLENGE_COUNTDOWN_MINUTES,
-  CHALLENGE_COUNTDOWN_SECONDS,
-} from "@/lib/shared/constants/challenge";
-import { calculatePointsFromTime } from "@/lib/utilities/reward";
-import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
+import { CHALLENGE_SOLVE_REWARD_POINTS } from "@/lib/shared/constants/challenge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Flame, Zap, Circle, BarChart3, Tag, Clock } from "lucide-react";
+import { Flame, Zap, Circle, BarChart3, Tag } from "lucide-react";
 
 export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
   const turnText = getNextTurnFromFen(puzzle.fen);
@@ -25,11 +20,9 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
   const setStreak = useStatsStore((state) => state.setStreak);
   const xp = 0;
   const { updatePuzzleAnswerHook } = useUpdatePuzzleAnswer();
-  const startTimeRef = useRef<number>(Date.now());
 
   useEffect(() => {
     initLives();
-    startTimeRef.current = Date.now();
   }, [puzzle.id, initLives]);
 
   const handleSolved = async (isCorrect: boolean) => {
@@ -41,12 +34,7 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
     }
     await updatePuzzleAnswerHook(puzzle.id, isCorrect);
     if (isCorrect) {
-      const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
-      const points = calculatePointsFromTime(
-        elapsedSeconds,
-        CHALLENGE_COUNTDOWN_SECONDS,
-      );
-      await addReward(points).catch(() => {});
+      await addReward(CHALLENGE_SOLVE_REWARD_POINTS).catch(() => {});
     }
   };
 
@@ -69,15 +57,6 @@ export default function PuzzleController({ puzzle }: { puzzle: Puzzle }) {
 
         {/* Right: Stats & Info */}
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="border-border bg-muted/50 flex items-center justify-center gap-6 rounded-lg border p-4">
-            <div className="flex items-center gap-2">
-              <Clock className="text-primary h-5 w-5" />
-              <CountdownTimer
-                minutes={CHALLENGE_COUNTDOWN_MINUTES}
-                className="text-foreground text-2xl font-bold"
-              />
-            </div>
-          </div>
           <div className="grid grid-cols-2 gap-2">
             <div className="border-border bg-muted/50 flex flex-col items-center gap-1 rounded-lg border p-3">
               <Flame className="text-primary h-5 w-5" />

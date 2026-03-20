@@ -1,6 +1,5 @@
 "use client";
 
-import { CountdownTimer } from "@/components/countdown-timer/countdown-timer";
 import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
 import { Button } from "@/components/ui/button";
@@ -10,8 +9,7 @@ import VoltBoard, {
 } from "@/components/volt-board/volt-board";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { CHALLENGE_COUNTDOWN_MINUTES } from "@/lib/shared/constants/challenge";
-import { Clock, Lightbulb, Puzzle } from "lucide-react";
+import { Lightbulb, Puzzle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -44,15 +42,12 @@ export default function OpeningsController({
       : "Black";
   const moveCount = getMoveCount(variant.moves);
   const boardRef = useRef<VoltBoardHandle>(null);
-  const startTimeRef = useRef<number>(Date.now());
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
-  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
 
   useEffect(() => {
     setHintCount(0);
-    startTimeRef.current = Date.now();
   }, [variant.id]);
 
   // ======================================================================
@@ -62,8 +57,6 @@ export default function OpeningsController({
   const handleSolved = async (isCorrect: boolean) => {
     await updateOpeningVariantAnswerHook(variant.id, isCorrect);
     if (isCorrect) {
-      const elapsed = (Date.now() - startTimeRef.current) / 1000;
-      setElapsedSeconds(Math.round(elapsed));
       setShowCorrect(true);
       setTimeout(() => {
         if (nextVariantId) {
@@ -79,7 +72,7 @@ export default function OpeningsController({
     <div className="container mx-auto max-w-5xl px-8 py-6">
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
         <div key={variant.id} className="relative min-w-0">
-          <SuccessOverlay show={showCorrect} elapsedSeconds={elapsedSeconds} />
+          <SuccessOverlay show={showCorrect} />
           <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
@@ -96,17 +89,6 @@ export default function OpeningsController({
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="border-border bg-muted/50 flex items-center justify-center gap-6 rounded-lg border p-4">
-            <div className="flex items-center gap-2">
-              <Clock className="text-primary h-5 w-5" />
-              <CountdownTimer
-                key={variant.id}
-                minutes={CHALLENGE_COUNTDOWN_MINUTES}
-                className="text-foreground text-2xl font-bold"
-              />
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
               <div
