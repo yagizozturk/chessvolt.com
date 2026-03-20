@@ -32,6 +32,7 @@ export type VoltBoardProps = {
   height?: number;
   className?: string;
   viewOnly?: boolean;
+  coordinates?: boolean;
   onSolved?: (isCorrect: boolean) => void;
   onHintUsed?: (hintCount: number) => void;
   onGameStateChange?: (state: {
@@ -56,6 +57,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       height = 620,
       className,
       viewOnly = false,
+      coordinates = true,
       onGameStateChange,
       onSolved,
       onHintUsed,
@@ -163,6 +165,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
         fen: game.current.fen(),
         orientation: initialPlayerOrientation.current,
         viewOnly: viewOnly,
+        coordinates,
         turnColor: game.current.turn() === "w" ? "white" : "black",
         lastMove: lastMoveRef.current ?? undefined,
         movable: {
@@ -205,6 +208,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       ground.current.set({
         fen: game.current.fen(),
         orientation: initialPlayerOrientation.current,
+        coordinates,
         turnColor: game.current.turn() === "w" ? "white" : "black",
         lastMove: lastMoveRef.current ?? undefined,
         movable: {

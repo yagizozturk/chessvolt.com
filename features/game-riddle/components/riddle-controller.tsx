@@ -116,6 +116,7 @@ export default function RiddleController({
             ref={boardRef}
             sourceId={riddle.id}
             mode="riddle"
+            coordinates={true}
             initialFen={riddle.displayFen}
             moves={riddle.moves ?? ""}
             width={600}

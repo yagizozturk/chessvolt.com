@@ -55,6 +55,7 @@ export function OpeningBoardCard({
           height={height}
           className="border-muted rounded-xl border-4"
           viewOnly
+          coordinates={false}
         />
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-2 rounded-lg bg-black/60 opacity-0 transition-opacity duration-200 group-hover/board:opacity-100">
           <div className="bg-primary flex h-14 w-14 items-center justify-center rounded-full">
