@@ -35,11 +35,6 @@ export type VoltBoardProps = {
   coordinates?: boolean;
   onSolved?: (isCorrect: boolean) => void;
   onHintUsed?: (hintCount: number) => void;
-  onGameStateChange?: (state: {
-    from: string;
-    to: string;
-    fen: string;
-  }) => void;
 };
 
 export type VoltBoardHandle = {
@@ -58,7 +53,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       className,
       viewOnly = false,
       coordinates = true,
-      onGameStateChange,
       onSolved,
       onHintUsed,
     } = props;
@@ -286,12 +280,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       updateBoard();
       setStoreFen(game.current.fen());
       analyze(game.current.fen(), 8);
-
-      onGameStateChange?.({
-        from,
-        to,
-        fen: game.current.fen(),
-      });
     }
 
     return (
