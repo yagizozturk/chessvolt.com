@@ -1,8 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,13 +10,20 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Trash2, Save } from "lucide-react";
-import {
-  updateOpeningVariantAction,
-  deleteOpeningVariantAction,
-} from "./actions";
-import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
 import VoltBoard from "@/components/volt-board/volt-board";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import {
+  getSanMovesFromPgn,
+  getUciMovesFromPgnAfterPly,
+} from "@/lib/chess/extractMovesFromPgn";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  deleteOpeningVariantAction,
+  updateOpeningVariantAction,
+} from "./actions";
 
 type Props = {
   variant: OpeningVariant;
@@ -70,8 +74,22 @@ export function VariantDetail({ variant }: Props) {
   const [ply, setPly] = useState(String(variant.ply ?? 0));
   const plyNum = parseInt(ply, 10) >= 0 ? parseInt(ply, 10) : 0;
   const derivedMoves = pgn
-    ? getUciMovesFromPgnAfterPly(pgn, plyNum) ?? variant.moves
+    ? (getUciMovesFromPgnAfterPly(pgn, plyNum) ?? variant.moves)
     : variant.moves;
+
+  const pgnPairedLines = useMemo(() => {
+    const trimmed = pgn.trim();
+    if (!trimmed) return null;
+    const moves = getSanMovesFromPgn(trimmed);
+    if (!moves) return null;
+    const lines: string[] = [];
+    for (let i = 0; i < moves.length; i += 2) {
+      const w = moves[i];
+      const b = moves[i + 1];
+      lines.push(b ? `${w} - ${b}` : w);
+    }
+    return lines;
+  }, [pgn]);
 
   useEffect(() => {
     if (!isEditing) {
@@ -126,8 +144,8 @@ export function VariantDetail({ variant }: Props) {
         <CardContent className="space-y-8">
           <div>
             <p className="text-muted-foreground mb-4 text-sm">
-              Saved positions from the database. FEN edits in the form appear here after
-              you save.
+              Saved positions from the database. FEN edits in the form appear
+              here after you save.
             </p>
             <div className="grid gap-8 sm:grid-cols-2">
               <FenBoardPreview
@@ -160,10 +178,7 @@ export function VariantDetail({ variant }: Props) {
                 </Field>
                 <Field>
                   <FieldLabel>Title</FieldLabel>
-                  <Input
-                    name="title"
-                    defaultValue={variant.title ?? ""}
-                  />
+                  <Input name="title" defaultValue={variant.title ?? ""} />
                 </Field>
                 <Field>
                   <FieldLabel>Description</FieldLabel>
@@ -190,8 +205,13 @@ export function VariantDetail({ variant }: Props) {
                     onChange={(e) => setPgn(e.target.value)}
                     required
                     rows={6}
-                    className="border-input w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-base font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                    className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-base text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
                   />
+                  {pgnPairedLines && pgnPairedLines.length > 0 ? (
+                    <pre className="border-muted bg-muted/20 mt-2 max-h-64 overflow-auto rounded-md border p-3 font-mono text-xs whitespace-pre-wrap">
+                      {pgnPairedLines.join("\n")}
+                    </pre>
+                  ) : null}
                 </Field>
                 <Field>
                   <FieldLabel>Moves (UCI)</FieldLabel>
@@ -244,7 +264,9 @@ export function VariantDetail({ variant }: Props) {
                 <dd>{variant.title ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">Description</dt>
+                <dt className="text-muted-foreground font-medium">
+                  Description
+                </dt>
                 <dd>{variant.description ?? "—"}</dd>
               </div>
               <div>
@@ -253,17 +275,27 @@ export function VariantDetail({ variant }: Props) {
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Moves</dt>
-                <dd className="font-mono break-all text-xs">{variant.moves}</dd>
+                <dd className="font-mono text-xs break-all">{variant.moves}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">PGN</dt>
-                <dd className="font-mono break-all text-xs">{variant.pgn}</dd>
+                <dd className="space-y-2">
+                  {pgnPairedLines && pgnPairedLines.length > 0 ? (
+                    <pre className="font-mono text-xs whitespace-pre-wrap">
+                      {pgnPairedLines.join("\n")}
+                    </pre>
+                  ) : (
+                    <span className="font-mono text-xs break-all">
+                      {variant.pgn || "—"}
+                    </span>
+                  )}
+                </dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">
                   Initial FEN
                 </dt>
-                <dd className="font-mono break-all text-xs">
+                <dd className="font-mono text-xs break-all">
                   {variant.initialFen ?? "—"}
                 </dd>
               </div>
@@ -271,7 +303,7 @@ export function VariantDetail({ variant }: Props) {
                 <dt className="text-muted-foreground font-medium">
                   Display FEN
                 </dt>
-                <dd className="font-mono break-all text-xs">
+                <dd className="font-mono text-xs break-all">
                   {variant.displayFen ?? "—"}
                 </dd>
               </div>

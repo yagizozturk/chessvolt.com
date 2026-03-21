@@ -5,6 +5,20 @@ import { Chess } from "chess.js";
  * @param pgn - Full PGN string
  * @returns Space-separated UCI moves (e.g. "e2e4 e7e5") or null if invalid
  */
+/**
+ * SAN move list from a PGN (one entry per half-move, index 0 = White's first).
+ */
+export function getSanMovesFromPgn(pgn: string): string[] | null {
+  try {
+    const game = new Chess();
+    game.loadPgn(pgn.trim(), { strict: false });
+    const history = game.history();
+    return history.length > 0 ? history : null;
+  } catch {
+    return null;
+  }
+}
+
 export function getUciMovesFromPgn(pgn: string): string | null {
   try {
     const game = new Chess();
