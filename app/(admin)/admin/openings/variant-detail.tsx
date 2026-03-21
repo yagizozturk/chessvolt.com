@@ -19,10 +19,50 @@ import {
   deleteOpeningVariantAction,
 } from "./actions";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
+import VoltBoard from "@/components/volt-board/volt-board";
 
 type Props = {
   variant: OpeningVariant;
 };
+
+function FenBoardPreview({
+  label,
+  fen,
+  sourceId,
+}: {
+  label: string;
+  fen: string | null | undefined;
+  sourceId: string;
+}) {
+  const trimmed = fen?.trim();
+  if (!trimmed) {
+    return (
+      <div className="space-y-2">
+        <p className="text-sm font-medium">{label}</p>
+        <div className="border-muted bg-muted/30 text-muted-foreground flex aspect-square max-h-[320px] max-w-[320px] items-center justify-center rounded-lg border text-sm">
+          —
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="text-sm font-medium">{label}</p>
+      <VoltBoard
+        sourceId={sourceId}
+        mode="opening"
+        initialFen={trimmed}
+        moves=""
+        width={320}
+        height={320}
+        className="border-muted rounded-lg border"
+        viewOnly
+        coordinates
+      />
+    </div>
+  );
+}
 
 export function VariantDetail({ variant }: Props) {
   const [isEditing, setIsEditing] = useState(false);
@@ -83,7 +123,25 @@ export function VariantDetail({ variant }: Props) {
             </Button>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-8">
+          <div>
+            <p className="text-muted-foreground mb-4 text-sm">
+              Saved positions from the database. FEN edits in the form appear here after
+              you save.
+            </p>
+            <div className="grid gap-8 sm:grid-cols-2">
+              <FenBoardPreview
+                label="Initial FEN"
+                fen={variant.initialFen}
+                sourceId={`${variant.id}-admin-initial-fen`}
+              />
+              <FenBoardPreview
+                label="Display FEN"
+                fen={variant.displayFen}
+                sourceId={`${variant.id}-admin-display-fen`}
+              />
+            </div>
+          </div>
           {isEditing ? (
             <form
               action={async (formData) => {
