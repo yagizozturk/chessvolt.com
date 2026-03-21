@@ -204,6 +204,7 @@ export function VariantDetail({ variant }: Props) {
                   <FieldLabel>Sort Key</FieldLabel>
                   <Input
                     name="sortKey"
+                    type="number"
                     defaultValue={variant.sortKey}
                     className="font-mono"
                   />
@@ -292,7 +293,7 @@ export function VariantDetail({ variant }: Props) {
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Sort Key</dt>
-                <dd className="font-mono text-xs">{variant.sortKey || "—"}</dd>
+                <dd className="font-mono text-xs">{variant.sortKey}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Title</dt>

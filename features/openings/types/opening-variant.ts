@@ -1,7 +1,7 @@
 export type OpeningVariant = {
   id: string;
   openingId: string;
-  sortKey: string;
+  sortKey: number;
   title: string | null;
   description: string | null;
   ply: number;

@@ -3,7 +3,7 @@ import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 type DbOpeningVariant = {
   id: string;
   opening_id: string;
-  sort_key: string;
+  sort_key: number;
   title: string | null;
   description: string | null;
   ply: number;

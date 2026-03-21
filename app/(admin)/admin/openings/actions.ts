@@ -18,7 +18,7 @@ import { redirect } from "next/navigation";
 
 type BulkVariantInput = {
   opening_id: string;
-  sort_key: string;
+  sort_key?: number | string;
   title?: string | null;
   pgn: string;
   initial_fen?: string;
@@ -26,6 +26,22 @@ type BulkVariantInput = {
   display_ply?: number;
   description?: string | null;
 };
+
+function parseBulkSortKey(
+  v: unknown,
+): { ok: true; value: number } | { ok: false } {
+  if (v === undefined || v === null) return { ok: true, value: 0 };
+  if (typeof v === "number" && Number.isFinite(v))
+    return { ok: true, value: Math.trunc(v) };
+  if (typeof v === "string") {
+    const t = v.trim();
+    if (t === "") return { ok: true, value: 0 };
+    const n = parseInt(t, 10);
+    if (Number.isNaN(n)) return { ok: false };
+    return { ok: true, value: n };
+  }
+  return { ok: false };
+}
 
 export async function createOpeningVariantAction(formData: FormData) {
   const { supabase } = await getAdminUser();
@@ -35,14 +51,17 @@ export async function createOpeningVariantAction(formData: FormData) {
   const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
-  const sortKey = (formData.get("sortKey") as string)?.trim() ?? "";
+  const sortKey = parseInt(
+    (formData.get("sortKey") as string)?.trim() ?? "",
+    10,
+  );
   const initialFen =
     (formData.get("initialFen") as string)?.trim() ||
     getFenFromPgnAtPly(pgn ?? "", ply >= 0 ? ply : 0) ||
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
   const displayFen = (formData.get("displayFen") as string)?.trim() || null;
 
-  if (!openingId?.trim() || !pgn) {
+  if (!openingId?.trim() || !pgn || Number.isNaN(sortKey)) {
     redirect("/admin/openings/new?error=eksik_alan");
   }
 
@@ -117,9 +136,15 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       getFenFromPgnAtPly(item.pgn.trim(), initialPly) ||
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
+    const sortKeyParsed = parseBulkSortKey(item.sort_key);
+    if (!sortKeyParsed.ok) {
+      errors.push({ index: i, message: "Geçersiz sort_key" });
+      continue;
+    }
+
     const input: CreateOpeningVariantInput = {
       openingId: item.opening_id.trim(),
-      sortKey: (item.sort_key ?? "").toString().trim(),
+      sortKey: sortKeyParsed.value,
       title: item.title?.trim() || null,
       description: item.description?.trim() || null,
       ply: initialPly,
@@ -154,7 +179,7 @@ export async function updateOpeningVariantAction(
 
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
-  const sortKey = (formData.get("sortKey") as string)?.trim();
+  const sortKeyStr = (formData.get("sortKey") as string)?.trim();
   const pgn = (formData.get("pgn") as string)?.trim();
   const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
   const initialFen = (formData.get("initialFen") as string)?.trim() || null;
@@ -163,7 +188,13 @@ export async function updateOpeningVariantAction(
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
   if (description !== undefined) input.description = description;
-  if (sortKey !== undefined) input.sortKey = sortKey;
+  if (sortKeyStr !== undefined && sortKeyStr !== "") {
+    const n = parseInt(sortKeyStr, 10);
+    if (Number.isNaN(n)) {
+      redirect(`/admin/openings/${id}?error=gecersiz_sort_key`);
+    }
+    input.sortKey = n;
+  }
   if (!isNaN(ply) && ply >= 0) input.ply = ply;
   if (pgn) {
     const moves = getUciMovesFromPgnAfterPly(pgn, ply >= 0 ? ply : 0);

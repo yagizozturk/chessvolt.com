@@ -94,7 +94,7 @@ export async function findByOpeningId(
 
 export type CreateOpeningVariantInput = {
   openingId: string;
-  sortKey: string;
+  sortKey: number;
   title?: string | null;
   description?: string | null;
   ply: number;
@@ -133,7 +133,7 @@ export async function create(
 }
 
 export type UpdateOpeningVariantInput = {
-  sortKey?: string;
+  sortKey?: number;
   title?: string | null;
   description?: string | null;
   ply?: number;

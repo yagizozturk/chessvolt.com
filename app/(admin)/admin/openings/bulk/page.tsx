@@ -52,7 +52,7 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
             <pre className="overflow-x-auto whitespace-pre-wrap">
               {`{
   "opening_id": "uuid",
-  "sort_key": "02.01",
+  "sort_key": 201,
   "title": "c5 Line: Queen Check Defense",
   "pgn": "1.d4 d5 2.Nc3 Nf6 3.Bf4 c5 ...",
   "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",

@@ -43,8 +43,9 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
           <FieldLabel>Sort Key</FieldLabel>
           <Input
             name="sortKey"
+            type="number"
             required
-            placeholder="Sıralama için (örn: 001, 002)"
+            placeholder="Sıra numarası (örn: 1, 2)"
             className="font-mono"
           />
         </Field>
