@@ -37,12 +37,22 @@ export function ParentOpeningsList({ openings }: Props) {
           className="border-border flex items-center justify-between rounded-lg border p-4"
         >
           <div className="flex-1">
-            <p className="font-medium">{o.name}</p>
+            <Link
+              href={`/admin/openings/opening/${o.id}`}
+              className="hover:text-primary font-medium transition-colors"
+            >
+              {o.name}
+            </Link>
             {o.description && (
               <p className="text-muted-foreground text-sm">{o.description}</p>
             )}
           </div>
           <div className="flex items-center gap-2">
+            <Link href={`/admin/openings/opening/${o.id}`}>
+              <Button variant="default" size="sm">
+                Variants
+              </Button>
+            </Link>
             <Link href={`/admin/openings/edit/${o.id}`}>
               <Button variant="outline" size="sm">
                 Edit

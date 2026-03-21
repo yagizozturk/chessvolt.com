@@ -10,9 +10,10 @@ import type { Opening } from "@/features/openings/types/opening";
 
 type Props = {
   openings: Opening[];
+  defaultOpeningId?: string;
 };
 
-export function VariantForm({ openings }: Props) {
+export function VariantForm({ openings, defaultOpeningId }: Props) {
   const [pgn, setPgn] = useState("");
   const [ply, setPly] = useState("0");
   const plyNum = parseInt(ply, 10) >= 0 ? parseInt(ply, 10) : 0;
@@ -27,6 +28,7 @@ export function VariantForm({ openings }: Props) {
           <select
             name="openingId"
             required
+            defaultValue={defaultOpeningId ?? ""}
             className="border-input w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
             <option value="">Select opening...</option>

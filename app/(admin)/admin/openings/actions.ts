@@ -7,6 +7,7 @@ import type {
 import {
   createOpeningVariant,
   deleteOpeningVariant,
+  getOpeningVariantById,
   updateOpeningVariant,
 } from "@/features/openings/services/openings.service";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
@@ -68,6 +69,7 @@ export async function createOpeningVariantAction(formData: FormData) {
   }
 
   revalidatePath("/admin/openings");
+  revalidatePath(`/admin/openings/opening/${variant.openingId}`);
   redirect(`/admin/openings/${variant.id}`);
 }
 
@@ -181,17 +183,31 @@ export async function updateOpeningVariantAction(
 
   revalidatePath("/admin/openings");
   revalidatePath(`/admin/openings/${id}`);
+  revalidatePath(`/admin/openings/opening/${variant.openingId}`);
   redirect(`/admin/openings/${id}`);
 }
 
 export async function deleteOpeningVariantAction(id: string): Promise<void> {
   const { supabase } = await getAdminUser();
 
+  const existing = await getOpeningVariantById(supabase, id);
+  const openingId = existing?.openingId;
+
   const ok = await deleteOpeningVariant(supabase, id);
   if (!ok) {
-    redirect("/admin/openings?error=delete_failed");
+    redirect(
+      openingId
+        ? `/admin/openings/opening/${openingId}?error=delete_failed`
+        : "/admin/openings?error=delete_failed",
+    );
   }
 
   revalidatePath("/admin/openings");
-  redirect("/admin/openings");
+  if (openingId) {
+    revalidatePath(`/admin/openings/opening/${openingId}`);
+  }
+  revalidatePath(`/admin/openings/${id}`);
+  redirect(
+    openingId ? `/admin/openings/opening/${openingId}` : "/admin/openings",
+  );
 }

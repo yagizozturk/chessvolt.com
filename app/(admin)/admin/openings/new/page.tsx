@@ -13,9 +13,14 @@ import Link from "next/link";
 
 import { VariantForm } from "../variant-form";
 
-export default async function AdminOpeningsNewPage() {
+type Props = {
+  searchParams: Promise<{ openingId?: string }>;
+};
+
+export default async function AdminOpeningsNewPage({ searchParams }: Props) {
   const { supabase } = await getAdminUser();
   const openings = await getAllOpenings(supabase);
+  const { openingId } = await searchParams;
 
   return (
     <div className="container mx-auto max-w-6xl space-y-6 px-4 py-8">
@@ -48,7 +53,10 @@ export default async function AdminOpeningsNewPage() {
               No openings found. Create openings first in the database.
             </p>
           ) : (
-            <VariantForm openings={openings} />
+            <VariantForm
+              openings={openings}
+              defaultOpeningId={openingId}
+            />
           )}
         </CardContent>
       </Card>

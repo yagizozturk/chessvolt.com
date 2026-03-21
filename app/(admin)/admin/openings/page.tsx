@@ -5,24 +5,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  getAllOpeningVariants,
-  getAllOpenings,
-} from "@/features/openings/services/openings.service";
+import { getAllOpenings } from "@/features/openings/services/openings.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { Plus, Upload } from "lucide-react";
 import Link from "next/link";
 
 import { OpeningForm } from "./opening-form";
-import { OpeningsList } from "./openings-list";
 import { ParentOpeningsList } from "./parent-openings-list";
 
 export default async function AdminOpeningsPage() {
   const { supabase } = await getAdminUser();
-  const [openings, variants] = await Promise.all([
-    getAllOpenings(supabase),
-    getAllOpeningVariants(supabase),
-  ]);
+  const openings = await getAllOpenings(supabase);
 
   return (
     <div className="container mx-auto max-w-6xl space-y-8 px-4 py-8">
@@ -49,39 +42,33 @@ export default async function AdminOpeningsPage() {
           </CardContent>
         </Card>
         <div className="mt-4">
+          <p className="text-muted-foreground mb-3 text-sm">
+            Open an opening to manage its variants.
+          </p>
           <ParentOpeningsList openings={openings} />
         </div>
       </section>
 
-      {/* Opening Variants */}
-      <section>
-        <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-xl font-bold tracking-tight">
-              Opening Variants
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              {variants.length} variant(s) listed
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/admin/openings/bulk"
-              className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors"
-            >
-              <Upload className="h-4 w-4" />
-              Toplu Variant
-            </Link>
-            <Link
-              href="/admin/openings/new"
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              New Variant
-            </Link>
-          </div>
+      <section className="border-border flex flex-wrap items-center gap-4 rounded-lg border p-4">
+        <p className="text-muted-foreground text-sm">
+          Global variant tools (pick opening inside the form):
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/admin/openings/bulk"
+            className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors"
+          >
+            <Upload className="h-4 w-4" />
+            Toplu Variant
+          </Link>
+          <Link
+            href="/admin/openings/new"
+            className="flex items-center gap-2 text-sm font-medium"
+          >
+            <Plus className="h-4 w-4" />
+            New Variant
+          </Link>
         </div>
-        <OpeningsList variants={variants} />
       </section>
     </div>
   );

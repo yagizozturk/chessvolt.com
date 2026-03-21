@@ -7,9 +7,14 @@ import { Button } from "@/components/ui/button";
 
 type Props = {
   variants: OpeningVariant[];
+  /** When false, hide parent opening UUID (e.g. on a single-opening variants page). */
+  showOpeningParentId?: boolean;
 };
 
-export function OpeningsList({ variants }: Props) {
+export function OpeningsList({
+  variants,
+  showOpeningParentId = true,
+}: Props) {
   async function handleDelete(id: string) {
     if (!confirm("This variant will be deleted. Are you sure?")) return;
     await deleteOpeningVariantAction(id);
@@ -37,8 +42,12 @@ export function OpeningsList({ variants }: Props) {
             <p className="font-medium">
               {v.title || "Untitled Variant"}
             </p>
-            {v.openingId && (
+            {showOpeningParentId && v.openingId ? (
               <p className="text-muted-foreground text-sm">{v.openingId}</p>
+            ) : (
+              <p className="text-muted-foreground font-mono text-sm">
+                {v.sortKey}
+              </p>
             )}
           </Link>
           <Button
