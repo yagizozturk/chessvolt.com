@@ -9,6 +9,7 @@ import VoltBoard, {
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { getCommentsAndFensFromPgn } from "@/lib/chess/getCommentFromPgnAtPly";
+import { highlightPgnCommentSpans } from "@/lib/chess/highlight-pgn-comment";
 import type { PgnCommentRow } from "@/lib/shared/types/pgn-comment";
 import { Lightbulb, Puzzle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -155,13 +156,9 @@ export default function OpeningsController({
           <Card>
             <CardHeader className="min-w-0">
               <CardTitle className="text-base">Not</CardTitle>
-              {activeComment ? (
+              {activeComment && (
                 <p className="text-muted-foreground pt-1 text-sm leading-relaxed">
-                  {activeComment}
-                </p>
-              ) : (
-                <p className="text-muted-foreground pt-1 text-sm">
-                  Bu hamle için PGN’de yorum yok veya henüz hamle yok.
+                  {highlightPgnCommentSpans(activeComment)}
                 </p>
               )}
             </CardHeader>
