@@ -1,10 +1,18 @@
 import { Chess } from "chess.js";
 
-/**
- * Extracts all moves from a PGN string in UCI format.
- * @param pgn - Full PGN string
- * @returns Space-separated UCI moves (e.g. "e2e4 e7e5") or null if invalid
- */
+export type PgnPairedRow = {
+  whiteSan: string;
+  blackSan?: string;
+  whiteComment?: string;
+  blackComment?: string;
+};
+
+export type PgnPairedDisplay = {
+  /** `{...}` yorumu başlangıç pozisyonunda (ilk hamleden önce) */
+  startComment?: string;
+  rows: PgnPairedRow[];
+};
+
 /**
  * SAN move list from a PGN (one entry per half-move, index 0 = White's first).
  */
@@ -14,6 +22,63 @@ export function getSanMovesFromPgn(pgn: string): string[] | null {
     game.loadPgn(pgn.trim(), { strict: false });
     const history = game.history();
     return history.length > 0 ? history : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Beyaz–siyah satırları ve chess.js’in PGN `{...}` yorumlarını (hamle sonrası FEN’e göre) eşler.
+ */
+export function getPairedPgnDisplayFromPgn(pgn: string): PgnPairedDisplay | null {
+  const trimmed = pgn.trim();
+  if (!trimmed) return null;
+  try {
+    const game = new Chess();
+    game.loadPgn(trimmed, { strict: false });
+    const history = game.history();
+
+    const fenToComment = new Map<string, string>();
+    for (const { fen, comment } of game.getComments()) {
+      const c = comment.trim();
+      if (!c) continue;
+      fenToComment.set(
+        fen,
+        fenToComment.has(fen) ? `${fenToComment.get(fen)!}\n${c}` : c,
+      );
+    }
+
+    while (game.undo()) {}
+
+    const startComment = fenToComment.get(game.fen());
+
+    const commentsAfterPly: (string | undefined)[] = [];
+    for (const san of history) {
+      game.move(san);
+      commentsAfterPly.push(fenToComment.get(game.fen()));
+    }
+
+    const rows: PgnPairedRow[] = [];
+    for (let i = 0; i < history.length; i += 2) {
+      const whiteSan = history[i];
+      const blackSan = history[i + 1];
+      const whiteComment = commentsAfterPly[i];
+      const blackComment =
+        blackSan !== undefined ? commentsAfterPly[i + 1] : undefined;
+      rows.push({
+        whiteSan,
+        ...(blackSan !== undefined ? { blackSan } : {}),
+        ...(whiteComment ? { whiteComment } : {}),
+        ...(blackComment ? { blackComment } : {}),
+      });
+    }
+
+    if (rows.length === 0 && !startComment) return null;
+
+    return {
+      ...(startComment ? { startComment } : {}),
+      rows,
+    };
   } catch {
     return null;
   }

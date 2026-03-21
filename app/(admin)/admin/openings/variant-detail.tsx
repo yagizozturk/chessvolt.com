@@ -13,9 +13,11 @@ import { Input } from "@/components/ui/input";
 import VoltBoard from "@/components/volt-board/volt-board";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import {
-  getSanMovesFromPgn,
+  getPairedPgnDisplayFromPgn,
+  type PgnPairedDisplay,
   getUciMovesFromPgnAfterPly,
 } from "@/lib/chess/extractMovesFromPgn";
+import { cn } from "@/lib/utilities/cn";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -28,6 +30,41 @@ import {
 type Props = {
   variant: OpeningVariant;
 };
+
+function PgnPairedBlock({
+  display,
+  className,
+}: {
+  display: PgnPairedDisplay;
+  className?: string;
+}) {
+  return (
+    <div className={cn("space-y-3", className)}>
+      {display.startComment ? (
+        <p className="text-muted-foreground border-muted border-l-2 pl-2 text-xs whitespace-pre-wrap">
+          {display.startComment}
+        </p>
+      ) : null}
+      {display.rows.map((row, i) => (
+        <div key={i} className="space-y-1">
+          <p className="font-mono text-xs">
+            {row.blackSan ? `${row.whiteSan} - ${row.blackSan}` : row.whiteSan}
+          </p>
+          {row.whiteComment || row.blackComment ? (
+            <div className="text-muted-foreground border-muted space-y-1 border-l-2 pl-2 text-xs">
+              {row.whiteComment ? (
+                <p className="whitespace-pre-wrap">{row.whiteComment}</p>
+              ) : null}
+              {row.blackComment ? (
+                <p className="whitespace-pre-wrap">{row.blackComment}</p>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function FenBoardPreview({
   label,
@@ -77,19 +114,10 @@ export function VariantDetail({ variant }: Props) {
     ? (getUciMovesFromPgnAfterPly(pgn, plyNum) ?? variant.moves)
     : variant.moves;
 
-  const pgnPairedLines = useMemo(() => {
-    const trimmed = pgn.trim();
-    if (!trimmed) return null;
-    const moves = getSanMovesFromPgn(trimmed);
-    if (!moves) return null;
-    const lines: string[] = [];
-    for (let i = 0; i < moves.length; i += 2) {
-      const w = moves[i];
-      const b = moves[i + 1];
-      lines.push(b ? `${w} - ${b}` : w);
-    }
-    return lines;
-  }, [pgn]);
+  const pgnPairedDisplay = useMemo(
+    () => getPairedPgnDisplayFromPgn(pgn.trim()),
+    [pgn],
+  );
 
   useEffect(() => {
     if (!isEditing) {
@@ -207,10 +235,13 @@ export function VariantDetail({ variant }: Props) {
                     rows={6}
                     className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-base text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
                   />
-                  {pgnPairedLines && pgnPairedLines.length > 0 ? (
-                    <pre className="border-muted bg-muted/20 mt-2 max-h-64 overflow-auto rounded-md border p-3 font-mono text-xs whitespace-pre-wrap">
-                      {pgnPairedLines.join("\n")}
-                    </pre>
+                  {pgnPairedDisplay &&
+                  (pgnPairedDisplay.rows.length > 0 ||
+                    pgnPairedDisplay.startComment) ? (
+                    <PgnPairedBlock
+                      display={pgnPairedDisplay}
+                      className="border-muted bg-muted/20 mt-2 max-h-64 overflow-auto rounded-md border p-3"
+                    />
                   ) : null}
                 </Field>
                 <Field>
@@ -280,10 +311,10 @@ export function VariantDetail({ variant }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">PGN</dt>
                 <dd className="space-y-2">
-                  {pgnPairedLines && pgnPairedLines.length > 0 ? (
-                    <pre className="font-mono text-xs whitespace-pre-wrap">
-                      {pgnPairedLines.join("\n")}
-                    </pre>
+                  {pgnPairedDisplay &&
+                  (pgnPairedDisplay.rows.length > 0 ||
+                    pgnPairedDisplay.startComment) ? (
+                    <PgnPairedBlock display={pgnPairedDisplay} />
                   ) : (
                     <span className="font-mono text-xs break-all">
                       {variant.pgn || "—"}
