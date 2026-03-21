@@ -1,6 +1,5 @@
 "use client";
 
-import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,9 +8,11 @@ import VoltBoard, {
 } from "@/components/volt-board/volt-board";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import { getCommentsAndFensFromPgn } from "@/lib/chess/getCommentFromPgnAtPly";
+import type { PgnCommentRow } from "@/lib/shared/types/pgn-comment";
 import { Lightbulb, Puzzle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 function getMoveCount(moves: string | null): number {
   if (!moves?.trim()) return 0;
@@ -27,13 +28,11 @@ export default function OpeningsController({
   openingName,
   nextVariantId,
   parentOpeningUrl = "/openings",
-  progressPercentage = 0,
 }: {
   variant: OpeningVariant;
   openingName?: string;
   nextVariantId?: string | null;
   parentOpeningUrl?: string;
-  progressPercentage?: number;
 }) {
   const router = useRouter();
   const turn =
@@ -44,11 +43,19 @@ export default function OpeningsController({
   const boardRef = useRef<VoltBoardHandle>(null);
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
+  const [activeComment, setActiveComment] = useState<string | null>(null);
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
+  // useMemo sayfa her render olduğunda karmaşık işlem tekrar yapılmasın die sonucu memory de tutar
+  // PgnCommentRow hem o movedaki FEN durumunu hem de commenti içerir. Chess.js getComments() default bunları döner.
+  const pgnComments: PgnCommentRow[] = useMemo(
+    () => getCommentsAndFensFromPgn(variant.pgn),
+    [variant.pgn, variant.id],
+  );
 
   useEffect(() => {
     setHintCount(0);
-  }, [variant.id]);
+    setActiveComment(pgnComments[0]?.comment ?? null);
+  }, [variant.id, pgnComments]);
 
   // ======================================================================
   // If there is another unsolved variant, go to that page
@@ -68,6 +75,18 @@ export default function OpeningsController({
     }
   };
 
+  const handlePlayerMovePlayed = (actualFen: string) => {
+    setActiveComment(
+      pgnComments.find((comment) => comment.fen === actualFen)?.comment ?? null,
+    );
+  };
+
+  const handleOpponentMovePlayed = (actualFen: string) => {
+    setActiveComment(
+      pgnComments.find((comment) => comment.fen === actualFen)?.comment ?? null,
+    );
+  };
+
   return (
     <div className="container mx-auto max-w-5xl px-8 py-6">
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
@@ -83,6 +102,8 @@ export default function OpeningsController({
             height={600}
             className="border-muted rounded-xl border-4"
             viewOnly={false}
+            onPlayerMovePlayed={handlePlayerMovePlayed}
+            onOpponentMovePlayed={handleOpponentMovePlayed}
             onSolved={handleSolved}
             onHintUsed={setHintCount}
           />
@@ -118,12 +139,6 @@ export default function OpeningsController({
             )}
           </div>
 
-          <ProgressStatsCard
-            percentage={progressPercentage}
-            label="Solved variants"
-            className="w-full"
-          />
-
           <Card>
             <CardHeader className="min-w-0 overflow-hidden">
               <CardTitle className="text-2xl font-bold break-words">
@@ -132,6 +147,21 @@ export default function OpeningsController({
               {openingName && (
                 <p className="text-muted-foreground pt-2 text-sm">
                   {openingName}
+                </p>
+              )}
+            </CardHeader>
+          </Card>
+
+          <Card>
+            <CardHeader className="min-w-0">
+              <CardTitle className="text-base">Not</CardTitle>
+              {activeComment ? (
+                <p className="text-muted-foreground pt-1 text-sm leading-relaxed">
+                  {activeComment}
+                </p>
+              ) : (
+                <p className="text-muted-foreground pt-1 text-sm">
+                  Bu hamle için PGN’de yorum yok veya henüz hamle yok.
                 </p>
               )}
             </CardHeader>
