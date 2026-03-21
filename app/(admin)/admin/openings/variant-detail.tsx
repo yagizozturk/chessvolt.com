@@ -13,8 +13,8 @@ import { Input } from "@/components/ui/input";
 import VoltBoard from "@/components/volt-board/volt-board";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import {
-  getPairedPgnDisplayFromPgn,
   type PgnPairedDisplay,
+  getPairedPgnDisplayFromPgn,
   getUciMovesFromPgnAfterPly,
 } from "@/lib/chess/extractMovesFromPgn";
 import { cn } from "@/lib/utilities/cn";
@@ -83,6 +83,7 @@ function FenBoardPreview({
         <div className="border-muted bg-muted/30 text-muted-foreground flex aspect-square max-h-[320px] max-w-[320px] items-center justify-center rounded-lg border text-sm">
           —
         </div>
+        <p className="text-muted-foreground font-mono text-xs break-all">—</p>
       </div>
     );
   }
@@ -97,10 +98,13 @@ function FenBoardPreview({
         moves=""
         width={320}
         height={320}
+        coordinates={false}
         className="border-muted rounded-lg border"
         viewOnly
-        coordinates
       />
+      <p className="text-muted-foreground font-mono text-xs break-all">
+        {trimmed}
+      </p>
     </div>
   );
 }
@@ -320,22 +324,6 @@ export function VariantDetail({ variant }: Props) {
                       {variant.pgn || "—"}
                     </span>
                   )}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground font-medium">
-                  Initial FEN
-                </dt>
-                <dd className="font-mono text-xs break-all">
-                  {variant.initialFen ?? "—"}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground font-medium">
-                  Display FEN
-                </dt>
-                <dd className="font-mono text-xs break-all">
-                  {variant.displayFen ?? "—"}
                 </dd>
               </div>
               <div>

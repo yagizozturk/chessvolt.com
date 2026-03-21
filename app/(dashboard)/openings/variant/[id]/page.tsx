@@ -1,11 +1,10 @@
 import OpeningsController from "@/features/openings/components/openings-controller";
 import {
-  getCorrectlySolvedVariantIds,
   getOpeningById,
   getOpeningVariantById,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
-import { getPublicUser } from "@/lib/supabase/auth";
+import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 
 type Params = {
@@ -24,7 +23,7 @@ type Params = {
  */
 export default async function OpeningVariantPage({ params }: Params) {
   const { id } = await params;
-  const { user, supabase } = await getPublicUser();
+  const supabase = await createClient();
   const variant = await getOpeningVariantById(supabase, id);
 
   if (!variant) {
@@ -39,7 +38,6 @@ export default async function OpeningVariantPage({ params }: Params) {
     supabase,
     variant.openingId,
   );
-  const variantIds = variants.map((v) => v.id);
 
   // ======================================================================
   // 3. Get the next variant
@@ -51,14 +49,6 @@ export default async function OpeningVariantPage({ params }: Params) {
       : null;
 
   // ======================================================================
-  // 4. Get the solved variant ids for the user
-  // Eğer giriş yapmamışsa solvedVariantIds boş set olacak.
-  // ======================================================================
-  const solvedVariantIds = user
-    ? await getCorrectlySolvedVariantIds(supabase, user.id, variantIds)
-    : new Set<string>();
-
-  // ======================================================================
   // 5. Get the opening
   // Get the return URL and progress stats
   // ======================================================================
@@ -68,18 +58,12 @@ export default async function OpeningVariantPage({ params }: Params) {
       ? `/openings/${opening.slug}/${opening.id}`
       : "/openings";
 
-  const progressPercentage =
-    variants.length > 0
-      ? Math.round((solvedVariantIds.size / variants.length) * 100)
-      : 0;
-
   return (
     <OpeningsController
       variant={variant}
       openingName={opening?.name ?? "Opening"}
       nextVariantId={nextVariant?.id ?? null}
       parentOpeningUrl={parentOpeningUrl}
-      progressPercentage={progressPercentage}
     />
   );
 }
