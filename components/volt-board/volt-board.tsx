@@ -265,6 +265,8 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       lastMoveRef.current = [from as Key, to as Key];
       playCorrectSound();
       ground.current?.setAutoShapes([]);
+      hintCountRef.current = 0;
+      onHintUsed?.(0);
       handleStepChange();
       updateBoard();
       setStoreFen(game.current.fen());
