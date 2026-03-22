@@ -153,16 +153,16 @@ export default function OpeningsController({
             </CardHeader>
           </Card>
 
-          <Card>
-            <CardHeader className="min-w-0">
-              <CardTitle className="text-base">Not</CardTitle>
-              {activeComment && (
+          {activeComment?.trim() ? (
+            <Card>
+              <CardHeader className="min-w-0">
+                <CardTitle className="text-base">Note</CardTitle>
                 <p className="text-muted-foreground pt-1 text-sm leading-relaxed">
-                  {highlightPgnCommentSpans(activeComment)}
+                  {highlightPgnCommentSpans(activeComment.trim())}
                 </p>
-              )}
-            </CardHeader>
-          </Card>
+              </CardHeader>
+            </Card>
+          ) : null}
 
           <Button
             variant="default"
