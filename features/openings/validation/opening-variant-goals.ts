@@ -11,7 +11,8 @@ export function isOpeningVariantGoal(
     typeof o.move === "string" &&
     typeof o.card === "string" &&
     typeof o.title === "string" &&
-    typeof o.description === "string"
+    typeof o.description === "string" &&
+    typeof o.isCompleted === "boolean"
   );
 }
 

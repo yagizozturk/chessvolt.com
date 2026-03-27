@@ -1,7 +1,6 @@
 "use client";
 
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +18,8 @@ import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { getCommentsAndFensFromPgn } from "@/lib/chess/getCommentFromPgnAtPly";
 import { highlightPgnCommentSpans } from "@/lib/chess/highlight-pgn-comment";
 import type { PgnCommentRow } from "@/lib/shared/types/pgn-comment";
-import { Lightbulb, Puzzle, Target } from "lucide-react";
+import { cn } from "@/lib/utilities/cn";
+import { CheckCircle2, Circle, Lightbulb, Puzzle, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -34,12 +34,10 @@ function getMoveCount(moves: string | null): number {
 
 export default function OpeningsController({
   variant,
-  openingName,
   nextVariantId,
   parentOpeningUrl = "/openings",
 }: {
   variant: OpeningVariant;
-  openingName?: string;
   nextVariantId?: string | null;
   parentOpeningUrl?: string;
 }) {
@@ -154,19 +152,6 @@ export default function OpeningsController({
             )}
           </div>
 
-          <Card>
-            <CardHeader className="min-w-0 overflow-hidden">
-              <CardTitle className="text-2xl font-bold break-words">
-                {variant.title || "Untitled Variant"}
-              </CardTitle>
-              {openingName && (
-                <p className="text-muted-foreground pt-2 text-sm">
-                  {openingName}
-                </p>
-              )}
-            </CardHeader>
-          </Card>
-
           {sortedGoals.length > 0 ? (
             <Card>
               <CardHeader className="pb-2">
@@ -186,18 +171,32 @@ export default function OpeningsController({
                 {sortedGoals.map((goal, index) => (
                   <div key={`${goal.sort_key}-${index}`}>
                     {index > 0 ? (
-                      <Separator className="my-4 bg-border/80" />
+                      <Separator className="bg-border/80 my-4" />
                     ) : null}
                     <div className="flex gap-3">
-                      <Badge
-                        variant="outline"
-                        className="mt-0.5 h-6 min-w-6 shrink-0 justify-center px-2 font-mono text-xs tabular-nums"
+                      <div
+                        className="text-muted-foreground mt-0.5 shrink-0"
+                        aria-hidden
                       >
-                        {goal.sort_key}
-                      </Badge>
-                      <div className="min-w-0 space-y-1.5">
+                        {goal.isCompleted ? (
+                          <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-500" />
+                        ) : (
+                          <Circle className="h-4 w-4" />
+                        )}
+                      </div>
+                      <div
+                        className={cn(
+                          "min-w-0 space-y-1.5",
+                          goal.isCompleted && "opacity-80",
+                        )}
+                      >
                         <div className="flex flex-wrap items-baseline gap-2">
-                          <p className="text-sm font-semibold leading-snug">
+                          <p
+                            className={cn(
+                              "text-sm leading-snug font-semibold",
+                              goal.isCompleted && "text-muted-foreground",
+                            )}
+                          >
                             {goal.title}
                           </p>
                           {goal.move.trim() ? (
@@ -206,11 +205,6 @@ export default function OpeningsController({
                             </span>
                           ) : null}
                         </div>
-                        {goal.card.trim() ? (
-                          <p className="text-muted-foreground text-xs font-medium leading-snug">
-                            {goal.card.trim()}
-                          </p>
-                        ) : null}
                         <p className="text-muted-foreground text-sm leading-relaxed">
                           {goal.description}
                         </p>

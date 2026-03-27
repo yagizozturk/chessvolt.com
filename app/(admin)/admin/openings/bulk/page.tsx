@@ -55,6 +55,10 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
             <code className="bg-muted rounded px-1 py-0.5 text-xs">title</code>,{" "}
             <code className="bg-muted rounded px-1 py-0.5 text-xs">
               description
+            </code>
+            ,{" "}
+            <code className="bg-muted rounded px-1 py-0.5 text-xs">
+              isCompleted
             </code>{" "}
             zorunlu. Atlanırsa veya{" "}
             <code className="bg-muted rounded px-1 py-0.5 text-xs">null</code>{" "}
@@ -80,14 +84,16 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
       "move": "c3",
       "card": "Pawn structure",
       "title": "Build the Pawn Pyramid",
-      "description": "Construct the solid c3-d4-e3 chain."
+      "description": "Construct the solid c3-d4-e3 chain.",
+      "isCompleted": false
     },
     {
       "sort_key": 2,
       "move": "Bf4",
       "card": "Development",
       "title": "The London Bishop (Bf4)",
-      "description": "Develop the dark-squared bishop to f4 early."
+      "description": "Develop the dark-squared bishop to f4 early.",
+      "isCompleted": false
     }
   ]
 }`}

@@ -5,6 +5,7 @@ export type OpeningVariantGoal = {
   card: string;
   title: string;
   description: string;
+  isCompleted: boolean;
 };
 
 export type OpeningVariant = {

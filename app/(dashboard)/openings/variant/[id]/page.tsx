@@ -61,7 +61,6 @@ export default async function OpeningVariantPage({ params }: Params) {
   return (
     <OpeningsController
       variant={variant}
-      openingName={opening?.name ?? "Opening"}
       nextVariantId={nextVariant?.id ?? null}
       parentOpeningUrl={parentOpeningUrl}
     />

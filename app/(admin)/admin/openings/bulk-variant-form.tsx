@@ -15,8 +15,8 @@ const EXAMPLE_JSON = `{
   "display_ply": 4,
   "description": "Black attempts a disruptive check, but White's attack is too strong.",
   "goals": [
-    { "sort_key": 1, "move": "d4", "card": "Center", "title": "Build the center", "description": "Solid pawn structure." },
-    { "sort_key": 2, "move": "Nf3", "card": "Development", "title": "Piece activity", "description": "Coordinate pieces toward the king." }
+    { "sort_key": 1, "move": "d4", "card": "Center", "title": "Build the center", "description": "Solid pawn structure.", "isCompleted": false },
+    { "sort_key": 2, "move": "Nf3", "card": "Development", "title": "Piece activity", "description": "Coordinate pieces toward the king.", "isCompleted": false }
   ]
 }`;
 
