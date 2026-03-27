@@ -7,7 +7,10 @@ import VoltBoard, {
   type VoltBoardHandle,
 } from "@/components/volt-board/volt-board";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
-import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import type {
+  OpeningVariant,
+  OpeningVariantGoal,
+} from "@/features/openings/types/opening-variant";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getFenFromPgnAtPly";
 import { cn } from "@/lib/utilities/cn";
 import { Check, CheckCircle2, Circle, Lightbulb, Target } from "lucide-react";
@@ -38,11 +41,8 @@ export default function OpeningsController({
     return [...g].sort((a, b) => a.ply - b.ply);
   }, [variant.goals]);
 
-  /** Sadece bir sonraki hamlenin ply’sindeki hedef: goal.ply === activePly + 1 */
-  const goalsMatchingActivePly = useMemo(() => {
-    if (activePly == null) return [];
-    return sortedGoals.filter((g) => g.ply === activePly + 1);
-  }, [sortedGoals, activePly]);
+  const isHighlightedGoal = (goal: OpeningVariantGoal) =>
+    activePly != null && goal.ply === activePly + 1;
 
   useEffect(() => {
     setHintCount(0);
@@ -106,69 +106,71 @@ export default function OpeningsController({
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
-          {goalsMatchingActivePly.map((goal, index) => (
-            <Card key={goal.ply}>
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
-                    <Target className="h-4 w-4" aria-hidden />
-                  </div>
-                  <div className="min-w-0">
-                    <CardTitle className="flex flex-wrap items-center gap-x-2 gap-y-1 text-lg">
-                      <span className="flex items-center gap-2">
-                        Goal {index + 1}
-                      </span>
-                      {lastUserUci === goal.move ? (
-                        <span
-                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 text-white shadow-md ring-2 shadow-emerald-500/35 ring-emerald-300/60 dark:from-emerald-500 dark:via-emerald-600 dark:to-teal-700 dark:shadow-emerald-900/50 dark:ring-emerald-400/40"
-                          aria-hidden
+          <div className="flex flex-col gap-2">
+            {sortedGoals.map((goal, index) => {
+              const highlighted = isHighlightedGoal(goal);
+
+              if (highlighted) {
+                return (
+                  <Card
+                    key={goal.ply}
+                    className="border-primary/35 ring-primary/15 shadow-md ring-2"
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
+                          <Target className="h-4 w-4" aria-hidden />
+                        </div>
+                        <div className="min-w-0">
+                          <CardTitle className="flex flex-wrap items-center gap-x-2 gap-y-1 text-lg">
+                            <span className="flex min-w-0 flex-wrap items-baseline gap-2">
+                              <span className="min-w-0">{goal.title}</span>
+                            </span>
+                            {lastUserUci === goal.move ? (
+                              <span
+                                className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 text-white shadow-md ring-2 shadow-emerald-500/35 ring-emerald-300/60 dark:from-emerald-500 dark:via-emerald-600 dark:to-teal-700 dark:shadow-emerald-900/50 dark:ring-emerald-400/40"
+                                aria-hidden
+                              >
+                                <Check
+                                  className="h-4 w-4 drop-shadow-sm"
+                                  strokeWidth={2.75}
+                                />
+                              </span>
+                            ) : null}
+                          </CardTitle>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-0 pt-0">
+                      <div className="flex gap-3">
+                        <div
+                          className={cn(
+                            "min-w-0 space-y-1.5",
+                            goal.isCompleted && "opacity-80",
+                          )}
                         >
-                          <Check
-                            className="h-4 w-4 drop-shadow-sm"
-                            strokeWidth={2.75}
-                          />
-                        </span>
-                      ) : null}
-                    </CardTitle>
-                  </div>
+                          <p className="text-muted-foreground text-sm leading-relaxed">
+                            {goal.description}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              }
+
+              return (
+                <div
+                  key={goal.ply}
+                  className="bg-muted/35 flex min-h-10 items-center justify-between gap-2 rounded-lg border px-3 py-2"
+                >
+                  <span className="min-w-0 truncate text-sm font-medium">
+                    Goal {index + 1}: {goal.title}
+                  </span>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-0 pt-0">
-                <div className="flex gap-3">
-                  <div
-                    className="text-muted-foreground mt-0.5 shrink-0"
-                    aria-hidden
-                  >
-                    {goal.isCompleted ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-500" />
-                    ) : (
-                      <Circle className="h-4 w-4" />
-                    )}
-                  </div>
-                  <div
-                    className={cn(
-                      "min-w-0 space-y-1.5",
-                      goal.isCompleted && "opacity-80",
-                    )}
-                  >
-                    <div className="flex flex-wrap items-baseline gap-2">
-                      <p
-                        className={cn(
-                          "text-sm leading-snug font-semibold",
-                          goal.isCompleted && "text-muted-foreground",
-                        )}
-                      >
-                        {goal.title}
-                      </p>
-                    </div>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {goal.description}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+              );
+            })}
+          </div>
 
           <Button
             variant="default"
