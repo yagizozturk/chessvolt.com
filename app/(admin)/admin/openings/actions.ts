@@ -4,6 +4,8 @@ import type {
   CreateOpeningVariantInput,
   UpdateOpeningVariantInput,
 } from "@/features/openings/repository/opening-variant.repository";
+import type { OpeningVariantGoal } from "@/features/openings/types/opening-variant";
+import { isOpeningVariantGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 import {
   createOpeningVariant,
   deleteOpeningVariant,
@@ -25,7 +27,26 @@ type BulkVariantInput = {
   initial_ply?: number;
   display_ply?: number;
   description?: string | null;
+  goals?: unknown;
 };
+
+function parseGoalsFromForm(
+  formData: FormData,
+  errorRedirect: string,
+): OpeningVariantGoal[] | null {
+  const raw = formData.get("goals");
+  if (raw === null) return null;
+  const str = typeof raw === "string" ? raw.trim() : "";
+  if (str === "") return null;
+  try {
+    const parsed = JSON.parse(str) as unknown;
+    if (parsed === null) return null;
+    if (!isOpeningVariantGoalsArray(parsed)) redirect(errorRedirect);
+    return parsed;
+  } catch {
+    redirect(errorRedirect);
+  }
+}
 
 function parseBulkSortKey(
   v: unknown,
@@ -60,6 +81,10 @@ export async function createOpeningVariantAction(formData: FormData) {
     getFenFromPgnAtPly(pgn ?? "", ply >= 0 ? ply : 0) ||
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
   const displayFen = (formData.get("displayFen") as string)?.trim() || null;
+  const goals = parseGoalsFromForm(
+    formData,
+    "/admin/openings/new?error=gecersiz_goals_json",
+  );
 
   if (!openingId?.trim() || !pgn || Number.isNaN(sortKey)) {
     redirect("/admin/openings/new?error=eksik_alan");
@@ -80,6 +105,7 @@ export async function createOpeningVariantAction(formData: FormData) {
     pgn,
     initialFen,
     displayFen,
+    goals,
   };
 
   const variant = await createOpeningVariant(supabase, input);
@@ -142,6 +168,23 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       continue;
     }
 
+    let goals: OpeningVariantGoal[] | null | undefined;
+    if ("goals" in item) {
+      const g = item.goals;
+      if (g === null) {
+        goals = null;
+      } else if (isOpeningVariantGoalsArray(g)) {
+        goals = g;
+      } else {
+        errors.push({
+          index: i,
+          message:
+            "goals null veya { sort_key, move, card, title, description }[] olmalıdır",
+        });
+        continue;
+      }
+    }
+
     const input: CreateOpeningVariantInput = {
       openingId: item.opening_id.trim(),
       sortKey: sortKeyParsed.value,
@@ -152,6 +195,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       pgn: item.pgn.trim(),
       initialFen,
       displayFen,
+      ...(goals !== undefined ? { goals } : {}),
     };
 
     const variant = await createOpeningVariant(supabase, input);
@@ -184,6 +228,10 @@ export async function updateOpeningVariantAction(
   const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
   const initialFen = (formData.get("initialFen") as string)?.trim() || null;
   const displayFen = (formData.get("displayFen") as string)?.trim() || null;
+  const goals = parseGoalsFromForm(
+    formData,
+    `/admin/openings/${id}?error=gecersiz_goals_json`,
+  );
 
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
@@ -206,6 +254,7 @@ export async function updateOpeningVariantAction(
   }
   if (initialFen) input.initialFen = initialFen; // only when non-empty (initial_fen is NOT NULL)
   if (displayFen !== undefined) input.displayFen = displayFen;
+  input.goals = goals;
 
   const variant = await updateOpeningVariant(supabase, id, input);
   if (!variant) {

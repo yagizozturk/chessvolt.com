@@ -273,6 +273,19 @@ export function VariantDetail({ variant }: Props) {
                     className="font-mono text-sm"
                   />
                 </Field>
+                <Field>
+                  <FieldLabel>Goals (JSON)</FieldLabel>
+                  <textarea
+                    name="goals"
+                    rows={6}
+                    defaultValue={
+                      variant.goals != null
+                        ? JSON.stringify(variant.goals, null, 2)
+                        : ""
+                    }
+                    className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                  />
+                </Field>
               </FieldGroup>
               <Button type="submit">
                 <Save className="h-4 w-4" />
@@ -324,6 +337,18 @@ export function VariantDetail({ variant }: Props) {
                     <span className="font-mono text-xs break-all">
                       {variant.pgn || "—"}
                     </span>
+                  )}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">Goals</dt>
+                <dd>
+                  {variant.goals != null ? (
+                    <pre className="bg-muted/30 max-h-64 overflow-auto rounded-md border p-3 font-mono text-xs whitespace-pre-wrap">
+                      {JSON.stringify(variant.goals, null, 2)}
+                    </pre>
+                  ) : (
+                    "—"
                   )}
                 </dd>
               </div>

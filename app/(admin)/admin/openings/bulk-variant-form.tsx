@@ -13,7 +13,11 @@ const EXAMPLE_JSON = `{
   "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   "initial_ply": 0,
   "display_ply": 4,
-  "description": "Black attempts a disruptive check, but White's attack is too strong."
+  "description": "Black attempts a disruptive check, but White's attack is too strong.",
+  "goals": [
+    { "sort_key": 1, "move": "d4", "card": "Center", "title": "Build the center", "description": "Solid pawn structure." },
+    { "sort_key": 2, "move": "Nf3", "card": "Development", "title": "Piece activity", "description": "Coordinate pieces toward the king." }
+  ]
 }`;
 
 export function BulkVariantForm() {

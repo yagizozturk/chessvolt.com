@@ -4,7 +4,10 @@
  * Responsibility: CRUD access to the opening_variants table.
  */
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
-import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import type {
+  OpeningVariant,
+  OpeningVariantGoal,
+} from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function findAll(
@@ -102,6 +105,7 @@ export type CreateOpeningVariantInput = {
   pgn: string;
   initialFen?: string | null;
   displayFen?: string | null;
+  goals?: OpeningVariantGoal[] | null;
 };
 
 export async function create(
@@ -120,6 +124,7 @@ export async function create(
       pgn: input.pgn,
       initial_fen: input.initialFen ?? null,
       display_fen: input.displayFen ?? null,
+      goals: input.goals ?? null,
     })
     .select()
     .single();
@@ -141,6 +146,7 @@ export type UpdateOpeningVariantInput = {
   pgn?: string;
   initialFen?: string | null;
   displayFen?: string | null;
+  goals?: OpeningVariantGoal[] | null;
 };
 
 export async function update(
@@ -157,6 +163,7 @@ export async function update(
   if (input.pgn !== undefined) updates.pgn = input.pgn;
   if (input.initialFen !== undefined) updates.initial_fen = input.initialFen;
   if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
+  if (input.goals !== undefined) updates.goals = input.goals;
 
   const { data, error } = await supabase
     .from("opening_variants")

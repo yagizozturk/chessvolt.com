@@ -43,7 +43,22 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
           </CardTitle>
           <CardDescription>
             JSON formatında variant verisi yapıştırın. Tek obje veya obje dizisi
-            desteklenir. display_fen ve moves otomatik hesaplanır.
+            desteklenir. display_fen ve moves otomatik hesaplanır. İsteğe bağlı{" "}
+            <code className="bg-muted rounded px-1 py-0.5 text-xs">goals</code>{" "}
+            alanı: açılış hedefleri (jsonb dizi); her öğede{" "}
+            <code className="bg-muted rounded px-1 py-0.5 text-xs">
+              sort_key
+            </code>
+            ,{" "}
+            <code className="bg-muted rounded px-1 py-0.5 text-xs">move</code>,{" "}
+            <code className="bg-muted rounded px-1 py-0.5 text-xs">card</code>,{" "}
+            <code className="bg-muted rounded px-1 py-0.5 text-xs">title</code>,{" "}
+            <code className="bg-muted rounded px-1 py-0.5 text-xs">
+              description
+            </code>{" "}
+            zorunlu. Atlanırsa veya{" "}
+            <code className="bg-muted rounded px-1 py-0.5 text-xs">null</code>{" "}
+            verilirse hedef yazılmaz.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -58,7 +73,23 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
   "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   "initial_ply": 0,
   "display_ply": 4,
-  "description": "Optional description"
+  "description": "Optional description",
+  "goals": [
+    {
+      "sort_key": 1,
+      "move": "c3",
+      "card": "Pawn structure",
+      "title": "Build the Pawn Pyramid",
+      "description": "Construct the solid c3-d4-e3 chain."
+    },
+    {
+      "sort_key": 2,
+      "move": "Bf4",
+      "card": "Development",
+      "title": "The London Bishop (Bf4)",
+      "description": "Develop the dark-squared bishop to f4 early."
+    }
+  ]
 }`}
             </pre>
           </div>

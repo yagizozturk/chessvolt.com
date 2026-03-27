@@ -1,4 +1,5 @@
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import { isOpeningVariantGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 
 type DbOpeningVariant = {
   id: string;
@@ -11,6 +12,7 @@ type DbOpeningVariant = {
   pgn: string;
   initial_fen: string;
   display_fen: string | null;
+  goals?: unknown;
   created_at: string;
 };
 
@@ -28,6 +30,10 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
       db.initial_fen ??
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     displayFen: db.display_fen ?? null,
+    goals:
+      db.goals != null && isOpeningVariantGoalsArray(db.goals)
+        ? db.goals
+        : null,
     createdAt: db.created_at,
   };
 }

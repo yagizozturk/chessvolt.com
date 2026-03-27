@@ -105,6 +105,15 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
             className="font-mono text-sm"
           />
         </Field>
+        <Field>
+          <FieldLabel>Goals (JSON)</FieldLabel>
+          <textarea
+            name="goals"
+            rows={4}
+            placeholder='[{"sort_key":1,"move":"Bf4","card":"...","title":"...","description":"..."}]'
+            className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+          />
+        </Field>
       </FieldGroup>
       <Button type="submit">Create Variant</Button>
     </form>

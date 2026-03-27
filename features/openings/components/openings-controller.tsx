@@ -1,8 +1,16 @@
 "use client";
 
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import VoltBoard, {
   type VoltBoardHandle,
 } from "@/components/volt-board/volt-board";
@@ -11,7 +19,7 @@ import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { getCommentsAndFensFromPgn } from "@/lib/chess/getCommentFromPgnAtPly";
 import { highlightPgnCommentSpans } from "@/lib/chess/highlight-pgn-comment";
 import type { PgnCommentRow } from "@/lib/shared/types/pgn-comment";
-import { Lightbulb, Puzzle } from "lucide-react";
+import { Lightbulb, Puzzle, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -52,6 +60,12 @@ export default function OpeningsController({
     () => getCommentsAndFensFromPgn(variant.pgn),
     [variant.pgn, variant.id],
   );
+
+  const sortedGoals = useMemo(() => {
+    const g = variant.goals;
+    if (!g?.length) return [];
+    return [...g].sort((a, b) => a.sort_key - b.sort_key);
+  }, [variant.goals]);
 
   useEffect(() => {
     setHintCount(0);
@@ -152,6 +166,61 @@ export default function OpeningsController({
               )}
             </CardHeader>
           </Card>
+
+          {sortedGoals.length > 0 ? (
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2">
+                  <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
+                    <Target className="h-4 w-4" aria-hidden />
+                  </div>
+                  <div className="min-w-0 space-y-1">
+                    <CardTitle className="text-lg">Objectives</CardTitle>
+                    <CardDescription className="text-xs leading-relaxed">
+                      What this line trains you to aim for in the opening.
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-0 pt-0">
+                {sortedGoals.map((goal, index) => (
+                  <div key={`${goal.sort_key}-${index}`}>
+                    {index > 0 ? (
+                      <Separator className="my-4 bg-border/80" />
+                    ) : null}
+                    <div className="flex gap-3">
+                      <Badge
+                        variant="outline"
+                        className="mt-0.5 h-6 min-w-6 shrink-0 justify-center px-2 font-mono text-xs tabular-nums"
+                      >
+                        {goal.sort_key}
+                      </Badge>
+                      <div className="min-w-0 space-y-1.5">
+                        <div className="flex flex-wrap items-baseline gap-2">
+                          <p className="text-sm font-semibold leading-snug">
+                            {goal.title}
+                          </p>
+                          {goal.move.trim() ? (
+                            <span className="text-muted-foreground font-mono text-xs">
+                              {goal.move.trim()}
+                            </span>
+                          ) : null}
+                        </div>
+                        {goal.card.trim() ? (
+                          <p className="text-muted-foreground text-xs font-medium leading-snug">
+                            {goal.card.trim()}
+                          </p>
+                        ) : null}
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {goal.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
 
           {activeComment?.trim() ? (
             <Card>
