@@ -12,7 +12,7 @@ import { getCommentsAndFensFromPgn } from "@/lib/chess/getCommentFromPgnAtPly";
 import { highlightPgnCommentSpans } from "@/lib/chess/highlight-pgn-comment";
 import type { PgnCommentRow } from "@/lib/shared/types/pgn-comment";
 import { cn } from "@/lib/utilities/cn";
-import { CheckCircle2, Circle, Lightbulb, Target } from "lucide-react";
+import { Check, CheckCircle2, Circle, Lightbulb, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -30,6 +30,7 @@ export default function OpeningsController({
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
   const [activeComment, setActiveComment] = useState<string | null>(null);
+  const [lastUserUci, setLastUserUci] = useState<string | null>(null);
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
   // useMemo sayfa her render olduğunda karmaşık işlem tekrar yapılmasın die sonucu memory de tutar
   // PgnCommentRow hem o movedaki FEN durumunu hem de commenti içerir. Chess.js getComments() default bunları döner.
@@ -46,6 +47,7 @@ export default function OpeningsController({
 
   useEffect(() => {
     setHintCount(0);
+    setLastUserUci(null);
     setActiveComment(pgnComments[0]?.comment ?? null);
   }, [variant.id, pgnComments]);
 
@@ -67,7 +69,9 @@ export default function OpeningsController({
     }
   };
 
-  const handleUserMovePlayed = (uci: string) => {};
+  const handleUserMovePlayed = (uci: string) => {
+    setLastUserUci(uci);
+  };
 
   const handleFenAfterUserMove = (fen: string) => {
     setActiveComment(
@@ -96,6 +100,7 @@ export default function OpeningsController({
             height={600}
             className="border-muted rounded-xl border-4"
             viewOnly={false}
+            onUserMovePlayed={handleUserMovePlayed}
             onFenAfterUserMove={handleFenAfterUserMove}
             onFenAfterOpponentMove={handleFenAfterOpponentMove}
             onSolved={handleSolved}
@@ -112,8 +117,16 @@ export default function OpeningsController({
                     <Target className="h-4 w-4" aria-hidden />
                   </div>
                   <div className="min-w-0">
-                    <CardTitle className="text-lg">
-                      Goal {index + 1} {goal.move}
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      Goal {index + 1}
+                      {lastUserUci === goal.move ? (
+                        <span
+                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 text-white shadow-md shadow-emerald-500/35 ring-2 ring-emerald-300/60 dark:from-emerald-500 dark:via-emerald-600 dark:to-teal-700 dark:shadow-emerald-900/50 dark:ring-emerald-400/40"
+                          aria-hidden
+                        >
+                          <Check className="h-4 w-4 drop-shadow-sm" strokeWidth={2.75} />
+                        </span>
+                      ) : null}
                     </CardTitle>
                   </div>
                 </div>
