@@ -6,8 +6,8 @@ export function isOpeningVariantGoal(
   if (value === null || typeof value !== "object") return false;
   const o = value as Record<string, unknown>;
   return (
-    typeof o.sort_key === "number" &&
-    Number.isFinite(o.sort_key) &&
+    typeof o.ply === "number" &&
+    Number.isFinite(o.ply) &&
     typeof o.move === "string" &&
     typeof o.card === "string" &&
     typeof o.title === "string" &&

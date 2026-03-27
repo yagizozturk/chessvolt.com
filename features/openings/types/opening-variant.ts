@@ -1,6 +1,6 @@
 /** One learning goal row stored in `opening_variants.goals` (jsonb array). */
 export type OpeningVariantGoal = {
-  sort_key: number;
+  ply: number;
   move: string;
   card: string;
   title: string;

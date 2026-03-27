@@ -8,9 +8,7 @@ import VoltBoard, {
 } from "@/components/volt-board/volt-board";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { getCommentsAndFensFromPgn } from "@/lib/chess/getCommentFromPgnAtPly";
-import { highlightPgnCommentSpans } from "@/lib/chess/highlight-pgn-comment";
-import type { PgnCommentRow } from "@/lib/shared/types/pgn-comment";
+import { getPlyFromPgnAtFen } from "@/lib/chess/getFenFromPgnAtPly";
 import { cn } from "@/lib/utilities/cn";
 import { Check, CheckCircle2, Circle, Lightbulb, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -29,27 +27,28 @@ export default function OpeningsController({
   const boardRef = useRef<VoltBoardHandle>(null);
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
-  const [activeComment, setActiveComment] = useState<string | null>(null);
+  /** PGN’e göre mevcut tahta pozisyonunun ply’si (FEN eşlemesi) */
+  const [activePly, setActivePly] = useState<number | null>(() => variant.ply);
   const [lastUserUci, setLastUserUci] = useState<string | null>(null);
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
-  // useMemo sayfa her render olduğunda karmaşık işlem tekrar yapılmasın die sonucu memory de tutar
-  // PgnCommentRow hem o movedaki FEN durumunu hem de commenti içerir. Chess.js getComments() default bunları döner.
-  const pgnComments: PgnCommentRow[] = useMemo(
-    () => getCommentsAndFensFromPgn(variant.pgn),
-    [variant.pgn, variant.id],
-  );
 
   const sortedGoals = useMemo(() => {
     const g = variant.goals;
     if (!g?.length) return [];
-    return [...g].sort((a, b) => a.sort_key - b.sort_key);
+    return [...g].sort((a, b) => a.ply - b.ply);
   }, [variant.goals]);
+
+  /** Sadece bir sonraki hamlenin ply’sindeki hedef: goal.ply === activePly + 1 */
+  const goalsMatchingActivePly = useMemo(() => {
+    if (activePly == null) return [];
+    return sortedGoals.filter((g) => g.ply === activePly + 1);
+  }, [sortedGoals, activePly]);
 
   useEffect(() => {
     setHintCount(0);
     setLastUserUci(null);
-    setActiveComment(pgnComments[0]?.comment ?? null);
-  }, [variant.id, pgnComments]);
+    setActivePly(variant.ply);
+  }, [variant.id, variant.ply]);
 
   // ======================================================================
   // If there is another unsolved variant, go to that page
@@ -74,15 +73,13 @@ export default function OpeningsController({
   };
 
   const handleFenAfterUserMove = (fen: string) => {
-    setActiveComment(
-      pgnComments.find((comment) => comment.fen === fen)?.comment ?? null,
-    );
+    const ply = getPlyFromPgnAtFen(variant.pgn, fen);
+    if (ply !== null) setActivePly(ply);
   };
 
   const handleFenAfterOpponentMove = (fen: string) => {
-    setActiveComment(
-      pgnComments.find((comment) => comment.fen === fen)?.comment ?? null,
-    );
+    const ply = getPlyFromPgnAtFen(variant.pgn, fen);
+    if (ply !== null) setActivePly(ply);
   };
 
   return (
@@ -109,22 +106,27 @@ export default function OpeningsController({
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
-          {sortedGoals.map((goal, index) => (
-            <Card key={goal.sort_key}>
+          {goalsMatchingActivePly.map((goal, index) => (
+            <Card key={goal.ply}>
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-2">
                   <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
                     <Target className="h-4 w-4" aria-hidden />
                   </div>
                   <div className="min-w-0">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      Goal {index + 1}
+                    <CardTitle className="flex flex-wrap items-center gap-x-2 gap-y-1 text-lg">
+                      <span className="flex items-center gap-2">
+                        Goal {index + 1}
+                      </span>
                       {lastUserUci === goal.move ? (
                         <span
-                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 text-white shadow-md shadow-emerald-500/35 ring-2 ring-emerald-300/60 dark:from-emerald-500 dark:via-emerald-600 dark:to-teal-700 dark:shadow-emerald-900/50 dark:ring-emerald-400/40"
+                          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 text-white shadow-md ring-2 shadow-emerald-500/35 ring-emerald-300/60 dark:from-emerald-500 dark:via-emerald-600 dark:to-teal-700 dark:shadow-emerald-900/50 dark:ring-emerald-400/40"
                           aria-hidden
                         >
-                          <Check className="h-4 w-4 drop-shadow-sm" strokeWidth={2.75} />
+                          <Check
+                            className="h-4 w-4 drop-shadow-sm"
+                            strokeWidth={2.75}
+                          />
                         </span>
                       ) : null}
                     </CardTitle>
@@ -167,17 +169,6 @@ export default function OpeningsController({
               </CardContent>
             </Card>
           ))}
-
-          {activeComment?.trim() ? (
-            <Card>
-              <CardHeader className="min-w-0">
-                <CardTitle className="text-base">Note</CardTitle>
-                <p className="text-muted-foreground pt-1 text-sm leading-relaxed">
-                  {highlightPgnCommentSpans(activeComment.trim())}
-                </p>
-              </CardHeader>
-            </Card>
-          ) : null}
 
           <Button
             variant="default"

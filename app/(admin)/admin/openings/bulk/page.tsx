@@ -46,9 +46,7 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
             desteklenir. display_fen ve moves otomatik hesaplanır. İsteğe bağlı{" "}
             <code className="bg-muted rounded px-1 py-0.5 text-xs">goals</code>{" "}
             alanı: açılış hedefleri (jsonb dizi); her öğede{" "}
-            <code className="bg-muted rounded px-1 py-0.5 text-xs">
-              sort_key
-            </code>
+            <code className="bg-muted rounded px-1 py-0.5 text-xs">ply</code>
             ,{" "}
             <code className="bg-muted rounded px-1 py-0.5 text-xs">move</code>,{" "}
             <code className="bg-muted rounded px-1 py-0.5 text-xs">card</code>,{" "}
@@ -80,7 +78,7 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
   "description": "Optional description",
   "goals": [
     {
-      "sort_key": 1,
+      "ply": 1,
       "move": "c3",
       "card": "Pawn structure",
       "title": "Build the Pawn Pyramid",
@@ -88,7 +86,7 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
       "isCompleted": false
     },
     {
-      "sort_key": 2,
+      "ply": 2,
       "move": "Bf4",
       "card": "Development",
       "title": "The London Bishop (Bf4)",

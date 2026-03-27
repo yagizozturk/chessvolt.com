@@ -179,7 +179,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
         errors.push({
           index: i,
           message:
-            "goals null veya { sort_key, move, card, title, description, isCompleted }[] olmalıdır",
+            "goals null veya { ply, move, card, title, description, isCompleted }[] olmalıdır",
         });
         continue;
       }
