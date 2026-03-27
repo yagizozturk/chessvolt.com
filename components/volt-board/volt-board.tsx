@@ -33,6 +33,8 @@ export type VoltBoardProps = {
   className?: string;
   viewOnly?: boolean;
   coordinates?: boolean;
+  /** Oyuncunun tahtada yaptığı her hamle denemesi; UCI (örn. `e2e4`). Doğru / yanlış ayrımı yok. */
+  onUserMovePlayed?: (uci: string) => void;
   /** Oyuncu beklenen hamleyi doğru oynadıktan sonra güncel FEN (ör. yorum / koç eşlemesi için). */
   onFenAfterUserMove?: (fen: string) => void;
   /** Otomatik rakip cevabı işlendikten sonra güncel FEN. */
@@ -57,6 +59,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       className,
       viewOnly = false,
       coordinates = true,
+      onUserMovePlayed,
       onFenAfterUserMove,
       onFenAfterOpponentMove,
       onSolved,
@@ -253,6 +256,8 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       const step = currentStepRef.current;
       const expectedUci = movesArray[step];
       const userUci = from + to;
+
+      onUserMovePlayed?.(userUci);
 
       if (userUci !== expectedUci) {
         playMoveSound();

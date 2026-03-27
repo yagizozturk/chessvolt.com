@@ -2,12 +2,7 @@
 
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import VoltBoard, {
   type VoltBoardHandle,
 } from "@/components/volt-board/volt-board";
@@ -19,7 +14,7 @@ import type { PgnCommentRow } from "@/lib/shared/types/pgn-comment";
 import { cn } from "@/lib/utilities/cn";
 import { CheckCircle2, Circle, Lightbulb, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function OpeningsController({
   variant,
@@ -72,6 +67,8 @@ export default function OpeningsController({
     }
   };
 
+  const handleUserMovePlayed = (uci: string) => {};
+
   const handleFenAfterUserMove = (fen: string) => {
     setActiveComment(
       pgnComments.find((comment) => comment.fen === fen)?.comment ?? null,
@@ -107,60 +104,56 @@ export default function OpeningsController({
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
-          {sortedGoals.length > 0 ? (
-            <Card>
-              {sortedGoals.slice(0, 1).map((goal, index) => (
-                <Fragment key={goal.sort_key}>
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
-                        <Target className="h-4 w-4" aria-hidden />
-                      </div>
-                      <div className="min-w-0">
-                        <CardTitle className="text-lg">
-                          Goal {index + 1}
-                        </CardTitle>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-0 pt-0">
-                    <div className="flex gap-3">
-                      <div
-                        className="text-muted-foreground mt-0.5 shrink-0"
-                        aria-hidden
-                      >
-                        {goal.isCompleted ? (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-500" />
-                        ) : (
-                          <Circle className="h-4 w-4" />
-                        )}
-                      </div>
-                      <div
+          {sortedGoals.map((goal, index) => (
+            <Card key={goal.sort_key}>
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2">
+                  <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
+                    <Target className="h-4 w-4" aria-hidden />
+                  </div>
+                  <div className="min-w-0">
+                    <CardTitle className="text-lg">
+                      Goal {index + 1} {goal.move}
+                    </CardTitle>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-0 pt-0">
+                <div className="flex gap-3">
+                  <div
+                    className="text-muted-foreground mt-0.5 shrink-0"
+                    aria-hidden
+                  >
+                    {goal.isCompleted ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-500" />
+                    ) : (
+                      <Circle className="h-4 w-4" />
+                    )}
+                  </div>
+                  <div
+                    className={cn(
+                      "min-w-0 space-y-1.5",
+                      goal.isCompleted && "opacity-80",
+                    )}
+                  >
+                    <div className="flex flex-wrap items-baseline gap-2">
+                      <p
                         className={cn(
-                          "min-w-0 space-y-1.5",
-                          goal.isCompleted && "opacity-80",
+                          "text-sm leading-snug font-semibold",
+                          goal.isCompleted && "text-muted-foreground",
                         )}
                       >
-                        <div className="flex flex-wrap items-baseline gap-2">
-                          <p
-                            className={cn(
-                              "text-sm leading-snug font-semibold",
-                              goal.isCompleted && "text-muted-foreground",
-                            )}
-                          >
-                            {goal.title}
-                          </p>
-                        </div>
-                        <p className="text-muted-foreground text-sm leading-relaxed">
-                          {goal.description}
-                        </p>
-                      </div>
+                        {goal.title}
+                      </p>
                     </div>
-                  </CardContent>
-                </Fragment>
-              ))}
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {goal.description}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
             </Card>
-          ) : null}
+          ))}
 
           {activeComment?.trim() ? (
             <Card>
