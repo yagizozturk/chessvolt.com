@@ -33,9 +33,10 @@ export type VoltBoardProps = {
   className?: string;
   viewOnly?: boolean;
   coordinates?: boolean;
-  /** Doğru oyuncu hamlesi tahtaya işlendikten sonra; `ply` = `game.history().length` (yarım hamle sayısı). Rakip otomatik hamlesi tetiklemez. */
-  onPlayerMovePlayed?: (actualFen: string) => void;
-  onOpponentMovePlayed?: (actualFen: string) => void;
+  /** Oyuncu beklenen hamleyi doğru oynadıktan sonra güncel FEN (ör. yorum / koç eşlemesi için). */
+  onFenAfterUserMove?: (fen: string) => void;
+  /** Otomatik rakip cevabı işlendikten sonra güncel FEN. */
+  onFenAfterOpponentMove?: (fen: string) => void;
   onSolved?: (isCorrect: boolean) => void;
   onHintUsed?: (hintCount: number) => void;
 };
@@ -56,8 +57,8 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       className,
       viewOnly = false,
       coordinates = true,
-      onPlayerMovePlayed,
-      onOpponentMovePlayed,
+      onFenAfterUserMove,
+      onFenAfterOpponentMove,
       onSolved,
       onHintUsed,
     } = props;
@@ -271,7 +272,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       updateBoard();
       setStoreFen(game.current.fen());
       useCoachStore.setState({ fen: game.current.fen() });
-      onPlayerMovePlayed?.(game.current.fen()); // doğru hamleden sonra hamle yapıldı bilgisi history'nin length i kadar yollanır. PLY ye denk gelir.
+      onFenAfterUserMove?.(game.current.fen());
 
       if (step === movesArray.length - 1) {
         setIsOver(true);
@@ -285,7 +286,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       const oppTo = opponentUci.slice(2, 4);
       makeMove(oppFrom, oppTo, "q");
       lastMoveRef.current = [oppFrom as Key, oppTo as Key];
-      onOpponentMovePlayed?.(game.current.fen());
+      onFenAfterOpponentMove?.(game.current.fen());
       handleStepChange();
       updateBoard();
       setStoreFen(game.current.fen());

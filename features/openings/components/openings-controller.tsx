@@ -5,11 +5,9 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import VoltBoard, {
   type VoltBoardHandle,
 } from "@/components/volt-board/volt-board";
@@ -19,18 +17,9 @@ import { getCommentsAndFensFromPgn } from "@/lib/chess/getCommentFromPgnAtPly";
 import { highlightPgnCommentSpans } from "@/lib/chess/highlight-pgn-comment";
 import type { PgnCommentRow } from "@/lib/shared/types/pgn-comment";
 import { cn } from "@/lib/utilities/cn";
-import { CheckCircle2, Circle, Lightbulb, Puzzle, Target } from "lucide-react";
+import { CheckCircle2, Circle, Lightbulb, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
-
-function getMoveCount(moves: string | null): number {
-  if (!moves?.trim()) return 0;
-  const arr = moves
-    .trim()
-    .split(/\s+/)
-    .filter((m) => m.length > 0);
-  return Math.ceil(arr.length / 2);
-}
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 
 export default function OpeningsController({
   variant,
@@ -42,11 +31,6 @@ export default function OpeningsController({
   parentOpeningUrl?: string;
 }) {
   const router = useRouter();
-  const turn =
-    ((variant.initialFen ?? variant.displayFen)?.includes(" w ") ?? true)
-      ? "White"
-      : "Black";
-  const moveCount = getMoveCount(variant.moves);
   const boardRef = useRef<VoltBoardHandle>(null);
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
@@ -88,15 +72,15 @@ export default function OpeningsController({
     }
   };
 
-  const handlePlayerMovePlayed = (actualFen: string) => {
+  const handleFenAfterUserMove = (fen: string) => {
     setActiveComment(
-      pgnComments.find((comment) => comment.fen === actualFen)?.comment ?? null,
+      pgnComments.find((comment) => comment.fen === fen)?.comment ?? null,
     );
   };
 
-  const handleOpponentMovePlayed = (actualFen: string) => {
+  const handleFenAfterOpponentMove = (fen: string) => {
     setActiveComment(
-      pgnComments.find((comment) => comment.fen === actualFen)?.comment ?? null,
+      pgnComments.find((comment) => comment.fen === fen)?.comment ?? null,
     );
   };
 
@@ -115,64 +99,31 @@ export default function OpeningsController({
             height={600}
             className="border-muted rounded-xl border-4"
             viewOnly={false}
-            onPlayerMovePlayed={handlePlayerMovePlayed}
-            onOpponentMovePlayed={handleOpponentMovePlayed}
+            onFenAfterUserMove={handleFenAfterUserMove}
+            onFenAfterOpponentMove={handleFenAfterOpponentMove}
             onSolved={handleSolved}
             onHintUsed={setHintCount}
           />
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
-              <div
-                className={`h-7 w-7 shrink-0 rounded-full border-2 ${
-                  turn === "White"
-                    ? "border-gray-300 bg-white dark:border-gray-600"
-                    : "border-gray-800 bg-black dark:border-gray-400"
-                }`}
-              />
-              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                Turn
-              </p>
-              <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
-                {turn}
-              </span>
-            </div>
-            {moveCount > 0 && (
-              <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
-                <Puzzle className="h-7 w-7 shrink-0 text-emerald-500 dark:text-emerald-400" />
-                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                  Moves To Find
-                </p>
-                <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
-                  {moveCount} {moveCount === 1 ? "move" : "moves"}
-                </span>
-              </div>
-            )}
-          </div>
-
           {sortedGoals.length > 0 ? (
             <Card>
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
-                    <Target className="h-4 w-4" aria-hidden />
-                  </div>
-                  <div className="min-w-0 space-y-1">
-                    <CardTitle className="text-lg">Objectives</CardTitle>
-                    <CardDescription className="text-xs leading-relaxed">
-                      What this line trains you to aim for in the opening.
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-0 pt-0">
-                {sortedGoals.map((goal, index) => (
-                  <div key={`${goal.sort_key}-${index}`}>
-                    {index > 0 ? (
-                      <Separator className="bg-border/80 my-4" />
-                    ) : null}
+              {sortedGoals.slice(0, 1).map((goal, index) => (
+                <Fragment key={goal.sort_key}>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
+                        <Target className="h-4 w-4" aria-hidden />
+                      </div>
+                      <div className="min-w-0">
+                        <CardTitle className="text-lg">
+                          Goal {index + 1}
+                        </CardTitle>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-0 pt-0">
                     <div className="flex gap-3">
                       <div
                         className="text-muted-foreground mt-0.5 shrink-0"
@@ -199,20 +150,15 @@ export default function OpeningsController({
                           >
                             {goal.title}
                           </p>
-                          {goal.move.trim() ? (
-                            <span className="text-muted-foreground font-mono text-xs">
-                              {goal.move.trim()}
-                            </span>
-                          ) : null}
                         </div>
                         <p className="text-muted-foreground text-sm leading-relaxed">
                           {goal.description}
                         </p>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </CardContent>
+                  </CardContent>
+                </Fragment>
+              ))}
             </Card>
           ) : null}
 
