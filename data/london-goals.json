@@ -1,0 +1,50 @@
+[
+  {
+    "ply": 1,
+    "card": "central_claim",
+    "move": "d2d4",
+    "title": "Central Claim",
+    "description": "Control the center and open lines for your pieces.",
+    "isCompleted": false
+  },
+  {
+    "ply": 3,
+    "card": "london_bishop",
+    "move": "c1f4",
+    "title": "The Golden Bishop",
+    "description": "Develop the bishop outside the pawn chain early.",
+    "isCompleted": false
+  },
+  {
+    "ply": 5,
+    "card": "pawn_pyramid",
+    "move": "e2e3",
+    "title": "Solid Pyramid",
+    "description": "Solidify d4 and build the core London structure.",
+    "isCompleted": false
+  },
+  {
+    "ply": 7,
+    "card": "knight_development",
+    "move": "g1f3",
+    "title": "Flexible Knight",
+    "description": "Develop the knight to control e5 and protect kingside.",
+    "isCompleted": false
+  },
+  {
+    "ply": 9,
+    "card": "knight_outpost",
+    "move": "f3e5",
+    "title": "Central Outpost",
+    "description": "Establish a powerful knight to dominate the center.",
+    "isCompleted": false
+  },
+  {
+    "ply": 11,
+    "card": "finish_pyramid",
+    "move": "c2c3",
+    "title": "Finish the Pyramid",
+    "description": "Complete the pawn structure and support the center.",
+    "isCompleted": false
+  }
+]

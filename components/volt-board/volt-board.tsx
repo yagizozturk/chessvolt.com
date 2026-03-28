@@ -280,6 +280,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       onFenAfterUserMove?.(game.current.fen());
 
       if (step === movesArray.length - 1) {
+        // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
         setIsOver(true);
         onSolved?.(true);
         return;

@@ -4,14 +4,14 @@ import type {
   CreateOpeningVariantInput,
   UpdateOpeningVariantInput,
 } from "@/features/openings/repository/opening-variant.repository";
-import type { OpeningVariantGoal } from "@/features/openings/types/opening-variant";
-import { isOpeningVariantGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 import {
   createOpeningVariant,
   deleteOpeningVariant,
   getOpeningVariantById,
   updateOpeningVariant,
 } from "@/features/openings/services/openings.service";
+import type { OpeningVariantGoal } from "@/features/openings/types/opening-variant";
+import { isOpeningVariantGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getAdminUser } from "@/lib/supabase/auth";

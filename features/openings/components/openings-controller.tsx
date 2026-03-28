@@ -167,7 +167,7 @@ export default function OpeningsController({
                 return (
                   <Card
                     key={goal.ply}
-                    className="border-primary/35 ring-primary/15 shadow-md ring-2"
+                    className="border-primary/35 ring-primary/15 gap-2 shadow-md ring-2"
                   >
                     <CardHeader>
                       <div className="flex items-center gap-2">

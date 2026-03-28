@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { useState } from "react";
+
 import { bulkCreateVariantsAction } from "./actions";
 
 const EXAMPLE_JSON = `{
@@ -41,7 +42,7 @@ export function BulkVariantForm() {
             required
             rows={16}
             placeholder={EXAMPLE_JSON}
-            className="border-input w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           />
         </Field>
       </FieldGroup>

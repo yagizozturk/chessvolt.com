@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { createOpeningVariantAction } from "./actions";
-import { Button } from "@/components/ui/button";
-import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
 import type { Opening } from "@/features/openings/types/opening";
+import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
+import { useState } from "react";
+
+import { createOpeningVariantAction } from "./actions";
 
 type Props = {
   openings: Opening[];
@@ -17,8 +18,9 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
   const [pgn, setPgn] = useState("");
   const [ply, setPly] = useState("0");
   const plyNum = parseInt(ply, 10) >= 0 ? parseInt(ply, 10) : 0;
-  const derivedMoves =
-    pgn ? getUciMovesFromPgnAfterPly(pgn, plyNum) ?? "" : "";
+  const derivedMoves = pgn
+    ? (getUciMovesFromPgnAfterPly(pgn, plyNum) ?? "")
+    : "";
 
   return (
     <form action={createOpeningVariantAction} className="space-y-4">
@@ -29,7 +31,7 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
             name="openingId"
             required
             defaultValue={defaultOpeningId ?? ""}
-            className="border-input w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            className="border-input focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs focus-visible:ring-2 focus-visible:outline-none"
           >
             <option value="">Select opening...</option>
             {openings.map((o) => (
@@ -55,10 +57,15 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
         </Field>
         <Field>
           <FieldLabel>Description</FieldLabel>
-          <Input name="description" placeholder="Optional variant description" />
+          <Input
+            name="description"
+            placeholder="Optional variant description"
+          />
         </Field>
         <Field>
-          <FieldLabel>Ply (başlangıç hamle indeksi, 0 = tüm hamleler)</FieldLabel>
+          <FieldLabel>
+            Ply (başlangıç hamle indeksi, 0 = tüm hamleler)
+          </FieldLabel>
           <Input
             name="ply"
             type="number"
@@ -77,7 +84,7 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
             required
             rows={6}
             placeholder="1. e4 e5 2. Nf3 Nc6 3. Bb5 ..."
-            className="border-input w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-base font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-base text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           />
         </Field>
         <Field>
