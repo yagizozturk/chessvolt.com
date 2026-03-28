@@ -105,6 +105,11 @@ export async function deleteOpeningVariant(
   supabase: SupabaseClient,
   id: string,
 ): Promise<boolean> {
+  const cleared = await userOpeningVariantRepo.removeByOpeningVariantId(
+    supabase,
+    id,
+  );
+  if (!cleared) return false;
   return openingVariantRepo.remove(supabase, id);
 }
 

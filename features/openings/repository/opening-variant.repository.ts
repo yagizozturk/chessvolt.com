@@ -184,13 +184,22 @@ export async function remove(
   supabase: SupabaseClient,
   id: string,
 ): Promise<boolean> {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("opening_variants")
     .delete()
-    .eq("id", id);
+    .eq("id", id)
+    .select("id");
 
   if (error) {
     console.error("opening-variant.repository.remove error:", error);
+    return false;
+  }
+
+  if (!data?.length) {
+    console.error(
+      "opening-variant.repository.remove: no row deleted (missing or RLS)",
+      { id },
+    );
     return false;
   }
 

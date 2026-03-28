@@ -60,6 +60,27 @@ export async function findCorrectlySolvedVariantIds(
   return new Set(data?.map((r) => r.opening_variant_id) ?? []);
 }
 
+/** Removes all user progress rows for a variant (required before deleting the variant if FK is not CASCADE). */
+export async function removeByOpeningVariantId(
+  supabase: SupabaseClient,
+  openingVariantId: string,
+): Promise<boolean> {
+  const { error } = await supabase
+    .from("user_opening_variants")
+    .delete()
+    .eq("opening_variant_id", openingVariantId);
+
+  if (error) {
+    console.error(
+      "user-opening-variant.repository.removeByOpeningVariantId error:",
+      error,
+    );
+    return false;
+  }
+
+  return true;
+}
+
 /** Saves or updates opening variant attempt (upsert) */
 export async function upsert(
   supabase: SupabaseClient,
