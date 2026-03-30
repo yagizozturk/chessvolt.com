@@ -68,8 +68,8 @@ export default async function ChallengePage({ params }: Params) {
 
   // ========================================================================
   // (7) Render -> ilgili challenge daki(memorable games) GameRiddle lar kadar dönüp
-  // onu RiddleBoard a atıcaz. Eğer record silinmiş ise, yani game silinmiş ise riddle
-  // silinmeden o null kontrolüne girer. (satır 81)
+  // onu RiddleBoard a atıcaz. Eğer record silinmiş ise, yani game silinmiş ise riddle silinmeden
+  // o null kontrolüne girer. (satır 81)
   // ========================================================================
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">

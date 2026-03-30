@@ -14,20 +14,6 @@ export type PgnPairedDisplay = {
 };
 
 /**
- * SAN move list from a PGN (one entry per half-move, index 0 = White's first).
- */
-export function getSanMovesFromPgn(pgn: string): string[] | null {
-  try {
-    const game = new Chess();
-    game.loadPgn(pgn.trim(), { strict: false });
-    const history = game.history();
-    return history.length > 0 ? history : null;
-  } catch {
-    return null;
-  }
-}
-
-/**
  * Beyaz–siyah satırları ve chess.js’in PGN `{...}` yorumlarını (hamle sonrası FEN’e göre) eşler.
  */
 export function getPairedPgnDisplayFromPgn(pgn: string): PgnPairedDisplay | null {
@@ -87,7 +73,7 @@ export function getPairedPgnDisplayFromPgn(pgn: string): PgnPairedDisplay | null
 export function getUciMovesFromPgn(pgn: string): string | null {
   try {
     const game = new Chess();
-    game.loadPgn(pgn.trim());
+    game.loadPgn(pgn.trim(), { strict: false });
     const history = game.history();
     const replayGame = new Chess();
     const uciMoves: string[] = [];
@@ -134,34 +120,12 @@ export function getUciMovesFromPgnAfterPly(
 export function extractMovesFromPgn(
   pgn: string,
   ply: number,
-  moveCount: number
+  moveCount: number,
 ): string | null {
-  try {
-    const game = new Chess();
-    game.loadPgn(pgn);
-
-    const history = game.history();
-    if (ply < 0 || ply >= history.length || moveCount <= 0) {
-      return null;
-    }
-
-    // Replay from start to get UCI for each move
-    const replayGame = new Chess();
-    const uciMoves: string[] = [];
-
-    for (const san of history) {
-      const move = replayGame.move(san);
-      if (!move) return null;
-      const uci = move.from + move.to + (move.promotion ?? "");
-      uciMoves.push(uci);
-    }
-
-    const startIdx = ply;
-    const endIdx = Math.min(ply + moveCount, uciMoves.length);
-    const extracted = uciMoves.slice(startIdx, endIdx);
-
-    return extracted.length > 0 ? extracted.join(" ") : null;
-  } catch {
-    return null;
-  }
+  const allMoves = getUciMovesFromPgn(pgn);
+  if (!allMoves || ply < 0 || moveCount <= 0) return null;
+  const uciMoves = allMoves.split(" ");
+  if (ply >= uciMoves.length) return null;
+  const extracted = uciMoves.slice(ply, ply + moveCount);
+  return extracted.length > 0 ? extracted.join(" ") : null;
 }

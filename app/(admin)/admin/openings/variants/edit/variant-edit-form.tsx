@@ -13,7 +13,7 @@ import { getPlyFromPgnAtFen } from "@/lib/chess/getFenFromPgnAtPly";
 import { Save } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { PgnPairedBlock } from "./pgn-paired-block";
+import { PgnPairedBlock } from "../components/pgn-paired-block";
 
 type Props = {
   variant: OpeningVariant;
