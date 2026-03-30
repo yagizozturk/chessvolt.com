@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteOpeningAction } from "@/app/(admin)/admin/openings/actions/openings";
+import { deleteOpeningAction } from "@/app/(admin)/admin/openings/main-opening/actions/openings";
 import { Button } from "@/components/ui/button";
 import type { Opening } from "@/features/openings/types/opening";
 import Link from "next/link";

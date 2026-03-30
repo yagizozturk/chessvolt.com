@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteOpeningVariantAction } from "@/app/(admin)/admin/openings/actions/variants";
+import { deleteOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,13 +11,12 @@ import {
 } from "@/components/ui/card";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { getPairedPgnDisplayFromPgn } from "@/lib/chess/extractMovesFromPgn";
-import { getPlyFromPgnAtFen } from "@/lib/chess/getFenFromPgnAtPly";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import { PgnPairedBlock } from "./pgn-paired-block";
-import { VariantEditForm } from "./variant-edit-form";
+import { PgnPairedBlock } from "../components/pgn-paired-block";
+import { VariantEditForm } from "../edit/variant-edit-form";
 
 type Props = {
   variant: OpeningVariant;
@@ -30,13 +29,6 @@ export function VariantDetail({ variant }: Props) {
     () => getPairedPgnDisplayFromPgn(variant.pgn.trim()),
     [variant.pgn],
   );
-
-  const displayPlyLabel = useMemo(() => {
-    const df = variant.displayFen?.trim();
-    if (!df) return "—";
-    const p = getPlyFromPgnAtFen(variant.pgn, df);
-    return p !== null ? String(p) : "—";
-  }, [variant.pgn, variant.displayFen]);
 
   return (
     <div className="container mx-auto max-w-6xl space-y-6 px-4 py-8">
@@ -91,12 +83,6 @@ export function VariantDetail({ variant }: Props) {
                 <dd className="font-mono text-xs">{variant.id}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">
-                  Opening ID
-                </dt>
-                <dd className="font-mono text-xs">{variant.openingId}</dd>
-              </div>
-              <div>
                 <dt className="text-muted-foreground font-medium">Sort Key</dt>
                 <dd className="font-mono text-xs">{variant.sortKey}</dd>
               </div>
@@ -111,16 +97,15 @@ export function VariantDetail({ variant }: Props) {
                 <dd>{variant.description ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">
-                  Initial ply
-                </dt>
-                <dd>{variant.ply ?? 0}</dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground font-medium">
-                  Display ply
-                </dt>
-                <dd>{displayPlyLabel}</dd>
+                <dt className="text-muted-foreground font-medium">Ply</dt>
+                <dd>
+                  <span className="tabular-nums">{variant.ply ?? 0}</span>
+                  <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed">
+                    Half-move index in the PGN where this line begins (0 = start
+                    position). Stored UCI moves and the default initial FEN
+                    match this point in the game.
+                  </p>
+                </dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Moves</dt>

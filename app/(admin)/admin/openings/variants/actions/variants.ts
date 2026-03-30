@@ -124,7 +124,7 @@ export async function createOpeningVariantAction(formData: FormData) {
 
   revalidatePath("/admin/openings");
   revalidatePath(`/admin/openings/opening/${variant.openingId}`);
-  redirect(`/admin/openings/${variant.id}`);
+  redirect(`/admin/openings/variants/${variant.id}`);
 }
 
 export async function bulkCreateVariantsAction(jsonData: string) {
@@ -243,7 +243,7 @@ export async function updateOpeningVariantAction(
   const displayFenManual = (formData.get("displayFen") as string)?.trim() || null;
   const goals = parseGoalsFromForm(
     formData,
-    `/admin/openings/${id}?error=gecersiz_goals_json`,
+    `/admin/openings/variants/${id}?error=gecersiz_goals_json`,
   );
 
   const input: UpdateOpeningVariantInput = {};
@@ -252,14 +252,14 @@ export async function updateOpeningVariantAction(
   if (sortKeyStr !== undefined && sortKeyStr !== "") {
     const n = parseInt(sortKeyStr, 10);
     if (Number.isNaN(n)) {
-      redirect(`/admin/openings/${id}?error=invalid_sort_key`);
+      redirect(`/admin/openings/variants/${id}?error=invalid_sort_key`);
     }
     input.sortKey = n;
   }
   if (pgn) {
     const moves = getUciMovesFromPgnAfterPly(pgn, initialPly);
     if (!moves) {
-      redirect(`/admin/openings/${id}?error=invalid_pgn`);
+      redirect(`/admin/openings/variants/${id}?error=invalid_pgn`);
     }
     input.pgn = pgn;
     input.moves = moves;
@@ -283,13 +283,13 @@ export async function updateOpeningVariantAction(
 
   const variant = await updateOpeningVariant(supabase, id, input);
   if (!variant) {
-    redirect(`/admin/openings/${id}?error=could_not_be_updated`);
+    redirect(`/admin/openings/variants/${id}?error=could_not_be_updated`);
   }
 
   revalidatePath("/admin/openings");
-  revalidatePath(`/admin/openings/${id}`);
+  revalidatePath(`/admin/openings/variants/${id}`);
   revalidatePath(`/admin/openings/opening/${variant.openingId}`);
-  redirect(`/admin/openings/${id}`);
+  redirect(`/admin/openings/variants/${id}`);
 }
 
 export async function deleteOpeningVariantAction(id: string): Promise<void> {
@@ -311,7 +311,7 @@ export async function deleteOpeningVariantAction(id: string): Promise<void> {
   if (openingId) {
     revalidatePath(`/admin/openings/opening/${openingId}`);
   }
-  revalidatePath(`/admin/openings/${id}`);
+  revalidatePath(`/admin/openings/variants/${id}`);
   redirect(
     openingId ? `/admin/openings/opening/${openingId}` : "/admin/openings",
   );

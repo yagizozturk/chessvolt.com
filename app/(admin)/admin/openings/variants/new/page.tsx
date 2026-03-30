@@ -11,7 +11,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import { ArrowLeft, Upload } from "lucide-react";
 import Link from "next/link";
 
-import { VariantForm } from "../components/forms/variant-form";
+import { VariantForm } from "../components/form/variant-form";
 
 type Props = {
   searchParams: Promise<{ openingId?: string }>;

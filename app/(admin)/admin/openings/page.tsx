@@ -3,7 +3,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import { Plus, Upload } from "lucide-react";
 import Link from "next/link";
 
-import { MainOpenings } from "./components/lists/main-openings-list";
+import { MainOpenings } from "./main-opening/components/list/main-openings-list";
 
 export default async function AdminOpeningsPage() {
   const { supabase } = await getAdminUser();

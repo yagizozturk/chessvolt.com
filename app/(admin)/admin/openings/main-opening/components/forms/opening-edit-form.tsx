@@ -1,10 +1,10 @@
 "use client";
 
-import type { Opening } from "@/features/openings/types/opening";
+import { updateOpeningAction } from "@/app/(admin)/admin/openings/main-opening/actions/openings";
+import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { updateOpeningAction } from "@/app/(admin)/admin/openings/actions/openings";
-import { Button } from "@/components/ui/button";
+import type { Opening } from "@/features/openings/types/opening";
 
 type Props = {
   opening: Opening;

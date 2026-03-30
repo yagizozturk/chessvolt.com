@@ -1,6 +1,6 @@
 "use client";
 
-import { updateOpeningVariantAction } from "@/app/(admin)/admin/openings/actions/variants";
+import { updateOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";

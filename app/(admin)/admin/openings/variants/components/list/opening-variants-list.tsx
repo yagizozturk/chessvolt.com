@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { deleteOpeningVariantAction } from "@/app/(admin)/admin/openings/actions/variants";
+import { deleteOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import Link from "next/link";
 
 type Props = {
   variants: OpeningVariant[];
@@ -31,7 +31,7 @@ export function OpeningVariantsList({ variants }: Props) {
           className="border-border flex min-h-0 flex-col gap-3 rounded-lg border p-4"
         >
           <Link
-            href={`/admin/openings/${v.id}`}
+            href={`/admin/openings/variants/${v.id}`}
             className="hover:text-primary line-clamp-2 block min-w-0 font-medium transition-colors"
           >
             {v.title || "Untitled Variant"}

@@ -2,7 +2,7 @@ import { getOpeningVariantById } from "@/features/openings/services/openings.ser
 import { getAdminUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
 
-import { VariantDetail } from "../variants/variant-detail";
+import { VariantDetail } from "../components/variant-detail";
 
 type Params = {
   params: Promise<{ id: string }>;

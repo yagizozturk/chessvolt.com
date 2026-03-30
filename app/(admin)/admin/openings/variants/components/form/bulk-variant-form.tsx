@@ -1,10 +1,9 @@
 "use client";
 
+import { bulkCreateVariantsAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { useState } from "react";
-
-import { bulkCreateVariantsAction } from "@/app/(admin)/admin/openings/actions/variants";
 
 const EXAMPLE_JSON = `{
   "opening_id": "7dfa1d04-bb0c-4f63-80ec-5169bb15a47a",

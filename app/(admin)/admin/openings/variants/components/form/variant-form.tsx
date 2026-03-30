@@ -1,13 +1,12 @@
 "use client";
 
+import { createOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { Opening } from "@/features/openings/types/opening";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
 import { useState } from "react";
-
-import { createOpeningVariantAction } from "@/app/(admin)/admin/openings/actions/variants";
 
 type Props = {
   openings: Opening[];

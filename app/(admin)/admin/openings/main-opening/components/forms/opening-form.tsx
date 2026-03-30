@@ -1,9 +1,9 @@
 "use client";
 
+import { createOpeningAction } from "@/app/(admin)/admin/openings/main-opening/actions/openings";
+import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { createOpeningAction } from "@/app/(admin)/admin/openings/actions/openings";
-import { Button } from "@/components/ui/button";
 
 export function OpeningForm() {
   return (
@@ -11,11 +11,7 @@ export function OpeningForm() {
       <FieldGroup>
         <Field>
           <FieldLabel>Name</FieldLabel>
-          <Input
-            name="name"
-            required
-            placeholder="e.g. Sicilian Defense"
-          />
+          <Input name="name" required placeholder="e.g. Sicilian Defense" />
         </Field>
         <Field>
           <FieldLabel>Slug (URL)</FieldLabel>
@@ -26,10 +22,7 @@ export function OpeningForm() {
         </Field>
         <Field>
           <FieldLabel>Description</FieldLabel>
-          <Input
-            name="description"
-            placeholder="Optional description"
-          />
+          <Input name="description" placeholder="Optional description" />
         </Field>
         <Field>
           <FieldLabel>Display FEN</FieldLabel>

@@ -10,7 +10,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import { ArrowLeft, Upload } from "lucide-react";
 import Link from "next/link";
 
-import { BulkVariantForm } from "../components/forms/bulk-variant-form";
+import { BulkVariantForm } from "../components/form/bulk-variant-form";
 
 type Props = {
   searchParams: Promise<{
