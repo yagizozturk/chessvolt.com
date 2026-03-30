@@ -48,6 +48,15 @@ function parseGoalsFromForm(
   }
 }
 
+/** Empty or missing → 0 (initial ply default). */
+function parseAdminPly(formData: FormData, key: string): number {
+  const raw = (formData.get(key) as string | null)?.trim();
+  if (raw === undefined || raw === "") return 0;
+  const n = parseInt(raw, 10);
+  if (Number.isNaN(n) || n < 0) return 0;
+  return n;
+}
+
 function parseBulkSortKey(
   v: unknown,
 ): { ok: true; value: number } | { ok: false } {
@@ -228,9 +237,10 @@ export async function updateOpeningVariantAction(
   const description = (formData.get("description") as string) || null;
   const sortKeyStr = (formData.get("sortKey") as string)?.trim();
   const pgn = (formData.get("pgn") as string)?.trim();
-  const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
-  const initialFen = (formData.get("initialFen") as string)?.trim() || null;
-  const displayFen = (formData.get("displayFen") as string)?.trim() || null;
+  const initialPly = parseAdminPly(formData, "initialPly");
+  const displayPly = parseAdminPly(formData, "displayPly");
+  const initialFenManual = (formData.get("initialFen") as string)?.trim() || null;
+  const displayFenManual = (formData.get("displayFen") as string)?.trim() || null;
   const goals = parseGoalsFromForm(
     formData,
     `/admin/openings/${id}?error=gecersiz_goals_json`,
@@ -246,17 +256,29 @@ export async function updateOpeningVariantAction(
     }
     input.sortKey = n;
   }
-  if (!isNaN(ply) && ply >= 0) input.ply = ply;
   if (pgn) {
-    const moves = getUciMovesFromPgnAfterPly(pgn, ply >= 0 ? ply : 0);
+    const moves = getUciMovesFromPgnAfterPly(pgn, initialPly);
     if (!moves) {
       redirect(`/admin/openings/${id}?error=invalid_pgn`);
     }
     input.pgn = pgn;
     input.moves = moves;
+    input.ply = initialPly;
+    const defaultStart =
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    input.initialFen =
+      initialFenManual ||
+      getFenFromPgnAtPly(pgn, initialPly) ||
+      defaultStart;
+    input.displayFen =
+      displayFenManual ||
+      getFenFromPgnAtPly(pgn, displayPly) ||
+      null;
+  } else {
+    if (initialFenManual) input.initialFen = initialFenManual;
+    if (displayFenManual) input.displayFen = displayFenManual;
+    input.ply = initialPly;
   }
-  if (initialFen) input.initialFen = initialFen; // only when non-empty (initial_fen is NOT NULL)
-  if (displayFen !== undefined) input.displayFen = displayFen;
   input.goals = goals;
 
   const variant = await updateOpeningVariant(supabase, id, input);
