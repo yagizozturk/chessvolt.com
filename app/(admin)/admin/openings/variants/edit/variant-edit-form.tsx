@@ -9,7 +9,7 @@ import {
   getPairedPgnDisplayFromPgn,
   getUciMovesFromPgnAfterPly,
 } from "@/lib/chess/extractMovesFromPgn";
-import { getPlyFromPgnAtFen } from "@/lib/chess/getFenFromPgnAtPly";
+import { getPlyFromPgnAndFen } from "@/lib/chess/getPlyFromPgnAndFen";
 import { Save } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -23,7 +23,7 @@ type Props = {
 function defaultDisplayPlyString(v: OpeningVariant): string {
   const df = v.displayFen?.trim();
   if (df) {
-    const p = getPlyFromPgnAtFen(v.pgn, df);
+    const p = getPlyFromPgnAndFen(v.pgn, df);
     if (p !== null) return String(p);
   }
   return String(v.ply ?? 0);

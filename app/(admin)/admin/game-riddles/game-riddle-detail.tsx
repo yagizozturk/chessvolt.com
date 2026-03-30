@@ -16,10 +16,8 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Trash2, Save } from "lucide-react";
 import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
-import {
-  getFenFromPgnAtPly,
-  getPlyFromPgnAtFen,
-} from "@/lib/chess/getFenFromPgnAtPly";
+import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
+import { getPlyFromPgnAndFen } from "@/lib/chess/getPlyFromPgnAndFen";
 import { updateGameRiddleAction, deleteGameRiddleAction } from "./actions";
 import { cn } from "@/lib/utilities/cn";
 
@@ -38,7 +36,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [ply, setPly] = useState(() => {
     if (game?.pgn && riddle.displayFen?.trim()) {
-      const p = getPlyFromPgnAtFen(game.pgn, riddle.displayFen.trim());
+      const p = getPlyFromPgnAndFen(game.pgn, riddle.displayFen.trim());
       return p != null ? String(p) : "0";
     }
     return "0";
