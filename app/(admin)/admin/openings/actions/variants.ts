@@ -126,7 +126,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
     const parsed = JSON.parse(jsonData.trim()) as unknown;
     items = Array.isArray(parsed) ? parsed : [parsed];
   } catch {
-    redirect("/admin/openings/bulk?error=gecersiz_json");
+    redirect("/admin/openings/bulk?error=invalid_json");
   }
 
   const created: string[] = [];
@@ -135,7 +135,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     if (!item?.opening_id?.trim() || !item?.pgn?.trim()) {
-      errors.push({ index: i, message: "opening_id ve pgn zorunludur" });
+      errors.push({ index: i, message: "opening_id and pgn are required" });
       continue;
     }
 
@@ -152,7 +152,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
     if (!displayFen) {
       errors.push({
         index: i,
-        message: `display_ply (${displayPly}) PGN uzunluğunu aşıyor`,
+        message: `display_ply (${displayPly}) exceeds PGN length`,
       });
       continue;
     }
@@ -164,7 +164,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
 
     const sortKeyParsed = parseBulkSortKey(item.sort_key);
     if (!sortKeyParsed.ok) {
-      errors.push({ index: i, message: "Geçersiz sort_key" });
+      errors.push({ index: i, message: "Invalid sort_key" });
       continue;
     }
 
@@ -179,7 +179,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
         errors.push({
           index: i,
           message:
-            "goals null veya { ply, move, card, title, description, isCompleted }[] olmalıdır",
+            "goals must be null or an array of { ply, move, card, title, description, isCompleted }",
         });
         continue;
       }
@@ -202,7 +202,10 @@ export async function bulkCreateVariantsAction(jsonData: string) {
     if (variant) {
       created.push(variant.id);
     } else {
-      errors.push({ index: i, message: "Veritabanına yazılamadı" });
+      errors.push({
+        index: i,
+        message: "Could not be written to the database",
+      });
     }
   }
 
@@ -239,7 +242,7 @@ export async function updateOpeningVariantAction(
   if (sortKeyStr !== undefined && sortKeyStr !== "") {
     const n = parseInt(sortKeyStr, 10);
     if (Number.isNaN(n)) {
-      redirect(`/admin/openings/${id}?error=gecersiz_sort_key`);
+      redirect(`/admin/openings/${id}?error=invalid_sort_key`);
     }
     input.sortKey = n;
   }
@@ -247,7 +250,7 @@ export async function updateOpeningVariantAction(
   if (pgn) {
     const moves = getUciMovesFromPgnAfterPly(pgn, ply >= 0 ? ply : 0);
     if (!moves) {
-      redirect(`/admin/openings/${id}?error=gecersiz_pgn`);
+      redirect(`/admin/openings/${id}?error=invalid_pgn`);
     }
     input.pgn = pgn;
     input.moves = moves;
@@ -258,7 +261,7 @@ export async function updateOpeningVariantAction(
 
   const variant = await updateOpeningVariant(supabase, id, input);
   if (!variant) {
-    redirect(`/admin/openings/${id}?error=guncellenemedi`);
+    redirect(`/admin/openings/${id}?error=could_not_be_updated`);
   }
 
   revalidatePath("/admin/openings");
