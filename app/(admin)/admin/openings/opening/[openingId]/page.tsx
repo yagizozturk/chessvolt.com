@@ -1,11 +1,4 @@
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   getOpeningById,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
@@ -14,7 +7,7 @@ import { ArrowLeft, Plus, Upload } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { OpeningsList } from "../../components/lists/openings-list";
+import { OpeningVariantsList } from "../../components/lists/opening-variants-list";
 
 type Params = {
   params: Promise<{ openingId: string }>;
@@ -73,17 +66,7 @@ export default async function AdminOpeningVariantsPage({ params }: Params) {
             {variants.length} variant(s)
           </p>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Variants</CardTitle>
-            <CardDescription>
-              Edit or delete variants for this opening.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <OpeningsList variants={variants} showOpeningParentId={false} />
-          </CardContent>
-        </Card>
+        <OpeningVariantsList variants={variants} />
       </section>
     </div>
   );

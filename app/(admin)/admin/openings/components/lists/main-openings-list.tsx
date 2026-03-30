@@ -3,7 +3,6 @@
 import { deleteOpeningAction } from "@/app/(admin)/admin/openings/actions/openings";
 import { Button } from "@/components/ui/button";
 import type { Opening } from "@/features/openings/types/opening";
-import { Trash2 } from "lucide-react";
 import Link from "next/link";
 
 type Props = {
@@ -35,11 +34,6 @@ export function MainOpenings({ openings }: Props) {
             {o.name}
           </Link>
           <div className="mt-auto flex flex-wrap gap-2">
-            <Link href={`/admin/openings/opening/${o.id}`}>
-              <Button variant="outline" size="sm">
-                Variants
-              </Button>
-            </Link>
             <Link href={`/admin/openings/edit/${o.id}`}>
               <Button variant="outline" size="sm">
                 Edit
@@ -47,13 +41,12 @@ export function MainOpenings({ openings }: Props) {
             </Link>
             <Button
               type="button"
-              variant="ghost"
-              size="icon"
+              variant="outline"
+              size="sm"
               onClick={() => handleDelete(o.id)}
-              className="text-destructive hover:bg-destructive/10"
-              aria-label="Delete opening"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
             >
-              <Trash2 className="h-4 w-4" />
+              Delete
             </Button>
           </div>
         </div>
