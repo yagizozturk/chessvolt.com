@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { deleteOpeningVariantAction } from "./actions";
+import { deleteOpeningVariantAction } from "@/app/(admin)/admin/openings/actions/variants";
 import { Button } from "@/components/ui/button";
 
 type Props = {

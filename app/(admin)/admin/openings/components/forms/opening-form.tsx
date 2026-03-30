@@ -2,7 +2,7 @@
 
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { createOpeningAction } from "./opening-actions";
+import { createOpeningAction } from "@/app/(admin)/admin/openings/actions/openings";
 import { Button } from "@/components/ui/button";
 
 export function OpeningForm() {

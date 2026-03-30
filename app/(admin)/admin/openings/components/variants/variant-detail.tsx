@@ -25,7 +25,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   deleteOpeningVariantAction,
   updateOpeningVariantAction,
-} from "./actions";
+} from "@/app/(admin)/admin/openings/actions/variants";
 
 type Props = {
   variant: OpeningVariant;

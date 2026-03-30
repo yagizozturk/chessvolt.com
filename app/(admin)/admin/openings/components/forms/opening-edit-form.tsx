@@ -3,7 +3,7 @@
 import type { Opening } from "@/features/openings/types/opening";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { updateOpeningAction } from "./opening-actions";
+import { updateOpeningAction } from "@/app/(admin)/admin/openings/actions/openings";
 import { Button } from "@/components/ui/button";
 
 type Props = {

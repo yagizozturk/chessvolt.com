@@ -14,7 +14,7 @@ import { ArrowLeft, Plus, Upload } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { OpeningsList } from "../../openings-list";
+import { OpeningsList } from "../../components/lists/openings-list";
 
 type Params = {
   params: Promise<{ openingId: string }>;

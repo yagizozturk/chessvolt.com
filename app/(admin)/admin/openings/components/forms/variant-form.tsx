@@ -7,7 +7,7 @@ import type { Opening } from "@/features/openings/types/opening";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
 import { useState } from "react";
 
-import { createOpeningVariantAction } from "./actions";
+import { createOpeningVariantAction } from "@/app/(admin)/admin/openings/actions/variants";
 
 type Props = {
   openings: Opening[];

@@ -11,7 +11,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { OpeningEditForm } from "../../opening-edit-form";
+import { OpeningEditForm } from "../../components/forms/opening-edit-form";
 
 type Params = {
   params: Promise<{ id: string }>;

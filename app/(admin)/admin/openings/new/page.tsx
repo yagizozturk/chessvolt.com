@@ -11,7 +11,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import { ArrowLeft, Upload } from "lucide-react";
 import Link from "next/link";
 
-import { VariantForm } from "../variant-form";
+import { VariantForm } from "../components/forms/variant-form";
 
 type Props = {
   searchParams: Promise<{ openingId?: string }>;
@@ -53,10 +53,7 @@ export default async function AdminOpeningsNewPage({ searchParams }: Props) {
               No openings found. Create openings first in the database.
             </p>
           ) : (
-            <VariantForm
-              openings={openings}
-              defaultOpeningId={openingId}
-            />
+            <VariantForm openings={openings} defaultOpeningId={openingId} />
           )}
         </CardContent>
       </Card>
