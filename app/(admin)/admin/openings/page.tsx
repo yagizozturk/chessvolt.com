@@ -1,6 +1,6 @@
 import { getAllOpenings } from "@/features/openings/services/openings.service";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import Link from "next/link";
 
 import { MainOpenings } from "./components/lists/main-openings-list";
@@ -19,13 +19,22 @@ export default async function AdminOpeningsPage() {
               {openings.length} openings
             </p>
           </div>
-          <Link
-            href="/admin/openings/create"
-            className="inline-flex shrink-0 items-center gap-2 text-sm font-medium"
-          >
-            <Plus className="h-4 w-4" />
-            New opening
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/admin/openings/bulk"
+              className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors"
+            >
+              <Upload className="h-4 w-4" />
+              Toplu Variant
+            </Link>
+            <Link
+              href="/admin/openings/create"
+              className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors"
+            >
+              <Plus className="h-4 w-4" />
+              New opening
+            </Link>
+          </div>
         </div>
         <div className="mt-4">
           <MainOpenings openings={openings} />
