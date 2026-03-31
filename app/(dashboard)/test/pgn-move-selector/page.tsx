@@ -75,6 +75,63 @@ function useUciRowsFromPgn(pgn: string) {
   }, [pgn]);
 }
 
+const JSON_FIELD_ORDER = [
+  "title",
+  "moves",
+  "pgn",
+  "description",
+  "sort_key",
+  "id",
+  "opening_id",
+  "initial_fen",
+  "ply",
+  "display_fen",
+  "created_at",
+] as const;
+
+function useParsedOpeningJson(jsonInput: string) {
+  return useMemo(() => {
+    const trimmed = jsonInput.trim();
+    if (!trimmed) {
+      return { record: null as Record<string, unknown> | null, error: null as string | null };
+    }
+    try {
+      const parsed: unknown = JSON.parse(trimmed);
+      let obj: unknown = parsed;
+      if (Array.isArray(parsed)) {
+        obj = parsed[0];
+      }
+      if (obj !== null && typeof obj === "object" && !Array.isArray(obj)) {
+        return { record: obj as Record<string, unknown>, error: null };
+      }
+      return {
+        record: null,
+        error: "JSON bir nesne veya nesne dizisi olmalı.",
+      };
+    } catch (e) {
+      return {
+        record: null,
+        error: e instanceof Error ? e.message : "Geçersiz JSON",
+      };
+    }
+  }, [jsonInput]);
+}
+
+function sortedJsonKeys(record: Record<string, unknown>): string[] {
+  const keys = Object.keys(record);
+  const ordered = JSON_FIELD_ORDER.filter((k) => keys.includes(k));
+  const rest = keys
+    .filter((k) => !JSON_FIELD_ORDER.includes(k as (typeof JSON_FIELD_ORDER)[number]))
+    .sort();
+  return [...ordered, ...rest];
+}
+
+function formatJsonValue(value: unknown): string {
+  if (value === null || value === undefined) return String(value);
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
 type BoardWithMovesProps = {
   sourceId: string;
   title: string;
@@ -192,9 +249,20 @@ function BoardWithMoves({
   );
 }
 
+function pgnFromJsonRecord(record: Record<string, unknown> | null): string {
+  if (!record) return "";
+  const p = record.pgn;
+  return typeof p === "string" ? p : "";
+}
+
 export default function PgnMoveSelectorPage() {
-  const [pgn, setPgn] = useState("");
-  const { rows, error, fensByPly, uciMoves } = useUciRowsFromPgn(pgn);
+  const [jsonInput, setJsonInput] = useState("");
+  const { record: jsonRecord, error: jsonError } = useParsedOpeningJson(jsonInput);
+  const pgnFromJson = useMemo(
+    () => pgnFromJsonRecord(jsonRecord),
+    [jsonRecord],
+  );
+  const { rows, error, fensByPly, uciMoves } = useUciRowsFromPgn(pgnFromJson);
   const maxPly = Math.max(0, fensByPly.length - 1);
 
   const [selectedPlyInitial, setSelectedPlyInitial] = useState(0);
@@ -203,12 +271,29 @@ export default function PgnMoveSelectorPage() {
   useEffect(() => {
     setSelectedPlyInitial(maxPly);
     setSelectedPlyDisplay(maxPly);
-  }, [pgn, maxPly]);
+  }, [pgnFromJson, maxPly]);
 
   const safePlyInitial = Math.min(Math.max(0, selectedPlyInitial), maxPly);
   const safePlyDisplay = Math.min(Math.max(0, selectedPlyDisplay), maxPly);
   const initialFen = fensByPly[safePlyInitial] ?? START_FEN;
   const displayFen = fensByPly[safePlyDisplay] ?? START_FEN;
+
+  const mergedJsonForExport = useMemo(() => {
+    const base =
+      jsonRecord && !jsonError
+        ? { ...jsonRecord }
+        : ({} as Record<string, unknown>);
+    return {
+      ...base,
+      initial_fen: initialFen,
+      display_fen: displayFen,
+    };
+  }, [jsonRecord, jsonError, initialFen, displayFen]);
+
+  const mergedJsonString = useMemo(
+    () => JSON.stringify(mergedJsonForExport, null, 2),
+    [mergedJsonForExport],
+  );
 
   return (
     <div className="container mx-auto max-w-[110rem] space-y-4 p-8">
@@ -273,13 +358,65 @@ export default function PgnMoveSelectorPage() {
         />
       </div>
 
-      <textarea
-        value={pgn}
-        onChange={(e) => setPgn(e.target.value)}
-        className="border-input h-40 w-full rounded-md border bg-transparent p-2 font-mono text-sm"
-        placeholder="PGN"
-        spellCheck={false}
-      />
+      <div className="space-y-2">
+        <p className="text-muted-foreground text-sm font-medium">JSON</p>
+        <p className="text-muted-foreground text-xs">
+          Tahta ve hamle listesi, nesnedeki <span className="font-mono">pgn</span>{" "}
+          alanından üretilir.
+        </p>
+        <textarea
+          value={jsonInput}
+          onChange={(e) => setJsonInput(e.target.value)}
+          className="border-input h-48 w-full rounded-md border bg-transparent p-2 font-mono text-sm"
+          placeholder='{"title": "...", "moves": "...", "pgn": "...", ...}'
+          spellCheck={false}
+          autoComplete="off"
+          autoCorrect="off"
+        />
+      </div>
+
+      <div className="border-input bg-muted/20 rounded-md border p-4">
+        <p className="text-muted-foreground mb-3 text-sm font-medium">
+          JSON alanları (yapıştırılan nesne)
+        </p>
+        {jsonError && (
+          <p className="text-destructive text-sm">{jsonError}</p>
+        )}
+        {!jsonError && !jsonInput.trim() && (
+          <p className="text-muted-foreground text-sm">
+            Geçerli bir açılış varyantı JSON’u yapıştırın (tek nesne veya dizi).
+          </p>
+        )}
+        {!jsonError && jsonRecord && (
+          <dl className="space-y-3">
+            {sortedJsonKeys(jsonRecord).map((key) => (
+              <div key={key} className="sm:flex sm:gap-4">
+                <dt className="text-muted-foreground shrink-0 font-mono text-xs tracking-wide uppercase sm:w-36">
+                  {key}
+                </dt>
+                <dd className="min-w-0 flex-1 font-mono text-sm break-all whitespace-pre-wrap">
+                  {formatJsonValue(jsonRecord[key])}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
+      </div>
+
+      <div className="border-input bg-muted/30 rounded-md border p-4">
+        <p className="text-muted-foreground mb-1 text-sm font-medium">
+          JSON (son hal)
+        </p>
+        <p className="text-muted-foreground mb-3 text-xs">
+          Sol tahtadaki pozisyon{" "}
+          <span className="font-mono">initial_fen</span>, sağdaki{" "}
+          <span className="font-mono">display_fen</span> olarak eklenir; yapıştırdığın
+          nesnenin diğer alanları korunur.
+        </p>
+        <pre className="border-input max-h-[min(28rem,70vh)] overflow-auto rounded-md border bg-background p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">
+          {mergedJsonString}
+        </pre>
+      </div>
     </div>
   );
 }
