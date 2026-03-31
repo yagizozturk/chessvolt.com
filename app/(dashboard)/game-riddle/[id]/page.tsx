@@ -8,6 +8,12 @@ type Params = {
   params: Promise<{ id: string }>;
 };
 
+/**
+ * Fonksyon Bilgisi ✅
+ * 1. İlgili riddle id ye göre çekilir
+ * 2. İlgili game id ye göre çekilir
+ * 3. RiddleController a verilir riddle ve game
+ */
 export default async function GameRiddlePage({ params }: Params) {
   const { supabase } = await getPublicUser();
   const { id } = await params;

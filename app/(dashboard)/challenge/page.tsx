@@ -18,7 +18,6 @@ import { groupBy } from "@/lib/utilities/groupBy";
  * 2. Tüm oyunlarıdaki tüm Riddle lar çekilir
  * 3. Oyunucunun çözülmeye çalıştığı game riddle ların attempt bilgisi çekilir
  * 4. fromEntries riddleId, isCorrect bilgisi ile birleştirilir ve yeni objeye çevrilir.
- * 5.
  * Gets user, gets allRiddles, gets user attempted Riddles. Filters in allRiddles. Group them by gameType
  * Full PGN string
  *
