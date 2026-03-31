@@ -10,7 +10,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-import { VariantForm } from "../components/form/variant-form";
+import { JsonVariantForm } from "../components/form/json-variant-form";
 
 type Props = {
   searchParams: Promise<{ openingId?: string }>;
@@ -32,9 +32,11 @@ export default async function AdminOpeningsNewPage({ searchParams }: Props) {
       </Link>
       <Card>
         <CardHeader>
-          <CardTitle>New Opening Variant</CardTitle>
+          <CardTitle>New Opening Variant (JSON)</CardTitle>
           <CardDescription>
-            Add a new variant to an opening. Requires an existing opening.
+            Paste variant JSON (with <code className="text-xs">pgn</code>), pick
+            boards for <code className="text-xs">initial_fen</code> /{" "}
+            <code className="text-xs">display_fen</code>, then submit to save.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -43,7 +45,7 @@ export default async function AdminOpeningsNewPage({ searchParams }: Props) {
               No openings found. Create openings first in the database.
             </p>
           ) : (
-            <VariantForm openings={openings} defaultOpeningId={openingId} />
+            <JsonVariantForm openings={openings} defaultOpeningId={openingId} />
           )}
         </CardContent>
       </Card>
