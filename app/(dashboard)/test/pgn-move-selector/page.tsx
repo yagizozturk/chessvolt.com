@@ -78,7 +78,8 @@ function useUciRowsFromPgn(pgn: string) {
 type BoardWithMovesProps = {
   sourceId: string;
   title: string;
-  activeFen: string;
+  /** VoltBoard `initialFen` — sol panelde initial, sağda display pozisyonu */
+  boardFen: string;
   rows: { num: number; white: string; black?: string }[];
   error: string | null;
   uciMoves: string[];
@@ -90,7 +91,7 @@ type BoardWithMovesProps = {
 function BoardWithMoves({
   sourceId,
   title,
-  activeFen,
+  boardFen,
   rows,
   error,
   uciMoves,
@@ -111,20 +112,20 @@ function BoardWithMoves({
       </h2>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <VoltBoard
-          key={`${sourceId}-${activeFen}`}
+          key={`${sourceId}-${boardFen}`}
           sourceId={sourceId}
           mode="opening"
           moves=""
-          initialFen={activeFen}
+          initialFen={boardFen}
           width={420}
           height={420}
           viewOnly
         />
         <div className="min-h-[200px] min-w-0 flex-1 lg:max-w-md">
-          <p className="text-muted-foreground mb-2 text-sm font-medium">UCI hamleler</p>
-          {error && (
-            <p className="text-destructive mb-2 text-sm">{error}</p>
-          )}
+          <p className="text-muted-foreground mb-2 text-sm font-medium">
+            UCI hamleler
+          </p>
+          {error && <p className="text-destructive mb-2 text-sm">{error}</p>}
           {uciMoves.length > 0 && (
             <button
               type="button"
@@ -139,13 +140,20 @@ function BoardWithMoves({
               const whiteIdx = (r.num - 1) * 2;
               const blackIdx = (r.num - 1) * 2 + 1;
               return (
-                <li key={r.num} className="flex flex-wrap items-baseline gap-2 gap-y-1">
-                  <span className="text-muted-foreground w-6 shrink-0">{r.num}.</span>
+                <li
+                  key={r.num}
+                  className="flex flex-wrap items-baseline gap-2 gap-y-1"
+                >
+                  <span className="text-muted-foreground w-6 shrink-0">
+                    {r.num}.
+                  </span>
                   <span className="flex flex-wrap gap-1">
                     <button
                       type="button"
-                      className={`rounded px-1.5 py-0.5 transition-colors hover:bg-muted ${
-                        safePly === whiteIdx + 1 ? "bg-primary/20 font-medium" : ""
+                      className={`hover:bg-muted rounded px-1.5 py-0.5 transition-colors ${
+                        safePly === whiteIdx + 1
+                          ? "bg-primary/20 font-medium"
+                          : ""
                       }`}
                       onClick={() => setSelectedPly(whiteIdx + 1)}
                     >
@@ -154,8 +162,10 @@ function BoardWithMoves({
                     {r.black !== undefined && (
                       <button
                         type="button"
-                        className={`rounded px-1.5 py-0.5 transition-colors hover:bg-muted ${
-                          safePly === blackIdx + 1 ? "bg-primary/20 font-medium" : ""
+                        className={`hover:bg-muted rounded px-1.5 py-0.5 transition-colors ${
+                          safePly === blackIdx + 1
+                            ? "bg-primary/20 font-medium"
+                            : ""
                         }`}
                         onClick={() => setSelectedPly(blackIdx + 1)}
                       >
@@ -187,60 +197,79 @@ export default function PgnMoveSelectorPage() {
   const { rows, error, fensByPly, uciMoves } = useUciRowsFromPgn(pgn);
   const maxPly = Math.max(0, fensByPly.length - 1);
 
-  const [selectedPly, setSelectedPly] = useState(0);
+  const [selectedPlyInitial, setSelectedPlyInitial] = useState(0);
+  const [selectedPlyDisplay, setSelectedPlyDisplay] = useState(0);
 
   useEffect(() => {
-    setSelectedPly(maxPly);
+    setSelectedPlyInitial(maxPly);
+    setSelectedPlyDisplay(maxPly);
   }, [pgn, maxPly]);
 
-  const safePly = Math.min(Math.max(0, selectedPly), maxPly);
-  const activeFen = fensByPly[safePly] ?? START_FEN;
-
-  const panelProps = {
-    activeFen,
-    rows,
-    error,
-    uciMoves,
-    safePly,
-    maxPly,
-    setSelectedPly,
-  };
+  const safePlyInitial = Math.min(Math.max(0, selectedPlyInitial), maxPly);
+  const safePlyDisplay = Math.min(Math.max(0, selectedPlyDisplay), maxPly);
+  const initialFen = fensByPly[safePlyInitial] ?? START_FEN;
+  const displayFen = fensByPly[safePlyDisplay] ?? START_FEN;
 
   return (
     <div className="container mx-auto max-w-[110rem] space-y-4 p-8">
       <div className="border-input bg-muted/30 rounded-md border p-3">
-        <div className="flex flex-wrap gap-6 gap-y-3">
-          <div className="min-w-0 flex-1">
-            <p className="text-muted-foreground mb-1 text-xs font-medium uppercase tracking-wide">
-              Aktif FEN
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div className="min-w-0">
+            <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">
+              initialFen (sol board)
             </p>
-            <p className="font-mono text-xs break-all">{activeFen}</p>
+            <p className="font-mono text-xs break-all">{initialFen}</p>
+            <p className="text-muted-foreground mt-2 text-xs">
+              Seçilen ply:{" "}
+              <span className="text-foreground font-mono tabular-nums">
+                {safePlyInitial}
+              </span>
+            </p>
           </div>
-          <div className="shrink-0">
-            <p className="text-muted-foreground mb-1 text-xs font-medium uppercase tracking-wide">
-              Seçilen ply
+          <div className="min-w-0">
+            <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">
+              displayFen (sağ board)
             </p>
-            <p className="font-mono text-sm tabular-nums">{safePly}</p>
+            <p className="font-mono text-xs break-all">{displayFen}</p>
+            <p className="text-muted-foreground mt-2 text-xs">
+              Seçilen ply:{" "}
+              <span className="text-foreground font-mono tabular-nums">
+                {safePlyDisplay}
+              </span>
+            </p>
           </div>
         </div>
-        <p className="text-muted-foreground mt-3 border-t border-border pt-3 text-[11px] leading-relaxed">
-          <span className="font-medium text-foreground/80">Note: </span>
-          The selected ply is the number of half-moves played. If it is odd, it is
-          Black&apos;s turn; if it is even, it is White&apos;s turn. If it is odd,
-          board orientation is Black; if it is even, board orientation is White.
+        <p className="text-muted-foreground border-border mt-3 border-t pt-3 text-[11px] leading-relaxed">
+          <span className="text-foreground/80 font-medium">Note: </span>
+          The selected ply is the number of half-moves played. If it is odd, it
+          is Black&apos;s turn; if it is even, it is White&apos;s turn. If it is
+          odd, board orientation is Black; if it is even, board orientation is
+          White.
         </p>
       </div>
 
       <div className="grid gap-10 xl:grid-cols-2">
         <BoardWithMoves
-          {...panelProps}
-          sourceId="pgn-move-selector-a"
-          title="Board A"
+          sourceId="pgn-move-selector-initial"
+          title="Sol — initial"
+          boardFen={initialFen}
+          rows={rows}
+          error={error}
+          uciMoves={uciMoves}
+          safePly={safePlyInitial}
+          maxPly={maxPly}
+          setSelectedPly={setSelectedPlyInitial}
         />
         <BoardWithMoves
-          {...panelProps}
-          sourceId="pgn-move-selector-b"
-          title="Board B"
+          sourceId="pgn-move-selector-display"
+          title="Sağ — display"
+          boardFen={displayFen}
+          rows={rows}
+          error={error}
+          uciMoves={uciMoves}
+          safePly={safePlyDisplay}
+          maxPly={maxPly}
+          setSelectedPly={setSelectedPlyDisplay}
         />
       </div>
 
