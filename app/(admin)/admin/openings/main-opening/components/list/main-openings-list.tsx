@@ -28,13 +28,13 @@ export function MainOpenings({ openings }: Props) {
           className="border-border flex min-h-0 flex-col gap-3 rounded-lg border p-4"
         >
           <Link
-            href={`/admin/openings/opening/${o.id}`}
+            href={`/admin/openings/main-opening/${o.id}`}
             className="hover:text-primary line-clamp-2 block min-w-0 font-medium transition-colors"
           >
             {o.name}
           </Link>
           <div className="mt-auto flex flex-wrap gap-2">
-            <Link href={`/admin/openings/edit/${o.id}`}>
+            <Link href={`/admin/openings/main-opening/edit/${o.id}`}>
               <Button variant="outline" size="sm">
                 Edit
               </Button>

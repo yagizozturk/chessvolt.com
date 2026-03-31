@@ -1,6 +1,5 @@
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -8,7 +7,7 @@ import {
 } from "@/components/ui/card";
 import { getAllOpenings } from "@/features/openings/services/openings.service";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { ArrowLeft, Upload } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 import { VariantForm } from "../components/form/variant-form";
@@ -37,15 +36,6 @@ export default async function AdminOpeningsNewPage({ searchParams }: Props) {
           <CardDescription>
             Add a new variant to an opening. Requires an existing opening.
           </CardDescription>
-          <CardAction>
-            <Link
-              href="/admin/openings/bulk"
-              className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors"
-            >
-              <Upload className="h-4 w-4" />
-              Toplu Variant Gir
-            </Link>
-          </CardAction>
         </CardHeader>
         <CardContent>
           {openings.length === 0 ? (

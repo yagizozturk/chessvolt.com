@@ -57,6 +57,14 @@ function parseAdminPly(formData: FormData, key: string): number {
   return n;
 }
 
+/** Form hata yönlendirmesi — doğru route: `variants/new`. */
+function newVariantUrl(formData: FormData, error: string): string {
+  const q = new URLSearchParams({ error });
+  const id = (formData.get("openingId") as string)?.trim();
+  if (id) q.set("openingId", id);
+  return `/admin/openings/variants/new?${q.toString()}`;
+}
+
 function parseBulkSortKey(
   v: unknown,
 ): { ok: true; value: number } | { ok: false } {
@@ -92,16 +100,16 @@ export async function createOpeningVariantAction(formData: FormData) {
   const displayFen = (formData.get("displayFen") as string)?.trim() || null;
   const goals = parseGoalsFromForm(
     formData,
-    "/admin/openings/new?error=gecersiz_goals_json",
+    newVariantUrl(formData, "gecersiz_goals_json"),
   );
 
   if (!openingId?.trim() || !pgn || Number.isNaN(sortKey)) {
-    redirect("/admin/openings/new?error=eksik_alan");
+    redirect(newVariantUrl(formData, "eksik_alan"));
   }
 
   const moves = getUciMovesFromPgnAfterPly(pgn, ply >= 0 ? ply : 0);
   if (!moves) {
-    redirect("/admin/openings/new?error=gecersiz_pgn");
+    redirect(newVariantUrl(formData, "gecersiz_pgn"));
   }
 
   const input: CreateOpeningVariantInput = {
@@ -119,11 +127,11 @@ export async function createOpeningVariantAction(formData: FormData) {
 
   const variant = await createOpeningVariant(supabase, input);
   if (!variant) {
-    redirect("/admin/openings/new?error=olusturulamadi");
+    redirect(newVariantUrl(formData, "olusturulamadi"));
   }
 
   revalidatePath("/admin/openings");
-  revalidatePath(`/admin/openings/opening/${variant.openingId}`);
+  revalidatePath(`/admin/openings/main-opening/${variant.openingId}`);
   redirect(`/admin/openings/variants/${variant.id}`);
 }
 
@@ -288,7 +296,7 @@ export async function updateOpeningVariantAction(
 
   revalidatePath("/admin/openings");
   revalidatePath(`/admin/openings/variants/${id}`);
-  revalidatePath(`/admin/openings/opening/${variant.openingId}`);
+  revalidatePath(`/admin/openings/main-opening/${variant.openingId}`);
   redirect(`/admin/openings/variants/${id}`);
 }
 
@@ -302,17 +310,17 @@ export async function deleteOpeningVariantAction(id: string): Promise<void> {
   if (!ok) {
     redirect(
       openingId
-        ? `/admin/openings/opening/${openingId}?error=delete_failed`
+        ? `/admin/openings/main-opening/${openingId}?error=delete_failed`
         : "/admin/openings?error=delete_failed",
     );
   }
 
   revalidatePath("/admin/openings");
   if (openingId) {
-    revalidatePath(`/admin/openings/opening/${openingId}`);
+    revalidatePath(`/admin/openings/main-opening/${openingId}`);
   }
   revalidatePath(`/admin/openings/variants/${id}`);
   redirect(
-    openingId ? `/admin/openings/opening/${openingId}` : "/admin/openings",
+    openingId ? `/admin/openings/main-opening/${openingId}` : "/admin/openings",
   );
 }

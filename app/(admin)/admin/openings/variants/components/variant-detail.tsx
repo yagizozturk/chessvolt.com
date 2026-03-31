@@ -35,7 +35,7 @@ export function VariantDetail({ variant }: Props) {
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
           <Link
-            href={`/admin/openings/opening/${variant.openingId}`}
+            href={`/admin/openings/main-opening/${variant.openingId}`}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />

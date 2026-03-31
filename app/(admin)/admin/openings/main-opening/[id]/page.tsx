@@ -10,12 +10,12 @@ import { notFound } from "next/navigation";
 import { OpeningVariantsList } from "../../variants/components/list/opening-variants-list";
 
 type Params = {
-  params: Promise<{ openingId: string }>;
+  params: Promise<{ id: string }>;
 };
 
 export default async function AdminOpeningVariantsPage({ params }: Params) {
   const { supabase } = await getAdminUser();
-  const { openingId } = await params;
+  const { id: openingId } = await params;
 
   const [opening, variants] = await Promise.all([
     getOpeningById(supabase, openingId),
@@ -45,7 +45,7 @@ export default async function AdminOpeningVariantsPage({ params }: Params) {
             Toplu Variant
           </Link>
           <Link
-            href={`/admin/openings/new?openingId=${encodeURIComponent(openingId)}`}
+            href={`/admin/openings/variants/new?openingId=${encodeURIComponent(openingId)}`}
             className="flex items-center gap-2 text-sm font-medium"
           >
             <Plus className="h-4 w-4" />
