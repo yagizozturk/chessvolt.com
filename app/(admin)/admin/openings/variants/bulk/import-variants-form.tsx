@@ -20,7 +20,7 @@ const EXAMPLE_JSON = `{
   ]
 }`;
 
-export function BulkVariantForm() {
+export function ImportVariantsForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   return (

@@ -1,16 +1,9 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { getAllOpenings } from "@/features/openings/services/openings.service";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { ArrowLeft, Upload } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-import { BulkVariantForm } from "../components/form/bulk-variant-form";
+import { ImportVariantsForm } from "./import-variants-form";
 
 type Props = {
   searchParams: Promise<{
@@ -55,7 +48,7 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
           Önce bir opening oluşturmanız gerekiyor.
         </p>
       ) : (
-        <BulkVariantForm />
+        <ImportVariantsForm />
       )}
     </div>
   );
