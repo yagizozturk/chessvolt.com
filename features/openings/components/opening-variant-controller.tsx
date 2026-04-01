@@ -1,6 +1,8 @@
 "use client";
 
+import { MoveGoal as MoveGoalView } from "@/components/move-goal/move-goal";
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
+import { AnimatedList } from "@/components/ui/animated-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -9,12 +11,11 @@ import VoltBoard, {
 } from "@/components/volt-board/volt-board";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import type {
+  MoveGoal,
   OpeningVariant,
-  OpeningVariantGoal,
 } from "@/features/openings/types/opening-variant";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
-import { cn } from "@/lib/utils/cn";
-import { Check, Lightbulb, Target } from "lucide-react";
+import { Lightbulb, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -41,11 +42,11 @@ export default function OpeningVariantController({
     return [...g].sort((a, b) => a.ply - b.ply);
   }, [variant.goals]);
 
-  const isHighlightedGoal = (goal: OpeningVariantGoal) =>
+  const isHighlightedGoal = (goal: MoveGoal) =>
     activePly != null && goal.ply === activePly + 1;
 
   /** activePly hedef ply’ine ulaştıysa / geçtiyse tamam (bir sonraki hedefe geçilebildiyse önceki biter) */
-  const isGoalDone = (goal: OpeningVariantGoal) =>
+  const isGoalDone = (goal: MoveGoal) =>
     activePly != null && activePly >= goal.ply;
 
   const goalsProgress = useMemo(() => {
@@ -183,80 +184,15 @@ export default function OpeningVariantController({
 
           {/*************** Goals ***************/}
           <div className="flex flex-col gap-2">
-            {sortedGoals.map((goal, index) => {
-              const highlighted = isHighlightedGoal(goal);
-
-              if (highlighted) {
-                return (
-                  <Card
-                    key={goal.ply}
-                    className="border-primary/35 ring-primary/15 gap-2 shadow-md ring-2"
-                  >
-                    <CardHeader>
-                      <div className="flex items-center gap-2">
-                        <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
-                          <Target className="h-4 w-4" aria-hidden />
-                        </div>
-                        <div className="min-w-0">
-                          <CardTitle className="flex flex-wrap items-center gap-x-2 text-lg">
-                            <span className="min-w-0">{goal.title}</span>
-                            {isGoalDone(goal) ? (
-                              <span
-                                className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm dark:bg-emerald-500"
-                                aria-label="Goal completed"
-                              >
-                                <Check
-                                  className="h-4 w-4"
-                                  strokeWidth={2.75}
-                                  aria-hidden
-                                />
-                              </span>
-                            ) : null}
-                          </CardTitle>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-0 pt-0">
-                      <div className="flex gap-3">
-                        <div
-                          className={cn(
-                            "min-w-0 space-y-1.5",
-                            isGoalDone(goal) && "opacity-80",
-                          )}
-                        >
-                          <p className="text-muted-foreground text-sm leading-relaxed">
-                            {goal.description}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              }
-
-              return (
-                <div
-                  key={goal.ply}
-                  className="bg-muted/35 flex min-h-10 items-center justify-between gap-2 rounded-lg border px-3 py-2"
-                >
-                  <span className="min-w-0 truncate text-sm font-medium">
-                    Goal {index + 1}: {goal.title}
-                  </span>
-                  {isGoalDone(goal) ? (
-                    <span
-                      className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white dark:bg-emerald-500"
-                      aria-label="Goal completed"
-                    >
-                      <Check
-                        className="h-3.5 w-3.5"
-                        strokeWidth={2.75}
-                        aria-hidden
-                      />
-                    </span>
-                  ) : null}
-                </div>
-              );
-            })}
+            {sortedGoals.map((goal, index) => (
+              <MoveGoalView
+                key={goal.ply}
+                goal={goal}
+                index={index}
+                highlighted={isHighlightedGoal(goal)}
+                done={isGoalDone(goal)}
+              />
+            ))}
           </div>
 
           {/*************** Hint Button ***************/}

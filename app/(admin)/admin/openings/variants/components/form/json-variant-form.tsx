@@ -6,8 +6,8 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import VoltBoard from "@/components/volt-board/volt-board";
 import type { Opening } from "@/features/openings/types/opening";
-import type { OpeningVariantGoal } from "@/features/openings/types/opening-variant";
-import { isOpeningVariantGoalsArray } from "@/features/openings/validation/opening-variant-goals";
+import type { MoveGoal } from "@/features/openings/types/opening-variant";
+import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { Chess } from "chess.js";
@@ -252,7 +252,7 @@ function sortKeyFromRecord(record: Record<string, unknown> | null): number {
 function parseGoalsFromRecord(
   record: Record<string, unknown> | null,
 ):
-  | { ok: true; goals: OpeningVariantGoal[] | null }
+  | { ok: true; goals: MoveGoal[] | null }
   | { ok: false; error: string } {
   if (!record) return { ok: true, goals: null };
   if (!("goals" in record)) return { ok: true, goals: null };
@@ -261,7 +261,7 @@ function parseGoalsFromRecord(
   if (!Array.isArray(g)) {
     return { ok: false, error: "goals bir dizi olmalı." };
   }
-  if (!isOpeningVariantGoalsArray(g)) {
+  if (!isMoveGoalsArray(g)) {
     return {
       ok: false,
       error:

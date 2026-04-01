@@ -1,5 +1,5 @@
 /** One learning goal row stored in `opening_variants.goals` (jsonb array). */
-export type OpeningVariantGoal = {
+export type MoveGoal = {
   ply: number;
   move: string;
   card: string;
@@ -19,6 +19,6 @@ export type OpeningVariant = {
   pgn: string;
   initialFen: string;
   displayFen: string | null;
-  goals: OpeningVariantGoal[] | null;
+  goals: MoveGoal[] | null;
   createdAt: string;
 };

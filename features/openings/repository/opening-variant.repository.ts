@@ -5,8 +5,8 @@
  */
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
 import type {
+  MoveGoal,
   OpeningVariant,
-  OpeningVariantGoal,
 } from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -105,7 +105,7 @@ export type CreateOpeningVariantInput = {
   pgn: string;
   initialFen?: string | null;
   displayFen?: string | null;
-  goals?: OpeningVariantGoal[] | null;
+  goals?: MoveGoal[] | null;
 };
 
 export async function create(
@@ -146,7 +146,7 @@ export type UpdateOpeningVariantInput = {
   pgn?: string;
   initialFen?: string | null;
   displayFen?: string | null;
-  goals?: OpeningVariantGoal[] | null;
+  goals?: MoveGoal[] | null;
 };
 
 export async function update(

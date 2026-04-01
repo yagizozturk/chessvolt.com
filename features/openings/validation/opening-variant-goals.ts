@@ -1,8 +1,6 @@
-import type { OpeningVariantGoal } from "@/features/openings/types/opening-variant";
+import type { MoveGoal } from "@/features/openings/types/opening-variant";
 
-export function isOpeningVariantGoal(
-  value: unknown,
-): value is OpeningVariantGoal {
+export function isMoveGoal(value: unknown): value is MoveGoal {
   if (value === null || typeof value !== "object") return false;
   const o = value as Record<string, unknown>;
   return (
@@ -16,9 +14,7 @@ export function isOpeningVariantGoal(
   );
 }
 
-export function isOpeningVariantGoalsArray(
-  value: unknown,
-): value is OpeningVariantGoal[] {
+export function isMoveGoalsArray(value: unknown): value is MoveGoal[] {
   if (!Array.isArray(value)) return false;
-  return value.every(isOpeningVariantGoal);
+  return value.every(isMoveGoal);
 }

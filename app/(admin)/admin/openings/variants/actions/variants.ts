@@ -10,8 +10,8 @@ import {
   getOpeningVariantById,
   updateOpeningVariant,
 } from "@/features/openings/services/openings.service";
-import type { OpeningVariantGoal } from "@/features/openings/types/opening-variant";
-import { isOpeningVariantGoalsArray } from "@/features/openings/validation/opening-variant-goals";
+import type { MoveGoal } from "@/features/openings/types/opening-variant";
+import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getAdminUser } from "@/lib/supabase/auth";
@@ -33,7 +33,7 @@ type BulkVariantInput = {
 function parseGoalsFromForm(
   formData: FormData,
   errorRedirect: string,
-): OpeningVariantGoal[] | null {
+): MoveGoal[] | null {
   const raw = formData.get("goals");
   if (raw === null) return null;
   const str = typeof raw === "string" ? raw.trim() : "";
@@ -41,7 +41,7 @@ function parseGoalsFromForm(
   try {
     const parsed = JSON.parse(str) as unknown;
     if (parsed === null) return null;
-    if (!isOpeningVariantGoalsArray(parsed)) redirect(errorRedirect);
+    if (!isMoveGoalsArray(parsed)) redirect(errorRedirect);
     return parsed;
   } catch {
     redirect(errorRedirect);
@@ -185,12 +185,12 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       continue;
     }
 
-    let goals: OpeningVariantGoal[] | null | undefined;
+    let goals: MoveGoal[] | null | undefined;
     if ("goals" in item) {
       const g = item.goals;
       if (g === null) {
         goals = null;
-      } else if (isOpeningVariantGoalsArray(g)) {
+      } else if (isMoveGoalsArray(g)) {
         goals = g;
       } else {
         errors.push({
