@@ -9,6 +9,7 @@ import VoltBoard, {
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
+import { getFullMoveCountFromMoves } from "@/lib/chess/getFullMoveCountFromMoves";
 import { Calendar, Flag, Lightbulb, Puzzle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -17,15 +18,6 @@ type RiddleControllerProps = {
   riddle: GameRiddle;
   game: Game;
 };
-
-function getMoveCount(moves: string | null): number {
-  if (!moves?.trim()) return 0;
-  const arr = moves
-    .trim()
-    .split(/\s+/)
-    .filter((m) => m.length > 0);
-  return Math.ceil(arr.length / 2);
-}
 
 function formatDate(dateStr: string) {
   try {
@@ -47,7 +39,7 @@ export default function RiddleController({
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const turn = (riddle.displayFen?.includes(" w ") ?? true) ? "White" : "Black";
-  const moveCount = getMoveCount(riddle.moves);
+  const moveCount = getFullMoveCountFromMoves(riddle.moves);
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();

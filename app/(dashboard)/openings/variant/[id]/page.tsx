@@ -1,4 +1,4 @@
-import OpeningsController from "@/features/openings/components/openings-controller";
+import OpeningVariantController from "@/features/openings/components/opening-variant-controller";
 import {
   getOpeningById,
   getOpeningVariantById,
@@ -59,10 +59,11 @@ export default async function OpeningVariantPage({ params }: Params) {
       : "/openings";
 
   return (
-    <OpeningsController
+    <OpeningVariantController
       variant={variant}
       nextVariantId={nextVariant?.id ?? null}
       parentOpeningUrl={parentOpeningUrl}
     />
   );
 }
+

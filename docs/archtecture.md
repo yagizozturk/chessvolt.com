@@ -254,7 +254,7 @@
 │   ├── openings
 │   │   ├── components
 │   │   │   ├── opening-board-card.tsx
-│   │   │   └── openings-controller.tsx
+│   │   │   └── opening-variant-controller.tsx
 │   │   ├── mapper
 │   │   │   └── opening-variant.mapper.ts
 │   │   ├── repository
