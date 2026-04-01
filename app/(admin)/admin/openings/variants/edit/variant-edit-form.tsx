@@ -5,15 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import {
-  getPairedPgnDisplayFromPgn,
-  getUciMovesFromPgnAfterPly,
-} from "@/lib/chess/extractMovesFromPgn";
+import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { getPlyFromPgnAndFen } from "@/lib/chess/getPlyFromPgnAndFen";
 import { Save } from "lucide-react";
-import { useMemo, useState } from "react";
-
-import { PgnPairedBlock } from "../components/pgn-paired-block";
+import { useState } from "react";
 
 type Props = {
   variant: OpeningVariant;
@@ -40,11 +35,6 @@ export function VariantEditForm({ variant, onCancel }: Props) {
   const derivedMoves = pgn
     ? (getUciMovesFromPgnAfterPly(pgn, initialPlyNum) ?? variant.moves)
     : variant.moves;
-
-  const pgnPairedDisplay = useMemo(
-    () => getPairedPgnDisplayFromPgn(pgn.trim()),
-    [pgn],
-  );
 
   return (
     <form
@@ -112,14 +102,6 @@ export function VariantEditForm({ variant, onCancel }: Props) {
             rows={6}
             className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-base text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           />
-          {pgnPairedDisplay &&
-          (pgnPairedDisplay.rows.length > 0 ||
-            pgnPairedDisplay.startComment) ? (
-            <PgnPairedBlock
-              display={pgnPairedDisplay}
-              className="border-muted bg-muted/20 mt-2 max-h-64 overflow-auto rounded-md border p-3"
-            />
-          ) : null}
         </Field>
         <Field>
           <FieldLabel>Moves (UCI)</FieldLabel>

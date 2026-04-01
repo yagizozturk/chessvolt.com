@@ -8,10 +8,8 @@ import VoltBoard from "@/components/volt-board/volt-board";
 import type { Opening } from "@/features/openings/types/opening";
 import type { OpeningVariantGoal } from "@/features/openings/types/opening-variant";
 import { isOpeningVariantGoalsArray } from "@/features/openings/validation/opening-variant-goals";
-import {
-  getUciMovesFromPgn,
-  getUciMovesFromPgnAfterPly,
-} from "@/lib/chess/extractMovesFromPgn";
+import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
+import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { Chess } from "chess.js";
 import { useEffect, useMemo, useState } from "react";
 
@@ -45,8 +43,8 @@ function useUciRowsFromPgn(pgn: string) {
       const game = new Chess();
       game.loadPgn(trimmed, { strict: false });
       const fen = game.fen();
-      const uciStr = getUciMovesFromPgn(pgn);
-      if (!uciStr) {
+      const uciMovesRaw = getUciMovesArrayFromPgn(pgn);
+      if (!uciMovesRaw || uciMovesRaw.length === 0) {
         return {
           rows: [],
           error: null,
@@ -55,7 +53,7 @@ function useUciRowsFromPgn(pgn: string) {
           uciMoves: [] as string[],
         };
       }
-      const uciMoves = uciStr.split(" ");
+      const uciMoves = uciMovesRaw;
       const rows: { num: number; white: string; black?: string }[] = [];
       for (let i = 0; i < uciMoves.length; i += 2) {
         rows.push({

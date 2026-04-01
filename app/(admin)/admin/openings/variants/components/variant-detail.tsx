@@ -10,12 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { getPairedPgnDisplayFromPgn } from "@/lib/chess/extractMovesFromPgn";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
-
-import { PgnPairedBlock } from "../components/pgn-paired-block";
+import { useState } from "react";
 import { VariantEditForm } from "../edit/variant-edit-form";
 
 type Props = {
@@ -24,11 +21,6 @@ type Props = {
 
 export function VariantDetail({ variant }: Props) {
   const [isEditing, setIsEditing] = useState(false);
-
-  const pgnPairedDisplay = useMemo(
-    () => getPairedPgnDisplayFromPgn(variant.pgn.trim()),
-    [variant.pgn],
-  );
 
   return (
     <div className="container mx-auto max-w-6xl space-y-6 px-4 py-8">
@@ -129,16 +121,10 @@ export function VariantDetail({ variant }: Props) {
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">PGN</dt>
-                <dd className="space-y-2">
-                  {pgnPairedDisplay &&
-                  (pgnPairedDisplay.rows.length > 0 ||
-                    pgnPairedDisplay.startComment) ? (
-                    <PgnPairedBlock display={pgnPairedDisplay} />
-                  ) : (
-                    <span className="font-mono text-xs break-all">
-                      {variant.pgn || "—"}
-                    </span>
-                  )}
+                <dd>
+                  <span className="font-mono text-xs break-all whitespace-pre-wrap">
+                    {variant.pgn || "—"}
+                  </span>
                 </dd>
               </div>
               <div>

@@ -12,7 +12,7 @@ import {
 } from "@/features/openings/services/openings.service";
 import type { OpeningVariantGoal } from "@/features/openings/types/opening-variant";
 import { isOpeningVariantGoalsArray } from "@/features/openings/validation/opening-variant-goals";
-import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
+import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { revalidatePath } from "next/cache";

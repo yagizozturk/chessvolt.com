@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { Opening } from "@/features/openings/types/opening";
-import { getUciMovesFromPgnAfterPly } from "@/lib/chess/extractMovesFromPgn";
+import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { useState } from "react";
 
 type Props = {

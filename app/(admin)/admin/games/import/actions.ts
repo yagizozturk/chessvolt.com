@@ -4,7 +4,7 @@ import { createGameRiddle } from "@/features/game-riddle/services/game-riddle.se
 import { createGame } from "@/features/game/services/game.service";
 import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
-import { parsePgn, splitPgnGames, validatePgn } from "@/lib/chess/parsePgn";
+import { parsePgn, splitPgnGames } from "@/lib/chess/parsePgn";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -31,14 +31,11 @@ export async function importPgnAction(formData: FormData) {
   const errors: string[] = [];
 
   for (const gamePgn of games) {
-    if (!validatePgn(gamePgn)) {
-      errors.push("Invalid move: " + gamePgn.slice(0, 50) + "...");
-      continue;
-    }
-
     const parsed = parsePgn(gamePgn);
     if (!parsed) {
-      errors.push("Parse error");
+      errors.push(
+        "Could not parse or validate PGN: " + gamePgn.slice(0, 50) + "...",
+      );
       continue;
     }
 
