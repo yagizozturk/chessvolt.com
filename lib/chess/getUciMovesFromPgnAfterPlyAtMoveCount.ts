@@ -1,14 +1,11 @@
 import { getUciMovesArrayFromPgn } from "./getUciMovesArrayFromPgn";
 
 /**
- * Extracts the next N moves from a PGN in UCI format, starting after the given ply.
- *
- * @param pgn - Full PGN string
- * @param ply - Position after this many moves (0 = initial, 1 = after first move)
- * @param moveCount - Number of moves to extract
- * @returns Space-separated UCI moves (e.g. "e2e4 e7e5") or null if invalid
+ * Fonksyon Bilgisi ✅
+ * PGN’den verilen ply’den başlayıp `moveCount` kadar hamleyi UCI olarak döndürür.
+ * @returns Boşlukla ayrılmış UCI (örn. "e2e4 e7e5") veya geçersizse null
  */
-export function extractMovesFromPgn(
+export function getUciMovesFromPgnAfterPlyAtMoveCount(
   pgn: string,
   ply: number,
   moveCount: number,

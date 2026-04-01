@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import type { Game } from "@/features/game/types/game";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { createGameRiddleAction } from "./actions";
-import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
+import type { Game } from "@/features/game/types/game";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
+import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { cn } from "@/lib/utilities/cn";
+import { useEffect, useState } from "react";
+
+import { createGameRiddleAction } from "./actions";
 
 type Props = {
   games: Game[];
@@ -30,7 +31,11 @@ export function GameRiddleForm({ games }: Props) {
     const plyNum = parseInt(ply, 10);
     const moveCount = parseInt(moveCountForAnswer, 10);
     if (isNaN(plyNum) || isNaN(moveCount) || moveCount <= 0) return;
-    const uci = extractMovesFromPgn(game.pgn, plyNum, moveCount);
+    const uci = getUciMovesFromPgnAfterPlyAtMoveCount(
+      game.pgn,
+      plyNum,
+      moveCount,
+    );
     if (uci) setMoves(uci);
   }, [gameId, ply, moveCountForAnswer, gameMap]);
 
@@ -89,11 +94,7 @@ export function GameRiddleForm({ games }: Props) {
         {displayFen && (
           <Field>
             <FieldLabel>Pozisyon (PGN + PLY ile hesaplanan FEN)</FieldLabel>
-            <Input
-              readOnly
-              value={displayFen}
-              className="font-mono text-sm"
-            />
+            <Input readOnly value={displayFen} className="font-mono text-sm" />
           </Field>
         )}
         <Field>
@@ -125,11 +126,7 @@ export function GameRiddleForm({ games }: Props) {
         </Field>
         <Field>
           <FieldLabel>Game Type</FieldLabel>
-          <Input
-            name="gameType"
-            required
-            placeholder="e.g. legend_games"
-          />
+          <Input name="gameType" required placeholder="e.g. legend_games" />
         </Field>
       </FieldGroup>
       <Button type="submit">Create</Button>

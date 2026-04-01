@@ -1,9 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
-import type { Game } from "@/features/game/types/game";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,12 +10,17 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Trash2, Save } from "lucide-react";
-import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
+import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import type { Game } from "@/features/game/types/game";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getPlyFromPgnAndFen } from "@/lib/chess/getPlyFromPgnAndFen";
-import { updateGameRiddleAction, deleteGameRiddleAction } from "./actions";
+import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { cn } from "@/lib/utilities/cn";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
+import { deleteGameRiddleAction, updateGameRiddleAction } from "./actions";
 
 type Props = {
   riddle: GameRiddle;
@@ -55,7 +56,11 @@ export function GameRiddleDetail({ riddle, game }: Props) {
     const fen = getFenFromPgnAtPly(game.pgn, plyNum);
     setDisplayFen(fen);
     if (!isNaN(moveCount) && moveCount > 0) {
-      const uci = extractMovesFromPgn(game.pgn, plyNum, moveCount);
+      const uci = getUciMovesFromPgnAfterPlyAtMoveCount(
+        game.pgn,
+        plyNum,
+        moveCount,
+      );
       setMoves(uci ?? "");
     }
   }, [game?.pgn, ply, moveCountForAnswer]);
@@ -207,8 +212,10 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                 <dd>{riddle.gameType ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">Display FEN</dt>
-                <dd className="font-mono break-all text-xs">
+                <dt className="text-muted-foreground font-medium">
+                  Display FEN
+                </dt>
+                <dd className="font-mono text-xs break-all">
                   {riddle.displayFen ?? "—"}
                 </dd>
               </div>

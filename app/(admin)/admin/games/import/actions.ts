@@ -2,8 +2,8 @@
 
 import { createGameRiddle } from "@/features/game-riddle/services/game-riddle.service";
 import { createGame } from "@/features/game/services/game.service";
-import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
+import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { parsePgn, splitPgnGames } from "@/lib/chess/parsePgn";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { revalidatePath } from "next/cache";
@@ -55,7 +55,11 @@ export async function importPgnAction(formData: FormData) {
       inserted.push(game.id);
 
       // Default game_riddle at ply 0: title from ChapterName (description)
-      const movesAtPly0 = extractMovesFromPgn(parsed.pgn, 0, 1);
+      const movesAtPly0 = getUciMovesFromPgnAfterPlyAtMoveCount(
+        parsed.pgn,
+        0,
+        1,
+      );
       const defaultTitle =
         parsed.description?.trim() ||
         `Find the first move - ${parsed.whitePlayer} vs ${parsed.blackPlayer}`;

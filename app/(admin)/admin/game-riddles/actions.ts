@@ -7,8 +7,8 @@ import {
   updateGameRiddle,
 } from "@/features/game-riddle/services/game-riddle.service";
 import * as gameRepo from "@/features/game/repository/game.repository";
-import { extractMovesFromPgn } from "@/lib/chess/extractMovesFromPgn";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
+import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -76,7 +76,11 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
     game?.pgn != null ? getFenFromPgnAtPly(game.pgn, ply) : null;
   const moves =
     game?.pgn != null
-      ? (extractMovesFromPgn(game.pgn, ply, moveCountForAnswer) ?? null)
+      ? (getUciMovesFromPgnAfterPlyAtMoveCount(
+          game.pgn,
+          ply,
+          moveCountForAnswer,
+        ) ?? null)
       : null;
 
   const input: Record<string, unknown> = {
