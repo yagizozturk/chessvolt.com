@@ -113,7 +113,6 @@ export default function OpeningsController({
           <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
-            mode="opening"
             initialFen={variant.initialFen ?? undefined}
             moves={variant.moves}
             width={600}

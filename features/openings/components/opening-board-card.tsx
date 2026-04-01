@@ -48,7 +48,6 @@ export function OpeningBoardCard({
         {isComplete === false && <BoardStatusIcon status="wrong" />}
         <VoltBoard
           sourceId={id}
-          mode="opening"
           initialFen={fen}
           moves={""}
           width={width}

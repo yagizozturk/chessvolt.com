@@ -42,7 +42,6 @@ export function RiddleBoardCard({
         {isComplete === false && <BoardStatusIcon status="wrong" />}
         <VoltBoard
           sourceId={riddle.id}
-          mode="riddle"
           coordinates={false}
           initialFen={displayFen}
           moves={riddle.moves ?? ""}

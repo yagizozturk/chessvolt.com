@@ -98,7 +98,6 @@ export default function RiddleController({
           <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}
-            mode="riddle"
             coordinates={true}
             initialFen={riddle.displayFen}
             moves={riddle.moves ?? ""}

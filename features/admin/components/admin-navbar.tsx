@@ -10,7 +10,6 @@ import {
   ArrowLeft,
   LogOut,
   Users,
-  Puzzle,
   Gamepad2,
   HelpCircle,
   BookOpen,
@@ -29,7 +28,6 @@ import { createClient } from "@/lib/supabase/client";
 const adminNavItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/puzzles", label: "Puzzles", icon: Puzzle },
   { href: "/admin/games", label: "Games", icon: Gamepad2 },
   { href: "/admin/game-riddles", label: "Game Riddles", icon: HelpCircle },
   { href: "/admin/openings", label: "Openings", icon: BookOpen },

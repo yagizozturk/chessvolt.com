@@ -21,11 +21,8 @@ import {
   useState,
 } from "react";
 
-export type BoardMode = "puzzle" | "riddle" | "opening";
-
 export type VoltBoardProps = {
   sourceId: string;
-  mode: BoardMode;
   moves: string;
   initialFen?: string | null; // TODO: Bu neden ? içeriyor? Bunu çağıran yerlere bak boş gönderen varmı
   width?: number;
@@ -52,7 +49,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
   function VoltBoard(props, ref) {
     const {
       sourceId,
-      mode,
       moves,
       width = 620,
       height = 620,
@@ -158,11 +154,9 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
 
       if (ground.current) ground.current.destroy();
 
-      // Fix orientation from player's perspective - never flip when turn changes
-      initialPlayerOrientation.current = getPlayerOrientation(
-        game.current.turn(),
-        mode === "puzzle" && movesArray.length > 0,
-      );
+      // Fixed orientation from the side to move at setup — does not flip when turn changes
+      initialPlayerOrientation.current =
+        game.current.turn() === "w" ? "white" : "black";
 
       ground.current = Chessground(boardRef.current, {
         fen: game.current.fen(),
@@ -179,11 +173,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
         },
       });
 
-      // At the start of the puzzle, apply the first move of the opponent.
-      if (mode === "puzzle" && movesArray.length > 0) {
-        applyInitialMove();
-      }
-
       return () => {
         ground.current?.destroy();
       };
@@ -191,20 +180,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
 
     // ============================================================================
     // Helper Functions
-    // getPlayerOrientation: Puzzle: FEN has opponent to move → player is opposite color. Riddle/opening: player to move → same as turn
     // ============================================================================
-    function getPlayerOrientation(
-      turn: "w" | "b",
-      isOpponentToMove: boolean,
-    ): "white" | "black" {
-      const turnColor = turn === "w" ? "white" : "black";
-      return isOpponentToMove
-        ? turnColor === "white"
-          ? "black"
-          : "white"
-        : turnColor;
-    }
-
     function updateBoard() {
       if (!game.current || !ground.current) return;
 
@@ -223,22 +199,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       });
     }
 
-    // Apply first opponent move to understand the puzzle what was the last move
-    function applyInitialMove() {
-      if (!game.current || !ground.current || movesArray.length === 0) return;
-
-      const oppMove = movesArray[0];
-      const from = oppMove.slice(0, 2);
-      const to = oppMove.slice(2, 4);
-      makeMove(from, to, "q");
-      lastMoveRef.current = [from as Key, to as Key];
-      handleStepChange();
-      updateBoard();
-      setStoreFen(game.current.fen()); // After the first move, fen changes and is set in the store.
-      analyze(game.current.fen(), 8);
-    }
-
-    // Understanding the step of the solution. If final step is played, puzzle over
+    // Step through the solution line; when the last expected move is played, the line is complete
     function handleStepChange() {
       setCurrentStep((prev) => {
         const newStep = prev + 1;

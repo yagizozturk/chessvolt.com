@@ -7,7 +7,7 @@ import * as profileRepo from "@/features/profile/repository/profile.repository";
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next") || "/puzzle";
+  const next = requestUrl.searchParams.get("next") || "/challenge";
 
   if (code) {
     const cookieStore = await cookies();

@@ -154,7 +154,6 @@ function BoardWithMoves({
         <VoltBoard
           key={`${sourceId}-${boardFen}`}
           sourceId={sourceId}
-          mode="opening"
           moves=""
           initialFen={boardFen}
           width={380}

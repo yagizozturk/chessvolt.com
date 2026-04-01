@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { Zap, Map, Puzzle, BookOpen, LogIn } from "lucide-react";
+import { Zap, Map, BookOpen, LogIn } from "lucide-react";
 
 export function Footer() {
   const links = [
     { href: "/challenge", label: "Challenges", icon: Map },
-    { href: "/puzzle", label: "Puzzles", icon: Puzzle },
     { href: "/openings", label: "Opening Crusher", icon: BookOpen },
   ];
 

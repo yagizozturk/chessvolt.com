@@ -5,7 +5,7 @@ export type GameTypeDetails = {
 };
 
 export const DEFAULT_GAME_TYPE_DETAILS: GameTypeDetails = {
-  description: "Challenge yourself with chess puzzles.",
+  description: "Challenge yourself with interactive chess challenges.",
   quote: "The only way to get smarter is by playing a smarter opponent.",
   author: "Fundamentals of Chess",
 };
