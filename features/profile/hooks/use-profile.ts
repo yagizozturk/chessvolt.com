@@ -1,13 +1,8 @@
 "use client";
 
+import type { Profile, ProfileRole } from "@/features/profile/types/profile";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-
-type Profile = {
-  xp: number;
-  username: string | null;
-  role: "user" | "admin";
-} | null;
 
 export function useProfile() {
   const [profile, setProfile] = useState<Profile>(null);
@@ -28,7 +23,7 @@ export function useProfile() {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("xp, username, role")
+        .select("username, role")
         .eq("id", user.id)
         .maybeSingle();
 
@@ -37,9 +32,8 @@ export function useProfile() {
         setProfile(null);
       } else {
         setProfile({
-          xp: data?.xp ?? 0,
           username: data?.username ?? null,
-          role: (data?.role as "user" | "admin") ?? "user",
+          role: (data?.role as ProfileRole) ?? "user",
         });
       }
       setIsLoading(false);

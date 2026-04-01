@@ -25,7 +25,6 @@ import {
   Map,
   Menu,
   Shield,
-  Sparkles,
   User,
   Zap,
 } from "lucide-react";
@@ -54,14 +53,6 @@ export function DashboardNavbar() {
 
   const rightSection = (
     <div className="flex items-center gap-2">
-      {/* XP */}
-      <div className="bg-muted/60 hidden items-center gap-1.5 rounded-lg px-2.5 py-1.5 sm:flex">
-        <Sparkles className="h-4 w-4 text-amber-500" />
-        <span className="text-sm font-semibold tabular-nums">
-          {profile?.xp ?? "—"}
-        </span>
-      </div>
-
       {/* Streak */}
       <div className="bg-muted/60 hidden items-center gap-1.5 rounded-lg px-2.5 py-1.5 sm:flex">
         <Flame className="h-4 w-4 text-orange-500" />
@@ -82,9 +73,6 @@ export function DashboardNavbar() {
         <DropdownMenuContent align="end" className="w-48">
           <div className="px-2 py-2">
             <p className="text-sm font-medium">{profile?.username ?? "User"}</p>
-            <p className="text-muted-foreground text-xs">
-              {profile?.xp ?? 0} XP
-            </p>
           </div>
           {profile?.role === "admin" && (
             <DropdownMenuItem asChild>
@@ -146,7 +134,7 @@ export function DashboardNavbar() {
           })}
         </nav>
 
-        {/* Right: XP, Streak, Theme, Profile (desktop) */}
+        {/* Right: Streak, Theme, Profile (desktop) */}
         <div className="hidden items-center gap-2 md:flex">{rightSection}</div>
 
         {/* Mobile: Menu + right section */}
@@ -203,15 +191,6 @@ export function DashboardNavbar() {
                 )}
               </nav>
               <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4">
-                <div className="bg-muted/60 flex items-center justify-between rounded-lg px-4 py-3">
-                  <span className="flex items-center gap-2 text-sm">
-                    <Sparkles className="h-4 w-4 text-amber-500" />
-                    XP
-                  </span>
-                  <span className="font-semibold tabular-nums">
-                    {profile?.xp ?? "—"}
-                  </span>
-                </div>
                 <div className="bg-muted/60 flex items-center justify-between rounded-lg px-4 py-3">
                   <span className="flex items-center gap-2 text-sm">
                     <Flame className="h-4 w-4 text-orange-500" />

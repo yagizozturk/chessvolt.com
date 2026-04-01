@@ -10,8 +10,6 @@ import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-upda
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 import { useStatsStore } from "@/features/home/store/stats-store";
-import { addReward } from "@/features/profile/api/profile";
-import { CHALLENGE_SOLVE_REWARD_POINTS } from "@/lib/shared/constants/challenge";
 import { Calendar, Flag, Lightbulb, Puzzle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -57,7 +55,6 @@ export default function RiddleController({
   const setStreak = useStatsStore((state) => state.setStreak);
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
-  const [earnedPoints, setEarnedPoints] = useState(0);
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
 
   useEffect(() => {
@@ -80,9 +77,6 @@ export default function RiddleController({
     }
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
     if (isCorrect) {
-      const points = CHALLENGE_SOLVE_REWARD_POINTS;
-      await addReward(points).catch(() => {});
-      setEarnedPoints(points);
       setShowCorrect(true);
       setTimeout(() => {
         if (challengeSlug) router.push(`/challenge/${challengeSlug}`);
@@ -94,7 +88,7 @@ export default function RiddleController({
     <div className="container mx-auto max-w-5xl px-8 py-6">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
         <div className="relative min-w-0">
-          <SuccessOverlay show={showCorrect} earnedPoints={earnedPoints} />
+          <SuccessOverlay show={showCorrect} />
           <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}
