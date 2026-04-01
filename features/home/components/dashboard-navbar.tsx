@@ -16,16 +16,8 @@ import {
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useProfile } from "@/features/profile/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
-import { cn } from "@/lib/utilities/cn";
-import {
-  BookOpen,
-  LogOut,
-  Map,
-  Menu,
-  Shield,
-  User,
-  Zap,
-} from "lucide-react";
+import { cn } from "@/lib/utils/cn";
+import { BookOpen, LogOut, Map, Menu, Shield, User, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";

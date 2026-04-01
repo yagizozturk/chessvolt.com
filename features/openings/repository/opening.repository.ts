@@ -2,10 +2,9 @@
  * Opening Repository
  * CRUD access to the openings table (parent of opening_variants).
  */
-
-import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Opening } from "@/features/openings/types/opening";
-import { slugify } from "@/lib/utilities/slugify";
+import { slugify } from "@/lib/utils/slugify";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 function slugFromName(name: string): string {
   return slugify(name) || "opening";
@@ -26,7 +25,9 @@ function toOpening(db: DbOpening): Opening {
     name: db.name,
     slug: db.slug,
     description: db.description,
-    displayFen: db.display_fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    displayFen:
+      db.display_fen ??
+      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     createdAt: db.created_at,
   };
 }
@@ -35,9 +36,7 @@ type DbOpeningWithVariantCount = DbOpening & {
   opening_variants: [{ count: number }];
 };
 
-export async function findAll(
-  supabase: SupabaseClient,
-): Promise<Opening[]> {
+export async function findAll(supabase: SupabaseClient): Promise<Opening[]> {
   const { data, error } = await supabase
     .from("openings")
     .select("id, name, slug, description, display_fen, created_at")
@@ -58,7 +57,9 @@ export async function findAllWithVariantCount(
 ): Promise<OpeningWithVariantCount[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, display_fen, created_at, opening_variants(count)")
+    .select(
+      "id, name, slug, description, display_fen, created_at, opening_variants(count)",
+    )
     .order("name", { ascending: true });
 
   if (error) {

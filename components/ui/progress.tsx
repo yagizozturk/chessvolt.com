@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utilities/cn";
+import { cn } from "@/lib/utils/cn";
 import { Progress as ProgressPrimitive } from "radix-ui";
 import * as React from "react";
 

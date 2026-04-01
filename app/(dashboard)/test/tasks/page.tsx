@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utilities/cn";
+import { cn } from "@/lib/utils/cn";
 import { Check, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -159,8 +159,8 @@ export default function TasksPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Görevler</CardTitle>
           <CardDescription>
-            Önce bekleyenler, önem (P1→P5) yüksekten düşüğe; tamamlananlar altta.
-            Liste tarayıcıda saklanır.
+            Önce bekleyenler, önem (P1→P5) yüksekten düşüğe; tamamlananlar
+            altta. Liste tarayıcıda saklanır.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -278,7 +278,7 @@ export default function TasksPage() {
                 onChange={(e) =>
                   setNewImportance(Number(e.target.value) as 1 | 2 | 3 | 4 | 5)
                 }
-                className="border-input bg-background h-9 w-full rounded-md border px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                className="border-input bg-background focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-md border px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
               >
                 {IMPORTANCE_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -287,7 +287,11 @@ export default function TasksPage() {
                 ))}
               </select>
             </Field>
-            <Button type="button" className="w-full sm:w-auto" onClick={addTask}>
+            <Button
+              type="button"
+              className="w-full sm:w-auto"
+              onClick={addTask}
+            >
               <Plus className="size-4" />
               Ekle
             </Button>

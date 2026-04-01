@@ -1,9 +1,8 @@
 "use client";
 
-import * as React from "react";
+import { cn } from "@/lib/utils/cn";
 import { Label as LabelPrimitive } from "radix-ui";
-
-import { cn } from "@/lib/utilities/cn";
+import * as React from "react";
 
 function Label({
   className,

@@ -15,7 +15,7 @@ import type { Game } from "@/features/game/types/game";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
-import { cn } from "@/lib/utilities/cn";
+import { cn } from "@/lib/utils/cn";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";

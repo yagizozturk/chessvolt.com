@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import type { Game } from "@/features/game/types/game";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
-import { cn } from "@/lib/utilities/cn";
+import { cn } from "@/lib/utils/cn";
 import { useEffect, useState } from "react";
 
 import { createGameRiddleAction } from "./actions";

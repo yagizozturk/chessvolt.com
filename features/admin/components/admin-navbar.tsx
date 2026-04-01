@@ -1,19 +1,5 @@
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  Zap,
-  Menu,
-  LayoutDashboard,
-  ArrowLeft,
-  LogOut,
-  Users,
-  Gamepad2,
-  HelpCircle,
-  BookOpen,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -22,8 +8,22 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { cn } from "@/lib/utilities/cn";
 import { createClient } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils/cn";
+import {
+  ArrowLeft,
+  BookOpen,
+  Gamepad2,
+  HelpCircle,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Users,
+  Zap,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import * as React from "react";
 
 const adminNavItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },

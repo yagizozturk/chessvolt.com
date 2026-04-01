@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utilities/cn";
-import { ChessPawn, Puzzle, Map, Lightbulb, Swords } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
+import { ChessPawn, Lightbulb, Map, Puzzle, Swords } from "lucide-react";
+import Image from "next/image";
+
 import { MotionWrapper } from "./hero-content";
 
 const sharedFeatures = [

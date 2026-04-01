@@ -8,7 +8,7 @@ import { toDests } from "@/lib/chess/toDests";
 import { useChessEngine } from "@/lib/engine/hooks/use-stockfish-engine";
 import { useSound } from "@/lib/shared/hooks/use-sound";
 import { useCoachStore } from "@/lib/shared/store/coach-store";
-import { cn } from "@/lib/utilities/cn";
+import { cn } from "@/lib/utils/cn";
 import { Chessground } from "@lichess-org/chessground";
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";

@@ -2,12 +2,7 @@
 
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import VoltBoard, {
   type VoltBoardHandle,
@@ -18,7 +13,7 @@ import type {
   OpeningVariantGoal,
 } from "@/features/openings/types/opening-variant";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
-import { cn } from "@/lib/utilities/cn";
+import { cn } from "@/lib/utils/cn";
 import { Check, Lightbulb, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";

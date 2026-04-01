@@ -3,8 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils/cn";
+
 import { createGameAction } from "./actions";
-import { cn } from "@/lib/utilities/cn";
 
 export function GameForm() {
   return (

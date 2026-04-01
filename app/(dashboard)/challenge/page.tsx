@@ -10,7 +10,7 @@ import {
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
-import { groupBy } from "@/lib/utilities/groupBy";
+import { groupBy } from "@/lib/utils/groupBy";
 
 /**
  * Fonksyon Bilgisi ✅

@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { cn } from "@/lib/utils/cn";
 import { FileText, Upload } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+
 import { importPgnAction } from "./actions";
-import { cn } from "@/lib/utilities/cn";
 
 /** Client-side game count for preview (avoids importing chess.js) */
 function countPgnGames(pgn: string): number {
@@ -116,7 +117,9 @@ export function ImportPgnForm() {
         </Field>
 
         <Field>
-          <FieldLabel>veya PGN Yapıştır (oyunlar boş satırla ayrılmış)</FieldLabel>
+          <FieldLabel>
+            veya PGN Yapıştır (oyunlar boş satırla ayrılmış)
+          </FieldLabel>
           <textarea
             value={pgn}
             onChange={(e) => setPgn(e.target.value)}

@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utilities/cn";
+import { cn } from "@/lib/utils/cn";
 
 interface StatItemProps {
   icon: React.ReactNode;

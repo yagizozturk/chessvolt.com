@@ -1,8 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import type { Game } from "@/features/game/types/game";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,9 +10,13 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Trash2, Save } from "lucide-react";
-import { updateGameAction, deleteGameAction } from "./actions";
-import { cn } from "@/lib/utilities/cn";
+import type { Game } from "@/features/game/types/game";
+import { cn } from "@/lib/utils/cn";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+
+import { deleteGameAction, updateGameAction } from "./actions";
 
 type Props = {
   game: Game;

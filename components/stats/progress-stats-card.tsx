@@ -1,6 +1,6 @@
-import { Target } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utilities/cn";
+import { cn } from "@/lib/utils/cn";
+import { Target } from "lucide-react";
 
 type ProgressStatsCardProps = {
   percentage: number;
