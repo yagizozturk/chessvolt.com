@@ -2,7 +2,12 @@
 
 import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import VoltBoard, {
   type VoltBoardHandle,
@@ -12,11 +17,9 @@ import type {
   OpeningVariant,
   OpeningVariantGoal,
 } from "@/features/openings/types/opening-variant";
-import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
-import { getFullMoveCountFromMoves } from "@/lib/chess/getFullMoveCountFromMoves";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { cn } from "@/lib/utilities/cn";
-import { Check, Lightbulb, Puzzle, Target } from "lucide-react";
+import { Check, Lightbulb, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -65,21 +68,6 @@ export default function OpeningVariantController({
     };
   }, [sortedGoals, activePly]);
 
-  const positionFen = useMemo(() => {
-    if (activePly == null) {
-      return variant.displayFen ?? variant.initialFen;
-    }
-    return (
-      getFenFromPgnAtPly(variant.pgn, activePly) ??
-      variant.displayFen ??
-      variant.initialFen
-    );
-  }, [variant.pgn, variant.displayFen, variant.initialFen, activePly]);
-
-  const turn = (positionFen?.includes(" w ") ?? true) ? "White" : "Black";
-
-  const moveCount = getFullMoveCountFromMoves(variant.moves);
-
   useEffect(() => {
     setHintCount(0);
     setActivePly(variant.ply);
@@ -114,169 +102,181 @@ export default function OpeningVariantController({
   };
 
   return (
-    <>
-      {goalsProgress.total > 0 && (
-        <div className="w-full">
-          <div className="container mx-auto max-w-5xl px-8 pt-6 pb-2">
-            <Progress
-              className="h-2.5 w-full"
-              value={goalsProgress.percent}
-              aria-label={`Goals progress: ${goalsProgress.completed} of ${goalsProgress.total} completed`}
-            />
-          </div>
+    <div className="container mx-auto max-w-5xl px-8 py-6">
+      <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
+        {/*************** Board ***************/}
+        <div key={variant.id} className="relative min-w-0">
+          <SuccessOverlay show={showCorrect} />
+          <VoltBoard
+            ref={boardRef}
+            sourceId={variant.id}
+            initialFen={variant.initialFen ?? undefined}
+            moves={variant.moves}
+            width={600}
+            height={600}
+            className="border-muted rounded-xl border-4"
+            viewOnly={false}
+            onFenAfterUserMove={handleFenAfterUserMove}
+            onFenAfterOpponentMove={handleFenAfterOpponentMove}
+            onSolved={handleSolved}
+            onHintUsed={setHintCount}
+          />
         </div>
-      )}
 
-      <div className="container mx-auto max-w-5xl px-8 py-2">
-        <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
-          {/*************** Board ***************/}
-          <div key={variant.id} className="relative min-w-0">
-            <SuccessOverlay show={showCorrect} />
-            <VoltBoard
-              ref={boardRef}
-              sourceId={variant.id}
-              initialFen={variant.initialFen ?? undefined}
-              moves={variant.moves}
-              width={600}
-              height={600}
-              className="border-muted rounded-xl border-4"
-              viewOnly={false}
-              onFenAfterUserMove={handleFenAfterUserMove}
-              onFenAfterOpponentMove={handleFenAfterOpponentMove}
-              onSolved={handleSolved}
-              onHintUsed={setHintCount}
-            />
-          </div>
+        {/*************** Move Count, Turn, Goals ***************/}
+        <div className="flex min-w-0 flex-col gap-4">
+          {goalsProgress.total === 0 && variant.title ? (
+            <h2 className="text-foreground text-xl font-semibold tracking-tight">
+              {variant.title}
+            </h2>
+          ) : null}
 
-          {/*************** Move Count, Turn, Goals ***************/}
-          <div className="flex min-w-0 flex-col gap-4">
-            {variant.title ? (
-              <h2 className="text-foreground text-xl font-semibold tracking-tight">
-                {variant.title}
-              </h2>
-            ) : null}
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
-                <div
-                  className={`h-7 w-7 shrink-0 rounded-full border-2 ${
-                    turn === "White"
-                      ? "border-gray-300 bg-white dark:border-gray-600"
-                      : "border-gray-800 bg-black dark:border-gray-400"
-                  }`}
+          {goalsProgress.total > 0 && (
+            <Card className="gap-0 overflow-hidden py-0 shadow-sm">
+              <CardHeader className="border-border bg-muted/40 gap-0 space-y-0 border-b px-4 py-4">
+                <div className="flex items-start gap-3">
+                  <div className="bg-primary/10 text-primary flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+                    <Target className="h-4 w-4" aria-hidden />
+                  </div>
+                  <div className="min-w-0 flex-1 space-y-1.5">
+                    <CardTitle className="text-lg leading-snug">
+                      {variant.title ?? "Opening line"}
+                    </CardTitle>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="px-4 py-4">
+                <Progress
+                  className="h-2.5 w-full"
+                  value={goalsProgress.percent}
+                  aria-label={`Goals progress: ${goalsProgress.completed} of ${goalsProgress.total} completed`}
                 />
-                <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                  Turn
+              </CardContent>
+            </Card>
+          )}
+
+          {/*
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
+              <div
+                className={`h-7 w-7 shrink-0 rounded-full border-2 ${
+                  turn === "White"
+                    ? "border-gray-300 bg-white dark:border-gray-600"
+                    : "border-gray-800 bg-black dark:border-gray-400"
+                }`}
+              />
+              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                Turn
+              </p>
+              <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
+                {turn}
+              </span>
+            </div>
+            {moveCount > 0 && (
+              <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
+                <Puzzle className="h-7 w-7 shrink-0 text-emerald-500 dark:text-emerald-400" />
+                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                  Moves To Find
                 </p>
                 <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
-                  {turn}
+                  {moveCount} {moveCount === 1 ? "move" : "moves"}
                 </span>
               </div>
-              {moveCount > 0 && (
-                <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
-                  <Puzzle className="h-7 w-7 shrink-0 text-emerald-500 dark:text-emerald-400" />
-                  <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                    Moves To Find
-                  </p>
-                  <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
-                    {moveCount} {moveCount === 1 ? "move" : "moves"}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/*************** Goals ***************/}
-            <div className="flex flex-col gap-2">
-              {sortedGoals.map((goal, index) => {
-                const highlighted = isHighlightedGoal(goal);
-
-                if (highlighted) {
-                  return (
-                    <Card
-                      key={goal.ply}
-                      className="border-primary/35 ring-primary/15 gap-2 shadow-md ring-2"
-                    >
-                      <CardHeader>
-                        <div className="flex items-center gap-2">
-                          <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
-                            <Target className="h-4 w-4" aria-hidden />
-                          </div>
-                          <div className="min-w-0">
-                            <CardTitle className="flex flex-wrap items-center gap-x-2 text-lg">
-                              <span className="min-w-0">{goal.title}</span>
-                              {isGoalDone(goal) ? (
-                                <span
-                                  className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm dark:bg-emerald-500"
-                                  aria-label="Goal completed"
-                                >
-                                  <Check
-                                    className="h-4 w-4"
-                                    strokeWidth={2.75}
-                                    aria-hidden
-                                  />
-                                </span>
-                              ) : null}
-                            </CardTitle>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-0 pt-0">
-                        <div className="flex gap-3">
-                          <div
-                            className={cn(
-                              "min-w-0 space-y-1.5",
-                              isGoalDone(goal) && "opacity-80",
-                            )}
-                          >
-                            <p className="text-muted-foreground text-sm leading-relaxed">
-                              {goal.description}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                }
-
-                return (
-                  <div
-                    key={goal.ply}
-                    className="bg-muted/35 flex min-h-10 items-center justify-between gap-2 rounded-lg border px-3 py-2"
-                  >
-                    <span className="min-w-0 truncate text-sm font-medium">
-                      Goal {index + 1}: {goal.title}
-                    </span>
-                    {isGoalDone(goal) ? (
-                      <span
-                        className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white dark:bg-emerald-500"
-                        aria-label="Goal completed"
-                      >
-                        <Check
-                          className="h-3.5 w-3.5"
-                          strokeWidth={2.75}
-                          aria-hidden
-                        />
-                      </span>
-                    ) : null}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/*************** Hint Button ***************/}
-            <Button
-              variant="default"
-              size="lg"
-              className="w-full"
-              disabled={hintCount >= 2}
-              onClick={() => boardRef.current?.showHint()}
-            >
-              <Lightbulb className="mr-2 h-4 w-4" />
-              Hint
-            </Button>
+            )}
           </div>
+          */}
+
+          {/*************** Goals ***************/}
+          <div className="flex flex-col gap-2">
+            {sortedGoals.map((goal, index) => {
+              const highlighted = isHighlightedGoal(goal);
+
+              if (highlighted) {
+                return (
+                  <Card
+                    key={goal.ply}
+                    className="border-primary/35 ring-primary/15 gap-2 shadow-md ring-2"
+                  >
+                    <CardHeader>
+                      <div className="flex items-center gap-2">
+                        <div className="bg-primary/10 text-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
+                          <Target className="h-4 w-4" aria-hidden />
+                        </div>
+                        <div className="min-w-0">
+                          <CardTitle className="flex flex-wrap items-center gap-x-2 text-lg">
+                            <span className="min-w-0">{goal.title}</span>
+                            {isGoalDone(goal) ? (
+                              <span
+                                className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-sm dark:bg-emerald-500"
+                                aria-label="Goal completed"
+                              >
+                                <Check
+                                  className="h-4 w-4"
+                                  strokeWidth={2.75}
+                                  aria-hidden
+                                />
+                              </span>
+                            ) : null}
+                          </CardTitle>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-0 pt-0">
+                      <div className="flex gap-3">
+                        <div
+                          className={cn(
+                            "min-w-0 space-y-1.5",
+                            isGoalDone(goal) && "opacity-80",
+                          )}
+                        >
+                          <p className="text-muted-foreground text-sm leading-relaxed">
+                            {goal.description}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              }
+
+              return (
+                <div
+                  key={goal.ply}
+                  className="bg-muted/35 flex min-h-10 items-center justify-between gap-2 rounded-lg border px-3 py-2"
+                >
+                  <span className="min-w-0 truncate text-sm font-medium">
+                    Goal {index + 1}: {goal.title}
+                  </span>
+                  {isGoalDone(goal) ? (
+                    <span
+                      className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white dark:bg-emerald-500"
+                      aria-label="Goal completed"
+                    >
+                      <Check
+                        className="h-3.5 w-3.5"
+                        strokeWidth={2.75}
+                        aria-hidden
+                      />
+                    </span>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+
+          {/*************** Hint Button ***************/}
+          <Button
+            variant="default"
+            size="lg"
+            className="w-full"
+            disabled={hintCount >= 2}
+            onClick={() => boardRef.current?.showHint()}
+          >
+            <Lightbulb className="mr-2 h-4 w-4" />
+            Hint
+          </Button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
