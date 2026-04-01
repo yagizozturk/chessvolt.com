@@ -9,7 +9,6 @@ import VoltBoard, {
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
-import { useStatsStore } from "@/features/home/store/stats-store";
 import { Calendar, Flag, Lightbulb, Puzzle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -49,18 +48,13 @@ export default function RiddleController({
   const boardRef = useRef<VoltBoardHandle>(null);
   const turn = (riddle.displayFen?.includes(" w ") ?? true) ? "White" : "Black";
   const moveCount = getMoveCount(riddle.moves);
-  const initLives = useStatsStore((state) => state.initLives);
-  const decrementLives = useStatsStore((state) => state.decrementLives);
-  const streak = useStatsStore((state) => state.streak);
-  const setStreak = useStatsStore((state) => state.setStreak);
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
 
   useEffect(() => {
-    initLives();
     setHintCount(0);
-  }, [riddle.id, initLives]);
+  }, [riddle.id]);
 
   // ===================================================================
   // When riddle is answered correctly, redirect user back to challenge
@@ -69,12 +63,6 @@ export default function RiddleController({
   // ===================================================================
   const challengeSlug = riddle.gameType?.replace(/_/g, "-");
   const handleSolved = async (isCorrect: boolean) => {
-    if (isCorrect) {
-      setStreak(streak + 1);
-    } else {
-      decrementLives();
-      setStreak(0);
-    }
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
     if (isCorrect) {
       setShowCorrect(true);

@@ -1,5 +1,5 @@
 import { StatItem } from "./stat-item";
-import { Flame, Gem, Heart } from "lucide-react";
+import { Gem } from "lucide-react";
 
 export const UserStats = () => {
   return (
@@ -10,25 +10,11 @@ export const UserStats = () => {
         value="29" 
       />
 
-      {/* Streak */}
-      <StatItem 
-        icon={<Flame size={20} fill="#374151" className="text-[#374151]" />} 
-        value="0" 
-        colorClassName="text-[#374151]"
-      />
-
       {/* Gems */}
       <StatItem 
         icon={<Gem size={20} fill="#38BDF8" className="text-[#38BDF8]" />} 
         value="998" 
         colorClassName="text-[#38BDF8]"
-      />
-
-      {/* Health */}
-      <StatItem 
-        icon={<Heart size={20} fill="#EF4444" className="text-[#EF4444]" />} 
-        value="5" 
-        colorClassName="text-[#EF4444]"
       />
     </div>
   );

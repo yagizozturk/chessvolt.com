@@ -19,7 +19,7 @@ export function Pricing() {
       description: "To discover basic features and start learning.",
       features: [
         "Access to all basic lessons",
-        "5 lives per day limit",
+        "Core puzzles and lessons",
         "Leaderboard participation",
         "Standard achievement badges",
       ],
@@ -32,7 +32,7 @@ export function Pricing() {
       price: "99",
       description: "Legendary features for those who want to learn without stopping.",
       features: [
-        "Unlimited lives for uninterrupted lessons",
+        "Full access to all lessons and modes",
         "Ad-free experience",
         "Volt exclusive achievement badges",
         "Personalized error analysis",

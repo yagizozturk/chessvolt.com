@@ -15,9 +15,9 @@ const sharedFeatures = [
     icon: Puzzle,
   },
   {
-    title: "Points & Streaks",
+    title: "Structured Challenges",
     description:
-      "Earn points and build streaks as you correctly identify each move. Track your progress.",
+      "Work through puzzles by game type and theme. Pick up where you left off.",
     badge: "Challenge",
     icon: Map,
   },

@@ -14,13 +14,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { useStatsStore } from "@/features/home/store/stats-store";
 import { useProfile } from "@/features/profile/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utilities/cn";
 import {
   BookOpen,
-  Flame,
   LogOut,
   Map,
   Menu,
@@ -42,7 +40,6 @@ export function DashboardNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { profile } = useProfile();
-  const streak = useStatsStore((state) => state.streak);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -53,12 +50,6 @@ export function DashboardNavbar() {
 
   const rightSection = (
     <div className="flex items-center gap-2">
-      {/* Streak */}
-      <div className="bg-muted/60 hidden items-center gap-1.5 rounded-lg px-2.5 py-1.5 sm:flex">
-        <Flame className="h-4 w-4 text-orange-500" />
-        <span className="text-sm font-semibold tabular-nums">{streak}</span>
-      </div>
-
       {/* Profile dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -134,7 +125,7 @@ export function DashboardNavbar() {
           })}
         </nav>
 
-        {/* Right: Streak, Theme, Profile (desktop) */}
+        {/* Right: Theme, Profile (desktop) */}
         <div className="hidden items-center gap-2 md:flex">{rightSection}</div>
 
         {/* Mobile: Menu + right section */}
@@ -191,13 +182,6 @@ export function DashboardNavbar() {
                 )}
               </nav>
               <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4">
-                <div className="bg-muted/60 flex items-center justify-between rounded-lg px-4 py-3">
-                  <span className="flex items-center gap-2 text-sm">
-                    <Flame className="h-4 w-4 text-orange-500" />
-                    Streak
-                  </span>
-                  <span className="font-semibold tabular-nums">{streak}</span>
-                </div>
                 <ThemeToggle className="rounded-full" />
               </div>
             </SheetContent>
