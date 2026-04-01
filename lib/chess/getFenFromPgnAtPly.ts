@@ -1,8 +1,8 @@
 import { Chess } from "chess.js";
 
 /**
- * Returns the FEN position at a specific ply from a PGN string.
- * ply 0 = initial position, ply 1 = after first move, etc.
+ * Fonksyon Bilgisi ✅
+ * Oyundaki FEN pozisyonunu ilgili PLY de PGN e bakarak döndürür.
  */
 export function getFenFromPgnAtPly(pgn: string, ply: number): string | null {
   try {
