@@ -48,21 +48,6 @@ export function Hero() {
                   </Link>
                 </Button>
               </div>
-              <dl className="flex items-center gap-8 border-t border-white/10 pt-8">
-                <div>
-                  <dt className="text-2xl font-bold text-white">1k+</dt>
-                  <dd className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase">
-                    Riddles
-                  </dd>
-                </div>
-                <div className="h-10 w-px bg-white/10" />
-                <div>
-                  <dt className="text-2xl font-bold text-white">100%</dt>
-                  <dd className="text-muted-foreground text-[10px] tracking-[0.2em] uppercase">
-                    Progress
-                  </dd>
-                </div>
-              </dl>
             </div>
           </MotionWrapper>
           <div className="relative mt-8 flex justify-center lg:mt-0 lg:justify-end">
