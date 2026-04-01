@@ -12,7 +12,7 @@ import type {
   OpeningVariantGoal,
 } from "@/features/openings/types/opening-variant";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
-import { getPlyFromPgnAndFen } from "@/lib/chess/getPlyFromPgnAndFen";
+import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { cn } from "@/lib/utilities/cn";
 import { Check, Lightbulb, Puzzle, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -96,12 +96,12 @@ export default function OpeningsController({
   };
 
   const handleFenAfterUserMove = (fen: string) => {
-    const ply = getPlyFromPgnAndFen(variant.pgn, fen);
+    const ply = getPlyFromPgnAtFen(variant.pgn, fen);
     if (ply !== null) setActivePly(ply);
   };
 
   const handleFenAfterOpponentMove = (fen: string) => {
-    const ply = getPlyFromPgnAndFen(variant.pgn, fen);
+    const ply = getPlyFromPgnAtFen(variant.pgn, fen);
     if (ply !== null) setActivePly(ply);
   };
 

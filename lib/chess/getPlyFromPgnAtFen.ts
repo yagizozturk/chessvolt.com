@@ -11,7 +11,7 @@ import { Chess } from "chess.js";
  * Hamleler bittiğinde null döner ve döngü durur.
  * Genellikle bir analiz tahtasında veya kullanıcı arayüzünde "Başa Dön" ya da "Oyunu Sıfırla" butonuna basıldığında tüm hamle geçmişini temizlemek için tercih edilir.
  */
-export function getPlyFromPgnAndFen(pgn: string, fen: string): number | null {
+export function getPlyFromPgnAtFen(pgn: string, fen: string): number | null {
   try {
     const game = new Chess();
     game.loadPgn(pgn);

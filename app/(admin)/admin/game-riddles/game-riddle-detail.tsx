@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
-import { getPlyFromPgnAndFen } from "@/lib/chess/getPlyFromPgnAndFen";
+import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { cn } from "@/lib/utilities/cn";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
@@ -37,7 +37,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [ply, setPly] = useState(() => {
     if (game?.pgn && riddle.displayFen?.trim()) {
-      const p = getPlyFromPgnAndFen(game.pgn, riddle.displayFen.trim());
+      const p = getPlyFromPgnAtFen(game.pgn, riddle.displayFen.trim());
       return p != null ? String(p) : "0";
     }
     return "0";

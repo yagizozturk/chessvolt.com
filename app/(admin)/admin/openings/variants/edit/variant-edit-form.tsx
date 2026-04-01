@@ -6,7 +6,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
-import { getPlyFromPgnAndFen } from "@/lib/chess/getPlyFromPgnAndFen";
+import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { Save } from "lucide-react";
 import { useState } from "react";
 
@@ -18,7 +18,7 @@ type Props = {
 function defaultDisplayPlyString(v: OpeningVariant): string {
   const df = v.displayFen?.trim();
   if (df) {
-    const p = getPlyFromPgnAndFen(v.pgn, df);
+    const p = getPlyFromPgnAtFen(v.pgn, df);
     if (p !== null) return String(p);
   }
   return String(v.ply ?? 0);
