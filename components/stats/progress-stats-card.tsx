@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils/cn";
 import { Target } from "lucide-react";
 
@@ -13,6 +14,8 @@ export function ProgressStatsCard({
   label = "Finished riddles",
   className,
 }: ProgressStatsCardProps) {
+  const value = Math.min(100, Math.max(0, percentage));
+
   return (
     <Card className={cn("w-44 shrink-0 self-start p-4", className)}>
       <div className="flex items-center gap-3">
@@ -24,12 +27,7 @@ export function ProgressStatsCard({
           <p className="text-xl font-bold">{percentage}%</p>
         </div>
       </div>
-      <div className="bg-muted mt-3 h-2 overflow-hidden rounded-full">
-        <div
-          className="bg-primary h-full rounded-full transition-all"
-          style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
-        />
-      </div>
+      <Progress className="mt-3 h-2" value={value} />
     </Card>
   );
 }
