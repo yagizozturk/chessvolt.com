@@ -23,6 +23,9 @@ export function MoveGoal({ goal, index, highlighted, done }: MoveGoalProps) {
             </div>
             <div className="min-w-0">
               <CardTitle className="flex flex-wrap items-center gap-x-2 text-lg">
+                <span className="text-muted-foreground shrink-0 text-sm font-semibold tracking-tight">
+                  Goal {index + 1}
+                </span>
                 <span className="min-w-0">{goal.title}</span>
                 {done ? (
                   <span

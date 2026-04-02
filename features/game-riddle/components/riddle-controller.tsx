@@ -1,6 +1,6 @@
 "use client";
 
-import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
+import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import VoltBoard, {
@@ -11,7 +11,6 @@ import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 import { getFullMoveCountFromMoves } from "@/lib/chess/getFullMoveCountFromMoves";
 import { Calendar, Flag, Lightbulb, Puzzle } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 type RiddleControllerProps = {
@@ -36,7 +35,6 @@ export default function RiddleController({
   riddle,
   game,
 }: RiddleControllerProps) {
-  const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const turn = (riddle.displayFen?.includes(" w ") ?? true) ? "White" : "Black";
   const moveCount = getFullMoveCountFromMoves(riddle.moves);
@@ -49,26 +47,40 @@ export default function RiddleController({
   }, [riddle.id]);
 
   // ===================================================================
-  // When riddle is answered correctly, redirect user back to challenge
-  // page. gameType is already in the riddle. I know where they came from.
-  // Controller handles this flow
+  // On correct solve, show SolveSuccessDialog; player continues via button.
+  // Destination uses gameType as challenge slug when present.
   // ===================================================================
   const challengeSlug = riddle.gameType?.replace(/_/g, "-");
   const handleSolved = async (isCorrect: boolean) => {
     await updateGameRiddleAnswerHook(riddle.id, isCorrect);
     if (isCorrect) {
       setShowCorrect(true);
-      setTimeout(() => {
-        if (challengeSlug) router.push(`/challenge/${challengeSlug}`);
-      }, 1000);
     }
   };
 
+  const riddleDestinationPath = challengeSlug
+    ? `/challenge/${challengeSlug}`
+    : "/";
+
   return (
     <div className="container mx-auto max-w-5xl px-8 py-6">
+      <SolveSuccessDialog
+        open={showCorrect}
+        onOpenChange={(open) => {
+          if (!open) setShowCorrect(false);
+        }}
+        title="Riddle solved"
+        description={
+          challengeSlug
+            ? "Return to the challenge when you are ready."
+            : "Continue from the home page."
+        }
+        destinationPath={riddleDestinationPath}
+        continueLabel={challengeSlug ? "Back to challenge" : "Home"}
+      />
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
         <div className="relative min-w-0">
-          <SuccessOverlay show={showCorrect} />
           <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}

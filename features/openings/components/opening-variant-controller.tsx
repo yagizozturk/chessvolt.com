@@ -1,10 +1,10 @@
 "use client";
 
 import { MoveGoal as MoveGoalView } from "@/components/move-goal/move-goal";
-import { SuccessOverlay } from "@/components/success-overlay/success-overlay";
-import { AnimatedList } from "@/components/ui/animated-list";
+import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import VoltBoard, {
   type VoltBoardHandle,
@@ -16,7 +16,6 @@ import type {
 } from "@/features/openings/types/opening-variant";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { Lightbulb, Target } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function OpeningVariantController({
@@ -28,8 +27,8 @@ export default function OpeningVariantController({
   nextVariantId?: string | null;
   parentOpeningUrl?: string; //TODO: Bu ne işe yarıyor kontrol et.
 }) {
-  const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
+  const confettiRef = useRef<ConfettiRef>(null);
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
   /** PGN’e göre mevcut tahta pozisyonunun ply’si (FEN eşlemesi) */
@@ -69,6 +68,15 @@ export default function OpeningVariantController({
     setActivePly(variant.ply);
   }, [variant.id, variant.ply]);
 
+  useEffect(() => {
+    if (!showCorrect) return;
+    void confettiRef.current?.fire({
+      particleCount: 120,
+      spread: 80,
+      origin: { x: 0.5, y: 0.45 },
+    });
+  }, [showCorrect]);
+
   // ======================================================================
   // If there is another unsolved variant, go to that page
   // If all the variants are solved, return to main opening page
@@ -77,13 +85,6 @@ export default function OpeningVariantController({
     await updateOpeningVariantAnswerHook(variant.id, isCorrect);
     if (isCorrect) {
       setShowCorrect(true);
-      setTimeout(() => {
-        if (nextVariantId) {
-          router.push(`/openings/variant/${nextVariantId}`);
-        } else {
-          router.push(parentOpeningUrl);
-        }
-      }, 1500);
     }
   };
 
@@ -99,10 +100,33 @@ export default function OpeningVariantController({
 
   return (
     <div className="container mx-auto max-w-5xl px-8 py-6">
+      <SolveSuccessDialog
+        open={showCorrect}
+        onOpenChange={(open) => {
+          if (!open) setShowCorrect(false);
+        }}
+        title="Line completed successfully"
+        description={
+          nextVariantId
+            ? "Continue to the next variation."
+            : "Return to the opening overview when you are ready."
+        }
+        destinationPath={
+          nextVariantId != null
+            ? `/openings/variant/${nextVariantId}`
+            : parentOpeningUrl
+        }
+        continueLabel={nextVariantId ? "Next variant" : "Back to opening"}
+      />
+
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
         {/*************** Board ***************/}
         <div key={variant.id} className="relative min-w-0">
-          <SuccessOverlay show={showCorrect} />
+          <Confetti
+            ref={confettiRef}
+            manualstart
+            className="pointer-events-none absolute inset-0 z-10 size-full"
+          />
           <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
