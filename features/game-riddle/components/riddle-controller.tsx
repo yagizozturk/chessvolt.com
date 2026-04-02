@@ -76,7 +76,7 @@ export default function RiddleController({
             : "Continue from the home page."
         }
         destinationPath={riddleDestinationPath}
-        continueLabel={challengeSlug ? "Back to challenge" : "Home"}
+        buttonLabel={challengeSlug ? "Back to challenge" : "Home"}
       />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">

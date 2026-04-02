@@ -116,7 +116,7 @@ export default function OpeningVariantController({
             ? `/openings/variant/${nextVariantId}`
             : parentOpeningUrl
         }
-        continueLabel={nextVariantId ? "Next variant" : "Back to opening"}
+        buttonLabel={nextVariantId ? "Next variant" : "Back to opening"}
       />
 
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">

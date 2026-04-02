@@ -9,47 +9,63 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export type SolveSuccessDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Dialog heading (e.g. “Line completed”, “Riddle solved”) */
   title?: string;
   description: string;
-  /** Passed to `router.push` when the primary button is pressed */
   destinationPath: string;
-  /** Primary action label */
-  continueLabel: string;
+  buttonLabel: string;
 };
 
+/**
+ * Refactor: ✅
+ * A dialog that appears when a user solves a puzzle successfully.
+ * @param open - Whether the dialog is open.
+ * @param onOpenChange - A function that is called when the dialog is opened or closed.
+ * @param title - The title of the dialog.
+ * @param description - The description of the dialog.
+ * @param destinationPath - The path to redirect to when the user clicks the button.
+ * @param buttonLabel - The label of the primary button.
+ */
 export function SolveSuccessDialog({
   open,
   onOpenChange,
   title = "Completed",
   description,
   destinationPath,
-  continueLabel,
+  buttonLabel,
 }: SolveSuccessDialogProps) {
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+
+  const handleContinue = async () => {
+    setIsPending(true);
+    router.push(destinationPath);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton={false}
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-      >
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogDescription className="text-pretty">
+            {description}
+          </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button
             type="button"
-            onClick={() => router.push(destinationPath)}
+            disabled={isPending}
+            onClick={handleContinue}
+            className="w-full sm:w-auto"
           >
-            {continueLabel}
+            {isPending && <Spinner data-icon="inline-start" />}
+            {buttonLabel}
           </Button>
         </DialogFooter>
       </DialogContent>
