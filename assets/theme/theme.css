@@ -25,6 +25,14 @@
   background-image: url("../images/board/deep-blue.png");
 }
 
+.dark-blue cg-board {
+  background-image: url("../images/board/dark-blue.png");
+}
+
+.orange cg-board {
+  background-image: url("../images/board/orange.png");
+}
+
 .merida cg-board piece.pawn.white {
   background-image: url("../images/pieces/merida/wP.svg");
 }

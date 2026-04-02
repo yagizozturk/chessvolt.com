@@ -62,7 +62,7 @@ function NavLink({
   if (isCta) {
     return (
       <Button
-        variant="cta"
+        variant="default"
         size="sm"
         className={`shadow-primary/20 shadow-lg ${className}`}
         asChild
@@ -79,7 +79,7 @@ function NavLink({
   }
 
   return (
-    <Button variant="vghost" size="sm" asChild>
+    <Button variant="ghost" size="sm" asChild>
       <Link
         href={href}
         className={`flex items-center gap-2 ${className}`}

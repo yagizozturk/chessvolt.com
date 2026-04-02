@@ -133,7 +133,6 @@ export default function StorybookPage() {
             { variant: "ghost" as const, label: "ghost" },
             { variant: "link" as const, label: "link" },
             { variant: "destructive" as const, label: "destructive" },
-            { variant: "cta" as const, label: "cta" },
           ].map(({ variant, label }) => (
             <div key={variant} className="border-border rounded-lg border p-6">
               <h4 className="text-muted-foreground mb-4 text-sm font-medium">
@@ -152,9 +151,6 @@ export default function StorybookPage() {
                 <Button variant={variant} size="lg">
                   lg
                 </Button>
-                <Button variant={variant} size="xl">
-                  xl
-                </Button>
                 <Button variant={variant} size="icon">
                   <Zap className="h-4 w-4" />
                 </Button>
@@ -166,31 +162,28 @@ export default function StorybookPage() {
             </div>
           ))}
 
-          {/* vghost — koyu arka plan gerekli */}
+          {/* ghost on dark background */}
           <div className="border-border rounded-lg border p-6">
             <h4 className="text-muted-foreground mb-4 text-sm font-medium">
-              vghost
+              ghost (on dark)
             </h4>
             <div className="flex flex-wrap items-center gap-4 rounded-lg bg-[#1A1147] p-8">
-              <Button variant="vghost" size="xs">
+              <Button variant="ghost" size="xs">
                 xs
               </Button>
-              <Button variant="vghost" size="sm">
+              <Button variant="ghost" size="sm">
                 sm
               </Button>
-              <Button variant="vghost" size="default">
+              <Button variant="ghost" size="default">
                 default
               </Button>
-              <Button variant="vghost" size="lg">
+              <Button variant="ghost" size="lg">
                 lg
               </Button>
-              <Button variant="vghost" size="xl">
-                xl
-              </Button>
-              <Button variant="vghost" size="icon">
+              <Button variant="ghost" size="icon">
                 <Zap className="h-4 w-4" />
               </Button>
-              <Button variant="vghost" size="sm">
+              <Button variant="ghost" size="sm">
                 <ChevronRight className="mr-2 h-4 w-4" />
                 With icon
               </Button>
