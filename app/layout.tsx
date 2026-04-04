@@ -5,7 +5,7 @@ import { Geist, Geist_Mono, Manrope, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +31,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn(geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
+      className={cn(geistSans.variable, geistMono.variable, "font-sans", geist.variable)}
     >
       <body className="bg-background min-h-screen antialiased">
         <ThemeProvider
