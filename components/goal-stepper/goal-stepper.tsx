@@ -1,7 +1,6 @@
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Check, Goal } from "lucide-react";
-import Image from "next/image";
+import { Check, Crown, Goal } from "lucide-react";
 
 const activeGoalCardClass =
   "bg-primary text-primary-foreground ring-1 ring-primary/25";
@@ -56,6 +55,7 @@ export function GoalStepper({
       className={cn("flex flex-col gap-3", className)}
     >
       {items.map((item, index) => {
+        console.log(item);
         const isActive = index === safeIndex;
 
         if (isActive) {
@@ -71,16 +71,13 @@ export function GoalStepper({
                 )}
               >
                 <div className="flex flex-row items-start gap-3 px-4 py-4 sm:gap-4 sm:px-5 sm:py-5">
-                  <div className="relative size-14 shrink-0 overflow-hidden rounded-md">
-                    <Image
-                      src={item.imageSrc}
-                      alt={item.imageAlt}
-                      fill
-                      className="object-cover"
-                      sizes="56px"
+                  <div className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-white/25 ring-1 ring-white/20">
+                    <Crown
+                      className="size-8 text-zinc-700 opacity-90"
+                      aria-hidden
                     />
                   </div>
-                  <div className="flex min-w-0 flex-1 flex-col gap-1.5 text-left">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1 text-left">
                     <CardTitle
                       className={cn(
                         "text-lg leading-snug font-semibold",

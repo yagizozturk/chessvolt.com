@@ -88,8 +88,8 @@ export default function OpeningVariantController({
       sortedGoals.map((g) => ({
         title: g.title,
         description: g.description,
-        imageSrc: g.imageSrc ?? "/images/cards/card_pawn_pyramid.png",
-        imageAlt: g.imageAlt ?? g.title,
+        imageSrc: `/images/cards/${g.card}.png`,
+        imageAlt: g.card ?? g.title,
         completed: isGoalDone(g),
       })),
     [sortedGoals, activePly],
