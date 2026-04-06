@@ -7,7 +7,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LogIn, type LucideIcon, Menu, Zap } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -124,7 +123,6 @@ export function Navbar() {
               isCta={item.isCta}
             />
           ))}
-          <ThemeToggle />
         </nav>
 
         {/* Mobile Navigation */}
@@ -145,7 +143,7 @@ export function Navbar() {
               className="border-white/10 bg-slate-950/95 px-8 text-white backdrop-blur-md"
             >
               <SheetTitle className="sr-only">Menu</SheetTitle>
-              <div className="mb-8 flex items-center justify-between">
+              <div className="mb-8 flex items-center">
                 <Link
                   href="/"
                   onClick={closeSheet}
@@ -155,7 +153,6 @@ export function Navbar() {
                   <Zap className="text-primary h-5 w-5" />
                   <span>chessvolt</span>
                 </Link>
-                <ThemeToggle />
               </div>
 
               <nav className="flex flex-col gap-6" aria-label="Mobile menu">

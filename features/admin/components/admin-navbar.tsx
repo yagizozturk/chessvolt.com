@@ -7,7 +7,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -99,11 +98,9 @@ export function AdminNavbar() {
           >
             <LogOut className="h-4 w-4" />
           </Button>
-          <ThemeToggle className="rounded-full" />
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle className="rounded-full" />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
