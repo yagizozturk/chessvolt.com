@@ -25,7 +25,7 @@ type OpeningVariantControllerProps = {
 };
 
 /**
- * Fonksyon Açıklaması ✅
+ * Fonksyon Açıklaması
  * Props alır ve Variant ın oynanacağı ekranı gçösterir. VoltBoard içerir
  * variant: variant ın kendisini alır
  * siblingVariants: Aynı opening altındaki tüm varyantlar (sıralı); varyant-slider için.
@@ -45,17 +45,28 @@ export default function OpeningVariantController({
   const [activePly, setActivePly] = useState<number | null>(() => variant.ply);
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
 
+  // ============================================================================
+  // Goals variant içinden alınır ve ply sırasına göre yukarıdan aşağıya dizilir.
+  // Stepper bu sıralı listeyi kullanır.
+  // ============================================================================
   const sortedGoals = useMemo(() => {
     const g = variant.goals;
     if (!g?.length) return [];
     return [...g].sort((a, b) => a.ply - b.ply);
   }, [variant.goals]);
 
-  /** activePly hedef ply’ine ulaştıysa / geçtiyse tamam (bir sonraki hedefe geçilebildiyse önceki biter) */
+  // ============================================================================
+  // activePly hedef ply’ine ulaştıysa / geçtiyse tamam
+  // (bir sonraki hedefe geçilebildiyse önceki biter)
+  // ============================================================================
   const isGoalDone = (goal: MoveGoal) =>
     activePly != null && activePly >= goal.ply;
 
-  const activeSliderIndex = useMemo(() => {
+  // ============================================================================
+  // GoalStepper içinde hangi adımın aktif/highlight olacağını hesaplar.
+  // Önce "bir sonraki hedef"i bulur; yoksa ilk tamamlanmamışı seçer.
+  // ============================================================================
+  const activeGoalStepIndex = useMemo(() => {
     if (sortedGoals.length === 0) return 0;
     const highlighted = sortedGoals.findIndex(
       (g) => activePly != null && g.ply === activePly + 1,
@@ -68,6 +79,10 @@ export default function OpeningVariantController({
     return sortedGoals.length - 1;
   }, [sortedGoals, activePly]);
 
+  // ============================================================================
+  // Goal verisini GoalStepper bileşeninin beklediği item formatına dönüştürür.
+  // completed alanı activePly üzerinden dinamik hesaplanır.
+  // ============================================================================
   const goalStepperItems = useMemo(
     () =>
       sortedGoals.map((g) => ({
@@ -80,11 +95,19 @@ export default function OpeningVariantController({
     [sortedGoals, activePly],
   );
 
+  // ============================================================================
+  // Variant değiştiğinde local ekran state'i sıfırlanır:
+  // - Hint hakkı yeniden başlar
+  // - Aktif ply, variant başlangıç ply'sine döner
+  // ============================================================================
   useEffect(() => {
     setHintCount(0);
     setActivePly(variant.ply);
   }, [variant.id, variant.ply]);
 
+  // ============================================================================
+  // Doğru çözüm dialog'u açıldığında konfeti bir kez tetiklenir.
+  // ============================================================================
   useEffect(() => {
     if (!showCorrect) return;
     void confettiRef.current?.fire({
@@ -105,16 +128,29 @@ export default function OpeningVariantController({
     }
   };
 
+  // ============================================================================
+  // Kullanıcının doğru hamlesinden sonra gelen FEN'i PGN içinde ply'e çevirir.
+  // Böylece goal ilerlemesi doğru adımı işaretler.
+  // ============================================================================
   const handleFenAfterUserMove = (fen: string) => {
     const ply = getPlyFromPgnAtFen(variant.pgn, fen);
     if (ply !== null) setActivePly(ply);
   };
 
+  // ============================================================================
+  // Rakip otomatik hamlesinden sonra da activePly güncellenir.
+  // Stepper bir sonraki hedefi doğru highlight eder.
+  // ============================================================================
   const handleFenAfterOpponentMove = (fen: string) => {
     const ply = getPlyFromPgnAtFen(variant.pgn, fen);
     if (ply !== null) setActivePly(ply);
   };
 
+  // ============================================================================
+  // Hint politikası controller tarafında yönetilir:
+  // - Her step için en fazla 2 hint
+  // - Kaçıncı hint olduğu board'a parametre olarak gönderilir
+  // ============================================================================
   const handleHintClick = () => {
     if (hintCount >= 2) return;
     const nextHintCount = hintCount + 1;
@@ -173,7 +209,7 @@ export default function OpeningVariantController({
           {goalStepperItems.length > 0 ? (
             <GoalStepper
               items={goalStepperItems}
-              activeIndex={activeSliderIndex}
+              activeIndex={activeGoalStepIndex}
             />
           ) : null}
 
