@@ -28,7 +28,7 @@ export function VariantSlider({
   const activeTitle = activeVariant?.title?.trim() || "Variation";
 
   return (
-    <div className="flex flex-col items-center gap-1.5 py-2">
+    <div className="flex flex-col items-center gap-2 py-2">
       <div
         className="flex flex-wrap items-center justify-center gap-2.5"
         role="navigation"

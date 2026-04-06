@@ -81,20 +81,6 @@ export function GoalStepper({
                     />
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-1.5 text-left">
-                    <div
-                      className={cn(
-                        "flex items-center gap-2 text-sm font-medium",
-                        done
-                          ? "text-emerald-800 dark:text-emerald-200"
-                          : activeGoalMutedTextClass,
-                      )}
-                    >
-                      <Goal
-                        className="size-4 shrink-0 opacity-90"
-                        aria-hidden
-                      />
-                      Goal {index + 1}
-                    </div>
                     <CardTitle
                       className={cn(
                         "text-lg leading-snug font-semibold",

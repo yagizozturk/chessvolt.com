@@ -175,7 +175,7 @@ export default function OpeningVariantController({
               Hint
             </Button>
           </div>
-          <div className="pt-2">
+          <div className="pt-1">
             <VariantSlider
               variants={siblingVariants ?? []}
               activeVariantId={variant.id}

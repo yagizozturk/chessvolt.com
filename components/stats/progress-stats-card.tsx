@@ -9,6 +9,10 @@ type ProgressStatsCardProps = {
   className?: string;
 };
 
+/**
+ * shrink-0: Flex container içinde daralmasını engeller (yanındaki elemanlar büyüse bile bu kart sıkışmaz).
+ * self-start: Parent flex ise, cross-axis’te (genelde dikey) karta start hizası verir.
+ */
 export function ProgressStatsCard({
   percentage,
   label = "Finished riddles",
@@ -17,7 +21,7 @@ export function ProgressStatsCard({
   const value = Math.min(100, Math.max(0, percentage));
 
   return (
-    <Card className={cn("w-44 shrink-0 self-start p-4", className)}>
+    <Card className={cn("shrink-0 self-start p-4", className)}>
       <div className="flex items-center gap-3">
         <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-lg">
           <Target className="text-primary h-5 w-5" />
