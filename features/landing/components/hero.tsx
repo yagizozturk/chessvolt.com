@@ -6,8 +6,6 @@ import Link from "next/link";
 
 import { MotionWrapper } from "./hero-content";
 
-// Client component above
-
 export function Hero() {
   return (
     <section className="bg-background relative w-full overflow-hidden pt-32 pb-20">
@@ -23,10 +21,10 @@ export function Hero() {
                 <ChessQueen className="h-4 w-4" />
                 Free to Play
               </Badge>
-              <div className="space-y-6 text-white">
+              <div className="text-foreground space-y-6">
                 <h1 className="text-4xl leading-tight font-extrabold tracking-tighter sm:text-6xl lg:text-7xl/none">
                   Chess{" "}
-                  <span className="text-primary underline decoration-white/20 underline-offset-8">
+                  <span className="text-primary decoration-foreground/20 underline underline-offset-8">
                     Improvement
                   </span>{" "}
                   <br /> With Games

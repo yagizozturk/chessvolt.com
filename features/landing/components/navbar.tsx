@@ -102,7 +102,7 @@ export function Navbar() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-white transition-opacity hover:opacity-90"
+          className="text-foreground flex items-center gap-2 text-2xl font-bold tracking-tighter transition-opacity hover:opacity-90"
           aria-label="chessvolt - Home"
         >
           <Zap className="fill-primary text-primary h-6 w-6" />
@@ -134,7 +134,7 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/10"
+                className="text-foreground hover:bg-foreground/10"
                 aria-label="Open menu"
               >
                 <Menu className="h-6 w-6" />

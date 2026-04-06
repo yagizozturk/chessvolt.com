@@ -71,13 +71,13 @@ export function GoalStepper({
                 )}
               >
                 <div className="flex flex-row items-start gap-3 px-4 py-4 sm:gap-4 sm:px-5 sm:py-5">
-                  <div className="relative size-11 shrink-0 overflow-hidden rounded-md">
+                  <div className="relative size-14 shrink-0 overflow-hidden rounded-md">
                     <Image
                       src={item.imageSrc}
                       alt={item.imageAlt}
                       fill
                       className="object-cover"
-                      sizes="44px"
+                      sizes="56px"
                     />
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-1.5 text-left">

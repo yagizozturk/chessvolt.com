@@ -1,5 +1,13 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ChevronRight, Zap } from "lucide-react";
 
 export default function StorybookPage() {
@@ -24,170 +32,132 @@ export default function StorybookPage() {
           >
             Backgrounds
           </a>
-          <a
-            href="#texts"
-            className="text-foreground hover:bg-accent block rounded-md px-3 py-2 text-sm font-medium"
-          >
-            Texts
-          </a>
-          <a
-            href="#buttons"
-            className="text-foreground hover:bg-accent block rounded-md px-3 py-2 text-sm font-medium"
-          >
-            Buttons
-          </a>
         </nav>
       </aside>
 
       {/* Right column - Preview area */}
       <main className="flex-1 overflow-auto p-8">
-        {/* Backgrounds section */}
-        <section id="backgrounds" className="mb-16 space-y-8">
-          <div>
-            <h3 className="text-2xl font-bold tracking-tight">Backgrounds</h3>
-            <p className="text-muted-foreground mt-1">
-              Background colors (globals.css)
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { name: "background", class: "bg-background", hex: "#121f25" },
-              { name: "foreground", class: "bg-foreground", hex: "#F8F7FF" },
-              { name: "primary", class: "bg-primary", hex: "#fcc800" },
-              { name: "secondary", class: "bg-secondary", hex: "#1e1f26" },
-              { name: "border", class: "bg-border", hex: "#37464f" },
-              { name: "input", class: "bg-input", hex: "#e6e6ea" },
-              {
-                name: "hero",
-                class:
-                  "bg-gradient-to-br from-[#1A1147] via-[#2D1B69] via-[#3D2580] via-60% to-[#1A1147]",
-                hex: "gradient",
-              },
-            ].map(({ name, class: className, hex }) => (
-              <div
-                key={name}
-                className="border-border overflow-hidden rounded-lg border"
-              >
-                <div className={`h-20 ${className}`} />
-                <div className="p-3">
-                  <p className="font-medium">{name}</p>
-                  <p className="text-muted-foreground text-sm">{hex}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        
 
-        {/* Texts section */}
-        <section id="texts" className="mb-16 space-y-8">
+        <section id="cards" className="space-y-8">
           <div>
-            <h3 className="text-2xl font-bold tracking-tight">Texts</h3>
-            <p className="text-muted-foreground mt-1">
-              Text colors (globals.css)
+            <h2 className="text-foreground text-2xl font-semibold tracking-tight">
+              Cards
+            </h2>
+            <p className="text-muted-foreground mt-1 text-sm">
+              shadcn default card yapilari
             </p>
           </div>
-          <div className="border-border space-y-4 rounded-lg border p-6">
-            {[
-              {
-                name: "foreground",
-                class: "text-foreground",
-                hex: "#fff",
-                sample: "Main text color",
-              },
-              {
-                name: "primary",
-                class: "text-primary",
-                hex: "#fcc800",
-                sample: "Accent and CTA text",
-              },
-              {
-                name: "muted-foreground",
-                class: "text-muted-foreground",
-                hex: "var(--muted-foreground)",
-                sample: "Secondary, description text",
-              },
-            ].map(({ name, class: className, hex, sample }) => (
-              <div key={name} className="flex flex-col gap-1">
-                <p className={`text-lg font-medium ${className}`}>{sample}</p>
-                <p className="text-muted-foreground text-sm">
-                  {name} · {hex}
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Basic Card</CardTitle>
+                <CardDescription>
+                  Basit baslik ve aciklama iceren default kart.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Icerik alani, metin veya kisa bir ozet gostermek icin
+                  kullanilir.
                 </p>
-              </div>
-            ))}
-          </div>
-        </section>
+              </CardContent>
+            </Card>
 
-        {/* Buttons section */}
-        <section id="buttons" className="space-y-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Card With Actions</CardTitle>
+                <CardDescription>
+                  Footer icinde birincil ve ikincil buton ornegi.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Bu varyasyon, kartin altinda aksiyon gostermeye uygundur.
+                </p>
+              </CardContent>
+              <CardFooter className="justify-end gap-2">
+                <Button variant="outline">Cancel</Button>
+                <Button>Continue</Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Stats Card</CardTitle>
+                <CardDescription>
+                  Bilgi karti tarzinda sade bir default kullanim.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-1">
+                <p className="text-3xl font-semibold">1,284</p>
+                <p className="text-sm text-muted-foreground">
+                  Son 30 gunde tamamlanan puzzle
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="ghost" className="px-0">
+                  Tum istatistikleri gor
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+
           <div>
-            <h3 className="text-2xl font-bold tracking-tight">Buttons</h3>
-            <p className="text-muted-foreground mt-1">
-              All button variants and sizes
+            <h3 className="text-foreground text-lg font-semibold">
+              Filled Variations
+            </h3>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Ici boyali (filled) kart ornekleri
             </p>
           </div>
 
-          {[
-            { variant: "default" as const, label: "default" },
-            { variant: "secondary" as const, label: "secondary" },
-            { variant: "outline" as const, label: "outline" },
-            { variant: "ghost" as const, label: "ghost" },
-            { variant: "link" as const, label: "link" },
-            { variant: "destructive" as const, label: "destructive" },
-          ].map(({ variant, label }) => (
-            <div key={variant} className="border-border rounded-lg border p-6">
-              <h4 className="text-muted-foreground mb-4 text-sm font-medium">
-                {label}
-              </h4>
-              <div className="flex flex-wrap items-center gap-4">
-                <Button variant={variant} size="xs">
-                  xs
-                </Button>
-                <Button variant={variant} size="sm">
-                  sm
-                </Button>
-                <Button variant={variant} size="default">
-                  default
-                </Button>
-                <Button variant={variant} size="lg">
-                  lg
-                </Button>
-                <Button variant={variant} size="icon">
-                  <Zap className="h-4 w-4" />
-                </Button>
-                <Button variant={variant} size="sm">
-                  <ChevronRight className="mr-2 h-4 w-4" />
-                  With icon
-                </Button>
-              </div>
-            </div>
-          ))}
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            <Card className="bg-primary text-primary-foreground ring-primary/20">
+              <CardHeader>
+                <CardTitle>Primary Filled</CardTitle>
+                <CardDescription className="text-primary-foreground/80">
+                  Vurgu gereken durumlar icin dolu kart stili.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-primary-foreground/90">
+                  Oncelikli bilgi veya CTA alanlari icin kullanilabilir.
+                </p>
+              </CardContent>
+            </Card>
 
-          {/* ghost on dark background */}
-          <div className="border-border rounded-lg border p-6">
-            <h4 className="text-muted-foreground mb-4 text-sm font-medium">
-              ghost (on dark)
-            </h4>
-            <div className="flex flex-wrap items-center gap-4 rounded-lg bg-[#1A1147] p-8">
-              <Button variant="ghost" size="xs">
-                xs
-              </Button>
-              <Button variant="ghost" size="sm">
-                sm
-              </Button>
-              <Button variant="ghost" size="default">
-                default
-              </Button>
-              <Button variant="ghost" size="lg">
-                lg
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Zap className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm">
-                <ChevronRight className="mr-2 h-4 w-4" />
-                With icon
-              </Button>
-            </div>
+            <Card className="bg-secondary text-secondary-foreground ring-secondary/40">
+              <CardHeader>
+                <CardTitle>Secondary Filled</CardTitle>
+                <CardDescription className="text-secondary-foreground/80">
+                  Daha yumusak tonlu dolu kart varyasyonu.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-secondary-foreground/90">
+                  Ikincil bilgi panelleri icin ideal bir gorunum saglar.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-accent text-accent-foreground ring-accent/40">
+              <CardHeader>
+                <CardTitle>Accent Filled</CardTitle>
+                <CardDescription className="text-accent-foreground/80">
+                  Ozellikle dikkat cekmesi gereken kisa mesajlar icin.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-accent-foreground/90">
+                  Durum etiketi, duyuru veya mini ozetler icin uygun.
+                </p>
+                <Button variant="secondary" size="sm" className="w-fit">
+                  Detay
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </section>
       </main>

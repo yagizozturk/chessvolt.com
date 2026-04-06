@@ -2,7 +2,7 @@ import { BoardStatusIcon } from "@/components/board-status-icon/board-status-ico
 import { IterationBadge } from "@/components/number-badge/number-badge";
 import { BlurFade } from "@/components/ui/blur-fade";
 import VoltBoard from "@/components/volt-board/volt-board";
-import { Book, Sword } from "lucide-react";
+import { Sword } from "lucide-react";
 import Link from "next/link";
 
 type OpeningBoardCardProps = {
@@ -14,7 +14,6 @@ type OpeningBoardCardProps = {
   isComplete?: boolean;
   href: string;
   fen: string;
-  variantCount?: number;
   description?: string | null;
 };
 
@@ -27,7 +26,6 @@ export function OpeningBoardCard({
   isComplete,
   href,
   fen,
-  variantCount,
   description,
 }: OpeningBoardCardProps) {
   return (
@@ -38,12 +36,6 @@ export function OpeningBoardCard({
           <p className="line-clamp-2 min-w-0 flex-1 text-sm break-words">
             {name}
           </p>
-          {variantCount != null && variantCount > 0 && (
-            <span className="text-primary bg-primary/10 ml-auto flex shrink-0 items-center gap-1 rounded-md border border-current px-2 py-0.5 text-xs font-medium">
-              <Book className="size-3" />
-              {variantCount}
-            </span>
-          )}
         </div>
         <div className="group/board relative mt-2 inline-flex justify-center">
           {isComplete === true && <BoardStatusIcon status="solved" />}
@@ -54,7 +46,7 @@ export function OpeningBoardCard({
             moves={""}
             width={width}
             height={height}
-            className="border-muted rounded-xl border-4"
+            className="border-secondary rounded-xl border-4"
             viewOnly
             coordinates={false}
           />
@@ -66,7 +58,7 @@ export function OpeningBoardCard({
           </div>
         </div>
         {description && (
-          <div className="bg-muted/50 border-muted mt-4 flex rounded-lg p-3 text-sm">
+          <div className="bg-secondary/50 mt-4 flex rounded-lg p-3 text-sm ring-0">
             {description}
           </div>
         )}

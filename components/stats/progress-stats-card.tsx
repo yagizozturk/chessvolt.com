@@ -21,7 +21,12 @@ export function ProgressStatsCard({
   const value = Math.min(100, Math.max(0, percentage));
 
   return (
-    <Card className={cn("shrink-0 self-start p-4", className)}>
+    <Card
+      className={cn(
+        "bg-secondary/80 shrink-0 self-start p-4 ring-0",
+        className,
+      )}
+    >
       <div className="flex items-center gap-3">
         <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-lg">
           <Target className="text-primary h-5 w-5" />
@@ -31,7 +36,7 @@ export function ProgressStatsCard({
           <p className="text-xl font-bold">{percentage}%</p>
         </div>
       </div>
-      <Progress className="mt-3 h-2" value={value} />
+      <Progress className="mt-1 h-2" value={value} />
     </Card>
   );
 }

@@ -38,7 +38,7 @@ export function NumberStatsCard({
   const styles = variantStyles[variant];
 
   return (
-    <Card className={cn(className)}>
+    <Card className={cn("bg-secondary/80 ring-0", className)}>
       <CardContent className="flex items-center gap-4">
         <div
           className={cn(

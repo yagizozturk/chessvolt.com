@@ -66,7 +66,6 @@ export function OpeningsList({ openings }: OpeningsListProps) {
             height={250}
             href={`/openings/${opening.slug}/${opening.id}`}
             fen={opening.displayFen}
-            variantCount={opening.variantCount}
             description={opening.description}
           />
         ))}

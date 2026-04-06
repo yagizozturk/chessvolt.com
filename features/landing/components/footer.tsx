@@ -15,7 +15,7 @@ export function Footer() {
           <div className="flex flex-col items-center text-center md:items-start md:text-left">
             <Link
               href="/"
-              className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-white transition-opacity hover:opacity-90"
+              className="text-foreground flex items-center gap-2 text-2xl font-bold tracking-tighter transition-opacity hover:opacity-90"
             >
               <Zap className="fill-primary text-primary h-6 w-6" />
               <span>chessvolt</span>
