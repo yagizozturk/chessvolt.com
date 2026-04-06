@@ -1,5 +1,5 @@
-import { NumberStatsCard } from "@/components/stats/number-stats-card";
-import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
+import { NumberStatsCard } from "@/components/cards/number-stats-card";
+import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import {
   getCorrectlySolvedVariantIds,
@@ -66,7 +66,6 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
         <div className="grid gap-6 px-2 sm:grid-cols-2 lg:grid-cols-3">
           {variants.map((variant, index) => {
             const num = index + 1;
-
             return (
               <OpeningBoardCard
                 key={variant.id}
@@ -100,12 +99,6 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             label="Incorrect attempts"
             value={incorrect}
             variant="destructive"
-          />
-          <NumberStatsCard
-            icon={TrendingUp}
-            label="Success percentage"
-            value={`${solveRate}%`}
-            variant="primary"
           />
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { NumberStatsCard } from "@/components/stats/number-stats-card";
+import { NumberStatsCard } from "@/components/cards/number-stats-card";
 import {
   Card,
   CardContent,

@@ -1,5 +1,5 @@
+import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { CollectionHeader } from "@/components/collection/collection-header";
-import { ProgressStatsCard } from "@/components/stats/progress-stats-card";
 import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle.service";

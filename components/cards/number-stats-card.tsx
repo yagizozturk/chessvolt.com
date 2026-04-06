@@ -28,6 +28,10 @@ const variantStyles = {
   },
 };
 
+/**
+ * Fonksyon Açıklaması ✅
+ * Bu fonksiyon, bir sayısal istatistik kartı oluşturur.
+ */
 export function NumberStatsCard({
   icon: Icon,
   label,
@@ -42,14 +46,14 @@ export function NumberStatsCard({
       <CardContent className="flex items-center gap-4">
         <div
           className={cn(
-            "flex size-12 shrink-0 items-center justify-center rounded-lg",
+            "flex size-12 shrink-0 items-center justify-center rounded-xl",
             styles.iconBg,
           )}
         >
           <Icon className={cn("h-7 w-7", styles.iconColor)} />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-muted-foreground text-xs">{label}</p>
+          <p className="text-muted-foreground text-sm">{label}</p>
           <p className={cn("text-2xl font-bold", styles.valueColor)}>{value}</p>
         </div>
       </CardContent>
