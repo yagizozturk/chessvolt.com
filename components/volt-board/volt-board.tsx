@@ -32,16 +32,17 @@ export type VoltBoardProps = {
   coordinates?: boolean;
   /** Oyuncunun tahtada yaptığı her hamle denemesi; UCI (örn. `e2e4`). Doğru / yanlış ayrımı yok. */
   onUserMovePlayed?: (uci: string) => void;
+  /** Oyuncu doğru hamle yaptığında controller'a haber verir. */
+  onUserSuccessMovePlayed?: () => void;
   /** Oyuncu beklenen hamleyi doğru oynadıktan sonra güncel FEN (ör. yorum / koç eşlemesi için). */
   onFenAfterUserMove?: (fen: string) => void;
   /** Otomatik rakip cevabı işlendikten sonra güncel FEN. */
   onFenAfterOpponentMove?: (fen: string) => void;
   onSolved?: (isCorrect: boolean) => void;
-  onHintUsed?: (hintCount: number) => void;
 };
 
 export type VoltBoardHandle = {
-  showHint: () => void;
+  showHint: (hintLevel: number) => void;
 };
 
 /**
@@ -70,10 +71,10 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       viewOnly = false,
       coordinates = true,
       onUserMovePlayed,
+      onUserSuccessMovePlayed,
       onFenAfterUserMove,
       onFenAfterOpponentMove,
       onSolved,
-      onHintUsed,
     } = props;
 
     const boardRef = useRef<HTMLDivElement>(null);
@@ -82,7 +83,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
 
     const currentStepRef = useRef(0);
     const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
-    const hintCountRef = useRef(0);
     const initialPlayerOrientation = useRef<"white" | "black">("white"); // Fixed orientation from player's perspective - never flips when turn changes
     const [isOver, setIsOver] = useState(false);
 
@@ -111,7 +111,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       setIsOver(false);
       currentStepRef.current = 0;
       lastMoveRef.current = undefined;
-      hintCountRef.current = 0;
     }, [sourceId]);
 
     // ============================================================================
@@ -196,8 +195,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       lastMoveRef.current = [from as Key, to as Key];
       playCorrectSound();
       ground.current?.setAutoShapes([]);
-      hintCountRef.current = 0;
-      onHintUsed?.(0); // Doğru hamlede hint kullanımı 0 lanır
+      onUserSuccessMovePlayed?.();
       handleStepChange();
       updateBoard();
       onFenAfterUserMove?.(game.current.fen());
@@ -227,25 +225,22 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
     useImperativeHandle(
       ref,
       () => ({
-        showHint() {
+        showHint(hintLevel: number) {
           if (!ground.current || isOver) return;
-          if (hintCountRef.current >= 2) return; // sayaç doğru hamlede 0 lanır. tek seferde 2 defa hint e basılabilir
           const step = currentStepRef.current;
           const expectedUci = movesArray[step];
           const parsedUci = parseUci(expectedUci);
           if (!parsedUci) return;
           const orig = parsedUci.from as Key;
           const dest = parsedUci.to as Key;
-          hintCountRef.current += 1;
-          if (hintCountRef.current === 1) {
+          if (hintLevel <= 1) {
             ground.current.setAutoShapes([{ orig, brush: "green" }]);
           } else {
             ground.current.setAutoShapes([{ orig, dest, brush: "green" }]);
           }
-          onHintUsed?.(hintCountRef.current);
         },
       }),
-      [isOver, onHintUsed],
+      [isOver],
     );
 
     return (

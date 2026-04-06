@@ -42,7 +42,6 @@ export default function OpeningVariantController({
   const confettiRef = useRef<ConfettiRef>(null);
   const [hintCount, setHintCount] = useState(0);
   const [showCorrect, setShowCorrect] = useState(false);
-  /** PGN’e göre mevcut tahta pozisyonunun ply’si (FEN eşlemesi) */
   const [activePly, setActivePly] = useState<number | null>(() => variant.ply);
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
 
@@ -116,6 +115,13 @@ export default function OpeningVariantController({
     if (ply !== null) setActivePly(ply);
   };
 
+  const handleHintClick = () => {
+    if (hintCount >= 2) return;
+    const nextHintCount = hintCount + 1;
+    setHintCount(nextHintCount);
+    boardRef.current?.showHint(nextHintCount);
+  };
+
   return (
     <div className="container mx-auto max-w-5xl px-8 py-6">
       <SolveSuccessDialog
@@ -156,8 +162,8 @@ export default function OpeningVariantController({
             viewOnly={false}
             onFenAfterUserMove={handleFenAfterUserMove}
             onFenAfterOpponentMove={handleFenAfterOpponentMove}
+            onUserSuccessMovePlayed={() => setHintCount(0)}
             onSolved={handleSolved}
-            onHintUsed={setHintCount}
           />
         </div>
 
@@ -178,7 +184,7 @@ export default function OpeningVariantController({
               size="lg"
               className="w-full"
               disabled={hintCount >= 2}
-              onClick={() => boardRef.current?.showHint()}
+              onClick={handleHintClick}
             >
               <Lightbulb className="mr-2 h-4 w-4" />
               Hint

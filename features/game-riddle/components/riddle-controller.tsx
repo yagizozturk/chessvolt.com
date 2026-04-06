@@ -62,6 +62,13 @@ export default function RiddleController({
     ? `/challenge/${challengeSlug}`
     : "/";
 
+  const handleHintClick = () => {
+    if (hintCount >= 2) return;
+    const nextHintCount = hintCount + 1;
+    setHintCount(nextHintCount);
+    boardRef.current?.showHint(nextHintCount);
+  };
+
   return (
     <div className="container mx-auto max-w-5xl px-8 py-6">
       <SolveSuccessDialog
@@ -90,8 +97,8 @@ export default function RiddleController({
             width={600}
             height={600}
             className="border-muted rounded-xl border-4"
+            onUserSuccessMovePlayed={() => setHintCount(0)}
             onSolved={handleSolved}
-            onHintUsed={setHintCount}
           />
         </div>
         <div className="flex min-w-0 flex-col gap-4">
@@ -176,7 +183,7 @@ export default function RiddleController({
             size="lg"
             className="w-full"
             disabled={hintCount >= 2}
-            onClick={() => boardRef.current?.showHint()}
+            onClick={handleHintClick}
           >
             <Lightbulb className="mr-2 h-4 w-4" />
             Hint
