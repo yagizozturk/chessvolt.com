@@ -61,9 +61,9 @@ export default async function OpeningVariantPage({ params }: Params) {
   return (
     <OpeningVariantController
       variant={variant}
+      siblingVariants={variants}
       nextVariantId={nextVariant?.id ?? null}
       parentOpeningUrl={parentOpeningUrl}
     />
   );
 }
-
