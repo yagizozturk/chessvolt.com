@@ -1,4 +1,3 @@
-/** One learning goal row stored in `opening_variants.goals` (jsonb array). */
 export type MoveGoal = {
   ply: number;
   move: string;
@@ -6,6 +5,8 @@ export type MoveGoal = {
   title: string;
   description: string;
   isCompleted: boolean;
+  imageSrc?: string;
+  imageAlt?: string;
 };
 
 export type OpeningVariant = {

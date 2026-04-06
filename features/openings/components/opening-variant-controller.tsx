@@ -108,7 +108,7 @@ export default function OpeningVariantController({
   };
 
   return (
-    <div className="container mx-auto max-w-5xl px-8 py-2">
+    <div className="container mx-auto max-w-5xl px-8 py-6">
       <SolveSuccessDialog
         open={showCorrect}
         onOpenChange={(open) => {
