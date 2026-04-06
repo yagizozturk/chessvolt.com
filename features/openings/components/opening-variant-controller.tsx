@@ -150,12 +150,6 @@ export default function OpeningVariantController({
             onSolved={handleSolved}
             onHintUsed={setHintCount}
           />
-          <div className="pt-3">
-            <VariantSlider
-              variants={siblingVariants ?? []}
-              activeVariantId={variant.id}
-            />
-          </div>
         </div>
 
         {/*************** Move Count, Turn, Goals ***************/}
@@ -169,16 +163,24 @@ export default function OpeningVariantController({
           ) : null}
 
           {/*************** Hint Button ***************/}
-          <Button
-            variant="default"
-            size="lg"
-            className="w-full"
-            disabled={hintCount >= 2}
-            onClick={() => boardRef.current?.showHint()}
-          >
-            <Lightbulb className="mr-2 h-4 w-4" />
-            Hint
-          </Button>
+          <div>
+            <Button
+              variant="default"
+              size="lg"
+              className="w-full"
+              disabled={hintCount >= 2}
+              onClick={() => boardRef.current?.showHint()}
+            >
+              <Lightbulb className="mr-2 h-4 w-4" />
+              Hint
+            </Button>
+          </div>
+          <div className="pt-2">
+            <VariantSlider
+              variants={siblingVariants ?? []}
+              activeVariantId={variant.id}
+            />
+          </div>
         </div>
       </div>
     </div>
