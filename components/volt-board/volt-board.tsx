@@ -4,10 +4,9 @@ import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
+import { parseUci } from "@/lib/chess/parseUci";
 import { toDests } from "@/lib/chess/toDests";
-import { useChessEngine } from "@/lib/engine/hooks/use-stockfish-engine";
 import { useSound } from "@/lib/shared/hooks/use-sound";
-import { useCoachStore } from "@/lib/shared/store/coach-store";
 import { cn } from "@/lib/utils/cn";
 import { Chessground } from "@lichess-org/chessground";
 import "@lichess-org/chessground/assets/chessground.base.css";
@@ -17,6 +16,7 @@ import {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -41,12 +41,26 @@ export type VoltBoardProps = {
 };
 
 export type VoltBoardHandle = {
-  // TODO: Bu ne işe yarar?
   showHint: () => void;
 };
 
+/**
+ * VoltBoard için açıklama ✅
+ * forwardRef ile VoltBoard'u sarmalıyorsun. Bu sayede artık bu bileşen sadece props değil, ikinci bir parametre olarak ref de alabiliyor.
+ * Normalde React bileşeni referans alamaz. ForwardRef bu yasağı deliyor. Dışarıda gelen ref bağlantısını
+ * useImperativeHandle içinde izin verilen metotlarda kullanılmasını sağlıyor.
+ * Bu sayade controller dan showHint buttonu tetiklenebiliyor.
+ *
+ * lastMoveRef: Son hamlenin başlangıç ve bitiş karesini tutar.
+ * lastMoveRef'in başlangıç değerini undefined yapıyoruz ki tahta boş (hiçbir kare boyanmamış) başlasın.
+ *
+ * useRef: içindeki değer değiştiğinde bileşenin yeniden render edilmemesini (re-render) sağlamasıdır."
+ *
+ * movesArray: moves içinde gelen hamleleri boşlukla ayırıp bir dizi ye atar.
+ */
 const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
   function VoltBoard(props, ref) {
+    // React'ta her zaman ilk parametre props paketidir.
     const {
       sourceId,
       moves,
@@ -66,80 +80,34 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
     const { game, makeMove } = useChessOne(props.initialFen);
     const ground = useRef<ReturnType<typeof Chessground> | null>(null);
 
-    const [currentStep, setCurrentStep] = useState(0);
     const currentStepRef = useRef(0);
-    const [isOver, setIsOver] = useState(false);
     const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
     const hintCountRef = useRef(0);
-    /** Fixed orientation from player's perspective - never flips when turn changes */
-    const initialPlayerOrientation = useRef<"white" | "black">("white");
+    const initialPlayerOrientation = useRef<"white" | "black">("white"); // Fixed orientation from player's perspective - never flips when turn changes
+    const [isOver, setIsOver] = useState(false);
 
-    const movesArray = moves
-      .trim()
-      .split(/\s+/)
-      .filter((m) => m.length > 0); // Get array of uci moves
+    const movesArray = useMemo(
+      () =>
+        moves
+          .trim()
+          .split(/\s+/)
+          .filter((m) => m.length > 0),
+      [moves],
+    );
+
     const { play: playCorrectSound } = useSound(
-      "/audio/piece-move-sound.mp3",
+      "/audio/piece-correct-move-sound.mp3",
       1,
     );
-    const { play: playMoveSound } = useSound("/audio/move.wav", 0.5);
-
-    // ============================================================================
-    // Coach Store updates
-    // ============================================================================
-    const setStoreFen = useCoachStore((state) => state.setFen);
-    //const setStoreBestMove = useCoachStore((state) => state.setBestMove); //*
-    //const setStoreBestMoveSan = useCoachStore((state) => state.setBestMoveSan); //*
-
-    // ============================================================================
-    // Stockfish Engine for best move analysis
-    // ============================================================================
-    const { analyze } = useChessEngine({
-      difficulty: "Expert",
-      onBestMove: (uci) => {
-        // Opponent move is automatic so the turn is always for the player
-        //setStoreBestMove(uci); // Getting best move from the engine and set for the coach store. //*
-        try {
-          //const sanMove = convertUciToSan(game.current!, uci);
-          //setStoreBestMoveSan(sanMove); //*
-        } catch (error) {
-          console.error("Error converting UCI to SAN:", error);
-          //setStoreBestMoveSan(uci);
-        }
-      },
-    });
-
-    // ============================================================================
-    // Hint (drawable shapes) - exposed via ref
-    // ============================================================================
-    useImperativeHandle(
-      ref,
-      () => ({
-        showHint() {
-          if (!ground.current || isOver) return;
-          if (hintCountRef.current >= 2) return;
-          const step = currentStepRef.current;
-          const expectedUci = movesArray[step];
-          if (!expectedUci || expectedUci.length < 4) return;
-          const orig = expectedUci.slice(0, 2) as Key;
-          const dest = expectedUci.slice(2, 4) as Key;
-          hintCountRef.current += 1;
-          if (hintCountRef.current === 1) {
-            ground.current.setAutoShapes([{ orig, brush: "green" }]);
-          } else {
-            ground.current.setAutoShapes([{ orig, dest, brush: "green" }]);
-          }
-          onHintUsed?.(hintCountRef.current);
-        },
-      }),
-      [isOver, onHintUsed],
+    const { play: playMoveSound } = useSound(
+      "/audio/piece-move-sound.wav",
+      0.5,
     );
 
     // ============================================================================
     // Initialize Fen
     // ============================================================================
     useEffect(() => {
-      setCurrentStep(0);
       setIsOver(false);
       currentStepRef.current = 0;
       lastMoveRef.current = undefined;
@@ -201,11 +169,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
 
     // Step through the solution line; when the last expected move is played, the line is complete
     function handleStepChange() {
-      setCurrentStep((prev) => {
-        const newStep = prev + 1;
-        currentStepRef.current = newStep;
-        return newStep;
-      });
+      currentStepRef.current += 1;
     }
 
     // ============================================================================
@@ -233,15 +197,13 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       playCorrectSound();
       ground.current?.setAutoShapes([]);
       hintCountRef.current = 0;
-      onHintUsed?.(0);
+      onHintUsed?.(0); // Doğru hamlede hint kullanımı 0 lanır
       handleStepChange();
       updateBoard();
-      setStoreFen(game.current.fen());
-      useCoachStore.setState({ fen: game.current.fen() });
       onFenAfterUserMove?.(game.current.fen());
 
+      // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
       if (step === movesArray.length - 1) {
-        // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
         setIsOver(true);
         onSolved?.(true);
         return;
@@ -256,9 +218,35 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       onFenAfterOpponentMove?.(game.current.fen());
       handleStepChange();
       updateBoard();
-      setStoreFen(game.current.fen());
-      analyze(game.current.fen(), 8);
     }
+
+    // ============================================================================
+    // Hint (drawable shapes) - exposed via ref
+    // useImperativeHandle(ref, () => ({ ... })) bloğu içinde, dışarıdan erişilmesini istediğin fonksiyonları paketliyorsun.
+    // ============================================================================
+    useImperativeHandle(
+      ref,
+      () => ({
+        showHint() {
+          if (!ground.current || isOver) return;
+          if (hintCountRef.current >= 2) return; // sayaç doğru hamlede 0 lanır. tek seferde 2 defa hint e basılabilir
+          const step = currentStepRef.current;
+          const expectedUci = movesArray[step];
+          const parsedUci = parseUci(expectedUci);
+          if (!parsedUci) return;
+          const orig = parsedUci.from as Key;
+          const dest = parsedUci.to as Key;
+          hintCountRef.current += 1;
+          if (hintCountRef.current === 1) {
+            ground.current.setAutoShapes([{ orig, brush: "green" }]);
+          } else {
+            ground.current.setAutoShapes([{ orig, dest, brush: "green" }]);
+          }
+          onHintUsed?.(hintCountRef.current);
+        },
+      }),
+      [isOver, onHintUsed],
+    );
 
     return (
       <div className={cn("w-fit", className)}>

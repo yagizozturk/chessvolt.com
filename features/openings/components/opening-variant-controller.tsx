@@ -14,21 +14,30 @@ import type {
   OpeningVariant,
 } from "@/features/openings/types/opening-variant";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
-import { Lightbulb, Target } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+type OpeningVariantControllerProps = {
+  variant: OpeningVariant;
+  siblingVariants: OpeningVariant[];
+  nextVariantId: string | null;
+  parentOpeningUrl: string;
+};
+
+/**
+ * Fonksyon Açıklaması ✅
+ * Props alır ve Variant ın oynanacağı ekranı gçösterir. VoltBoard içerir
+ * variant: variant ın kendisini alır
+ * siblingVariants: Aynı opening altındaki tüm varyantlar (sıralı); varyant-slider için.
+ * nextVariantId: Sonraki variant ın id si; next-variant butonu için.
+ * parentOpeningUrl: Opening ana sayfasının URL si; variant olarak sona geldiğinde ana opening sayfası için
+ */
 export default function OpeningVariantController({
   variant,
   siblingVariants,
   nextVariantId,
-  parentOpeningUrl = "/openings",
-}: {
-  variant: OpeningVariant;
-  /** Aynı opening altındaki tüm varyantlar (sıralı); varyant seçici için. */
-  siblingVariants?: OpeningVariant[];
-  nextVariantId?: string | null;
-  parentOpeningUrl?: string; //TODO: Bu ne işe yarıyor kontrol et.
-}) {
+  parentOpeningUrl,
+}: OpeningVariantControllerProps) {
   const boardRef = useRef<VoltBoardHandle>(null);
   const confettiRef = useRef<ConfettiRef>(null);
   const [hintCount, setHintCount] = useState(0);
@@ -129,7 +138,7 @@ export default function OpeningVariantController({
       />
 
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
-        {/*************** Board ***************/}
+        {/*************** Left Column ***************/}
         <div key={variant.id} className="relative min-w-0">
           <Confetti
             ref={confettiRef}
@@ -152,7 +161,7 @@ export default function OpeningVariantController({
           />
         </div>
 
-        {/*************** Move Count, Turn, Goals ***************/}
+        {/*************** Right Column ***************/}
         <div className="flex min-w-0 flex-col gap-4">
           {/*************** Goals (stacked; active expanded) ***************/}
           {goalStepperItems.length > 0 ? (

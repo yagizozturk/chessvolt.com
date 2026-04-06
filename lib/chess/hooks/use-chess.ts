@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Chess, Move } from "chess.js";
 import { GameStatus } from "@/lib/shared/types/game-status";
+import { parseUci } from "@/lib/chess/parseUci";
 
 export function useChessOne(initialFen?: string | null) {
   const game = useRef(new Chess());
@@ -66,18 +67,15 @@ export function useChessOne(initialFen?: string | null) {
   }
 
   function convertUciToSan(uci: string): string {
-    if (!uci || uci.length < 4) return uci;
-
-    const from = uci.slice(0, 2);
-    const to = uci.slice(2, 4);
-    const promotion = uci.length > 4 ? uci[4] : undefined;
+    const parsedUci = parseUci(uci);
+    if (!parsedUci) return uci;
 
     try {
       // Temporarily play the move
       const move = game.current.move({
-        from,
-        to,
-        promotion: promotion || undefined,
+        from: parsedUci.from,
+        to: parsedUci.to,
+        promotion: parsedUci.promotion || undefined,
       });
 
       if (!move) return uci; // Return UCI if move is invalid
