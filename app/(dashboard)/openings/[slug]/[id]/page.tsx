@@ -8,7 +8,6 @@ import {
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
 import { getPublicUser } from "@/lib/supabase/auth";
-import { TrendingUp, Trophy, XOctagon } from "lucide-react";
 import { notFound } from "next/navigation";
 
 type Params = {
@@ -89,13 +88,13 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             className="w-full"
           />
           <NumberStatsCard
-            icon={Trophy}
+            imageSrc="/images/icons/confetti.png"
             label="Correct answers"
             value={correct}
             variant="primary"
           />
           <NumberStatsCard
-            icon={XOctagon}
+            imageSrc="/images/icons/confetti.png"
             label="Incorrect attempts"
             value={incorrect}
             variant="destructive"

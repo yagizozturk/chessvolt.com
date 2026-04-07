@@ -1,31 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
-import type { LucideIcon } from "lucide-react";
+import Image from "next/image";
 
 type NumberStatsCardProps = {
-  icon: LucideIcon;
+  /** Public path, e.g. `/images/cards/stats-correct.png` */
+  imageSrc: string;
+  imageAlt?: string;
   label: string;
   value: string | number;
-  variant?: "default" | "primary" | "destructive";
   className?: string;
-};
-
-const variantStyles = {
-  default: {
-    iconBg: "bg-muted",
-    iconColor: "text-muted-foreground",
-    valueColor: "text-foreground",
-  },
-  primary: {
-    iconBg: "bg-primary/10",
-    iconColor: "text-primary",
-    valueColor: "text-primary",
-  },
-  destructive: {
-    iconBg: "bg-destructive/10",
-    iconColor: "text-destructive",
-    valueColor: "text-destructive",
-  },
 };
 
 /**
@@ -33,28 +16,27 @@ const variantStyles = {
  * Bu fonksiyon, bir sayısal istatistik kartı oluşturur.
  */
 export function NumberStatsCard({
-  icon: Icon,
+  imageSrc,
+  imageAlt,
   label,
   value,
-  variant = "primary",
   className,
 }: NumberStatsCardProps) {
-  const styles = variantStyles[variant];
-
   return (
-    <Card className={cn("bg-secondary/80 ring-0", className)}>
+    <Card className={cn("ring-border bg-transparent ring-2", className)}>
       <CardContent className="flex items-center gap-4">
-        <div
-          className={cn(
-            "flex size-12 shrink-0 items-center justify-center rounded-xl",
-            styles.iconBg,
-          )}
-        >
-          <Icon className={cn("h-7 w-7", styles.iconColor)} />
+        <div className="flex size-12 shrink-0 items-center justify-center rounded-xl">
+          <Image
+            src={imageSrc}
+            alt={imageAlt ?? label}
+            width={28}
+            height={28}
+            className="h-7 w-7 object-contain"
+          />
         </div>
         <div className="min-w-0 flex-1">
+          <p className="text-2xl font-bold">{value}</p>
           <p className="text-muted-foreground text-sm">{label}</p>
-          <p className={cn("text-2xl font-bold", styles.valueColor)}>{value}</p>
         </div>
       </CardContent>
     </Card>

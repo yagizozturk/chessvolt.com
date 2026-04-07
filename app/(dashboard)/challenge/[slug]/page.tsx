@@ -12,7 +12,7 @@ import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-r
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
-import { Target, TrendingUp, Trophy, XOctagon } from "lucide-react";
+import { Target } from "lucide-react";
 
 type Params = {
   params: Promise<{ slug: string }>;
@@ -126,19 +126,19 @@ export default async function ChallengePage({ params }: Params) {
           </Card>
 
           <NumberStatsCard
-            icon={Trophy}
+            imageSrc="/images/cards/stats-correct.png"
             label="Correct answers"
             value={correct}
             variant="primary"
           />
           <NumberStatsCard
-            icon={XOctagon}
+            imageSrc="/images/cards/stats-incorrect.png"
             label="Incorrect attempts"
             value={incorrect}
             variant="destructive"
           />
           <NumberStatsCard
-            icon={TrendingUp}
+            imageSrc="/images/cards/stats-success.png"
             label="Success percentage"
             value={`${solveRate}%`}
             variant="primary"
