@@ -1,5 +1,6 @@
 import { NumberStatsCard } from "@/components/cards/number-stats-card";
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
+import { StatsViewer } from "@/components/ui/stats-viewer";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import {
   getCorrectlySolvedVariantIds,
@@ -8,6 +9,7 @@ import {
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
 import { getPublicUser } from "@/lib/supabase/auth";
+import { Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
 type Params = {
@@ -88,6 +90,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             imageSrc="/images/icons/confetti.png"
             className="w-full"
           />
+          <StatsViewer value={100} label="CORRECT" icon={Star} />
           <NumberStatsCard
             imageSrc="/images/icons/correct.png"
             label="Correct answers"
