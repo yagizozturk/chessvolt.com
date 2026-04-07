@@ -85,19 +85,18 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
           <ProgressStatsCard
             percentage={solveRate}
             label="Solved variants"
+            imageSrc="/images/icons/confetti.png"
             className="w-full"
           />
           <NumberStatsCard
-            imageSrc="/images/icons/confetti.png"
+            imageSrc="/images/icons/correct.png"
             label="Correct answers"
             value={correct}
-            variant="primary"
           />
           <NumberStatsCard
-            imageSrc="/images/icons/confetti.png"
+            imageSrc="/images/icons/incorrect.png"
             label="Incorrect attempts"
             value={incorrect}
-            variant="destructive"
           />
         </div>
       </div>

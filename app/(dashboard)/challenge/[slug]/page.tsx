@@ -126,22 +126,19 @@ export default async function ChallengePage({ params }: Params) {
           </Card>
 
           <NumberStatsCard
-            imageSrc="/images/cards/stats-correct.png"
+            imageSrc="/images/cards/correct.png"
             label="Correct answers"
             value={correct}
-            variant="primary"
           />
           <NumberStatsCard
-            imageSrc="/images/cards/stats-incorrect.png"
+            imageSrc="/images/cards/incorrect.png"
             label="Incorrect attempts"
             value={incorrect}
-            variant="destructive"
           />
           <NumberStatsCard
             imageSrc="/images/cards/stats-success.png"
             label="Success percentage"
             value={`${solveRate}%`}
-            variant="primary"
           />
         </div>
       </div>

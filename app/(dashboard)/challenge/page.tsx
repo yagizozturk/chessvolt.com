@@ -81,6 +81,8 @@ export default async function ChallengePage() {
                 />
                 <ProgressStatsCard
                   percentage={stats.percentage}
+                  label="Solved riddles"
+                  imageSrc="/images/icons/confetti.png"
                   className="shrink-0"
                 />
               </div>

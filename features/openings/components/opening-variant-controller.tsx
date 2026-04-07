@@ -2,8 +2,8 @@
 
 import { GoalStepper } from "@/components/goal-stepper/goal-stepper";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
-import { Button } from "@/components/ui/button";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
+import { DuolingoButton } from "@/components/ui/duolingo-button";
 import { VariantSlider } from "@/components/variant-slider/variant-slider";
 import VoltBoard, {
   type VoltBoardHandle,
@@ -215,16 +215,13 @@ export default function OpeningVariantController({
 
           {/*************** Hint Button ***************/}
           <div>
-            <Button
-              variant="default"
-              size="lg"
+            <DuolingoButton
               className="w-full"
               disabled={hintCount >= 2}
               onClick={handleHintClick}
             >
-              <Lightbulb className="mr-2 h-4 w-4" />
               Hint
-            </Button>
+            </DuolingoButton>
           </div>
           <div className="pt-1">
             <VariantSlider

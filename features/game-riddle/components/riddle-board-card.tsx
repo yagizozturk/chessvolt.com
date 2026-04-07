@@ -35,7 +35,7 @@ export function RiddleBoardCard({
     >
       <div className="flex items-center gap-3">
         <IterationBadge num={num} />
-        <p className="text-md min-w-0 flex-1 truncate">{riddle.title}</p>
+        <p className="min-w-0 flex-1 truncate text-base">{riddle.title}</p>
       </div>
       <div className="group/board relative mt-2 inline-flex justify-center">
         {isComplete === true && <BoardStatusIcon status="solved" />}

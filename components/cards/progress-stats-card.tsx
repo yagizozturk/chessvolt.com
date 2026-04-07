@@ -1,11 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils/cn";
-import { Target } from "lucide-react";
+import Image from "next/image";
 
 type ProgressStatsCardProps = {
   percentage: number;
-  label?: string;
+  label: string;
+  imageSrc: string;
+  imageAlt?: string;
   className?: string;
 };
 
@@ -15,7 +17,9 @@ type ProgressStatsCardProps = {
  */
 export function ProgressStatsCard({
   percentage,
-  label = "Finished riddles",
+  label,
+  imageSrc,
+  imageAlt,
   className,
 }: ProgressStatsCardProps) {
   const value = Math.min(100, Math.max(0, percentage));
@@ -23,17 +27,25 @@ export function ProgressStatsCard({
   return (
     <Card
       className={cn(
-        "bg-secondary/80 shrink-0 self-start p-4 ring-0",
+        "ring-border shrink-0 self-start bg-transparent p-4 ring-2",
         className,
       )}
     >
       <div className="flex items-center gap-3">
-        <div className="bg-primary/10 flex size-10 shrink-0 items-center justify-center rounded-lg">
-          <Target className="text-primary h-5 w-5" />
+        <div className="flex size-12 shrink-0 items-center justify-center rounded-lg">
+          <Image
+            src={imageSrc}
+            alt={imageAlt ?? label}
+            width={40}
+            height={40}
+            className="size-10 object-contain"
+          />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-muted-foreground text-xs">{label}</p>
-          <p className="text-xl font-bold">{percentage}%</p>
+          <p className="text-muted-foreground text-base font-semibold">
+            {label}
+          </p>
+          <p className="text-2xl font-bold">{percentage}%</p>
         </div>
       </div>
       <Progress className="mt-1 h-2" value={value} />
