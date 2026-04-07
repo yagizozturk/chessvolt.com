@@ -1,54 +1,65 @@
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { COLOR_MAP } from "@/lib/shared/constants/color-map";
 import { cn } from "@/lib/utils/cn";
-import Image from "next/image";
+import type { LucideIcon } from "lucide-react";
 
 type ProgressStatsCardProps = {
   percentage: number;
   label: string;
-  imageSrc: string;
-  imageAlt?: string;
+  icon: LucideIcon;
+  color?: keyof typeof COLOR_MAP; // Yeni renk prop'u
   className?: string;
 };
 
-/**
- * shrink-0: Flex container içinde daralmasını engeller (yanındaki elemanlar büyüse bile bu kart sıkışmaz).
- * self-start: Parent flex ise, cross-axis’te (genelde dikey) karta start hizası verir.
- */
 export function ProgressStatsCard({
   percentage,
   label,
-  imageSrc,
-  imageAlt,
+  icon: Icon,
+  color = "mint",
   className,
 }: ProgressStatsCardProps) {
   const value = Math.min(100, Math.max(0, percentage));
+  const rgb = COLOR_MAP[color];
 
   return (
     <Card
       className={cn(
-        "ring-border shrink-0 self-start bg-transparent p-4 ring-2",
+        "card-gamified shrink-0 self-start border-2 p-4 transition-transform hover:-translate-y-1",
         className,
       )}
+      style={
+        {
+          "--brand-rgb": rgb,
+        } as React.CSSProperties
+      }
     >
       <div className="flex items-center gap-3">
-        <div className="flex size-12 shrink-0 items-center justify-center rounded-lg">
-          <Image
-            src={imageSrc}
-            alt={imageAlt ?? label}
-            width={40}
-            height={40}
-            className="size-10 object-contain"
-          />
-        </div>
+        {/* İkon rengi artık kart rengiyle aynı olacak */}
+        <Icon
+          className="size-10 shrink-0 opacity-90"
+          strokeWidth={2.5}
+          aria-hidden="true"
+        />
         <div className="min-w-0 flex-1">
-          <p className="text-muted-foreground text-base font-semibold">
+          {/* Label için biraz opacity ekleyerek hiyerarşi kuruyoruz */}
+          <p className="text-[11px] font-bold tracking-wider uppercase opacity-70">
             {label}
           </p>
-          <p className="text-2xl font-bold">{percentage}%</p>
+          <p className="mt-1 text-2xl leading-none font-black">{percentage}%</p>
         </div>
       </div>
-      <Progress className="mt-1 h-2" value={value} />
+
+      {/* Progress Bar'ı kart rengine boyuyoruz */}
+      <Progress
+        className="mt-4 h-2.5"
+        value={value}
+        style={{
+          backgroundColor: `rgba(${rgb}, 0.2)`, // Barın boş kısmı
+        }}
+        // Shadcn Progress içindeki 'indicator' için custom style gerekebilir
+        // veya basitçe indicator'a renk geçebiliriz.
+      />
     </Card>
   );
 }

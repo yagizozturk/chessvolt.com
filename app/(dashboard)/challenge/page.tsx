@@ -11,6 +11,7 @@ import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats"
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 import { groupBy } from "@/lib/utils/groupBy";
+import { PartyPopper } from "lucide-react";
 
 /**
  * Fonksyon Bilgisi ✅
@@ -82,7 +83,7 @@ export default async function ChallengePage() {
                 <ProgressStatsCard
                   percentage={stats.percentage}
                   label="Solved riddles"
-                  imageSrc="/images/icons/confetti.png"
+                  icon={PartyPopper}
                   className="shrink-0"
                 />
               </div>

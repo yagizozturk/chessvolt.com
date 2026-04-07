@@ -2,11 +2,11 @@ import { ThemeProvider } from "@/components/theme-provider/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { Geist_Mono, Nunito } from "next/font/google";
+import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 
 import "./globals.css";
 
-const nunito = Nunito({
+const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
 });
@@ -30,7 +30,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn(nunito.variable, geistMono.variable, "font-sans")}
+      className={cn(plusJakartaSans.variable, geistMono.variable, "font-sans")}
     >
       <body className="bg-background min-h-screen antialiased">
         <ThemeProvider
