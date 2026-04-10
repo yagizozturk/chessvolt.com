@@ -24,7 +24,7 @@ export async function createGameAction(formData: FormData) {
   const description = (formData.get("description") as string) || null;
 
   if (!whitePlayer || !blackPlayer || !pgn || !result || !playedAt) {
-    redirect("/admin/games/new?error=eksik_alan");
+    redirect("/admin/games/new?error=missing_fields");
   }
 
   // Normalize result for DB constraint (1-0, 0-1, 1/2-1/2)
@@ -47,7 +47,7 @@ export async function createGameAction(formData: FormData) {
 
   const game = await createGame(supabase, input);
   if (!game) {
-    redirect("/admin/games/new?error=olusturulamadi");
+    redirect("/admin/games/new?error=create_failed");
   }
 
   revalidatePath("/admin/games");
@@ -86,7 +86,7 @@ export async function updateGameAction(id: string, formData: FormData) {
 
   const game = await updateGame(supabase, id, input);
   if (!game) {
-    redirect(`/admin/games/${id}?error=guncellenemedi`);
+    redirect(`/admin/games/${id}?error=update_failed`);
   }
 
   revalidatePath("/admin/games");

@@ -16,7 +16,7 @@ export async function importPgnAction(formData: FormData) {
 
   const pgnText = formData.get("pgn") as string;
   if (!pgnText?.trim()) {
-    redirect("/admin/games/import?error=eksik_pgn");
+    redirect("/admin/games/import?error=missing_pgn");
   }
 
   const gameType =
@@ -24,7 +24,7 @@ export async function importPgnAction(formData: FormData) {
 
   const games = splitPgnGames(pgnText);
   if (games.length === 0) {
-    redirect("/admin/games/import?error=gecersiz_pgn");
+    redirect("/admin/games/import?error=invalid_pgn");
   }
 
   const inserted: string[] = [];
@@ -89,5 +89,5 @@ export async function importPgnAction(formData: FormData) {
     redirect(`/admin/games${query}`);
   }
 
-  redirect("/admin/games/import?error=hic_eklenemedi");
+  redirect("/admin/games/import?error=none_added");
 }

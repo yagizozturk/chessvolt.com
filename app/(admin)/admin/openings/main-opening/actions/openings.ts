@@ -22,7 +22,7 @@ export async function createOpeningAction(formData: FormData) {
   const displayFen = (formData.get("displayFen") as string) || null;
 
   if (!name) {
-    redirect("/admin/openings?error=eksik_alan");
+    redirect("/admin/openings?error=missing_fields");
   }
 
   const input: CreateOpeningInput = {
@@ -34,7 +34,7 @@ export async function createOpeningAction(formData: FormData) {
 
   const opening = await createOpening(supabase, input);
   if (!opening) {
-    redirect("/admin/openings?error=olusturulamadi");
+    redirect("/admin/openings?error=create_failed");
   }
 
   revalidatePath("/admin/openings");
@@ -57,7 +57,7 @@ export async function updateOpeningAction(id: string, formData: FormData) {
 
   const opening = await updateOpening(supabase, id, input);
   if (!opening) {
-    redirect(`/admin/openings?error=guncellenemedi`);
+    redirect(`/admin/openings?error=update_failed`);
   }
 
   revalidatePath("/admin/openings");

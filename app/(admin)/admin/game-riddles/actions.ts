@@ -23,7 +23,7 @@ export async function createGameRiddleAction(formData: FormData) {
   const gameType = (formData.get("gameType") as string)?.trim() || null;
 
   if (!gameId || !title || !gameType || isNaN(ply) || ply < 0) {
-    redirect("/admin/game-riddles/new?error=eksik_alan");
+    redirect("/admin/game-riddles/new?error=missing_fields");
   }
 
   const game = await gameRepo.findById(supabase, gameId);
@@ -40,7 +40,7 @@ export async function createGameRiddleAction(formData: FormData) {
 
   const riddle = await createGameRiddle(supabase, input);
   if (!riddle) {
-    redirect("/admin/game-riddles/new?error=olusturulamadi");
+    redirect("/admin/game-riddles/new?error=create_failed");
   }
 
   revalidatePath("/admin/game-riddles");
@@ -68,7 +68,7 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
     isNaN(moveCountForAnswer) ||
     moveCountForAnswer < 1
   ) {
-    redirect(`/admin/game-riddles/${id}?error=eksik_alan`);
+    redirect(`/admin/game-riddles/${id}?error=missing_fields`);
   }
 
   const game = await gameRepo.findById(supabase, gameId);
@@ -93,7 +93,7 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
 
   const riddle = await updateGameRiddle(supabase, id, input);
   if (!riddle) {
-    redirect(`/admin/game-riddles/${id}?error=guncellenemedi`);
+    redirect(`/admin/game-riddles/${id}?error=update_failed`);
   }
 
   revalidatePath("/admin/game-riddles");

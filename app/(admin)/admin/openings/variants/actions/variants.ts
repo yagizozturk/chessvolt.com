@@ -100,16 +100,16 @@ export async function createOpeningVariantAction(formData: FormData) {
   const displayFen = (formData.get("displayFen") as string)?.trim() || null;
   const goals = parseGoalsFromForm(
     formData,
-    newVariantUrl(formData, "gecersiz_goals_json"),
+    newVariantUrl(formData, "invalid_goals_json"),
   );
 
   if (!openingId?.trim() || !pgn || Number.isNaN(sortKey)) {
-    redirect(newVariantUrl(formData, "eksik_alan"));
+    redirect(newVariantUrl(formData, "missing_fields"));
   }
 
   const moves = getUciMovesFromPgnAfterPly(pgn, ply >= 0 ? ply : 0);
   if (!moves) {
-    redirect(newVariantUrl(formData, "gecersiz_pgn"));
+    redirect(newVariantUrl(formData, "invalid_pgn"));
   }
 
   const input: CreateOpeningVariantInput = {
@@ -127,7 +127,7 @@ export async function createOpeningVariantAction(formData: FormData) {
 
   const variant = await createOpeningVariant(supabase, input);
   if (!variant) {
-    redirect(newVariantUrl(formData, "olusturulamadi"));
+    redirect(newVariantUrl(formData, "create_failed"));
   }
 
   revalidatePath("/admin/openings");
@@ -143,7 +143,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
     const parsed = JSON.parse(jsonData.trim()) as unknown;
     items = Array.isArray(parsed) ? parsed : [parsed];
   } catch {
-    redirect("/admin/openings/bulk?error=invalid_json");
+    redirect("/admin/openings/variants/bulk?error=invalid_json");
   }
 
   const created: string[] = [];
@@ -232,7 +232,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
   if (errors.length > 0) params.set("errorDetails", JSON.stringify(errors));
 
   revalidatePath("/admin/openings");
-  redirect(`/admin/openings/bulk?${params.toString()}`);
+  redirect(`/admin/openings/variants/bulk?${params.toString()}`);
 }
 
 export async function updateOpeningVariantAction(
@@ -251,7 +251,7 @@ export async function updateOpeningVariantAction(
   const displayFenManual = (formData.get("displayFen") as string)?.trim() || null;
   const goals = parseGoalsFromForm(
     formData,
-    `/admin/openings/variants/${id}?error=gecersiz_goals_json`,
+    `/admin/openings/variants/${id}?error=invalid_goals_json`,
   );
 
   const input: UpdateOpeningVariantInput = {};

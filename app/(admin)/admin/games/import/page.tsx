@@ -20,9 +20,9 @@ export default async function AdminGamesImportPage({ searchParams }: SearchParam
   const { error } = await searchParams;
 
   const errorMessages: Record<string, string> = {
-    eksik_pgn: "PGN metni boş.",
-    gecersiz_pgn: "Geçerli PGN bulunamadı.",
-    hic_eklenemedi: "Hiçbir oyun eklenemedi.",
+    missing_pgn: "PGN metni boş.",
+    invalid_pgn: "Geçerli PGN bulunamadı.",
+    none_added: "Hiçbir oyun eklenemedi.",
   };
 
   return (
