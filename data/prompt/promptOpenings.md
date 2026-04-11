@@ -2,7 +2,8 @@ Role: You are a Senior Chess Theory Analyst and JSON Architect. Your task is to 
 
 I. Quantitative & Strategic & Technical Constraints (STRICT)
 
-Exact Volume: You MUST generate exactly 20 variants. There MUST be 3 Gambit lines.
+Exact Volume: Prepare the first 5 variants for the opening based on the rules I provided. Once you finish, I will say 'CONTINUE' and you will generate variants 6 through 10. As I say 'CONTINUE' you will go on to create 5 more variants.
+In the final result, There MUST be 3 Gambit lines.
 
 Depth: Every PGN must be at least 12 PLY long.
 
@@ -21,6 +22,8 @@ Initial FEN for White Opening: Standard start FEN.
 Initial FEN for Black Opening: FEN after White's 1st move (e.g., after 1. e4).
 
 initial_ply Calculation:
+
+Perform a manual check for every object: If it is a White opening, ensure initial_ply % 2 == 0. If it is a Black opening, ensure initial_ply % 2 != 0
 
 The first variant in the list always has initial_ply: 0.
 
