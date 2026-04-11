@@ -1,0 +1,697 @@
+[
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 1,
+    "title": "Line 1: Italian Game - The Safe Way",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. d3 Nf6 5. O-O O-O 6. c3 d6 7. Bb3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 0,
+    "display_ply": 0,
+    "description": "Standard setup for beginners. Range: <800.",
+    "goals": [
+      {
+        "ply": 1,
+        "card": "move",
+        "move": "e2e4",
+        "title": "Start",
+        "description": "Claim the middle of the board with your pawn."
+      },
+      {
+        "ply": 3,
+        "card": "move",
+        "move": "g1f3",
+        "title": "Attack",
+        "description": "Develop the knight and attack the _enemy_ pawn."
+      },
+      {
+        "ply": 5,
+        "card": "move",
+        "move": "f1c4",
+        "title": "Aim",
+        "description": "Point your bishop at the weak f7 square."
+      },
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "d2d3",
+        "title": "Solid",
+        "description": "Support your center and free your _other_ bishop."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "e1g1",
+        "title": "Safety",
+        "description": "Hide your king behind a wall of pawns."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "c2c3",
+        "title": "Support",
+        "description": "Prepare to build a strong _pawn_ center later."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "c4b3",
+        "title": "Tuck",
+        "description": "Move the bishop to safety before it is attacked."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 2,
+    "title": "Line 2: Italian Game - Fast Attack",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4 6. cxd4 Bb4+ 7. Bd2",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 2,
+    "description": "Pushing the center early. Range: 800-1000.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "c2c3",
+        "title": "Prepare",
+        "description": "Get ready to challenge the _center_ with pawns."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "d2d4",
+        "title": "Strike",
+        "description": "Strike at the heart of the board immediately."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "c3d4",
+        "title": "Recapture",
+        "description": "Keep control by taking back with your _pawn_."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "c1d2",
+        "title": "Block",
+        "description": "Stop the check and offer a bishop trade."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 3,
+    "title": "Line 3: Evans Gambit - Power Sacrifice",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. b4 Bxb4 5. c3 Ba5 6. d4 exd4 7. O-O",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 2,
+    "description": "Sacrifice a pawn for speed. Range: 1000+.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "b2b4",
+        "title": "Gambit",
+        "description": "Offer a _pawn_ to lure the bishop away."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "c2c3",
+        "title": "Tempo",
+        "description": "Attack the bishop and prepare the center."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "d2d4",
+        "title": "Center",
+        "description": "Take over the _middle_ while Black is busy."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "e1g1",
+        "title": "Castle",
+        "description": "Safety first while your attack starts brewing."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 4,
+    "title": "Line 4: Evans Gambit - Pressure Line",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. b4 Bxb4 5. c3 Ba5 6. d4 d6 7. Qb3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 4,
+    "description": "Pressure the weak f7 spot. Range: 1100+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "d2d4",
+        "title": "Break",
+        "description": "Open lines for your pieces to _attack_."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "d1b3",
+        "title": "Battery",
+        "description": "Create a double attack on the f7 pawn."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 5,
+    "title": "Line 5: Italian Game - Two Knights Trap",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Na5 6. Bb5+ c6 7. dxc6",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 4,
+    "display_ply": 4,
+    "description": "White plays aggressively early. Range: 900+.",
+    "goals": [
+      {
+        "ply": 5,
+        "card": "move",
+        "move": "f1c4",
+        "title": "Classic",
+        "description": "Develop and look for a _weakness_ early."
+      },
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "f3g5",
+        "title": "Jump",
+        "description": "The knight attacks f7 with the bishop."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "e4d5",
+        "title": "Take",
+        "description": "Grab the pawn and open the _diagonal_."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "c4b5",
+        "title": "Check",
+        "description": "Force Black to block and lose time."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "d5c6",
+        "title": "Greedy",
+        "description": "Keep the _material_ advantage while you can."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 6,
+    "title": "Line 6: Fried Liver - The Sac",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Nxd5 6. Nxf7 Kxf7 7. Qf3+",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 4,
+    "description": "Destroy the King's cover. Range: 1000+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "g5f7",
+        "title": "Sacrifice",
+        "description": "Kill the pawn and draw out the king."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "d1f3",
+        "title": "Double",
+        "description": "Check the king and attack the _knight_."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 7,
+    "title": "Line 7: Two Knights - Polerio Defense",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Na5 6. d3 h6 7. Nf3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 2,
+    "description": "A more solid retreat. Range: 1200+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "d2d3",
+        "title": "Support",
+        "description": "Hold the center and keep your _bishop_."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "g5f3",
+        "title": "Retreat",
+        "description": "Move back after provoking a pawn move."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 8,
+    "title": "Line 8: Giuoco Piano - Greco Attack",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4 6. cxd4 Bb4+ 7. Nc3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 12,
+    "display_ply": 2,
+    "description": "Offer a pawn for development. Range: 1200+.",
+    "goals": [
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "b1c3",
+        "title": "Develop",
+        "description": "Bring out the knight and ignore the _check_."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 9,
+    "title": "Line 9: Giuoco Piano - Möller Attack",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4 6. cxd4 Bb4+ 7. Nc3 Nxe4 8. O-O Bxc3 9. d5",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 12,
+    "display_ply": 4,
+    "description": "Counter-attack the knight. Range: 1400+.",
+    "goals": [
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "e1g1",
+        "title": "Castle",
+        "description": "Get safe and prepare the king _rook_."
+      },
+      {
+        "ply": 15,
+        "card": "move",
+        "move": "d4d5",
+        "title": "Push",
+        "description": "Hit the knight and create massive chaos."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 10,
+    "title": "Line 10: Giuoco Pianissimo - Quiet Game",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. d3 Nf6 5. Nc3 d6 6. Bg5 h6 7. Bxf6",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 8,
+    "display_ply": 2,
+    "description": "Positional play. Range: <1000.",
+    "goals": [
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "b1c3",
+        "title": "Natural",
+        "description": "Develop your knight to a very _strong_ square."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "c1g5",
+        "title": "Pin",
+        "description": "Pin the knight to the enemy queen."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "g5f6",
+        "title": "Trade",
+        "description": "Remove the defender and mess up _pawns_."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 11,
+    "title": "Line 11: Max Lange Attack - Chaos Gambit",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. d4 exd4 5. O-O Bc5 6. e5 d5 7. exf6",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 2,
+    "description": "Sharp sacrifice. Range: 1300+.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "d2d4",
+        "title": "Explode",
+        "description": "Blow open the center of the board."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "e1g1",
+        "title": "Prep",
+        "description": "Get the king to a _safe_ spot."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "e4e5",
+        "title": "Advance",
+        "description": "Kick the knight away from its home."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "e5f6",
+        "title": "Capture",
+        "description": "Take the pawn and open the _king_."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 12,
+    "title": "Line 12: Deutz Gambit - Center Blast",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. O-O Nf6 5. d4 Bxd4 6. Nxd4 Nxd4 7. f4",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 2,
+    "description": "A tricky gambit. Range: 1100+.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "e1g1",
+        "title": "Ready",
+        "description": "Hide the king and prepare for _battle_."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "d2d4",
+        "title": "Sac",
+        "description": "Offer a pawn to open the center."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "f3d4",
+        "title": "Recoup",
+        "description": "Bring the knight to the _central_ square."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "f2f4",
+        "title": "Pressure",
+        "description": "Attack the center with your f-pawn now."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 13,
+    "title": "Line 13: Italian Game - Hungarian Defense",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Be7 4. d4 d6 5. d5 Nb8 6. Bd3 Nf6 7. c4",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 4,
+    "display_ply": 2,
+    "description": "Patient control. Range: 1000+.",
+    "goals": [
+      {
+        "ply": 5,
+        "card": "move",
+        "move": "f1c4",
+        "title": "Italian",
+        "description": "Place the bishop on its _best_ square."
+      },
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "d2d4",
+        "title": "Occupy",
+        "description": "Take space while Black plays very defensively."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "d4d5",
+        "title": "Lock",
+        "description": "Trap the knight and gain _space_ advantage."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "c4d3",
+        "title": "Re-route",
+        "description": "Improve the bishop's position for later play."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "c2c4",
+        "title": "Clamp",
+        "description": "Secure the center with a _pawn_ wall."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 14,
+    "title": "Line 14: Four Knights Italian - Solid",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Nc3 Bc5 5. d3 d6 6. O-O O-O 7. Bg5",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 0,
+    "description": "Symmetry and balance. Range: <1000.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "b1c3",
+        "title": "Complete",
+        "description": "Bring the last _knight_ out to play."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "d2d3",
+        "title": "Open",
+        "description": "Let your dark-square bishop enter the game."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "e1g1",
+        "title": "Castle",
+        "description": "Keep the _king_ safe from any threats."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "c1g5",
+        "title": "Aggressive",
+        "description": "Put pressure on the kingside knight immediately."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 15,
+    "title": "Line 15: Italian Game - Paris Defense",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 d6 4. d4 exd4 5. Nxd4 Nf6 6. Nc3 Be7 7. O-O",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 4,
+    "display_ply": 2,
+    "description": "Facing the d6 wall. Range: 900+.",
+    "goals": [
+      {
+        "ply": 5,
+        "card": "move",
+        "move": "f1c4",
+        "title": "Target",
+        "description": "Aim at f7 even if they _defend_."
+      },
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "d2d4",
+        "title": "Expansion",
+        "description": "Claim the middle ground with your pawns."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "f3d4",
+        "title": "Recapture",
+        "description": "Keep the _knight_ active in the center."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "b1c3",
+        "title": "Reinforce",
+        "description": "Defend the e4 pawn and develop pieces."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "e1g1",
+        "title": "Finalize",
+        "description": "Complete your _opening_ development by castling."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 16,
+    "title": "Line 16: Two Knights - Steinitz Line",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Na5 6. Bb5+ c6 7. dxc6 bxc6 8. Be2",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 14,
+    "display_ply": 4,
+    "description": "A more cautious retreat. Range: 1300+.",
+    "goals": [
+      {
+        "ply": 15,
+        "card": "move",
+        "move": "b5e2",
+        "title": "Safety",
+        "description": "Move the _bishop_ back to avoid trade."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 17,
+    "title": "Line 17: Italian Game - Scotch Transition",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. d4 exd4 5. c3 dxc3 6. Bxf7+ Kxf7 7. Qd5+",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 2,
+    "description": "Sacrifice for king hunt. Range: 1200+.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "move",
+        "move": "d2d4",
+        "title": "Gambit",
+        "description": "Sacrifice a _pawn_ for quick attacking lines."
+      },
+      {
+        "ply": 9,
+        "card": "move",
+        "move": "c2c3",
+        "title": "Bait",
+        "description": "Offer another pawn to clear the path."
+      },
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "c4f7",
+        "title": "Smash",
+        "description": "Remove the _protection_ from the enemy king."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "d1d5",
+        "title": "Fork",
+        "description": "Check the king and take the bishop."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 18,
+    "title": "Line 18: Giuoco Piano - Canal Attack",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. d3 Nf6 5. Nc3 d6 6. Bg5 h6 7. Bxf6 Qxf6 8. Nd5",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 12,
+    "display_ply": 2,
+    "description": "Aggressive knight maneuver. Range: 1100+.",
+    "goals": [
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "g5f6",
+        "title": "Removal",
+        "description": "Eliminate the _defender_ of the d5 square."
+      },
+      {
+        "ply": 15,
+        "card": "move",
+        "move": "c3d5",
+        "title": "Invasion",
+        "description": "Place the knight on a dominant square."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 19,
+    "title": "Line 19: Two Knights - Lolli Attack",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Nxd5 6. d4 exd4 7. O-O",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 4,
+    "description": "Alternative to Fried Liver. Range: 1100+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "d2d4",
+        "title": "Hammer",
+        "description": "Strike in the center with a _pawn_."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "e1g1",
+        "title": "Safety",
+        "description": "Castle quickly to bring the rook in."
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 20,
+    "title": "Line 20: Italian Game - Modern d3",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. O-O Nf6 5. d3 d6 6. c3 a6 7. a4",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 0,
+    "description": "Prophylactic edge play. Range: 1400+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "move",
+        "move": "c3c3",
+        "title": "Buffer",
+        "description": "Control the _center_ and allow bishop retreat."
+      },
+      {
+        "ply": 13,
+        "card": "move",
+        "move": "a2a4",
+        "title": "Space",
+        "description": "Prevent Black from gaining space on queenside."
+      }
+    ]
+  }
+]

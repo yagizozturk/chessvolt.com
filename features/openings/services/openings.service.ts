@@ -55,7 +55,7 @@ export async function updateOpening(
   supabase: SupabaseClient,
   id: string,
   input: openingRepo.UpdateOpeningInput,
-): Promise<Opening | null> {
+): Promise<openingRepo.UpdateOpeningResult> {
   return openingRepo.update(supabase, id, input);
 }
 

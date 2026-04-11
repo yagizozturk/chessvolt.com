@@ -23,7 +23,6 @@ type BulkVariantInput = {
   sort_key?: number | string;
   title?: string | null;
   pgn: string;
-  initial_fen?: string;
   initial_ply?: number;
   display_ply?: number;
   description?: string | null;
@@ -175,7 +174,6 @@ export async function bulkCreateVariantsAction(jsonData: string) {
     }
 
     const initialFen =
-      item.initial_fen?.trim() ||
       getFenFromPgnAtPly(item.pgn.trim(), initialPly) ||
       "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 

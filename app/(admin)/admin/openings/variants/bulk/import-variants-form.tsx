@@ -10,7 +10,6 @@ const EXAMPLE_JSON = `{
   "sort_key": 201,
   "title": "c5 Line: Queen Check Defense (Qa5+)",
   "pgn": "1.d4 d5 2.Nc3 Nf6 3.Bf4 c5 4.e3 Nc6 5.Nb5 e5 6.Bxe5 Nxe5 7.dxe5 Ne4 8.Qxd5 Qa5+ 9.c3 Bf5 10.Bc4 Bg6 11.Qxb7",
-  "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
   "initial_ply": 0,
   "display_ply": 4,
   "description": "Black attempts a disruptive check, but White's attack is too strong.",
@@ -33,6 +32,13 @@ export function ImportVariantsForm() {
       }}
       className="space-y-4"
     >
+      <p className="text-muted-foreground text-sm">
+        Zorunlu: <span className="font-mono">opening_id</span>,{" "}
+        <span className="font-mono">pgn</span>. Başlangıç pozisyonu{" "}
+        <span className="font-mono">initial_ply</span> (yarım hamle sayısı) ile
+        PGN üzerinden hesaplanır; <span className="font-mono">initial_fen</span>{" "}
+        göndermenize gerek yok.
+      </p>
       <FieldGroup>
         <Field>
           <FieldLabel>JSON Verisi</FieldLabel>

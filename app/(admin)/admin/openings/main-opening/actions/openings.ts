@@ -41,26 +41,44 @@ export async function createOpeningAction(formData: FormData) {
   redirect("/admin/openings");
 }
 
-export async function updateOpeningAction(id: string, formData: FormData) {
+export type UpdateOpeningFormState = {
+  error: string | null;
+};
+
+export async function updateOpeningAction(
+  _prevState: UpdateOpeningFormState,
+  formData: FormData,
+): Promise<UpdateOpeningFormState> {
   const { supabase } = await getAdminUser();
+
+  const id = (formData.get("openingId") as string)?.trim();
+  if (!id) {
+    return { error: "Missing opening id. Refresh the page and try again." };
+  }
 
   const name = (formData.get("name") as string)?.trim();
   const slug = (formData.get("slug") as string) || null;
   const description = (formData.get("description") as string) || null;
   const displayFen = (formData.get("displayFen") as string) || null;
 
-  const input: UpdateOpeningInput = {};
-  if (name !== undefined) input.name = name;
-  if (slug !== undefined) input.slug = slug || null;
-  if (description !== undefined) input.description = description;
-  if (displayFen !== undefined) input.displayFen = displayFen || null;
+  if (!name) {
+    return { error: "Name is required." };
+  }
 
-  const opening = await updateOpening(supabase, id, input);
-  if (!opening) {
-    redirect(`/admin/openings?error=update_failed`);
+  const input: UpdateOpeningInput = {
+    name,
+    slug: slug || null,
+    description,
+    displayFen: displayFen || null,
+  };
+
+  const { opening, error } = await updateOpening(supabase, id, input);
+  if (error || !opening) {
+    return { error: error ?? "Could not save changes. Please try again." };
   }
 
   revalidatePath("/admin/openings");
+  revalidatePath(`/admin/openings/main-opening/edit/${id}`);
   redirect("/admin/openings");
 }
 

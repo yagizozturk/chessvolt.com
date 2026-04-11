@@ -33,9 +33,7 @@ export async function findById(
     .maybeSingle();
 
   if (error) {
-    if (error.code !== "PGRST116") {
-      console.error("game-riddle.repository.findById error:", error);
-    }
+    console.error("game-riddle.repository.findById error:", error);
     return null;
   }
 

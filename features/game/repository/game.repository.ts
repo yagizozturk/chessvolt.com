@@ -33,9 +33,7 @@ export async function findById(
     .maybeSingle();
 
   if (error) {
-    if (error.code !== "PGRST116") {
-      console.error("game.repository.findById error:", error);
-    }
+    console.error("game.repository.findById error:", error);
     return null;
   }
 

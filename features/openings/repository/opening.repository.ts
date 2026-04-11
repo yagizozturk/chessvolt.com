@@ -3,6 +3,7 @@
  * CRUD access to the openings table (parent of opening_variants).
  */
 import type { Opening } from "@/features/openings/types/opening";
+import { postgrestUserMessage } from "@/lib/supabase/postgrest-user-message";
 import { slugify } from "@/lib/utils/slugify";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -35,6 +36,26 @@ function toOpening(db: DbOpening): Opening {
 type DbOpeningWithVariantCount = DbOpening & {
   opening_variants: [{ count: number }];
 };
+
+function dbRowMatchesUpdates(
+  row: DbOpening,
+  updates: Record<string, unknown>,
+): boolean {
+  if ("name" in updates && row.name !== updates.name) return false;
+  if ("slug" in updates && (row.slug ?? null) !== (updates.slug ?? null))
+    return false;
+  if (
+    "description" in updates &&
+    (row.description ?? null) !== (updates.description ?? null)
+  )
+    return false;
+  if (
+    "display_fen" in updates &&
+    (row.display_fen ?? null) !== (updates.display_fen ?? null)
+  )
+    return false;
+  return true;
+}
 
 export async function findAll(supabase: SupabaseClient): Promise<Opening[]> {
   const { data, error } = await supabase
@@ -147,30 +168,73 @@ export type UpdateOpeningInput = {
   displayFen?: string | null;
 };
 
+export type UpdateOpeningResult = {
+  opening: Opening | null;
+  error: string | null;
+};
+
 export async function update(
   supabase: SupabaseClient,
   id: string,
   input: UpdateOpeningInput,
-): Promise<Opening | null> {
+): Promise<UpdateOpeningResult> {
   const updates: Record<string, unknown> = {};
   if (input.name !== undefined) updates.name = input.name.trim();
   if (input.slug !== undefined) updates.slug = input.slug;
   if (input.description !== undefined) updates.description = input.description;
   if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 
+  if (Object.keys(updates).length === 0) {
+    return { opening: null, error: "No changes to save." };
+  }
+
+  const selectColumns =
+    "id, name, slug, description, display_fen, created_at" as const;
+
   const { data, error } = await supabase
     .from("openings")
     .update(updates)
     .eq("id", id)
-    .select()
-    .single();
+    .select(selectColumns)
+    .maybeSingle();
 
   if (error) {
     console.error("opening.repository.update error:", error);
-    return null;
+    return { opening: null, error: postgrestUserMessage(error) };
   }
 
-  return toOpening(data);
+  if (data) {
+    return { opening: toOpening(data), error: null };
+  }
+
+  const { data: row, error: readError } = await supabase
+    .from("openings")
+    .select(selectColumns)
+    .eq("id", id)
+    .maybeSingle();
+
+  if (readError) {
+    console.error("opening.repository.update re-read error:", readError);
+    return { opening: null, error: postgrestUserMessage(readError) };
+  }
+
+  if (!row) {
+    return {
+      opening: null,
+      error:
+        "This opening could not be loaded after save. It may have been removed, or you may not have access.",
+    };
+  }
+
+  if (dbRowMatchesUpdates(row, updates)) {
+    return { opening: toOpening(row), error: null };
+  }
+
+  return {
+    opening: null,
+    error:
+      "The update did not apply. Check permissions for editing openings, or try again.",
+  };
 }
 
 export async function remove(

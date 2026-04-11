@@ -1,0 +1,898 @@
+[
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 1,
+    "title": "Line 1: Giuoco Pianissimo - The Quiet Game",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. d3 Nf6 5. O-O d6 6. c3 O-O 7. Re1 a6 8. Bb3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 0,
+    "display_ply": 1,
+    "description": "A solid setup focusing on slow development. Range: <1000.",
+    "goals": [
+      {
+        "ply": 1,
+        "card": "e2e4",
+        "move": "e2e4",
+        "title": "Center",
+        "description": "Claim the middle of the board with your king pawn.",
+        "isCompleted": false
+      },
+      {
+        "ply": 3,
+        "card": "g1f3",
+        "move": "g1f3",
+        "title": "Develop",
+        "description": "Bring out your knight to attack the _center_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 5,
+        "card": "f1c4",
+        "move": "f1c4",
+        "title": "Bishop",
+        "description": "Place the bishop on an active diagonal.",
+        "isCompleted": false
+      },
+      {
+        "ply": 7,
+        "card": "d2d3",
+        "move": "d2d3",
+        "title": "Support",
+        "description": "Defend your center and free your _bishop_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 9,
+        "card": "e1g1",
+        "move": "e1g1",
+        "title": "Castle",
+        "description": "Move your king to safety behind pawns.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "c2c3",
+        "move": "c2c3",
+        "title": "Structure",
+        "description": "Prepare to support your _pawn_ chain.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "f1e1",
+        "move": "f1e1",
+        "title": "Rook",
+        "description": "Place your rook on the central file.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "c4b3",
+        "move": "c4b3",
+        "title": "Retreat",
+        "description": "Move the bishop back to avoid a _trade_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 2,
+    "title": "Line 2: Giuoco Pianissimo - Kingside Safety",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. d3 Nf6 5. O-O d6 6. c3 O-O 7. h3 h6 8. Bb3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 12,
+    "display_ply": 1,
+    "description": "Adding a layer of defense for the king. Range: <1200.",
+    "goals": [
+      {
+        "ply": 13,
+        "card": "h2h3",
+        "move": "h2h3",
+        "title": "Prophylaxis",
+        "description": "Stop the enemy from creating a _pin_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "c4b3",
+        "move": "c4b3",
+        "title": "Safety",
+        "description": "Keep your bishop away from enemy pawns.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 3,
+    "title": "Line 3: Italian Mainline - Central Strike",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4 6. cxd4 Bb4+ 7. Bd2 Bxd2+ 8. Nbxd2",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 1,
+    "description": "Challenging the center early with pawns. Range: <1400.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "c2c3",
+        "move": "c2c3",
+        "title": "Preparation",
+        "description": "Prepare a strong _pawn_ center.",
+        "isCompleted": false
+      },
+      {
+        "ply": 9,
+        "card": "d2d4",
+        "move": "d2d4",
+        "title": "Center",
+        "description": "Strike in the middle of the board.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "c3d4",
+        "move": "c3d4",
+        "title": "Capture",
+        "description": "Regain control of the _outpost_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "c1d2",
+        "move": "c1d2",
+        "title": "Block",
+        "description": "Stop the check with your bishop.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "b1d2",
+        "move": "b1d2",
+        "title": "Develop",
+        "description": "Recapture while developing your _knight_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 4,
+    "title": "Line 4: Greco Attack - Sharp Lines",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4 6. cxd4 Bb4+ 7. Nc3 Nxe4 8. O-O",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 12,
+    "display_ply": 1,
+    "description": "Sacrificing a pawn for rapid development. Range: 1500+.",
+    "goals": [
+      {
+        "ply": 13,
+        "card": "e1g1",
+        "move": "e1g1",
+        "title": "Castle",
+        "description": "Ignore the pawn to speed up _development_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "b2c3",
+        "move": "b2c3",
+        "title": "Structure",
+        "description": "Fix your pawn structure in the center.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 5,
+    "title": "Line 5: Evans Gambit - Bold Sacrifice",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. b4 Bxb4 5. c3 Ba5 6. d4 exd4 7. O-O dxc3 8. Qb3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 1,
+    "description": "Giving up a pawn for a massive attack. Range: 1600+.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "b2b4",
+        "move": "b2b4",
+        "title": "Gambit",
+        "description": "Offer a pawn to gain an _initiative_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 9,
+        "card": "c2c3",
+        "move": "c2c3",
+        "title": "Kick",
+        "description": "Push the bishop back immediately.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "d2d4",
+        "move": "d2d4",
+        "title": "Control",
+        "description": "Dominate the center with aggressive _play_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "e1g1",
+        "move": "e1g1",
+        "title": "Safety",
+        "description": "Protect your king before the attack.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "d1b3",
+        "move": "d1b3",
+        "title": "Pressure",
+        "description": "Aim at the weak f7 _square_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 6,
+    "title": "Line 6: Evans Gambit - Lasker Defense",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. b4 Bxb4 5. c3 Ba5 6. d4 d6 7. Qb3 Qd7 8. dxe5",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 1,
+    "description": "Handling Black's defensive setup. Range: 1700+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "d2d4",
+        "move": "d2d4",
+        "title": "Push",
+        "description": "Keep the pressure on the _center_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "d1b3",
+        "move": "d1b3",
+        "title": "Attack",
+        "description": "Create a battery against the king.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "d4e5",
+        "move": "d4e5",
+        "title": "Liquidate",
+        "description": "Open lines for your attacking _pieces_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 7,
+    "title": "Line 7: Two Knights - Fried Liver Attack",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Nxd5 6. Nxf7 Kxf7 7. Qf3+ Ke6 8. Nc3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 4,
+    "display_ply": 1,
+    "description": "The most famous attack in chess. Range: <1200.",
+    "goals": [
+      {
+        "ply": 5,
+        "card": "f1c4",
+        "move": "f1c4",
+        "title": "Bishop",
+        "description": "Develop and prepare the _attack_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 7,
+        "card": "f3g5",
+        "move": "f3g5",
+        "title": "Aggression",
+        "description": "Target the weak f7 square.",
+        "isCompleted": false
+      },
+      {
+        "ply": 9,
+        "card": "e4d5",
+        "move": "e4d5",
+        "title": "Trade",
+        "description": "Clear the way for your _pieces_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "g5f7",
+        "move": "g5f7",
+        "title": "Sacrifice",
+        "description": "Lure the king into the open.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "d1f3",
+        "move": "d1f3",
+        "title": "Check",
+        "description": "Force the king to defend the _knight_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "b1c3",
+        "move": "b1c3",
+        "title": "Develop",
+        "description": "Bring more pressure on the pinned piece.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 8,
+    "title": "Line 8: Two Knights - Polerio Defense",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Na5 6. Bb5+ c6 7. dxc6 bxc6 8. Be2",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 1,
+    "description": "Handling Black's best response. Range: 1500+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "c4b5",
+        "move": "c4b5",
+        "title": "Check",
+        "description": "Force Black to weaken their _pawn_ structure.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "d5c6",
+        "move": "d5c6",
+        "title": "Take",
+        "description": "Accept the material on the wing.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "b5e2",
+        "move": "b5e2",
+        "title": "Retreat",
+        "description": "Move to safety while maintaining the _advantage_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 9,
+    "title": "Line 9: Two Knights - Fritz Variation",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Nd4 6. c3 b5 7. Bf1 Nxd5 8. cxd4",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 1,
+    "description": "White faces a tricky knight jump. Range: 1600+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "c2c3",
+        "move": "c2c3",
+        "title": "Eject",
+        "description": "Attack the knight jumping into your _territory_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "c4f1",
+        "move": "c4f1",
+        "title": "Safety",
+        "description": "Keep your bishop safe from the pawns.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "c3d4",
+        "move": "c3d4",
+        "title": "Capture",
+        "description": "Simplify the center by taking the _knight_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 10,
+    "title": "Line 10: Two Knights - Ulvestad Variation",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 b5 6. Bf1 Nd4 7. c3 Nxd5 8. Ne4",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 8,
+    "display_ply": 1,
+    "description": "Navigating complex tactics. Range: 1800+.",
+    "goals": [
+      {
+        "ply": 9,
+        "card": "e4d5",
+        "move": "e4d5",
+        "title": "Capture",
+        "description": "Take the pawn while opening the _line_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "c4f1",
+        "move": "c4f1",
+        "title": "Preserve",
+        "description": "Save the bishop from the flank attack.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "c2c3",
+        "move": "c2c3",
+        "title": "Kick",
+        "description": "Force the knight to move or _trade_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "g5e4",
+        "move": "g5e4",
+        "title": "Centralize",
+        "description": "Bring the knight back to help defense.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 11,
+    "title": "Line 11: Hungarian Defense - Solid Walls",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Be7 4. d4 d6 5. d5 Nb8 6. Bd3 Nf6 7. c4 O-O 8. Nc3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 4,
+    "display_ply": 1,
+    "description": "White plays against a cramped setup. Range: <1200.",
+    "goals": [
+      {
+        "ply": 5,
+        "card": "f1c4",
+        "move": "f1c4",
+        "title": "Develop",
+        "description": "Place the bishop on the best _diagonal_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 7,
+        "card": "d2d4",
+        "move": "d2d4",
+        "title": "Challenge",
+        "description": "Take control of the center immediately.",
+        "isCompleted": false
+      },
+      {
+        "ply": 9,
+        "card": "d4d5",
+        "move": "d4d5",
+        "title": "Space",
+        "description": "Gain space by pushing the central _pawn_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "c4d3",
+        "move": "c4d3",
+        "title": "Reposition",
+        "description": "Solidify your structure.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "c2c4",
+        "move": "c2c4",
+        "title": "Structure",
+        "description": "Create a strong pawn chain in the _center_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "b1c3",
+        "move": "b1c3",
+        "title": "Knight",
+        "description": "Develop your last minor piece.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 12,
+    "title": "Line 12: Giuoco Piano - Max Lange Attack",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. O-O Nf6 5. d4 exd4 6. e5 d5 7. exf6 dxc4 8. Re1+",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 1,
+    "description": "A classic tactical slugfest. Range: 1700+.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "e1g1",
+        "move": "e1g1",
+        "title": "Safety",
+        "description": "Castle early to prepare the _storm_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 9,
+        "card": "d2d4",
+        "move": "d2d4",
+        "title": "Sacrifice",
+        "description": "Open lines for your rooks.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "e4e5",
+        "move": "e4e5",
+        "title": "Thrust",
+        "description": "Attack the knight and gain central _space_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "e5f6",
+        "move": "e5f6",
+        "title": "Destroy",
+        "description": "Ruin Black's pawn structure.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "f1e1",
+        "move": "f1e1",
+        "title": "Check",
+        "description": "Deliver a powerful check on the _file_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 13,
+    "title": "Line 13: Italian Game - Paris Defense",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 d6 4. d4 exd4 5. Nxd4 Nf6 6. Nc3 Be7 7. O-O O-O 8. h3",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 4,
+    "display_ply": 1,
+    "description": "Playing against a solid d6 defense. Range: <1100.",
+    "goals": [
+      {
+        "ply": 5,
+        "card": "f1c4",
+        "move": "f1c4",
+        "title": "Bishop",
+        "description": "Control the center with your _piece_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 7,
+        "card": "d2d4",
+        "move": "d2d4",
+        "title": "Center",
+        "description": "Occupy the middle with a pawn.",
+        "isCompleted": false
+      },
+      {
+        "ply": 9,
+        "card": "f3d4",
+        "move": "f3d4",
+        "title": "Capture",
+        "description": "Regain the pawn and improve the _knight_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "b1c3",
+        "move": "b1c3",
+        "title": "Knight",
+        "description": "Develop naturally to the center.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "e1g1",
+        "move": "e1g1",
+        "title": "Safety",
+        "description": "Tuck your king away behind _pawns_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "h2h3",
+        "move": "h2h3",
+        "title": "Control",
+        "description": "Secure the kingside squares.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 14,
+    "title": "Line 14: Giuoco Piano - Möller Attack",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4 6. cxd4 Bb4+ 7. Nc3 Nxe4 8. O-O Bxc3 9. d5",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 14,
+    "display_ply": 1,
+    "description": "Pushing the d-pawn for maximum disruption. Range: 1600+.",
+    "goals": [
+      {
+        "ply": 15,
+        "card": "d4d5",
+        "move": "d4d5",
+        "title": "Interference",
+        "description": "Disrupt Black's coordination with a central _push_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 15,
+    "title": "Line 15: Two Knights - Traxler Safe Path",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 Bc5 5. Bxf7+ Ke7 6. Bb3 Rf8 7. d3 d6 8. O-O",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 8,
+    "display_ply": 1,
+    "description": "Avoiding traps with a careful check. Range: 1400+.",
+    "goals": [
+      {
+        "ply": 9,
+        "card": "c4f7",
+        "move": "c4f7",
+        "title": "Safe Check",
+        "description": "Win a pawn while keeping things _stable_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "f7b3",
+        "move": "f7b3",
+        "title": "Recede",
+        "description": "Bring the bishop back to safety.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "d2d3",
+        "move": "d2d3",
+        "title": "Solidity",
+        "description": "Protect the center and free the _bishop_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "e1g1",
+        "move": "e1g1",
+        "title": "Hide",
+        "description": "Escape the pressure on the f-file.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 16,
+    "title": "Line 16: Evans Gambit - Declined Mainline",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. b4 Bb6 5. a4 a6 6. Nc3 Nf6 7. Nd5 Nxd5 8. exd5",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 8,
+    "display_ply": 1,
+    "description": "Winning space when the gambit is refused. Range: 1300+.",
+    "goals": [
+      {
+        "ply": 9,
+        "card": "a2a4",
+        "move": "a2a4",
+        "title": "Space",
+        "description": "Gain room on the queen's _side_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "b1c3",
+        "move": "b1c3",
+        "title": "Mobilize",
+        "description": "Get your pieces out to the center.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "c3d5",
+        "move": "c3d5",
+        "title": "Outpost",
+        "description": "Place the knight on a central _square_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "e4d5",
+        "move": "e4d5",
+        "title": "Structure",
+        "description": "Strengthen your grip on the board.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 17,
+    "title": "Line 17: Giuoco Pianissimo - Early c3",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d3 d6 6. Bb3 a6 7. O-O Ba7 8. Nbd2",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 6,
+    "display_ply": 1,
+    "description": "A modern approach to the quiet game. Range: 1500+.",
+    "goals": [
+      {
+        "ply": 7,
+        "card": "c2c3",
+        "move": "c2c3",
+        "title": "Solidity",
+        "description": "Build a base for your _bishops_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 9,
+        "card": "d2d3",
+        "move": "d2d3",
+        "title": "Support",
+        "description": "Safeguard the middle of the board.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "c4b3",
+        "move": "c4b3",
+        "title": "Avoid",
+        "description": "Prevent any trades of your active _bishop_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "e1g1",
+        "move": "e1g1",
+        "title": "Castle",
+        "description": "Finalize your king's defense.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "b1d2",
+        "move": "b1d2",
+        "title": "Maneuver",
+        "description": "Start the journey to the king's _side_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 18,
+    "title": "Line 18: Italian Game - Deutz Gambit",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. O-O Nf6 5. d4 Bxd4 6. Nxd4 Nxd4 7. f4 d6 8. fxe5",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 8,
+    "display_ply": 1,
+    "description": "Trading pieces for a dynamic attack. Range: 1600+.",
+    "goals": [
+      {
+        "ply": 9,
+        "card": "d2d4",
+        "move": "d2d4",
+        "title": "Gambit",
+        "description": "Offer a pawn to open the _center_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 11,
+        "card": "f3d4",
+        "move": "f3d4",
+        "title": "Simplify",
+        "description": "Exchange pieces to gain attacking lines.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "f2f4",
+        "move": "f2f4",
+        "title": "Leverage",
+        "description": "Challenge the defender of the _center_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "f4e5",
+        "move": "f4e5",
+        "title": "Open",
+        "description": "Open the f-file for your rook.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 19,
+    "title": "Line 19: Two Knights - Lolli Attack",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Nxd5 6. d4 exd4 7. O-O Be7 8. Nxf7",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 1,
+    "description": "A different way to sacrifice on f7. Range: 1700+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "d2d4",
+        "move": "d2d4",
+        "title": "Opening",
+        "description": "Blow open the middle of the _board_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "e1g1",
+        "move": "e1g1",
+        "title": "Safety",
+        "description": "Get ready before the tactical explosion.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "g5f7",
+        "move": "g5f7",
+        "title": "Explosion",
+        "description": "Strike the target to expose the _king_.",
+        "isCompleted": false
+      }
+    ]
+  },
+  {
+    "opening_id": "7f6a13de-9b20-48c2-8f07-2c6146751c6c",
+    "sort_key": 20,
+    "title": "Line 20: Giuoco Piano - Early Center",
+    "pgn": "1. e4 e5 2. Nf3 Nc6 3. Bc4 Bc5 4. c3 Nf6 5. d4 exd4 6. e5 d5 7. Bb5 Ne4 8. cxd4",
+    "initial_fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    "initial_ply": 10,
+    "display_ply": 1,
+    "description": "Aggressive central control for White. Range: 1400+.",
+    "goals": [
+      {
+        "ply": 11,
+        "card": "e4e5",
+        "move": "e4e5",
+        "title": "Aggressive",
+        "description": "Force the opponent's knight to a _corner_.",
+        "isCompleted": false
+      },
+      {
+        "ply": 13,
+        "card": "c4b5",
+        "move": "c4b5",
+        "title": "Pin",
+        "description": "Apply pressure to the defender.",
+        "isCompleted": false
+      },
+      {
+        "ply": 15,
+        "card": "c3d4",
+        "move": "c3d4",
+        "title": "Reclaim",
+        "description": "Regain the pawn while controlling the _center_.",
+        "isCompleted": false
+      }
+    ]
+  }
+]
