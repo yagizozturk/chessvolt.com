@@ -85,13 +85,16 @@ export default function OpeningVariantController({
   // ============================================================================
   const goalStepperItems = useMemo(
     () =>
-      sortedGoals.map((g) => ({
-        title: g.title,
-        description: g.description,
-        imageSrc: `/images/cards/${g.card}.png`,
-        imageAlt: g.card ?? g.title,
-        completed: isGoalDone(g),
-      })),
+      sortedGoals.map((g) => {
+        const cardCode = g.card?.trim();
+        return {
+          title: g.title,
+          description: g.description,
+          imageSrc: cardCode ? `/images/cards/${cardCode}.png` : "",
+          imageAlt: cardCode ?? g.title,
+          completed: isGoalDone(g),
+        };
+      }),
     [sortedGoals, activePly],
   );
 

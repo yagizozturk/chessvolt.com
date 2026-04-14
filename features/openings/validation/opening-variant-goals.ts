@@ -7,7 +7,7 @@ export function isMoveGoal(value: unknown): value is MoveGoal {
     typeof o.ply === "number" &&
     Number.isFinite(o.ply) &&
     typeof o.move === "string" &&
-    typeof o.card === "string" &&
+    (o.card === undefined || typeof o.card === "string") &&
     typeof o.title === "string" &&
     typeof o.description === "string" &&
     typeof o.isCompleted === "boolean"

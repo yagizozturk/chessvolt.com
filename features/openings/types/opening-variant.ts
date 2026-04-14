@@ -1,7 +1,7 @@
 export type MoveGoal = {
   ply: number;
   move: string;
-  card: string;
+  card?: string;
   title: string;
   description: string;
   isCompleted: boolean;

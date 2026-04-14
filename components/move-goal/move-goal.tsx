@@ -92,13 +92,13 @@ function GoalVisual({
   card,
   highlighted,
 }: {
-  card: string;
+  card?: string;
   highlighted: boolean;
 }) {
   const [failed, setFailed] = useState(false);
 
   const src = useMemo(() => {
-    const trimmed = card.trim();
+    const trimmed = (card ?? "").trim();
     return trimmed ? `/images/cards/card_${trimmed}.png` : null;
   }, [card]);
 

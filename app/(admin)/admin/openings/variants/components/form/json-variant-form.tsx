@@ -74,7 +74,7 @@ function useUciRowsFromPgn(pgn: string) {
     } catch (e) {
       return {
         rows: [] as { num: number; white: string; black?: string }[],
-        error: e instanceof Error ? e.message : "PGN okunamadı",
+        error: e instanceof Error ? e.message : "PGN could not be parsed",
         fen: null,
         fensByPly: [START_FEN] as string[],
         uciMoves: [] as string[],
@@ -103,12 +103,12 @@ function useParsedOpeningJson(jsonInput: string) {
       }
       return {
         record: null,
-        error: "JSON bir nesne veya nesne dizisi olmalı.",
+        error: "JSON must be an object or an array of objects.",
       };
     } catch (e) {
       return {
         record: null,
-        error: e instanceof Error ? e.message : "Geçersiz JSON",
+        error: e instanceof Error ? e.message : "Invalid JSON",
       };
     }
   }, [jsonInput]);
@@ -259,13 +259,13 @@ function parseGoalsFromRecord(
   const g = record.goals;
   if (g === undefined || g === null) return { ok: true, goals: null };
   if (!Array.isArray(g)) {
-    return { ok: false, error: "goals bir dizi olmalı." };
+    return { ok: false, error: "goals must be an array." };
   }
   if (!isMoveGoalsArray(g)) {
     return {
       ok: false,
       error:
-        "goals: ply (sayı), card, move, title, description (string), isCompleted (boolean) gerekli.",
+        "goals must include ply (number), move, title, description (string), and isCompleted (boolean). card is optional.",
     };
   }
   return { ok: true, goals: g };
@@ -570,9 +570,10 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         </Button>
         {!canSubmit && (
           <p className="text-muted-foreground text-xs">
-            Opening seçin, geçerli JSON ve <span className="font-mono">pgn</span>{" "}
-            gerekir; <span className="font-mono">goals</span> varsa şema doğru
-            olmalı.
+            Select an opening, provide valid JSON and{" "}
+            <span className="font-mono">pgn</span>; if{" "}
+            <span className="font-mono">goals</span> is present, it must follow
+            the schema (<span className="font-mono">card</span> is optional).
           </p>
         )}
       </form>
