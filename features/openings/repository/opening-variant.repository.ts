@@ -96,6 +96,7 @@ export async function findByOpeningId(
 export type CreateOpeningVariantInput = {
   openingId: string;
   sortKey: number;
+  level: string;
   title?: string | null;
   description?: string | null;
   ply: number;
@@ -115,6 +116,7 @@ export async function create(
     .insert({
       opening_id: input.openingId,
       sort_key: input.sortKey,
+      level: input.level,
       title: input.title ?? null,
       description: input.description ?? null,
       ply: input.ply,
@@ -137,6 +139,7 @@ export async function create(
 
 export type UpdateOpeningVariantInput = {
   sortKey?: number;
+  level?: string;
   title?: string | null;
   description?: string | null;
   ply?: number;
@@ -154,6 +157,7 @@ export async function update(
 ): Promise<OpeningVariant | null> {
   const updates: Record<string, unknown> = {};
   if (input.sortKey !== undefined) updates.sort_key = input.sortKey;
+  if (input.level !== undefined) updates.level = input.level;
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description;
   if (input.ply !== undefined) updates.ply = input.ply;

@@ -254,6 +254,10 @@ export function VariantEditForm({ variant, onCancel }: Props) {
           />
         </Field>
         <Field>
+          <FieldLabel>Level</FieldLabel>
+          <Input name="level" defaultValue={variant.level} required />
+        </Field>
+        <Field>
           <FieldLabel>Title</FieldLabel>
           <Input name="title" defaultValue={variant.title ?? ""} />
         </Field>

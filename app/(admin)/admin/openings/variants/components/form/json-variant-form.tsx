@@ -279,6 +279,7 @@ type Props = {
 export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
   const [jsonInput, setJsonInput] = useState("");
   const [openingId, setOpeningId] = useState(defaultOpeningId ?? "");
+  const [levelEdit, setLevelEdit] = useState("");
   const [titleEdit, setTitleEdit] = useState("");
   const [descriptionEdit, setDescriptionEdit] = useState("");
   const [sortKeyEdit, setSortKeyEdit] = useState("1");
@@ -292,11 +293,13 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
 
   useEffect(() => {
     if (!jsonRecord) {
+      setLevelEdit("");
       setTitleEdit("");
       setDescriptionEdit("");
       setSortKeyEdit("1");
       return;
     }
+    setLevelEdit(typeof jsonRecord.level === "string" ? jsonRecord.level : "");
     setTitleEdit(
       typeof jsonRecord.title === "string" ? jsonRecord.title : "",
     );
@@ -357,6 +360,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         : ({} as Record<string, unknown>);
     const out: Record<string, unknown> = {
       ...base,
+      level: levelEdit,
       title: titleEdit,
       description: descriptionEdit,
       sort_key: sortKeyNum,
@@ -376,6 +380,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
     jsonError,
     initialFen,
     displayFen,
+    levelEdit,
     titleEdit,
     descriptionEdit,
     sortKeyNum,
@@ -391,6 +396,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
 
   const canSubmit =
     Boolean(openingId?.trim()) &&
+    Boolean(levelEdit.trim()) &&
     Boolean(pgnFromJson.trim()) &&
     !jsonError &&
     !error &&
@@ -421,6 +427,17 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         </div>
 
         <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="json-variant-level">Level</FieldLabel>
+            <Input
+              id="json-variant-level"
+              name="level"
+              required
+              value={levelEdit}
+              onChange={(e) => setLevelEdit(e.target.value)}
+              placeholder="beginner"
+            />
+          </Field>
           <Field>
             <FieldLabel htmlFor="json-variant-title">Title</FieldLabel>
             <Input
@@ -570,7 +587,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         </Button>
         {!canSubmit && (
           <p className="text-muted-foreground text-xs">
-            Select an opening, provide valid JSON and{" "}
+            Select an opening, set a level, provide valid JSON and{" "}
             <span className="font-mono">pgn</span>; if{" "}
             <span className="font-mono">goals</span> is present, it must follow
             the schema (<span className="font-mono">card</span> is optional).

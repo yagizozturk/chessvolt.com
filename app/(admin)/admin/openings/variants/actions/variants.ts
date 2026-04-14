@@ -21,6 +21,7 @@ import { redirect } from "next/navigation";
 type BulkVariantInput = {
   opening_id: string;
   sort_key?: number | string;
+  level?: string;
   title?: string | null;
   pgn: string;
   initial_ply?: number;
@@ -86,6 +87,7 @@ export async function createOpeningVariantAction(formData: FormData) {
   const openingId = formData.get("openingId") as string;
   const pgn = (formData.get("pgn") as string)?.trim();
   const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
+  const level = (formData.get("level") as string)?.trim();
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
   const sortKey = parseInt(
@@ -102,7 +104,7 @@ export async function createOpeningVariantAction(formData: FormData) {
     newVariantUrl(formData, "invalid_goals_json"),
   );
 
-  if (!openingId?.trim() || !pgn || Number.isNaN(sortKey)) {
+  if (!openingId?.trim() || !pgn || !level || Number.isNaN(sortKey)) {
     redirect(newVariantUrl(formData, "missing_fields"));
   }
 
@@ -114,6 +116,7 @@ export async function createOpeningVariantAction(formData: FormData) {
   const input: CreateOpeningVariantInput = {
     openingId: openingId.trim(),
     sortKey,
+    level,
     title: title || null,
     description: description || null,
     ply: ply >= 0 ? ply : 0,
@@ -151,7 +154,18 @@ export async function bulkCreateVariantsAction(jsonData: string) {
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     if (!item?.opening_id?.trim() || !item?.pgn?.trim()) {
-      errors.push({ index: i, message: "opening_id and pgn are required" });
+      errors.push({
+        index: i,
+        message: "opening_id, pgn and level are required",
+      });
+      continue;
+    }
+    const level = item.level?.trim();
+    if (!level) {
+      errors.push({
+        index: i,
+        message: "opening_id, pgn and level are required",
+      });
       continue;
     }
 
@@ -203,6 +217,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
     const input: CreateOpeningVariantInput = {
       openingId: item.opening_id.trim(),
       sortKey: sortKeyParsed.value,
+      level,
       title: item.title?.trim() || null,
       description: item.description?.trim() || null,
       ply: initialPly,
@@ -241,6 +256,7 @@ export async function updateOpeningVariantAction(
 
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
+  const level = (formData.get("level") as string)?.trim();
   const sortKeyStr = (formData.get("sortKey") as string)?.trim();
   const pgn = (formData.get("pgn") as string)?.trim();
   const initialPly = parseAdminPly(formData, "initialPly");
@@ -255,6 +271,7 @@ export async function updateOpeningVariantAction(
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
   if (description !== undefined) input.description = description;
+  if (level !== undefined && level !== "") input.level = level;
   if (sortKeyStr !== undefined && sortKeyStr !== "") {
     const n = parseInt(sortKeyStr, 10);
     if (Number.isNaN(n)) {

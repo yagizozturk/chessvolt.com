@@ -5,6 +5,7 @@ type DbOpeningVariant = {
   id: string;
   opening_id: string;
   sort_key: number;
+  level: string | null;
   title: string | null;
   description: string | null;
   ply: number;
@@ -21,6 +22,7 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     id: db.id,
     openingId: db.opening_id,
     sortKey: db.sort_key,
+    level: db.level ?? "",
     title: db.title,
     description: db.description ?? null,
     ply: db.ply ?? 0,
