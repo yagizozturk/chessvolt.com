@@ -2,9 +2,9 @@
 
 import { toDests } from "@/lib/chess/toDests";
 import { Chessground } from "@lichess-org/chessground";
+import type { Key } from "@lichess-org/chessground/types";
 import { Chess } from "chess.js";
 import { RefObject, useEffect, useRef } from "react";
-import type { Key } from "@lichess-org/chessground/types";
 
 export function useOneChessground(
   boardRef: RefObject<HTMLDivElement | null>,
@@ -39,7 +39,7 @@ export function useOneChessground(
         events: {
           after: (from: string, to: string) => {
             onMove(from, to);
-            //markSquareLastMove(from, to);
+            markSquareLastMove(from, to);
           },
         },
       },
@@ -134,7 +134,7 @@ export function useOneChessground(
         events: {
           after: (from: string, to: string) => {
             onMove(from, to);
-            //markSquareLastMove(from, to);
+            markSquareLastMove(from, to);
           },
         },
       },

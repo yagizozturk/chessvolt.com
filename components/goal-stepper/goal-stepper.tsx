@@ -55,7 +55,6 @@ export function GoalStepper({
       className={cn("flex flex-col gap-3", className)}
     >
       {items.map((item, index) => {
-        console.log(item);
         const isActive = index === safeIndex;
 
         if (isActive) {
