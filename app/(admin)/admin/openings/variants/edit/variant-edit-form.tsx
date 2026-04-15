@@ -254,8 +254,8 @@ export function VariantEditForm({ variant, onCancel }: Props) {
           />
         </Field>
         <Field>
-          <FieldLabel>Level</FieldLabel>
-          <Input name="level" defaultValue={variant.level} required />
+          <FieldLabel>Group</FieldLabel>
+          <Input name="group" defaultValue={variant.group} required />
         </Field>
         <Field>
           <FieldLabel>Title</FieldLabel>

@@ -279,7 +279,7 @@ type Props = {
 export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
   const [jsonInput, setJsonInput] = useState("");
   const [openingId, setOpeningId] = useState(defaultOpeningId ?? "");
-  const [levelEdit, setLevelEdit] = useState("");
+  const [groupEdit, setGroupEdit] = useState("");
   const [titleEdit, setTitleEdit] = useState("");
   const [descriptionEdit, setDescriptionEdit] = useState("");
   const [sortKeyEdit, setSortKeyEdit] = useState("1");
@@ -293,13 +293,19 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
 
   useEffect(() => {
     if (!jsonRecord) {
-      setLevelEdit("");
+      setGroupEdit("");
       setTitleEdit("");
       setDescriptionEdit("");
       setSortKeyEdit("1");
       return;
     }
-    setLevelEdit(typeof jsonRecord.level === "string" ? jsonRecord.level : "");
+    setGroupEdit(
+      typeof jsonRecord.group === "string"
+        ? jsonRecord.group
+        : typeof jsonRecord.level === "string"
+          ? jsonRecord.level
+          : "",
+    );
     setTitleEdit(
       typeof jsonRecord.title === "string" ? jsonRecord.title : "",
     );
@@ -360,7 +366,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         : ({} as Record<string, unknown>);
     const out: Record<string, unknown> = {
       ...base,
-      level: levelEdit,
+      group: groupEdit,
       title: titleEdit,
       description: descriptionEdit,
       sort_key: sortKeyNum,
@@ -380,7 +386,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
     jsonError,
     initialFen,
     displayFen,
-    levelEdit,
+    groupEdit,
     titleEdit,
     descriptionEdit,
     sortKeyNum,
@@ -396,7 +402,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
 
   const canSubmit =
     Boolean(openingId?.trim()) &&
-    Boolean(levelEdit.trim()) &&
+    Boolean(groupEdit.trim()) &&
     Boolean(pgnFromJson.trim()) &&
     !jsonError &&
     !error &&
@@ -428,13 +434,13 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
 
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor="json-variant-level">Level</FieldLabel>
+            <FieldLabel htmlFor="json-variant-group">Group</FieldLabel>
             <Input
-              id="json-variant-level"
-              name="level"
+              id="json-variant-group"
+              name="group"
               required
-              value={levelEdit}
-              onChange={(e) => setLevelEdit(e.target.value)}
+              value={groupEdit}
+              onChange={(e) => setGroupEdit(e.target.value)}
               placeholder="beginner"
             />
           </Field>
@@ -587,7 +593,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         </Button>
         {!canSubmit && (
           <p className="text-muted-foreground text-xs">
-            Select an opening, set a level, provide valid JSON and{" "}
+            Select an opening, set a group, provide valid JSON and{" "}
             <span className="font-mono">pgn</span>; if{" "}
             <span className="font-mono">goals</span> is present, it must follow
             the schema (<span className="font-mono">card</span> is optional).

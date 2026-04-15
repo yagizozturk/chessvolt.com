@@ -51,8 +51,8 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
           />
         </Field>
         <Field>
-          <FieldLabel>Level</FieldLabel>
-          <Input name="level" required placeholder="e.g. beginner" />
+          <FieldLabel>Group</FieldLabel>
+          <Input name="group" required placeholder="e.g. beginner" />
         </Field>
         <Field>
           <FieldLabel>Title</FieldLabel>

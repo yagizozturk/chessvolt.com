@@ -22,7 +22,7 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     id: db.id,
     openingId: db.opening_id,
     sortKey: db.sort_key,
-    level: db.level ?? "",
+    group: db.level ?? "",
     title: db.title,
     description: db.description ?? null,
     ply: db.ply ?? 0,

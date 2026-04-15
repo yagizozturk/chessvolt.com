@@ -37,7 +37,7 @@ export function OpeningVariantsList({ variants }: Props) {
             {v.title || "Untitled Variant"}
           </Link>
           <p className="text-muted-foreground font-mono text-sm">
-            {v.sortKey} · {v.level}
+            {v.sortKey} · {v.group}
           </p>
           <div className="mt-auto flex flex-wrap gap-2">
             <Button

@@ -13,7 +13,7 @@ export type OpeningVariant = {
   id: string;
   openingId: string;
   sortKey: number;
-  level: string;
+  group: string;
   title: string | null;
   description: string | null;
   ply: number;
