@@ -1,6 +1,7 @@
 "use client";
 
 import { GoalStepper } from "@/components/goal-stepper/goal-stepper";
+import IdeaViewer from "@/components/idea-viewer/idea-viewer";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { DuolingoButton } from "@/components/ui/duolingo-button";
@@ -14,7 +15,6 @@ import type {
   OpeningVariant,
 } from "@/features/openings/types/opening-variant";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
-import { Lightbulb } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type OpeningVariantControllerProps = {
@@ -215,6 +215,9 @@ export default function OpeningVariantController({
               activeIndex={activeGoalStepIndex}
             />
           ) : null}
+
+          {/*************** Ideas (stacked; active expanded) ***************/}
+          {variant.ideas && <IdeaViewer ideas={variant.ideas} />}
 
           {/*************** Hint Button ***************/}
           <div>
