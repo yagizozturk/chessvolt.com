@@ -21,7 +21,7 @@ export type GoalStepperProps = {
   className?: string;
 };
 
-export function GoalStepper({
+export function ActiveGoalViewer({
   items,
   activeIndex,
   className,

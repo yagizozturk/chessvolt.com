@@ -1,7 +1,7 @@
 "use client";
 
+import { ActiveGoalViewer } from "@/components/active-goal-viewer/active-goal-viewer";
 import GoalProgress from "@/components/goal-progress/goal-progress";
-import { GoalStepper } from "@/components/goal-stepper/goal-stepper";
 import IdeaViewer from "@/components/idea-viewer/idea-viewer";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
@@ -196,8 +196,8 @@ export default function OpeningVariantController({
             sourceId={variant.id}
             initialFen={variant.initialFen ?? undefined}
             moves={variant.moves}
-            width={600}
-            height={600}
+            width={550}
+            height={550}
             className="border-muted rounded-xl border-4"
             viewOnly={false}
             onFenAfterUserMove={handleFenAfterUserMove}
@@ -211,7 +211,7 @@ export default function OpeningVariantController({
         <div className="flex min-w-0 flex-col gap-4">
           {/*************** Goals (stacked; active expanded) ***************/}
           {goalStepperItems.length > 0 ? (
-            <GoalStepper
+            <ActiveGoalViewer
               items={goalStepperItems}
               activeIndex={activeGoalStepIndex}
             />
