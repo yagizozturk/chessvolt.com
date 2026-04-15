@@ -2,7 +2,7 @@
 
 import { ActiveGoalViewer } from "@/components/active-goal-viewer/active-goal-viewer";
 import GoalProgress from "@/components/goal-progress/goal-progress";
-import IdeaViewer from "@/components/idea-viewer/idea-viewer";
+import CardInformer from "@/components/informer/card-informer";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { DuolingoButton } from "@/components/ui/duolingo-button";
@@ -98,6 +98,15 @@ export default function OpeningVariantController({
       }),
     [sortedGoals, activePly],
   );
+
+  const ideaItems = useMemo(() => {
+    if (!variant.ideas) return [];
+
+    return [
+      { title: "Core idea", description: variant.ideas.core_idea },
+      { title: "Common mistake", description: variant.ideas.common_mistake },
+    ].filter((item) => item.description?.trim().length > 0);
+  }, [variant.ideas]);
 
   // ============================================================================
   // Variant değiştiğinde local ekran state'i sıfırlanır:
@@ -196,8 +205,8 @@ export default function OpeningVariantController({
             sourceId={variant.id}
             initialFen={variant.initialFen ?? undefined}
             moves={variant.moves}
-            width={550}
-            height={550}
+            width={580}
+            height={580}
             className="border-muted rounded-xl border-4"
             viewOnly={false}
             onFenAfterUserMove={handleFenAfterUserMove}
@@ -218,7 +227,18 @@ export default function OpeningVariantController({
           ) : null}
 
           {/*************** Ideas (stacked; active expanded) ***************/}
-          {variant.ideas && <IdeaViewer ideas={variant.ideas} />}
+          {ideaItems.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {ideaItems.map((item) => (
+                <CardInformer
+                  key={item.title}
+                  imageSrc={`/images/cards/card-alt2-${item.title.toLowerCase().replace(" ", "-")}.png`}
+                  title={item.title}
+                  description={item.description}
+                />
+              ))}
+            </div>
+          ) : null}
 
           {/*************** Goal Progress ***************/}
           {goalStepperItems.length > 0 ? (

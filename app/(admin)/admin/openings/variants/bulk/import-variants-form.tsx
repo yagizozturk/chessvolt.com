@@ -15,7 +15,6 @@ const EXAMPLE_JSON = `{
   "display_ply": 4,
   "description": "Black attempts a disruptive check, but White's attack is too strong.",
   "ideas": {
-    "objective": "Complete harmonious development against Black's classical center.",
     "core_idea": "Use the standard London setup with c3, Nbd2, Bd3, and castling before choosing between e4, Ne5, or kingside activity.",
     "common_mistake": "Playing an early e4 without full development, which can leave the center overextended."
   },

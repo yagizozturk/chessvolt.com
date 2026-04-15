@@ -252,7 +252,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
         errors.push({
           index: i,
           message:
-            "ideas must be an object: { objective, core_idea, common_mistake }",
+            "ideas must be an object: { core_idea, common_mistake }",
         });
         continue;
       }

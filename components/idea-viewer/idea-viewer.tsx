@@ -13,7 +13,6 @@ type IdeaItem = {
 
 export default function IdeaViewer({ ideas, className }: IdeaViewerProps) {
   const items: IdeaItem[] = [
-    { label: "Objective", value: ideas.objective },
     { label: "Core idea", value: ideas.core_idea },
     { label: "Common mistake", value: ideas.common_mistake },
   ].filter((item) => item.value?.trim().length > 0);

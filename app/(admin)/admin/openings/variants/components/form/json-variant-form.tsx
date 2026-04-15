@@ -289,7 +289,7 @@ function parseIdeasFromRecord(
     return {
       ok: false,
       error:
-        "ideas must be an object with objective, core_idea and common_mistake (all strings).",
+        "ideas must be an object with core_idea and common_mistake (both strings).",
     };
   }
   return { ok: true, ideas: i };

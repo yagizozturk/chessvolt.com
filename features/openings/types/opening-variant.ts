@@ -11,7 +11,6 @@ export type MoveGoal = {
 
 // TODO: _ case lerini düzelt
 export type OpeningIdeas = {
-  objective: string;
   core_idea: string;
   common_mistake: string;
 };

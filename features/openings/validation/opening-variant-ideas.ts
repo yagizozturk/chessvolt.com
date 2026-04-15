@@ -6,7 +6,6 @@ export function isOpeningIdeas(value: unknown): value is OpeningIdeas {
   }
   const o = value as Record<string, unknown>;
   return (
-    typeof o.objective === "string" &&
     typeof o.core_idea === "string" &&
     typeof o.common_mistake === "string"
   );
