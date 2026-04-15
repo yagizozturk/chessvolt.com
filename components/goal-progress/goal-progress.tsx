@@ -16,12 +16,6 @@ export default function GoalProgress({
 
   return (
     <div className="rounded-lg border border-zinc-200/80 bg-white/70 p-3 dark:border-zinc-800 dark:bg-zinc-900/50">
-      <div className="mb-2 flex items-center justify-between text-sm">
-        <span className="font-medium">Goal progress</span>
-        <span className="text-muted-foreground">
-          {safeCompleted}/{safeTotal}
-        </span>
-      </div>
       <Progress value={percentage} className="h-2.5" />
     </div>
   );

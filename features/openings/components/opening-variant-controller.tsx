@@ -1,8 +1,8 @@
 "use client";
 
+import GoalProgress from "@/components/goal-progress/goal-progress";
 import { GoalStepper } from "@/components/goal-stepper/goal-stepper";
 import IdeaViewer from "@/components/idea-viewer/idea-viewer";
-import GoalProgress from "@/components/goal-progress/goal-progress";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { DuolingoButton } from "@/components/ui/duolingo-button";
@@ -184,17 +184,6 @@ export default function OpeningVariantController({
       />
 
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
-        {/*************** Goal Progress ***************/}
-        {goalStepperItems.length > 0 ? (
-          <div className="lg:col-span-2">
-            <GoalProgress
-              completedGoals={goalStepperItems.filter((item) => item.completed)
-                .length}
-              totalGoals={goalStepperItems.length}
-            />
-          </div>
-        ) : null}
-
         {/*************** Left Column ***************/}
         <div key={variant.id} className="relative min-w-0">
           <Confetti
@@ -230,6 +219,16 @@ export default function OpeningVariantController({
 
           {/*************** Ideas (stacked; active expanded) ***************/}
           {variant.ideas && <IdeaViewer ideas={variant.ideas} />}
+
+          {/*************** Goal Progress ***************/}
+          {goalStepperItems.length > 0 ? (
+            <GoalProgress
+              completedGoals={
+                goalStepperItems.filter((item) => item.completed).length
+              }
+              totalGoals={goalStepperItems.length}
+            />
+          ) : null}
 
           {/*************** Hint Button ***************/}
           <div>
