@@ -6,6 +6,7 @@
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
 import type {
   MoveGoal,
+  OpeningIdeas,
   OpeningVariant,
 } from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -105,6 +106,7 @@ export type CreateOpeningVariantInput = {
   initialFen?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
+  ideas?: OpeningIdeas | null;
 };
 
 export async function create(
@@ -116,7 +118,7 @@ export async function create(
     .insert({
       opening_id: input.openingId,
       sort_key: input.sortKey,
-      level: input.group,
+      group: input.group,
       title: input.title ?? null,
       description: input.description ?? null,
       ply: input.ply,
@@ -125,6 +127,7 @@ export async function create(
       initial_fen: input.initialFen ?? null,
       display_fen: input.displayFen ?? null,
       goals: input.goals ?? null,
+      ideas: input.ideas ?? null,
     })
     .select()
     .single();
@@ -148,6 +151,7 @@ export type UpdateOpeningVariantInput = {
   initialFen?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
+  ideas?: OpeningIdeas | null;
 };
 
 export async function update(
@@ -157,7 +161,7 @@ export async function update(
 ): Promise<OpeningVariant | null> {
   const updates: Record<string, unknown> = {};
   if (input.sortKey !== undefined) updates.sort_key = input.sortKey;
-  if (input.group !== undefined) updates.level = input.group;
+  if (input.group !== undefined) updates.group = input.group;
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description;
   if (input.ply !== undefined) updates.ply = input.ply;
@@ -166,6 +170,7 @@ export async function update(
   if (input.initialFen !== undefined) updates.initial_fen = input.initialFen;
   if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
   if (input.goals !== undefined) updates.goals = input.goals;
+  if (input.ideas !== undefined) updates.ideas = input.ideas;
 
   const { data, error } = await supabase
     .from("opening_variants")

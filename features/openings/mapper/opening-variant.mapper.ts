@@ -1,11 +1,12 @@
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
+import { isOpeningIdeas } from "@/features/openings/validation/opening-variant-ideas";
 
 type DbOpeningVariant = {
   id: string;
   opening_id: string;
   sort_key: number;
-  level: string | null;
+  group: string | null;
   title: string | null;
   description: string | null;
   ply: number;
@@ -14,6 +15,7 @@ type DbOpeningVariant = {
   initial_fen: string;
   display_fen: string | null;
   goals?: unknown;
+  ideas?: unknown;
   created_at: string;
 };
 
@@ -22,7 +24,7 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     id: db.id,
     openingId: db.opening_id,
     sortKey: db.sort_key,
-    group: db.level ?? "",
+    group: db.group ?? "",
     title: db.title,
     description: db.description ?? null,
     ply: db.ply ?? 0,
@@ -35,6 +37,10 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     goals:
       db.goals != null && isMoveGoalsArray(db.goals)
         ? db.goals
+        : null,
+    ideas:
+      db.ideas != null && isOpeningIdeas(db.ideas)
+        ? db.ideas
         : null,
     createdAt: db.created_at,
   };

@@ -10,8 +10,12 @@ import {
   getOpeningVariantById,
   updateOpeningVariant,
 } from "@/features/openings/services/openings.service";
-import type { MoveGoal } from "@/features/openings/types/opening-variant";
+import type {
+  MoveGoal,
+  OpeningIdeas,
+} from "@/features/openings/types/opening-variant";
 import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
+import { isOpeningIdeas } from "@/features/openings/validation/opening-variant-ideas";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getAdminUser } from "@/lib/supabase/auth";
@@ -28,6 +32,7 @@ type BulkVariantInput = {
   display_ply?: number;
   description?: string | null;
   goals?: unknown;
+  ideas?: unknown;
 };
 
 function parseGoalsFromForm(
@@ -42,6 +47,24 @@ function parseGoalsFromForm(
     const parsed = JSON.parse(str) as unknown;
     if (parsed === null) return null;
     if (!isMoveGoalsArray(parsed)) redirect(errorRedirect);
+    return parsed;
+  } catch {
+    redirect(errorRedirect);
+  }
+}
+
+function parseIdeasFromForm(
+  formData: FormData,
+  errorRedirect: string,
+): OpeningIdeas | null {
+  const raw = formData.get("ideas");
+  if (raw === null) return null;
+  const str = typeof raw === "string" ? raw.trim() : "";
+  if (str === "") return null;
+  try {
+    const parsed = JSON.parse(str) as unknown;
+    if (parsed === null) return null;
+    if (!isOpeningIdeas(parsed)) redirect(errorRedirect);
     return parsed;
   } catch {
     redirect(errorRedirect);
@@ -103,6 +126,10 @@ export async function createOpeningVariantAction(formData: FormData) {
     formData,
     newVariantUrl(formData, "invalid_goals_json"),
   );
+  const ideas = parseIdeasFromForm(
+    formData,
+    newVariantUrl(formData, "invalid_ideas_json"),
+  );
 
   if (!openingId?.trim() || !pgn || !group || Number.isNaN(sortKey)) {
     redirect(newVariantUrl(formData, "missing_fields"));
@@ -125,6 +152,7 @@ export async function createOpeningVariantAction(formData: FormData) {
     initialFen,
     displayFen,
     goals,
+    ideas,
   };
 
   const variant = await createOpeningVariant(supabase, input);
@@ -213,6 +241,22 @@ export async function bulkCreateVariantsAction(jsonData: string) {
         continue;
       }
     }
+    let ideas: OpeningIdeas | null | undefined;
+    if ("ideas" in item) {
+      const ii = item.ideas;
+      if (ii === null) {
+        ideas = null;
+      } else if (isOpeningIdeas(ii)) {
+        ideas = ii;
+      } else {
+        errors.push({
+          index: i,
+          message:
+            "ideas must be an object: { objective, core_idea, common_mistake }",
+        });
+        continue;
+      }
+    }
 
     const input: CreateOpeningVariantInput = {
       openingId: item.opening_id.trim(),
@@ -226,6 +270,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       initialFen,
       displayFen,
       ...(goals !== undefined ? { goals } : {}),
+      ...(ideas !== undefined ? { ideas } : {}),
     };
 
     const variant = await createOpeningVariant(supabase, input);
@@ -267,6 +312,10 @@ export async function updateOpeningVariantAction(
     formData,
     `/admin/openings/variants/${id}?error=invalid_goals_json`,
   );
+  const ideas = parseIdeasFromForm(
+    formData,
+    `/admin/openings/variants/${id}?error=invalid_ideas_json`,
+  );
 
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
@@ -303,6 +352,7 @@ export async function updateOpeningVariantAction(
     input.ply = initialPly;
   }
   input.goals = goals;
+  input.ideas = ideas;
 
   const variant = await updateOpeningVariant(supabase, id, input);
   if (!variant) {

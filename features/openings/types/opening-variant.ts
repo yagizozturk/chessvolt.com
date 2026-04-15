@@ -9,6 +9,13 @@ export type MoveGoal = {
   imageAlt?: string;
 };
 
+// TODO: _ case lerini düzelt
+export type OpeningIdeas = {
+  objective: string;
+  core_idea: string;
+  common_mistake: string;
+};
+
 export type OpeningVariant = {
   id: string;
   openingId: string;
@@ -22,5 +29,6 @@ export type OpeningVariant = {
   initialFen: string;
   displayFen: string | null;
   goals: MoveGoal[] | null;
+  ideas: OpeningIdeas | null;
   createdAt: string;
 };

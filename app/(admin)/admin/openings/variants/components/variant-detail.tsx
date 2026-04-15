@@ -144,6 +144,18 @@ export function VariantDetail({ variant }: Props) {
                 </dd>
               </div>
               <div>
+                <dt className="text-muted-foreground font-medium">Ideas</dt>
+                <dd>
+                  {variant.ideas != null ? (
+                    <pre className="bg-muted/30 max-h-64 overflow-auto rounded-md border p-3 font-mono text-xs whitespace-pre-wrap">
+                      {JSON.stringify(variant.ideas, null, 2)}
+                    </pre>
+                  ) : (
+                    "—"
+                  )}
+                </dd>
+              </div>
+              <div>
                 <dt className="text-muted-foreground font-medium">
                   Created At
                 </dt>
