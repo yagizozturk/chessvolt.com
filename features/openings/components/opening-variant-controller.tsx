@@ -218,6 +218,16 @@ export default function OpeningVariantController({
 
         {/*************** Right Column ***************/}
         <div className="flex min-w-0 flex-col gap-4">
+          {/*************** Goal Progress ***************/}
+          {goalStepperItems.length > 0 ? (
+            <GoalProgress
+              completedGoals={
+                goalStepperItems.filter((item) => item.completed).length
+              }
+              totalGoals={goalStepperItems.length}
+            />
+          ) : null}
+
           {/*************** Goals (stacked; active expanded) ***************/}
           {goalStepperItems.length > 0 ? (
             <ActiveGoalViewer
@@ -238,16 +248,6 @@ export default function OpeningVariantController({
                 />
               ))}
             </div>
-          ) : null}
-
-          {/*************** Goal Progress ***************/}
-          {goalStepperItems.length > 0 ? (
-            <GoalProgress
-              completedGoals={
-                goalStepperItems.filter((item) => item.completed).length
-              }
-              totalGoals={goalStepperItems.length}
-            />
           ) : null}
 
           {/*************** Hint Button ***************/}

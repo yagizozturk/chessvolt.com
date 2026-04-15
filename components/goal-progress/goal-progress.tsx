@@ -1,4 +1,5 @@
 import { Progress } from "@/components/ui/progress";
+import { Goal } from "lucide-react";
 
 type GoalProgressProps = {
   completedGoals: number;
@@ -15,8 +16,26 @@ export default function GoalProgress({
     safeTotal > 0 ? Math.round((safeCompleted / safeTotal) * 100) : 0;
 
   return (
-    <div className="rounded-lg border border-zinc-200/80 bg-white/70 p-3 dark:border-zinc-800 dark:bg-zinc-900/50">
-      <Progress value={percentage} className="h-2.5" />
+    <div className="rounded-lg border-2 p-3">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-emerald-100 dark:bg-emerald-900/40">
+          <Goal className="h-6 w-6 text-emerald-700 dark:text-emerald-300" />
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-200">
+              Progress
+            </span>
+
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+              {safeCompleted}/{safeTotal} Moves ({percentage}%)
+            </span>
+          </div>
+
+          <Progress value={percentage} className="h-2.5" />
+        </div>
+      </div>
     </div>
   );
 }
