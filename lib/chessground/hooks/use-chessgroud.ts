@@ -4,31 +4,49 @@ import { toDests } from "@/lib/chess/toDests";
 import { Chessground } from "@lichess-org/chessground";
 import type { Key } from "@lichess-org/chessground/types";
 import { Chess } from "chess.js";
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject, useCallback, useEffect, useRef } from "react";
 
-export function useOneChessground(
-  boardRef: RefObject<HTMLDivElement | null>,
-  game: RefObject<Chess>,
-  playerColor: "white" | "black",
-  onMove: (from: string, to: string) => void,
-) {
+type UseChessgroundOptions = {
+  boardRef: RefObject<HTMLDivElement | null>;
+  game: RefObject<Chess>;
+  sourceId: string;
+  orientationRef: RefObject<"white" | "black">;
+  viewOnly?: boolean;
+  coordinates?: boolean;
+  lastMoveRef: RefObject<[Key, Key] | undefined>;
+  onMove: (from: string, to: string) => void;
+};
+
+export function useChessground({
+  boardRef,
+  game,
+  sourceId,
+  orientationRef,
+  viewOnly = false,
+  coordinates = true,
+  lastMoveRef,
+  onMove,
+}: UseChessgroundOptions) {
   const ground = useRef<ReturnType<typeof Chessground> | null>(null);
+  const onMoveRef = useRef(onMove);
 
-  // ============================================================================
-  // Loading Chessground
-  // ============================================================================
   useEffect(() => {
-    if (!boardRef.current) return;
-    if (ground.current) return;
+    onMoveRef.current = onMove;
+  }, [onMove]);
 
-    const turn = game.current.turn() === "w" ? "white" : "black";
+  const getBoardConfig = useCallback(() => {
+    const turn: "white" | "black" =
+      game.current.turn() === "w" ? "white" : "black";
     const isCheck = game.current.isCheck();
 
-    ground.current = Chessground(boardRef.current, {
+    return {
       fen: game.current.fen(),
-      orientation: playerColor,
+      orientation: orientationRef.current,
+      viewOnly,
+      coordinates,
       turnColor: turn,
       check: isCheck ? turn : false,
+      lastMove: lastMoveRef.current,
       highlight: {
         check: isCheck,
       },
@@ -38,18 +56,28 @@ export function useOneChessground(
         dests: toDests(game.current),
         events: {
           after: (from: string, to: string) => {
-            onMove(from, to);
+            onMoveRef.current(from, to);
             markSquareLastMove(from, to);
           },
         },
       },
-    });
+    };
+  }, [game, orientationRef, viewOnly, coordinates, lastMoveRef]);
+
+  // ============================================================================
+  // Loading Chessground
+  // ============================================================================
+  useEffect(() => {
+    if (!boardRef.current) return;
+
+    ground.current?.destroy();
+    ground.current = Chessground(boardRef.current, getBoardConfig());
 
     return () => {
       ground.current?.destroy();
       ground.current = null;
     };
-  }, []);
+  }, [sourceId, boardRef, getBoardConfig]);
 
   // ============================================================================
   // After player moves, show whether the move was good or bad.
@@ -113,38 +141,8 @@ export function useOneChessground(
     // We re-set because we're moving from React's "controlled" model to "imperative" mode.
     if (!ground.current) return;
 
-    const turn = game.current.turn() === "w" ? "white" : "black";
-    const isCheck = game.current.isCheck();
-
-    if (isCheck) {
-      console.log("check");
-    }
-
-    ground.current.set({
-      fen: game.current.fen(),
-      turnColor: turn,
-      check: isCheck ? turn : false,
-      highlight: {
-        check: isCheck,
-      },
-      movable: {
-        free: false,
-        color: turn,
-        dests: toDests(game.current),
-        events: {
-          after: (from: string, to: string) => {
-            onMove(from, to);
-            markSquareLastMove(from, to);
-          },
-        },
-      },
-    });
+    ground.current.set(getBoardConfig());
   }
-
-  // ============================================================================
-  // Change orientation after color change
-  // ============================================================================
-  useEffect(() => {}, [playerColor]);
 
   return {
     ground,

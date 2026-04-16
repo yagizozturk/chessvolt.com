@@ -5,10 +5,9 @@ import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
-import { toDests } from "@/lib/chess/toDests";
+import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { useSound } from "@/lib/shared/hooks/use-sound";
 import { cn } from "@/lib/utils/cn";
-import { Chessground } from "@lichess-org/chessground";
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
 import type { Key } from "@lichess-org/chessground/types";
@@ -18,7 +17,6 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
 } from "react";
 
 export type VoltBoardProps = {
@@ -79,12 +77,11 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
 
     const boardRef = useRef<HTMLDivElement>(null);
     const { game, makeMove } = useChessOne(props.initialFen);
-    const ground = useRef<ReturnType<typeof Chessground> | null>(null);
 
     const currentStepRef = useRef(0);
     const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
     const initialPlayerOrientation = useRef<"white" | "black">("white"); // Fixed orientation from player's perspective - never flips when turn changes
-    const [isOver, setIsOver] = useState(false);
+    const isOverRef = useRef(false);
 
     const movesArray = useMemo(
       () =>
@@ -108,63 +105,26 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
     // Initialize Fen
     // ============================================================================
     useEffect(() => {
-      setIsOver(false);
+      isOverRef.current = false;
       currentStepRef.current = 0;
       lastMoveRef.current = undefined;
-    }, [sourceId]);
+      initialPlayerOrientation.current =
+        game.current.turn() === "w" ? "white" : "black";
+    }, [sourceId, game]);
 
     // ============================================================================
     // Initialize Chessground
     // ============================================================================
-    useEffect(() => {
-      if (!boardRef.current || !game.current) return;
-
-      if (ground.current) ground.current.destroy();
-
-      // Fixed orientation from the side to move at setup — does not flip when turn changes
-      initialPlayerOrientation.current =
-        game.current.turn() === "w" ? "white" : "black";
-
-      ground.current = Chessground(boardRef.current, {
-        fen: game.current.fen(),
-        orientation: initialPlayerOrientation.current,
-        viewOnly: viewOnly,
-        coordinates,
-        turnColor: game.current.turn() === "w" ? "white" : "black",
-        lastMove: lastMoveRef.current ?? undefined,
-        movable: {
-          free: false,
-          color: game.current.turn() === "w" ? "white" : "black",
-          dests: toDests(game.current),
-          events: { after: handleMove },
-        },
-      });
-
-      return () => {
-        ground.current?.destroy();
-      };
-    }, [sourceId]);
-
-    // ============================================================================
-    // Helper Functions
-    // ============================================================================
-    function updateBoard() {
-      if (!game.current || !ground.current) return;
-
-      ground.current.set({
-        fen: game.current.fen(),
-        orientation: initialPlayerOrientation.current,
-        coordinates,
-        turnColor: game.current.turn() === "w" ? "white" : "black",
-        lastMove: lastMoveRef.current ?? undefined,
-        movable: {
-          free: false,
-          color: game.current.turn() === "w" ? "white" : "black",
-          dests: toDests(game.current),
-          events: { after: handleMove },
-        },
-      });
-    }
+    const { ground, updateBoard } = useChessground({
+      boardRef,
+      game,
+      sourceId,
+      orientationRef: initialPlayerOrientation,
+      viewOnly,
+      coordinates,
+      lastMoveRef,
+      onMove: handleMove,
+    });
 
     // Step through the solution line; when the last expected move is played, the line is complete
     function handleStepChange() {
@@ -202,7 +162,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
 
       // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
       if (step === movesArray.length - 1) {
-        setIsOver(true);
+        isOverRef.current = true;
         onSolved?.(true);
         return;
       }
@@ -226,7 +186,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       ref,
       () => ({
         showHint(hintLevel: number) {
-          if (!ground.current || isOver) return;
+          if (!ground.current || isOverRef.current) return;
           const step = currentStepRef.current;
           const expectedUci = movesArray[step];
           const parsedUci = parseUci(expectedUci);
@@ -240,7 +200,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
           }
         },
       }),
-      [isOver],
+      [ground, movesArray],
     );
 
     return (
