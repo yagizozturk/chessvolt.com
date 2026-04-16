@@ -5,6 +5,7 @@ import { ImageStatsCard } from "@/components/cards/image-stats-card";
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { Separator } from "@/components/ui/separator";
 import { Activity, Info, Trophy } from "lucide-react";
+import { CodeViewer } from "../code-viewer";
 
 export function CardsShowcase() {
   return (
@@ -34,13 +35,13 @@ export function CardsShowcase() {
             <span className="text-muted-foreground">Component:</span>{" "}
             ImageStatsCard
           </p>
-          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
-            <code>{`<ImageStatsCard
+          <CodeViewer
+            code={`<ImageStatsCard
   imageSrc="/images/cards/card-alt2-objective.png"
   label="Solved Puzzles"
   value="1,284"
-/>`}</code>
-          </pre>
+/>`}
+          />
         </div>
       </div>
 
@@ -55,9 +56,7 @@ export function CardsShowcase() {
           <p className="text-sm font-medium">
             <span className="text-muted-foreground">Component:</span> IconCard
           </p>
-          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
-            <code>{`<IconCard icon={Info} />`}</code>
-          </pre>
+          <CodeViewer code={`<IconCard icon={Info} />`} />
         </div>
       </div>
 
@@ -77,13 +76,13 @@ export function CardsShowcase() {
             <span className="text-muted-foreground">Component:</span>{" "}
             ImageInformationCard
           </p>
-          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
-            <code>{`<ImageInformationCard
+          <CodeViewer
+            code={`<ImageInformationCard
   imageSrc="/images/cards/card-alt2-core-idea.png"
   title="Caro-Kann Core Idea"
   description="Capture central squares and keep a solid pawn structure."
-/>`}</code>
-          </pre>
+/>`}
+          />
         </div>
       </div>
 
@@ -99,13 +98,13 @@ export function CardsShowcase() {
             <span className="text-muted-foreground">Component:</span>{" "}
             ProgressStatsCard
           </p>
-          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
-            <code>{`<ProgressStatsCard
+          <CodeViewer
+            code={`<ProgressStatsCard
   percentage={74}
   label="Accuracy"
   icon={Trophy}
-/>`}</code>
-          </pre>
+/>`}
+          />
         </div>
       </div>
 
@@ -125,13 +124,13 @@ export function CardsShowcase() {
             <span className="text-muted-foreground">Component:</span>{" "}
             IconInformationCard
           </p>
-          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
-            <code>{`<IconInformationCard
+          <CodeViewer
+            code={`<IconInformationCard
   value={932}
   label="Total Games"
   icon={Activity}
-/>`}</code>
-          </pre>
+/>`}
+          />
         </div>
       </div>
     </section>

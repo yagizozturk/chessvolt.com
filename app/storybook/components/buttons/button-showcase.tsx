@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { VoltButton } from "@/components/ui/volt-button";
+import { CodeViewer } from "../code-viewer";
 
 const buttonExamples = [
   {
@@ -89,9 +90,7 @@ export function ButtonShowcase() {
                   {example.size}
                 </code>
               </p>
-              <pre className="overflow-x-auto rounded-md border bg-muted p-3 text-sm leading-relaxed text-foreground">
-                <code>{example.code}</code>
-              </pre>
+              <CodeViewer code={example.code} />
             </div>
           </div>
         ))}
