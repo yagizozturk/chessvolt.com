@@ -3,6 +3,7 @@
 import {
   LayoutPanelTop,
   MousePointerClick,
+  Palette,
   RectangleHorizontal,
   Tag,
   Zap,
@@ -13,6 +14,30 @@ import { useEffect, useState } from "react";
 import { BadgesShowcase } from "../components/badges/badges-showcase";
 import { ButtonShowcase } from "../components/buttons/button-showcase";
 import { CardsShowcase } from "../components/cards/cards-showcase";
+import { ColorsShowcase } from "../components/colors/colors-showcase";
+
+const navItems = [
+  {
+    id: "#buttons",
+    label: "Buttons",
+    icon: MousePointerClick,
+  },
+  {
+    id: "#badges",
+    label: "Badges",
+    icon: Tag,
+  },
+  {
+    id: "#cards",
+    label: "Cards",
+    icon: RectangleHorizontal,
+  },
+  {
+    id: "#colors",
+    label: "Colors",
+    icon: Palette,
+  },
+] as const;
 
 export default function StorybookPage() {
   const [activeItem, setActiveItem] = useState("#buttons");
@@ -47,42 +72,25 @@ export default function StorybookPage() {
         </h2>
 
         <nav className="mt-4 space-y-1">
-          <a
-            href="#buttons"
-            aria-current={activeItem === "#buttons" ? "page" : undefined}
-            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-              activeItem === "#buttons"
-                ? "bg-primary/10 text-primary"
-                : "text-foreground hover:bg-accent"
-            }`}
-          >
-            <MousePointerClick className="size-4" />
-            Buttons
-          </a>
-          <a
-            href="#badges"
-            aria-current={activeItem === "#badges" ? "page" : undefined}
-            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-              activeItem === "#badges"
-                ? "bg-primary/10 text-primary"
-                : "text-foreground hover:bg-accent"
-            }`}
-          >
-            <Tag className="size-4" />
-            Badges
-          </a>
-          <a
-            href="#cards"
-            aria-current={activeItem === "#cards" ? "page" : undefined}
-            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-              activeItem === "#cards"
-                ? "bg-primary/10 text-primary"
-                : "text-foreground hover:bg-accent"
-            }`}
-          >
-            <RectangleHorizontal className="size-4" />
-            Cards
-          </a>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <a
+                key={item.id}
+                href={item.id}
+                aria-current={activeItem === item.id ? "page" : undefined}
+                className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  activeItem === item.id
+                    ? "bg-primary/10 text-primary"
+                    : "text-foreground hover:bg-accent"
+                }`}
+              >
+                <Icon className="size-4" />
+                {item.label}
+              </a>
+            );
+          })}
         </nav>
       </aside>
 
@@ -90,6 +98,7 @@ export default function StorybookPage() {
         <ButtonShowcase />
         <BadgesShowcase />
         <CardsShowcase />
+        <ColorsShowcase />
       </main>
     </div>
   );
