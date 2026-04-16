@@ -6,6 +6,7 @@ import "@/assets/volt.css";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
+import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
 import { useSound } from "@/lib/shared/hooks/use-sound";
 import { cn } from "@/lib/utils/cn";
 import "@lichess-org/chessground/assets/chessground.base.css";
@@ -126,9 +127,49 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       onMove: handleMove,
     });
 
+    function clearHintShapes() {
+      ground.current?.setAutoShapes([]);
+    }
+
+    function isExpectedMove(userUci: string, expectedUci?: string) {
+      return userUci === expectedUci;
+    }
+
     // Step through the solution line; when the last expected move is played, the line is complete
-    function handleStepChange() {
+    function advanceStep() {
       currentStepRef.current += 1;
+      return currentStepRef.current;
+    }
+
+    function handleWrongMove() {
+      playMoveSound();
+      clearHintShapes();
+      updateBoard();
+      onSolved?.(false);
+    }
+
+    function applyUserMove(from: string, to: string) {
+      makeMove(from, to, DEFAULT_PROMOTION_PIECE);
+      lastMoveRef.current = [from as Key, to as Key];
+      playCorrectSound();
+      clearHintShapes();
+      onUserSuccessMovePlayed?.();
+      updateBoard();
+      onFenAfterUserMove?.(game.current.fen());
+    }
+
+    function finishSolution() {
+      isOverRef.current = true;
+      onSolved?.(true);
+    }
+
+    function applyOpponentMove(opponentUci: string) {
+      const oppFrom = opponentUci.slice(0, 2);
+      const oppTo = opponentUci.slice(2, 4);
+      makeMove(oppFrom, oppTo, DEFAULT_PROMOTION_PIECE);
+      lastMoveRef.current = [oppFrom as Key, oppTo as Key];
+      onFenAfterOpponentMove?.(game.current.fen());
+      updateBoard();
     }
 
     // ============================================================================
@@ -137,45 +178,32 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
     function handleMove(from: string, to: string) {
       if (!game.current || !ground.current) return;
 
-      const step = currentStepRef.current;
-      const expectedUci = movesArray[step];
+      const currentStep = currentStepRef.current;
+      const expectedUci = movesArray[currentStep];
+      if (!expectedUci) return;
+
       const userUci = from + to;
 
       onUserMovePlayed?.(userUci);
 
-      if (userUci !== expectedUci) {
-        playMoveSound();
-        ground.current?.setAutoShapes([]);
-        updateBoard();
-        onSolved?.(false);
+      if (!isExpectedMove(userUci, expectedUci)) {
+        handleWrongMove();
         return;
       }
 
-      makeMove(from, to, "q");
-      lastMoveRef.current = [from as Key, to as Key];
-      playCorrectSound();
-      ground.current?.setAutoShapes([]);
-      onUserSuccessMovePlayed?.();
-      handleStepChange();
-      updateBoard();
-      onFenAfterUserMove?.(game.current.fen());
+      applyUserMove(from, to);
+      const nextStep = advanceStep();
 
       // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
-      if (step === movesArray.length - 1) {
-        isOverRef.current = true;
-        onSolved?.(true);
+      if (nextStep >= movesArray.length) {
+        finishSolution();
         return;
       }
 
-      // Rakip hamleye geçilir.
-      const opponentUci = movesArray[step + 1];
-      const oppFrom = opponentUci.slice(0, 2);
-      const oppTo = opponentUci.slice(2, 4);
-      makeMove(oppFrom, oppTo, "q");
-      lastMoveRef.current = [oppFrom as Key, oppTo as Key];
-      onFenAfterOpponentMove?.(game.current.fen());
-      handleStepChange();
-      updateBoard();
+      const opponentUci = movesArray[nextStep];
+      if (!opponentUci) return;
+      applyOpponentMove(opponentUci);
+      advanceStep();
     }
 
     // ============================================================================
