@@ -35,9 +35,8 @@ export default function RootLayout({
       <body className="bg-background min-h-screen antialiased">
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          forcedTheme="dark"
-          enableSystem={false}
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           <TooltipProvider>{children}</TooltipProvider>

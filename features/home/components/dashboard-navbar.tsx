@@ -13,6 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useProfile } from "@/features/profile/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
@@ -74,6 +75,8 @@ export function DashboardNavbar() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      {/* Dark mode - right side, rounded */}
+      <ThemeToggle className="rounded-full" />
     </div>
   );
 
@@ -169,6 +172,9 @@ export function DashboardNavbar() {
                   </Link>
                 )}
               </nav>
+              <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4">
+                <ThemeToggle className="rounded-full" />
+              </div>
             </SheetContent>
           </Sheet>
         </div>
