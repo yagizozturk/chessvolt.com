@@ -8,6 +8,19 @@ import { Activity, Info, Trophy } from "lucide-react";
 
 import { CodeViewer } from "../code-viewer";
 
+const iconInformationCardColors = [
+  "mint",
+  "blue",
+  "purple",
+  "amber",
+  "emerald",
+  "indigo",
+  "rose",
+  "cyan",
+  "orange",
+  "pink",
+] as const;
+
 export function CardsShowcase() {
   return (
     <section id="cards" className="space-y-6">
@@ -116,12 +129,18 @@ export function CardsShowcase() {
 
         <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
           <div className="flex items-start">
-            <div className="w-full max-w-sm">
-              <IconInformationCard
-                value={932}
-                label="Total Games"
-                icon={Activity}
-              />
+            <div className="w-full">
+              <div className="grid grid-cols-2 gap-3">
+                {iconInformationCardColors.map((color, index) => (
+                  <IconInformationCard
+                    key={color}
+                    value={932 + index}
+                    label={`${color.toUpperCase()} Theme`}
+                    icon={Activity}
+                    color={color}
+                  />
+                ))}
+              </div>
             </div>
           </div>
           <Separator />
@@ -135,7 +154,13 @@ export function CardsShowcase() {
   value={932}
   label="Total Games"
   icon={Activity}
-/>`}
+  color="mint"
+/>
+
+// color prop'u alir.
+// Renk opsiyonlari:
+// "mint" | "blue" | "purple" | "amber" | "emerald"
+// | "indigo" | "rose" | "cyan" | "orange" | "pink"`}
             />
           </div>
         </div>
