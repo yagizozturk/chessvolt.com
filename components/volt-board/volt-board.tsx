@@ -23,7 +23,7 @@ import {
 export type VoltBoardProps = {
   sourceId: string;
   moves: string;
-  initialFen?: string | null; // TODO: Bu neden ? içeriyor? Bunu çağıran yerlere bak boş gönderen varmı
+  initialFen?: string;
   width?: number;
   height?: number;
   className?: string;
@@ -132,6 +132,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
     }
 
     function isExpectedMove(userUci: string, expectedUci?: string) {
+      // TODO: Support promotion-aware validation (e.g. e7e8q vs e7e8n). Current matching ignores promotion piece from expected UCI.
       return userUci === expectedUci;
     }
 

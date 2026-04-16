@@ -5,7 +5,7 @@ import { Chess, Move } from "chess.js";
 import { GameStatus } from "@/lib/shared/types/game-status";
 import { parseUci } from "@/lib/chess/parseUci";
 
-export function useChessOne(initialFen?: string | null) {
+export function useChessOne(initialFen?: string) {
   const game = useRef(new Chess());
 
   useEffect(() => {
