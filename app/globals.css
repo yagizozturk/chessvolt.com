@@ -50,8 +50,6 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -81,10 +79,12 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
 }
 
 .dark {
-  --background: oklch(0.2301 0.0215 228.52); /* + */
+  --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -95,11 +95,11 @@
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.494 0.0263 225.32); /* + */
+  --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.3847 0.0246 234.61); /* + */
+  --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.809 0.105 251.813);
@@ -118,10 +118,6 @@
 }
 
 @layer base {
-  :root {
-    /* Varsayılan renk (mint) */
-    --brand-rgb: 88, 204, 187;
-  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -130,14 +126,5 @@
   }
   html {
     @apply font-sans;
-  }
-}
-
-@layer utilities {
-  .card-gamified {
-    background-color: rgba(var(--brand-rgb), 0.08);
-    border-color: rgba(var(--brand-rgb), 0.2);
-    box-shadow: 0 4px 0 0 rgba(var(--brand-rgb), 0.15);
-    color: rgb(var(--brand-rgb));
   }
 }
