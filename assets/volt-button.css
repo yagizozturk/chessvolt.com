@@ -1,4 +1,4 @@
-.duolingo-button {
+.volt-button {
   appearance: button;
   background-color: #1899d6;
   border: solid transparent;
@@ -28,7 +28,7 @@
   white-space: nowrap;
 }
 
-.duolingo-button::after {
+.volt-button::after {
   background-clip: padding-box;
   background-color: #1cb0f6;
   border: solid transparent;
@@ -43,22 +43,22 @@
   z-index: -1;
 }
 
-.duolingo-button:focus {
+.volt-button:focus {
   user-select: auto;
 }
 
-.duolingo-button:hover:not(:disabled) {
+.volt-button:hover:not(:disabled) {
   filter: brightness(1.1);
 }
 
-.duolingo-button:disabled {
+.volt-button:disabled {
   cursor: auto;
 }
 
-.duolingo-button:active::after {
+.volt-button:active::after {
   border-width: 0;
 }
 
-.duolingo-button:active {
+.volt-button:active {
   transform: translateY(3px) translateZ(0);
 }

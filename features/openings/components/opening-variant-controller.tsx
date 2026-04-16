@@ -5,7 +5,7 @@ import GoalProgress from "@/components/goal-progress/goal-progress";
 import CardInformer from "@/components/informer/card-informer";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
-import { DuolingoButton } from "@/components/ui/duolingo-button";
+import { VoltButton } from "@/components/ui/volt-button";
 import { VariantSlider } from "@/components/variant-slider/variant-slider";
 import VoltBoard, {
   type VoltBoardHandle,
@@ -98,6 +98,10 @@ export default function OpeningVariantController({
       }),
     [sortedGoals, activePly],
   );
+  const hasGoals = goalStepperItems.length > 0;
+  const completedGoalsCount = goalStepperItems.filter(
+    (item) => item.completed,
+  ).length;
 
   const ideaItems = useMemo(() => {
     if (!variant.ideas) return [];
@@ -116,6 +120,7 @@ export default function OpeningVariantController({
   useEffect(() => {
     setHintCount(0);
     setActivePly(variant.ply);
+    setShowCorrect(false);
   }, [variant.id, variant.ply]);
 
   // ============================================================================
@@ -219,17 +224,15 @@ export default function OpeningVariantController({
         {/*************** Right Column ***************/}
         <div className="flex min-w-0 flex-col gap-4">
           {/*************** Goal Progress ***************/}
-          {goalStepperItems.length > 0 ? (
+          {hasGoals ? (
             <GoalProgress
-              completedGoals={
-                goalStepperItems.filter((item) => item.completed).length
-              }
+              completedGoals={completedGoalsCount}
               totalGoals={goalStepperItems.length}
             />
           ) : null}
 
           {/*************** Goals (stacked; active expanded) ***************/}
-          {goalStepperItems.length > 0 ? (
+          {hasGoals ? (
             <ActiveGoalViewer
               items={goalStepperItems}
               activeIndex={activeGoalStepIndex}
@@ -252,13 +255,13 @@ export default function OpeningVariantController({
 
           {/*************** Hint Button ***************/}
           <div>
-            <DuolingoButton
+            <VoltButton
               className="w-full"
               disabled={hintCount >= 2}
               onClick={handleHintClick}
             >
               Hint
-            </DuolingoButton>
+            </VoltButton>
           </div>
           <div className="pt-1">
             <VariantSlider
