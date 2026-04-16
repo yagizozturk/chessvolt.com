@@ -61,7 +61,7 @@ export function ButtonShowcase() {
         </p>
       </div>
 
-      <div className="grid gap-3">
+      <div className="grid grid-cols-2 gap-3">
         {buttonExamples.map((example) => (
           <div
             key={example.code}

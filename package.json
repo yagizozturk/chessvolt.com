@@ -9,8 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@hugeicons/core-free-icons": "^4.1.1",
-    "@hugeicons/react": "^1.1.6",
     "@lichess-org/chessground": "^9.8.5",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.81.1",

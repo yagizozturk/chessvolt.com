@@ -1,10 +1,10 @@
+import { IconCard } from "@/components/cards/icon-card";
+import { IconInformationCard } from "@/components/cards/icon-information-card";
 import ImageInformationCard from "@/components/cards/image-information-card";
 import { ImageStatsCard } from "@/components/cards/image-stats-card";
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
-import { IconInformationCard } from "@/components/cards/icon-information-card";
 import { Separator } from "@/components/ui/separator";
 import { Activity, Info, Trophy } from "lucide-react";
-import { IconCard } from "@/components/cards/icon-card";
 
 export function CardsShowcase() {
   return (
@@ -18,7 +18,7 @@ export function CardsShowcase() {
         </p>
       </div>
 
-      <div className="grid gap-3 rounded-md border bg-muted/40 p-4">
+      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
         <div className="flex items-start">
           <div className="w-full max-w-sm">
             <ImageStatsCard
@@ -34,7 +34,7 @@ export function CardsShowcase() {
             <span className="text-muted-foreground">Component:</span>{" "}
             ImageStatsCard
           </p>
-          <pre className="overflow-x-auto rounded-md border bg-muted p-3 text-sm leading-relaxed text-foreground">
+          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
             <code>{`<ImageStatsCard
   imageSrc="/images/cards/card-alt2-objective.png"
   label="Solved Puzzles"
@@ -44,7 +44,7 @@ export function CardsShowcase() {
         </div>
       </div>
 
-      <div className="grid gap-3 rounded-md border bg-muted/40 p-4">
+      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
         <div className="flex items-start">
           <div className="w-full max-w-sm">
             <IconCard icon={Info} />
@@ -53,16 +53,15 @@ export function CardsShowcase() {
         <Separator />
         <div className="flex flex-col gap-2">
           <p className="text-sm font-medium">
-            <span className="text-muted-foreground">Component:</span>{" "}
-            IconCard
+            <span className="text-muted-foreground">Component:</span> IconCard
           </p>
-          <pre className="overflow-x-auto rounded-md border bg-muted p-3 text-sm leading-relaxed text-foreground">
+          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
             <code>{`<IconCard icon={Info} />`}</code>
           </pre>
         </div>
       </div>
 
-      <div className="grid gap-3 rounded-md border bg-muted/40 p-4">
+      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
         <div className="flex items-start">
           <div className="w-full max-w-sm">
             <ImageInformationCard
@@ -78,7 +77,7 @@ export function CardsShowcase() {
             <span className="text-muted-foreground">Component:</span>{" "}
             ImageInformationCard
           </p>
-          <pre className="overflow-x-auto rounded-md border bg-muted p-3 text-sm leading-relaxed text-foreground">
+          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
             <code>{`<ImageInformationCard
   imageSrc="/images/cards/card-alt2-core-idea.png"
   title="Caro-Kann Core Idea"
@@ -88,7 +87,7 @@ export function CardsShowcase() {
         </div>
       </div>
 
-      <div className="grid gap-3 rounded-md border bg-muted/40 p-4">
+      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
         <div className="flex items-start">
           <div className="w-full max-w-sm">
             <ProgressStatsCard percentage={74} label="Accuracy" icon={Trophy} />
@@ -100,7 +99,7 @@ export function CardsShowcase() {
             <span className="text-muted-foreground">Component:</span>{" "}
             ProgressStatsCard
           </p>
-          <pre className="overflow-x-auto rounded-md border bg-muted p-3 text-sm leading-relaxed text-foreground">
+          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
             <code>{`<ProgressStatsCard
   percentage={74}
   label="Accuracy"
@@ -110,10 +109,14 @@ export function CardsShowcase() {
         </div>
       </div>
 
-      <div className="grid gap-3 rounded-md border bg-muted/40 p-4">
+      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
         <div className="flex items-start">
           <div className="w-full max-w-sm">
-            <IconInformationCard value={932} label="Total Games" icon={Activity} />
+            <IconInformationCard
+              value={932}
+              label="Total Games"
+              icon={Activity}
+            />
           </div>
         </div>
         <Separator />
@@ -122,7 +125,7 @@ export function CardsShowcase() {
             <span className="text-muted-foreground">Component:</span>{" "}
             IconInformationCard
           </p>
-          <pre className="overflow-x-auto rounded-md border bg-muted p-3 text-sm leading-relaxed text-foreground">
+          <pre className="bg-muted text-foreground overflow-x-auto rounded-md border p-3 text-sm leading-relaxed">
             <code>{`<IconInformationCard
   value={932}
   label="Total Games"
