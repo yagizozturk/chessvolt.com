@@ -5,6 +5,7 @@ import { ImageStatsCard } from "@/components/cards/image-stats-card";
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { Separator } from "@/components/ui/separator";
 import { Activity, Info, Trophy } from "lucide-react";
+
 import { CodeViewer } from "../code-viewer";
 
 export function CardsShowcase() {
@@ -19,118 +20,124 @@ export function CardsShowcase() {
         </p>
       </div>
 
-      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
-        <div className="flex items-start">
-          <div className="w-full max-w-sm">
-            <ImageStatsCard
-              imageSrc="/images/cards/card-alt2-objective.png"
-              label="Solved Puzzles"
-              value="1,284"
-            />
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
+          <div className="flex items-start">
+            <div className="w-full max-w-sm">
+              <ImageStatsCard
+                imageSrc="/images/cards/card-alt2-objective.png"
+                label="Solved Puzzles"
+                value="1,284"
+              />
+            </div>
           </div>
-        </div>
-        <Separator />
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium">
-            <span className="text-muted-foreground">Component:</span>{" "}
-            ImageStatsCard
-          </p>
-          <CodeViewer
-            code={`<ImageStatsCard
+          <Separator />
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">
+              <span className="text-muted-foreground">Component:</span>{" "}
+              ImageStatsCard
+            </p>
+            <CodeViewer
+              code={`<ImageStatsCard
   imageSrc="/images/cards/card-alt2-objective.png"
   label="Solved Puzzles"
   value="1,284"
 />`}
-          />
-        </div>
-      </div>
-
-      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
-        <div className="flex items-start">
-          <div className="w-full max-w-sm">
-            <IconCard icon={Info} />
-          </div>
-        </div>
-        <Separator />
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium">
-            <span className="text-muted-foreground">Component:</span> IconCard
-          </p>
-          <CodeViewer code={`<IconCard icon={Info} />`} />
-        </div>
-      </div>
-
-      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
-        <div className="flex items-start">
-          <div className="w-full max-w-sm">
-            <ImageInformationCard
-              imageSrc="/images/cards/card-alt2-core-idea.png"
-              title="Caro-Kann Core Idea"
-              description="Capture central squares and keep a solid pawn structure."
             />
           </div>
         </div>
-        <Separator />
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium">
-            <span className="text-muted-foreground">Component:</span>{" "}
-            ImageInformationCard
-          </p>
-          <CodeViewer
-            code={`<ImageInformationCard
-  imageSrc="/images/cards/card-alt2-core-idea.png"
-  title="Caro-Kann Core Idea"
-  description="Capture central squares and keep a solid pawn structure."
-/>`}
-          />
-        </div>
-      </div>
 
-      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
-        <div className="flex items-start">
-          <div className="w-full max-w-sm">
-            <ProgressStatsCard percentage={74} label="Accuracy" icon={Trophy} />
+        <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
+          <div className="flex items-start">
+            <div className="w-full max-w-sm">
+              <IconCard icon={Info} />
+            </div>
+          </div>
+          <Separator />
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">
+              <span className="text-muted-foreground">Component:</span> IconCard
+            </p>
+            <CodeViewer code={`<IconCard icon={Info} />`} />
           </div>
         </div>
-        <Separator />
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium">
-            <span className="text-muted-foreground">Component:</span>{" "}
-            ProgressStatsCard
-          </p>
-          <CodeViewer
-            code={`<ProgressStatsCard
+
+        <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
+          <div className="flex items-start">
+            <div className="w-full max-w-sm">
+              <ImageInformationCard
+                imageSrc="/images/cards/card-alt2-core-idea.png"
+                title="Caro-Kann Core Idea"
+                description="Capture central squares."
+              />
+            </div>
+          </div>
+          <Separator />
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">
+              <span className="text-muted-foreground">Component:</span>{" "}
+              ImageInformationCard
+            </p>
+            <CodeViewer
+              code={`<ImageInformationCard
+  imageSrc="/images/cards/card-alt2-core-idea.png"
+  title="Caro-Kann Core Idea"
+  description="Capture central squares."
+/>`}
+            />
+          </div>
+        </div>
+
+        <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
+          <div className="flex items-start">
+            <div className="w-full max-w-sm">
+              <ProgressStatsCard
+                percentage={74}
+                label="Accuracy"
+                icon={Trophy}
+              />
+            </div>
+          </div>
+          <Separator />
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">
+              <span className="text-muted-foreground">Component:</span>{" "}
+              ProgressStatsCard
+            </p>
+            <CodeViewer
+              code={`<ProgressStatsCard
   percentage={74}
   label="Accuracy"
   icon={Trophy}
 />`}
-          />
-        </div>
-      </div>
-
-      <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
-        <div className="flex items-start">
-          <div className="w-full max-w-sm">
-            <IconInformationCard
-              value={932}
-              label="Total Games"
-              icon={Activity}
             />
           </div>
         </div>
-        <Separator />
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium">
-            <span className="text-muted-foreground">Component:</span>{" "}
-            IconInformationCard
-          </p>
-          <CodeViewer
-            code={`<IconInformationCard
+
+        <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
+          <div className="flex items-start">
+            <div className="w-full max-w-sm">
+              <IconInformationCard
+                value={932}
+                label="Total Games"
+                icon={Activity}
+              />
+            </div>
+          </div>
+          <Separator />
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">
+              <span className="text-muted-foreground">Component:</span>{" "}
+              IconInformationCard
+            </p>
+            <CodeViewer
+              code={`<IconInformationCard
   value={932}
   label="Total Games"
   icon={Activity}
 />`}
-          />
+            />
+          </div>
         </div>
       </div>
     </section>
