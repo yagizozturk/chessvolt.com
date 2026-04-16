@@ -1,11 +1,18 @@
 "use client";
 
-import { LayoutPanelTop, MousePointerClick, Tag, Zap } from "lucide-react";
+import {
+  LayoutPanelTop,
+  MousePointerClick,
+  RectangleHorizontal,
+  Tag,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { BadgesShowcase } from "../components/badges/badges-showcase";
 import { ButtonShowcase } from "../components/buttons/button-showcase";
+import { CardsShowcase } from "../components/cards/cards-showcase";
 
 export default function StorybookPage() {
   const [activeItem, setActiveItem] = useState("#buttons");
@@ -64,12 +71,25 @@ export default function StorybookPage() {
             <Tag className="size-4" />
             Badges
           </a>
+          <a
+            href="#cards"
+            aria-current={activeItem === "#cards" ? "page" : undefined}
+            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+              activeItem === "#cards"
+                ? "bg-primary/10 text-primary"
+                : "text-foreground hover:bg-accent"
+            }`}
+          >
+            <RectangleHorizontal className="size-4" />
+            Cards
+          </a>
         </nav>
       </aside>
 
       <main className="flex-1 space-y-10 overflow-auto p-6">
         <ButtonShowcase />
         <BadgesShowcase />
+        <CardsShowcase />
       </main>
     </div>
   );

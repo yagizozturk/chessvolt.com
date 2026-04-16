@@ -4,14 +4,14 @@ import { Card } from "@/components/ui/card";
 import { COLOR_MAP } from "@/lib/shared/constants/color-map";
 import { cn } from "@/lib/utils/cn";
 
-type StatsViewerProps = React.HTMLAttributes<HTMLDivElement> & {
+type IconInformationCardProps = React.HTMLAttributes<HTMLDivElement> & {
   value: number | string;
   label: string;
   icon: LucideIcon;
   color?: keyof typeof COLOR_MAP;
 };
 
-export function StatsViewer({
+export function IconInformationCard({
   value,
   label,
   icon: Icon,
@@ -19,7 +19,7 @@ export function StatsViewer({
   className,
   style,
   ...props
-}: StatsViewerProps) {
+}: IconInformationCardProps) {
   const rgb = COLOR_MAP[color];
 
   return (

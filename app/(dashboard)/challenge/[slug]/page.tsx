@@ -1,4 +1,4 @@
-import { NumberStatsCard } from "@/components/cards/number-stats-card";
+import { ImageStatsCard } from "@/components/cards/image-stats-card";
 import {
   Card,
   CardContent,
@@ -125,17 +125,17 @@ export default async function ChallengePage({ params }: Params) {
             </CardContent>
           </Card>
 
-          <NumberStatsCard
+          <ImageStatsCard
             imageSrc="/images/cards/correct.png"
             label="Correct answers"
             value={correct}
           />
-          <NumberStatsCard
+          <ImageStatsCard
             imageSrc="/images/cards/incorrect.png"
             label="Incorrect attempts"
             value={incorrect}
           />
-          <NumberStatsCard
+          <ImageStatsCard
             imageSrc="/images/cards/stats-success.png"
             label="Success percentage"
             value={`${solveRate}%`}

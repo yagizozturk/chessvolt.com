@@ -1,6 +1,5 @@
-import { NumberStatsCard } from "@/components/cards/number-stats-card";
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
-import { StatsViewer } from "@/components/cards/stats-viewer";
+import { IconInformationCard } from "@/components/cards/icon-information-card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import {
   getCorrectlySolvedVariantIds,
@@ -90,13 +89,13 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             icon={PartyPopper}
             className="w-full"
           />
-          <StatsViewer
+          <IconInformationCard
             value={correct}
             label="CORRECT"
             icon={Star}
             color="blue"
           />
-          <StatsViewer
+          <IconInformationCard
             value={incorrect}
             label="INCORRECT"
             icon={CircleX}

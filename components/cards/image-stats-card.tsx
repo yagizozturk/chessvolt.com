@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import Image from "next/image";
 
-type NumberStatsCardProps = {
+type ImageStatsCardProps = {
   /** Public path, e.g. `/images/cards/stats-correct.png` */
   imageSrc: string;
   imageAlt?: string;
@@ -15,13 +15,13 @@ type NumberStatsCardProps = {
  * Fonksyon Açıklaması ✅
  * Bu fonksiyon, bir sayısal istatistik kartı oluşturur.
  */
-export function NumberStatsCard({
+export function ImageStatsCard({
   imageSrc,
   imageAlt,
   label,
   value,
   className,
-}: NumberStatsCardProps) {
+}: ImageStatsCardProps) {
   return (
     <Card className={cn("ring-border bg-transparent ring-2", className)}>
       <CardContent className="flex items-center gap-4">

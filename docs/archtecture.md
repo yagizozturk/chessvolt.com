@@ -84,7 +84,7 @@
 │   ├── solve-success-dialog
 │   │   └── solve-success-dialog.tsx
 │   ├── stats
-│   │   ├── number-stats-card.tsx ✅
+│   │   ├── image-stats-card.tsx ✅
 │   │   └── progress-stats-card.tsx
 │   ├── success-overlay
 │   │   └── success-overlay.tsx

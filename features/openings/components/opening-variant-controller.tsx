@@ -1,8 +1,8 @@
 "use client";
 
 import { ActiveGoalViewer } from "@/components/active-goal-viewer/active-goal-viewer";
+import ImageInformationCard from "@/components/cards/image-information-card";
 import GoalProgress from "@/components/goal-progress/goal-progress";
-import CardInformer from "@/components/informer/card-informer";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { VoltButton } from "@/components/ui/volt-button";
@@ -243,7 +243,7 @@ export default function OpeningVariantController({
           {ideaItems.length > 0 ? (
             <div className="flex flex-col gap-3">
               {ideaItems.map((item) => (
-                <CardInformer
+                <ImageInformationCard
                   key={item.title}
                   imageSrc={`/images/cards/card-alt2-${item.title.toLowerCase().replace(" ", "-")}.png`}
                   title={item.title}
