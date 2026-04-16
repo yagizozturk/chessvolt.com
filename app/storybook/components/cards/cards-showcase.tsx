@@ -3,7 +3,8 @@ import { ImageStatsCard } from "@/components/cards/image-stats-card";
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { IconInformationCard } from "@/components/cards/icon-information-card";
 import { Separator } from "@/components/ui/separator";
-import { Activity, Trophy } from "lucide-react";
+import { Activity, Info, Trophy } from "lucide-react";
+import { IconCard } from "@/components/cards/icon-card";
 
 export function CardsShowcase() {
   return (
@@ -39,6 +40,24 @@ export function CardsShowcase() {
   label="Solved Puzzles"
   value="1,284"
 />`}</code>
+          </pre>
+        </div>
+      </div>
+
+      <div className="grid gap-3 rounded-md border bg-muted/40 p-4">
+        <div className="flex items-start">
+          <div className="w-full max-w-sm">
+            <IconCard icon={Info} />
+          </div>
+        </div>
+        <Separator />
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-medium">
+            <span className="text-muted-foreground">Component:</span>{" "}
+            IconCard
+          </p>
+          <pre className="overflow-x-auto rounded-md border bg-muted p-3 text-sm leading-relaxed text-foreground">
+            <code>{`<IconCard icon={Info} />`}</code>
           </pre>
         </div>
       </div>
