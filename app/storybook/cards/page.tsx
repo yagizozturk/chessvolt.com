@@ -5,6 +5,7 @@ import { ImageStatsCard } from "@/components/cards/image-stats-card";
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { Separator } from "@/components/ui/separator";
 import { Activity, Info, Trophy } from "lucide-react";
+
 import { CodeViewer } from "../components/code-viewer";
 import { StorybookPage } from "../page";
 

@@ -1,12 +1,9 @@
 "use client";
 
-import { ActiveGoalViewer } from "@/components/active-goal-viewer/active-goal-viewer";
 import ImageInformationCard from "@/components/cards/image-information-card";
-import GoalProgress from "@/components/goal-progress/goal-progress";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { VoltButton } from "@/components/ui/volt-button";
-import { VariantSlider } from "@/components/variant-slider/variant-slider";
 import VoltBoard, {
   type VoltBoardHandle,
 } from "@/components/volt-board/volt-board";
@@ -223,22 +220,6 @@ export default function OpeningVariantController({
 
         {/*************** Right Column ***************/}
         <div className="flex min-w-0 flex-col gap-4">
-          {/*************** Goal Progress ***************/}
-          {hasGoals ? (
-            <GoalProgress
-              completedGoals={completedGoalsCount}
-              totalGoals={goalStepperItems.length}
-            />
-          ) : null}
-
-          {/*************** Goals (stacked; active expanded) ***************/}
-          {hasGoals ? (
-            <ActiveGoalViewer
-              items={goalStepperItems}
-              activeIndex={activeGoalStepIndex}
-            />
-          ) : null}
-
           {/*************** Ideas (stacked; active expanded) ***************/}
           {ideaItems.length > 0 ? (
             <div className="flex flex-col gap-3">
@@ -262,12 +243,6 @@ export default function OpeningVariantController({
             >
               Hint
             </VoltButton>
-          </div>
-          <div className="pt-1">
-            <VariantSlider
-              variants={siblingVariants ?? []}
-              activeVariantId={variant.id}
-            />
           </div>
         </div>
       </div>
