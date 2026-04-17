@@ -7,6 +7,7 @@ import { VoltButton } from "@/components/ui/volt-button";
 import VoltBoard, {
   type VoltBoardHandle,
 } from "@/components/volt-board/volt-board";
+import { DEFAULT_GOAL_IMAGE_SRC } from "@/features/openings/constants/opening-variant-controller.constants";
 import { useOpeningVariantController } from "@/features/openings/hooks/use-opening-variant-controller";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { useEffect, useRef } from "react";
@@ -17,6 +18,30 @@ type OpeningVariantControllerProps = {
   nextVariantId: string | null;
   parentOpeningUrl: string;
 };
+
+type GoalItem = NonNullable<OpeningVariant["goals"]>[number];
+
+// ============================================================================
+// Goal görselini öncelik sırasına göre belirler:
+// 1) nextGoal.imageSrc
+// 2) nextGoal.card -> /images/cards/{card}.png
+// 3) default goal görseli
+// ============================================================================
+function getGoalImageSrc(nextGoal: GoalItem | null) {
+  if (!nextGoal) return DEFAULT_GOAL_IMAGE_SRC;
+  if (nextGoal.imageSrc) return nextGoal.imageSrc;
+
+  const cardName = nextGoal.card?.trim();
+  return cardName ? `/images/cards/${cardName}.png` : DEFAULT_GOAL_IMAGE_SRC;
+}
+
+// ============================================================================
+// Idea başlığını dosya adına uygun slug formatına çevirip görsel path'i üretir.
+// ============================================================================
+function getIdeaImageSrc(title: string) {
+  const slug = title.trim().toLowerCase().replace(/\s+/g, "-");
+  return `/images/cards/card-alt2-${slug}.png`;
+}
 
 /**
  * Fonksyon Açıklaması
@@ -46,6 +71,9 @@ export default function OpeningVariantController({
     setShowCorrect,
     showCorrect,
   } = useOpeningVariantController({ variant });
+
+  const goalImageSrc = getGoalImageSrc(nextGoal);
+  const goalImageAlt = nextGoal?.imageAlt ?? nextGoal?.card ?? nextGoal?.title;
 
   // ============================================================================
   // Doğru çözüm dialog'u açıldığında konfeti bir kez tetiklenir.
@@ -118,33 +146,28 @@ export default function OpeningVariantController({
         {/*************** Right Column ***************/}
         <div className="flex min-w-0 flex-col gap-4">
           {/*************** Goals ***************/}
-          {nextGoal ? (
+          {nextGoal && (
             <ImageInformationCard
-              imageSrc={
-                nextGoal.imageSrc ??
-                (nextGoal.card?.trim()
-                  ? `/images/cards/${nextGoal.card.trim()}.png`
-                  : "/images/cards/card-alt2-objective.png")
-              }
-              imageAlt={nextGoal.imageAlt ?? nextGoal.card ?? nextGoal.title}
+              imageSrc={goalImageSrc}
+              imageAlt={goalImageAlt}
               title={nextGoal.title}
               description={nextGoal.description}
             />
-          ) : null}
+          )}
 
           {/*************** Ideas (stacked; active expanded) ***************/}
-          {ideaItems.length > 0 ? (
+          {ideaItems.length > 0 && (
             <div className="flex flex-col gap-3">
               {ideaItems.map((item) => (
                 <ImageInformationCard
                   key={item.title}
-                  imageSrc={`/images/cards/card-alt2-${item.title.toLowerCase().replace(" ", "-")}.png`}
+                  imageSrc={getIdeaImageSrc(item.title)}
                   title={item.title}
                   description={item.description}
                 />
               ))}
             </div>
-          ) : null}
+          )}
 
           {/*************** Hint Button ***************/}
           <div>
