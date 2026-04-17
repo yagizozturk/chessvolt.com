@@ -1,5 +1,5 @@
 import { ColorsShowcase } from "../components/colors/colors-showcase";
-import StorybookPage from "../storybook-page";
+import { StorybookPage } from "../page";
 
 export default function StorybookColorsPage() {
   return (

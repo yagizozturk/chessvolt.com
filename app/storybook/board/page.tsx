@@ -1,7 +1,7 @@
 import VoltBoard from "@/components/volt-board/volt-board";
 
 import { CodeViewer } from "../components/code-viewer";
-import StorybookPage from "../storybook-page";
+import { StorybookPage } from "../page";
 
 export default function StorybookBoardPage() {
   return (

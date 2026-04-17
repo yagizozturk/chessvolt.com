@@ -1,7 +1,7 @@
 import { IterationBadge } from "@/components/number-badge/number-badge";
 
 import { CodeViewer } from "../components/code-viewer";
-import StorybookPage from "../storybook-page";
+import { StorybookPage } from "../page";
 
 export default function MiscPage() {
   return (

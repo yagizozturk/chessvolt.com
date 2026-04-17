@@ -1,7 +1,7 @@
 import { CollectionHeader } from "@/components/collection/collection-header";
 
 import { CodeViewer } from "../components/code-viewer";
-import StorybookPage from "../storybook-page";
+import { StorybookPage } from "../page";
 
 export default function CollectionHeaderPage() {
   return (
