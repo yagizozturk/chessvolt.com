@@ -53,52 +53,17 @@ export default function OpeningVariantController({
     return [...g].sort((a, b) => a.ply - b.ply);
   }, [variant.goals]);
 
+  const nextGoal = useMemo(() => {
+    if (activePly == null) return null;
+    return sortedGoals.find((goal) => goal.ply === activePly + 1) ?? null;
+  }, [sortedGoals, activePly]);
+
   // ============================================================================
   // activePly hedef ply’ine ulaştıysa / geçtiyse tamam
   // (bir sonraki hedefe geçilebildiyse önceki biter)
   // ============================================================================
   const isGoalDone = (goal: MoveGoal) =>
     activePly != null && activePly >= goal.ply;
-
-  // ============================================================================
-  // GoalStepper içinde hangi adımın aktif/highlight olacağını hesaplar.
-  // Önce "bir sonraki hedef"i bulur; yoksa ilk tamamlanmamışı seçer.
-  // ============================================================================
-  const activeGoalStepIndex = useMemo(() => {
-    if (sortedGoals.length === 0) return 0;
-    const highlighted = sortedGoals.findIndex(
-      (g) => activePly != null && g.ply === activePly + 1,
-    );
-    if (highlighted !== -1) return highlighted;
-    const firstIncomplete = sortedGoals.findIndex(
-      (g) => activePly == null || activePly < g.ply,
-    );
-    if (firstIncomplete !== -1) return firstIncomplete;
-    return sortedGoals.length - 1;
-  }, [sortedGoals, activePly]);
-
-  // ============================================================================
-  // Goal verisini GoalStepper bileşeninin beklediği item formatına dönüştürür.
-  // completed alanı activePly üzerinden dinamik hesaplanır.
-  // ============================================================================
-  const goalStepperItems = useMemo(
-    () =>
-      sortedGoals.map((g) => {
-        const cardCode = g.card?.trim();
-        return {
-          title: g.title,
-          description: g.description,
-          imageSrc: cardCode ? `/images/cards/${cardCode}.png` : "",
-          imageAlt: cardCode ?? g.title,
-          completed: isGoalDone(g),
-        };
-      }),
-    [sortedGoals, activePly],
-  );
-  const hasGoals = goalStepperItems.length > 0;
-  const completedGoalsCount = goalStepperItems.filter(
-    (item) => item.completed,
-  ).length;
 
   const ideaItems = useMemo(() => {
     if (!variant.ideas) return [];
@@ -220,6 +185,21 @@ export default function OpeningVariantController({
 
         {/*************** Right Column ***************/}
         <div className="flex min-w-0 flex-col gap-4">
+          {/*************** Goals ***************/}
+          {nextGoal ? (
+            <ImageInformationCard
+              imageSrc={
+                nextGoal.imageSrc ??
+                (nextGoal.card?.trim()
+                  ? `/images/cards/${nextGoal.card.trim()}.png`
+                  : "/images/cards/card-alt2-objective.png")
+              }
+              imageAlt={nextGoal.imageAlt ?? nextGoal.card ?? nextGoal.title}
+              title={nextGoal.title}
+              description={nextGoal.description}
+            />
+          ) : null}
+
           {/*************** Ideas (stacked; active expanded) ***************/}
           {ideaItems.length > 0 ? (
             <div className="flex flex-col gap-3">
