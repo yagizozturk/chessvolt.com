@@ -31,8 +31,8 @@ export type VoltBoardProps = {
   coordinates?: boolean;
   /** Oyuncunun tahtada yaptığı her hamle denemesi; UCI (örn. `e2e4`). Doğru / yanlış ayrımı yok. */
   onUserMovePlayed?: (uci: string) => void;
-  /** Oyuncu doğru hamle yaptığında controller'a haber verir. */
-  onUserSuccessMovePlayed?: () => void;
+  /** Oyuncu doğru hamle yaptığında controller'a haber verir (varış karesi ile). */
+  onUserSuccessMovePlayed?: (toSquare: string) => void;
   /** Oyuncu beklenen hamleyi doğru oynadıktan sonra güncel FEN (ör. yorum / koç eşlemesi için). */
   onFenAfterUserMove?: (fen: string) => void;
   /** Otomatik rakip cevabı işlendikten sonra güncel FEN. */
@@ -154,8 +154,8 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       lastMoveRef.current = [from as Key, to as Key];
       playCorrectSound();
       clearHintShapes();
-      onUserSuccessMovePlayed?.();
       updateBoard();
+      onUserSuccessMovePlayed?.(to);
       onFenAfterUserMove?.(game.current.fen());
     }
 

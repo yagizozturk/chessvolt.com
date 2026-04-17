@@ -138,7 +138,9 @@ export default function OpeningVariantController({
             viewOnly={false}
             onFenAfterUserMove={handleFenAfterUserMove}
             onFenAfterOpponentMove={handleFenAfterOpponentMove}
-            onUserSuccessMovePlayed={() => setHintCount(0)}
+            onUserSuccessMovePlayed={() => {
+              setHintCount(0);
+            }}
             onSolved={handleSolved}
           />
         </div>

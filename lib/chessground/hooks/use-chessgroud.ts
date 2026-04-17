@@ -97,6 +97,19 @@ export function useChessground({
     });
   };
 
+  /*const markSquareBestMove = (square: string) => {
+    if (!ground.current) return;
+
+    const custom = new Map<Key, string>();
+    custom.set(square as Key, "custom-best-move");
+
+    ground.current.set({
+      highlight: {
+        custom,
+      },
+    });
+  };*/
+
   // ============================================================================
   // Chessground determines which CSS classes to apply to squares
   // ============================================================================
@@ -146,6 +159,7 @@ export function useChessground({
 
   return {
     ground,
+    //markSquareBestMove,
     updateBoard,
     highlightAlternativeMoves,
   };

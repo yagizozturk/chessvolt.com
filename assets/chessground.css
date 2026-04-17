@@ -232,24 +232,7 @@ coords.squares:nth-of-type(even) :nth-child(odd) {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
-cg-board > square.custom-last-move-to::after {
-  content: "";
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 32px; /* ikon boyutu */
-  height: 32px;
-  background-image: url("/images/icons/icon-checkmark.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  pointer-events: none;
-  z-index: 99;
-}
-
-cg-board > square.custom-suggestion-one::after,
-cg-board > square.custom-suggestion-two::after,
-cg-board > square.custom-suggestion-three::after {
+cg-board > square.custom-best-move::after {
   content: "";
   position: absolute;
   top: -10px;
@@ -263,14 +246,6 @@ cg-board > square.custom-suggestion-three::after {
   z-index: 99;
 }
 
-cg-board > square.custom-suggestion-one::after {
-  background-image: url("/images/icons/icon-first.png") !important;
-}
-
-cg-board > square.custom-suggestion-two::after {
-  background-image: url("/images/icons/icon-second.png");
-}
-
-cg-board > square.custom-suggestion-three::after {
-  background-image: url("/images/icons/icon-third.png");
+cg-board > square.custom-best-move::after {
+  background-image: url("/images/icons/icon-checkmark.png") !important;
 }
