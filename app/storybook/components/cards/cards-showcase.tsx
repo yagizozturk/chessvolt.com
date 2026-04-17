@@ -8,7 +8,7 @@ import { Activity, Info, Trophy } from "lucide-react";
 
 import { CodeViewer } from "../code-viewer";
 
-const iconInformationCardColors = [
+const cardColors = [
   "mint",
   "blue",
   "purple",
@@ -36,7 +36,7 @@ export function CardsShowcase() {
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
           <div className="flex items-start">
-            <div className="w-full max-w-sm">
+            <div>
               <ImageStatsCard
                 imageSrc="/images/cards/card-alt2-objective.png"
                 label="Solved Puzzles"
@@ -62,7 +62,7 @@ export function CardsShowcase() {
 
         <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
           <div className="flex items-start">
-            <div className="w-full max-w-sm">
+            <div>
               <IconCard icon={Info} />
             </div>
           </div>
@@ -77,7 +77,7 @@ export function CardsShowcase() {
 
         <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
           <div className="flex items-start">
-            <div className="w-full max-w-sm">
+            <div>
               <ImageInformationCard
                 imageSrc="/images/cards/card-alt2-core-idea.png"
                 title="Caro-Kann Core Idea"
@@ -103,12 +103,44 @@ export function CardsShowcase() {
 
         <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
           <div className="flex items-start">
-            <div className="w-full max-w-sm">
-              <ProgressStatsCard
-                percentage={74}
-                label="Accuracy"
-                icon={Trophy}
+            <div>
+              <ImageInformationCard
+                imageSrc="/images/cards/card-alt2-core-idea.png"
+                title="Caro-Kann Core Idea"
+                description="Capture central squares."
               />
+            </div>
+          </div>
+          <Separator />
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">
+              <span className="text-muted-foreground">Component:</span>{" "}
+              ImageInformationCard
+            </p>
+            <CodeViewer
+              code={`<ImageInformationCard
+  imageSrc="/images/cards/card-alt2-core-idea.png"
+  title="Caro-Kann Core Idea"
+  description="Capture central squares."
+/>`}
+            />
+          </div>
+        </div>
+
+        <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
+          <div className="flex items-start">
+            <div>
+              <div className="grid grid-cols-2 gap-3">
+                {cardColors.map((color, index) => (
+                  <ProgressStatsCard
+                    key={color}
+                    percentage={65 + index * 3}
+                    label={`${color.toUpperCase()} Accuracy`}
+                    icon={Trophy}
+                    color={color}
+                  />
+                ))}
+              </div>
             </div>
           </div>
           <Separator />
@@ -122,7 +154,13 @@ export function CardsShowcase() {
   percentage={74}
   label="Accuracy"
   icon={Trophy}
-/>`}
+  color="mint"
+/>
+
+// color prop'u alir.
+// Renk opsiyonlari:
+// "mint" | "blue" | "purple" | "amber" | "emerald"
+// | "indigo" | "rose" | "cyan" | "orange" | "pink"`}
             />
           </div>
         </div>
@@ -131,7 +169,7 @@ export function CardsShowcase() {
           <div className="flex items-start">
             <div className="w-full">
               <div className="grid grid-cols-2 gap-3">
-                {iconInformationCardColors.map((color, index) => (
+                {cardColors.map((color, index) => (
                   <IconInformationCard
                     key={color}
                     value={932 + index}

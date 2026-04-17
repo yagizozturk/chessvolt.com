@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { VoltButton } from "@/components/ui/volt-button";
+
 import { CodeViewer } from "../code-viewer";
 
 const buttonExamples = [
@@ -24,9 +25,9 @@ const buttonExamples = [
     name: "Button",
     variant: "ghost",
     size: "default",
-    label: "Tum istatistikleri gor",
-    code: `<Button variant="ghost">Tum istatistikleri gor</Button>`,
-    preview: <Button variant="ghost">Tum istatistikleri gor</Button>,
+    label: "See Stats",
+    code: `<Button variant="ghost">See Stats</Button>`,
+    preview: <Button variant="ghost">See Stats</Button>,
   },
   {
     name: "Button",
@@ -66,11 +67,9 @@ export function ButtonShowcase() {
         {buttonExamples.map((example) => (
           <div
             key={example.code}
-            className="flex flex-col gap-3 rounded-md border bg-muted/40 p-4"
+            className="bg-muted/40 flex flex-col gap-3 rounded-md border p-4"
           >
-            <div className="flex items-center">
-              {example.preview}
-            </div>
+            <div className="flex items-center">{example.preview}</div>
 
             <Separator />
 
@@ -81,12 +80,12 @@ export function ButtonShowcase() {
               </p>
               <p className="text-sm">
                 <span className="text-muted-foreground">Variant:</span>{" "}
-                <code className="rounded bg-muted px-1 py-0.5 text-xs">
+                <code className="bg-muted rounded px-1 py-0.5 text-xs">
                   {example.variant}
                 </code>
                 {" · "}
                 <span className="text-muted-foreground">Size:</span>{" "}
-                <code className="rounded bg-muted px-1 py-0.5 text-xs">
+                <code className="bg-muted rounded px-1 py-0.5 text-xs">
                   {example.size}
                 </code>
               </p>

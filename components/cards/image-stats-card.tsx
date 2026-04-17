@@ -25,13 +25,13 @@ export function ImageStatsCard({
   return (
     <Card className={cn("ring-border bg-transparent ring-2", className)}>
       <CardContent className="flex items-center gap-4">
-        <div className="flex size-14 shrink-0 items-center justify-center rounded-xl">
+        <div className="flex size-16 shrink-0 items-center justify-center rounded-xl">
           <Image
             src={imageSrc}
             alt={imageAlt ?? label}
-            width={42}
-            height={42}
-            className="h-10 w-10 object-contain"
+            width={50}
+            height={70}
+            className="h-14 w-10 object-contain"
           />
         </div>
         <div className="min-w-0 flex-1">
