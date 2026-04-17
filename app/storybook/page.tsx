@@ -1,3 +1,5 @@
-import StorybookPage from "./storybook-page";
+import { redirect } from "next/navigation";
 
-export default StorybookPage;
+export default function StorybookHomePage() {
+  redirect("/storybook/buttons");
+}

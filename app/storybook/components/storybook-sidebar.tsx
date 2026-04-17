@@ -6,17 +6,12 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { LayoutPanelTop, Map, PieChart, Sparkles, Zap } from "lucide-react";
+import { LayoutPanelTop, Zap } from "lucide-react";
 import * as React from "react";
 
 import { NavMain } from "./nav-main";
 
 const data = {
-  user: {
-    name: "Storybook",
-    email: "ui@chessvolt.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "ChessVolt",
@@ -27,44 +22,39 @@ const data = {
   navMain: [
     {
       title: "Components",
-      url: "#",
+      url: "/storybook/buttons",
       icon: <LayoutPanelTop className="size-4" />,
       isActive: true,
       items: [
         {
           title: "Buttons",
-          url: "#buttons",
+          url: "/storybook/buttons",
         },
         {
           title: "Badges",
-          url: "#badges",
+          url: "/storybook/badges",
+        },
+        {
+          title: "Board",
+          url: "/storybook/board",
         },
         {
           title: "Cards",
-          url: "#cards",
+          url: "/storybook/cards",
         },
         {
           title: "Colors",
-          url: "#colors",
+          url: "/storybook/colors",
+        },
+        {
+          title: "Collections",
+          url: "/storybook/collection-header",
+        },
+        {
+          title: "Misc",
+          url: "/storybook/misc",
         },
       ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Tokens",
-      url: "#colors",
-      icon: <Sparkles className="size-4" />,
-    },
-    {
-      name: "Components",
-      url: "#buttons",
-      icon: <PieChart className="size-4" />,
-    },
-    {
-      name: "Layouts",
-      url: "#cards",
-      icon: <Map className="size-4" />,
     },
   ],
 };
@@ -77,8 +67,8 @@ export function StorybookSidebar({
       <SidebarContent>
         <SidebarHeader>
           <div className="flex items-center gap-2 px-2 py-1.5">
-            <Zap className="size-5 text-[#fcc800]" />
-            <span className="text-sm font-semibold tracking-tight">
+            <Zap className="size-5" />
+            <span className="text-base font-bold tracking-tight">
               chessvolt
             </span>
           </div>
