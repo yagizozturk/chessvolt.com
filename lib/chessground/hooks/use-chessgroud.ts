@@ -57,7 +57,6 @@ export function useChessground({
         events: {
           after: (from: string, to: string) => {
             onMoveRef.current(from, to);
-            markSquareLastMove(from, to);
           },
         },
       },
@@ -80,15 +79,14 @@ export function useChessground({
   }, [sourceId, boardRef, getBoardConfig]);
 
   // ============================================================================
-  // After player moves, show whether the move was good or bad.
-  // Called in the after event post-move. Adds CSS to the square.
+  // After player moves wrong, show whether the move is bad.
+  // Called in the volt-board.tsx post-move. Adds CSS to the square.
   // ============================================================================
-  const markSquareLastMove = (from: string, to: string) => {
+  const markSquareWrongMove = (square: string) => {
     if (!ground.current) return;
 
     const custom = new Map<Key, string>();
-    custom.set(to as Key, "custom-last-move-to");
-    custom.set(from as Key, "custom-last-move-from");
+    custom.set(square as Key, "custom-wrong-move");
 
     ground.current.set({
       highlight: {
@@ -96,55 +94,6 @@ export function useChessground({
       },
     });
   };
-
-  /*const markSquareBestMove = (square: string) => {
-    if (!ground.current) return;
-
-    const custom = new Map<Key, string>();
-    custom.set(square as Key, "custom-best-move");
-
-    ground.current.set({
-      highlight: {
-        custom,
-      },
-    });
-  };*/
-
-  // ============================================================================
-  // Chessground determines which CSS classes to apply to squares
-  // ============================================================================
-  function highlightAlternativeMoves(squares: string[]) {
-    console.log("squares", squares);
-    if (!ground.current) return;
-
-    const custom = new Map<Key, string>();
-    const sameSquares = new Set<string>(); // Stockfish may show same move twice. Check for duplicate squares so icons don't overlap.
-    let uniqueIndex = 0; // Keep index outside foreach so return order doesn't shift
-
-    squares.forEach((square) => {
-      // Skip if same square already exists.
-      if (sameSquares.has(square)) return;
-      sameSquares.add(square);
-
-      const className =
-        uniqueIndex === 0
-          ? "custom-suggestion-one"
-          : uniqueIndex === 1
-            ? "custom-suggestion-two"
-            : uniqueIndex === 2
-              ? "custom-suggestion-three"
-              : "custom-suggestion";
-      custom.set(square as Key, className);
-
-      uniqueIndex++;
-    });
-
-    ground.current.set({
-      highlight: {
-        custom,
-      },
-    });
-  }
 
   // ============================================================================
   // Update board
@@ -159,8 +108,7 @@ export function useChessground({
 
   return {
     ground,
-    //markSquareBestMove,
+    markSquareWrongMove,
     updateBoard,
-    highlightAlternativeMoves,
   };
 }

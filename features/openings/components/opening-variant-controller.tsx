@@ -138,7 +138,8 @@ export default function OpeningVariantController({
             viewOnly={false}
             onFenAfterUserMove={handleFenAfterUserMove}
             onFenAfterOpponentMove={handleFenAfterOpponentMove}
-            onUserSuccessMovePlayed={() => {
+            onUserSuccessMovePlayed={(toSquare) => {
+              console.log("user moved to square", toSquare);
               setHintCount(0);
             }}
             onSolved={handleSolved}

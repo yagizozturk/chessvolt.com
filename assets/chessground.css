@@ -232,7 +232,8 @@ coords.squares:nth-of-type(even) :nth-child(odd) {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
-cg-board > square.custom-best-move::after {
+cg-board > square.custom-best-move::after,
+cg-board > square.custom-wrong-move::after {
   content: "";
   position: absolute;
   top: -10px;
@@ -248,4 +249,8 @@ cg-board > square.custom-best-move::after {
 
 cg-board > square.custom-best-move::after {
   background-image: url("/images/icons/icon-checkmark.png") !important;
+}
+
+cg-board > square.custom-wrong-move::after {
+  background-image: url("/images/icons/icon-error.png") !important;
 }

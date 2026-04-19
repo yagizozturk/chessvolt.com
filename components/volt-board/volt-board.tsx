@@ -116,7 +116,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
     // ============================================================================
     // Initialize Chessground
     // ============================================================================
-    const { ground, updateBoard } = useChessground({
+    const { ground, markSquareWrongMove, updateBoard } = useChessground({
       boardRef,
       game,
       sourceId,
@@ -126,6 +126,40 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       lastMoveRef,
       onMove: handleMove,
     });
+
+    // ============================================================================
+    // Events
+    // ============================================================================
+    function handleMove(from: string, to: string) {
+      if (!game.current || !ground.current) return;
+
+      const currentStep = currentStepRef.current;
+      const expectedUci = movesArray[currentStep];
+      if (!expectedUci) return;
+
+      const userUci = from + to;
+
+      onUserMovePlayed?.(userUci);
+
+      if (!isExpectedMove(userUci, expectedUci)) {
+        handleWrongMove(to);
+        return;
+      }
+
+      applyUserMove(from, to);
+      const nextStep = advanceStep();
+
+      // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
+      if (nextStep >= movesArray.length) {
+        finishSolution();
+        return;
+      }
+
+      const opponentUci = movesArray[nextStep];
+      if (!opponentUci) return;
+      applyOpponentMove(opponentUci);
+      advanceStep();
+    }
 
     function clearHintShapes() {
       ground.current?.setAutoShapes([]);
@@ -142,7 +176,9 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       return currentStepRef.current;
     }
 
-    function handleWrongMove() {
+    function handleWrongMove(to: string) {
+      // TODO: Play wrong move sound
+      markSquareWrongMove(to);
       playMoveSound();
       clearHintShapes();
       updateBoard();
@@ -171,40 +207,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       lastMoveRef.current = [oppFrom as Key, oppTo as Key];
       onFenAfterOpponentMove?.(game.current.fen());
       updateBoard();
-    }
-
-    // ============================================================================
-    // Events
-    // ============================================================================
-    function handleMove(from: string, to: string) {
-      if (!game.current || !ground.current) return;
-
-      const currentStep = currentStepRef.current;
-      const expectedUci = movesArray[currentStep];
-      if (!expectedUci) return;
-
-      const userUci = from + to;
-
-      onUserMovePlayed?.(userUci);
-
-      if (!isExpectedMove(userUci, expectedUci)) {
-        handleWrongMove();
-        return;
-      }
-
-      applyUserMove(from, to);
-      const nextStep = advanceStep();
-
-      // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
-      if (nextStep >= movesArray.length) {
-        finishSolution();
-        return;
-      }
-
-      const opponentUci = movesArray[nextStep];
-      if (!opponentUci) return;
-      applyOpponentMove(opponentUci);
-      advanceStep();
     }
 
     // ============================================================================
