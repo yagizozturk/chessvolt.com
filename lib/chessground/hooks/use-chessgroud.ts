@@ -28,6 +28,7 @@ export function useChessground({
   onMove,
 }: UseChessgroundOptions) {
   const ground = useRef<ReturnType<typeof Chessground> | null>(null);
+  const customSquareHighlightsRef = useRef<Map<Key, string>>(new Map());
   const onMoveRef = useRef(onMove);
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export function useChessground({
       lastMove: lastMoveRef.current,
       highlight: {
         check: isCheck,
+        custom: new Map(customSquareHighlightsRef.current),
       },
       movable: {
         free: false,
@@ -70,6 +72,7 @@ export function useChessground({
     if (!boardRef.current) return;
 
     ground.current?.destroy();
+    customSquareHighlightsRef.current = new Map();
     ground.current = Chessground(boardRef.current, getBoardConfig());
 
     return () => {
@@ -79,21 +82,24 @@ export function useChessground({
   }, [sourceId, boardRef, getBoardConfig]);
 
   // ============================================================================
-  // After player moves wrong, show whether the move is bad.
-  // Called in the volt-board.tsx post-move. Adds CSS to the square.
+  // Square feedback (wrong move, blunder, best move, etc.) via CSS classes on cg-square.
+  // Class names should match rules in assets/chessground.css (e.g. custom-wrong-move).
   // ============================================================================
-  const markSquareWrongMove = (square: string) => {
-    if (!ground.current) return;
+  const setSquareCustomHighlight = useCallback(
+    (square: string, cssClass: string) => {
+      const next = new Map(customSquareHighlightsRef.current);
+      next.set(square as Key, cssClass);
+      customSquareHighlightsRef.current = next;
+      if (!ground.current) return;
+      ground.current.set(getBoardConfig());
+    },
+    [getBoardConfig],
+  );
 
-    const custom = new Map<Key, string>();
-    custom.set(square as Key, "custom-wrong-move");
-
-    ground.current.set({
-      highlight: {
-        custom,
-      },
-    });
-  };
+  /** Sadece ref'i temizler; tahtayı güncellemek için hemen ardından `updateBoard()` çağrılmalıdır. */
+  const clearSquareCustomHighlights = useCallback(() => {
+    customSquareHighlightsRef.current = new Map();
+  }, []);
 
   // ============================================================================
   // Update board
@@ -108,7 +114,8 @@ export function useChessground({
 
   return {
     ground,
-    markSquareWrongMove,
+    setSquareCustomHighlight,
+    clearSquareCustomHighlights,
     updateBoard,
   };
 }

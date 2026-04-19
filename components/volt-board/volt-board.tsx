@@ -116,7 +116,8 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
     // ============================================================================
     // Initialize Chessground
     // ============================================================================
-    const { ground, markSquareWrongMove, updateBoard } = useChessground({
+    const { ground, setSquareCustomHighlight, clearSquareCustomHighlights, updateBoard } =
+      useChessground({
       boardRef,
       game,
       sourceId,
@@ -178,14 +179,14 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
 
     function handleWrongMove(to: string) {
       // TODO: Play wrong move sound
-      markSquareWrongMove(to);
+      setSquareCustomHighlight(to, "custom-wrong-move");
       playMoveSound();
       clearHintShapes();
-      updateBoard();
       onSolved?.(false);
     }
 
     function applyUserMove(from: string, to: string) {
+      clearSquareCustomHighlights();
       makeMove(from, to, DEFAULT_PROMOTION_PIECE);
       lastMoveRef.current = [from as Key, to as Key];
       playCorrectSound();
