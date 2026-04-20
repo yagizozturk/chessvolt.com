@@ -9,8 +9,8 @@ import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 import {
-  getMoveFeedbackClass,
   type MoveQuality,
+  getMoveFeedbackClass,
 } from "@/lib/utils/getMoveFeedbackClass";
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
@@ -25,15 +25,15 @@ export type VoltBoardFeedback = {
 type VoltBoardUpdatedProps = {
   width?: number;
   height?: number;
-  onMoveAttempt?: (payload: MoveAttemptPayload) => boolean;
-  onMovePlayed?: (payload: MoveEvaluationPayload) => void;
+  onCheckMove?: (payload: MoveAttemptPayload) => boolean;
+  onMovePlayed?: (payload: MoveEvaluationPayload) => string | undefined;
   feedback?: VoltBoardFeedback | null;
 };
 
 export default function VoltBoardUpdated({
   width = 520,
   height = 520,
-  onMoveAttempt,
+  onCheckMove,
   onMovePlayed,
   feedback,
 }: VoltBoardUpdatedProps) {
@@ -44,44 +44,62 @@ export default function VoltBoardUpdated({
 
   const { updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } =
     useChessground({
-    boardRef,
-    game,
-    sourceId: "volt-board-updated-basic",
-    orientationRef,
-    viewOnly: false,
-    coordinates: true,
-    lastMoveRef,
-    onMove: (from, to) => {
-      const fenBefore = game.current.fen();
-      const playedBy = game.current.turn() === "w" ? "white" : "black";
-      const uci = `${from}${to}`;
-      const isAllowed = onMoveAttempt?.({
-        uci,
-        fenBefore,
-        playedBy,
-      });
+      boardRef,
+      game,
+      sourceId: "volt-board-updated-basic",
+      orientationRef,
+      viewOnly: false,
+      coordinates: true,
+      lastMoveRef,
+      onMove: (from, to) => {
+        const fenBefore = game.current.fen();
+        const playedBy = game.current.turn() === "w" ? "white" : "black";
+        const uci = `${from}${to}`;
+        const isCorrect = onCheckMove?.({
+          uci,
+          fenBefore,
+          playedBy,
+        });
 
-      if (isAllowed === false) {
-        updateBoard();
-        return;
-      }
+        // Yanlış hamle yapıldı
+        if (isCorrect === false) {
+          updateBoard();
+          return;
+        }
 
-      const move = makeMove(from, to, DEFAULT_PROMOTION_PIECE);
-      if (!move) {
+        // Doğru hamle yapıldı
+        const move = makeMove(from, to, DEFAULT_PROMOTION_PIECE);
+        if (!move) {
+          updateBoard();
+          return;
+        }
+
+        const fenAfter = game.current.fen();
+        lastMoveRef.current = [from as Key, to as Key];
+        const nextMove = onMovePlayed?.({
+          uci,
+          fenBefore,
+          fenAfter,
+          playedBy,
+        });
         updateBoard();
-        return;
-      }
-      const fenAfter = game.current.fen();
-      lastMoveRef.current = [from as Key, to as Key];
-      onMovePlayed?.({
-        uci,
-        fenBefore,
-        fenAfter,
-        playedBy,
-      });
-      updateBoard();
-    },
-  });
+
+        if (nextMove) {
+          const opponentFrom = nextMove.slice(0, 2);
+          const opponentTo = nextMove.slice(2, 4);
+          const opponentMove = makeMove(
+            opponentFrom,
+            opponentTo,
+            DEFAULT_PROMOTION_PIECE,
+          );
+
+          if (opponentMove) {
+            lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
+          }
+        }
+        updateBoard();
+      },
+    });
 
   useEffect(() => {
     if (!feedback) return;

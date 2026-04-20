@@ -259,7 +259,7 @@ cg-board > square.custom-wrong-move::after {
 }
 
 cg-board > square.custom-good-move::after {
-  background-image: url("/images/icons/icon-best-move.png") !important;
+  background-image: url("/images/icons/icon-electrical.gif") !important;
 }
 
 cg-board > square.custom-inaccuracy-move::after {

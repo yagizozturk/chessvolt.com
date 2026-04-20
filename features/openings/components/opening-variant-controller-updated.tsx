@@ -16,20 +16,15 @@ type OpeningVariantControllerUpdatedProps = {
 export default function OpeningVariantControllerUpdated({
   moves,
 }: OpeningVariantControllerUpdatedProps) {
-  const {
-    handleMoveAttempt,
-    handleMoveCommitted,
-    moveCount,
-    lastMoveEvaluation,
-  } =
+  const { _handleMoveCheck, _handleMovePlayed, lastMoveEvaluation } =
     useOpeningVariantControllerUpdated(moves);
   const [feedback, setFeedback] = useState<VoltBoardFeedback | null>(null);
 
   // ============================================================================
   // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
   // ============================================================================
-  function handleBoardMoveAttempt(move: MoveAttemptPayload) {
-    const { isCorrect } = handleMoveAttempt(move);
+  function handleBoardCheckMove(move: MoveAttemptPayload) {
+    const { isCorrect } = _handleMoveCheck(move);
     return isCorrect;
   }
 
@@ -37,7 +32,8 @@ export default function OpeningVariantControllerUpdated({
   // Hamle onaylanıp tahtaya uygulandıktan sonra commit event'i gelir.
   // ============================================================================
   function handleBoardMovePlayed(move: MoveEvaluationPayload) {
-    handleMoveCommitted(move);
+    const { nextMove } = _handleMovePlayed(move);
+    return nextMove;
   }
 
   // ============================================================================
@@ -57,7 +53,7 @@ export default function OpeningVariantControllerUpdated({
 
   return (
     <VoltBoardUpdated
-      onMoveAttempt={handleBoardMoveAttempt}
+      onCheckMove={handleBoardCheckMove}
       onMovePlayed={handleBoardMovePlayed}
       feedback={feedback}
     />

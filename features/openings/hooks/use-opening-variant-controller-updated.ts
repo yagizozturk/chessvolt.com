@@ -1,8 +1,6 @@
 "use client";
 
-import {
-  useMoveEvaluation,
-} from "@/features/openings/hooks/use-move-evaluation";
+import { useMoveEvaluation } from "@/features/openings/hooks/use-move-evaluation";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 import { useState } from "react";
@@ -14,15 +12,11 @@ export function useOpeningVariantControllerUpdated(initialMoves: string[]) {
     useMoveEvaluation();
 
   // ============================================================================
-  // Oyuncu hamle denemesi yapınca tetiklenir.
+  // Oyuncu hamle yapınca önce kontole girer(attempt) ve tetiklenir.
   // ============================================================================
-  function handleMoveAttempt(playedMove: MoveAttemptPayload) {
+  function _handleMoveCheck(playedMove: MoveAttemptPayload) {
     const expectedMove = moves[moveCount];
     const isCorrect = playedMove.uci === expectedMove;
-
-    if (isCorrect) {
-      incrementMoveCount();
-    }
 
     return {
       isCorrect,
@@ -31,33 +25,42 @@ export function useOpeningVariantControllerUpdated(initialMoves: string[]) {
 
   // ============================================================================
   // Hamle onaylanıp tahtaya uygulandıktan sonra tetiklenir.
+  // Oynandığına göre hamle doğrudur.
+  // Sonraki rakip hamlesi varsa index 2 artar; yoksa 1 artar.
   // ============================================================================
-  function handleMoveCommitted(playedMove: MoveEvaluationPayload) {
+  function _handleMovePlayed(playedMove: MoveEvaluationPayload) {
     evaluateMove(playedMove);
+    const currentStep = moveCount;
+    const nextMove = moves[currentStep + 1];
+    const nextUserStep = nextMove ? currentStep + 2 : currentStep + 1;
+    setMoveCount(nextUserStep);
+
+    return {
+      nextMove,
+    };
   }
 
   // ============================================================================
   // Moves arrayi içindeki hamleyi bulmak için count ı arttrırır.
   // ============================================================================
-  function incrementMoveCount() {
+  function _incrementMoveCount() {
     setMoveCount((prev) => prev + 1);
   }
 
   // ============================================================================
   // Move count'u sıfırlar.
   // ============================================================================
-  function resetMoveCount() {
+  function _resetMoveCount() {
     setMoveCount(0);
   }
 
   return {
     moves,
-    moveCount,
     engineStatus,
     lastMoveEvaluation,
-    handleMoveAttempt,
-    handleMoveCommitted,
-    incrementMoveCount,
-    resetMoveCount,
+    _handleMoveCheck,
+    _handleMovePlayed,
+    _incrementMoveCount,
+    _resetMoveCount,
   };
 }
