@@ -233,7 +233,10 @@ coords.squares:nth-of-type(even) :nth-child(odd) {
 }
 
 cg-board > square.custom-best-move::after,
-cg-board > square.custom-wrong-move::after {
+cg-board > square.custom-wrong-move::after,
+cg-board > square.custom-good-move::after,
+cg-board > square.custom-inaccuracy-move::after,
+cg-board > square.custom-blunder-move::after {
   content: "";
   position: absolute;
   top: -10px;
@@ -253,4 +256,16 @@ cg-board > square.custom-best-move::after {
 
 cg-board > square.custom-wrong-move::after {
   background-image: url("/images/icons/icon-error.png") !important;
+}
+
+cg-board > square.custom-good-move::after {
+  background-image: url("/images/icons/icon-best-move.png") !important;
+}
+
+cg-board > square.custom-inaccuracy-move::after {
+  background-image: url("/images/icons/icon-warning.png") !important;
+}
+
+cg-board > square.custom-blunder-move::after {
+  background-image: url("/images/icons/icon-blunder.png") !important;
 }

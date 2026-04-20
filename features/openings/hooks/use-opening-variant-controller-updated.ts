@@ -1,17 +1,24 @@
 "use client";
 
+import {
+  type MoveEvaluationPayload,
+  useMoveEvaluation,
+} from "@/features/openings/hooks/use-move-evaluation";
 import { useState } from "react";
 
 export function useOpeningVariantControllerUpdated(initialMoves: string[]) {
   const moves = initialMoves;
   const [moveCount, setMoveCount] = useState<number>(0);
+  const { evaluateMove, engineStatus, lastMoveEvaluation } =
+    useMoveEvaluation();
 
   // ============================================================================
   // Oyuncu hamle yapınca tetiklenir.
   // ============================================================================
-  function handleMovePlayed(playedMove: string) {
+  function handleMovePlayed(playedMove: MoveEvaluationPayload) {
     const expectedMove = moves[moveCount];
-    const isCorrect = playedMove === expectedMove;
+    const isCorrect = playedMove.uci === expectedMove;
+    evaluateMove(playedMove);
 
     if (isCorrect) {
       incrementMoveCount();
@@ -39,6 +46,8 @@ export function useOpeningVariantControllerUpdated(initialMoves: string[]) {
   return {
     moves,
     moveCount,
+    engineStatus,
+    lastMoveEvaluation,
     handleMovePlayed,
     incrementMoveCount,
     resetMoveCount,
