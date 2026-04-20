@@ -6,6 +6,8 @@ import "@/assets/volt.css";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
+import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 import {
   getMoveFeedbackClass,
   type MoveQuality,
@@ -20,23 +22,18 @@ export type VoltBoardFeedback = {
   moveQuality: MoveQuality;
 };
 
-export type VoltBoardMovePayload = {
-  uci: string;
-  fenBefore: string;
-  fenAfter: string;
-  playedBy: "white" | "black";
-};
-
 type VoltBoardUpdatedProps = {
   width?: number;
   height?: number;
-  onMovePlayed?: (payload: VoltBoardMovePayload) => void;
+  onMoveAttempt?: (payload: MoveAttemptPayload) => boolean;
+  onMovePlayed?: (payload: MoveEvaluationPayload) => void;
   feedback?: VoltBoardFeedback | null;
 };
 
 export default function VoltBoardUpdated({
   width = 520,
   height = 520,
+  onMoveAttempt,
   onMovePlayed,
   feedback,
 }: VoltBoardUpdatedProps) {
@@ -57,12 +54,27 @@ export default function VoltBoardUpdated({
     onMove: (from, to) => {
       const fenBefore = game.current.fen();
       const playedBy = game.current.turn() === "w" ? "white" : "black";
+      const uci = `${from}${to}`;
+      const isAllowed = onMoveAttempt?.({
+        uci,
+        fenBefore,
+        playedBy,
+      });
+
+      if (isAllowed === false) {
+        updateBoard();
+        return;
+      }
+
       const move = makeMove(from, to, DEFAULT_PROMOTION_PIECE);
-      if (!move) return;
+      if (!move) {
+        updateBoard();
+        return;
+      }
       const fenAfter = game.current.fen();
       lastMoveRef.current = [from as Key, to as Key];
       onMovePlayed?.({
-        uci: `${from}${to}`,
+        uci,
         fenBefore,
         fenAfter,
         playedBy,

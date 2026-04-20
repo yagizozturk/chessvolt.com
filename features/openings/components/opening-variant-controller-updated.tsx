@@ -2,39 +2,48 @@
 
 import VoltBoardUpdated, {
   type VoltBoardFeedback,
-  type VoltBoardMovePayload,
 } from "@/components/volt-board-updated/volt-board-updated";
 import { useOpeningVariantControllerUpdated } from "@/features/openings/hooks/use-opening-variant-controller-updated";
-import type { MoveQuality } from "@/lib/utils/getMoveFeedbackClass";
+import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
+import { getMoveQuality } from "@/lib/utils/getMoveQuality";
 import { useEffect, useState } from "react";
 
 type OpeningVariantControllerUpdatedProps = {
   moves: string[];
 };
 
-function getMoveQuality(deltaCp: number | null): MoveQuality {
-  if (deltaCp == null) return "good_move";
-  if (deltaCp >= -20) return "best_move";
-  if (deltaCp >= -100) return "good_move";
-  if (deltaCp >= -250) return "inaccuracy";
-  return "blunder";
-}
-
 export default function OpeningVariantControllerUpdated({
   moves,
 }: OpeningVariantControllerUpdatedProps) {
-  const { handleMovePlayed, moveCount, lastMoveEvaluation } =
+  const {
+    handleMoveAttempt,
+    handleMoveCommitted,
+    moveCount,
+    lastMoveEvaluation,
+  } =
     useOpeningVariantControllerUpdated(moves);
   const [feedback, setFeedback] = useState<VoltBoardFeedback | null>(null);
 
-  function handleBoardMovePlayed(move: VoltBoardMovePayload) {
-    const { isCorrect } = handleMovePlayed(move);
-
-    console.log("move played:", move.uci);
-    console.log("move count:", moveCount);
-    console.log("is correct:", isCorrect);
+  // ============================================================================
+  // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
+  // ============================================================================
+  function handleBoardMoveAttempt(move: MoveAttemptPayload) {
+    const { isCorrect } = handleMoveAttempt(move);
+    return isCorrect;
   }
 
+  // ============================================================================
+  // Hamle onaylanıp tahtaya uygulandıktan sonra commit event'i gelir.
+  // ============================================================================
+  function handleBoardMovePlayed(move: MoveEvaluationPayload) {
+    handleMoveCommitted(move);
+  }
+
+  // ============================================================================
+  // Last move evaluation'ı her değiştiğinde tetiklenir.
+  // Oyuncu hamlesinden sonra değişmeye başlar Hook da değişir.
+  // ============================================================================
   useEffect(() => {
     if (!lastMoveEvaluation) return;
     const toSquare = lastMoveEvaluation.playedMove.slice(2, 4);
@@ -44,16 +53,11 @@ export default function OpeningVariantControllerUpdated({
       to: toSquare,
       moveQuality,
     });
-
-    console.log("move evaluation:", lastMoveEvaluation);
-    console.log("before cp:", lastMoveEvaluation.beforeCp);
-    console.log("after cp:", lastMoveEvaluation.afterCp);
-    console.log("delta cp:", lastMoveEvaluation.deltaCp);
-    console.log("move quality:", moveQuality);
   }, [lastMoveEvaluation]);
 
   return (
     <VoltBoardUpdated
+      onMoveAttempt={handleBoardMoveAttempt}
       onMovePlayed={handleBoardMovePlayed}
       feedback={feedback}
     />

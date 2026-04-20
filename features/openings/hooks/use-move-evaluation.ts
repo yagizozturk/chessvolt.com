@@ -2,14 +2,8 @@
 
 import { useChessEngine } from "@/lib/engine/hooks/use-stockfish-engine";
 import type { EngineInfo } from "@/lib/shared/types/engine-info";
+import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 import { useEffect, useRef, useState } from "react";
-
-export type MoveEvaluationPayload = {
-  uci: string;
-  fenBefore: string;
-  fenAfter: string;
-  playedBy: "white" | "black";
-};
 
 type PendingEvaluation = MoveEvaluationPayload & {
   beforeCp: number | null;

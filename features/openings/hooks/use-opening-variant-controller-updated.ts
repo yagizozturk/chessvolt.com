@@ -1,9 +1,10 @@
 "use client";
 
 import {
-  type MoveEvaluationPayload,
   useMoveEvaluation,
 } from "@/features/openings/hooks/use-move-evaluation";
+import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 import { useState } from "react";
 
 export function useOpeningVariantControllerUpdated(initialMoves: string[]) {
@@ -13,12 +14,11 @@ export function useOpeningVariantControllerUpdated(initialMoves: string[]) {
     useMoveEvaluation();
 
   // ============================================================================
-  // Oyuncu hamle yapınca tetiklenir.
+  // Oyuncu hamle denemesi yapınca tetiklenir.
   // ============================================================================
-  function handleMovePlayed(playedMove: MoveEvaluationPayload) {
+  function handleMoveAttempt(playedMove: MoveAttemptPayload) {
     const expectedMove = moves[moveCount];
     const isCorrect = playedMove.uci === expectedMove;
-    evaluateMove(playedMove);
 
     if (isCorrect) {
       incrementMoveCount();
@@ -27,6 +27,13 @@ export function useOpeningVariantControllerUpdated(initialMoves: string[]) {
     return {
       isCorrect,
     };
+  }
+
+  // ============================================================================
+  // Hamle onaylanıp tahtaya uygulandıktan sonra tetiklenir.
+  // ============================================================================
+  function handleMoveCommitted(playedMove: MoveEvaluationPayload) {
+    evaluateMove(playedMove);
   }
 
   // ============================================================================
@@ -48,7 +55,8 @@ export function useOpeningVariantControllerUpdated(initialMoves: string[]) {
     moveCount,
     engineStatus,
     lastMoveEvaluation,
-    handleMovePlayed,
+    handleMoveAttempt,
+    handleMoveCommitted,
     incrementMoveCount,
     resetMoveCount,
   };
