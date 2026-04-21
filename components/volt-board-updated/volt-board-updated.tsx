@@ -15,15 +15,9 @@ import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
 import { useBoardSounds } from "@/lib/shared/hooks/use-board-sounds";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
-import { type MoveQuality, getMoveFeedbackClass } from "@/lib/utils/getMoveFeedbackClass";
 
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
-
-export type VoltBoardFeedback = {
-  to: string;
-  moveQuality: MoveQuality;
-};
 
 const WRONG_MOVE_REVERT_DELAY_MS = 1000;
 
@@ -35,7 +29,6 @@ type VoltBoardUpdatedProps = {
   expectedMove?: string | null;
   onCheckMove?: (payload: MoveAttemptPayload) => boolean;
   onMovePlayed?: (payload: MoveEvaluationPayload) => string | undefined;
-  feedback?: VoltBoardFeedback | null;
 };
 
 // ============================================================================
@@ -48,7 +41,7 @@ export type VoltBoardUpdatedHandle = {
 };
 
 const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProps>(function VoltBoardUpdated(
-  { sourceId, size = 620, width, height, expectedMove, onCheckMove, onMovePlayed, feedback },
+  { sourceId, size = 620, width, height, expectedMove, onCheckMove, onMovePlayed },
   ref,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
@@ -163,12 +156,14 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
     playedBy: "white" | "black",
   ) {
     clearHintShapes();
+    clearSquareCustomHighlights();
     const promotion = getPromotionPiece(game.current, from, to, DEFAULT_PROMOTION_PIECE);
     const move = makeMove(from, to, promotion ?? DEFAULT_PROMOTION_PIECE);
     if (!move) {
       return;
     }
     playCorrectSound();
+    setSquareCustomHighlight(to, "custom-best-move");
 
     const fenAfter = game.current.fen();
     lastMoveRef.current = [from as Key, to as Key];
@@ -183,19 +178,6 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
       applyOpponentMove(nextMove);
     }
   }
-
-  // ============================================================================
-  // Feedback'ı gösterir.
-  // ============================================================================
-  useEffect(() => {
-    if (!feedback) return;
-
-    const feedbackClass = getMoveFeedbackClass(feedback.moveQuality);
-
-    clearSquareCustomHighlights();
-    setSquareCustomHighlight(feedback.to, feedbackClass);
-    updateBoard();
-  }, [clearSquareCustomHighlights, feedback, setSquareCustomHighlight, updateBoard]);
 
   // ============================================================================
   // Cleanup wrong move timeout

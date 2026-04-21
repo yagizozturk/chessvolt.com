@@ -1,20 +1,18 @@
 "use client";
 
 import { ArrowLeft, BookOpen } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import VoltBoardUpdated, {
-  type VoltBoardFeedback,
   type VoltBoardUpdatedHandle,
 } from "@/components/volt-board-updated/volt-board-updated";
 import { useOpeningVariantControllerUpdated } from "@/features/openings/hooks/use-opening-variant-controller-updated";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
-import { getMoveQuality } from "@/lib/utils/getMoveQuality";
 
 import type { OpeningVariant } from "../types/opening-variant";
 import { OpeningVariantGoalViewer } from "./opening-variant-goal-viewer";
@@ -34,7 +32,6 @@ export default function OpeningVariantControllerUpdated({
   const {
     _handleMoveCheck,
     _handleMovePlayed,
-    _lastMoveEvaluation,
     _nextGoal,
     _totalGoals,
     _currentGoalIndex,
@@ -45,7 +42,6 @@ export default function OpeningVariantControllerUpdated({
   } = useOpeningVariantControllerUpdated({
     variant,
   });
-  const [feedback, setFeedback] = useState<VoltBoardFeedback | null>(null);
 
   // ============================================================================
   // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
@@ -62,21 +58,6 @@ export default function OpeningVariantControllerUpdated({
     const { nextMove } = _handleMovePlayed(move);
     return nextMove;
   }
-
-  // ============================================================================
-  // Last move evaluation'ı her değiştiğinde tetiklenir.
-  // Oyuncu hamlesinden sonra değişmeye başlar Hook da değişir.
-  // ============================================================================
-  useEffect(() => {
-    if (!_lastMoveEvaluation) return;
-    const toSquare = _lastMoveEvaluation.playedMove.slice(2, 4);
-    const moveQuality = getMoveQuality(_lastMoveEvaluation.deltaCp);
-
-    setFeedback({
-      to: toSquare,
-      moveQuality,
-    });
-  }, [_lastMoveEvaluation]);
 
   // ============================================================================
   // Hint politikası controller tarafında yönetilir:
@@ -100,7 +81,6 @@ export default function OpeningVariantControllerUpdated({
             expectedMove={_currentExpectedMove}
             onCheckMove={handleBoardCheckMove}
             onMovePlayed={handleBoardMovePlayed}
-            feedback={feedback}
           />
         </div>
         <div className="flex h-full min-w-0 flex-col gap-4">

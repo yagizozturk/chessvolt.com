@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { useMoveEvaluation } from "@/features/openings/hooks/use-move-evaluation";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
@@ -21,11 +20,6 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
   const [_moveCount, _setMoveCount] = useState<number>(0);
   const [_hintCount, _setHintCount] = useState(0);
   const [_activePly, _setActivePly] = useState<number | null>(() => _variant.ply);
-  const {
-    evaluateMove: _evaluateMove,
-    engineStatus: _engineStatus,
-    lastMoveEvaluation: _lastMoveEvaluation,
-  } = useMoveEvaluation();
 
   // ============================================================================
   // Goals variant içinden alınır ve ply sırasına göre yukarıdan aşağıya dizilir.
@@ -92,7 +86,6 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
   // Sonraki rakip hamlesi varsa index 2 artar; yoksa 1 artar.
   // ============================================================================
   function _handleMovePlayed(_playedMove: MoveEvaluationPayload) {
-    _evaluateMove(_playedMove);
     const _currentStep = _moveCount;
     const _nextMove = _moves[_currentStep + 1];
     const _nextUserStep = _nextMove ? _currentStep + 2 : _currentStep + 1;
@@ -152,8 +145,6 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
     _currentGoalIndex,
     _hintCount,
     _progressValue,
-    _engineStatus,
-    _lastMoveEvaluation,
     _handleMoveCheck,
     _handleMovePlayed,
     _incrementMoveCount,
