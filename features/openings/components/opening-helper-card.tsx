@@ -7,9 +7,10 @@ import { OpeningVariantGoalViewer } from "./opening-variant-goal-viewer";
 type OpeningHelperCardProps = {
   title: string | null;
   nextGoal: MoveGoal | null;
+  progressValue: number;
 };
 
-export function OpeningHelperCard({ title, nextGoal }: OpeningHelperCardProps) {
+export function OpeningHelperCard({ title, nextGoal, progressValue }: OpeningHelperCardProps) {
   return (
     <div className="space-y-4">
       <Card className="flex h-full flex-col border-0 shadow-none">
@@ -21,7 +22,7 @@ export function OpeningHelperCard({ title, nextGoal }: OpeningHelperCardProps) {
         </CardContent>
         <CardFooter className="w-full">
           <div className="flex w-full flex-col gap-2">
-            <Progress value={10} className="h-2" />
+            <Progress value={progressValue} className="h-2" />
           </div>
         </CardFooter>
       </Card>

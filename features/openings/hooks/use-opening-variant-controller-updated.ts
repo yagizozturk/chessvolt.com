@@ -13,30 +13,47 @@ type UseOpeningVariantControllerParams = {
   variant: OpeningVariant;
 };
 
-export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVariantControllerParams) {
-  const moves = variant.moves
+export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpeningVariantControllerParams) {
+  const _moves = _variant.moves
     .trim()
     .split(/\s+/)
     .filter((m) => m.length > 0);
-  const [moveCount, setMoveCount] = useState<number>(0);
-  const [hintCount, setHintCount] = useState(0);
-  const [activePly, setActivePly] = useState<number | null>(() => variant.ply);
-  const { evaluateMove, engineStatus, lastMoveEvaluation } = useMoveEvaluation();
+  const [_moveCount, _setMoveCount] = useState<number>(0);
+  const [_hintCount, _setHintCount] = useState(0);
+  const [_activePly, _setActivePly] = useState<number | null>(() => _variant.ply);
+  const {
+    evaluateMove: _evaluateMove,
+    engineStatus: _engineStatus,
+    lastMoveEvaluation: _lastMoveEvaluation,
+  } = useMoveEvaluation();
 
   // ============================================================================
   // Goals variant içinden alınır ve ply sırasına göre yukarıdan aşağıya dizilir.
   // Stepper bu sıralı listeyi kullanır.
   // ============================================================================
-  const sortedGoals = useMemo(() => {
-    const g = variant.goals;
-    if (!g?.length) return [];
-    return [...g].sort((a, b) => a.ply - b.ply);
-  }, [variant.goals]);
+  const _sortedGoals = useMemo(() => {
+    const _goals = _variant.goals;
+    if (!_goals?.length) return [];
+    return [..._goals].sort((a, b) => a.ply - b.ply);
+  }, [_variant.goals]);
 
-  const nextGoal = useMemo(() => {
-    if (activePly == null) return null;
-    return sortedGoals.find((goal) => goal.ply === activePly + 1) ?? null;
-  }, [sortedGoals, activePly]);
+  const _nextGoal = useMemo(() => {
+    if (_activePly == null) return null;
+    return _sortedGoals.find((goal) => goal.ply === _activePly + 1) ?? null;
+  }, [_sortedGoals, _activePly]);
+
+  // ============================================================================
+  // Variant içindneki Progress value'u hesaplar.
+  // ============================================================================
+  const _progressValue = useMemo(() => {
+    if (!_sortedGoals.length) return 0;
+
+    const _completedGoalsCount = _sortedGoals.filter(
+      (goal) => goal.isCompleted || (_activePly != null && _activePly >= goal.ply),
+    ).length;
+
+    return Math.round((_completedGoalsCount / _sortedGoals.length) * 100);
+  }, [_sortedGoals, _activePly]);
 
   // ============================================================================
   // Variant değiştiğinde local ekran state'i sıfırlanır:
@@ -44,19 +61,19 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
   // - Aktif ply, variant başlangıç ply'sine döner
   // ============================================================================
   useEffect(() => {
-    setHintCount(0);
-    setActivePly(variant.ply);
-  }, [variant.id, variant.ply]);
+    _setHintCount(0);
+    _setActivePly(_variant.ply);
+  }, [_variant.id, _variant.ply]);
 
   // ============================================================================
   // Oyuncu hamle yapınca önce kontole girer(attempt) ve tetiklenir.
   // ============================================================================
-  function _handleMoveCheck(playedMove: MoveAttemptPayload) {
-    const expectedMove = moves[moveCount];
-    const isCorrect = playedMove.uci === expectedMove;
+  function _handleMoveCheck(_playedMove: MoveAttemptPayload) {
+    const _expectedMove = _moves[_moveCount];
+    const _isCorrect = _playedMove.uci === _expectedMove;
 
     return {
-      isCorrect,
+      isCorrect: _isCorrect,
     };
   }
 
@@ -65,22 +82,22 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
   // Oynandığına göre hamle doğrudur.
   // Sonraki rakip hamlesi varsa index 2 artar; yoksa 1 artar.
   // ============================================================================
-  function _handleMovePlayed(playedMove: MoveEvaluationPayload) {
-    evaluateMove(playedMove);
-    const currentStep = moveCount;
-    const nextMove = moves[currentStep + 1];
-    const nextUserStep = nextMove ? currentStep + 2 : currentStep + 1;
-    setMoveCount(nextUserStep);
+  function _handleMovePlayed(_playedMove: MoveEvaluationPayload) {
+    _evaluateMove(_playedMove);
+    const _currentStep = _moveCount;
+    const _nextMove = _moves[_currentStep + 1];
+    const _nextUserStep = _nextMove ? _currentStep + 2 : _currentStep + 1;
+    _setMoveCount(_nextUserStep);
 
     // Tahtadaki güncel konuma göre active ply'i ilerletir.
     // Rakip otomatik hamlesi varsa bir ply daha ileride olur.
-    const userMovePly = getPlyFromPgnAtFen(variant.pgn, playedMove.fenAfter);
-    if (userMovePly !== null) {
-      setActivePly(nextMove ? userMovePly + 1 : userMovePly);
+    const _userMovePly = getPlyFromPgnAtFen(_variant.pgn, _playedMove.fenAfter);
+    if (_userMovePly !== null) {
+      _setActivePly(_nextMove ? _userMovePly + 1 : _userMovePly);
     }
 
     return {
-      nextMove,
+      nextMove: _nextMove,
     };
   }
 
@@ -88,14 +105,14 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
   // Moves arrayi içindeki hamleyi bulmak için count ı arttrırır.
   // ============================================================================
   function _incrementMoveCount() {
-    setMoveCount((prev) => prev + 1);
+    _setMoveCount((_prev) => _prev + 1);
   }
 
   // ============================================================================
   // Move count'u sıfırlar.
   // ============================================================================
   function _resetMoveCount() {
-    setMoveCount(0);
+    _setMoveCount(0);
   }
 
   // ============================================================================
@@ -104,18 +121,19 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
   // - Kaçıncı hint olduğu board'a parametre olarak gönderilir
   // ============================================================================
   const _hintRequested = () => {
-    if (hintCount >= 2) return null;
+    if (_hintCount >= 2) return null;
 
-    const nextHintCount = hintCount + 1;
-    setHintCount(nextHintCount);
-    return nextHintCount;
+    const _nextHintCount = _hintCount + 1;
+    _setHintCount(_nextHintCount);
+    return _nextHintCount;
   };
 
   return {
-    moves,
-    nextGoal,
-    engineStatus,
-    lastMoveEvaluation,
+    _moves,
+    _nextGoal,
+    _progressValue,
+    _engineStatus,
+    _lastMoveEvaluation,
     _handleMoveCheck,
     _handleMovePlayed,
     _incrementMoveCount,

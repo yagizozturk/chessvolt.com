@@ -25,12 +25,11 @@ export default function OpeningVariantControllerUpdated({
   void nextVariantId;
   void parentOpeningUrl;
 
-  const { _handleMoveCheck, _handleMovePlayed, nextGoal, lastMoveEvaluation } = useOpeningVariantControllerUpdated({
-    variant,
-  });
+  const { _handleMoveCheck, _handleMovePlayed, _lastMoveEvaluation, _nextGoal, _progressValue } =
+    useOpeningVariantControllerUpdated({
+      variant,
+    });
   const [feedback, setFeedback] = useState<VoltBoardFeedback | null>(null);
-  const dummyVariantProgress = 68;
-  const dummyVariantStatus = "In Progress";
 
   // ============================================================================
   // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
@@ -53,15 +52,15 @@ export default function OpeningVariantControllerUpdated({
   // Oyuncu hamlesinden sonra değişmeye başlar Hook da değişir.
   // ============================================================================
   useEffect(() => {
-    if (!lastMoveEvaluation) return;
-    const toSquare = lastMoveEvaluation.playedMove.slice(2, 4);
-    const moveQuality = getMoveQuality(lastMoveEvaluation.deltaCp);
+    if (!_lastMoveEvaluation) return;
+    const toSquare = _lastMoveEvaluation.playedMove.slice(2, 4);
+    const moveQuality = getMoveQuality(_lastMoveEvaluation.deltaCp);
 
     setFeedback({
       to: toSquare,
       moveQuality,
     });
-  }, [lastMoveEvaluation]);
+  }, [_lastMoveEvaluation]);
 
   return (
     <div className="container mx-auto max-w-6xl px-8 py-6">
@@ -75,7 +74,7 @@ export default function OpeningVariantControllerUpdated({
           />
         </div>
         <div className="flex h-full min-w-0 flex-col gap-4">
-          <OpeningHelperCard title={variant.title} nextGoal={nextGoal} />
+          <OpeningHelperCard title={variant.title} nextGoal={_nextGoal} progressValue={_progressValue} />
         </div>
       </div>
     </div>
