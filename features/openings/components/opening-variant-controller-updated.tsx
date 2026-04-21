@@ -1,16 +1,16 @@
 "use client";
 
 import { ArrowLeft, BookOpen } from "lucide-react";
-import { useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import VoltBoardUpdated, {
-  type VoltBoardUpdatedHandle,
-} from "@/components/volt-board-updated/volt-board-updated";
+import VoltBoardUpdated, { type VoltBoardUpdatedHandle } from "@/components/volt-board-updated/volt-board-updated";
 import { useOpeningVariantControllerUpdated } from "@/features/openings/hooks/use-opening-variant-controller-updated";
+import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 
@@ -28,7 +28,10 @@ export default function OpeningVariantControllerUpdated({
   nextVariantId,
   parentOpeningUrl,
 }: OpeningVariantControllerUpdatedProps) {
+  const router = useRouter();
   const boardRef = useRef<VoltBoardUpdatedHandle>(null);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
   const {
     _handleMoveCheck,
     _handleMovePlayed,
@@ -42,6 +45,17 @@ export default function OpeningVariantControllerUpdated({
   } = useOpeningVariantControllerUpdated({
     variant,
   });
+
+  useEffect(() => {
+    setIsCompleted(false);
+  }, [variant.id]);
+
+  useEffect(() => {
+    if (_currentExpectedMove != null || isCompleted) return;
+
+    setIsCompleted(true);
+    void updateOpeningVariantAnswerHook(variant.id, true);
+  }, [isCompleted, _currentExpectedMove, updateOpeningVariantAnswerHook, variant.id]);
 
   // ============================================================================
   // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
@@ -69,6 +83,11 @@ export default function OpeningVariantControllerUpdated({
     const nextHintCount = _hintRequested();
     if (nextHintCount == null || !_currentExpectedMove) return;
     boardRef.current?.showHint(nextHintCount);
+  };
+
+  const handleContinueClick = () => {
+    const destinationPath = nextVariantId ? `/openings/variant/${nextVariantId}` : parentOpeningUrl;
+    router.push(destinationPath);
   };
 
   return (
@@ -116,6 +135,13 @@ export default function OpeningVariantControllerUpdated({
                     Hint
                   </Button>
                 </div>
+                {isCompleted ? (
+                  <div className="w-full">
+                    <Button className="w-full" onClick={handleContinueClick}>
+                      {nextVariantId ? "Next variant" : "Back to opening"}
+                    </Button>
+                  </div>
+                ) : null}
               </CardFooter>
             </Card>
           </div>
