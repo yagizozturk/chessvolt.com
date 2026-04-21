@@ -30,9 +30,6 @@ export default function OpeningVariantControllerUpdated({
   nextVariantId,
   parentOpeningUrl,
 }: OpeningVariantControllerUpdatedProps) {
-  void nextVariantId;
-  void parentOpeningUrl;
-
   const boardRef = useRef<VoltBoardUpdatedHandle>(null);
   const {
     _handleMoveCheck,
