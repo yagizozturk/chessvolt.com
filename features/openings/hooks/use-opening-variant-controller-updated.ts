@@ -5,8 +5,11 @@ import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 import { useState } from "react";
 
-export function useOpeningVariantControllerUpdated(initialMoves: string[]) {
-  const moves = initialMoves;
+export function useOpeningVariantControllerUpdated(initialMoves: string) {
+  const moves = initialMoves
+    .trim()
+    .split(/\s+/)
+    .filter((m) => m.length > 0);
   const [moveCount, setMoveCount] = useState<number>(0);
   const { evaluateMove, engineStatus, lastMoveEvaluation } =
     useMoveEvaluation();

@@ -53,15 +53,15 @@ export default async function OpeningVariantPage({ params }: Params) {
 
   return (
     <>
-      <OpeningVariantController
+      {/* <OpeningVariantController
         variant={variant}
         siblingVariants={variants}
         nextVariantId={nextVariant?.id ?? null}
         parentOpeningUrl={parentOpeningUrl}
-      />
+      /> */}
 
       <OpeningVariantControllerUpdated
-        moves={variant.moves.split(" ") as string[]}
+        variant={variant}
         nextVariantId={nextVariant?.id ?? null}
         parentOpeningUrl={parentOpeningUrl}
       />

@@ -91,9 +91,14 @@ export function useChessground({
       next.set(square as Key, cssClass);
       customSquareHighlightsRef.current = next;
       if (!ground.current) return;
-      ground.current.set(getBoardConfig());
+      ground.current.set({
+        highlight: {
+          check: game.current.isCheck(),
+          custom: new Map(customSquareHighlightsRef.current),
+        },
+      });
     },
-    [getBoardConfig],
+    [game],
   );
 
   /** Sadece ref'i temizler; tahtayı güncellemek için hemen ardından `updateBoard()` çağrılmalıdır. */

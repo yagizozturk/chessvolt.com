@@ -2,28 +2,34 @@
 
 import { useEffect, useState } from "react";
 
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import VoltBoardUpdated, { type VoltBoardFeedback } from "@/components/volt-board-updated/volt-board-updated";
 import { useOpeningVariantControllerUpdated } from "@/features/openings/hooks/use-opening-variant-controller-updated";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 import { getMoveQuality } from "@/lib/utils/getMoveQuality";
 
+import type { OpeningVariant } from "../types/opening-variant";
+
 type OpeningVariantControllerUpdatedProps = {
-  moves: string[];
+  variant: OpeningVariant;
   nextVariantId: string | null;
   parentOpeningUrl: string;
 };
 
 export default function OpeningVariantControllerUpdated({
-  moves,
+  variant,
   nextVariantId,
   parentOpeningUrl,
 }: OpeningVariantControllerUpdatedProps) {
   void nextVariantId;
   void parentOpeningUrl;
 
-  const { _handleMoveCheck, _handleMovePlayed, lastMoveEvaluation } = useOpeningVariantControllerUpdated(moves);
+  const { _handleMoveCheck, _handleMovePlayed, lastMoveEvaluation } = useOpeningVariantControllerUpdated(variant.moves);
   const [feedback, setFeedback] = useState<VoltBoardFeedback | null>(null);
+  const dummyVariantProgress = 68;
+  const dummyVariantStatus = "In Progress";
 
   // ============================================================================
   // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
@@ -57,6 +63,36 @@ export default function OpeningVariantControllerUpdated({
   }, [lastMoveEvaluation]);
 
   return (
-    <VoltBoardUpdated onCheckMove={handleBoardCheckMove} onMovePlayed={handleBoardMovePlayed} feedback={feedback} />
+    <div className="container mx-auto max-w-6xl px-8 py-6">
+      <div className="grid gap-4 lg:grid-cols-[620px_minmax(0,1fr)] lg:gap-4">
+        <div key={variant.id} className="relative w-full min-w-0">
+          <VoltBoardUpdated
+            sourceId={variant.id}
+            onCheckMove={handleBoardCheckMove}
+            onMovePlayed={handleBoardMovePlayed}
+            feedback={feedback}
+          />
+        </div>
+        <div className="flex h-full min-w-0 flex-col gap-4">
+          <Card className="flex h-full flex-col border-0 shadow-none">
+            <CardHeader>
+              <CardTitle>{variant.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1">
+              <p>Card Content</p>
+            </CardContent>
+            <CardFooter className="w-full">
+              <div className="flex w-full flex-col gap-2">
+                <div className="text-muted-foreground flex items-center justify-between text-sm">
+                  <span>{dummyVariantStatus}</span>
+                  <span>%{dummyVariantProgress}</span>
+                </div>
+                <Progress value={dummyVariantProgress} className="h-2" />
+              </div>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 }

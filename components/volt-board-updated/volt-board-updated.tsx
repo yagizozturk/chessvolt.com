@@ -27,6 +27,7 @@ export type VoltBoardFeedback = {
 const WRONG_MOVE_REVERT_DELAY_MS = 1000;
 
 type VoltBoardUpdatedProps = {
+  sourceId: string;
   size?: number;
   width?: number;
   height?: number;
@@ -36,7 +37,8 @@ type VoltBoardUpdatedProps = {
 };
 
 export default function VoltBoardUpdated({
-  size = 520,
+  sourceId,
+  size = 620,
   width,
   height,
   onCheckMove,
@@ -61,7 +63,7 @@ export default function VoltBoardUpdated({
   const { updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } = useChessground({
     boardRef,
     game,
-    sourceId: "volt-board-updated",
+    sourceId,
     orientationRef,
     viewOnly: false,
     coordinates: true,
@@ -192,5 +194,5 @@ export default function VoltBoardUpdated({
     };
   }, []);
 
-  return <div ref={boardRef} className="cardinal blue" style={{ width: boardWidth, height: boardHeight }} />;
+  return <div ref={boardRef} className="cardinal purple" style={{ width: boardWidth, height: boardHeight }} />;
 }

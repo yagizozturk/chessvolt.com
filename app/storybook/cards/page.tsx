@@ -3,6 +3,7 @@ import { IconInformationCard } from "@/components/cards/icon-information-card";
 import ImageInformationCard from "@/components/cards/image-information-card";
 import { ImageStatsCard } from "@/components/cards/image-stats-card";
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Activity, Info, Trophy } from "lucide-react";
 
@@ -34,6 +35,20 @@ export default function StorybookCardsPage() {
             Projede kullanilan kart komponentlerinin ornekleri.
           </p>
         </div>
+
+        <Card className="h-72 border-0 shadow-none">
+          <CardHeader>
+            <CardTitle>Card Title</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <p className="text-muted-foreground text-sm">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <p className="text-muted-foreground text-sm">Card Footer</p>
+          </CardFooter>
+        </Card>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
