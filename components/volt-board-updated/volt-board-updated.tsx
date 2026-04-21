@@ -8,8 +8,8 @@ import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
 import { buildUci } from "@/lib/chess/buildUci";
 import { getPromotionPiece } from "@/lib/chess/getPromotionPiece";
-import { parseUci } from "@/lib/chess/parseUci";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
+import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
 import { useBoardSounds } from "@/lib/shared/hooks/use-board-sounds";
@@ -38,21 +38,17 @@ type VoltBoardUpdatedProps = {
   feedback?: VoltBoardFeedback | null;
 };
 
+// ============================================================================
+// Hint level burada hangi hint i göstereceğini belirliyor
+// 1 olursa sadece yuvarlak içine alır
+// 2 olursa başlangıç ve bitiş karesi arasına çizgi çeker
+// ============================================================================
 export type VoltBoardUpdatedHandle = {
   showHint: (hintLevel: number) => void;
 };
 
 const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProps>(function VoltBoardUpdated(
-  {
-    sourceId,
-    size = 620,
-    width,
-    height,
-    expectedMove,
-    onCheckMove,
-    onMovePlayed,
-    feedback,
-  },
+  { sourceId, size = 620, width, height, expectedMove, onCheckMove, onMovePlayed, feedback },
   ref,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)

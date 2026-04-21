@@ -41,6 +41,14 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
     if (_activePly == null) return null;
     return _sortedGoals.find((goal) => goal.ply === _activePly + 1) ?? null;
   }, [_sortedGoals, _activePly]);
+  const _totalGoals = _sortedGoals.length;
+  const _currentGoalIndex = useMemo(() => {
+    if (_totalGoals === 0) return 0;
+    if (!_nextGoal) return _totalGoals;
+
+    const _goalIndex = _sortedGoals.findIndex((goal) => goal.ply === _nextGoal.ply);
+    return _goalIndex >= 0 ? _goalIndex + 1 : 1;
+  }, [_nextGoal, _sortedGoals, _totalGoals]);
 
   // ============================================================================
   // Variant içindneki Progress value'u hesaplar.
@@ -62,6 +70,7 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
   // ============================================================================
   useEffect(() => {
     _setHintCount(0);
+    _setMoveCount(0);
     _setActivePly(_variant.ply);
   }, [_variant.id, _variant.ply]);
 
@@ -129,11 +138,18 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
     return _nextHintCount;
   };
 
+  // ============================================================================
+  // Sıradaki oynanması gereken hamle
+  // _currentExpectedMove bir derived value:
+  // _moveCount’a göre otomatik hesaplanıyor.
+  // ============================================================================
   const _currentExpectedMove = _moves[_moveCount] ?? null;
 
   return {
     _moves,
     _nextGoal,
+    _totalGoals,
+    _currentGoalIndex,
     _hintCount,
     _progressValue,
     _engineStatus,

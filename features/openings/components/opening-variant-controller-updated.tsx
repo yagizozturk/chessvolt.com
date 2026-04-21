@@ -1,7 +1,12 @@
 "use client";
 
+import { ArrowLeft, BookOpen } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import VoltBoardUpdated, {
   type VoltBoardFeedback,
   type VoltBoardUpdatedHandle,
@@ -12,7 +17,7 @@ import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-p
 import { getMoveQuality } from "@/lib/utils/getMoveQuality";
 
 import type { OpeningVariant } from "../types/opening-variant";
-import { OpeningHelperCard } from "./opening-helper-card";
+import { OpeningVariantGoalViewer } from "./opening-variant-goal-viewer";
 
 type OpeningVariantControllerUpdatedProps = {
   variant: OpeningVariant;
@@ -34,6 +39,8 @@ export default function OpeningVariantControllerUpdated({
     _handleMovePlayed,
     _lastMoveEvaluation,
     _nextGoal,
+    _totalGoals,
+    _currentGoalIndex,
     _progressValue,
     _hintCount,
     _hintRequested,
@@ -78,6 +85,7 @@ export default function OpeningVariantControllerUpdated({
   // Hint politikası controller tarafında yönetilir:
   // - Her step için en fazla 2 hint
   // - Kaçıncı hint olduğu board'a parametre olarak gönderilir
+  // Hint değer hook da tutulur
   // ============================================================================
   const handleHintClick = () => {
     const nextHintCount = _hintRequested();
@@ -99,13 +107,41 @@ export default function OpeningVariantControllerUpdated({
           />
         </div>
         <div className="flex h-full min-w-0 flex-col gap-4">
-          <OpeningHelperCard
-            title={variant.title}
-            nextGoal={_nextGoal}
-            progressValue={_progressValue}
-            hintCount={_hintCount}
-            onHintClick={handleHintClick}
-          />
+          <div className="flex h-full flex-col space-y-4">
+            <Card className="flex h-full flex-1 flex-col border-0 shadow-none">
+              <CardHeader className="pb-3">
+                <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+                  <div className="flex items-center">
+                    <ArrowLeft className="text-muted-foreground size-4" aria-hidden="true" />
+                  </div>
+                  <CardTitle className="flex items-center justify-center gap-2 text-center">
+                    <BookOpen className="text-muted-foreground size-4" aria-hidden="true" />
+                    <span>{variant.title ?? "Untitled variant"}</span>
+                  </CardTitle>
+                  <div aria-hidden="true" />
+                </div>
+                <Separator className="mt-3" />
+              </CardHeader>
+              <CardContent className="flex h-full flex-1">
+                <OpeningVariantGoalViewer nextGoal={_nextGoal} />
+              </CardContent>
+              <CardFooter className="flex flex-col gap-4">
+                <div className="flex w-full flex-col gap-2">
+                  {_totalGoals > 0 ? (
+                    <p className="text-muted-foreground text-xs">
+                      Goal {_currentGoalIndex} / {_totalGoals}
+                    </p>
+                  ) : null}
+                  <Progress value={_progressValue} className="h-2" />
+                </div>
+                <div className="w-full">
+                  <Button className="w-full" variant="outline" disabled={_hintCount >= 2} onClick={handleHintClick}>
+                    Hint
+                  </Button>
+                </div>
+              </CardFooter>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
