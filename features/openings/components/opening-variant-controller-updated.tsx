@@ -1,23 +1,28 @@
 "use client";
 
-import VoltBoardUpdated, {
-  type VoltBoardFeedback,
-} from "@/components/volt-board-updated/volt-board-updated";
+import { useEffect, useState } from "react";
+
+import VoltBoardUpdated, { type VoltBoardFeedback } from "@/components/volt-board-updated/volt-board-updated";
 import { useOpeningVariantControllerUpdated } from "@/features/openings/hooks/use-opening-variant-controller-updated";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 import { getMoveQuality } from "@/lib/utils/getMoveQuality";
-import { useEffect, useState } from "react";
 
 type OpeningVariantControllerUpdatedProps = {
   moves: string[];
+  nextVariantId: string | null;
+  parentOpeningUrl: string;
 };
 
 export default function OpeningVariantControllerUpdated({
   moves,
+  nextVariantId,
+  parentOpeningUrl,
 }: OpeningVariantControllerUpdatedProps) {
-  const { _handleMoveCheck, _handleMovePlayed, lastMoveEvaluation } =
-    useOpeningVariantControllerUpdated(moves);
+  void nextVariantId;
+  void parentOpeningUrl;
+
+  const { _handleMoveCheck, _handleMovePlayed, lastMoveEvaluation } = useOpeningVariantControllerUpdated(moves);
   const [feedback, setFeedback] = useState<VoltBoardFeedback | null>(null);
 
   // ============================================================================
@@ -52,10 +57,6 @@ export default function OpeningVariantControllerUpdated({
   }, [lastMoveEvaluation]);
 
   return (
-    <VoltBoardUpdated
-      onCheckMove={handleBoardCheckMove}
-      onMovePlayed={handleBoardMovePlayed}
-      feedback={feedback}
-    />
+    <VoltBoardUpdated onCheckMove={handleBoardCheckMove} onMovePlayed={handleBoardMovePlayed} feedback={feedback} />
   );
 }

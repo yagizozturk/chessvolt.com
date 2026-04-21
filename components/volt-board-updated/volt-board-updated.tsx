@@ -1,13 +1,13 @@
 "use client";
 
 import type { Key } from "@lichess-org/chessground/types";
-import type { Square } from "chess.js";
 import { useEffect, useRef } from "react";
 
 import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
 import { buildUci } from "@/lib/chess/buildUci";
+import { getPromotionPiece } from "@/lib/chess/getPromotionPiece";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
@@ -85,15 +85,13 @@ export default function VoltBoardUpdated({
     },
   });
 
-  function getPromotionPiece(from: string, to: string) {
-    const piece = game.current.get(from as Square);
-    const isPromotionMove = piece?.type === "p" && (to.endsWith("1") || to.endsWith("8"));
-
-    return isPromotionMove ? DEFAULT_PROMOTION_PIECE : undefined;
-  }
-
   function buildMoveUci(from: string, to: string) {
-    const promotion = getPromotionPiece(from, to);
+    const promotion = getPromotionPiece(
+      game.current,
+      from,
+      to,
+      DEFAULT_PROMOTION_PIECE,
+    );
     return buildUci(from, to, promotion);
   }
 
@@ -119,7 +117,12 @@ export default function VoltBoardUpdated({
     fenBefore: string,
     playedBy: "white" | "black",
   ) {
-    const promotion = getPromotionPiece(from, to);
+    const promotion = getPromotionPiece(
+      game.current,
+      from,
+      to,
+      DEFAULT_PROMOTION_PIECE,
+    );
     const move = makeMove(from, to, promotion ?? DEFAULT_PROMOTION_PIECE);
     if (!move) {
       return;
