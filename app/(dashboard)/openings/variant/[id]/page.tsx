@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import OpeningVariantController from "@/features/openings/components/opening-variant-controller";
 import OpeningVariantControllerUpdated from "@/features/openings/components/opening-variant-controller-updated";
 import {
@@ -6,7 +8,6 @@ import {
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
 import { createClient } from "@/lib/supabase/server";
-import { notFound } from "next/navigation";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -35,29 +36,20 @@ export default async function OpeningVariantPage({ params }: Params) {
   // Get all the variants for the opening
   // Get the next variant if it exists
   // ======================================================================
-  const variants = await getOpeningVariantsByOpeningId(
-    supabase,
-    variant.openingId,
-  );
+  const variants = await getOpeningVariantsByOpeningId(supabase, variant.openingId);
 
   // ======================================================================
   // 3. Get the next variant
   // ======================================================================
   const currentIndex = variants.findIndex((v) => v.id === variant.id);
-  const nextVariant =
-    currentIndex >= 0 && currentIndex < variants.length - 1
-      ? variants[currentIndex + 1]
-      : null;
+  const nextVariant = currentIndex >= 0 && currentIndex < variants.length - 1 ? variants[currentIndex + 1] : null;
 
   // ======================================================================
   // 5. Get the opening
   // Get the return URL and progress stats
   // ======================================================================
   const opening = await getOpeningById(supabase, variant.openingId);
-  const parentOpeningUrl =
-    opening?.slug && opening?.id
-      ? `/openings/${opening.slug}/${opening.id}`
-      : "/openings";
+  const parentOpeningUrl = opening?.slug && opening?.id ? `/openings/${opening.slug}/${opening.id}` : "/openings";
 
   return (
     <>
@@ -70,6 +62,8 @@ export default async function OpeningVariantPage({ params }: Params) {
 
       <OpeningVariantControllerUpdated
         moves={variant.moves.split(" ") as string[]}
+        nextVariantId={nextVariant?.id ?? null}
+        parentOpeningUrl={parentOpeningUrl}
       />
     </>
   );

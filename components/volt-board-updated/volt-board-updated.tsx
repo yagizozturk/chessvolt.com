@@ -24,6 +24,8 @@ export type VoltBoardFeedback = {
   moveQuality: MoveQuality;
 };
 
+const WRONG_MOVE_REVERT_DELAY_MS = 1000;
+
 type VoltBoardUpdatedProps = {
   size?: number;
   width?: number;
@@ -45,6 +47,7 @@ export default function VoltBoardUpdated({
   const boardRef = useRef<HTMLDivElement>(null);
   const orientationRef = useRef<"white" | "black">("white");
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
+  const wrongMoveRevertTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
   const { game, makeMove } = useChessOne();
@@ -64,6 +67,7 @@ export default function VoltBoardUpdated({
     coordinates: true,
     lastMoveRef,
     onMove: (from, to) => {
+      clearWrongMoveRevertTimeout();
       const fenBefore = game.current.fen();
       const playedBy = game.current.turn() === "w" ? "white" : "black";
       const uci = buildMoveUci(from, to);
@@ -75,7 +79,8 @@ export default function VoltBoardUpdated({
 
       // Yanlış hamle yapıldı
       if (isCorrect === false) {
-        handleWrongMoveAttempt();
+        handleWrongMoveAttempt(to);
+        return;
       } else {
         // Doğru hamle yapıldı
         handleCorrectMoveAttempt(from, to, uci, fenBefore, playedBy);
@@ -86,12 +91,7 @@ export default function VoltBoardUpdated({
   });
 
   function buildMoveUci(from: string, to: string) {
-    const promotion = getPromotionPiece(
-      game.current,
-      from,
-      to,
-      DEFAULT_PROMOTION_PIECE,
-    );
+    const promotion = getPromotionPiece(game.current, from, to, DEFAULT_PROMOTION_PIECE);
     return buildUci(from, to, promotion);
   }
 
@@ -106,10 +106,42 @@ export default function VoltBoardUpdated({
     }
   }
 
-  function handleWrongMoveAttempt() {
+  // ============================================================================
+  // Oyuncu yanlış hamle yapınca event bu metodu tetikler
+  // ============================================================================
+  function handleWrongMoveAttempt(to: string) {
+    clearSquareCustomHighlights();
+    setSquareCustomHighlight(to, "custom-wrong-move");
     playMoveSound();
+    scheduleWrongMoveRevert();
   }
 
+  // ============================================================================
+  // Wrong move revert timeout
+  // Component state/ref/useEffect bağımlılığı varsa → component içinde kalsın.
+  // ============================================================================
+  function clearWrongMoveRevertTimeout() {
+    if (wrongMoveRevertTimeoutRef.current) {
+      clearTimeout(wrongMoveRevertTimeoutRef.current);
+      wrongMoveRevertTimeoutRef.current = null;
+    }
+  }
+
+  // ============================================================================
+  // Wrong move revert timeout
+  // Yalnış hamle yapıldıktan sonra tahtayı geri alır.
+  // ============================================================================
+  function scheduleWrongMoveRevert() {
+    wrongMoveRevertTimeoutRef.current = setTimeout(() => {
+      wrongMoveRevertTimeoutRef.current = null;
+      clearSquareCustomHighlights();
+      updateBoard();
+    }, WRONG_MOVE_REVERT_DELAY_MS);
+  }
+
+  // ============================================================================
+  // Oyuncu doğru hamle yapınca event bu metodu tetikler
+  // ============================================================================
   function handleCorrectMoveAttempt(
     from: string,
     to: string,
@@ -117,12 +149,7 @@ export default function VoltBoardUpdated({
     fenBefore: string,
     playedBy: "white" | "black",
   ) {
-    const promotion = getPromotionPiece(
-      game.current,
-      from,
-      to,
-      DEFAULT_PROMOTION_PIECE,
-    );
+    const promotion = getPromotionPiece(game.current, from, to, DEFAULT_PROMOTION_PIECE);
     const move = makeMove(from, to, promotion ?? DEFAULT_PROMOTION_PIECE);
     if (!move) {
       return;
@@ -143,6 +170,9 @@ export default function VoltBoardUpdated({
     }
   }
 
+  // ============================================================================
+  // Feedback'ı gösterir.
+  // ============================================================================
   useEffect(() => {
     if (!feedback) return;
 
@@ -152,6 +182,15 @@ export default function VoltBoardUpdated({
     setSquareCustomHighlight(feedback.to, feedbackClass);
     updateBoard();
   }, [clearSquareCustomHighlights, feedback, setSquareCustomHighlight, updateBoard]);
+
+  // ============================================================================
+  // Cleanup wrong move timeout
+  // ============================================================================
+  useEffect(() => {
+    return () => {
+      clearWrongMoveRevertTimeout();
+    };
+  }, []);
 
   return <div ref={boardRef} className="cardinal blue" style={{ width: boardWidth, height: boardHeight }} />;
 }
