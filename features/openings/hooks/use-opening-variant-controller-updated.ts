@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { useMoveEvaluation } from "@/features/openings/hooks/use-move-evaluation";
+import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 
@@ -70,6 +71,13 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
     const nextMove = moves[currentStep + 1];
     const nextUserStep = nextMove ? currentStep + 2 : currentStep + 1;
     setMoveCount(nextUserStep);
+
+    // Tahtadaki güncel konuma göre active ply'i ilerletir.
+    // Rakip otomatik hamlesi varsa bir ply daha ileride olur.
+    const userMovePly = getPlyFromPgnAtFen(variant.pgn, playedMove.fenAfter);
+    if (userMovePly !== null) {
+      setActivePly(nextMove ? userMovePly + 1 : userMovePly);
+    }
 
     return {
       nextMove,
