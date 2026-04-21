@@ -93,13 +93,11 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             value={correct}
             label="CORRECT"
             icon={Star}
-            color="blue"
           />
           <IconInformationCard
             value={incorrect}
             label="INCORRECT"
             icon={CircleX}
-            color="rose"
           />
         </div>
       </div>

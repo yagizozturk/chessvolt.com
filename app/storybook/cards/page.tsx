@@ -193,7 +193,6 @@ export default function StorybookCardsPage() {
                       value={932 + index}
                       label={`${color.toUpperCase()} Theme`}
                       icon={Activity}
-                      color={color}
                     />
                   ))}
                 </div>
@@ -210,13 +209,8 @@ export default function StorybookCardsPage() {
   value={932}
   label="Total Games"
   icon={Activity}
-  color="mint"
 />
-
-// color prop'u alir.
-// Renk opsiyonlari:
-// "mint" | "blue" | "purple" | "amber" | "emerald"
-// | "indigo" | "rose" | "cyan" | "orange" | "pink"`}
+/>`}
               />
             </div>
           </div>

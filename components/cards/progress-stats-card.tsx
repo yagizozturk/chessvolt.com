@@ -25,14 +25,9 @@ export function ProgressStatsCard({
   return (
     <Card
       className={cn(
-        "card-gamified shrink-0 self-start border-2 p-4 transition-transform hover:-translate-y-1",
+        "shrink-0 self-start border-2 p-4 transition-transform hover:-translate-y-1",
         className,
       )}
-      style={
-        {
-          "--brand-rgb": rgb,
-        } as React.CSSProperties
-      }
     >
       <div className="flex items-center gap-3">
         {/* İkon rengi artık kart rengiyle aynı olacak */}

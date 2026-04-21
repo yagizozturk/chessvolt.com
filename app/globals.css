@@ -134,11 +134,3 @@
   }
 }
 
-@layer utilities {
-  .card-gamified {
-    background-color: rgba(var(--brand-rgb), 0.08);
-    border-color: rgba(var(--brand-rgb), 0.2);
-    box-shadow: 0 4px 0 0 rgba(var(--brand-rgb), 0.15);
-    color: rgb(var(--brand-rgb));
-  }
-}

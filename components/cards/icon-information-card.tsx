@@ -1,39 +1,27 @@
 import type { LucideIcon } from "lucide-react";
 import * as React from "react";
 import { Card } from "@/components/ui/card";
-import { COLOR_MAP } from "@/lib/shared/constants/color-map";
 import { cn } from "@/lib/utils/cn";
 
 type IconInformationCardProps = React.HTMLAttributes<HTMLDivElement> & {
   value: number | string;
   label: string;
   icon: LucideIcon;
-  color?: keyof typeof COLOR_MAP;
 };
 
 export function IconInformationCard({
   value,
   label,
   icon: Icon,
-  color = "mint",
   className,
-  style,
   ...props
 }: IconInformationCardProps) {
-  const rgb = COLOR_MAP[color];
-
   return (
     <Card
       className={cn(
-        "card-gamified shrink-0 self-start border-2 p-4 transition-transform hover:-translate-y-1",
+        "shrink-0 self-start p-4 transition-transform hover:-translate-y-1",
         className,
       )}
-      style={
-        {
-          "--brand-rgb": rgb,
-          ...style,
-        } as React.CSSProperties
-      }
       {...props}
     >
       <div className="flex items-center gap-3">
