@@ -3,6 +3,7 @@
 import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
+import { buildUci } from "@/lib/chess/buildUci";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
@@ -138,7 +139,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
       const expectedUci = movesArray[currentStep];
       if (!expectedUci) return;
 
-      const userUci = from + to;
+      const userUci = buildUci(from, to);
 
       onUserMovePlayed?.(userUci);
 

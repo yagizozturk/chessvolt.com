@@ -1,4 +1,5 @@
 import OpeningVariantController from "@/features/openings/components/opening-variant-controller";
+import OpeningVariantControllerUpdated from "@/features/openings/components/opening-variant-controller-updated";
 import {
   getOpeningById,
   getOpeningVariantById,
@@ -59,11 +60,17 @@ export default async function OpeningVariantPage({ params }: Params) {
       : "/openings";
 
   return (
-    <OpeningVariantController
-      variant={variant}
-      siblingVariants={variants}
-      nextVariantId={nextVariant?.id ?? null}
-      parentOpeningUrl={parentOpeningUrl}
-    />
+    <>
+      <OpeningVariantController
+        variant={variant}
+        siblingVariants={variants}
+        nextVariantId={nextVariant?.id ?? null}
+        parentOpeningUrl={parentOpeningUrl}
+      />
+
+      <OpeningVariantControllerUpdated
+        moves={variant.moves.split(" ") as string[]}
+      />
+    </>
   );
 }

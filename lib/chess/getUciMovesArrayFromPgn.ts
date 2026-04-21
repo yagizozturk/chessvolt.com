@@ -1,4 +1,5 @@
 import { Chess } from "chess.js";
+import { buildUci } from "@/lib/chess/buildUci";
 
 /**
  * Fonksyon Bilgisi ✅
@@ -20,7 +21,7 @@ export function getUciMovesArrayFromPgn(pgn: string): string[] | null {
     for (const san of history) {
       const move = replayGame.move(san);
       if (!move) return null;
-      uciMoves.push(move.from + move.to + (move.promotion ?? ""));
+      uciMoves.push(buildUci(move.from, move.to, move.promotion));
     }
     return uciMoves;
   } catch {
