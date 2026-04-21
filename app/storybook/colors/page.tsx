@@ -45,9 +45,6 @@ const colors: ColorItem[] = [
   { name: "Sidebar border", cssVar: "--sidebar-border" },
   { name: "Sidebar ring", cssVar: "--sidebar-ring" },
 
-  // Brand
-  { name: "Brand (rgb)", cssVar: "--brand-rgb", isRgb: true },
-
   // Volt button (standalone CSS, not theme token)
   { name: "Volt button background", hex: "#1899d6" },
   { name: "Volt button highlight", hex: "#1cb0f6" },
@@ -58,13 +55,10 @@ export default function StorybookColorsPage() {
     <StorybookPage>
       <section id="colors" className="space-y-6">
         <div>
-          <h2 className="text-foreground text-2xl font-semibold tracking-tight">
-            Colors
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Projede kullanılan tüm temel renk token&apos;larının bir önizlemesi.
-            Aşağıdaki kutular hem aydınlık hem de karanlık tema için güncel
-            değerleri yansıtır.
+          <h2 className="text-foreground text-2xl font-semibold tracking-tight">Colors</h2>
+          <p className="text-muted-foreground mt-2 max-w-2xl text-sm">
+            Projede kullanılan tüm temel renk token&apos;larının bir önizlemesi. Aşağıdaki kutular hem aydınlık hem de
+            karanlık tema için güncel değerleri yansıtır.
           </p>
         </div>
 
@@ -79,17 +73,13 @@ export default function StorybookColorsPage() {
             return (
               <div
                 key={color.name}
-                className="flex flex-col overflow-hidden rounded-lg border bg-card text-card-foreground"
+                className="bg-card text-card-foreground flex flex-col overflow-hidden rounded-lg border"
               >
                 <div className="h-20 w-full border-b" style={backgroundStyle} />
                 <div className="space-y-1 p-3">
-                  <p className="text-sm font-medium leading-none">{color.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {color.hex
-                      ? color.hex
-                      : color.isRgb
-                        ? `rgb(var(${color.cssVar}))`
-                        : `var(${color.cssVar})`}
+                  <p className="text-sm leading-none font-medium">{color.name}</p>
+                  <p className="text-muted-foreground text-xs">
+                    {color.hex ? color.hex : color.isRgb ? `rgb(var(${color.cssVar}))` : `var(${color.cssVar})`}
                   </p>
                 </div>
               </div>

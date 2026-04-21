@@ -118,11 +118,6 @@
 }
 
 @layer base {
-  :root {
-    /* Varsayılan renk (mint) */
-    --brand-rgb: 88, 204, 187;
-  }
-
   * {
     @apply border-border outline-ring/50;
   }
@@ -133,4 +128,3 @@
     @apply font-sans;
   }
 }
-

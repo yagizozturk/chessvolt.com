@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import VoltBoardUpdated, { type VoltBoardFeedback } from "@/components/volt-board-updated/volt-board-updated";
 import { useOpeningVariantControllerUpdated } from "@/features/openings/hooks/use-opening-variant-controller-updated";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -11,6 +9,7 @@ import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-p
 import { getMoveQuality } from "@/lib/utils/getMoveQuality";
 
 import type { OpeningVariant } from "../types/opening-variant";
+import { OpeningHelperCard } from "./opening-helper-card";
 
 type OpeningVariantControllerUpdatedProps = {
   variant: OpeningVariant;
@@ -26,7 +25,9 @@ export default function OpeningVariantControllerUpdated({
   void nextVariantId;
   void parentOpeningUrl;
 
-  const { _handleMoveCheck, _handleMovePlayed, lastMoveEvaluation } = useOpeningVariantControllerUpdated(variant.moves);
+  const { _handleMoveCheck, _handleMovePlayed, nextGoal, lastMoveEvaluation } = useOpeningVariantControllerUpdated({
+    variant,
+  });
   const [feedback, setFeedback] = useState<VoltBoardFeedback | null>(null);
   const dummyVariantProgress = 68;
   const dummyVariantStatus = "In Progress";
@@ -74,23 +75,7 @@ export default function OpeningVariantControllerUpdated({
           />
         </div>
         <div className="flex h-full min-w-0 flex-col gap-4">
-          <Card className="flex h-full flex-col border-0 shadow-none">
-            <CardHeader>
-              <CardTitle>{variant.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <p>Card Content</p>
-            </CardContent>
-            <CardFooter className="w-full">
-              <div className="flex w-full flex-col gap-2">
-                <div className="text-muted-foreground flex items-center justify-between text-sm">
-                  <span>{dummyVariantStatus}</span>
-                  <span>%{dummyVariantProgress}</span>
-                </div>
-                <Progress value={dummyVariantProgress} className="h-2" />
-              </div>
-            </CardFooter>
-          </Card>
+          <OpeningHelperCard title={variant.title} nextGoal={nextGoal} />
         </div>
       </div>
     </div>
