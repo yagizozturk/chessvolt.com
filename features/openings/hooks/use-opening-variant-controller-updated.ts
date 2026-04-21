@@ -88,6 +88,7 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
     const _nextMove = _moves[_currentStep + 1];
     const _nextUserStep = _nextMove ? _currentStep + 2 : _currentStep + 1;
     _setMoveCount(_nextUserStep);
+    _setHintCount(0);
 
     // Tahtadaki güncel konuma göre active ply'i ilerletir.
     // Rakip otomatik hamlesi varsa bir ply daha ileride olur.
@@ -128,9 +129,12 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
     return _nextHintCount;
   };
 
+  const _currentExpectedMove = _moves[_moveCount] ?? null;
+
   return {
     _moves,
     _nextGoal,
+    _hintCount,
     _progressValue,
     _engineStatus,
     _lastMoveEvaluation,
@@ -139,5 +143,6 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
     _incrementMoveCount,
     _resetMoveCount,
     _hintRequested,
+    _currentExpectedMove,
   };
 }

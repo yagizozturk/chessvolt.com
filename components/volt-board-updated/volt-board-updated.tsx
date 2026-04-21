@@ -1,13 +1,14 @@
 "use client";
 
 import type { Key } from "@lichess-org/chessground/types";
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
 import { buildUci } from "@/lib/chess/buildUci";
 import { getPromotionPiece } from "@/lib/chess/getPromotionPiece";
+import { parseUci } from "@/lib/chess/parseUci";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
@@ -31,20 +32,29 @@ type VoltBoardUpdatedProps = {
   size?: number;
   width?: number;
   height?: number;
+  expectedMove?: string | null;
   onCheckMove?: (payload: MoveAttemptPayload) => boolean;
   onMovePlayed?: (payload: MoveEvaluationPayload) => string | undefined;
   feedback?: VoltBoardFeedback | null;
 };
 
-export default function VoltBoardUpdated({
-  sourceId,
-  size = 620,
-  width,
-  height,
-  onCheckMove,
-  onMovePlayed,
-  feedback,
-}: VoltBoardUpdatedProps) {
+export type VoltBoardUpdatedHandle = {
+  showHint: (hintLevel: number) => void;
+};
+
+const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProps>(function VoltBoardUpdated(
+  {
+    sourceId,
+    size = 620,
+    width,
+    height,
+    expectedMove,
+    onCheckMove,
+    onMovePlayed,
+    feedback,
+  },
+  ref,
+) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
   const boardRef = useRef<HTMLDivElement>(null);
   const orientationRef = useRef<"white" | "black">("white");
@@ -60,7 +70,7 @@ export default function VoltBoardUpdated({
   const boardHeight = height ?? size;
 
   // 4. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
-  const { updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } = useChessground({
+  const { ground, updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } = useChessground({
     boardRef,
     game,
     sourceId,
@@ -97,6 +107,10 @@ export default function VoltBoardUpdated({
     return buildUci(from, to, promotion);
   }
 
+  function clearHintShapes() {
+    ground.current?.setAutoShapes([]);
+  }
+
   function applyOpponentMove(nextMove: string) {
     const opponentFrom = nextMove.slice(0, 2);
     const opponentTo = nextMove.slice(2, 4);
@@ -113,6 +127,7 @@ export default function VoltBoardUpdated({
   // ============================================================================
   function handleWrongMoveAttempt(to: string) {
     clearSquareCustomHighlights();
+    clearHintShapes();
     setSquareCustomHighlight(to, "custom-wrong-move");
     playMoveSound();
     scheduleWrongMoveRevert();
@@ -151,6 +166,7 @@ export default function VoltBoardUpdated({
     fenBefore: string,
     playedBy: "white" | "black",
   ) {
+    clearHintShapes();
     const promotion = getPromotionPiece(game.current, from, to, DEFAULT_PROMOTION_PIECE);
     const move = makeMove(from, to, promotion ?? DEFAULT_PROMOTION_PIECE);
     if (!move) {
@@ -194,5 +210,30 @@ export default function VoltBoardUpdated({
     };
   }, []);
 
+  // ============================================================================
+  // Hint (drawable shapes) - exposed via ref
+  // ============================================================================
+  useImperativeHandle(
+    ref,
+    () => ({
+      showHint(hintLevel: number) {
+        if (!ground.current || !expectedMove) return;
+        const parsedUci = parseUci(expectedMove);
+        if (!parsedUci) return;
+
+        const orig = parsedUci.from as Key;
+        const dest = parsedUci.to as Key;
+        if (hintLevel <= 1) {
+          ground.current.setAutoShapes([{ orig, brush: "green" }]);
+        } else {
+          ground.current.setAutoShapes([{ orig, dest, brush: "green" }]);
+        }
+      },
+    }),
+    [expectedMove, ground],
+  );
+
   return <div ref={boardRef} className="cardinal purple" style={{ width: boardWidth, height: boardHeight }} />;
-}
+});
+
+export default VoltBoardUpdated;

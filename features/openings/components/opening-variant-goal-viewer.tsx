@@ -1,4 +1,4 @@
-import { Lightbulb } from "lucide-react";
+import Image from "next/image";
 
 import { MoveGoal } from "../types/opening-variant";
 
@@ -9,9 +9,13 @@ type OpeningVariantGoalViewerProps = {
 export function OpeningVariantGoalViewer({ nextGoal }: OpeningVariantGoalViewerProps) {
   return (
     <div className="flex items-start gap-3">
-      <Lightbulb className="text-muted-foreground mt-0.5 size-4 shrink-0" aria-hidden="true" />
-      <p className="text-muted-foreground text-sm">{nextGoal?.title ?? "No title available."}</p>
-      <p className="text-muted-foreground text-sm">{nextGoal?.description ?? "No description available."}</p>
+      <div>
+        <Image src="/images/icons/icon-goal.png" alt="Volt icon" width={48} height={48} className="mt-0.5 shrink-0" />
+      </div>
+      <div>
+        <p className="text-muted-foreground text-lg font-semibold">{nextGoal?.title ?? "No title available."}</p>
+        <p className="text-muted-foreground">{nextGoal?.description ?? "No description available."}</p>
+      </div>
     </div>
   );
 }
