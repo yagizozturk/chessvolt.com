@@ -11,15 +11,13 @@ import { getPromotionPiece } from "@/lib/chess/getPromotionPiece";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
-import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
+import { DEFAULT_PROMOTION_PIECE, WRONG_MOVE_REVERT_DELAY_MS } from "@/lib/shared/constants/chess";
 import { useBoardSounds } from "@/lib/shared/hooks/use-board-sounds";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
-
-const WRONG_MOVE_REVERT_DELAY_MS = 1000;
 
 type VoltBoardUpdatedProps = {
   sourceId: string;
@@ -80,11 +78,11 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
 
       // Yanlış hamle yapıldı
       if (isCorrect === false) {
-        handleWrongMoveAttempt(to);
+        boardWrongMoveHandler(to);
         return;
       } else {
         // Doğru hamle yapıldı
-        handleCorrectMoveAttempt(from, to, uci, fenBefore, playedBy);
+        boardCorrectMoveHandler(from, to, uci, fenBefore, playedBy);
       }
 
       updateBoard();
@@ -100,21 +98,10 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
     ground.current?.setAutoShapes([]);
   }
 
-  function applyOpponentMove(nextMove: string) {
-    const opponentFrom = nextMove.slice(0, 2);
-    const opponentTo = nextMove.slice(2, 4);
-    const opponentPromotion = nextMove[4] ?? DEFAULT_PROMOTION_PIECE;
-    const opponentMove = makeMove(opponentFrom, opponentTo, opponentPromotion);
-
-    if (opponentMove) {
-      lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
-    }
-  }
-
   // ============================================================================
   // Oyuncu yanlış hamle yapınca event bu metodu tetikler
   // ============================================================================
-  function handleWrongMoveAttempt(to: string) {
+  function boardWrongMoveHandler(to: string) {
     clearSquareCustomHighlights();
     clearHintShapes();
     setSquareCustomHighlight(to, "custom-wrong-move");
@@ -148,7 +135,7 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
   // ============================================================================
   // Oyuncu doğru hamle yapınca event bu metodu tetikler
   // ============================================================================
-  function handleCorrectMoveAttempt(
+  function boardCorrectMoveHandler(
     from: string,
     to: string,
     uci: string,
@@ -163,7 +150,7 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
       return;
     }
     playCorrectSound();
-    setSquareCustomHighlight(to, "custom-best-move");
+    setSquareCustomHighlight(to, "custom-correct-move");
 
     const fenAfter = game.current.fen();
     lastMoveRef.current = [from as Key, to as Key];
@@ -175,7 +162,21 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
     });
 
     if (nextMove) {
-      applyOpponentMove(nextMove);
+      boardApplyOpponentMove(nextMove);
+    }
+  }
+
+  // ============================================================================
+  // Opponent move is played
+  // ============================================================================
+  function boardApplyOpponentMove(nextMove: string) {
+    const opponentFrom = nextMove.slice(0, 2);
+    const opponentTo = nextMove.slice(2, 4);
+    const opponentPromotion = nextMove[4] ?? DEFAULT_PROMOTION_PIECE;
+    const opponentMove = makeMove(opponentFrom, opponentTo, opponentPromotion);
+
+    if (opponentMove) {
+      lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
     }
   }
 

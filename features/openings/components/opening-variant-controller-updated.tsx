@@ -46,10 +46,17 @@ export default function OpeningVariantControllerUpdated({
     variant,
   });
 
+  // ============================================================================
+  // Variant değiştiğinde local ekran state'i sıfırlanır:
+  // - varyantın tamamnlandımı bilgisi resetlenir
+  // ============================================================================
   useEffect(() => {
     setIsCompleted(false);
   }, [variant.id]);
 
+  // ============================================================================
+  // isCompleted değiştiğinde ya da hamle değiştiğinde tamamlandı işaretliyoruz
+  // ============================================================================
   useEffect(() => {
     if (_currentExpectedMove != null || isCompleted) return;
 
@@ -58,15 +65,22 @@ export default function OpeningVariantControllerUpdated({
   }, [isCompleted, _currentExpectedMove, updateOpeningVariantAnswerHook, variant.id]);
 
   // ============================================================================
+  // handle metotları controller a aittir, _değişkenler hook a aittir.
   // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
   // ============================================================================
   function handleBoardCheckMove(move: MoveAttemptPayload) {
     const { isCorrect } = _handleMoveCheck(move);
+    if (!isCorrect && !isCompleted) {
+      // void, burada metodu çağırmak için değil, dönen Promise’i bilinçli olarak “await etmiyorum” demek için
+      void updateOpeningVariantAnswerHook(variant.id, false);
+    }
     return isCorrect;
   }
 
   // ============================================================================
-  // Hamle onaylanıp tahtaya uygulandıktan sonra commit event'i gelir.
+  // After move played from the board, controller handleBoardMovePlayed is
+  // triggered that asks HOOK for nextMove information. nextMove is returned to
+  // volt-board to play the opponent move.
   // ============================================================================
   function handleBoardMovePlayed(move: MoveEvaluationPayload) {
     const { nextMove } = _handleMovePlayed(move);
@@ -85,6 +99,9 @@ export default function OpeningVariantControllerUpdated({
     boardRef.current?.showHint(nextHintCount);
   };
 
+  // ============================================================================
+  // Next variant veya opening sayfasına yönlendirir. Variant bitince gözükür
+  // ============================================================================
   const handleContinueClick = () => {
     const destinationPath = nextVariantId ? `/openings/variant/${nextVariantId}` : parentOpeningUrl;
     router.push(destinationPath);

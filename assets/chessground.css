@@ -214,7 +214,7 @@ coords.squares:nth-of-type(even) :nth-child(odd) {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
-cg-board > square.custom-best-move::after,
+cg-board > square.custom-correct-move::after,
 cg-board > square.custom-wrong-move::after,
 cg-board > square.custom-good-move::after,
 cg-board > square.custom-inaccuracy-move::after,
@@ -232,7 +232,7 @@ cg-board > square.custom-blunder-move::after {
   z-index: 99;
 }
 
-cg-board > square.custom-best-move::after {
+cg-board > square.custom-correct-move::after {
   background-image: url("/images/icons/icon-checkmark.png") !important;
 }
 
