@@ -41,7 +41,7 @@ export function RiddleBoardCard({
         <VoltBoard
           sourceId={riddle.id}
           coordinates={false}
-          initialFen={displayFen}
+          initialFen={displayFen ?? undefined}
           moves={riddle.moves ?? ""}
           width={width}
           height={height}
