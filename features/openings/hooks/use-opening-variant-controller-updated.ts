@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
+import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
+import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
-import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 
 import { OpeningVariant } from "../types/opening-variant";
 
@@ -17,6 +17,7 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
     .trim()
     .split(/\s+/)
     .filter((m) => m.length > 0);
+  const _pgnMoves = useMemo(() => getUciMovesArrayFromPgn(_variant.pgn), [_variant.pgn]);
   const [_moveCount, _setMoveCount] = useState<number>(0);
   const [_hintCount, _setHintCount] = useState(0);
   const [_activePly, _setActivePly] = useState<number | null>(() => _variant.ply);
@@ -24,6 +25,7 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
   // ============================================================================
   // Goals variant içinden alınır ve ply sırasına göre yukarıdan aşağıya dizilir.
   // Stepper bu sıralı listeyi kullanır.
+  // TODO: REFACTOR
   // ============================================================================
   const _sortedGoals = useMemo(() => {
     const _goals = _variant.goals;
@@ -85,19 +87,19 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
   // Oynandığına göre hamle doğrudur.
   // Sonraki rakip hamlesi varsa index 2 artar; yoksa 1 artar.
   // ============================================================================
-  function _handleMovePlayed(_playedMove: MoveEvaluationPayload) {
+  function _handleMovePlayed(_playedMove: Move) {
     const _currentStep = _moveCount;
     const _nextMove = _moves[_currentStep + 1];
     const _nextUserStep = _nextMove ? _currentStep + 2 : _currentStep + 1;
     _setMoveCount(_nextUserStep);
     _setHintCount(0);
 
-    // Tahtadaki güncel konuma göre active ply'i ilerletir.
+    // Oynanan hamlenin UCI'sine göre aktif ply'i günceller.
     // Rakip otomatik hamlesi varsa bir ply daha ileride olur.
-    const _userMovePly = getPlyFromPgnAtFen(_variant.pgn, _playedMove.fenAfter);
-    if (_userMovePly !== null) {
-      _setActivePly(_nextMove ? _userMovePly + 1 : _userMovePly);
-    }
+    const _expectedUserMovePly = _variant.ply + _currentStep + 1;
+    const _isExpectedPgnMove = !!_playedMove.uci && _pgnMoves?.[_expectedUserMovePly - 1] === _playedMove.uci;
+    const _userMovePly = _isExpectedPgnMove ? _expectedUserMovePly : _variant.ply + _nextUserStep;
+    _setActivePly(_nextMove ? _userMovePly + 1 : _userMovePly);
 
     return {
       nextMove: _nextMove,
@@ -133,10 +135,10 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
 
   // ============================================================================
   // Sıradaki oynanması gereken hamle
-  // _currentExpectedMove bir derived value:
+  // _currentCorrectMove bir derived value:
   // _moveCount’a göre otomatik hesaplanıyor.
   // ============================================================================
-  const _currentExpectedMove = _moves[_moveCount] ?? null;
+  const _currentCorrectMove = _moves[_moveCount] ?? null;
 
   return {
     _moves,
@@ -150,6 +152,6 @@ export function useOpeningVariantControllerUpdated({ variant: _variant }: UseOpe
     _incrementMoveCount,
     _resetMoveCount,
     _hintRequested,
-    _currentExpectedMove,
+    _currentCorrectMove,
   };
 }

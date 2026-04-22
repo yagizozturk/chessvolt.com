@@ -13,8 +13,8 @@ import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { DEFAULT_PROMOTION_PIECE, WRONG_MOVE_REVERT_DELAY_MS } from "@/lib/shared/constants/chess";
 import { useBoardSounds } from "@/lib/shared/hooks/use-board-sounds";
+import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
-import type { MoveEvaluationPayload } from "@/lib/shared/types/move-evaluation-payload";
 
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
@@ -22,11 +22,9 @@ import "@lichess-org/chessground/assets/chessground.brown.css";
 type VoltBoardUpdatedProps = {
   sourceId: string;
   size?: number;
-  width?: number;
-  height?: number;
-  expectedMove?: string | null;
-  onCheckMove?: (payload: MoveAttemptPayload) => boolean;
-  onMovePlayed?: (payload: MoveEvaluationPayload) => string | undefined;
+  correctMove?: string | null;
+  onCheckMove: (payload: MoveAttemptPayload) => boolean;
+  onMovePlayed: (payload: Move) => string;
 };
 
 // ============================================================================
@@ -39,7 +37,7 @@ export type VoltBoardUpdatedHandle = {
 };
 
 const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProps>(function VoltBoardUpdated(
-  { sourceId, size = 620, width, height, expectedMove, onCheckMove, onMovePlayed },
+  { sourceId, size = 620, correctMove, onCheckMove, onMovePlayed },
   ref,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
@@ -52,11 +50,7 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
   const { game, makeMove } = useChessOne();
   const { playCorrectSound, playMoveSound } = useBoardSounds();
 
-  // 3. Derived State (Hesaplamalar - Render sırasında her seferinde çalışır)
-  const boardWidth = width ?? size;
-  const boardHeight = height ?? size;
-
-  // 4. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
+  // 3. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
   const { ground, updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } = useChessground({
     boardRef,
     game,
@@ -82,7 +76,7 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
         return;
       } else {
         // Doğru hamle yapıldı
-        boardCorrectMoveHandler(from, to, uci, fenBefore, playedBy);
+        boardCorrectMoveHandler(from, to, uci);
       }
 
       updateBoard();
@@ -135,13 +129,7 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
   // ============================================================================
   // Oyuncu doğru hamle yapınca event bu metodu tetikler
   // ============================================================================
-  function boardCorrectMoveHandler(
-    from: string,
-    to: string,
-    uci: string,
-    fenBefore: string,
-    playedBy: "white" | "black",
-  ) {
+  function boardCorrectMoveHandler(from: string, to: string, uci: string) {
     clearHintShapes();
     clearSquareCustomHighlights();
     const promotion = getPromotionPiece(game.current, from, to, DEFAULT_PROMOTION_PIECE);
@@ -152,13 +140,13 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
     playCorrectSound();
     setSquareCustomHighlight(to, "custom-correct-move");
 
-    const fenAfter = game.current.fen();
     lastMoveRef.current = [from as Key, to as Key];
-    const nextMove = onMovePlayed?.({
+    const nextMove = onMovePlayed({
+      from,
+      to,
+      promotion: move.promotion,
+      san: move.san,
       uci,
-      fenBefore,
-      fenAfter,
-      playedBy,
     });
 
     if (nextMove) {
@@ -196,23 +184,23 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
     ref,
     () => ({
       showHint(hintLevel: number) {
-        if (!ground.current || !expectedMove) return;
-        const parsedUci = parseUci(expectedMove);
+        if (!ground.current || !correctMove) return;
+        const parsedUci = parseUci(correctMove);
         if (!parsedUci) return;
 
         const orig = parsedUci.from as Key;
         const dest = parsedUci.to as Key;
         if (hintLevel <= 1) {
-          ground.current.setAutoShapes([{ orig, brush: "green" }]);
+          ground.current.setAutoShapes([{ orig, brush: "red" }]);
         } else {
-          ground.current.setAutoShapes([{ orig, dest, brush: "green" }]);
+          ground.current.setAutoShapes([{ orig, dest, brush: "red" }]);
         }
       },
     }),
-    [expectedMove, ground],
+    [correctMove, ground],
   );
 
-  return <div ref={boardRef} className="cardinal purple" style={{ width: boardWidth, height: boardHeight }} />;
+  return <div ref={boardRef} className="cardinal purple" style={{ width: size, height: size }} />;
 });
 
 export default VoltBoardUpdated;

@@ -12,7 +12,7 @@ export function OpeningVariantGoalViewer({ nextGoal }: OpeningVariantGoalViewerP
   return (
     <div className="flex items-start gap-3">
       <div>
-        <Image src="/images/icons/icon-goal.png" alt="Volt icon" width={48} height={48} className="mt-0.5 shrink-0" />
+        <Image src="/images/icons/icon-goal.png" alt="Volt icon" width={48} height={48} className="mt-3 shrink-0" />
       </div>
       <div>
         <p className="text-muted-foreground text-lg font-semibold">{nextGoal.title}</p>
