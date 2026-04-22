@@ -1,5 +1,8 @@
 "use client";
 
+import type { Key } from "@lichess-org/chessground/types";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+
 import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
@@ -10,16 +13,9 @@ import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
 import { useSound } from "@/lib/shared/hooks/use-sound";
 import { cn } from "@/lib/utils/cn";
+
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
-import type { Key } from "@lichess-org/chessground/types";
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from "react";
 
 export type VoltBoardProps = {
   sourceId: string;
@@ -59,193 +55,179 @@ export type VoltBoardHandle = {
  *
  * movesArray: moves içinde gelen hamleleri boşlukla ayırıp bir dizi ye atar.
  */
-const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(
-  function VoltBoard(props, ref) {
-    // React'ta her zaman ilk parametre props paketidir.
-    const {
-      sourceId,
-      moves,
-      width = 620,
-      height = 620,
-      className,
-      viewOnly = false,
-      coordinates = true,
-      onUserMovePlayed,
-      onUserSuccessMovePlayed,
-      onFenAfterUserMove,
-      onFenAfterOpponentMove,
-      onSolved,
-    } = props;
+const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard(props, ref) {
+  // React'ta her zaman ilk parametre props paketidir.
+  const {
+    sourceId,
+    moves,
+    width = 620,
+    height = 620,
+    className,
+    viewOnly = false,
+    coordinates = true,
+    onUserMovePlayed,
+    onUserSuccessMovePlayed,
+    onFenAfterUserMove,
+    onFenAfterOpponentMove,
+    onSolved,
+  } = props;
 
-    const boardRef = useRef<HTMLDivElement>(null);
-    const { game, makeMove } = useChessOne(props.initialFen);
+  const boardRef = useRef<HTMLDivElement>(null);
+  const { game, makeMove } = useChessOne(props.initialFen);
 
-    const currentStepRef = useRef(0);
-    const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
-    const initialPlayerOrientation = useRef<"white" | "black">("white"); // Fixed orientation from player's perspective - never flips when turn changes
-    const isOverRef = useRef(false);
+  const currentStepRef = useRef(0);
+  const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
+  const initialPlayerOrientation = useRef<"white" | "black">("white"); // Fixed orientation from player's perspective - never flips when turn changes
+  const isOverRef = useRef(false);
 
-    const movesArray = useMemo(
-      () =>
-        moves
-          .trim()
-          .split(/\s+/)
-          .filter((m) => m.length > 0),
-      [moves],
-    );
+  const movesArray = useMemo(
+    () =>
+      moves
+        .trim()
+        .split(/\s+/)
+        .filter((m) => m.length > 0),
+    [moves],
+  );
 
-    const { play: playCorrectSound } = useSound(
-      "/audio/piece-correct-move-sound.mp3",
-      1,
-    );
-    const { play: playMoveSound } = useSound(
-      "/audio/piece-move-sound.wav",
-      0.5,
-    );
+  const { play: playCorrectSound } = useSound("/audio/piece-correct-move-sound.mp3", 1);
+  const { play: playMoveSound } = useSound("/audio/piece-move-sound.wav", 0.5);
 
-    // ============================================================================
-    // Initialize Fen
-    // ============================================================================
-    useEffect(() => {
-      isOverRef.current = false;
-      currentStepRef.current = 0;
-      lastMoveRef.current = undefined;
-      initialPlayerOrientation.current =
-        game.current.turn() === "w" ? "white" : "black";
-    }, [sourceId, game]);
+  // ============================================================================
+  // Initialize Fen
+  // ============================================================================
+  useEffect(() => {
+    isOverRef.current = false;
+    currentStepRef.current = 0;
+    lastMoveRef.current = undefined;
+    initialPlayerOrientation.current = game.current.turn() === "w" ? "white" : "black";
+  }, [sourceId, game]);
 
-    // ============================================================================
-    // Initialize Chessground
-    // ============================================================================
-    const { ground, setSquareCustomHighlight, clearSquareCustomHighlights, updateBoard } =
-      useChessground({
-      boardRef,
-      game,
-      sourceId,
-      orientationRef: initialPlayerOrientation,
-      viewOnly,
-      coordinates,
-      lastMoveRef,
-      onMove: handleMove,
-    });
+  // ============================================================================
+  // Initialize Chessground
+  // ============================================================================
+  const { ground, setSquareCustomHighlight, clearSquareCustomHighlights, updateBoard } = useChessground({
+    boardRef,
+    game,
+    sourceId,
+    orientationRef: initialPlayerOrientation,
+    viewOnly,
+    coordinates,
+    lastMoveRef,
+    onMove: handleMove,
+  });
 
-    // ============================================================================
-    // Events
-    // ============================================================================
-    function handleMove(from: string, to: string) {
-      if (!game.current || !ground.current) return;
+  // ============================================================================
+  // Events
+  // ============================================================================
+  function handleMove(from: string, to: string) {
+    if (!game.current || !ground.current) return;
 
-      const currentStep = currentStepRef.current;
-      const expectedUci = movesArray[currentStep];
-      if (!expectedUci) return;
+    const currentStep = currentStepRef.current;
+    const expectedUci = movesArray[currentStep];
+    if (!expectedUci) return;
 
-      const userUci = buildUci(from, to);
+    const userUci = buildUci(from, to);
 
-      onUserMovePlayed?.(userUci);
+    onUserMovePlayed?.(userUci);
 
-      if (!isExpectedMove(userUci, expectedUci)) {
-        handleWrongMove(to);
-        return;
-      }
-
-      applyUserMove(from, to);
-      const nextStep = advanceStep();
-
-      // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
-      if (nextStep >= movesArray.length) {
-        finishSolution();
-        return;
-      }
-
-      const opponentUci = movesArray[nextStep];
-      if (!opponentUci) return;
-      applyOpponentMove(opponentUci);
-      advanceStep();
+    if (!isExpectedMove(userUci, expectedUci)) {
+      handleWrongMove(to);
+      return;
     }
 
-    function clearHintShapes() {
-      ground.current?.setAutoShapes([]);
+    applyUserMove(from, to);
+    const nextStep = advanceStep();
+
+    // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
+    if (nextStep >= movesArray.length) {
+      finishSolution();
+      return;
     }
 
-    function isExpectedMove(userUci: string, expectedUci?: string) {
-      // TODO: Support promotion-aware validation (e.g. e7e8q vs e7e8n). Current matching ignores promotion piece from expected UCI.
-      return userUci === expectedUci;
-    }
+    const opponentUci = movesArray[nextStep];
+    if (!opponentUci) return;
+    applyOpponentMove(opponentUci);
+    advanceStep();
+  }
 
-    // Step through the solution line; when the last expected move is played, the line is complete
-    function advanceStep() {
-      currentStepRef.current += 1;
-      return currentStepRef.current;
-    }
+  function clearHintShapes() {
+    ground.current?.setAutoShapes([]);
+  }
 
-    function handleWrongMove(to: string) {
-      // TODO: Play wrong move sound
-      setSquareCustomHighlight(to, "custom-wrong-move");
-      playMoveSound();
-      clearHintShapes();
-      onSolved?.(false);
-    }
+  function isExpectedMove(userUci: string, expectedUci?: string) {
+    // TODO: Support promotion-aware validation (e.g. e7e8q vs e7e8n). Current matching ignores promotion piece from expected UCI.
+    return userUci === expectedUci;
+  }
 
-    function applyUserMove(from: string, to: string) {
-      clearSquareCustomHighlights();
-      makeMove(from, to, DEFAULT_PROMOTION_PIECE);
-      lastMoveRef.current = [from as Key, to as Key];
-      playCorrectSound();
-      clearHintShapes();
-      updateBoard();
-      onUserSuccessMovePlayed?.(to);
-      onFenAfterUserMove?.(game.current.fen());
-    }
+  // Step through the solution line; when the last expected move is played, the line is complete
+  function advanceStep() {
+    currentStepRef.current += 1;
+    return currentStepRef.current;
+  }
 
-    function finishSolution() {
-      isOverRef.current = true;
-      onSolved?.(true);
-    }
+  function handleWrongMove(to: string) {
+    // TODO: Play wrong move sound
+    setSquareCustomHighlight(to, "custom-wrong-move");
+    playMoveSound();
+    clearHintShapes();
+    onSolved?.(false);
+  }
 
-    function applyOpponentMove(opponentUci: string) {
-      const oppFrom = opponentUci.slice(0, 2);
-      const oppTo = opponentUci.slice(2, 4);
-      makeMove(oppFrom, oppTo, DEFAULT_PROMOTION_PIECE);
-      lastMoveRef.current = [oppFrom as Key, oppTo as Key];
-      onFenAfterOpponentMove?.(game.current.fen());
-      updateBoard();
-    }
+  function applyUserMove(from: string, to: string) {
+    clearSquareCustomHighlights();
+    makeMove(from, to, DEFAULT_PROMOTION_PIECE);
+    lastMoveRef.current = [from as Key, to as Key];
+    playCorrectSound();
+    clearHintShapes();
+    updateBoard();
+    onUserSuccessMovePlayed?.(to);
+    onFenAfterUserMove?.(game.current.fen());
+  }
 
-    // ============================================================================
-    // Hint (drawable shapes) - exposed via ref
-    // useImperativeHandle(ref, () => ({ ... })) bloğu içinde, dışarıdan erişilmesini istediğin fonksiyonları paketliyorsun.
-    // ============================================================================
-    useImperativeHandle(
-      ref,
-      () => ({
-        showHint(hintLevel: number) {
-          if (!ground.current || isOverRef.current) return;
-          const step = currentStepRef.current;
-          const expectedUci = movesArray[step];
-          const parsedUci = parseUci(expectedUci);
-          if (!parsedUci) return;
-          const orig = parsedUci.from as Key;
-          const dest = parsedUci.to as Key;
-          if (hintLevel <= 1) {
-            ground.current.setAutoShapes([{ orig, brush: "green" }]);
-          } else {
-            ground.current.setAutoShapes([{ orig, dest, brush: "green" }]);
-          }
-        },
-      }),
-      [ground, movesArray],
-    );
+  function finishSolution() {
+    isOverRef.current = true;
+    onSolved?.(true);
+  }
 
-    return (
-      <div className={cn("w-fit", className)}>
-        <div
-          ref={boardRef}
-          className="cardinal purple"
-          style={{ width, height }}
-        />
-      </div>
-    );
-  },
-);
+  function applyOpponentMove(opponentUci: string) {
+    const oppFrom = opponentUci.slice(0, 2);
+    const oppTo = opponentUci.slice(2, 4);
+    makeMove(oppFrom, oppTo, DEFAULT_PROMOTION_PIECE);
+    lastMoveRef.current = [oppFrom as Key, oppTo as Key];
+    onFenAfterOpponentMove?.(game.current.fen());
+    updateBoard();
+  }
+
+  // ============================================================================
+  // Hint (drawable shapes) - exposed via ref
+  // useImperativeHandle(ref, () => ({ ... })) bloğu içinde, dışarıdan erişilmesini istediğin fonksiyonları paketliyorsun.
+  // ============================================================================
+  useImperativeHandle(
+    ref,
+    () => ({
+      showHint(hintLevel: number) {
+        if (!ground.current || isOverRef.current) return;
+        const step = currentStepRef.current;
+        const expectedUci = movesArray[step];
+        const parsedUci = parseUci(expectedUci);
+        if (!parsedUci) return;
+        const orig = parsedUci.from as Key;
+        const dest = parsedUci.to as Key;
+        if (hintLevel <= 1) {
+          ground.current.setAutoShapes([{ orig, brush: "green" }]);
+        } else {
+          ground.current.setAutoShapes([{ orig, dest, brush: "green" }]);
+        }
+      },
+    }),
+    [ground, movesArray],
+  );
+
+  return (
+    <div className={cn("w-fit", className)}>
+      <div ref={boardRef} className="cardinal dark-blue" style={{ width, height }} />
+    </div>
+  );
+});
 
 export default VoltBoard;
