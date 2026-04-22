@@ -1,4 +1,4 @@
-import { IterationBadge } from "@/components/number-badge/number-badge";
+import { IterationBadge } from "@/components/badge/number-badge/number-badge";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 
 import { CodeViewer } from "../components/code-viewer";
@@ -9,12 +9,8 @@ export default function MiscPage() {
     <StorybookPage>
       <section className="space-y-6">
         <div>
-          <h2 className="text-foreground text-2xl font-semibold tracking-tight">
-            Misc
-          </h2>
-          <p className="text-muted-foreground mt-1 text-sm">
-            IterationBadge bileseninin ornek kullanimi.
-          </p>
+          <h2 className="text-foreground text-2xl font-semibold tracking-tight">Misc</h2>
+          <p className="text-muted-foreground mt-1 text-sm">IterationBadge bileseninin ornek kullanimi.</p>
         </div>
 
         <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
@@ -27,8 +23,7 @@ export default function MiscPage() {
 
           <div className="flex flex-col gap-2">
             <p className="text-sm font-medium">
-              <span className="text-muted-foreground">Component:</span>{" "}
-              IterationBadge
+              <span className="text-muted-foreground">Component:</span> IterationBadge
             </p>
             <CodeViewer
               code={`<IterationBadge num={1} />
@@ -51,8 +46,7 @@ export default function MiscPage() {
 
           <div className="flex flex-col gap-2">
             <p className="text-sm font-medium">
-              <span className="text-muted-foreground">Component:</span>{" "}
-              BoardStatusIcon
+              <span className="text-muted-foreground">Component:</span> BoardStatusIcon
             </p>
             <CodeViewer
               code={`<div className="relative h-20 w-20">

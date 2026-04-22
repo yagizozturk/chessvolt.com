@@ -1,5 +1,8 @@
-import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
+import { CircleX, PartyPopper, Star } from "lucide-react";
+import { notFound } from "next/navigation";
+
 import { IconInformationCard } from "@/components/cards/icon-information-card";
+import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import {
   getCorrectlySolvedVariantIds,
@@ -8,8 +11,6 @@ import {
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
 import { getPublicUser } from "@/lib/supabase/auth";
-import { CircleX, PartyPopper, Star } from "lucide-react";
-import { notFound } from "next/navigation";
 
 type Params = {
   params: Promise<{ slug: string; id: string }>;
@@ -71,6 +72,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 key={variant.id}
                 id={variant.id}
                 name={variant.title ?? ""}
+                group={variant.group}
                 num={num}
                 width={250}
                 height={250}
@@ -83,22 +85,9 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
           })}
         </div>
         <div className="space-y-4">
-          <ProgressStatsCard
-            percentage={solveRate}
-            label="Solved variants"
-            icon={PartyPopper}
-            className="w-full"
-          />
-          <IconInformationCard
-            value={correct}
-            label="CORRECT"
-            icon={Star}
-          />
-          <IconInformationCard
-            value={incorrect}
-            label="INCORRECT"
-            icon={CircleX}
-          />
+          <ProgressStatsCard percentage={solveRate} label="Solved variants" icon={PartyPopper} className="w-full" />
+          <IconInformationCard value={correct} label="CORRECT" icon={Star} />
+          <IconInformationCard value={incorrect} label="INCORRECT" icon={CircleX} />
         </div>
       </div>
     </div>

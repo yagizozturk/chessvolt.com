@@ -1,10 +1,11 @@
+import { Circle, Sword } from "lucide-react";
+import Link from "next/link";
+
+import { IterationBadge } from "@/components/badge/number-badge/number-badge";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
-import { IterationBadge } from "@/components/number-badge/number-badge";
 import VoltBoard from "@/components/volt-board/volt-board";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
-import { Circle, Sword } from "lucide-react";
-import Link from "next/link";
 
 type RiddleBoardCardProps = {
   riddle: GameRiddle;
@@ -29,10 +30,7 @@ export function RiddleBoardCard({
   displayFen,
 }: RiddleBoardCardProps) {
   return (
-    <Link
-      href={href ?? `/game-riddle/${riddle.id}`}
-      className="group flex flex-col"
-    >
+    <Link href={href ?? `/game-riddle/${riddle.id}`} className="group flex flex-col">
       <div className="flex items-center gap-3">
         <IterationBadge num={num} />
         <p className="min-w-0 flex-1 truncate text-base">{riddle.title}</p>
@@ -61,15 +59,11 @@ export function RiddleBoardCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <Circle className="h-4 w-4 shrink-0 fill-white" />
-            <span className="truncate text-sm font-medium">
-              {game.whitePlayer}
-            </span>
+            <span className="truncate text-sm font-medium">{game.whitePlayer}</span>
           </div>
           <div className="flex items-center gap-2">
             <Circle className="h-4 w-4 shrink-0 fill-black" />
-            <span className="truncate text-sm font-medium">
-              {game.blackPlayer}
-            </span>
+            <span className="truncate text-sm font-medium">{game.blackPlayer}</span>
           </div>
         </div>
       </div>

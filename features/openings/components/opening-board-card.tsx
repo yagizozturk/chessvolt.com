@@ -1,13 +1,16 @@
-import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
-import { IterationBadge } from "@/components/number-badge/number-badge";
-import { BlurFade } from "@/components/ui/blur-fade";
-import VoltBoard from "@/components/volt-board/volt-board";
 import { Sword } from "lucide-react";
 import Link from "next/link";
+
+import ImageTooltipBadge from "@/components/badge/image-tooltip-badge/image-tooltip-badge";
+import { IterationBadge } from "@/components/badge/number-badge/number-badge";
+import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
+import { BlurFade } from "@/components/ui/blur-fade";
+import VoltBoard from "@/components/volt-board/volt-board";
 
 type OpeningBoardCardProps = {
   id: string;
   name: string;
+  group?: string | null;
   num: number;
   width?: number;
   height?: number;
@@ -17,9 +20,41 @@ type OpeningBoardCardProps = {
   description?: string | null;
 };
 
+type OpeningVariantGroupMeta = {
+  imageSrc: string;
+};
+
+function getOpeningVariantGroupMeta(group: string | null | undefined): OpeningVariantGroupMeta {
+  const normalizedGroup = group?.trim().toLowerCase();
+
+  switch (normalizedGroup) {
+    case "fundamentals":
+      return {
+        imageSrc: "/images/icons/icon-fundamentals.png",
+      };
+    case "practical gambits & traps":
+      return {
+        imageSrc: "/images/icons/icon-traps.png",
+      };
+    case "theoretical main lines":
+      return {
+        imageSrc: "/images/icons/icon-book.png",
+      };
+    case "responses to opponent reactions":
+      return {
+        imageSrc: "/images/icons/icon-sword.png",
+      };
+    default:
+      return {
+        imageSrc: "/images/icons/icon-goal.png",
+      };
+  }
+}
+
 export function OpeningBoardCard({
   id,
   name,
+  group,
   num,
   width = 200,
   height = 200,
@@ -28,18 +63,22 @@ export function OpeningBoardCard({
   fen,
   description,
 }: OpeningBoardCardProps) {
+  const { imageSrc } = getOpeningVariantGroupMeta(group);
+  const trimmedGroup = group?.trim();
+
   return (
     <BlurFade duration={0.4} direction="down" blur="4px">
       <Link href={href} className="group flex flex-col">
         <div className="flex items-center gap-3">
           <IterationBadge num={num} />
-          <p className="line-clamp-2 min-w-0 flex-1 text-sm break-words">
-            {name}
-          </p>
+          <p className="line-clamp-2 min-w-0 flex-1 text-sm break-words">{name}</p>
+          {trimmedGroup && (
+            <ImageTooltipBadge imageSrc={imageSrc} imageAlt={`${trimmedGroup} icon`} title={trimmedGroup} size={20} />
+          )}
         </div>
         <div className="group/board relative mt-2 inline-flex justify-center">
-          {isComplete === true && <BoardStatusIcon status="solved" />}
-          {isComplete === false && <BoardStatusIcon status="wrong" />}
+          {isComplete === true && <BoardStatusIcon status="solved" positionClassName="top-2 right-3" />}
+          {isComplete === false && <BoardStatusIcon status="wrong" positionClassName="top-2 right-3" />}
           <VoltBoard
             sourceId={id}
             initialFen={fen}
@@ -57,11 +96,7 @@ export function OpeningBoardCard({
             <span className="font-semibold text-white">Play</span>
           </div>
         </div>
-        {description && (
-          <div className="bg-secondary/50 mt-4 flex rounded-lg p-3 text-sm ring-0">
-            {description}
-          </div>
-        )}
+        {description && <div className="bg-secondary/50 mt-4 flex rounded-lg p-3 text-sm ring-0">{description}</div>}
       </Link>
     </BlurFade>
   );
