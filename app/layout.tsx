@@ -2,14 +2,11 @@ import { ThemeProvider } from "@/components/theme-provider/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Geist_Mono, Plus_Jakarta_Sans, IBM_Plex_Sans } from "next/font/google";
 
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
+const ibmPlexSans = IBM_Plex_Sans({subsets:['latin'],variable:'--font-sans'});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -30,7 +27,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn(plusJakartaSans.variable, geistMono.variable, "font-sans")}
+      className={cn(ibmPlexSans.variable, geistMono.variable, "font-sans")}
     >
       <body className="bg-background min-h-screen antialiased">
         <ThemeProvider
