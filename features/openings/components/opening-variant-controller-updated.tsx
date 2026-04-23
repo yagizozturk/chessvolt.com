@@ -15,7 +15,7 @@ import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
 import type { OpeningVariant } from "../types/opening-variant";
-import { OpeningVariantGoalViewer } from "./opening-variant-goal-viewer";
+import { OpeningVariantGoalViewer } from "./opening-variant-goal-viewer/opening-variant-goal-viewer";
 
 type OpeningVariantControllerUpdatedProps = {
   variant: OpeningVariant;
@@ -35,7 +35,7 @@ export default function OpeningVariantControllerUpdated({
   const {
     handleMoveCheck,
     handleMovePlayed,
-    nextGoal,
+    sortedGoals,
     totalGoals,
     currentGoalIndex,
     progressValue,
@@ -136,7 +136,7 @@ export default function OpeningVariantControllerUpdated({
               <Separator className="mt-3" />
             </CardHeader>
             <CardContent className="flex flex-1">
-              <OpeningVariantGoalViewer nextGoal={nextGoal} />
+              <OpeningVariantGoalViewer goals={sortedGoals} currentGoalIndex={currentGoalIndex} />
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <div className="flex w-full flex-col gap-2">

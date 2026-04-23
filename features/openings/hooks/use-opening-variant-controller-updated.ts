@@ -6,7 +6,7 @@ import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
-import { OpeningVariant } from "../types/opening-variant";
+import type { MoveGoal, OpeningVariant } from "../types/opening-variant";
 
 type UseOpeningVariantControllerParams = {
   variant: OpeningVariant;
@@ -21,6 +21,7 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
   const [moveCount, setMoveCount] = useState<number>(0);
   const [hintCount, setHintCount] = useState(0);
   const [activePly, setActivePly] = useState<number | null>(() => variant.ply);
+  const [goalsState, setGoalsState] = useState<MoveGoal[]>([]);
 
   // ============================================================================
   // Goals variant içinden alınır ve ply sırasına göre yukarıdan aşağıya dizilir.
@@ -28,15 +29,12 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
   // TODO: REFACTOR
   // ============================================================================
   const sortedGoals = useMemo(() => {
-    const goals = variant.goals;
-    if (!goals?.length) return [];
-    return [...goals].sort((a, b) => a.ply - b.ply);
-  }, [variant.goals]);
+    return [...goalsState].sort((a, b) => a.ply - b.ply);
+  }, [goalsState]);
 
   const nextGoal = useMemo(() => {
-    if (activePly == null) return null;
-    return sortedGoals.find((goal) => goal.ply === activePly + 1) ?? null;
-  }, [sortedGoals, activePly]);
+    return sortedGoals.find((goal) => !goal.isCompleted) ?? null;
+  }, [sortedGoals]);
   const totalGoals = sortedGoals.length;
   const currentGoalIndex = useMemo(() => {
     if (totalGoals === 0) return 0;
@@ -52,12 +50,10 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
   const progressValue = useMemo(() => {
     if (!sortedGoals.length) return 0;
 
-    const completedGoalsCount = sortedGoals.filter(
-      (goal) => goal.isCompleted || (activePly != null && activePly >= goal.ply),
-    ).length;
+    const completedGoalsCount = sortedGoals.filter((goal) => goal.isCompleted).length;
 
     return Math.round((completedGoalsCount / sortedGoals.length) * 100);
-  }, [sortedGoals, activePly]);
+  }, [sortedGoals]);
 
   // ============================================================================
   // Variant değiştiğinde local ekran state'i sıfırlanır:
@@ -68,7 +64,15 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
     setHintCount(0);
     setMoveCount(0);
     setActivePly(variant.ply);
-  }, [variant.id, variant.ply]);
+    setGoalsState(
+      [...(variant.goals ?? [])]
+        .sort((a, b) => a.ply - b.ply)
+        .map((goal) => ({
+          ...goal,
+          isCompleted: goal.isCompleted || variant.ply >= goal.ply,
+        })),
+    );
+  }, [variant.id, variant.ply, variant.goals]);
 
   // ============================================================================
   // Oyuncu hamle yapınca önce kontole girer(attempt) ve tetiklenir.
@@ -99,7 +103,15 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
     const expectedUserMovePly = variant.ply + currentStep + 1;
     const isExpectedPgnMove = !!playedMove.uci && pgnMoves?.[expectedUserMovePly - 1] === playedMove.uci;
     const userMovePly = isExpectedPgnMove ? expectedUserMovePly : variant.ply + nextUserStep;
-    setActivePly(nextMove ? userMovePly + 1 : userMovePly);
+    const updatedActivePly = nextMove ? userMovePly + 1 : userMovePly;
+    setActivePly(updatedActivePly);
+    setGoalsState((prev) =>
+      prev.map((goal) =>
+        goal.isCompleted || updatedActivePly >= goal.ply
+          ? { ...goal, isCompleted: true }
+          : goal,
+      ),
+    );
 
     return {
       nextMove,
@@ -142,6 +154,7 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
 
   return {
     moves,
+    sortedGoals,
     nextGoal,
     totalGoals,
     currentGoalIndex,
