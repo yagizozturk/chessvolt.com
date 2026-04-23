@@ -33,15 +33,15 @@ export default function OpeningVariantControllerUpdated({
   const [isCompleted, setIsCompleted] = useState(false);
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
   const {
-    _handleMoveCheck,
-    _handleMovePlayed,
-    _nextGoal,
-    _totalGoals,
-    _currentGoalIndex,
-    _progressValue,
-    _hintCount,
-    _hintRequested,
-    _currentCorrectMove,
+    handleMoveCheck,
+    handleMovePlayed,
+    nextGoal,
+    totalGoals,
+    currentGoalIndex,
+    progressValue,
+    hintCount,
+    hintRequested,
+    currentCorrectMove,
   } = useOpeningVariantControllerUpdated({
     variant,
   });
@@ -58,18 +58,18 @@ export default function OpeningVariantControllerUpdated({
   // isCompleted değiştiğinde ya da hamle değiştiğinde tamamlandı işaretliyoruz
   // ============================================================================
   useEffect(() => {
-    if (_currentCorrectMove != null || isCompleted) return;
+    if (currentCorrectMove != null || isCompleted) return;
 
     setIsCompleted(true);
     void updateOpeningVariantAnswerHook(variant.id, true);
-  }, [isCompleted, _currentCorrectMove, updateOpeningVariantAnswerHook, variant.id]);
+  }, [isCompleted, currentCorrectMove, updateOpeningVariantAnswerHook, variant.id]);
 
   // ============================================================================
   // handle metotları controller a aittir, _değişkenler hook a aittir.
   // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
   // ============================================================================
   function handleBoardCheckMove(move: MoveAttemptPayload) {
-    const { isCorrect } = _handleMoveCheck(move);
+    const { isCorrect } = handleMoveCheck(move);
     if (!isCorrect && !isCompleted) {
       // void, burada metodu çağırmak için değil, dönen Promise’i bilinçli olarak “await etmiyorum” demek için
       void updateOpeningVariantAnswerHook(variant.id, false);
@@ -83,7 +83,7 @@ export default function OpeningVariantControllerUpdated({
   // volt-board to play the opponent move.
   // ============================================================================
   function handleBoardMovePlayed(move: Move) {
-    const { nextMove } = _handleMovePlayed(move);
+    const { nextMove } = handleMovePlayed(move);
     return nextMove;
   }
 
@@ -94,8 +94,8 @@ export default function OpeningVariantControllerUpdated({
   // Hint değer hook da tutulur
   // ============================================================================
   const handleHintClick = () => {
-    const nextHintCount = _hintRequested();
-    if (nextHintCount == null || !_currentCorrectMove) return;
+    const nextHintCount = hintRequested();
+    if (nextHintCount == null || !currentCorrectMove) return;
     boardRef.current?.showHint(nextHintCount);
   };
 
@@ -114,7 +114,7 @@ export default function OpeningVariantControllerUpdated({
           <VoltBoardUpdated
             ref={boardRef}
             sourceId={variant.id}
-            correctMove={_currentCorrectMove}
+            correctMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onMovePlayed={handleBoardMovePlayed}
           />
@@ -136,19 +136,19 @@ export default function OpeningVariantControllerUpdated({
               <Separator className="mt-3" />
             </CardHeader>
             <CardContent className="flex flex-1">
-              <OpeningVariantGoalViewer nextGoal={_nextGoal} />
+              <OpeningVariantGoalViewer nextGoal={nextGoal} />
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <div className="flex w-full flex-col gap-2">
-                {_totalGoals > 0 ? (
+                {totalGoals > 0 ? (
                   <p className="text-muted-foreground text-xs">
-                    Goal {_currentGoalIndex} / {_totalGoals}
+                    Goal {currentGoalIndex} / {totalGoals}
                   </p>
                 ) : null}
-                <Progress value={_progressValue} className="h-2" />
+                <Progress value={progressValue} className="h-2" />
               </div>
               <div className="w-full">
-                <Button className="w-full" variant="outline" disabled={_hintCount >= 2} onClick={handleHintClick}>
+                <Button className="w-full" variant="outline" disabled={hintCount >= 2} onClick={handleHintClick}>
                   Hint
                 </Button>
               </div>

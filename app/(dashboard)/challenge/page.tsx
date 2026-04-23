@@ -1,17 +1,15 @@
+import { PartyPopper } from "lucide-react";
+
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { CollectionHeader } from "@/components/collection/collection-header";
 import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle.service";
-import {
-  formatGameType,
-  getGameTypeConstants,
-} from "@/features/game-riddle/utilities/game-type-helpers";
+import { formatGameType, getGameTypeConstants } from "@/features/game-riddle/utilities/game-type-helpers";
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 import { groupBy } from "@/lib/utils/groupBy";
-import { PartyPopper } from "lucide-react";
 
 /**
  * Fonksyon Bilgisi ✅
@@ -36,17 +34,13 @@ export default async function ChallengePage() {
   // ========================================================================
   // 4. Mapping. FromEntries example return: { "riddle-101": true }
   // ========================================================================
-  const attemptByRiddleId = Object.fromEntries(
-    attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
-  );
+  const attemptByRiddleId = Object.fromEntries(attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]));
 
   // ========================================================================
   // 5. Grouping data by gameType in riddles. (gameType is required; filter legacy nulls)
   // ========================================================================
   const riddlesWithGameType = allRiddles.filter((r) => r.gameType?.trim());
-  const riddleGameTypeGroups = groupBy(riddlesWithGameType, (r) =>
-    r.gameType!.trim(),
-  );
+  const riddleGameTypeGroups = groupBy(riddlesWithGameType, (r) => r.gameType!.trim());
 
   const groupGameTypes = Object.keys(riddleGameTypeGroups);
 
@@ -80,18 +74,9 @@ export default async function ChallengePage() {
                   itemCount={riddles.length}
                   itemLabel="riddles"
                 />
-                <ProgressStatsCard
-                  percentage={stats.percentage}
-                  label="Solved riddles"
-                  icon={PartyPopper}
-                  className="shrink-0"
-                />
+                <ProgressStatsCard percentage={stats.percentage} label="Solved riddles" icon={PartyPopper} />
               </div>
-              <ChallengeDataList
-                riddles={riddles}
-                gameMap={gameMap}
-                attemptByRiddleId={attemptByRiddleId}
-              />
+              <ChallengeDataList riddles={riddles} gameMap={gameMap} attemptByRiddleId={attemptByRiddleId} />
             </div>
           );
         })}

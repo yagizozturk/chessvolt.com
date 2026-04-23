@@ -1,9 +1,9 @@
 import { CircleX, PartyPopper, Star } from "lucide-react";
 import { notFound } from "next/navigation";
 
-import { IconInformationCard } from "@/components/cards/icon-information-card";
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
+import OpeningMainSidebar from "@/features/openings/components/opening-main-sidebar/opening-main-sidebar";
 import {
   getCorrectlySolvedVariantIds,
   getOpeningById,
@@ -85,9 +85,8 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
           })}
         </div>
         <div className="space-y-4">
-          <ProgressStatsCard percentage={solveRate} label="Solved variants" icon={PartyPopper} className="w-full" />
-          <IconInformationCard value={correct} label="CORRECT" icon={Star} />
-          <IconInformationCard value={incorrect} label="INCORRECT" icon={CircleX} />
+          <OpeningMainSidebar title={opening.name} subPlayCount={total} />
+          <ProgressStatsCard percentage={solveRate} label="Solved Variants" icon={PartyPopper} className="w-full" />
         </div>
       </div>
     </div>

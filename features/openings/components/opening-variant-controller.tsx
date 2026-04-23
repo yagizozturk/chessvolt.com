@@ -1,16 +1,13 @@
 "use client";
 
-import ImageInformationCard from "@/components/cards/image-information-card";
+import { useEffect, useRef } from "react";
+
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
-import { VoltButton } from "@/components/ui/volt-button";
-import VoltBoard, {
-  type VoltBoardHandle,
-} from "@/components/volt-board/volt-board";
+import VoltBoard, { type VoltBoardHandle } from "@/components/volt-board/volt-board";
 import { DEFAULT_GOAL_IMAGE_SRC } from "@/features/openings/constants/opening-variant-controller.constants";
 import { useOpeningVariantController } from "@/features/openings/hooks/use-opening-variant-controller";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { useEffect, useRef } from "react";
 
 type OpeningVariantControllerProps = {
   variant: OpeningVariant;
@@ -107,26 +104,16 @@ export default function OpeningVariantController({
         }}
         title="Line completed successfully"
         description={
-          nextVariantId
-            ? "Continue to the next variation."
-            : "Return to the opening overview when you are ready."
+          nextVariantId ? "Continue to the next variation." : "Return to the opening overview when you are ready."
         }
-        destinationPath={
-          nextVariantId != null
-            ? `/openings/variant/${nextVariantId}`
-            : parentOpeningUrl
-        }
+        destinationPath={nextVariantId != null ? `/openings/variant/${nextVariantId}` : parentOpeningUrl}
         buttonLabel={nextVariantId ? "Next variant" : "Back to opening"}
       />
 
       <div className="grid items-start gap-4 lg:grid-cols-[2fr_1fr] lg:gap-4">
         {/*************** Left Column ***************/}
         <div key={variant.id} className="relative min-w-0">
-          <Confetti
-            ref={confettiRef}
-            manualstart
-            className="pointer-events-none absolute inset-0 z-10 size-full"
-          />
+          <Confetti ref={confettiRef} manualstart className="pointer-events-none absolute inset-0 z-10 size-full" />
           <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
@@ -149,38 +136,12 @@ export default function OpeningVariantController({
         {/*************** Right Column ***************/}
         <div className="flex min-w-0 flex-col gap-4">
           {/*************** Goals ***************/}
-          {nextGoal && (
-            <ImageInformationCard
-              imageSrc={goalImageSrc}
-              imageAlt={goalImageAlt}
-              title={nextGoal.title}
-              description={nextGoal.description}
-            />
-          )}
-
-          {/*************** Ideas (stacked; active expanded) ***************/}
-          {ideaItems.length > 0 && (
-            <div className="flex flex-col gap-3">
-              {ideaItems.map((item) => (
-                <ImageInformationCard
-                  key={item.title}
-                  imageSrc={getIdeaImageSrc(item.title)}
-                  title={item.title}
-                  description={item.description}
-                />
-              ))}
-            </div>
-          )}
 
           {/*************** Hint Button ***************/}
           <div>
-            <VoltButton
-              className="w-full"
-              disabled={hintCount >= 2}
-              onClick={handleHintClick}
-            >
+            <button className="w-full" disabled={hintCount >= 2} onClick={handleHintClick}>
               Hint
-            </VoltButton>
+            </button>
           </div>
         </div>
       </div>

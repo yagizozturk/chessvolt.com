@@ -1,18 +1,12 @@
-import { ImageStatsCard } from "@/components/cards/image-stats-card";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Target } from "lucide-react";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RiddleBoardCard } from "@/features/game-riddle/components/riddle-board-card";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle.service";
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
-import { Target } from "lucide-react";
 
 type Params = {
   params: Promise<{ slug: string }>;
@@ -44,9 +38,7 @@ export default async function ChallengePage({ params }: Params) {
   // ========================================================================
   // (3) Mapping. FromEntries example return: { "riddle-101": true }
   // ========================================================================
-  const attemptByRiddleId = Object.fromEntries(
-    attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]),
-  );
+  const attemptByRiddleId = Object.fromEntries(attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]));
 
   // ========================================================================
   // (4, 5) Fetch games for riddles (unique gameIds) - single query
@@ -111,35 +103,15 @@ export default async function ChallengePage({ params }: Params) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="border-border bg-muted/50 flex items-center justify-between rounded-lg border px-4 py-3">
-                <span className="text-muted-foreground text-sm">
-                  Total Solved
-                </span>
+                <span className="text-muted-foreground text-sm">Total Solved</span>
                 <span className="text-foreground font-bold">{total}</span>
               </div>
               <div className="border-border bg-muted/50 flex items-center justify-between rounded-lg border px-4 py-3">
-                <span className="text-muted-foreground text-sm">
-                  Remaining Challenges
-                </span>
+                <span className="text-muted-foreground text-sm">Remaining Challenges</span>
                 <span className="text-foreground font-bold">{remaining}</span>
               </div>
             </CardContent>
           </Card>
-
-          <ImageStatsCard
-            imageSrc="/images/cards/correct.png"
-            label="Correct answers"
-            value={correct}
-          />
-          <ImageStatsCard
-            imageSrc="/images/cards/incorrect.png"
-            label="Incorrect attempts"
-            value={incorrect}
-          />
-          <ImageStatsCard
-            imageSrc="/images/cards/stats-success.png"
-            label="Success percentage"
-            value={`${solveRate}%`}
-          />
         </div>
       </div>
     </div>
