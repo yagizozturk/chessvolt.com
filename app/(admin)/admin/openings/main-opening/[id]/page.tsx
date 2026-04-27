@@ -1,11 +1,9 @@
-import {
-  getOpeningById,
-  getOpeningVariantsByOpeningId,
-} from "@/features/openings/services/openings.service";
-import { getAdminUser } from "@/lib/supabase/auth";
 import { ArrowLeft, Plus, Upload } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
 
 import { OpeningVariantsList } from "../../variants/components/list/opening-variants-list";
 
@@ -38,11 +36,11 @@ export default async function AdminOpeningVariantsPage({ params }: Params) {
         </Link>
         <div className="flex flex-wrap items-center gap-3">
           <Link
-            href="/admin/openings/bulk"
+            href="/admin/openings/variants/bulk"
             className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors"
           >
             <Upload className="h-4 w-4" />
-            Toplu Variant
+            Bulk Variant Upload
           </Link>
           <Link
             href={`/admin/openings/variants/new?openingId=${encodeURIComponent(openingId)}`}
@@ -57,14 +55,8 @@ export default async function AdminOpeningVariantsPage({ params }: Params) {
       <section>
         <div className="mb-4">
           <h1 className="text-2xl font-bold tracking-tight">{opening.name}</h1>
-          {opening.description ? (
-            <p className="text-muted-foreground mt-1 text-sm">
-              {opening.description}
-            </p>
-          ) : null}
-          <p className="text-muted-foreground mt-2 text-sm">
-            {variants.length} variant(s)
-          </p>
+          {opening.description ? <p className="text-muted-foreground mt-1 text-sm">{opening.description}</p> : null}
+          <p className="text-muted-foreground mt-2 text-sm">{variants.length} variant(s)</p>
         </div>
         <OpeningVariantsList variants={variants} />
       </section>
