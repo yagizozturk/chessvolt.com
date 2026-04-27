@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createEngine } from "@/lib/engine/createEngine";
-import { SkillLevel } from "@/lib/shared/types/game-difficulty";
+
+import { createEngine } from "@/lib/engine/create-engine";
+import { parseEngine } from "@/lib/engine/parse-engine";
 import { EngineInfo } from "@/lib/shared/types/engine-info";
-import { parseEngine } from "@/lib/engine/parseEngine";
+import { SkillLevel } from "@/lib/shared/types/game-difficulty";
 
 type EngineStatus = "loading" | "idle" | "thinking";
 
@@ -14,11 +15,7 @@ type UseChessEngineOptions = {
   onBestMove: (bestMove: string, infos: EngineInfo[]) => void;
 };
 
-export function useChessEngine({
-  difficulty,
-  onReady,
-  onBestMove,
-}: UseChessEngineOptions) {
+export function useChessEngine({ difficulty, onReady, onBestMove }: UseChessEngineOptions) {
   const engineRef = useRef<Worker | null>(null);
   const waitingRef = useRef(false);
   const [status, setStatus] = useState<EngineStatus>("loading");
