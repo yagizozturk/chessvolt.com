@@ -12,7 +12,7 @@ import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { DEFAULT_PROMOTION_PIECE, WRONG_MOVE_REVERT_DELAY_MS } from "@/lib/shared/constants/chess";
-import { useBoardSounds } from "@/lib/shared/hooks/use-board-sounds";
+import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
@@ -48,7 +48,7 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
   const { game, makeMove } = useChessOne();
-  const { playCorrectSound, playMoveSound } = useBoardSounds();
+  const { playCorrectSound, playWrongMoveSound } = useBoardSounds();
 
   // 3. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
   const { ground, updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } = useChessground({
@@ -99,7 +99,7 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
     clearSquareCustomHighlights();
     clearHintShapes();
     setSquareCustomHighlight(to, "custom-wrong-move");
-    playMoveSound();
+    playWrongMoveSound();
     scheduleWrongMoveRevert();
   }
 

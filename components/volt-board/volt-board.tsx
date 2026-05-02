@@ -11,7 +11,7 @@ import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
-import { useSound } from "@/lib/shared/hooks/use-sound";
+import { useSound } from "@/lib/shared/hooks/sound/use-sound";
 import { cn } from "@/lib/utils/cn";
 
 import "@lichess-org/chessground/assets/chessground.base.css";
@@ -89,7 +89,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     [moves],
   );
 
-  const { play: playCorrectSound } = useSound("/audio/piece-correct-move-sound.mp3", 1);
+  const { play: playCorrectSound } = useSound("/audio/correct-move-sound.mp3", 1);
   const { play: playMoveSound } = useSound("/audio/piece-move-sound.wav", 0.5);
 
   // ============================================================================

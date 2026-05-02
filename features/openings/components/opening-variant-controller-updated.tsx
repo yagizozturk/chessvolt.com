@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import VoltBoardUpdated, { type VoltBoardUpdatedHandle } from "@/components/volt-board-updated/volt-board-updated";
@@ -156,6 +157,12 @@ export default function OpeningVariantControllerUpdated({
           </Card>
         </div>
       </div>
+      {isCompleted ? (
+        <Confetti
+          aria-hidden
+          className="pointer-events-none fixed inset-0 z-50 size-full max-h-none max-w-none"
+        />
+      ) : null}
     </div>
   );
 }
