@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { Chess, Move } from "chess.js";
-import { GameStatus } from "@/lib/shared/types/game-status";
+import { useEffect, useRef } from "react";
+
 import { parseUci } from "@/lib/chess/parseUci";
+import { GameStatus } from "@/lib/shared/types/game-status";
 
 export function useChessOne(initialFen?: string) {
   const game = useRef(new Chess());
@@ -32,8 +33,16 @@ export function useChessOne(initialFen?: string) {
     }
   }
 
+  function undoMove() {
+    game.current.undo() ?? null;
+  }
+
   function reset() {
     game.current.reset();
+  }
+
+  function history(verbose: boolean = false) {
+    return game.current.history({ verbose });
   }
 
   function fen() {
@@ -95,9 +104,11 @@ export function useChessOne(initialFen?: string) {
   return {
     game,
     makeMove,
+    undoMove,
+    reset,
+    history,
     fen,
     turn,
-    reset,
     getGameStatus,
     convertUciToSan,
   };
