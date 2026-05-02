@@ -2,7 +2,6 @@ import type { MoveGoal } from "../../../types/opening-variant";
 
 export type OpeningVariantGoalViewerProps = {
   goals: MoveGoal[];
-  currentGoalIndex: number;
 };
 
 export type ActiveGoalCardProps = {

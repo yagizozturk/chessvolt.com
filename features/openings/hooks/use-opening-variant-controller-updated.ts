@@ -32,17 +32,10 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
     return [...goalsState].sort((a, b) => a.ply - b.ply);
   }, [goalsState]);
 
+  // .find() returns the first element.
   const nextGoal = useMemo(() => {
     return sortedGoals.find((goal) => !goal.isCompleted) ?? null;
   }, [sortedGoals]);
-  const totalGoals = sortedGoals.length;
-  const currentGoalIndex = useMemo(() => {
-    if (totalGoals === 0) return 0;
-    if (!nextGoal) return totalGoals;
-
-    const goalIndex = sortedGoals.findIndex((goal) => goal.ply === nextGoal.ply);
-    return goalIndex >= 0 ? goalIndex + 1 : 1;
-  }, [nextGoal, sortedGoals, totalGoals]);
 
   // ============================================================================
   // Variant içindneki Progress value'u hesaplar.
@@ -106,11 +99,7 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
     const updatedActivePly = nextMove ? userMovePly + 1 : userMovePly;
     setActivePly(updatedActivePly);
     setGoalsState((prev) =>
-      prev.map((goal) =>
-        goal.isCompleted || updatedActivePly >= goal.ply
-          ? { ...goal, isCompleted: true }
-          : goal,
-      ),
+      prev.map((goal) => (goal.isCompleted || updatedActivePly >= goal.ply ? { ...goal, isCompleted: true } : goal)),
     );
 
     return {
@@ -156,8 +145,6 @@ export function useOpeningVariantControllerUpdated({ variant }: UseOpeningVarian
     moves,
     sortedGoals,
     nextGoal,
-    totalGoals,
-    currentGoalIndex,
     hintCount,
     progressValue,
     handleMoveCheck,

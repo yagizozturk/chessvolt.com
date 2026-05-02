@@ -36,8 +36,6 @@ export default function OpeningVariantControllerUpdated({
     handleMoveCheck,
     handleMovePlayed,
     sortedGoals,
-    totalGoals,
-    currentGoalIndex,
     progressValue,
     hintCount,
     hintRequested,
@@ -136,15 +134,10 @@ export default function OpeningVariantControllerUpdated({
               <Separator className="mt-3" />
             </CardHeader>
             <CardContent className="flex flex-1">
-              <OpeningVariantGoalViewer goals={sortedGoals} currentGoalIndex={currentGoalIndex} />
+              <OpeningVariantGoalViewer goals={sortedGoals} />
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <div className="flex w-full flex-col gap-2">
-                {totalGoals > 0 ? (
-                  <p className="text-muted-foreground text-xs">
-                    Goal {currentGoalIndex} / {totalGoals}
-                  </p>
-                ) : null}
                 <Progress value={progressValue} className="h-2" />
               </div>
               <div className="w-full">

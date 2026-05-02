@@ -3,18 +3,11 @@ import { InactiveNextGoalRow } from "./inactive-next-goal-row/inactive-next-goal
 import { PreviousGoalRow } from "./previous-goal-row/previous-goal-row";
 import type { OpeningVariantGoalViewerProps } from "./types/types";
 
-export function OpeningVariantGoalViewer({ goals, currentGoalIndex }: OpeningVariantGoalViewerProps) {
+export function OpeningVariantGoalViewer({ goals }: OpeningVariantGoalViewerProps) {
   if (!goals.length) return null;
 
-  const fallbackActiveGoalIndex = goals.findIndex((goal) => !goal.isCompleted);
-  const activeGoalArrayIndex =
-    currentGoalIndex > 0 && currentGoalIndex <= goals.length
-      ? currentGoalIndex - 1
-      : fallbackActiveGoalIndex >= 0
-        ? fallbackActiveGoalIndex
-        : goals.length - 1;
-
-  const activeGoal = goals[activeGoalArrayIndex];
+  const activeGoal = goals.find((goal) => !goal.isCompleted) ?? goals.at(-1)!; // goals.at means the last complete one if all of them is complete
+  const activeGoalArrayIndex = goals.indexOf(activeGoal);
   const previousGoal = goals[activeGoalArrayIndex - 1] ?? null;
   const previousCompletedGoal = previousGoal?.isCompleted ? previousGoal : null;
   const nextGoal = goals[activeGoalArrayIndex + 1] ?? null;
