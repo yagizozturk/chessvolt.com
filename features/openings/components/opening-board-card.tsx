@@ -5,7 +5,7 @@ import ImageTooltipBadge from "@/components/badge/image-tooltip-badge/image-tool
 import { IterationBadge } from "@/components/badge/number-badge/number-badge";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import { BlurFade } from "@/components/ui/blur-fade";
-import VoltBoard from "@/components/volt-board/volt-board";
+import VoltBoardLegacy from "@/components/volt-board/volt-board";
 
 type OpeningBoardCardProps = {
   id: string;
@@ -79,7 +79,7 @@ export function OpeningBoardCard({
         <div className="group/board relative mt-2 inline-flex justify-center">
           {isComplete === true && <BoardStatusIcon status="solved" positionClassName="top-2 right-3" />}
           {isComplete === false && <BoardStatusIcon status="wrong" positionClassName="top-2 right-3" />}
-          <VoltBoard
+          <VoltBoardLegacy
             sourceId={id}
             initialFen={fen}
             moves={""}

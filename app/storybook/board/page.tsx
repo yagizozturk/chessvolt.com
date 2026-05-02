@@ -1,4 +1,4 @@
-import VoltBoard from "@/components/volt-board/volt-board";
+import VoltBoardLegacy from "@/components/volt-board/volt-board";
 
 import { CodeViewer } from "../components/code-viewer";
 import { StorybookPage } from "../page";
@@ -12,13 +12,13 @@ export default function StorybookBoardPage() {
             Board
           </h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            VoltBoard bileşeninin örnek kullanımı.
+            VoltBoardLegacy bileşeninin örnek kullanımı.
           </p>
         </div>
 
         <div className="bg-muted/40 grid gap-3 rounded-md border p-4">
           <div className="flex items-start justify-center">
-            <VoltBoard
+            <VoltBoardLegacy
               sourceId="storybook-board"
               moves="e2e4 e7e5 g1f3 b8c6 f1c4 g8f6"
               width={520}
@@ -29,10 +29,10 @@ export default function StorybookBoardPage() {
           <div className="flex flex-col gap-2">
             <p className="text-sm font-medium">
               <span className="text-muted-foreground">Component:</span>{" "}
-              VoltBoard
+              VoltBoardLegacy
             </p>
             <CodeViewer
-              code={`<VoltBoard
+              code={`<VoltBoardLegacy
   sourceId="storybook-board"
   moves="e2e4 e7e5 g1f3 b8c6 f1c4 g8f6"
   initialFen="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"

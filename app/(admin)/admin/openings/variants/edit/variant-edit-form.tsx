@@ -4,7 +4,7 @@ import { updateOpeningVariantAction } from "@/app/(admin)/admin/openings/variant
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import VoltBoard from "@/components/volt-board/volt-board";
+import VoltBoardLegacy from "@/components/volt-board/volt-board";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
@@ -121,7 +121,7 @@ function BoardWithMoves({
         {title}
       </h2>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <VoltBoard
+        <VoltBoardLegacy
           key={`${sourceId}-${boardFen}`}
           sourceId={sourceId}
           moves=""

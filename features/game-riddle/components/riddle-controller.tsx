@@ -3,7 +3,7 @@
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import VoltBoard, {
+import VoltBoardLegacy, {
   type VoltBoardHandle,
 } from "@/components/volt-board/volt-board";
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
@@ -88,7 +88,7 @@ export default function RiddleController({
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
         <div className="relative min-w-0">
-          <VoltBoard
+          <VoltBoardLegacy
             ref={boardRef}
             sourceId={riddle.id}
             coordinates={true}

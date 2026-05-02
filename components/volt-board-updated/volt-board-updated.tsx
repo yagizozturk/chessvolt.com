@@ -19,7 +19,7 @@ import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
 
-type VoltBoardUpdatedProps = {
+type VoltBoardProps = {
   sourceId: string;
   size?: number;
   correctMove?: string | null;
@@ -32,11 +32,11 @@ type VoltBoardUpdatedProps = {
 // 1 olursa sadece yuvarlak içine alır
 // 2 olursa başlangıç ve bitiş karesi arasına çizgi çeker
 // ============================================================================
-export type VoltBoardUpdatedHandle = {
+export type VoltBoardHandle = {
   showHint: (hintLevel: number) => void;
 };
 
-const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProps>(function VoltBoardUpdated(
+const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard(
   { sourceId, size = 620, correctMove, onCheckMove, onMovePlayed },
   ref,
 ) {
@@ -48,7 +48,7 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
   const { game, makeMove } = useChessOne();
-  const { playCorrectSound, playWrongMoveSound } = useBoardSounds();
+  const { playCorrectSound, playWrongMoveSound, playHintSound } = useBoardSounds();
 
   // 3. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
   const { ground, updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } = useChessground({
@@ -70,12 +70,12 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
         playedBy,
       });
 
-      // Yanlış hamle yapıldı
+      // Incorrect move played
       if (isCorrect === false) {
         boardWrongMoveHandler(to);
         return;
       } else {
-        // Doğru hamle yapıldı
+        // Correct move played
         boardCorrectMoveHandler(from, to, uci);
       }
 
@@ -195,12 +195,13 @@ const VoltBoardUpdated = forwardRef<VoltBoardUpdatedHandle, VoltBoardUpdatedProp
         } else {
           ground.current.setAutoShapes([{ orig, dest, brush: "red" }]);
         }
+        playHintSound();
       },
     }),
-    [correctMove, ground],
+    [correctMove, ground, playHintSound],
   );
 
   return <div ref={boardRef} className="cardinal dark-blue" style={{ width: size, height: size }} />;
 });
 
-export default VoltBoardUpdated;
+export default VoltBoard;

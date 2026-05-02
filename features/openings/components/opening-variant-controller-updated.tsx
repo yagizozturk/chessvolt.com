@@ -9,30 +9,32 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import VoltBoardUpdated, { type VoltBoardUpdatedHandle } from "@/components/volt-board-updated/volt-board-updated";
+import VoltBoard, { type VoltBoardHandle } from "@/components/volt-board-updated/volt-board-updated";
 import { useOpeningVariantControllerUpdated } from "@/features/openings/hooks/use-opening-variant-controller-updated";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
+import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
 import type { OpeningVariant } from "../types/opening-variant";
 import { OpeningVariantGoalViewer } from "./opening-variant-goal-viewer/opening-variant-goal-viewer";
 
-type OpeningVariantControllerUpdatedProps = {
+type OpeningVariantControllerProps = {
   variant: OpeningVariant;
   nextVariantId: string | null;
   parentOpeningUrl: string;
 };
 
-export default function OpeningVariantControllerUpdated({
+export default function OpeningVariantController({
   variant,
   nextVariantId,
   parentOpeningUrl,
-}: OpeningVariantControllerUpdatedProps) {
+}: OpeningVariantControllerProps) {
   const router = useRouter();
-  const boardRef = useRef<VoltBoardUpdatedHandle>(null);
+  const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
+  const { playLevelUpSound } = useBoardSounds();
   const {
     handleMoveCheck,
     handleMovePlayed,
@@ -60,6 +62,7 @@ export default function OpeningVariantControllerUpdated({
     if (currentCorrectMove != null || isCompleted) return;
 
     setIsCompleted(true);
+    playLevelUpSound();
     void updateOpeningVariantAnswerHook(variant.id, true);
   }, [isCompleted, currentCorrectMove, updateOpeningVariantAnswerHook, variant.id]);
 
@@ -110,7 +113,7 @@ export default function OpeningVariantControllerUpdated({
     <div className="container mx-auto max-w-6xl px-8 py-6">
       <div className="grid gap-4 lg:grid-cols-[620px_minmax(0,1fr)] lg:gap-8">
         <div key={variant.id} className="relative w-full min-w-0">
-          <VoltBoardUpdated
+          <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
             correctMove={currentCorrectMove}
@@ -158,10 +161,7 @@ export default function OpeningVariantControllerUpdated({
         </div>
       </div>
       {isCompleted ? (
-        <Confetti
-          aria-hidden
-          className="pointer-events-none fixed inset-0 z-50 size-full max-h-none max-w-none"
-        />
+        <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-50 size-full max-h-none max-w-none" />
       ) : null}
     </div>
   );

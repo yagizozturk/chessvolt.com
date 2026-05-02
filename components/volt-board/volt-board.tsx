@@ -42,8 +42,8 @@ export type VoltBoardHandle = {
 };
 
 /**
- * VoltBoard için açıklama ✅
- * forwardRef ile VoltBoard'u sarmalıyorsun. Bu sayede artık bu bileşen sadece props değil, ikinci bir parametre olarak ref de alabiliyor.
+ * VoltBoardLegacy için açıklama ✅
+ * forwardRef ile VoltBoardLegacy'yi sarmalıyorsun. Bu sayede artık bu bileşen sadece props değil, ikinci bir parametre olarak ref de alabiliyor.
  * Normalde React bileşeni referans alamaz. ForwardRef bu yasağı deliyor. Dışarıda gelen ref bağlantısını
  * useImperativeHandle içinde izin verilen metotlarda kullanılmasını sağlıyor.
  * Bu sayade controller dan showHint buttonu tetiklenebiliyor.
@@ -55,7 +55,7 @@ export type VoltBoardHandle = {
  *
  * movesArray: moves içinde gelen hamleleri boşlukla ayırıp bir dizi ye atar.
  */
-const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard(props, ref) {
+const VoltBoardLegacy = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoardLegacy(props, ref) {
   // React'ta her zaman ilk parametre props paketidir.
   const {
     sourceId,
@@ -230,4 +230,4 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   );
 });
 
-export default VoltBoard;
+export default VoltBoardLegacy;
