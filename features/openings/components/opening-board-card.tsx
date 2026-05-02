@@ -5,7 +5,7 @@ import ImageTooltipBadge from "@/components/badge/image-tooltip-badge/image-tool
 import { IterationBadge } from "@/components/badge/number-badge/number-badge";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import { BlurFade } from "@/components/ui/blur-fade";
-import VoltBoardLegacy from "@/components/volt-board/volt-board";
+import VoltBoardLegacy from "@/components/volt-board-legacy/volt-board-legacy";
 
 type OpeningBoardCardProps = {
   id: string;

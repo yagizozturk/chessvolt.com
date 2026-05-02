@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import OpeningVariantController from "@/features/openings/components/opening-variant-controller-updated";
+import OpeningVariantController from "@/features/openings/components/opening-variant-controller";
 import {
   getOpeningById,
   getOpeningVariantById,

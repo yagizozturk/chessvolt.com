@@ -1,233 +1,207 @@
 "use client";
 
 import type { Key } from "@lichess-org/chessground/types";
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
 import { buildUci } from "@/lib/chess/buildUci";
+import { getPromotionPiece } from "@/lib/chess/getPromotionPiece";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
-import { DEFAULT_PROMOTION_PIECE } from "@/lib/shared/constants/chess";
-import { useSound } from "@/lib/shared/hooks/sound/use-sound";
-import { cn } from "@/lib/utils/cn";
+import { DEFAULT_PROMOTION_PIECE, WRONG_MOVE_REVERT_DELAY_MS } from "@/lib/shared/constants/chess";
+import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
+import type { Move } from "@/lib/shared/types/move";
+import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
 
-export type VoltBoardProps = {
+type VoltBoardProps = {
   sourceId: string;
-  moves: string;
-  initialFen?: string;
-  width?: number;
-  height?: number;
-  className?: string;
-  viewOnly?: boolean;
-  coordinates?: boolean;
-  /** Oyuncunun tahtada yaptığı her hamle denemesi; UCI (örn. `e2e4`). Doğru / yanlış ayrımı yok. */
-  onUserMovePlayed?: (uci: string) => void;
-  /** Oyuncu doğru hamle yaptığında controller'a haber verir (varış karesi ile). */
-  onUserSuccessMovePlayed?: (toSquare: string) => void;
-  /** Oyuncu beklenen hamleyi doğru oynadıktan sonra güncel FEN (ör. yorum / koç eşlemesi için). */
-  onFenAfterUserMove?: (fen: string) => void;
-  /** Otomatik rakip cevabı işlendikten sonra güncel FEN. */
-  onFenAfterOpponentMove?: (fen: string) => void;
-  onSolved?: (isCorrect: boolean) => void;
+  size?: number;
+  correctMove?: string | null;
+  onCheckMove: (payload: MoveAttemptPayload) => boolean;
+  onMovePlayed: (payload: Move) => string;
 };
 
+// ============================================================================
+// Hint level burada hangi hint i göstereceğini belirliyor
+// 1 olursa sadece yuvarlak içine alır
+// 2 olursa başlangıç ve bitiş karesi arasına çizgi çeker
+// ============================================================================
 export type VoltBoardHandle = {
   showHint: (hintLevel: number) => void;
 };
 
-/**
- * VoltBoardLegacy için açıklama ✅
- * forwardRef ile VoltBoardLegacy'yi sarmalıyorsun. Bu sayede artık bu bileşen sadece props değil, ikinci bir parametre olarak ref de alabiliyor.
- * Normalde React bileşeni referans alamaz. ForwardRef bu yasağı deliyor. Dışarıda gelen ref bağlantısını
- * useImperativeHandle içinde izin verilen metotlarda kullanılmasını sağlıyor.
- * Bu sayade controller dan showHint buttonu tetiklenebiliyor.
- *
- * lastMoveRef: Son hamlenin başlangıç ve bitiş karesini tutar.
- * lastMoveRef'in başlangıç değerini undefined yapıyoruz ki tahta boş (hiçbir kare boyanmamış) başlasın.
- *
- * useRef: içindeki değer değiştiğinde bileşenin yeniden render edilmemesini (re-render) sağlamasıdır."
- *
- * movesArray: moves içinde gelen hamleleri boşlukla ayırıp bir dizi ye atar.
- */
-const VoltBoardLegacy = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoardLegacy(props, ref) {
-  // React'ta her zaman ilk parametre props paketidir.
-  const {
-    sourceId,
-    moves,
-    width = 620,
-    height = 620,
-    className,
-    viewOnly = false,
-    coordinates = true,
-    onUserMovePlayed,
-    onUserSuccessMovePlayed,
-    onFenAfterUserMove,
-    onFenAfterOpponentMove,
-    onSolved,
-  } = props;
-
+const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard(
+  { sourceId, size = 620, correctMove, onCheckMove, onMovePlayed },
+  ref,
+) {
+  // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
   const boardRef = useRef<HTMLDivElement>(null);
-  const { game, makeMove } = useChessOne(props.initialFen);
-
-  const currentStepRef = useRef(0);
+  const orientationRef = useRef<"white" | "black">("white");
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
-  const initialPlayerOrientation = useRef<"white" | "black">("white"); // Fixed orientation from player's perspective - never flips when turn changes
-  const isOverRef = useRef(false);
+  const wrongMoveRevertTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const movesArray = useMemo(
-    () =>
-      moves
-        .trim()
-        .split(/\s+/)
-        .filter((m) => m.length > 0),
-    [moves],
-  );
+  // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
+  const { game, makeMove } = useChessOne();
+  const { playCorrectSound, playWrongMoveSound, playHintSound } = useBoardSounds();
 
-  const { play: playCorrectSound } = useSound("/audio/correct-move-sound.mp3", 1);
-  const { play: playMoveSound } = useSound("/audio/piece-move-sound.wav", 0.5);
-
-  // ============================================================================
-  // Initialize Fen
-  // ============================================================================
-  useEffect(() => {
-    isOverRef.current = false;
-    currentStepRef.current = 0;
-    lastMoveRef.current = undefined;
-    initialPlayerOrientation.current = game.current.turn() === "w" ? "white" : "black";
-  }, [sourceId, game]);
-
-  // ============================================================================
-  // Initialize Chessground
-  // ============================================================================
-  const { ground, setSquareCustomHighlight, clearSquareCustomHighlights, updateBoard } = useChessground({
+  // 3. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
+  const { ground, updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } = useChessground({
     boardRef,
     game,
     sourceId,
-    orientationRef: initialPlayerOrientation,
-    viewOnly,
-    coordinates,
+    orientationRef,
+    viewOnly: false,
+    coordinates: true,
     lastMoveRef,
-    onMove: handleMove,
+    onMove: (from, to) => {
+      clearWrongMoveRevertTimeout();
+      const fenBefore = game.current.fen();
+      const playedBy = game.current.turn() === "w" ? "white" : "black";
+      const uci = buildMoveUci(from, to);
+      const isCorrect = onCheckMove?.({
+        uci,
+        fenBefore,
+        playedBy,
+      });
+
+      // Incorrect move played
+      if (isCorrect === false) {
+        boardWrongMoveHandler(to);
+        return;
+      } else {
+        // Correct move played
+        boardCorrectMoveHandler(from, to, uci);
+      }
+
+      updateBoard();
+    },
   });
 
-  // ============================================================================
-  // Events
-  // ============================================================================
-  function handleMove(from: string, to: string) {
-    if (!game.current || !ground.current) return;
-
-    const currentStep = currentStepRef.current;
-    const expectedUci = movesArray[currentStep];
-    if (!expectedUci) return;
-
-    const userUci = buildUci(from, to);
-
-    onUserMovePlayed?.(userUci);
-
-    if (!isExpectedMove(userUci, expectedUci)) {
-      handleWrongMove(to);
-      return;
-    }
-
-    applyUserMove(from, to);
-    const nextStep = advanceStep();
-
-    // Oyunucunun olduğu step ile hamle sayısı -1 tutoyrsa çözülmüş demektir.
-    if (nextStep >= movesArray.length) {
-      finishSolution();
-      return;
-    }
-
-    const opponentUci = movesArray[nextStep];
-    if (!opponentUci) return;
-    applyOpponentMove(opponentUci);
-    advanceStep();
+  function buildMoveUci(from: string, to: string) {
+    const promotion = getPromotionPiece(game.current, from, to, DEFAULT_PROMOTION_PIECE);
+    return buildUci(from, to, promotion);
   }
 
   function clearHintShapes() {
     ground.current?.setAutoShapes([]);
   }
 
-  function isExpectedMove(userUci: string, expectedUci?: string) {
-    // TODO: Support promotion-aware validation (e.g. e7e8q vs e7e8n). Current matching ignores promotion piece from expected UCI.
-    return userUci === expectedUci;
-  }
-
-  // Step through the solution line; when the last expected move is played, the line is complete
-  function advanceStep() {
-    currentStepRef.current += 1;
-    return currentStepRef.current;
-  }
-
-  function handleWrongMove(to: string) {
-    // TODO: Play wrong move sound
-    setSquareCustomHighlight(to, "custom-wrong-move");
-    playMoveSound();
-    clearHintShapes();
-    onSolved?.(false);
-  }
-
-  function applyUserMove(from: string, to: string) {
+  // ============================================================================
+  // Oyuncu yanlış hamle yapınca event bu metodu tetikler
+  // ============================================================================
+  function boardWrongMoveHandler(to: string) {
     clearSquareCustomHighlights();
-    makeMove(from, to, DEFAULT_PROMOTION_PIECE);
-    lastMoveRef.current = [from as Key, to as Key];
-    playCorrectSound();
     clearHintShapes();
-    updateBoard();
-    onUserSuccessMovePlayed?.(to);
-    onFenAfterUserMove?.(game.current.fen());
-  }
-
-  function finishSolution() {
-    isOverRef.current = true;
-    onSolved?.(true);
-  }
-
-  function applyOpponentMove(opponentUci: string) {
-    const oppFrom = opponentUci.slice(0, 2);
-    const oppTo = opponentUci.slice(2, 4);
-    makeMove(oppFrom, oppTo, DEFAULT_PROMOTION_PIECE);
-    lastMoveRef.current = [oppFrom as Key, oppTo as Key];
-    onFenAfterOpponentMove?.(game.current.fen());
-    updateBoard();
+    setSquareCustomHighlight(to, "custom-wrong-move");
+    playWrongMoveSound();
+    scheduleWrongMoveRevert();
   }
 
   // ============================================================================
+  // Wrong move revert timeout
+  // Component state/ref/useEffect bağımlılığı varsa → component içinde kalsın.
+  // ============================================================================
+  function clearWrongMoveRevertTimeout() {
+    if (wrongMoveRevertTimeoutRef.current) {
+      clearTimeout(wrongMoveRevertTimeoutRef.current);
+      wrongMoveRevertTimeoutRef.current = null;
+    }
+  }
+
+  // ============================================================================
+  // Wrong move revert timeout
+  // Yalnış hamle yapıldıktan sonra tahtayı geri alır.
+  // ============================================================================
+  function scheduleWrongMoveRevert() {
+    wrongMoveRevertTimeoutRef.current = setTimeout(() => {
+      wrongMoveRevertTimeoutRef.current = null;
+      clearSquareCustomHighlights();
+      updateBoard();
+    }, WRONG_MOVE_REVERT_DELAY_MS);
+  }
+
+  // ============================================================================
+  // Oyuncu doğru hamle yapınca event bu metodu tetikler
+  // ============================================================================
+  function boardCorrectMoveHandler(from: string, to: string, uci: string) {
+    clearHintShapes();
+    clearSquareCustomHighlights();
+    const promotion = getPromotionPiece(game.current, from, to, DEFAULT_PROMOTION_PIECE);
+    const move = makeMove(from, to, promotion ?? DEFAULT_PROMOTION_PIECE);
+    if (!move) {
+      return;
+    }
+    playCorrectSound();
+    setSquareCustomHighlight(to, "custom-correct-move");
+
+    lastMoveRef.current = [from as Key, to as Key];
+    const nextMove = onMovePlayed({
+      from,
+      to,
+      promotion: move.promotion,
+      san: move.san,
+      uci,
+    });
+
+    if (nextMove) {
+      boardApplyOpponentMove(nextMove);
+    }
+  }
+
+  // ============================================================================
+  // Opponent move is played
+  // ============================================================================
+  function boardApplyOpponentMove(nextMove: string) {
+    const opponentFrom = nextMove.slice(0, 2);
+    const opponentTo = nextMove.slice(2, 4);
+    const opponentPromotion = nextMove[4] ?? DEFAULT_PROMOTION_PIECE;
+    const opponentMove = makeMove(opponentFrom, opponentTo, opponentPromotion);
+
+    if (opponentMove) {
+      lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
+    }
+  }
+
+  // ============================================================================
+  // Cleanup wrong move timeout
+  // ============================================================================
+  useEffect(() => {
+    return () => {
+      clearWrongMoveRevertTimeout();
+    };
+  }, []);
+
+  // ============================================================================
   // Hint (drawable shapes) - exposed via ref
-  // useImperativeHandle(ref, () => ({ ... })) bloğu içinde, dışarıdan erişilmesini istediğin fonksiyonları paketliyorsun.
   // ============================================================================
   useImperativeHandle(
     ref,
     () => ({
       showHint(hintLevel: number) {
-        if (!ground.current || isOverRef.current) return;
-        const step = currentStepRef.current;
-        const expectedUci = movesArray[step];
-        const parsedUci = parseUci(expectedUci);
+        if (!ground.current || !correctMove) return;
+        const parsedUci = parseUci(correctMove);
         if (!parsedUci) return;
+
         const orig = parsedUci.from as Key;
         const dest = parsedUci.to as Key;
         if (hintLevel <= 1) {
-          ground.current.setAutoShapes([{ orig, brush: "green" }]);
+          ground.current.setAutoShapes([{ orig, brush: "red" }]);
         } else {
-          ground.current.setAutoShapes([{ orig, dest, brush: "green" }]);
+          ground.current.setAutoShapes([{ orig, dest, brush: "red" }]);
         }
+        playHintSound();
       },
     }),
-    [ground, movesArray],
+    [correctMove, ground, playHintSound],
   );
 
-  return (
-    <div className={cn("w-fit", className)}>
-      <div ref={boardRef} className="cardinal dark-blue" style={{ width, height }} />
-    </div>
-  );
+  return <div ref={boardRef} className="cardinal dark-blue" style={{ width: size, height: size }} />;
 });
 
-export default VoltBoardLegacy;
+export default VoltBoard;

@@ -1,4 +1,4 @@
-import OpeningVariantController from "@/features/openings/components/opening-variant-controller-updated";
+import OpeningVariantController from "@/features/openings/components/opening-variant-controller";
 
 export default function StorybookUpdatedBoardPage() {
   const mockVariant = {
@@ -18,11 +18,5 @@ export default function StorybookUpdatedBoardPage() {
     createdAt: new Date().toISOString(),
   };
 
-  return (
-    <OpeningVariantController
-      variant={mockVariant}
-      nextVariantId={null}
-      parentOpeningUrl="/openings"
-    />
-  );
+  return <OpeningVariantController variant={mockVariant} nextVariantId={null} parentOpeningUrl="/openings" />;
 }

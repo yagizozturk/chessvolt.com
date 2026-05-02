@@ -9,8 +9,8 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import VoltBoard, { type VoltBoardHandle } from "@/components/volt-board-updated/volt-board-updated";
-import { useOpeningVariantControllerUpdated } from "@/features/openings/hooks/use-opening-variant-controller-updated";
+import VoltBoard, { type VoltBoardHandle } from "@/components/volt-board/volt-board";
+import { useOpeningVariantController } from "@/features/openings/hooks/use-opening-variant-controller";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
@@ -43,7 +43,7 @@ export default function OpeningVariantController({
     hintCount,
     hintRequested,
     currentCorrectMove,
-  } = useOpeningVariantControllerUpdated({
+  } = useOpeningVariantController({
     variant,
   });
 

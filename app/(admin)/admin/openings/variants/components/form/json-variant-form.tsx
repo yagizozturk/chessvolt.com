@@ -1,29 +1,26 @@
 "use client";
 
+import { Chess } from "chess.js";
+import { useEffect, useMemo, useState } from "react";
+
 import { createOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import VoltBoardLegacy from "@/components/volt-board/volt-board";
+import VoltBoardLegacy from "@/components/volt-board-legacy/volt-board-legacy";
 import type { Opening } from "@/features/openings/types/opening";
-import type {
-  MoveGoal,
-  OpeningIdeas,
-} from "@/features/openings/types/opening-variant";
+import type { MoveGoal, OpeningIdeas } from "@/features/openings/types/opening-variant";
 import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 import { isOpeningIdeas } from "@/features/openings/validation/opening-variant-ideas";
 import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
-import { Chess } from "chess.js";
-import { useEffect, useMemo, useState } from "react";
 
 const START_FEN = new Chess().fen();
 
 function applyUci(game: Chess, uci: string) {
   const from = uci.slice(0, 2);
   const to = uci.slice(2, 4);
-  const promotion =
-    uci.length > 4 ? (uci[4] as "q" | "r" | "b" | "n") : undefined;
+  const promotion = uci.length > 4 ? (uci[4] as "q" | "r" | "b" | "n") : undefined;
   return game.move({
     from,
     to,
@@ -142,14 +139,8 @@ function BoardWithMoves({
   setSelectedPly,
 }: BoardWithMovesProps) {
   return (
-    <section
-      className="flex flex-col gap-4"
-      aria-labelledby={`${sourceId}-heading`}
-    >
-      <h2
-        id={`${sourceId}-heading`}
-        className="text-muted-foreground text-xs font-medium tracking-wide uppercase"
-      >
+    <section className="flex flex-col gap-4" aria-labelledby={`${sourceId}-heading`}>
+      <h2 id={`${sourceId}-heading`} className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
         {title}
       </h2>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -163,9 +154,7 @@ function BoardWithMoves({
           viewOnly
         />
         <div className="min-h-[200px] min-w-0 flex-1">
-          <p className="text-muted-foreground mb-2 text-sm font-medium">
-            UCI hamleler
-          </p>
+          <p className="text-muted-foreground mb-2 text-sm font-medium">UCI hamleler</p>
           {error && <p className="text-destructive mb-2 text-sm">{error}</p>}
           {uciMoves.length > 0 && (
             <button
@@ -176,28 +165,17 @@ function BoardWithMoves({
               Başlangıç pozisyonu
             </button>
           )}
-          <div
-            className="flex flex-wrap items-baseline gap-x-3 gap-y-2 font-mono text-sm leading-relaxed"
-            role="list"
-          >
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2 font-mono text-sm leading-relaxed" role="list">
             {rows.map((r) => {
               const whiteIdx = (r.num - 1) * 2;
               const blackIdx = (r.num - 1) * 2 + 1;
               return (
-                <div
-                  key={r.num}
-                  role="listitem"
-                  className="flex shrink-0 flex-wrap items-baseline gap-1"
-                >
-                  <span className="text-muted-foreground w-6 shrink-0 text-right">
-                    {r.num}.
-                  </span>
+                <div key={r.num} role="listitem" className="flex shrink-0 flex-wrap items-baseline gap-1">
+                  <span className="text-muted-foreground w-6 shrink-0 text-right">{r.num}.</span>
                   <button
                     type="button"
                     className={`hover:bg-muted rounded px-1.5 py-0.5 transition-colors ${
-                      safePly === whiteIdx + 1
-                        ? "bg-primary/20 font-medium"
-                        : ""
+                      safePly === whiteIdx + 1 ? "bg-primary/20 font-medium" : ""
                     }`}
                     onClick={() => setSelectedPly(whiteIdx + 1)}
                   >
@@ -207,9 +185,7 @@ function BoardWithMoves({
                     <button
                       type="button"
                       className={`hover:bg-muted rounded px-1.5 py-0.5 transition-colors ${
-                        safePly === blackIdx + 1
-                          ? "bg-primary/20 font-medium"
-                          : ""
+                        safePly === blackIdx + 1 ? "bg-primary/20 font-medium" : ""
                       }`}
                       onClick={() => setSelectedPly(blackIdx + 1)}
                     >
@@ -255,9 +231,7 @@ function sortKeyFromRecord(record: Record<string, unknown> | null): number {
 /** `goals` yalnızca ana JSON’dan okunur. */
 function parseGoalsFromRecord(
   record: Record<string, unknown> | null,
-):
-  | { ok: true; goals: MoveGoal[] | null }
-  | { ok: false; error: string } {
+): { ok: true; goals: MoveGoal[] | null } | { ok: false; error: string } {
   if (!record) return { ok: true, goals: null };
   if (!("goals" in record)) return { ok: true, goals: null };
   const g = record.goals;
@@ -278,9 +252,7 @@ function parseGoalsFromRecord(
 /** `ideas` yalnızca ana JSON’dan okunur ve obje olmalıdır (array değil). */
 function parseIdeasFromRecord(
   record: Record<string, unknown> | null,
-):
-  | { ok: true; ideas: OpeningIdeas | null }
-  | { ok: false; error: string } {
+): { ok: true; ideas: OpeningIdeas | null } | { ok: false; error: string } {
   if (!record) return { ok: true, ideas: null };
   if (!("ideas" in record)) return { ok: true, ideas: null };
   const i = record.ideas;
@@ -288,8 +260,7 @@ function parseIdeasFromRecord(
   if (!isOpeningIdeas(i)) {
     return {
       ok: false,
-      error:
-        "ideas must be an object with core_idea and common_mistake (both strings).",
+      error: "ideas must be an object with core_idea and common_mistake (both strings).",
     };
   }
   return { ok: true, ideas: i };
@@ -312,8 +283,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
     setOpeningId(defaultOpeningId ?? "");
   }, [defaultOpeningId]);
 
-  const { record: jsonRecord, error: jsonError } =
-    useParsedOpeningJson(jsonInput);
+  const { record: jsonRecord, error: jsonError } = useParsedOpeningJson(jsonInput);
 
   useEffect(() => {
     if (!jsonRecord) {
@@ -330,20 +300,11 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
           ? jsonRecord.level
           : "",
     );
-    setTitleEdit(
-      typeof jsonRecord.title === "string" ? jsonRecord.title : "",
-    );
-    setDescriptionEdit(
-      typeof jsonRecord.description === "string"
-        ? jsonRecord.description
-        : "",
-    );
+    setTitleEdit(typeof jsonRecord.title === "string" ? jsonRecord.title : "");
+    setDescriptionEdit(typeof jsonRecord.description === "string" ? jsonRecord.description : "");
     setSortKeyEdit(String(sortKeyFromRecord(jsonRecord)));
   }, [jsonRecord]);
-  const pgnFromJson = useMemo(
-    () => pgnFromJsonRecord(jsonRecord),
-    [jsonRecord],
-  );
+  const pgnFromJson = useMemo(() => pgnFromJsonRecord(jsonRecord), [jsonRecord]);
   const { rows, error, fensByPly, uciMoves } = useUciRowsFromPgn(pgnFromJson);
   const maxPly = Math.max(0, fensByPly.length - 1);
 
@@ -373,14 +334,8 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
     return s ?? "";
   }, [pgnFromJson, safePlyInitial]);
 
-  const goalsFromJson = useMemo(
-    () => parseGoalsFromRecord(jsonRecord),
-    [jsonRecord],
-  );
-  const ideasFromJson = useMemo(
-    () => parseIdeasFromRecord(jsonRecord),
-    [jsonRecord],
-  );
+  const goalsFromJson = useMemo(() => parseGoalsFromRecord(jsonRecord), [jsonRecord]);
+  const ideasFromJson = useMemo(() => parseIdeasFromRecord(jsonRecord), [jsonRecord]);
 
   const goalsFormValue = useMemo(() => {
     if (!goalsFromJson.ok || goalsFromJson.goals === null) return "";
@@ -392,10 +347,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
   }, [ideasFromJson]);
 
   const mergedJsonForExport = useMemo(() => {
-    const base =
-      jsonRecord && !jsonError
-        ? { ...jsonRecord }
-        : ({} as Record<string, unknown>);
+    const base = jsonRecord && !jsonError ? { ...jsonRecord } : ({} as Record<string, unknown>);
     const out: Record<string, unknown> = {
       ...base,
       group: groupEdit,
@@ -435,10 +387,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
     safePlyInitial,
   ]);
 
-  const mergedJsonString = useMemo(
-    () => JSON.stringify(mergedJsonForExport, null, 2),
-    [mergedJsonForExport],
-  );
+  const mergedJsonString = useMemo(() => JSON.stringify(mergedJsonForExport, null, 2), [mergedJsonForExport]);
 
   const canSubmit =
     Boolean(openingId?.trim()) &&
@@ -496,9 +445,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
             />
           </Field>
           <Field>
-            <FieldLabel htmlFor="json-variant-description">
-              Description
-            </FieldLabel>
+            <FieldLabel htmlFor="json-variant-description">Description</FieldLabel>
             <textarea
               id="json-variant-description"
               name="description"
@@ -538,10 +485,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
               </p>
               <p className="font-mono text-xs break-all">{initialFen}</p>
               <p className="text-muted-foreground mt-2 text-xs">
-                Seçilen ply:{" "}
-                <span className="text-foreground font-mono tabular-nums">
-                  {safePlyInitial}
-                </span>
+                Seçilen ply: <span className="text-foreground font-mono tabular-nums">{safePlyInitial}</span>
               </p>
             </div>
             <div className="min-w-0">
@@ -550,19 +494,15 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
               </p>
               <p className="font-mono text-xs break-all">{displayFen}</p>
               <p className="text-muted-foreground mt-2 text-xs">
-                Seçilen ply:{" "}
-                <span className="text-foreground font-mono tabular-nums">
-                  {safePlyDisplay}
-                </span>
+                Seçilen ply: <span className="text-foreground font-mono tabular-nums">{safePlyDisplay}</span>
               </p>
             </div>
           </div>
           <p className="text-muted-foreground border-border mt-3 border-t pt-3 text-[11px] leading-relaxed">
             <span className="text-foreground/80 font-medium">Note: </span>
-            The selected ply is the number of half-moves played. If it is odd,
-            it is Black&apos;s turn; if it is even, it is White&apos;s turn. If
-            it is odd, board orientation is Black; if it is even, board
-            orientation is White.
+            The selected ply is the number of half-moves played. If it is odd, it is Black&apos;s turn; if it is even,
+            it is White&apos;s turn. If it is odd, board orientation is Black; if it is even, board orientation is
+            White.
           </p>
         </div>
 
@@ -594,10 +534,9 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         <div className="space-y-2">
           <p className="text-muted-foreground text-sm font-medium">JSON</p>
           <p className="text-muted-foreground text-xs">
-            Tahta <span className="font-mono">pgn</span> ile.{" "}
-            <span className="font-mono">goals</span> dizi olarak bu JSON içinde
-            düzenlenir. <span className="font-mono">ideas</span> tek bir JSON
-            object olmalıdır (array değil).
+            Tahta <span className="font-mono">pgn</span> ile. <span className="font-mono">goals</span> dizi olarak bu
+            JSON içinde düzenlenir. <span className="font-mono">ideas</span> tek bir JSON object olmalıdır (array
+            değil).
           </p>
           <textarea
             value={jsonInput}
@@ -608,26 +547,17 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
             autoComplete="off"
             autoCorrect="off"
           />
-          {jsonError && (
-            <p className="text-destructive text-sm">{jsonError}</p>
-          )}
-          {jsonRecord && !goalsFromJson.ok && (
-            <p className="text-destructive text-sm">{goalsFromJson.error}</p>
-          )}
-          {jsonRecord && !ideasFromJson.ok && (
-            <p className="text-destructive text-sm">{ideasFromJson.error}</p>
-          )}
+          {jsonError && <p className="text-destructive text-sm">{jsonError}</p>}
+          {jsonRecord && !goalsFromJson.ok && <p className="text-destructive text-sm">{goalsFromJson.error}</p>}
+          {jsonRecord && !ideasFromJson.ok && <p className="text-destructive text-sm">{ideasFromJson.error}</p>}
         </div>
 
         <div className="border-input bg-muted/30 rounded-md border p-4">
-          <p className="text-muted-foreground mb-1 text-sm font-medium">
-            JSON (son hal)
-          </p>
+          <p className="text-muted-foreground mb-1 text-sm font-medium">JSON (son hal)</p>
           <p className="text-muted-foreground mb-3 text-xs">
-            Sol tahtadaki pozisyon{" "}
-            <span className="font-mono">initial_fen</span>, sağdaki{" "}
-            <span className="font-mono">display_fen</span> olarak eklenir;
-            yapıştırdığın nesnenin diğer alanları korunur.
+            Sol tahtadaki pozisyon <span className="font-mono">initial_fen</span>, sağdaki{" "}
+            <span className="font-mono">display_fen</span> olarak eklenir; yapıştırdığın nesnenin diğer alanları
+            korunur.
           </p>
           <pre className="border-input bg-background max-h-[min(28rem,70vh)] overflow-auto rounded-md border p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap">
             {mergedJsonString}
@@ -639,12 +569,10 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         </Button>
         {!canSubmit && (
           <p className="text-muted-foreground text-xs">
-            Select an opening, set a group, provide valid JSON and{" "}
-            <span className="font-mono">pgn</span>; if{" "}
-            <span className="font-mono">goals</span> is present, it must follow
-            the schema (<span className="font-mono">card</span> is optional).
-            If <span className="font-mono">ideas</span> is present, it must be a
-            single object (not array).
+            Select an opening, set a group, provide valid JSON and <span className="font-mono">pgn</span>; if{" "}
+            <span className="font-mono">goals</span> is present, it must follow the schema (
+            <span className="font-mono">card</span> is optional). If <span className="font-mono">ideas</span> is
+            present, it must be a single object (not array).
           </p>
         )}
       </form>

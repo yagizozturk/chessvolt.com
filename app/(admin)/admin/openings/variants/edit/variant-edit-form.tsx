@@ -1,17 +1,18 @@
 "use client";
 
+import { Chess } from "chess.js";
+import { Save } from "lucide-react";
+import { useMemo, useState } from "react";
+
 import { updateOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import VoltBoardLegacy from "@/components/volt-board/volt-board";
+import VoltBoardLegacy from "@/components/volt-board-legacy/volt-board-legacy";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
-import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
-import { Chess } from "chess.js";
-import { Save } from "lucide-react";
-import { useMemo, useState } from "react";
 
 type Props = {
   variant: OpeningVariant;
@@ -23,8 +24,7 @@ const START_FEN = new Chess().fen();
 function applyUci(game: Chess, uci: string) {
   const from = uci.slice(0, 2);
   const to = uci.slice(2, 4);
-  const promotion =
-    uci.length > 4 ? (uci[4] as "q" | "r" | "b" | "n") : undefined;
+  const promotion = uci.length > 4 ? (uci[4] as "q" | "r" | "b" | "n") : undefined;
   return game.move({
     from,
     to,
@@ -110,14 +110,8 @@ function BoardWithMoves({
   setSelectedPly,
 }: BoardWithMovesProps) {
   return (
-    <section
-      className="flex flex-col gap-4"
-      aria-labelledby={`${sourceId}-heading`}
-    >
-      <h2
-        id={`${sourceId}-heading`}
-        className="text-muted-foreground text-xs font-medium tracking-wide uppercase"
-      >
+    <section className="flex flex-col gap-4" aria-labelledby={`${sourceId}-heading`}>
+      <h2 id={`${sourceId}-heading`} className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
         {title}
       </h2>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
@@ -131,9 +125,7 @@ function BoardWithMoves({
           viewOnly
         />
         <div className="min-h-[200px] min-w-0 flex-1">
-          <p className="text-muted-foreground mb-2 text-sm font-medium">
-            UCI hamleler
-          </p>
+          <p className="text-muted-foreground mb-2 text-sm font-medium">UCI hamleler</p>
           {error && <p className="text-destructive mb-2 text-sm">{error}</p>}
           {uciMoves.length > 0 && (
             <button
@@ -144,28 +136,17 @@ function BoardWithMoves({
               Başlangıç pozisyonu
             </button>
           )}
-          <div
-            className="flex flex-wrap items-baseline gap-x-3 gap-y-2 font-mono text-sm leading-relaxed"
-            role="list"
-          >
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2 font-mono text-sm leading-relaxed" role="list">
             {rows.map((r) => {
               const whiteIdx = (r.num - 1) * 2;
               const blackIdx = (r.num - 1) * 2 + 1;
               return (
-                <div
-                  key={r.num}
-                  role="listitem"
-                  className="flex shrink-0 flex-wrap items-baseline gap-1"
-                >
-                  <span className="text-muted-foreground w-6 shrink-0 text-right">
-                    {r.num}.
-                  </span>
+                <div key={r.num} role="listitem" className="flex shrink-0 flex-wrap items-baseline gap-1">
+                  <span className="text-muted-foreground w-6 shrink-0 text-right">{r.num}.</span>
                   <button
                     type="button"
                     className={`hover:bg-muted rounded px-1.5 py-0.5 transition-colors ${
-                      safePly === whiteIdx + 1
-                        ? "bg-primary/20 font-medium"
-                        : ""
+                      safePly === whiteIdx + 1 ? "bg-primary/20 font-medium" : ""
                     }`}
                     onClick={() => setSelectedPly(whiteIdx + 1)}
                   >
@@ -175,9 +156,7 @@ function BoardWithMoves({
                     <button
                       type="button"
                       className={`hover:bg-muted rounded px-1.5 py-0.5 transition-colors ${
-                        safePly === blackIdx + 1
-                          ? "bg-primary/20 font-medium"
-                          : ""
+                        safePly === blackIdx + 1 ? "bg-primary/20 font-medium" : ""
                       }`}
                       onClick={() => setSelectedPly(blackIdx + 1)}
                     >
@@ -215,24 +194,14 @@ function defaultDisplayPlyString(v: OpeningVariant): string {
 export function VariantEditForm({ variant, onCancel }: Props) {
   const [pgn, setPgn] = useState(variant.pgn);
   const [initialPly, setInitialPly] = useState(String(variant.ply ?? 0));
-  const [displayPly, setDisplayPly] = useState(() =>
-    defaultDisplayPlyString(variant),
-  );
+  const [displayPly, setDisplayPly] = useState(() => defaultDisplayPlyString(variant));
   const { rows, error, fensByPly, uciMoves } = useUciRowsFromPgn(pgn);
   const maxPly = Math.max(0, fensByPly.length - 1);
-  const initialPlyNum = Math.min(
-    Math.max(0, parseInt(initialPly, 10) || 0),
-    maxPly,
-  );
-  const displayPlyNum = Math.min(
-    Math.max(0, parseInt(displayPly, 10) || 0),
-    maxPly,
-  );
+  const initialPlyNum = Math.min(Math.max(0, parseInt(initialPly, 10) || 0), maxPly);
+  const displayPlyNum = Math.min(Math.max(0, parseInt(displayPly, 10) || 0), maxPly);
   const initialFen = fensByPly[initialPlyNum] ?? START_FEN;
   const displayFen = fensByPly[displayPlyNum] ?? START_FEN;
-  const derivedMoves = pgn
-    ? (getUciMovesFromPgnAfterPly(pgn, initialPlyNum) ?? variant.moves)
-    : variant.moves;
+  const derivedMoves = pgn ? (getUciMovesFromPgnAfterPly(pgn, initialPlyNum) ?? variant.moves) : variant.moves;
 
   return (
     <form
@@ -246,12 +215,7 @@ export function VariantEditForm({ variant, onCancel }: Props) {
       <FieldGroup>
         <Field>
           <FieldLabel>Sort Key</FieldLabel>
-          <Input
-            name="sortKey"
-            type="number"
-            defaultValue={variant.sortKey}
-            className="font-mono"
-          />
+          <Input name="sortKey" type="number" defaultValue={variant.sortKey} className="font-mono" />
         </Field>
         <Field>
           <FieldLabel>Group</FieldLabel>
@@ -275,11 +239,9 @@ export function VariantEditForm({ variant, onCancel }: Props) {
             onChange={(e) => setInitialPly(e.target.value)}
           />
           <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
-            Half-move index in the PGN where this line begins: UCI moves and the
-            default initial FEN (when that field is empty) come from here. Empty
-            means 0 (start position). For White-focused openings, prefer an even
-            ply (0, 2, 4, …): with usual half-move numbering, even plies are the
-            positions where White is on move after the start.
+            Half-move index in the PGN where this line begins: UCI moves and the default initial FEN (when that field is
+            empty) come from here. Empty means 0 (start position). For White-focused openings, prefer an even ply (0, 2,
+            4, …): with usual half-move numbering, even plies are the positions where White is on move after the start.
           </p>
         </Field>
         <Field>
@@ -292,8 +254,7 @@ export function VariantEditForm({ variant, onCancel }: Props) {
             onChange={(e) => setDisplayPly(e.target.value)}
           />
           <p className="text-muted-foreground mt-1 text-xs">
-            Empty is treated as 0. Default display FEN is taken from this ply
-            when the display FEN field is left empty.
+            Empty is treated as 0. Default display FEN is taken from this ply when the display FEN field is left empty.
           </p>
         </Field>
         <Field>
@@ -316,11 +277,7 @@ export function VariantEditForm({ variant, onCancel }: Props) {
           <textarea
             name="goals"
             rows={6}
-            defaultValue={
-              variant.goals != null
-                ? JSON.stringify(variant.goals, null, 2)
-                : ""
-            }
+            defaultValue={variant.goals != null ? JSON.stringify(variant.goals, null, 2) : ""}
             className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           />
         </Field>
@@ -329,9 +286,7 @@ export function VariantEditForm({ variant, onCancel }: Props) {
           <textarea
             name="ideas"
             rows={6}
-            defaultValue={
-              variant.ideas != null ? JSON.stringify(variant.ideas, null, 2) : ""
-            }
+            defaultValue={variant.ideas != null ? JSON.stringify(variant.ideas, null, 2) : ""}
             className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           />
         </Field>
@@ -344,10 +299,7 @@ export function VariantEditForm({ variant, onCancel }: Props) {
             </p>
             <p className="font-mono text-xs break-all">{initialFen}</p>
             <p className="text-muted-foreground mt-2 text-xs">
-              Seçilen ply:{" "}
-              <span className="text-foreground font-mono tabular-nums">
-                {initialPlyNum}
-              </span>
+              Seçilen ply: <span className="text-foreground font-mono tabular-nums">{initialPlyNum}</span>
             </p>
           </div>
           <div className="min-w-0">
@@ -356,10 +308,7 @@ export function VariantEditForm({ variant, onCancel }: Props) {
             </p>
             <p className="font-mono text-xs break-all">{displayFen}</p>
             <p className="text-muted-foreground mt-2 text-xs">
-              Seçilen ply:{" "}
-              <span className="text-foreground font-mono tabular-nums">
-                {displayPlyNum}
-              </span>
+              Seçilen ply: <span className="text-foreground font-mono tabular-nums">{displayPlyNum}</span>
             </p>
           </div>
         </div>

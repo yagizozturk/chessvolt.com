@@ -1,17 +1,16 @@
 "use client";
 
+import { Calendar, Flag, Lightbulb, Puzzle } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import VoltBoardLegacy, {
-  type VoltBoardHandle,
-} from "@/components/volt-board/volt-board";
+import VoltBoardLegacy, { type VoltBoardHandle } from "@/components/volt-board-legacy/volt-board-legacy";
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 import { getFullMoveCountFromMoves } from "@/lib/chess/getFullMoveCountFromMoves";
-import { Calendar, Flag, Lightbulb, Puzzle } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 
 type RiddleControllerProps = {
   riddle: GameRiddle;
@@ -31,10 +30,7 @@ function formatDate(dateStr: string) {
   }
 }
 
-export default function RiddleController({
-  riddle,
-  game,
-}: RiddleControllerProps) {
+export default function RiddleController({ riddle, game }: RiddleControllerProps) {
   const boardRef = useRef<VoltBoardHandle>(null);
   const turn = (riddle.displayFen?.includes(" w ") ?? true) ? "White" : "Black";
   const moveCount = getFullMoveCountFromMoves(riddle.moves);
@@ -58,9 +54,7 @@ export default function RiddleController({
     }
   };
 
-  const riddleDestinationPath = challengeSlug
-    ? `/challenge/${challengeSlug}`
-    : "/";
+  const riddleDestinationPath = challengeSlug ? `/challenge/${challengeSlug}` : "/";
 
   const handleHintClick = () => {
     if (hintCount >= 2) return;
@@ -77,11 +71,7 @@ export default function RiddleController({
           if (!open) setShowCorrect(false);
         }}
         title="Riddle solved"
-        description={
-          challengeSlug
-            ? "Return to the challenge when you are ready."
-            : "Continue from the home page."
-        }
+        description={challengeSlug ? "Return to the challenge when you are ready." : "Continue from the home page."}
         destinationPath={riddleDestinationPath}
         buttonLabel={challengeSlug ? "Back to challenge" : "Home"}
       />
@@ -111,19 +101,13 @@ export default function RiddleController({
                     : "border-gray-800 bg-black dark:border-gray-400"
                 }`}
               />
-              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                Turn
-              </p>
-              <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
-                {turn}
-              </span>
+              <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">Turn</p>
+              <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">{turn}</span>
             </div>
             {moveCount > 0 && (
               <div className="flex flex-col items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-50 p-4 dark:border-emerald-400/30 dark:bg-emerald-950/50">
                 <Puzzle className="h-7 w-7 shrink-0 text-emerald-500 dark:text-emerald-400" />
-                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                  Moves To Find
-                </p>
+                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Moves To Find</p>
                 <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
                   {moveCount} {moveCount === 1 ? "move" : "moves"}
                 </span>
@@ -133,9 +117,7 @@ export default function RiddleController({
 
           <Card>
             <CardHeader className="min-w-0 overflow-hidden">
-              <CardTitle className="truncate text-2xl font-bold">
-                {riddle.title}
-              </CardTitle>
+              <CardTitle className="truncate text-2xl font-bold">{riddle.title}</CardTitle>
               <div className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 overflow-hidden pt-2 text-sm">
                 {game.event && (
                   <span className="flex max-w-full min-w-0 shrink items-center gap-1.5 overflow-hidden">
@@ -156,35 +138,21 @@ export default function RiddleController({
               <div className="border-border bg-muted/50 flex w-full items-center gap-3 rounded-lg border p-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white dark:border-gray-600" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-muted-foreground text-xs font-medium">
-                    White
-                  </p>
-                  <p className="text-foreground truncate font-medium">
-                    {game.whitePlayer}
-                  </p>
+                  <p className="text-muted-foreground text-xs font-medium">White</p>
+                  <p className="text-foreground truncate font-medium">{game.whitePlayer}</p>
                 </div>
               </div>
               <div className="border-border bg-muted/50 flex w-full items-center gap-3 rounded-lg border p-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-gray-800 bg-black dark:border-gray-400" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-muted-foreground text-xs font-medium">
-                    Black
-                  </p>
-                  <p className="text-foreground truncate font-medium">
-                    {game.blackPlayer}
-                  </p>
+                  <p className="text-muted-foreground text-xs font-medium">Black</p>
+                  <p className="text-foreground truncate font-medium">{game.blackPlayer}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <Button
-            variant="default"
-            size="lg"
-            className="w-full"
-            disabled={hintCount >= 2}
-            onClick={handleHintClick}
-          >
+          <Button variant="default" size="lg" className="w-full" disabled={hintCount >= 2} onClick={handleHintClick}>
             <Lightbulb className="mr-2 h-4 w-4" />
             Hint
           </Button>
