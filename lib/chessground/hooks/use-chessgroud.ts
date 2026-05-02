@@ -1,10 +1,11 @@
 "use client";
 
-import { toDests } from "@/lib/chess/toDests";
 import { Chessground } from "@lichess-org/chessground";
 import type { Key } from "@lichess-org/chessground/types";
 import { Chess } from "chess.js";
 import { RefObject, useCallback, useEffect, useRef } from "react";
+
+import { toDests } from "@/lib/chess/toDests";
 
 type UseChessgroundOptions = {
   boardRef: RefObject<HTMLDivElement | null>;
@@ -36,8 +37,7 @@ export function useChessground({
   }, [onMove]);
 
   const getBoardConfig = useCallback(() => {
-    const turn: "white" | "black" =
-      game.current.turn() === "w" ? "white" : "black";
+    const turn: "white" | "black" = game.current.turn() === "w" ? "white" : "black";
     const isCheck = game.current.isCheck();
 
     return {
@@ -61,6 +61,9 @@ export function useChessground({
             onMoveRef.current(from, to);
           },
         },
+      },
+      premovable: {
+        enabled: false,
       },
     };
   }, [game, orientationRef, viewOnly, coordinates, lastMoveRef]);
