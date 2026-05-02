@@ -89,7 +89,6 @@ const VoltBoardLegacy = forwardRef<VoltBoardHandle, VoltBoardProps>(function Vol
     [moves],
   );
 
-  const { play: playCorrectSound } = useSound("/audio/correct-move-sound.mp3", 1);
   const { play: playMoveSound } = useSound("/audio/piece-move-sound.wav", 0.5);
 
   // ============================================================================
@@ -177,7 +176,7 @@ const VoltBoardLegacy = forwardRef<VoltBoardHandle, VoltBoardProps>(function Vol
     clearSquareCustomHighlights();
     makeMove(from, to, DEFAULT_PROMOTION_PIECE);
     lastMoveRef.current = [from as Key, to as Key];
-    playCorrectSound();
+
     clearHintShapes();
     updateBoard();
     onUserSuccessMovePlayed?.(to);
