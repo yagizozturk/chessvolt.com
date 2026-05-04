@@ -218,13 +218,17 @@ cg-board > square.custom-correct-move::after,
 cg-board > square.custom-wrong-move::after,
 cg-board > square.custom-good-move::after,
 cg-board > square.custom-inaccuracy-move::after,
-cg-board > square.custom-blunder-move::after {
+cg-board > square.custom-blunder-move::after,
+cg-board > square.custom-king-move::after,
+cg-board > square.custom-bishop-move::after,
+cg-board > square.custom-knight-move::after,
+cg-board > square.custom-pawn-move::after {
   content: "";
   position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 32px; /* ikon boyutu */
-  height: 32px;
+  top: -15px;
+  right: -15px;
+  width: 48px; /* ikon boyutu */
+  height: 48px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -233,7 +237,23 @@ cg-board > square.custom-blunder-move::after {
 }
 
 cg-board > square.custom-correct-move::after {
-  background-image: url("/images/icons/icon-checkmark.png") !important;
+  background-image: url("/images/animations/applause.gif") !important;
+}
+
+cg-board > square.custom-bishop-move::after {
+  background-image: url("/images/icons/icon-bishop.png") !important;
+}
+
+cg-board > square.custom-king-move::after {
+  background-image: url("/images/icons/icon-king.png") !important;
+}
+
+cg-board > square.custom-knight-move::after {
+  background-image: url("/images/icons/icon-knight.png") !important;
+}
+
+cg-board > square.custom-pawn-move::after {
+  background-image: url("/images/icons/icon-pawn.png") !important;
 }
 
 cg-board > square.custom-wrong-move::after {
@@ -250,4 +270,19 @@ cg-board > square.custom-inaccuracy-move::after {
 
 cg-board > square.custom-blunder-move::after {
   background-image: url("/images/icons/icon-blunder.png") !important;
+}
+
+cg-board > square.custom-bg-move::after {
+  content: "";
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 77px; /* ikon boyutu */
+  height: 77px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  z-index: 99;
+  background-image: url("/images/icons/icon-target.png") !important;
 }

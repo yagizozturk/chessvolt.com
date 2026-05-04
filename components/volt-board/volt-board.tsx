@@ -92,6 +92,41 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     ground.current?.setAutoShapes([]);
   }
 
+  function drawDefaultShapes() {
+    ground.current?.setAutoShapes([
+      {
+        orig: "d2",
+        dest: "d4",
+        brush: "red",
+      },
+      {
+        orig: "c2",
+        dest: "c3",
+        brush: "red",
+      },
+      {
+        orig: "e2",
+        dest: "e3",
+        brush: "red",
+      },
+      {
+        orig: "c1",
+        dest: "f4",
+        brush: "blue",
+      },
+      {
+        orig: "b1",
+        dest: "d2",
+        brush: "purple",
+      },
+      {
+        orig: "g1",
+        dest: "f3",
+        brush: "purple",
+      },
+    ]);
+  }
+
   // ============================================================================
   // Oyuncu yanlış hamle yapınca event bu metodu tetikler
   // ============================================================================
@@ -168,6 +203,10 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     }
   }
 
+  useEffect(() => {
+    drawDefaultShapes();
+  }, [drawDefaultShapes]);
+
   // ============================================================================
   // Cleanup wrong move timeout
   // ============================================================================
@@ -201,7 +240,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     [correctMove, ground, playHintSound],
   );
 
-  return <div ref={boardRef} className="cardinal dark-blue" style={{ width: size, height: size }} />;
+  return <div ref={boardRef} className="cardinal blue" style={{ width: size, height: size }} />;
 });
 
 export default VoltBoard;
