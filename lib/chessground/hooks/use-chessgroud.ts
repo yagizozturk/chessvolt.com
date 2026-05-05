@@ -17,7 +17,7 @@ type UseChessgroundOptions = {
   coordinates?: boolean;
   lastMoveRef: RefObject<[Key, Key] | undefined>;
   onMove: (from: string, to: string) => void;
-  onDrawChange: (shapes: DrawShape[]) => void;
+  onDrawChange?: (shapes: DrawShape[]) => void;
 };
 
 export function useChessground({

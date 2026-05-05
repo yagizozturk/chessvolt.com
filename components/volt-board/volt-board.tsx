@@ -1,5 +1,6 @@
 "use client";
 
+import type { DrawShape } from "@lichess-org/chessground/draw";
 import type { Key } from "@lichess-org/chessground/types";
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
@@ -25,6 +26,7 @@ type VoltBoardProps = {
   correctMove?: string | null;
   onCheckMove: (payload: MoveAttemptPayload) => boolean;
   onMovePlayed: (payload: Move) => string;
+  onDrawChange?: (shapes: DrawShape[]) => void;
 };
 
 // ============================================================================
@@ -37,7 +39,7 @@ export type VoltBoardHandle = {
 };
 
 const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard(
-  { sourceId, size = 620, correctMove, onCheckMove, onMovePlayed },
+  { sourceId, size = 620, correctMove, onCheckMove, onMovePlayed, onDrawChange },
   ref,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
@@ -81,9 +83,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 
       updateBoard();
     },
-    onDrawChange: (shapes) => {
-      console.log("user drew:", shapes);
-    },
   });
 
   function buildMoveUci(from: string, to: string) {
@@ -93,41 +92,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 
   function clearHintShapes() {
     ground.current?.setAutoShapes([]);
-  }
-
-  function drawDefaultShapes() {
-    ground.current?.setAutoShapes([
-      {
-        orig: "d2",
-        dest: "d4",
-        brush: "red",
-      },
-      {
-        orig: "c2",
-        dest: "c3",
-        brush: "red",
-      },
-      {
-        orig: "e2",
-        dest: "e3",
-        brush: "red",
-      },
-      {
-        orig: "c1",
-        dest: "f4",
-        brush: "blue",
-      },
-      {
-        orig: "b1",
-        dest: "d2",
-        brush: "purple",
-      },
-      {
-        orig: "g1",
-        dest: "f3",
-        brush: "purple",
-      },
-    ]);
   }
 
   // ============================================================================
@@ -205,10 +169,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
       lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
     }
   }
-
-  useEffect(() => {
-    drawDefaultShapes();
-  }, [drawDefaultShapes]);
 
   // ============================================================================
   // Cleanup wrong move timeout

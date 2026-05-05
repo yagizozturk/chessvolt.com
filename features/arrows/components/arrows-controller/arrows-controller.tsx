@@ -1,10 +1,11 @@
 "use client";
 
 import type { DrawShape } from "@lichess-org/chessground/draw";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import ArrowBoard, { type ArrowBoardHandle } from "@/features/arrows/components/arrow-board/arrow-board";
 import { useArrowsController } from "@/features/arrows/hooks/use-arrows-controller";
+import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 
 type ArrowsControllerProps = {
   openingId: string;
@@ -14,10 +15,22 @@ type ArrowsControllerProps = {
 
 export function ArrowsController({ openingId, arrows, size = 620 }: ArrowsControllerProps) {
   const boardRef = useRef<ArrowBoardHandle>(null);
-  const { boardArrows, handleDrawChange, clearDefaultArrows } = useArrowsController({ arrows });
+  const previousApprovedCountRef = useRef(0);
+  const { playCorrectSound } = useBoardSounds();
+  const { boardArrows, userApprovedArrows, handleDrawChange, clearDefaultArrows } = useArrowsController({ arrows });
+
+  useEffect(() => {
+    const previousApprovedCount = previousApprovedCountRef.current;
+    const currentApprovedCount = userApprovedArrows.length;
+    if (currentApprovedCount > previousApprovedCount) {
+      playCorrectSound();
+    }
+    previousApprovedCountRef.current = currentApprovedCount;
+  }, [userApprovedArrows, playCorrectSound]);
 
   function handleClearArrows() {
     clearDefaultArrows();
+    previousApprovedCountRef.current = 0;
     boardRef.current?.clearArrows();
   }
 
