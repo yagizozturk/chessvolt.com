@@ -1,7 +1,9 @@
-import { CircleX, PartyPopper, Star } from "lucide-react";
+import { PartyPopper } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
+import { ArrowsBoardCard } from "@/features/arrows/components/arrows-board-card/arrows-board-card";
+import { ArrowsController } from "@/features/arrows/components/arrows-controller/arrows-controller";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import OpeningMainSidebar from "@/features/openings/components/opening-main-sidebar/opening-main-sidebar";
 import {
@@ -57,12 +59,19 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   // ========================================================================
   const total = variants.length;
   const correct = attempts.filter((a) => a.isCorrect).length;
-  const attempted = attempts.length;
-  const incorrect = attempted - correct;
   const solveRate = total > 0 ? Math.round((correct / total) * 100) : 0;
 
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">
+      <div>
+        <ArrowsBoardCard
+          openingId={opening.id}
+          name={opening.name}
+          description={opening.description ?? ""}
+          arrows={opening.arrows ?? []}
+          size={300}
+        />
+      </div>
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
         <div className="grid gap-6 px-2 sm:grid-cols-2 lg:grid-cols-3">
           {variants.map((variant, index) => {

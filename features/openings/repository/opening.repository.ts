@@ -2,10 +2,12 @@
  * Opening Repository
  * CRUD access to the openings table (parent of opening_variants).
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DrawShape } from "@lichess-org/chessground/draw";
+
 import type { Opening } from "@/features/openings/types/opening";
 import { postgrestUserMessage } from "@/lib/supabase/postgrest-user-message";
 import { slugify } from "@/lib/utils/slugify";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 function slugFromName(name: string): string {
   return slugify(name) || "opening";
@@ -16,6 +18,7 @@ type DbOpening = {
   name: string;
   slug: string | null;
   description: string | null;
+  arrows: DrawShape[] | null;
   display_fen: string | null;
   created_at: string;
 };
@@ -26,9 +29,8 @@ function toOpening(db: DbOpening): Opening {
     name: db.name,
     slug: db.slug,
     description: db.description,
-    displayFen:
-      db.display_fen ??
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    arrows: db.arrows ?? null,
+    displayFen: db.display_fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     createdAt: db.created_at,
   };
 }
@@ -37,30 +39,20 @@ type DbOpeningWithVariantCount = DbOpening & {
   opening_variants: [{ count: number }];
 };
 
-function dbRowMatchesUpdates(
-  row: DbOpening,
-  updates: Record<string, unknown>,
-): boolean {
+function dbRowMatchesUpdates(row: DbOpening, updates: Record<string, unknown>): boolean {
   if ("name" in updates && row.name !== updates.name) return false;
-  if ("slug" in updates && (row.slug ?? null) !== (updates.slug ?? null))
+  if ("slug" in updates && (row.slug ?? null) !== (updates.slug ?? null)) return false;
+  if ("description" in updates && (row.description ?? null) !== (updates.description ?? null)) return false;
+  if ("arrows" in updates && JSON.stringify(row.arrows ?? null) !== JSON.stringify(updates.arrows ?? null))
     return false;
-  if (
-    "description" in updates &&
-    (row.description ?? null) !== (updates.description ?? null)
-  )
-    return false;
-  if (
-    "display_fen" in updates &&
-    (row.display_fen ?? null) !== (updates.display_fen ?? null)
-  )
-    return false;
+  if ("display_fen" in updates && (row.display_fen ?? null) !== (updates.display_fen ?? null)) return false;
   return true;
 }
 
 export async function findAll(supabase: SupabaseClient): Promise<Opening[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, display_fen, created_at")
+    .select("id, name, slug, description, arrows, display_fen, created_at")
     .order("name", { ascending: true });
 
   if (error) {
@@ -73,14 +65,10 @@ export async function findAll(supabase: SupabaseClient): Promise<Opening[]> {
 
 export type OpeningWithVariantCount = Opening & { variantCount: number };
 
-export async function findAllWithVariantCount(
-  supabase: SupabaseClient,
-): Promise<OpeningWithVariantCount[]> {
+export async function findAllWithVariantCount(supabase: SupabaseClient): Promise<OpeningWithVariantCount[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select(
-      "id, name, slug, description, display_fen, created_at, opening_variants(count)",
-    )
+    .select("id, name, slug, description, arrows, display_fen, created_at, opening_variants(count)")
     .order("name", { ascending: true });
 
   if (error) {
@@ -95,13 +83,10 @@ export async function findAllWithVariantCount(
   });
 }
 
-export async function findBySlug(
-  supabase: SupabaseClient,
-  slug: string,
-): Promise<Opening | null> {
+export async function findBySlug(supabase: SupabaseClient, slug: string): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, display_fen, created_at")
+    .select("id, name, slug, description, arrows, display_fen, created_at")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -113,13 +98,10 @@ export async function findBySlug(
   return toOpening(data);
 }
 
-export async function findById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<Opening | null> {
+export async function findById(supabase: SupabaseClient, id: string): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, display_fen, created_at")
+    .select("id, name, slug, description, arrows, display_fen, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -135,19 +117,18 @@ export type CreateOpeningInput = {
   name: string;
   slug?: string | null;
   description?: string | null;
+  arrows?: DrawShape[] | null;
   displayFen?: string | null;
 };
 
-export async function create(
-  supabase: SupabaseClient,
-  input: CreateOpeningInput,
-): Promise<Opening | null> {
+export async function create(supabase: SupabaseClient, input: CreateOpeningInput): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
     .insert({
       name: input.name.trim(),
       slug: input.slug ?? slugFromName(input.name),
       description: input.description ?? null,
+      arrows: input.arrows ?? null,
       display_fen: input.displayFen ?? null,
     })
     .select()
@@ -165,6 +146,7 @@ export type UpdateOpeningInput = {
   name?: string;
   slug?: string | null;
   description?: string | null;
+  arrows?: DrawShape[] | null;
   displayFen?: string | null;
 };
 
@@ -182,14 +164,14 @@ export async function update(
   if (input.name !== undefined) updates.name = input.name.trim();
   if (input.slug !== undefined) updates.slug = input.slug;
   if (input.description !== undefined) updates.description = input.description;
+  if (input.arrows !== undefined) updates.arrows = input.arrows;
   if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 
   if (Object.keys(updates).length === 0) {
     return { opening: null, error: "No changes to save." };
   }
 
-  const selectColumns =
-    "id, name, slug, description, display_fen, created_at" as const;
+  const selectColumns = "id, name, slug, description, arrows, display_fen, created_at" as const;
 
   const { data, error } = await supabase
     .from("openings")
@@ -221,8 +203,7 @@ export async function update(
   if (!row) {
     return {
       opening: null,
-      error:
-        "This opening could not be loaded after save. It may have been removed, or you may not have access.",
+      error: "This opening could not be loaded after save. It may have been removed, or you may not have access.",
     };
   }
 
@@ -232,15 +213,11 @@ export async function update(
 
   return {
     opening: null,
-    error:
-      "The update did not apply. Check permissions for editing openings, or try again.",
+    error: "The update did not apply. Check permissions for editing openings, or try again.",
   };
 }
 
-export async function remove(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<boolean> {
+export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
   const { error } = await supabase.from("openings").delete().eq("id", id);
 
   if (error) {

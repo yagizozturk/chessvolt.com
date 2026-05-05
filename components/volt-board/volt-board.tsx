@@ -81,6 +81,9 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 
       updateBoard();
     },
+    onDrawChange: (shapes) => {
+      console.log("user drew:", shapes);
+    },
   });
 
   function buildMoveUci(from: string, to: string) {

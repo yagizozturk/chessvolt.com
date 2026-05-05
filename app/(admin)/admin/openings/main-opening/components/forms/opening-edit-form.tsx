@@ -1,14 +1,15 @@
 "use client";
 
+import { useActionState } from "react";
+
 import {
-  updateOpeningAction,
   type UpdateOpeningFormState,
+  updateOpeningAction,
 } from "@/app/(admin)/admin/openings/main-opening/actions/openings";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { Opening } from "@/features/openings/types/opening";
-import { useActionState } from "react";
 
 type Props = {
   opening: Opening;
@@ -17,47 +18,28 @@ type Props = {
 const initialState: UpdateOpeningFormState = { error: null };
 
 export function OpeningEditForm({ opening }: Props) {
-  const [state, formAction, isPending] = useActionState(
-    updateOpeningAction,
-    initialState,
-  );
+  const [state, formAction, isPending] = useActionState(updateOpeningAction, initialState);
 
   return (
     <form action={formAction} className="space-y-4">
       <input type="hidden" name="openingId" value={opening.id} />
       {state.error ? (
-        <div
-          className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive"
-          role="alert"
-        >
+        <div className="bg-destructive/10 text-destructive rounded-md px-4 py-3 text-sm" role="alert">
           {state.error}
         </div>
       ) : null}
       <FieldGroup>
         <Field>
           <FieldLabel>Name</FieldLabel>
-          <Input
-            name="name"
-            required
-            defaultValue={opening.name}
-            placeholder="e.g. Sicilian Defense"
-          />
+          <Input name="name" required defaultValue={opening.name} placeholder="e.g. Sicilian Defense" />
         </Field>
         <Field>
           <FieldLabel>Slug (URL)</FieldLabel>
-          <Input
-            name="slug"
-            defaultValue={opening.slug ?? ""}
-            placeholder="e.g. sicilian-defense"
-          />
+          <Input name="slug" defaultValue={opening.slug ?? ""} placeholder="e.g. sicilian-defense" />
         </Field>
         <Field>
           <FieldLabel>Description</FieldLabel>
-          <Input
-            name="description"
-            defaultValue={opening.description ?? ""}
-            placeholder="Optional description"
-          />
+          <Input name="description" defaultValue={opening.description ?? ""} placeholder="Optional description" />
         </Field>
         <Field>
           <FieldLabel>Display FEN</FieldLabel>

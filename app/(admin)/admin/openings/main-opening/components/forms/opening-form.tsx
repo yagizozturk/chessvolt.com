@@ -15,10 +15,7 @@ export function OpeningForm() {
         </Field>
         <Field>
           <FieldLabel>Slug (URL)</FieldLabel>
-          <Input
-            name="slug"
-            placeholder="e.g. sicilian-defense (auto from name if empty)"
-          />
+          <Input name="slug" placeholder="e.g. sicilian-defense (auto from name if empty)" />
         </Field>
         <Field>
           <FieldLabel>Description</FieldLabel>

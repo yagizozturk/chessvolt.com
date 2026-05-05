@@ -1,17 +1,11 @@
 "use server";
 
-import type {
-  CreateOpeningInput,
-  UpdateOpeningInput,
-} from "@/features/openings/repository/opening.repository";
-import {
-  createOpening,
-  deleteOpening,
-  updateOpening,
-} from "@/features/openings/services/openings.service";
-import { getAdminUser } from "@/lib/supabase/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+
+import type { CreateOpeningInput, UpdateOpeningInput } from "@/features/openings/repository/opening.repository";
+import { createOpening, deleteOpening, updateOpening } from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
 
 export async function createOpeningAction(formData: FormData) {
   const { supabase } = await getAdminUser();

@@ -1,6 +1,7 @@
 "use client";
 
 import { Chessground } from "@lichess-org/chessground";
+import type { DrawShape } from "@lichess-org/chessground/draw";
 import type { Key } from "@lichess-org/chessground/types";
 import { Chess } from "chess.js";
 import { RefObject, useCallback, useEffect, useRef } from "react";
@@ -16,6 +17,7 @@ type UseChessgroundOptions = {
   coordinates?: boolean;
   lastMoveRef: RefObject<[Key, Key] | undefined>;
   onMove: (from: string, to: string) => void;
+  onDrawChange: (shapes: DrawShape[]) => void;
 };
 
 export function useChessground({
@@ -27,6 +29,7 @@ export function useChessground({
   coordinates = true,
   lastMoveRef,
   onMove,
+  onDrawChange,
 }: UseChessgroundOptions) {
   const ground = useRef<ReturnType<typeof Chessground> | null>(null);
   const customSquareHighlightsRef = useRef<Map<Key, string>>(new Map());
@@ -64,6 +67,13 @@ export function useChessground({
       },
       premovable: {
         enabled: false,
+      },
+      drawable: {
+        enabled: true,
+        onChange: () => {
+          const shapes = ground.current?.state.drawable.shapes ?? [];
+          onDrawChange?.(shapes);
+        },
       },
     };
   }, [game, orientationRef, viewOnly, coordinates, lastMoveRef]);

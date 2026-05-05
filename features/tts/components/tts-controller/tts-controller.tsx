@@ -36,7 +36,7 @@ export function TTSController({ text }: TTSControllerProps) {
 
       const audio = new Audio(audioUrl);
       audioRef.current = audio;
-      await audio.play();
+      //await audio.play();
     };
 
     void playText();
