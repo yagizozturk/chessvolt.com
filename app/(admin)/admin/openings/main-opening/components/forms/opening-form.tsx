@@ -22,6 +22,15 @@ export function OpeningForm() {
           <Input name="description" placeholder="Optional description" />
         </Field>
         <Field>
+          <FieldLabel>Arrows (JSON Array)</FieldLabel>
+          <textarea
+            name="arrows"
+            placeholder='e.g. [{"orig":"e2","dest":"e4","brush":"green"}]'
+            rows={6}
+            className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px]"
+          />
+        </Field>
+        <Field>
           <FieldLabel>Display FEN</FieldLabel>
           <Input
             name="displayFen"

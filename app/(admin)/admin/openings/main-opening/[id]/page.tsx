@@ -56,6 +56,7 @@ export default async function AdminOpeningVariantsPage({ params }: Params) {
         <div className="mb-4">
           <h1 className="text-2xl font-bold tracking-tight">{opening.name}</h1>
           {opening.description ? <p className="text-muted-foreground mt-1 text-sm">{opening.description}</p> : null}
+          <p className="text-muted-foreground mt-1 text-sm">{opening.arrows?.length ?? 0} arrow(s)</p>
           <p className="text-muted-foreground mt-2 text-sm">{variants.length} variant(s)</p>
         </div>
         <OpeningVariantsList variants={variants} />
