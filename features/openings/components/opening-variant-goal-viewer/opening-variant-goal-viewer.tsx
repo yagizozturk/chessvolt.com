@@ -1,3 +1,5 @@
+import { TTSController } from "@/features/tts/components/tts-controller/tts-controller";
+
 import { ActiveGoalCard } from "./active-goal-card/active-goal-card";
 import { InactiveNextGoalRow } from "./inactive-next-goal-row/inactive-next-goal-row";
 import { PreviousGoalRow } from "./previous-goal-row/previous-goal-row";
@@ -12,9 +14,11 @@ export function OpeningVariantGoalViewer({ goals }: OpeningVariantGoalViewerProp
   const previousCompletedGoal = previousGoal?.isCompleted ? previousGoal : null;
   const nextGoal = goals[activeGoalArrayIndex + 1] ?? null;
   if (!activeGoal) return null;
+  const activeGoalSpeechText = `${activeGoal.title}. ${activeGoal.description}`;
 
   return (
     <div className="flex w-full flex-col gap-3">
+      <TTSController key={activeGoalArrayIndex} text={activeGoalSpeechText} />
       {previousCompletedGoal ? (
         <PreviousGoalRow
           key={`${previousCompletedGoal.ply}-${previousCompletedGoal.move}-${activeGoalArrayIndex - 1}-previous`}

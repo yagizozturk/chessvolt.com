@@ -214,6 +214,24 @@ coords.squares:nth-of-type(even) :nth-child(odd) {
   color: rgba(255, 255, 255, 0.8) !important;
 }
 
+/*
+ * Custom feedback lives on `square` ::after, but `piece` nodes are *siblings* of `square`
+ * under cg-board. z-index on ::after only competes inside the square; pieces use z-index
+ * up to 10 (.dragging). Lift these squares so the overlay paints above every piece layer.
+ */
+cg-board > square.custom-correct-move,
+cg-board > square.custom-wrong-move,
+cg-board > square.custom-good-move,
+cg-board > square.custom-inaccuracy-move,
+cg-board > square.custom-blunder-move,
+cg-board > square.custom-king-move,
+cg-board > square.custom-bishop-move,
+cg-board > square.custom-knight-move,
+cg-board > square.custom-pawn-move,
+cg-board > square.custom-bg-move {
+  z-index: 11;
+}
+
 cg-board > square.custom-correct-move::after,
 cg-board > square.custom-wrong-move::after,
 cg-board > square.custom-good-move::after,
@@ -225,19 +243,18 @@ cg-board > square.custom-knight-move::after,
 cg-board > square.custom-pawn-move::after {
   content: "";
   position: absolute;
-  top: -15px;
-  right: -15px;
-  width: 48px; /* ikon boyutu */
-  height: 48px;
+  top: 0px;
+  right: 0px;
+  width: 75px; /* ikon boyutu */
+  height: 75px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   pointer-events: none;
-  z-index: 99;
 }
 
 cg-board > square.custom-correct-move::after {
-  background-image: url("/images/animations/applause.gif") !important;
+  background-image: url("/images/animations/cup-75px.gif") !important;
 }
 
 cg-board > square.custom-bishop-move::after {
@@ -277,12 +294,11 @@ cg-board > square.custom-bg-move::after {
   position: absolute;
   top: 0px;
   right: 0px;
-  width: 77px; /* ikon boyutu */
-  height: 77px;
+  width: 66px; /* ikon boyutu */
+  height: 66px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   pointer-events: none;
-  z-index: 99;
   background-image: url("/images/icons/icon-target.png") !important;
 }
