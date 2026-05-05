@@ -8,11 +8,6 @@ type UseArrowsControllerParams = {
   arrows: DrawShape[] | null | undefined;
 };
 
-function getArrowKey(orig?: string, dest?: string) {
-  if (!orig || !dest) return null;
-  return `${orig.toLowerCase()}-${dest.toLowerCase()}`;
-}
-
 export function useArrowsController({ arrows }: UseArrowsControllerParams) {
   const [defaultArrows, setDefaultArrows] = useState<DrawShape[]>(() => arrows ?? []);
   const [drawnArrows, setDrawnArrows] = useState<DrawShape[]>([]);
@@ -26,8 +21,7 @@ export function useArrowsController({ arrows }: UseArrowsControllerParams) {
       new Set(
         defaultArrows
           .filter((arrow): arrow is DrawShape & { orig: string; dest: string } => !!arrow.orig && !!arrow.dest)
-          .map((arrow) => getArrowKey(arrow.orig, arrow.dest))
-          .filter((key): key is string => !!key),
+          .map((arrow) => `${arrow.orig}-${arrow.dest}`),
       ),
     [defaultArrows],
   );
@@ -36,8 +30,8 @@ export function useArrowsController({ arrows }: UseArrowsControllerParams) {
     const uniqueApproved = new Set<string>();
 
     drawnArrows.forEach((arrow) => {
-      const key = getArrowKey(arrow.orig, arrow.dest);
-      if (!key) return;
+      if (!arrow.orig || !arrow.dest) return;
+      const key = `${arrow.orig}-${arrow.dest}`;
       if (defaultArrowKeySet.has(key)) {
         uniqueApproved.add(key);
       }
@@ -52,8 +46,8 @@ export function useArrowsController({ arrows }: UseArrowsControllerParams) {
   const boardArrows = useMemo(() => {
     const approvedKeySet = new Set(userApprovedArrows.map((arrow) => `${arrow.orig}-${arrow.dest}`));
     return defaultArrows.map((arrow) => {
-      const key = getArrowKey(arrow.orig, arrow.dest);
-      if (!key) return arrow;
+      if (!arrow.orig || !arrow.dest) return arrow;
+      const key = `${arrow.orig}-${arrow.dest}`;
       if (!approvedKeySet.has(key)) return arrow;
       return {
         ...arrow,
@@ -68,9 +62,8 @@ export function useArrowsController({ arrows }: UseArrowsControllerParams) {
 
   function handleDrawChange(shapes: DrawShape[]) {
     const filteredShapes = shapes.filter((shape) => {
-      const key = getArrowKey(shape.orig, shape.dest);
-      if (!key) return false;
-      return defaultArrowKeySet.has(key);
+      if (!shape.orig || !shape.dest) return false;
+      return defaultArrowKeySet.has(`${shape.orig}-${shape.dest}`);
     });
 
     setDrawnArrows(filteredShapes);
