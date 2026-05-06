@@ -1,6 +1,5 @@
 "use client";
 
-import type { DrawShape } from "@lichess-org/chessground/draw";
 import type { Key } from "@lichess-org/chessground/types";
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
@@ -22,11 +21,12 @@ import "@lichess-org/chessground/assets/chessground.brown.css";
 
 type VoltBoardProps = {
   sourceId: string;
+  initialFen?: string;
   size?: number;
-  correctMove?: string | null;
+  viewOnly?: boolean;
+  drawHintMove?: string | null;
   onCheckMove: (payload: MoveAttemptPayload) => boolean;
   onMovePlayed: (payload: Move) => string;
-  onDrawChange?: (shapes: DrawShape[]) => void;
 };
 
 // ============================================================================
@@ -39,7 +39,7 @@ export type VoltBoardHandle = {
 };
 
 const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard(
-  { sourceId, size = 620, correctMove, onCheckMove, onMovePlayed, onDrawChange },
+  { sourceId, initialFen, size = 620, viewOnly = false, drawHintMove, onCheckMove, onMovePlayed },
   ref,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
@@ -49,7 +49,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   const wrongMoveRevertTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
-  const { game, makeMove } = useChessOne();
+  const { game, makeMove } = useChessOne(initialFen);
   const { playCorrectSound, playWrongMoveSound, playHintSound } = useBoardSounds();
 
   // 3. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
@@ -58,7 +58,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     game,
     sourceId,
     orientationRef,
-    viewOnly: false,
+    viewOnly,
     coordinates: true,
     lastMoveRef,
     onMove: (from, to) => {
@@ -186,8 +186,8 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     ref,
     () => ({
       showHint(hintLevel: number) {
-        if (!ground.current || !correctMove) return;
-        const parsedUci = parseUci(correctMove);
+        if (!ground.current || !drawHintMove) return;
+        const parsedUci = parseUci(drawHintMove);
         if (!parsedUci) return;
 
         const orig = parsedUci.from as Key;
@@ -200,7 +200,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
         playHintSound();
       },
     }),
-    [correctMove, ground, playHintSound],
+    [drawHintMove, ground, playHintSound],
   );
 
   return <div ref={boardRef} className="cardinal blue" style={{ width: size, height: size }} />;

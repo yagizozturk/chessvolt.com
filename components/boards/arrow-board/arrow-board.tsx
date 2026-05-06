@@ -17,6 +17,8 @@ import "@lichess-org/chessground/assets/chessground.brown.css";
 type ArrowBoardProps = {
   sourceId: string;
   size?: number;
+  viewOnly?: boolean;
+  coordinates?: boolean;
   arrows: DrawShape[];
   onDrawChange?: (shapes: DrawShape[]) => DrawShape[];
 };
@@ -32,7 +34,7 @@ export type ArrowBoardHandle = {
 };
 
 const ArrowBoard = forwardRef<ArrowBoardHandle, ArrowBoardProps>(function ArrowBoard(
-  { sourceId, size = 620, arrows, onDrawChange },
+  { sourceId, size = 620, viewOnly = false, coordinates = true, arrows, onDrawChange },
   ref,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
@@ -51,8 +53,8 @@ const ArrowBoard = forwardRef<ArrowBoardHandle, ArrowBoardProps>(function ArrowB
     game,
     sourceId,
     orientationRef,
-    viewOnly: false,
-    coordinates: true,
+    viewOnly,
+    coordinates,
     lastMoveRef,
     onMove: () => {
       return;
@@ -104,7 +106,7 @@ const ArrowBoard = forwardRef<ArrowBoardHandle, ArrowBoardProps>(function ArrowB
     [ground, playHintSound],
   );
 
-  return <div ref={boardRef} className="cardinal blue" style={{ width: size, height: size }} />;
+  return <div ref={boardRef} className="cardinal turq" style={{ width: size, height: size }} />;
 });
 
 export default ArrowBoard;

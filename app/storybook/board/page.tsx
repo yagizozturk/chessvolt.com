@@ -1,4 +1,4 @@
-import VoltBoardLegacy from "@/components/volt-board-legacy/volt-board-legacy";
+import VoltBoardLegacy from "@/components/boards/volt-board-legacy/volt-board-legacy";
 
 import { CodeViewer } from "../components/code-viewer";
 import { StorybookPage } from "../page";

@@ -42,7 +42,7 @@ cg-board {
   line-height: 0;
   background-size: cover;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 2px;
 }
 
 cg-board square {

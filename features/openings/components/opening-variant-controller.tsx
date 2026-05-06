@@ -4,12 +4,12 @@ import { ArrowLeft, BookOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import VoltBoard, { type VoltBoardHandle } from "@/components/volt-board/volt-board";
 import { useOpeningVariantController } from "@/features/openings/hooks/use-opening-variant-controller";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
@@ -117,7 +117,7 @@ export default function OpeningVariantController({
             ref={boardRef}
             sourceId={variant.id}
             size={600}
-            correctMove={currentCorrectMove}
+            drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onMovePlayed={handleBoardMovePlayed}
           />

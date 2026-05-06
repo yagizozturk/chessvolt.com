@@ -3,10 +3,10 @@
 import { Calendar, Flag, Lightbulb, Puzzle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import VoltBoardLegacy, { type VoltBoardHandle } from "@/components/boards/volt-board-legacy/volt-board-legacy";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import VoltBoardLegacy, { type VoltBoardHandle } from "@/components/volt-board-legacy/volt-board-legacy";
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";

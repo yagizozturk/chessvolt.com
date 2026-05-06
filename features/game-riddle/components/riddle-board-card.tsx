@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { IterationBadge } from "@/components/badge/number-badge/number-badge";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
-import VoltBoardLegacy from "@/components/volt-board-legacy/volt-board-legacy";
+import VoltBoardLegacy from "@/components/boards/volt-board-legacy/volt-board-legacy";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
 

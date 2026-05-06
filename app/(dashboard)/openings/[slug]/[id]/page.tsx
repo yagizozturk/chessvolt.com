@@ -63,17 +63,15 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
 
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">
-      <div>
-        <ArrowsBoardCard
-          openingId={opening.id}
-          name={opening.name}
-          description={opening.description ?? ""}
-          arrows={opening.arrows ?? []}
-          size={300}
-        />
-      </div>
       <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
-        <div className="grid gap-6 px-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex flex-col gap-6 px-2">
+          <ArrowsBoardCard
+            openingId={opening.id}
+            name={opening.name}
+            description={opening.description ?? ""}
+            arrows={opening.arrows ?? []}
+            size={170}
+          />
           {variants.map((variant, index) => {
             const num = index + 1;
             return (
@@ -83,8 +81,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 name={variant.title ?? ""}
                 group={variant.group}
                 num={num}
-                width={250}
-                height={250}
+                size={170}
                 href={`/openings/variant/${variant.id}`}
                 fen={variant.displayFen ?? variant.initialFen}
                 isComplete={solvedVariantIds.has(variant.id) ? true : undefined}

@@ -15,7 +15,7 @@ type UseChessgroundOptions = {
   orientationRef: RefObject<"white" | "black">;
   viewOnly?: boolean;
   coordinates?: boolean;
-  lastMoveRef: RefObject<[Key, Key] | undefined>;
+  lastMoveRef?: RefObject<[Key, Key] | undefined>;
   onMove: (from: string, to: string) => void;
   onDrawChange?: (shapes: DrawShape[]) => void;
 };
@@ -50,7 +50,7 @@ export function useChessground({
       coordinates,
       turnColor: turn,
       check: isCheck ? turn : false,
-      lastMove: lastMoveRef.current,
+      lastMove: lastMoveRef?.current,
       highlight: {
         check: isCheck,
         custom: new Map(customSquareHighlightsRef.current),

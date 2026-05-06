@@ -4,10 +4,10 @@ import { Chess } from "chess.js";
 import { useEffect, useMemo, useState } from "react";
 
 import { createOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
+import VoltBoardLegacy from "@/components/boards/volt-board-legacy/volt-board-legacy";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import VoltBoardLegacy from "@/components/volt-board-legacy/volt-board-legacy";
 import type { Opening } from "@/features/openings/types/opening";
 import type { MoveGoal, OpeningIdeas } from "@/features/openings/types/opening-variant";
 import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";

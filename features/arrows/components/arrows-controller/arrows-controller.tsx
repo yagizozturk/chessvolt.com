@@ -3,7 +3,7 @@
 import type { DrawShape } from "@lichess-org/chessground/draw";
 import { useEffect, useRef } from "react";
 
-import ArrowBoard, { type ArrowBoardHandle } from "@/features/arrows/components/arrow-board/arrow-board";
+import ArrowBoard, { type ArrowBoardHandle } from "@/components/boards/arrow-board/arrow-board";
 import { useArrowsController } from "@/features/arrows/hooks/use-arrows-controller";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 
@@ -39,7 +39,7 @@ export function ArrowsController({ openingId, arrows, size = 620 }: ArrowsContro
       <button
         type="button"
         onClick={handleClearArrows}
-        className="rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-accent"
+        className="hover:bg-accent rounded-md border px-3 py-1.5 text-sm font-medium"
       >
         Clear Arrows
       </button>
