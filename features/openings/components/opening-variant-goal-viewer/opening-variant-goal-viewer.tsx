@@ -1,5 +1,3 @@
-import { TTSController } from "@/features/tts/components/tts-controller/tts-controller";
-
 import { ActiveGoalCard } from "./active-goal-card/active-goal-card";
 import { GoalStepper } from "./goal-stepper/goal-stepper";
 import { InactiveNextGoalRow } from "./inactive-next-goal-row/inactive-next-goal-row";
@@ -16,7 +14,6 @@ export function OpeningVariantGoalViewer({ goals }: OpeningVariantGoalViewerProp
   return (
     <>
       <div className="bg-card flex flex-col gap-3 rounded-xl">
-        <TTSController key={activeGoalArrayIndex} text={activeGoal.description} />
         <ActiveGoalCard goal={activeGoal} />
         {nextGoal ? (
           <InactiveNextGoalRow

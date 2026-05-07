@@ -6,16 +6,19 @@ import { getTTS } from "@/features/tts/api/tts";
 
 type TTSControllerProps = {
   text: string;
+  muted: boolean;
 };
 
-export function TTSController({ text }: TTSControllerProps) {
+export function TTSController({ text, muted }: TTSControllerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
+    if (muted) return;
     if (!text.trim()) return;
 
     let cancelled = false;
+    const controller = new AbortController();
 
     const playText = async () => {
       const currentAudio = audioRef.current;
@@ -28,7 +31,7 @@ export function TTSController({ text }: TTSControllerProps) {
         objectUrlRef.current = null;
       }
 
-      const audioBlob = await getTTS(text);
+      const audioBlob = await getTTS(text, controller.signal);
       if (cancelled) return;
 
       const audioUrl = URL.createObjectURL(audioBlob);
@@ -36,13 +39,14 @@ export function TTSController({ text }: TTSControllerProps) {
 
       const audio = new Audio(audioUrl);
       audioRef.current = audio;
-      // await audio.play();
+      await audio.play();
     };
 
     void playText();
 
     return () => {
       cancelled = true;
+      controller.abort();
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
@@ -52,7 +56,7 @@ export function TTSController({ text }: TTSControllerProps) {
         objectUrlRef.current = null;
       }
     };
-  }, [text]);
+  }, [text, muted]);
 
   return null;
 }
