@@ -16,6 +16,7 @@ type DisplayBoardProps = {
   initialFen?: string;
   size?: number;
   coordinates?: boolean;
+  playerOrientation?: "white" | "black";
 };
 
 function getOrientationFromFen(fen?: string): "white" | "black" {
@@ -23,9 +24,15 @@ function getOrientationFromFen(fen?: string): "white" | "black" {
   return turn === "b" ? "black" : "white";
 }
 
-export default function DisplayBoard({ sourceId, initialFen, size = 200, coordinates = false }: DisplayBoardProps) {
+export default function DisplayBoard({
+  sourceId,
+  initialFen,
+  size = 200,
+  coordinates = false,
+  playerOrientation,
+}: DisplayBoardProps) {
   const boardRef = useRef<HTMLDivElement>(null);
-  const orientationRef = useRef<"white" | "black">(getOrientationFromFen(initialFen));
+  const orientationRef = useRef<"white" | "black">(playerOrientation ?? getOrientationFromFen(initialFen));
   const { game } = useChessOne(initialFen);
 
   const { updateBoard } = useChessground({
@@ -39,9 +46,9 @@ export default function DisplayBoard({ sourceId, initialFen, size = 200, coordin
   });
 
   useEffect(() => {
-    orientationRef.current = getOrientationFromFen(initialFen);
+    orientationRef.current = playerOrientation ?? getOrientationFromFen(initialFen);
     updateBoard();
-  }, [initialFen, updateBoard]);
+  }, [initialFen, playerOrientation, updateBoard]);
 
   return <div ref={boardRef} className="cardinal green" style={{ width: size, height: size }} />;
 }
