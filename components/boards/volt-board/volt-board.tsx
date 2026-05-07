@@ -186,6 +186,18 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   }, []);
 
   // ============================================================================
+  // External FEN sync (e.g. PGN navigator)
+  // Keep same board instance and update position when parent changes initialFen.
+  // ============================================================================
+  useEffect(() => {
+    clearCustomHighlightsTimeout();
+    clearSquareCustomHighlights();
+    clearHintShapes();
+    lastMoveRef.current = undefined;
+    updateBoard();
+  }, [initialFen, updateBoard, clearSquareCustomHighlights]);
+
+  // ============================================================================
   // Hint (drawable shapes) - exposed via ref
   // ============================================================================
   useImperativeHandle(

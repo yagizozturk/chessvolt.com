@@ -122,13 +122,13 @@ export function useChessground({
   // ============================================================================
   // Update board
   // ============================================================================
-  function updateBoard() {
+  const updateBoard = useCallback(() => {
     // React creates DOM elements but some libraries (e.g. Chessground, D3, Leaflet) manipulate DOM directly outside React.
     // We re-set because we're moving from React's "controlled" model to "imperative" mode.
     if (!ground.current) return;
 
     ground.current.set(getBoardConfig());
-  }
+  }, [getBoardConfig]);
 
   return {
     ground,

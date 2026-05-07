@@ -44,12 +44,18 @@ export default function PgnNavigatorPage() {
       <div className="flex flex-wrap gap-6">
         <div className="space-y-2">
           <p className="text-sm font-medium">DisplayBoard</p>
-          <DisplayBoard sourceId="pgn-navigator-display" initialFen={fen} size={360} coordinates playerOrientation="white" />
+          <DisplayBoard
+            sourceId="pgn-navigator-display"
+            initialFen={fen}
+            size={360}
+            coordinates
+            playerOrientation="white"
+          />
         </div>
         <div className="space-y-2">
           <p className="text-sm font-medium">VoltBoard</p>
           <VoltBoard
-            sourceId={`pgn-navigator-volt-${ply}`}
+            sourceId="pgn-navigator-volt"
             initialFen={fen}
             size={360}
             viewOnly
