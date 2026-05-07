@@ -4,11 +4,24 @@ type VoltButtonProps = {
   text: string;
   onClick?: () => void;
   disabled?: boolean;
+  fullWidth?: boolean;
+  muted?: boolean;
 };
 
-export function VoltButton({ text, onClick, disabled = false }: VoltButtonProps) {
+export function VoltButton({
+  text,
+  onClick,
+  disabled = false,
+  fullWidth = false,
+  muted = false,
+}: VoltButtonProps) {
   return (
-    <button type="button" className={styles.voltButton} onClick={onClick} disabled={disabled}>
+    <button
+      type="button"
+      className={`${styles.voltButton} ${fullWidth ? styles.fullWidth : ""} ${muted ? styles.muted : ""}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {text}
     </button>
   );

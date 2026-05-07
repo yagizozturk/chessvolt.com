@@ -109,42 +109,45 @@ export default function OpeningVariantController({
   };
 
   return (
-    <div className="container mx-auto max-w-6xl px-8 py-6">
-      <div className="grid gap-4 lg:grid-cols-[600px_minmax(0,1fr)] lg:gap-8">
-        <div key={variant.id} className="relative w-full min-w-0">
+    <div className="container mx-auto max-w-6xl px-20 py-6">
+      <div className="flex flex-col gap-4 lg:flex-row">
+        <div key={variant.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
           <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
-            size={600}
+            size={580}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onMovePlayed={handleBoardMovePlayed}
           />
         </div>
-        {/* min-w-0: allows the right panel to shrink within the grid track */}
-        <div className="flex min-w-0 flex-col gap-4">
-          <div>
-            <div className="flex items-center">
-              <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
-              <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
-                <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
-              </div>
+        {/* min-w-0: allows the right panel to shrink within the flex row */}
+        <div className="bg-card/50 flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
+          <div className="flex items-center justify-center">
+            <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>
+          </div>
+          <div className="flex items-center">
+            <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
+            <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
+              <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
             </div>
           </div>
           <OpeningVariantGoalViewer goals={sortedGoals} />
-          {/* 
-            <span>{variant.title ?? "Untitled variant"}</span>
-           {isCompleted ? (
-                <div className="w-full">
-                  <Button className="w-full" onClick={handleContinueClick}>
-                    {nextVariantId ? "Next variant" : "Back to opening"}
-                  </Button>
-                </div>
-              ) : null}
-          */}
-
-          <div>
-            <VoltButton onClick={handleHintClick} text="Hint" disabled={hintCount >= 2} />
+          <div className="mt-auto">
+            {!isCompleted ? (
+              <div>
+                <VoltButton onClick={handleHintClick} text="Hint" disabled={hintCount >= 2} fullWidth={true} />
+              </div>
+            ) : (
+              <div className="mt-4">
+                <VoltButton
+                  onClick={handleContinueClick}
+                  text={nextVariantId ? "Next variant" : "Back to opening"}
+                  fullWidth={true}
+                  muted={true}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

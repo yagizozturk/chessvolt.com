@@ -5,13 +5,15 @@ import completeAnimationData from "@/public/images/animations/animation-complete
 import type { GoalStepperProps } from "../types/types";
 
 export function GoalStepper({ goals }: GoalStepperProps) {
+  const activeGoalIndex = goals.findIndex((goal) => !goal.isCompleted);
+
   return (
     <div className="flex items-center gap-2">
       {goals.map((goal, index) =>
         goal.isCompleted ? (
           <div
             key={`${goal.ply}-${goal.move}-${index}-goal-progress`}
-            className="bg-muted relative size-9 overflow-hidden rounded-full"
+            className="bg-muted relative size-8 overflow-hidden rounded-full"
             aria-label={`Goal ${index + 1} completed`}
           >
             <Lottie
@@ -24,12 +26,14 @@ export function GoalStepper({ goals }: GoalStepperProps) {
         ) : (
           <div
             key={`${goal.ply}-${goal.move}-${index}-goal-progress`}
-            className="bg-muted text-muted-foreground flex size-9 items-center justify-center rounded-full text-xs font-semibold"
+            className={`flex size-8 items-center justify-center rounded-full text-xs font-bold ${
+              activeGoalIndex === index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+            }`}
             aria-label={`Goal ${index + 1}`}
           >
             {index + 1}
           </div>
-        )
+        ),
       )}
     </div>
   );
