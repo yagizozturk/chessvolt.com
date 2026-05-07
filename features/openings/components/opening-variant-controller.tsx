@@ -132,44 +132,19 @@ export default function OpeningVariantController({
             </div>
           </div>
           <OpeningVariantGoalViewer goals={sortedGoals} />
-          {/* <Card className="flex h-full flex-col border-0 shadow-none">
-            <CardHeader className="pb-3">
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center">
-                <div className="flex items-center">
-                  <ArrowLeft className="text-muted-foreground size-4" aria-hidden="true" />
-                </div>
-                <CardTitle className="flex items-center justify-center gap-2 text-center">
-                  <BookOpen className="text-muted-foreground size-4" aria-hidden="true" />
-                  <span>{variant.title ?? "Untitled variant"}</span>
-                </CardTitle>
-                <div aria-hidden="true" />
-              </div>
-              <Separator className="mt-3" />
-            </CardHeader>
-            <CardContent className="flex flex-1">
-              <OpeningVariantGoalViewer goals={sortedGoals} />
-            </CardContent>
-            <CardFooter className="flex flex-col gap-4">
-              <div className="flex w-full flex-col gap-2">
-                <Progress value={progressValue} className="h-2" />
-              </div>
-              <div className="w-full">
-                <Button className="w-full" variant="outline" disabled={hintCount >= 2} onClick={handleHintClick}>
-                  Hint
-                </Button>
-              </div>
-              {isCompleted ? (
+          {/* 
+            <span>{variant.title ?? "Untitled variant"}</span>
+           {isCompleted ? (
                 <div className="w-full">
                   <Button className="w-full" onClick={handleContinueClick}>
                     {nextVariantId ? "Next variant" : "Back to opening"}
                   </Button>
                 </div>
               ) : null}
-            </CardFooter>
-          </Card>*/}
+          */}
 
           <div>
-            <VoltButton text="Hint" />
+            <VoltButton onClick={handleHintClick} text="Hint" disabled={hintCount >= 2} />
           </div>
         </div>
       </div>
