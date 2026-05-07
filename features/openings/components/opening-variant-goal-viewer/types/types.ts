@@ -1,8 +1,10 @@
 import type { MoveGoal } from "../../../types/opening-variant";
 
-export type OpeningVariantGoalViewerProps = {
+type GoalsProps = {
   goals: MoveGoal[];
 };
+
+export type OpeningVariantGoalViewerProps = GoalsProps;
 
 export type ActiveGoalCardProps = {
   goal: MoveGoal;
@@ -10,10 +12,6 @@ export type ActiveGoalCardProps = {
 
 export type NextGoalRowProps = {
   goal: MoveGoal;
-  done: boolean;
 };
 
-export type PreviousGoalRowProps = {
-  goal: MoveGoal;
-  done: boolean;
-};
+export type GoalStepperProps = GoalsProps;

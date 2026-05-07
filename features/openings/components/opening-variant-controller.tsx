@@ -1,20 +1,19 @@
 "use client";
 
-import { ArrowLeft, BookOpen } from "lucide-react";
+import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
+import { VoltButton } from "@/components/volt-button/volt-button";
 import { useOpeningVariantController } from "@/features/openings/hooks/use-opening-variant-controller";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
 import type { OpeningVariant } from "../types/opening-variant";
 import { OpeningVariantGoalViewer } from "./opening-variant-goal-viewer/opening-variant-goal-viewer";
@@ -111,7 +110,7 @@ export default function OpeningVariantController({
 
   return (
     <div className="container mx-auto max-w-6xl px-8 py-6">
-      <div className="grid gap-4 lg:grid-cols-[620px_minmax(0,1fr)] lg:gap-8">
+      <div className="grid gap-4 lg:grid-cols-[600px_minmax(0,1fr)] lg:gap-8">
         <div key={variant.id} className="relative w-full min-w-0">
           <VoltBoard
             ref={boardRef}
@@ -123,8 +122,17 @@ export default function OpeningVariantController({
           />
         </div>
         {/* min-w-0: allows the right panel to shrink within the grid track */}
-        <div className="min-w-0">
-          <Card className="flex h-full flex-col border-0 shadow-none">
+        <div className="flex min-w-0 flex-col gap-4">
+          <div>
+            <div className="flex items-center">
+              <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
+              <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
+                <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
+              </div>
+            </div>
+          </div>
+          <OpeningVariantGoalViewer goals={sortedGoals} />
+          {/* <Card className="flex h-full flex-col border-0 shadow-none">
             <CardHeader className="pb-3">
               <div className="grid grid-cols-[1fr_auto_1fr] items-center">
                 <div className="flex items-center">
@@ -158,7 +166,11 @@ export default function OpeningVariantController({
                 </div>
               ) : null}
             </CardFooter>
-          </Card>
+          </Card>*/}
+
+          <div>
+            <VoltButton text="Hint" />
+          </div>
         </div>
       </div>
       {isCompleted ? (

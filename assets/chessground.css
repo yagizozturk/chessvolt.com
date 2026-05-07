@@ -42,7 +42,7 @@ cg-board {
   line-height: 0;
   background-size: cover;
   cursor: pointer;
-  border-radius: 2px;
+  border-radius: 8px;
 }
 
 cg-board square {
@@ -243,10 +243,10 @@ cg-board > square.custom-knight-move::after,
 cg-board > square.custom-pawn-move::after {
   content: "";
   position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 75px; /* ikon boyutu */
-  height: 75px;
+  top: -25px;
+  right: -25px;
+  width: 60px; /* ikon boyutu */
+  height: 60px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -254,7 +254,11 @@ cg-board > square.custom-pawn-move::after {
 }
 
 cg-board > square.custom-correct-move::after {
-  background-image: url("/images/animations/cup-75px.gif") !important;
+  background-image: url("/images/animations/animation-success-150px.gif") !important;
+}
+
+cg-board > square.custom-wrong-move::after {
+  background-image: url("/images/animations/animation-fail-150px-120px.gif") !important;
 }
 
 cg-board > square.custom-bishop-move::after {
@@ -271,10 +275,6 @@ cg-board > square.custom-knight-move::after {
 
 cg-board > square.custom-pawn-move::after {
   background-image: url("/images/icons/icon-pawn.png") !important;
-}
-
-cg-board > square.custom-wrong-move::after {
-  background-image: url("/images/icons/icon-error.png") !important;
 }
 
 cg-board > square.custom-good-move::after {

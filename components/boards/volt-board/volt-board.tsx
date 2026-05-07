@@ -11,7 +11,11 @@ import { getPromotionPiece } from "@/lib/chess/getPromotionPiece";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
-import { DEFAULT_PROMOTION_PIECE, WRONG_MOVE_REVERT_DELAY_MS } from "@/lib/shared/constants/chess";
+import {
+  CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS,
+  DEFAULT_PROMOTION_PIECE,
+  WRONG_MOVE_REVERT_DELAY_MS,
+} from "@/lib/shared/constants/chess";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -46,7 +50,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   const boardRef = useRef<HTMLDivElement>(null);
   const orientationRef = useRef<"white" | "black">("white");
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
-  const wrongMoveRevertTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearCustomHighlightsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
   const { game, makeMove } = useChessOne(initialFen);
@@ -62,7 +66,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     coordinates: true,
     lastMoveRef,
     onMove: (from, to) => {
-      clearWrongMoveRevertTimeout();
+      clearCustomHighlightsTimeout();
       const fenBefore = game.current.fen();
       const playedBy = game.current.turn() === "w" ? "white" : "black";
       const uci = buildMoveUci(from, to);
@@ -102,30 +106,31 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     clearHintShapes();
     setSquareCustomHighlight(to, "custom-wrong-move");
     playWrongMoveSound();
-    scheduleWrongMoveRevert();
+    scheduleClearCustomHighlights(WRONG_MOVE_REVERT_DELAY_MS);
   }
 
   // ============================================================================
-  // Wrong move revert timeout
+  // Clear custom highlights timeout
   // Component state/ref/useEffect bağımlılığı varsa → component içinde kalsın.
   // ============================================================================
-  function clearWrongMoveRevertTimeout() {
-    if (wrongMoveRevertTimeoutRef.current) {
-      clearTimeout(wrongMoveRevertTimeoutRef.current);
-      wrongMoveRevertTimeoutRef.current = null;
+  function clearCustomHighlightsTimeout() {
+    if (clearCustomHighlightsTimeoutRef.current) {
+      clearTimeout(clearCustomHighlightsTimeoutRef.current);
+      clearCustomHighlightsTimeoutRef.current = null;
     }
   }
 
   // ============================================================================
-  // Wrong move revert timeout
-  // Yalnış hamle yapıldıktan sonra tahtayı geri alır.
+  // Schedule custom highlight clear
+  // Delay sonunda tüm custom highlight'ları temizler.
   // ============================================================================
-  function scheduleWrongMoveRevert() {
-    wrongMoveRevertTimeoutRef.current = setTimeout(() => {
-      wrongMoveRevertTimeoutRef.current = null;
+  function scheduleClearCustomHighlights(delayMs: number) {
+    clearCustomHighlightsTimeout();
+    clearCustomHighlightsTimeoutRef.current = setTimeout(() => {
+      clearCustomHighlightsTimeoutRef.current = null;
       clearSquareCustomHighlights();
       updateBoard();
-    }, WRONG_MOVE_REVERT_DELAY_MS);
+    }, delayMs);
   }
 
   // ============================================================================
@@ -141,6 +146,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     }
     playCorrectSound();
     setSquareCustomHighlight(to, "custom-correct-move");
+    scheduleClearCustomHighlights(CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS);
 
     lastMoveRef.current = [from as Key, to as Key];
     const nextMove = onMovePlayed({
@@ -171,11 +177,11 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   }
 
   // ============================================================================
-  // Cleanup wrong move timeout
+  // Cleanup highlight clear timeout
   // ============================================================================
   useEffect(() => {
     return () => {
-      clearWrongMoveRevertTimeout();
+      clearCustomHighlightsTimeout();
     };
   }, []);
 
@@ -203,7 +209,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     [drawHintMove, ground, playHintSound],
   );
 
-  return <div ref={boardRef} className="cardinal blue" style={{ width: size, height: size }} />;
+  return <div ref={boardRef} className="cardinal green" style={{ width: size, height: size }} />;
 });
 
 export default VoltBoard;

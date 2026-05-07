@@ -1,0 +1,19 @@
+.voltButton {
+  display: inline-flex;
+  width: auto;
+  white-space: nowrap;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 15px;
+  background-color: #1bbf33;
+  font-weight: 700;
+  font-size: 1em;
+  color: white;
+  box-shadow: 0 5px green;
+  cursor: pointer;
+}
+
+.voltButton:active {
+  transform: translateY(2px);
+  border-bottom: 0;
+}
