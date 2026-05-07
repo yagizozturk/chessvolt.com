@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { VolumeX } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 import { TTSController } from "@/features/tts/components/tts-controller/tts-controller";
 
@@ -26,8 +26,12 @@ export function VoltCoach({ title, message, ttsKey }: VoltCoachProps) {
         <div className="flex">
           <div className="flex-1 truncate text-lg font-bold">{title}</div>
           <div className="flex-shrink-0">
-            <Button variant="ghost" aria-label={muted ? "Unmute coach" : "Mute coach"} onClick={() => setMuted((prev) => !prev)}>
-              <VolumeX className="size-4" />
+            <Button
+              variant="ghost"
+              aria-label={muted ? "Unmute coach" : "Mute coach"}
+              onClick={() => setMuted((prev) => !prev)}
+            >
+              {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
             </Button>
           </div>
         </div>

@@ -13,6 +13,8 @@
   color: white;
   box-shadow: 0 5px green;
   cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .fullWidth {

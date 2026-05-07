@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { Notifier } from "@/components/notifier/notifier";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { VoltButton } from "@/components/volt-button/volt-button";
@@ -110,6 +111,7 @@ export default function OpeningVariantController({
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-6">
+      <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
         <div key={variant.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
           <VoltBoard

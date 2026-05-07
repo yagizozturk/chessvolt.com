@@ -52,6 +52,7 @@ export function useOpeningVariantController({ variant }: UseOpeningVariantContro
   // Variant değiştiğinde local ekran state'i sıfırlanır:
   // - Hint hakkı yeniden başlar
   // - Aktif ply, variant başlangıç ply'sine döner
+  // - isCompleted goal için true olur
   // ============================================================================
   useEffect(() => {
     setHintCount(0);
