@@ -6,9 +6,9 @@ import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { Notifier } from "@/components/notifier/notifier";
+import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
-import { VoltButton } from "@/components/volt-button/volt-button";
 import { useOpeningVariantController } from "@/features/openings/hooks/use-opening-variant-controller";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
@@ -138,16 +138,15 @@ export default function OpeningVariantController({
           <div className="mt-auto">
             {!isCompleted ? (
               <div>
-                <VoltButton onClick={handleHintClick} text="Hint" disabled={hintCount >= 2} fullWidth={true} />
+                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="w-full">
+                  Hint
+                </Button>
               </div>
             ) : (
               <div className="mt-4">
-                <VoltButton
-                  onClick={handleContinueClick}
-                  text={nextVariantId ? "Next variant" : "Back to opening"}
-                  fullWidth={true}
-                  muted={true}
-                />
+                <Button variant="volt" onClick={handleContinueClick} className="w-full">
+                  {nextVariantId ? "Next variant" : "Back to opening"}
+                </Button>
               </div>
             )}
           </div>
