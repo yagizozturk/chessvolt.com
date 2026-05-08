@@ -51,7 +51,7 @@ export function OpeningBoardCard({
               <BookOpen />
               <span>{variantCount}</span>
             </Badge>
-            <Button variant="default">Play</Button>
+            <Button variant="voltOutline">Play</Button>
           </div>
         </div>
       </Link>
