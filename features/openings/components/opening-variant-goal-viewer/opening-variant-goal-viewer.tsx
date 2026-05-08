@@ -13,7 +13,7 @@ export function OpeningVariantGoalViewer({ goals }: OpeningVariantGoalViewerProp
 
   return (
     <>
-      <div className="bg-card flex flex-col gap-3 rounded-xl">
+      <div className="bg-muted/50 border-b-card-shadow flex flex-col rounded-xl border-b-[6px]">
         <ActiveGoalCard goal={activeGoal} />
         {nextGoal ? (
           <InactiveNextGoalRow

@@ -17,7 +17,7 @@ export function VoltCoach({ title, message, ttsKey }: VoltCoachProps) {
   const [muted, setMuted] = useState(false);
 
   return (
-    <div className="bg-card flex gap-4 rounded-xl p-4">
+    <div className="flex gap-4 rounded-xl p-4">
       <TTSController key={ttsKey} text={message} muted={muted} />
       <div className="shrink-0">
         <Image src="/images/avatar/volt-avatar.jpg" alt="Volt Coach" width={80} height={80} className="rounded-xl" />

@@ -124,7 +124,7 @@ export default function OpeningVariantController({
           />
         </div>
         {/* min-w-0: allows the right panel to shrink within the flex row */}
-        <div className="bg-card/50 flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
+        <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
           <div className="flex items-center justify-center">
             <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>
           </div>

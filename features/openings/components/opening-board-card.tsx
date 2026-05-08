@@ -36,7 +36,7 @@ export function OpeningBoardCard({
     <BlurFade duration={0.4} direction="down" blur="4px">
       <Link
         href={href}
-        className="bg-card flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] border-b-[#111] p-6"
+        className="bg-card border-b-card-shadow flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6"
       >
         <div>
           {isComplete === true && <BoardStatusIcon status="solved" positionClassName="top-2 right-3" />}
