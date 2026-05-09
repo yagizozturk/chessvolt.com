@@ -1,15 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { LogIn, type LucideIcon, Menu, Zap } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const NAV_ITEMS = [
   {
@@ -60,17 +56,8 @@ function NavLink({
 
   if (isCta) {
     return (
-      <Button
-        variant="default"
-        size="sm"
-        className={`shadow-primary/20 shadow-lg ${className}`}
-        asChild
-      >
-        <Link
-          href={href}
-          className="flex items-center gap-2"
-          onClick={onNavigate}
-        >
+      <Button variant="default" size="sm" className={`shadow-primary/20 shadow-lg ${className}`} asChild>
+        <Link href={href} className="flex items-center gap-2" onClick={onNavigate}>
           {content}
         </Link>
       </Button>
@@ -79,11 +66,7 @@ function NavLink({
 
   return (
     <Button variant="ghost" size="sm" asChild>
-      <Link
-        href={href}
-        className={`flex items-center gap-2 ${className}`}
-        onClick={onNavigate}
-      >
+      <Link href={href} className={`flex items-center gap-2 ${className}`} onClick={onNavigate}>
         {content}
       </Link>
     </Button>
@@ -102,17 +85,14 @@ export function Navbar() {
         <Link
           href="/"
           className="text-foreground flex items-center gap-2 text-2xl font-bold tracking-tighter transition-opacity hover:opacity-90"
-          aria-label="chessvolt - Home"
+          aria-label="ChessVolt - Home"
         >
           <Zap className="fill-primary text-primary h-6 w-6" />
-          <span>chessvolt</span>
+          <span>ChessVolt</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav
-          className="hidden items-center gap-3 md:flex"
-          aria-label="Main navigation"
-        >
+        <nav className="hidden items-center gap-3 md:flex" aria-label="Main navigation">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.href}
@@ -138,20 +118,17 @@ export function Navbar() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="border-white/10 bg-slate-950/95 px-8 text-white backdrop-blur-md"
-            >
+            <SheetContent side="right" className="border-white/10 bg-slate-950/95 px-8 text-white backdrop-blur-md">
               <SheetTitle className="sr-only">Menu</SheetTitle>
               <div className="mb-8 flex items-center">
                 <Link
                   href="/"
                   onClick={closeSheet}
                   className="flex items-center gap-2 text-xl font-bold text-white"
-                  aria-label="chessvolt - Go to home"
+                  aria-label="ChessVolt - Go to home"
                 >
                   <Zap className="text-primary h-5 w-5" />
-                  <span>chessvolt</span>
+                  <span>ChessVolt</span>
                 </Link>
               </div>
 
@@ -170,10 +147,7 @@ export function Navbar() {
                   asChild
                   onClick={closeSheet}
                 >
-                  <Link
-                    href="/challenge"
-                    className="flex items-center justify-center gap-2"
-                  >
+                  <Link href="/challenge" className="flex items-center justify-center gap-2">
                     Start Playing
                   </Link>
                 </Button>

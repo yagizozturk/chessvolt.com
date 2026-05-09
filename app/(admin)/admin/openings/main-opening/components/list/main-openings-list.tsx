@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
+
 import { deleteOpeningAction } from "@/app/(admin)/admin/openings/main-opening/actions/openings";
 import { Button } from "@/components/ui/button";
 import type { Opening } from "@/features/openings/types/opening";
-import Link from "next/link";
 
 type Props = {
   openings: Opening[];
@@ -11,11 +12,7 @@ type Props = {
 
 export function MainOpenings({ openings }: Props) {
   async function handleDelete(id: string) {
-    if (
-      !confirm(
-        "This opening will be deleted. All its variants will also be deleted (CASCADE). Are you sure?",
-      )
-    )
+    if (!confirm("This opening will be deleted. All its variants will also be deleted (CASCADE). Are you sure?"))
       return;
     await deleteOpeningAction(id);
   }
@@ -23,10 +20,7 @@ export function MainOpenings({ openings }: Props) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {openings.map((o) => (
-        <div
-          key={o.id}
-          className="border-border flex min-h-0 flex-col gap-3 rounded-lg border p-4"
-        >
+        <div key={o.id} className="border-border flex min-h-0 flex-col gap-3 rounded-lg border p-4">
           <Link
             href={`/admin/openings/main-opening/${o.id}`}
             className="hover:text-primary line-clamp-2 block min-w-0 font-medium transition-colors"

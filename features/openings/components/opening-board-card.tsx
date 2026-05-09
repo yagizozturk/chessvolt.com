@@ -43,7 +43,7 @@ export function OpeningBoardCard({
           {isComplete === false && <BoardStatusIcon status="wrong" positionClassName="top-2 right-3" />}
           <DisplayBoard sourceId={id} initialFen={fen} size={size} coordinates={false} />
         </div>
-        <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
           <p className="text-xl font-bold">{name}</p>
           <p className="text-muted-foreground text-base">{description}</p>
           <div className="mt-auto flex items-center justify-between gap-3">

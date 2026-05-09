@@ -1,28 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { createClient } from "@/lib/supabase/client";
-import { cn } from "@/lib/utils/cn";
-import {
-  ArrowLeft,
-  BookOpen,
-  Gamepad2,
-  HelpCircle,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  Users,
-  Zap,
-} from "lucide-react";
+import { ArrowLeft, BookOpen, Gamepad2, HelpCircle, LayoutDashboard, LogOut, Menu, Users, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
+
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { createClient } from "@/lib/supabase/client";
+import { cn } from "@/lib/utils/cn";
 
 const adminNavItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -52,7 +38,7 @@ export function AdminNavbar() {
           className="text-foreground flex shrink-0 items-center gap-2 text-xl font-bold tracking-tighter transition-opacity hover:opacity-90"
         >
           <Zap className="fill-primary text-primary h-6 w-6" />
-          <span>chessvolt</span>
+          <span>ChessVolt</span>
           <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
             Admin
           </span>
@@ -63,19 +49,10 @@ export function AdminNavbar() {
             const isActive =
               item.href === "/admin"
                 ? pathname === "/admin"
-                : pathname === item.href ||
-                  pathname.startsWith(item.href + "/");
+                : pathname === item.href || pathname.startsWith(item.href + "/");
             return (
-              <Button
-                key={item.href}
-                variant={isActive ? "secondary" : "ghost"}
-                size="sm"
-                asChild
-              >
-                <Link
-                  href={item.href}
-                  className={cn(isActive && "font-semibold")}
-                >
+              <Button key={item.href} variant={isActive ? "secondary" : "ghost"} size="sm" asChild>
+                <Link href={item.href} className={cn(isActive && "font-semibold")}>
                   {item.label}
                 </Link>
               </Button>
@@ -90,12 +67,7 @@ export function AdminNavbar() {
               <span className="hidden sm:inline">Main App</span>
             </Link>
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleLogout}
-            title="Sign out"
-          >
+          <Button variant="ghost" size="icon" onClick={handleLogout} title="Sign out">
             <LogOut className="h-4 w-4" />
           </Button>
         </div>
@@ -115,7 +87,7 @@ export function AdminNavbar() {
                   className="flex items-center gap-2 text-xl font-bold"
                 >
                   <Zap className="fill-primary text-primary h-5 w-5" />
-                  <span>chessvolt Admin</span>
+                  <span>ChessVolt Admin</span>
                 </Link>
               </SheetTitle>
               <nav className="flex flex-col gap-1">
@@ -123,8 +95,7 @@ export function AdminNavbar() {
                   const isActive =
                     item.href === "/admin"
                       ? pathname === "/admin"
-                      : pathname === item.href ||
-                        pathname.startsWith(item.href + "/");
+                      : pathname === item.href || pathname.startsWith(item.href + "/");
                   return (
                     <Link
                       key={item.href}
@@ -145,11 +116,7 @@ export function AdminNavbar() {
               </nav>
               <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4">
                 <Button variant="outline" asChild>
-                  <Link
-                    href="/challenge"
-                    onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-2"
-                  >
+                  <Link href="/challenge" onClick={() => setIsOpen(false)} className="flex items-center gap-2">
                     <ArrowLeft className="h-4 w-4" />
                     Main App
                   </Link>

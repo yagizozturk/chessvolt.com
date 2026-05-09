@@ -1,14 +1,15 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ArrowRight, ChessQueen, PlayCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 import { MotionWrapper } from "./hero-content";
 
 export function Hero() {
   return (
-    <section className="bg-background relative w-full overflow-hidden pt-32 pb-20">
+    <section className="bg-primary/70 relative w-full overflow-hidden pt-32 pb-20">
       <div className="absolute inset-0 z-0" />
       <div className="relative z-10 container mx-auto px-4 md:px-6">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -30,17 +31,12 @@ export function Hero() {
                   <br /> With Games
                 </h1>
                 <p className="text-muted-foreground max-w-[600px] text-lg leading-relaxed md:text-xl">
-                  Sharpen your skills through engaging riddles and openings
-                  designed to help you predict GM moves and opening repertoires.
+                  Sharpen your skills through engaging riddles and openings designed to help you predict GM moves and
+                  opening repertoires.
                 </p>
               </div>
               <div className="flex flex-wrap gap-4 pt-2">
-                <Button
-                  variant="default"
-                  size="lg"
-                  className="h-12 px-8 text-base"
-                  asChild
-                >
+                <Button variant="default" size="lg" className="h-12 px-8 text-base" asChild>
                   <Link href="/challenge">
                     Start Playing <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
@@ -49,17 +45,13 @@ export function Hero() {
             </div>
           </MotionWrapper>
           <div className="relative mt-8 flex justify-center lg:mt-0 lg:justify-end">
-            <div className="bg-primary/10 pointer-events-none absolute top-1/2 left-1/2 h-[110%] w-[110%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[80px]" />
-            <MotionWrapper delay={0.3} float={true}>
-              <Image
-                src="/images/hero/landing_page_1.png"
-                alt="Chessvolt Dashboard Preview"
-                width={600}
-                height={400}
-                priority
-                className="relative z-10 h-auto w-full max-w-[600px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
-              />
-            </MotionWrapper>
+            <Image
+              src="/images/hero/landing_page_7.png"
+              alt="ChessVolt Dashboard Preview"
+              width={600}
+              height={600}
+              priority
+            />
           </div>
         </div>
       </div>

@@ -2,8 +2,8 @@
  * Opening Repository
  * CRUD access to the openings table (parent of opening_variants).
  */
-import type { SupabaseClient } from "@supabase/supabase-js";
 import type { DrawShape } from "@lichess-org/chessground/draw";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Opening } from "@/features/openings/types/opening";
 import { postgrestUserMessage } from "@/lib/supabase/postgrest-user-message";

@@ -1,13 +1,14 @@
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import Link from "next/link";
 
 export const GameNavbar = () => {
   return (
     <header className="border-border shrink-0 border-b">
       <div className="container mx-auto flex h-20 items-center justify-between px-4 md:px-6">
         <Link href="/" className="text-lg font-semibold tracking-tight">
-          chessvolt
+          ChessVolt
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />

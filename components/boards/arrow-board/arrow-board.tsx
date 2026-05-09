@@ -41,11 +41,10 @@ const ArrowBoard = forwardRef<ArrowBoardHandle, ArrowBoardProps>(function ArrowB
   const boardRef = useRef<HTMLDivElement>(null);
   const orientationRef = useRef<"white" | "black">("white");
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
-  const wrongMoveRevertTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
   const { game } = useChessOne();
-  const { playCorrectSound, playWrongMoveSound, playHintSound } = useBoardSounds();
+  const { playHintSound } = useBoardSounds();
 
   // 3. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
   const { ground } = useChessground({
@@ -106,7 +105,7 @@ const ArrowBoard = forwardRef<ArrowBoardHandle, ArrowBoardProps>(function ArrowB
     [ground, playHintSound],
   );
 
-  return <div ref={boardRef} className="cardinal turq" style={{ width: size, height: size }} />;
+  return <div ref={boardRef} className="cardinal orange" style={{ width: size, height: size }} />;
 });
 
 export default ArrowBoard;

@@ -1,5 +1,5 @@
+import { BookOpen, LogIn, Map, Zap } from "lucide-react";
 import Link from "next/link";
-import { Zap, Map, BookOpen, LogIn } from "lucide-react";
 
 export function Footer() {
   const links = [
@@ -18,11 +18,10 @@ export function Footer() {
               className="text-foreground flex items-center gap-2 text-2xl font-bold tracking-tighter transition-opacity hover:opacity-90"
             >
               <Zap className="fill-primary text-primary h-6 w-6" />
-              <span>chessvolt</span>
+              <span>ChessVolt</span>
             </Link>
             <p className="text-muted-foreground mt-4 max-w-xs text-sm leading-relaxed">
-              A gamified, community-focused, and modern learning platform. Push
-              your limits, shine with Volt.
+              A gamified, community-focused, and modern learning platform. Push your limits, shine with Volt.
             </p>
           </div>
 

@@ -1,8 +1,8 @@
 "use server";
 
+import type { DrawShape } from "@lichess-org/chessground/draw";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { DrawShape } from "@lichess-org/chessground/draw";
 
 import type { CreateOpeningInput, UpdateOpeningInput } from "@/features/openings/repository/opening.repository";
 import { createOpening, deleteOpening, updateOpening } from "@/features/openings/services/openings.service";

@@ -20,7 +20,7 @@ export function ArrowsBoardCard({ openingId, name, description, arrows, size = 2
         <div>
           <ArrowBoard sourceId={openingId} size={size} arrows={arrows} coordinates={false} viewOnly={true} />
         </div>
-        <div className="flex min-w-0 flex-1 flex-col gap-2 pt-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
           <p className="text-xl font-bold">{name}</p>
           <p className="text-muted-foreground text-base">{description}</p>
           <div className="mt-auto flex items-center justify-end gap-3">

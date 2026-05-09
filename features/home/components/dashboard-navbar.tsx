@@ -1,5 +1,10 @@
 "use client";
 
+import { BookOpen, LogOut, Map, Menu, Shield, User, Zap } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import * as React from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,20 +12,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useProfile } from "@/features/profile/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
-import { BookOpen, LogOut, Map, Menu, Shield, User, Zap } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import * as React from "react";
 
 const navItems = [
   { href: "/challenge", label: "Challenges", icon: Map },
@@ -65,11 +61,7 @@ export function DashboardNavbar() {
               </Link>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem
-            variant="destructive"
-            onClick={handleLogout}
-            className="cursor-pointer"
-          >
+          <DropdownMenuItem variant="destructive" onClick={handleLogout} className="cursor-pointer">
             <LogOut className="mr-2 h-4 w-4" />
             Sign out
           </DropdownMenuItem>
@@ -89,26 +81,16 @@ export function DashboardNavbar() {
           className="text-foreground flex shrink-0 items-center gap-2 text-xl font-bold tracking-tighter transition-opacity hover:opacity-90"
         >
           <Zap className="fill-primary text-primary h-6 w-6" />
-          <span>chessvolt</span>
+          <span>ChessVolt</span>
         </Link>
 
         {/* Center: Nav items (desktop) */}
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
           {navItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href));
+            const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
             return (
-              <Button
-                key={item.href}
-                variant={isActive ? "secondary" : "ghost"}
-                size="sm"
-                asChild
-              >
-                <Link
-                  href={item.href}
-                  className={cn(isActive && "font-semibold")}
-                >
+              <Button key={item.href} variant={isActive ? "secondary" : "ghost"} size="sm" asChild>
+                <Link href={item.href} className={cn(isActive && "font-semibold")}>
                   {item.label}
                 </Link>
               </Button>
@@ -130,20 +112,14 @@ export function DashboardNavbar() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[280px]">
               <SheetTitle className="mb-8 text-left">
-                <Link
-                  href="/"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2 text-xl font-bold"
-                >
+                <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2 text-xl font-bold">
                   <Zap className="fill-primary text-primary h-5 w-5" />
-                  <span>chessvolt</span>
+                  <span>ChessVolt</span>
                 </Link>
               </SheetTitle>
               <nav className="flex flex-col gap-1">
                 {navItems.map((item) => {
-                  const isActive =
-                    pathname === item.href ||
-                    (item.href !== "/" && pathname.startsWith(item.href));
+                  const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
                   return (
                     <Link
                       key={item.href}
