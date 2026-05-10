@@ -1,52 +1,39 @@
-import { ArrowRight, ChessQueen, PlayCircle } from "lucide-react";
+import { ChessQueen } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-import { MotionWrapper } from "./hero-content";
 
 export function Hero() {
   return (
-    <section className="bg-primary/70 relative w-full overflow-hidden pt-32 pb-20">
+    <section className="relative w-full overflow-hidden bg-[#5137AC] pt-16">
       <div className="absolute inset-0 z-0" />
-      <div className="relative z-10 container mx-auto px-4 md:px-6">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          <MotionWrapper x={-40}>
-            <div className="flex flex-col items-start space-y-8 text-left">
-              <Badge
-                variant="outline"
-                className="border-primary/20 bg-primary/10 text-primary rounded-full px-4 py-2 backdrop-blur-md"
-              >
-                <ChessQueen className="h-4 w-4" />
-                Free to Play
-              </Badge>
-              <div className="text-foreground space-y-6">
-                <h1 className="text-4xl leading-tight font-extrabold tracking-tighter sm:text-6xl lg:text-7xl/none">
-                  Chess{" "}
-                  <span className="text-primary decoration-foreground/20 underline underline-offset-8">
-                    Improvement
-                  </span>{" "}
-                  <br /> With Games
-                </h1>
-                <p className="text-muted-foreground max-w-[600px] text-lg leading-relaxed md:text-xl">
-                  Sharpen your skills through engaging riddles and openings designed to help you predict GM moves and
-                  opening repertoires.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-4 pt-2">
-                <Button variant="default" size="lg" className="h-12 px-8 text-base" asChild>
-                  <Link href="/challenge">
-                    Start Playing <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
+      <div className="relative container mx-auto px-4 md:px-6">
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-center">
+          <div className="flex flex-col items-end space-y-8 text-right">
+            <div className="text-foreground space-y-6">
+              <h1 className="text-4xl leading-tight font-extrabold tracking-tighter sm:text-6xl lg:text-7xl/none">
+                Master The{" "}
+                <span className="text-primary decoration-foreground/20 underline underline-offset-8">Why</span> <br />{" "}
+                Behind Moves
+                <br /> With Fun
+              </h1>
+              <p className="text-foreground text-xl leading-relaxed">
+                Sharpen your skills through engaging riddles and openings designed to help you predict GM moves and
+                opening repertoires.
+              </p>
             </div>
-          </MotionWrapper>
-          <div className="relative mt-8 flex justify-center lg:mt-0 lg:justify-end">
+            <div className="flex w-full flex-wrap justify-end">
+              <Button variant="volt" size="lg" asChild>
+                <Link href="/challenge">
+                  Start Playing <ChessQueen className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+          <div className="relative mt-8 flex justify-start lg:mt-0">
             <Image
-              src="/images/hero/landing_page_7.png"
+              src="/images/hero/landing_page_9.png"
               alt="ChessVolt Dashboard Preview"
               width={600}
               height={600}

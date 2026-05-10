@@ -1,7 +1,7 @@
 import { PartyPopper } from "lucide-react";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { ArrowsBoardCard } from "@/features/arrows/components/arrows-board-card/arrows-board-card";
 import { ArrowsController } from "@/features/arrows/components/arrows-controller/arrows-controller";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
@@ -62,9 +62,9 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const solveRate = total > 0 ? Math.round((correct / total) * 100) : 0;
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">
-      <div className="grid items-start gap-8 lg:grid-cols-[1fr_240px]">
-        <div className="flex flex-col gap-6 px-2">
+    <div className="container mx-auto max-w-6xl pt-10 pb-16">
+      <div className="flex gap-6 rounded-lg bg-[#C4E2FC]">
+        <div>
           <ArrowsBoardCard
             openingId={opening.id}
             name={opening.name}
@@ -72,28 +72,40 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             arrows={opening.arrows ?? []}
             size={170}
           />
-          {variants.map((variant, index) => {
-            const num = index + 1;
-            return (
-              <OpeningBoardCard
-                key={variant.id}
-                id={variant.id}
-                name={variant.title ?? ""}
-                group={variant.group}
-                num={num}
-                size={170}
-                href={`/openings/variant/${variant.id}`}
-                fen={variant.displayFen ?? variant.initialFen}
-                isComplete={solvedVariantIds.has(variant.id) ? true : undefined}
-                description={variant.description}
-              />
-            );
-          })}
         </div>
-        <div className="space-y-4">
+        <div className="p-4">
+          <Image
+            src="/images/openings/bg-london-opening-4.png"
+            alt="{opening.name}"
+            className="object-contain"
+            height={180}
+            width={350}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-6 py-3">
+        {variants.map((variant, index) => {
+          const num = index + 1;
+          return (
+            <OpeningBoardCard
+              key={variant.id}
+              id={variant.id}
+              name={variant.title ?? ""}
+              group={variant.group}
+              num={num}
+              size={170}
+              href={`/openings/variant/${variant.id}`}
+              fen={variant.displayFen ?? variant.initialFen}
+              isComplete={solvedVariantIds.has(variant.id) ? true : undefined}
+              description={variant.description}
+            />
+          );
+        })}
+        {/* <div className="space-y-4">
           <OpeningMainSidebar title={opening.name} subPlayCount={total} />
           <ProgressStatsCard percentage={solveRate} label="Solved Variants" icon={PartyPopper} className="w-full" />
-        </div>
+        </div> */}
       </div>
     </div>
   );

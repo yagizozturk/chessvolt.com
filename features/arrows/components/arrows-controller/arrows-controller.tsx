@@ -1,10 +1,13 @@
 "use client";
 
 import type { DrawShape } from "@lichess-org/chessground/draw";
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 
 import ArrowBoard, { type ArrowBoardHandle } from "@/components/boards/arrow-board/arrow-board";
+import { ImageInfoCard } from "@/components/cards/image-info-card";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { useArrowsController } from "@/features/arrows/hooks/use-arrows-controller";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 
@@ -48,13 +51,30 @@ export function ArrowsController({ openingId, arrows, size = 620 }: ArrowsContro
           />
         </div>
         {/* min-w-0: allows the right panel to shrink within the flex row */}
+
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
-          <div className="flex items-center justify-center">
-            <span className="text-lg font-bold">Arrows</span>
+          <div className="flex items-center justify-center px-4">
+            <span className="text-lg font-bold">Draw The Ideal Position</span>
+          </div>
+          <Separator />
+          <div className="flex flex-col items-center gap-4">
+            <ImageInfoCard
+              imageSrc="/images/cards/pawn-pyramid.png"
+              imageAlt="Arrows"
+              title="Pawn Pyramid"
+              description="Pawn Pyramid is a chess opening that is played by moving the pawns to the center of the board."
+            />
+
+            <ImageInfoCard
+              imageSrc="/images/cards/signature-move.png"
+              imageAlt="Arrows"
+              title="Signature Move"
+              description="Signature Move is a chess opening that is played by moving the pawns to the center of the board."
+            />
           </div>
           <div className="mt-auto">
             <Button variant="volt" onClick={handleClearArrows} className="w-full">
-              Clear Arrows
+              Start Game
             </Button>
           </div>
         </div>

@@ -1,6 +1,5 @@
 import { PartyPopper } from "lucide-react";
 
-import { ProgressStatsCard } from "@/components/cards/progress-stats-card";
 import { CollectionHeader } from "@/components/collection/collection-header";
 import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
@@ -74,7 +73,7 @@ export default async function ChallengePage() {
                   itemCount={riddles.length}
                   itemLabel="riddles"
                 />
-                <ProgressStatsCard percentage={stats.percentage} label="Solved riddles" icon={PartyPopper} />
+                {/* <ProgressStatsCard percentage={stats.percentage} label="Solved riddles" icon={PartyPopper} /> */}
               </div>
               <ChallengeDataList riddles={riddles} gameMap={gameMap} attemptByRiddleId={attemptByRiddleId} />
             </div>
