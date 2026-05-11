@@ -1,7 +1,8 @@
-import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
-type CollectionHeaderProps = {
+import { Badge } from "@/components/ui/badge";
+
+type ChallengeHeaderProps = {
   title: string;
   imageSrc: string;
   imageAlt: string;
@@ -12,7 +13,7 @@ type CollectionHeaderProps = {
   itemLabel: string;
 };
 
-export function CollectionHeader({
+export function ChallengeHeader({
   title,
   imageSrc,
   imageAlt,
@@ -21,19 +22,10 @@ export function CollectionHeader({
   author,
   itemCount,
   itemLabel,
-}: CollectionHeaderProps) {
+}: ChallengeHeaderProps) {
   return (
-    <div className="flex items-center gap-4">
-      <div className="overflow-hidden rounded-lg bg-muted/30">
-        <Image
-          src={imageSrc}
-          alt={imageAlt}
-          width={150}
-          height={150}
-          className="object-cover"
-        />
-      </div>
-      <div className="min-w-0 flex-1 space-y-2">
+    <div className="flex gap-6 rounded-lg bg-[#001A53]">
+      <div className="min-w-0 flex-1 space-y-2 p-4">
         <h2 className="flex items-center gap-2 text-2xl font-semibold">
           {title}
           <Badge variant="default" className="font-normal">
@@ -42,11 +34,12 @@ export function CollectionHeader({
         </h2>
         <p className="text-muted-foreground text-sm">{description}</p>
         <blockquote className="border-primary/30 border-l-2 pl-3">
-          <p className="text-muted-foreground italic">&ldquo;{quote}&rdquo;</p>
-          <cite className="text-muted-foreground/80 mt-0.5 block text-xs not-italic">
-            — {author}
-          </cite>
+          <p className="text-muted-foreground text-sm italic">&ldquo;{quote}&rdquo;</p>
+          <cite className="text-muted-foreground/80 mt-0.5 block text-xs not-italic">— {author}</cite>
         </blockquote>
+      </div>
+      <div className="p-4">
+        <Image src={imageSrc} alt={imageAlt} width={350} height={180} className="object-contain" />
       </div>
     </div>
   );

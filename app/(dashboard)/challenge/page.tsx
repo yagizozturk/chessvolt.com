@@ -1,7 +1,7 @@
 import { PartyPopper } from "lucide-react";
 
-import { CollectionHeader } from "@/components/collection/collection-header";
 import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
+import { ChallengeHeader } from "@/features/challenge/components/challenge-header";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle.service";
 import { formatGameType, getGameTypeConstants } from "@/features/game-riddle/utilities/game-type-helpers";
@@ -59,22 +59,22 @@ export default async function ChallengePage() {
           const displayName = formatGameType(gameType);
           const gameTypeConstants = getGameTypeConstants(gameType);
           const stats = getGroupStats(riddles, attemptByRiddleId);
+          {
+            /** TODO: refactor */
+          }
 
           return (
-            <div key={gameType} className="overflow-hidden">
-              <div className="flex items-center justify-between gap-4 px-2 py-3">
-                <CollectionHeader
-                  title={displayName}
-                  imageSrc={`/images/challanges/${gameType}.png`}
-                  imageAlt={displayName}
-                  description={gameTypeConstants.description}
-                  quote={gameTypeConstants.quote}
-                  author={gameTypeConstants.author}
-                  itemCount={riddles.length}
-                  itemLabel="riddles"
-                />
-                {/* <ProgressStatsCard percentage={stats.percentage} label="Solved riddles" icon={PartyPopper} /> */}
-              </div>
+            <div key={gameType}>
+              <ChallengeHeader
+                title={displayName}
+                imageSrc={`/images/challanges/bg-${gameType}.png`}
+                imageAlt={displayName}
+                description={gameTypeConstants.description}
+                quote={gameTypeConstants.quote}
+                author={gameTypeConstants.author}
+                itemCount={riddles.length}
+                itemLabel="riddles"
+              />
               <ChallengeDataList riddles={riddles} gameMap={gameMap} attemptByRiddleId={attemptByRiddleId} />
             </div>
           );
