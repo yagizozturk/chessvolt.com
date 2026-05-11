@@ -1,10 +1,8 @@
 import { Circle, Sword } from "lucide-react";
 import Link from "next/link";
 
-import { IterationBadge } from "@/components/badge/number-badge/number-badge";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
-import VoltBoardLegacy from "@/components/boards/volt-board-legacy/volt-board-legacy";
 import { Button } from "@/components/ui/button";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
@@ -20,15 +18,7 @@ type RiddleBoardCardProps = {
   displayFen?: string | null;
 };
 
-export function RiddleBoardCard({
-  riddle,
-  game,
-  num,
-  size = 200,
-  isComplete,
-  href,
-  displayFen,
-}: RiddleBoardCardProps) {
+export function RiddleBoardCard({ riddle, game, num, size = 200, isComplete, href, displayFen }: RiddleBoardCardProps) {
   return (
     <Link
       href={href ?? `/game-riddle/${riddle.id}`}
