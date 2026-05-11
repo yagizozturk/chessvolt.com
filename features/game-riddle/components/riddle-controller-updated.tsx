@@ -9,31 +9,30 @@ import { Notifier } from "@/components/notifier/notifier";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
-import { useOpeningVariantController } from "@/features/openings/hooks/use-opening-variant-controller";
-import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
+import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
+import { useRiddleController } from "@/features/game-riddle/hooks/use-riddle-controller";
+import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
+import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
-import type { OpeningVariant } from "../types/opening-variant";
-import { OpeningVariantGoalViewer } from "./opening-variant-goal-viewer/opening-variant-goal-viewer";
-
-type OpeningVariantControllerProps = {
-  variant: OpeningVariant;
-  nextVariantId: string | null;
-  parentOpeningUrl: string;
+type RiddleControllerUpdatedProps = {
+  riddle: GameRiddle;
+  nextRiddleId?: string | null;
+  parentChallengeUrl?: string;
 };
 
-export default function OpeningVariantController({
-  variant,
-  nextVariantId,
-  parentOpeningUrl,
-}: OpeningVariantControllerProps) {
+export default function RiddleControllerUpdated({
+  riddle,
+  nextRiddleId = null,
+  parentChallengeUrl = "/",
+}: RiddleControllerUpdatedProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
-  const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
+  const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
   const { playLevelUpSound } = useBoardSounds();
   const {
     handleMoveCheck,
@@ -44,48 +43,33 @@ export default function OpeningVariantController({
     hintCount,
     hintRequested,
     currentCorrectMove,
-  } = useOpeningVariantController({
-    variant,
+  } = useRiddleController({
+    sourceId: riddle.id,
+    moves: riddle.moves,
   });
 
-  // ============================================================================
-  // Variant değiştiğinde local ekran state'i sıfırlanır:
-  // - varyantın tamamnlandımı bilgisi resetlenir
-  // ============================================================================
   useEffect(() => {
-    console.log("variant", variant);
     setIsCompleted(false);
-  }, [variant.id]);
+  }, [riddle.id]);
 
-  // ============================================================================
-  // isCompleted değiştiğinde ya da hamle değiştiğinde tamamlandı işaretliyoruz
-  // ============================================================================
   useEffect(() => {
     if (currentCorrectMove != null || isCompleted) return;
 
     setIsCompleted(true);
     playLevelUpSound();
-    void updateOpeningVariantAnswerHook(variant.id, true);
-  }, [isCompleted, currentCorrectMove, updateOpeningVariantAnswerHook, variant.id]);
+    void updateGameRiddleAnswerHook(riddle.id, true);
+  }, [currentCorrectMove, isCompleted, playLevelUpSound, riddle.id, updateGameRiddleAnswerHook]);
 
-  // ============================================================================
-  // handle metotları controller a aittir, _değişkenler hook a aittir.
-  // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
-  // ============================================================================
   function handleBoardCheckMove(move: MoveAttemptPayload) {
     const { isCorrect } = handleMoveCheck(move);
+
     if (!isCorrect && !isCompleted) {
-      // void, burada metodu çağırmak için değil, dönen Promise’i bilinçli olarak “await etmiyorum” demek için
-      void updateOpeningVariantAnswerHook(variant.id, false);
+      void updateGameRiddleAnswerHook(riddle.id, false);
     }
+
     return isCorrect;
   }
 
-  // ============================================================================
-  // After move played from the board, controller handleBoardMovePlayed is
-  // triggered that asks HOOK for nextMove information. nextMove is returned to
-  // volt-board to play the opponent move.
-  // ============================================================================
   function handleBoardSuccessMovePlayed(move: Move) {
     handleSuccessMovePlayed(move);
   }
@@ -95,23 +79,14 @@ export default function OpeningVariantController({
     return nextMove;
   }
 
-  // ============================================================================
-  // Hint politikası controller tarafında yönetilir:
-  // - Her step için en fazla 2 hint
-  // - Kaçıncı hint olduğu board'a parametre olarak gönderilir
-  // Hint değer hook da tutulur
-  // ============================================================================
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
     if (nextHintCount == null || !currentCorrectMove) return;
     boardRef.current?.showHint(nextHintCount);
   };
 
-  // ============================================================================
-  // Next variant veya opening sayfasına yönlendirir. Variant bitince gözükür
-  // ============================================================================
   const handleContinueClick = () => {
-    const destinationPath = nextVariantId ? `/openings/variant/${nextVariantId}` : parentOpeningUrl;
+    const destinationPath = nextRiddleId ? `/game-riddle/${nextRiddleId}` : parentChallengeUrl;
     router.push(destinationPath);
   };
 
@@ -119,10 +94,11 @@ export default function OpeningVariantController({
     <div className="container mx-auto max-w-6xl px-20 py-6">
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div key={variant.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
+        <div key={riddle.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
           <VoltBoard
             ref={boardRef}
-            sourceId={variant.id}
+            sourceId={riddle.id}
+            initialFen={riddle.displayFen ?? undefined}
             size={580}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
@@ -130,10 +106,9 @@ export default function OpeningVariantController({
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
         </div>
-        {/* min-w-0: allows the right panel to shrink within the flex row */}
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
           <div className="flex items-center justify-center">
-            <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>
+            <span className="text-lg font-bold">{riddle.title ?? "Untitled riddle"}</span>
           </div>
           <div className="flex items-center">
             <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
@@ -152,7 +127,7 @@ export default function OpeningVariantController({
             ) : (
               <div className="mt-4">
                 <Button variant="volt" onClick={handleContinueClick} className="w-full">
-                  {nextVariantId ? "Next variant" : "Back to opening"}
+                  {nextRiddleId ? "Next riddle" : "Back to challenge"}
                 </Button>
               </div>
             )}

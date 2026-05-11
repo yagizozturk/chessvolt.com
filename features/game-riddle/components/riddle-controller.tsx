@@ -3,7 +3,6 @@
 import { Calendar, Flag, Lightbulb, Puzzle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import VoltBoardLegacy, { type VoltBoardHandle } from "@/components/boards/volt-board-legacy/volt-board-legacy";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,7 +30,6 @@ function formatDate(dateStr: string) {
 }
 
 export default function RiddleController({ riddle, game }: RiddleControllerProps) {
-  const boardRef = useRef<VoltBoardHandle>(null);
   const turn = (riddle.displayFen?.includes(" w ") ?? true) ? "White" : "Black";
   const moveCount = getFullMoveCountFromMoves(riddle.moves);
   const [hintCount, setHintCount] = useState(0);
@@ -60,7 +58,7 @@ export default function RiddleController({ riddle, game }: RiddleControllerProps
     if (hintCount >= 2) return;
     const nextHintCount = hintCount + 1;
     setHintCount(nextHintCount);
-    boardRef.current?.showHint(nextHintCount);
+    // boardRef.current?.showHint(nextHintCount);
   };
 
   return (
@@ -78,7 +76,7 @@ export default function RiddleController({ riddle, game }: RiddleControllerProps
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[2fr_1fr] lg:items-start">
         <div className="relative min-w-0">
-          <VoltBoardLegacy
+          {/* <VoltBoardLegacy
             ref={boardRef}
             sourceId={riddle.id}
             coordinates={true}
@@ -89,7 +87,7 @@ export default function RiddleController({ riddle, game }: RiddleControllerProps
             className="border-muted rounded-xl border-4"
             onUserSuccessMovePlayed={() => setHintCount(0)}
             onSolved={handleSolved}
-          />
+          /> */}
         </div>
         <div className="flex min-w-0 flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">

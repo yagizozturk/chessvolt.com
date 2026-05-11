@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
@@ -17,10 +16,8 @@ export function useOpeningVariantController({ variant }: UseOpeningVariantContro
     .trim()
     .split(/\s+/)
     .filter((m) => m.length > 0);
-  const pgnMoves = useMemo(() => getUciMovesArrayFromPgn(variant.pgn), [variant.pgn]);
-  const [moveCount, setMoveCount] = useState<number>(0);
+  const [nextExpectedMoveIndex, setNextExpectedMoveIndex] = useState<number>(0);
   const [hintCount, setHintCount] = useState(0);
-  const [activePly, setActivePly] = useState<number | null>(() => variant.ply);
   const [goalsState, setGoalsState] = useState<MoveGoal[]>([]);
 
   // ============================================================================
@@ -51,13 +48,11 @@ export function useOpeningVariantController({ variant }: UseOpeningVariantContro
   // ============================================================================
   // Variant değiştiğinde local ekran state'i sıfırlanır:
   // - Hint hakkı yeniden başlar
-  // - Aktif ply, variant başlangıç ply'sine döner
   // - isCompleted goal için true olur
   // ============================================================================
   useEffect(() => {
     setHintCount(0);
-    setMoveCount(0);
-    setActivePly(variant.ply);
+    setNextExpectedMoveIndex(0);
     setGoalsState(
       [...(variant.goals ?? [])]
         .sort((a, b) => a.ply - b.ply)
@@ -72,7 +67,7 @@ export function useOpeningVariantController({ variant }: UseOpeningVariantContro
   // Oyuncu hamle yapınca önce kontole girer(attempt) ve tetiklenir.
   // ============================================================================
   function handleMoveCheck(playedMove: MoveAttemptPayload) {
-    const expectedMove = moves[moveCount];
+    const expectedMove = moves[nextExpectedMoveIndex];
     const isCorrect = playedMove.uci === expectedMove;
 
     return {
@@ -84,42 +79,40 @@ export function useOpeningVariantController({ variant }: UseOpeningVariantContro
   // Hamle onaylanıp tahtaya uygulandıktan sonra tetiklenir.
   // Oynandığına göre hamle doğrudur.
   // Sonraki rakip hamlesi varsa index 2 artar; yoksa 1 artar.
+  // Bir sonraki hamleyi döner
+  // Goal tamamlama: move.uci, goals[].move ile eşleşen kayıtta isCompleted true.
   // ============================================================================
-  function handleMovePlayed(playedMove: Move) {
-    const currentStep = moveCount;
+  function handleSuccessMovePlayed(move: Move) {
+    const { uci } = move;
+    if (!uci) return;
+
+    setGoalsState((prev) => prev.map((goal) => (goal.move === uci ? { ...goal, isCompleted: true } : goal)));
+  }
+
+  // ============================================================================
+  // Sıradaki oynanması gereken hamleyi döner
+  // ============================================================================
+  function handleNextMoveRequest() {
+    const currentStep = nextExpectedMoveIndex; // 0 ile başlıyor
     const nextMove = moves[currentStep + 1];
-    const nextUserStep = nextMove ? currentStep + 2 : currentStep + 1;
-    setMoveCount(nextUserStep);
+    const nextUserStep = nextMove ? currentStep + 2 : currentStep + 1; // Oyuncu için 1 hamle atlanacağından (varyant bitmediyse) sonraki hamle currentStep + 2
+    setNextExpectedMoveIndex(nextUserStep);
     setHintCount(0);
-
-    // Oynanan hamlenin UCI'sine göre aktif ply'i günceller.
-    // Rakip otomatik hamlesi varsa bir ply daha ileride olur.
-    const expectedUserMovePly = variant.ply + currentStep + 1;
-    const isExpectedPgnMove = !!playedMove.uci && pgnMoves?.[expectedUserMovePly - 1] === playedMove.uci;
-    const userMovePly = isExpectedPgnMove ? expectedUserMovePly : variant.ply + nextUserStep;
-    const updatedActivePly = nextMove ? userMovePly + 1 : userMovePly;
-    setActivePly(updatedActivePly);
-    setGoalsState((prev) =>
-      prev.map((goal) => (goal.isCompleted || updatedActivePly >= goal.ply ? { ...goal, isCompleted: true } : goal)),
-    );
-
-    return {
-      nextMove,
-    };
+    return nextMove;
   }
 
   // ============================================================================
-  // Moves arrayi içindeki hamleyi bulmak için count ı arttrırır.
+  // Moves dizisinde sıradaki beklenen hamle indeksini bir artırır.
   // ============================================================================
-  function incrementMoveCount() {
-    setMoveCount((prev) => prev + 1);
+  function incrementNextExpectedMoveIndex() {
+    setNextExpectedMoveIndex((prev) => prev + 1);
   }
 
   // ============================================================================
-  // Move count'u sıfırlar.
+  // Sıradaki beklenen hamle indeksini sıfırlar.
   // ============================================================================
-  function resetMoveCount() {
-    setMoveCount(0);
+  function resetNextExpectedMoveIndex() {
+    setNextExpectedMoveIndex(0);
   }
 
   // ============================================================================
@@ -138,9 +131,9 @@ export function useOpeningVariantController({ variant }: UseOpeningVariantContro
   // ============================================================================
   // Sıradaki oynanması gereken hamle
   // currentCorrectMove bir derived value:
-  // moveCount'a gore otomatik hesaplaniyor.
+  // nextExpectedMoveIndex'e göre otomatik hesaplanıyor.
   // ============================================================================
-  const currentCorrectMove = moves[moveCount] ?? null;
+  const currentCorrectMove = moves[nextExpectedMoveIndex] ?? null;
 
   return {
     moves,
@@ -149,9 +142,10 @@ export function useOpeningVariantController({ variant }: UseOpeningVariantContro
     hintCount,
     progressValue,
     handleMoveCheck,
-    handleMovePlayed,
-    incrementMoveCount,
-    resetMoveCount,
+    handleSuccessMovePlayed,
+    handleNextMoveRequest,
+    incrementNextExpectedMoveIndex,
+    resetNextExpectedMoveIndex,
     hintRequested,
     currentCorrectMove,
   };

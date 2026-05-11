@@ -30,7 +30,8 @@ type VoltBoardProps = {
   viewOnly?: boolean;
   drawHintMove?: string | null;
   onCheckMove: (payload: MoveAttemptPayload) => boolean;
-  onMovePlayed: (payload: Move) => string;
+  onSuccessMovePlayed: (move: Move) => void;
+  onNextMoveRequest: () => string | undefined;
 };
 
 // ============================================================================
@@ -43,7 +44,16 @@ export type VoltBoardHandle = {
 };
 
 const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard(
-  { sourceId, initialFen, size = 620, viewOnly = false, drawHintMove, onCheckMove, onMovePlayed },
+  {
+    sourceId,
+    initialFen,
+    size = 620,
+    viewOnly = false,
+    drawHintMove,
+    onCheckMove,
+    onSuccessMovePlayed,
+    onNextMoveRequest,
+  },
   ref,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
@@ -70,6 +80,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
       const fenBefore = game.current.fen();
       const playedBy = game.current.turn() === "w" ? "white" : "black";
       const uci = buildMoveUci(from, to);
+      // Move is getting checked in hook if it is right or wrong
       const isCorrect = onCheckMove?.({
         uci,
         fenBefore,
@@ -144,18 +155,13 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     if (!move) {
       return;
     }
+    onSuccessMovePlayed({ ...move, uci });
     playCorrectSound();
     setSquareCustomHighlight(to, "custom-correct-move");
     scheduleClearCustomHighlights(CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS);
 
     lastMoveRef.current = [from as Key, to as Key];
-    const nextMove = onMovePlayed({
-      from,
-      to,
-      promotion: move.promotion,
-      san: move.san,
-      uci,
-    });
+    const nextMove = onNextMoveRequest?.();
 
     if (nextMove) {
       boardApplyOpponentMove(nextMove);

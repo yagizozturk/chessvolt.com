@@ -1,0 +1,109 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+
+import type { Move } from "@/lib/shared/types/move";
+import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+
+import type { MoveGoal } from "@/features/openings/types/opening-variant";
+
+type UseRiddleControllerParams = {
+  sourceId: string;
+  moves: string | null;
+  goals?: MoveGoal[] | null;
+};
+
+function buildFallbackGoals(moves: string[]): MoveGoal[] {
+  return moves
+    .map((move, index) => ({ move, index }))
+    .filter(({ index }) => index % 2 === 0)
+    .map(({ move, index }, goalIndex) => ({
+      ply: index + 1,
+      move,
+      title: `Find move ${goalIndex + 1}`,
+      description: "Play the best move for this position.",
+      isCompleted: false,
+    }));
+}
+
+export function useRiddleController({ sourceId, moves: rawMoves, goals }: UseRiddleControllerParams) {
+  const moves = useMemo(() => {
+    return (rawMoves ?? "")
+      .trim()
+      .split(/\s+/)
+      .filter((m) => m.length > 0);
+  }, [rawMoves]);
+
+  const [nextExpectedMoveIndex, setNextExpectedMoveIndex] = useState<number>(0);
+  const [hintCount, setHintCount] = useState(0);
+  const [goalsState, setGoalsState] = useState<MoveGoal[]>([]);
+
+  const sortedGoals = useMemo(() => {
+    return [...goalsState].sort((a, b) => a.ply - b.ply);
+  }, [goalsState]);
+
+  const progressValue = useMemo(() => {
+    if (!sortedGoals.length) return 0;
+    const completedGoalsCount = sortedGoals.filter((goal) => goal.isCompleted).length;
+    return Math.round((completedGoalsCount / sortedGoals.length) * 100);
+  }, [sortedGoals]);
+
+  useEffect(() => {
+    setHintCount(0);
+    setNextExpectedMoveIndex(0);
+    setGoalsState(
+      [...(goals ?? buildFallbackGoals(moves))]
+        .sort((a, b) => a.ply - b.ply)
+        .map((goal) => ({
+          ...goal,
+          isCompleted: false,
+        })),
+    );
+  }, [sourceId, goals, moves]);
+
+  function handleMoveCheck(playedMove: MoveAttemptPayload) {
+    const expectedMove = moves[nextExpectedMoveIndex];
+    const isCorrect = playedMove.uci === expectedMove;
+
+    return {
+      isCorrect,
+    };
+  }
+
+  function handleSuccessMovePlayed(move: Move) {
+    const { uci } = move;
+    if (!uci) return;
+
+    setGoalsState((prev) => prev.map((goal) => (goal.move === uci ? { ...goal, isCompleted: true } : goal)));
+  }
+
+  function handleNextMoveRequest() {
+    const currentStep = nextExpectedMoveIndex;
+    const nextMove = moves[currentStep + 1];
+    const nextUserStep = nextMove ? currentStep + 2 : currentStep + 1;
+
+    setNextExpectedMoveIndex(nextUserStep);
+    setHintCount(0);
+    return nextMove;
+  }
+
+  const hintRequested = () => {
+    if (hintCount >= 2) return null;
+    const nextHintCount = hintCount + 1;
+    setHintCount(nextHintCount);
+    return nextHintCount;
+  };
+
+  const currentCorrectMove = moves[nextExpectedMoveIndex] ?? null;
+
+  return {
+    sortedGoals,
+    hintCount,
+    progressValue,
+    handleMoveCheck,
+    handleSuccessMovePlayed,
+    handleNextMoveRequest,
+    hintRequested,
+    currentCorrectMove,
+  };
+}

@@ -5,7 +5,7 @@ import { Save } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { updateOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
-import VoltBoardLegacy from "@/components/boards/volt-board-legacy/volt-board-legacy";
+import VoltBoard from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -115,14 +115,15 @@ function BoardWithMoves({
         {title}
       </h2>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <VoltBoardLegacy
+        <VoltBoard
           key={`${sourceId}-${boardFen}`}
           sourceId={sourceId}
-          moves=""
           initialFen={boardFen}
-          width={380}
-          height={380}
+          size={380}
           viewOnly
+          onCheckMove={() => true}
+          onSuccessMovePlayed={() => {}}
+          onNextMoveRequest={() => undefined}
         />
         <div className="min-h-[200px] min-w-0 flex-1">
           <p className="text-muted-foreground mb-2 text-sm font-medium">UCI hamleler</p>
