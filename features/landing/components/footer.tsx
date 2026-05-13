@@ -8,7 +8,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-background border-border/40 w-full border-t">
+    <footer className="border-border/40 mt-20 w-full border-t bg-[#3b247c]">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="flex flex-col items-center gap-10 md:flex-row md:items-start md:justify-between">
           {/* Logo ve Motto */}

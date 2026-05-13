@@ -5,6 +5,7 @@ export type Opening = {
   name: string;
   slug: string | null;
   description: string | null;
+  type: string | null;
   arrows: DrawShape[] | null;
   displayFen: string;
   createdAt: string;

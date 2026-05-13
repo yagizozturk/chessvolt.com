@@ -35,6 +35,7 @@ export async function createOpeningAction(formData: FormData) {
   const name = (formData.get("name") as string)?.trim();
   const slug = (formData.get("slug") as string) || null;
   const description = (formData.get("description") as string) || null;
+  const openingType = ((formData.get("openingType") as string) || "").trim() || null;
   const displayFen = (formData.get("displayFen") as string) || null;
   const arrows = parseArrowsInput(formData.get("arrows"));
 
@@ -46,6 +47,7 @@ export async function createOpeningAction(formData: FormData) {
     name,
     slug: slug || null,
     description: description || null,
+    type: openingType,
     arrows,
     displayFen: displayFen || null,
   };
@@ -77,6 +79,7 @@ export async function updateOpeningAction(
   const name = (formData.get("name") as string)?.trim();
   const slug = (formData.get("slug") as string) || null;
   const description = (formData.get("description") as string) || null;
+  const openingType = ((formData.get("openingType") as string) || "").trim() || null;
   const displayFen = (formData.get("displayFen") as string) || null;
   const arrows = parseArrowsInput(formData.get("arrows"));
 
@@ -88,6 +91,7 @@ export async function updateOpeningAction(
     name,
     slug: slug || null,
     description,
+    type: openingType,
     arrows,
     displayFen: displayFen || null,
   };

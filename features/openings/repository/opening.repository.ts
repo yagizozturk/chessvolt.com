@@ -18,6 +18,7 @@ type DbOpening = {
   name: string;
   slug: string | null;
   description: string | null;
+  type: string | null;
   arrows: DrawShape[] | null;
   display_fen: string | null;
   created_at: string;
@@ -29,6 +30,7 @@ function toOpening(db: DbOpening): Opening {
     name: db.name,
     slug: db.slug,
     description: db.description,
+    type: db.type ?? null,
     arrows: db.arrows ?? null,
     displayFen: db.display_fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     createdAt: db.created_at,
@@ -43,6 +45,7 @@ function dbRowMatchesUpdates(row: DbOpening, updates: Record<string, unknown>): 
   if ("name" in updates && row.name !== updates.name) return false;
   if ("slug" in updates && (row.slug ?? null) !== (updates.slug ?? null)) return false;
   if ("description" in updates && (row.description ?? null) !== (updates.description ?? null)) return false;
+  if ("type" in updates && (row.type ?? null) !== (updates.type ?? null)) return false;
   if ("arrows" in updates && JSON.stringify(row.arrows ?? null) !== JSON.stringify(updates.arrows ?? null))
     return false;
   if ("display_fen" in updates && (row.display_fen ?? null) !== (updates.display_fen ?? null)) return false;
@@ -52,7 +55,7 @@ function dbRowMatchesUpdates(row: DbOpening, updates: Record<string, unknown>): 
 export async function findAll(supabase: SupabaseClient): Promise<Opening[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, arrows, display_fen, created_at")
+    .select("id, name, slug, description, type, arrows, display_fen, created_at")
     .order("name", { ascending: true });
 
   if (error) {
@@ -68,7 +71,7 @@ export type OpeningWithVariantCount = Opening & { variantCount: number };
 export async function findAllWithVariantCount(supabase: SupabaseClient): Promise<OpeningWithVariantCount[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, arrows, display_fen, created_at, opening_variants(count)")
+    .select("id, name, slug, description, type, arrows, display_fen, created_at, opening_variants(count)")
     .order("name", { ascending: true });
 
   if (error) {
@@ -83,10 +86,57 @@ export async function findAllWithVariantCount(supabase: SupabaseClient): Promise
   });
 }
 
+export async function findByType(supabase: SupabaseClient, type: string): Promise<Opening[]> {
+  const trimmed = type.trim();
+  if (!trimmed) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("openings")
+    .select("id, name, slug, description, type, arrows, display_fen, created_at")
+    .ilike("type", trimmed)
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("opening.repository.findByType error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toOpening);
+}
+
+export async function findByTypeWithVariantCount(
+  supabase: SupabaseClient,
+  type: string,
+): Promise<OpeningWithVariantCount[]> {
+  const trimmed = type.trim();
+  if (!trimmed) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("openings")
+    .select("id, name, slug, description, type, arrows, display_fen, created_at, opening_variants(count)")
+    .ilike("type", trimmed)
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("opening.repository.findByTypeWithVariantCount error:", error);
+    return [];
+  }
+
+  return (data ?? []).map((row) => {
+    const db = row as DbOpeningWithVariantCount;
+    const variantCount = db.opening_variants?.[0]?.count ?? 0;
+    return { ...toOpening(db), variantCount };
+  });
+}
+
 export async function findBySlug(supabase: SupabaseClient, slug: string): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, arrows, display_fen, created_at")
+    .select("id, name, slug, description, type, arrows, display_fen, created_at")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -101,7 +151,7 @@ export async function findBySlug(supabase: SupabaseClient, slug: string): Promis
 export async function findById(supabase: SupabaseClient, id: string): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, arrows, display_fen, created_at")
+    .select("id, name, slug, description, type, arrows, display_fen, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -117,6 +167,7 @@ export type CreateOpeningInput = {
   name: string;
   slug?: string | null;
   description?: string | null;
+  type?: string | null;
   arrows?: DrawShape[] | null;
   displayFen?: string | null;
 };
@@ -128,6 +179,7 @@ export async function create(supabase: SupabaseClient, input: CreateOpeningInput
       name: input.name.trim(),
       slug: input.slug ?? slugFromName(input.name),
       description: input.description ?? null,
+      type: input.type ?? null,
       arrows: input.arrows ?? null,
       display_fen: input.displayFen ?? null,
     })
@@ -146,6 +198,7 @@ export type UpdateOpeningInput = {
   name?: string;
   slug?: string | null;
   description?: string | null;
+  type?: string | null;
   arrows?: DrawShape[] | null;
   displayFen?: string | null;
 };
@@ -164,6 +217,7 @@ export async function update(
   if (input.name !== undefined) updates.name = input.name.trim();
   if (input.slug !== undefined) updates.slug = input.slug;
   if (input.description !== undefined) updates.description = input.description;
+  if (input.type !== undefined) updates.type = input.type;
   if (input.arrows !== undefined) updates.arrows = input.arrows;
   if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 
@@ -171,7 +225,7 @@ export async function update(
     return { opening: null, error: "No changes to save." };
   }
 
-  const selectColumns = "id, name, slug, description, arrows, display_fen, created_at" as const;
+  const selectColumns = "id, name, slug, description, type, arrows, display_fen, created_at" as const;
 
   const { data, error } = await supabase
     .from("openings")

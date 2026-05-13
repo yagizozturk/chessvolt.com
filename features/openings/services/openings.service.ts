@@ -23,6 +23,20 @@ export async function getOpeningsWithVariantCount(
   return openingRepo.findAllWithVariantCount(supabase);
 }
 
+export async function getOpeningsByType(
+  supabase: SupabaseClient,
+  type: string,
+): Promise<Opening[]> {
+  return openingRepo.findByType(supabase, type);
+}
+
+export async function getOpeningsWithVariantCountByType(
+  supabase: SupabaseClient,
+  type: string,
+): Promise<OpeningWithVariantCount[]> {
+  return openingRepo.findByTypeWithVariantCount(supabase, type);
+}
+
 export async function getVariantCountsByOpeningIds(
   supabase: SupabaseClient,
   openingIds: string[],

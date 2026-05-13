@@ -22,6 +22,10 @@ export function OpeningForm() {
           <Input name="description" placeholder="Optional description" />
         </Field>
         <Field>
+          <FieldLabel>Type</FieldLabel>
+          <Input name="openingType" placeholder="e.g. white, black, popular" />
+        </Field>
+        <Field>
           <FieldLabel>Arrows (JSON Array)</FieldLabel>
           <textarea
             name="arrows"

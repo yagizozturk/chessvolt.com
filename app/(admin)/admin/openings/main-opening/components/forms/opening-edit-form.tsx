@@ -42,6 +42,10 @@ export function OpeningEditForm({ opening }: Props) {
           <Input name="description" defaultValue={opening.description ?? ""} placeholder="Optional description" />
         </Field>
         <Field>
+          <FieldLabel>Type</FieldLabel>
+          <Input name="openingType" defaultValue={opening.type ?? ""} placeholder="e.g. white, black, popular" />
+        </Field>
+        <Field>
           <FieldLabel>Arrows (JSON Array)</FieldLabel>
           <textarea
             name="arrows"
