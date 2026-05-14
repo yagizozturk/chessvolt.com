@@ -1,5 +1,8 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
 import type {
   CreateOpeningVariantInput,
   UpdateOpeningVariantInput,
@@ -10,17 +13,12 @@ import {
   getOpeningVariantById,
   updateOpeningVariant,
 } from "@/features/openings/services/openings.service";
-import type {
-  MoveGoal,
-  OpeningIdeas,
-} from "@/features/openings/types/opening-variant";
+import type { MoveGoal, OpeningIdeas } from "@/features/openings/types/opening-variant";
 import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 import { isOpeningIdeas } from "@/features/openings/validation/opening-variant-ideas";
-import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
+import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 type BulkVariantInput = {
   opening_id: string;
@@ -35,10 +33,7 @@ type BulkVariantInput = {
   ideas?: unknown;
 };
 
-function parseGoalsFromForm(
-  formData: FormData,
-  errorRedirect: string,
-): MoveGoal[] | null {
+function parseGoalsFromForm(formData: FormData, errorRedirect: string): MoveGoal[] | null {
   const raw = formData.get("goals");
   if (raw === null) return null;
   const str = typeof raw === "string" ? raw.trim() : "";
@@ -53,10 +48,7 @@ function parseGoalsFromForm(
   }
 }
 
-function parseIdeasFromForm(
-  formData: FormData,
-  errorRedirect: string,
-): OpeningIdeas | null {
+function parseIdeasFromForm(formData: FormData, errorRedirect: string): OpeningIdeas | null {
   const raw = formData.get("ideas");
   if (raw === null) return null;
   const str = typeof raw === "string" ? raw.trim() : "";
@@ -88,12 +80,9 @@ function newVariantUrl(formData: FormData, error: string): string {
   return `/admin/openings/variants/new?${q.toString()}`;
 }
 
-function parseBulkSortKey(
-  v: unknown,
-): { ok: true; value: number } | { ok: false } {
+function parseBulkSortKey(v: unknown): { ok: true; value: number } | { ok: false } {
   if (v === undefined || v === null) return { ok: true, value: 0 };
-  if (typeof v === "number" && Number.isFinite(v))
-    return { ok: true, value: Math.trunc(v) };
+  if (typeof v === "number" && Number.isFinite(v)) return { ok: true, value: Math.trunc(v) };
   if (typeof v === "string") {
     const t = v.trim();
     if (t === "") return { ok: true, value: 0 };
@@ -113,23 +102,14 @@ export async function createOpeningVariantAction(formData: FormData) {
   const group = (formData.get("group") as string)?.trim();
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
-  const sortKey = parseInt(
-    (formData.get("sortKey") as string)?.trim() ?? "",
-    10,
-  );
+  const sortKey = parseInt((formData.get("sortKey") as string)?.trim() ?? "", 10);
   const initialFen =
     (formData.get("initialFen") as string)?.trim() ||
     getFenFromPgnAtPly(pgn ?? "", ply >= 0 ? ply : 0) ||
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
   const displayFen = (formData.get("displayFen") as string)?.trim() || null;
-  const goals = parseGoalsFromForm(
-    formData,
-    newVariantUrl(formData, "invalid_goals_json"),
-  );
-  const ideas = parseIdeasFromForm(
-    formData,
-    newVariantUrl(formData, "invalid_ideas_json"),
-  );
+  const goals = parseGoalsFromForm(formData, newVariantUrl(formData, "invalid_goals_json"));
+  const ideas = parseIdeasFromForm(formData, newVariantUrl(formData, "invalid_ideas_json"));
 
   if (!openingId?.trim() || !pgn || !group || Number.isNaN(sortKey)) {
     redirect(newVariantUrl(formData, "missing_fields"));
@@ -216,8 +196,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
     }
 
     const initialFen =
-      getFenFromPgnAtPly(item.pgn.trim(), initialPly) ||
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+      getFenFromPgnAtPly(item.pgn.trim(), initialPly) || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
     const sortKeyParsed = parseBulkSortKey(item.sort_key);
     if (!sortKeyParsed.ok) {
@@ -235,8 +214,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       } else {
         errors.push({
           index: i,
-          message:
-            "goals must be null or an array of { ply, move, title, description, isCompleted, card? }",
+          message: "goals must be null or an array of { ply, move, title, description, isCompleted, card? }",
         });
         continue;
       }
@@ -251,8 +229,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       } else {
         errors.push({
           index: i,
-          message:
-            "ideas must be an object: { core_idea, common_mistake }",
+          message: "ideas must be an object: { core_idea, common_mistake }",
         });
         continue;
       }
@@ -293,10 +270,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
   redirect(`/admin/openings/variants/bulk?${params.toString()}`);
 }
 
-export async function updateOpeningVariantAction(
-  id: string,
-  formData: FormData,
-) {
+export async function updateOpeningVariantAction(id: string, formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const title = (formData.get("title") as string) || null;
@@ -308,14 +282,8 @@ export async function updateOpeningVariantAction(
   const displayPly = parseAdminPly(formData, "displayPly");
   const initialFenManual = (formData.get("initialFen") as string)?.trim() || null;
   const displayFenManual = (formData.get("displayFen") as string)?.trim() || null;
-  const goals = parseGoalsFromForm(
-    formData,
-    `/admin/openings/variants/${id}?error=invalid_goals_json`,
-  );
-  const ideas = parseIdeasFromForm(
-    formData,
-    `/admin/openings/variants/${id}?error=invalid_ideas_json`,
-  );
+  const goals = parseGoalsFromForm(formData, `/admin/openings/variants/${id}?error=invalid_goals_json`);
+  const ideas = parseIdeasFromForm(formData, `/admin/openings/variants/${id}?error=invalid_ideas_json`);
 
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
@@ -336,16 +304,9 @@ export async function updateOpeningVariantAction(
     input.pgn = pgn;
     input.moves = moves;
     input.ply = initialPly;
-    const defaultStart =
-      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    input.initialFen =
-      initialFenManual ||
-      getFenFromPgnAtPly(pgn, initialPly) ||
-      defaultStart;
-    input.displayFen =
-      displayFenManual ||
-      getFenFromPgnAtPly(pgn, displayPly) ||
-      null;
+    const defaultStart = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    input.initialFen = initialFenManual || getFenFromPgnAtPly(pgn, initialPly) || defaultStart;
+    input.displayFen = displayFenManual || getFenFromPgnAtPly(pgn, displayPly) || null;
   } else {
     if (initialFenManual) input.initialFen = initialFenManual;
     if (displayFenManual) input.displayFen = displayFenManual;
@@ -385,7 +346,5 @@ export async function deleteOpeningVariantAction(id: string): Promise<void> {
     revalidatePath(`/admin/openings/main-opening/${openingId}`);
   }
   revalidatePath(`/admin/openings/variants/${id}`);
-  redirect(
-    openingId ? `/admin/openings/main-opening/${openingId}` : "/admin/openings",
-  );
+  redirect(openingId ? `/admin/openings/main-opening/${openingId}` : "/admin/openings");
 }

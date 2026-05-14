@@ -1,10 +1,12 @@
 "use client";
 
+import Lottie from "lottie-react";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 import type { MoveGoal } from "@/features/openings/types/opening-variant";
 import { useAchievementSound } from "@/lib/shared/hooks/sound/use-achievement-sound";
+import coinAnimationData from "@/public/images/animations/animation-coin.json";
 
 type NotifierProps = {
   goals: MoveGoal[];
@@ -23,19 +25,17 @@ export function Notifier({ goals }: NotifierProps) {
       const previousCompletionState = previousCompletionByGoalRef.current.get(goal.ply) ?? goal.isCompleted;
 
       if (goal.card && goal.isCompleted && !previousCompletionState) {
-        const cardImageSrc = `/images/cards/${encodeURI(goal.card).replace(" ", "-")}.png`;
         playAchievementSound();
 
         toast("", {
           position: "bottom-right",
           description: (
-            <div className="flex items-center gap-2">
-              <div className="size-14 overflow-hidden rounded-md">
-                <img src={cardImageSrc} alt={goal.card} className="size-full object-cover" />
+            <div className="flex items-center">
+              <div className="size-16 shrink-0 overflow-hidden">
+                <Lottie animationData={coinAnimationData} loop={false} autoplay={true} className="size-full" />
               </div>
               <div>
-                <p className="text-lg font-bold">New Card Unlocked</p>
-                <p className="text-muted-foreground text-base font-semibold"> {goal.card}</p>
+                <p className="text-lg font-bold">{goal.card}</p>
               </div>
             </div>
           ),
