@@ -1,4 +1,4 @@
-import RiddleControllerUpdated from "@/features/game-riddle/components/riddle-controller-updated";
+import RiddleController from "@/features/game-riddle/components/riddle-controller";
 import { getGameRiddleById } from "@/features/game-riddle/services/game-riddle.service";
 import { getGameById } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
@@ -29,5 +29,5 @@ export default async function GameRiddlePage({ params }: Params) {
     notFound();
   }
 
-  return <RiddleControllerUpdated riddle={riddle} parentChallengeUrl={riddle.gameType ? `/challenge/${riddle.gameType.replace(/_/g, "-")}` : "/"} />;
+  return <RiddleController riddle={riddle} parentChallengeUrl={riddle.gameType ? `/challenge/${riddle.gameType.replace(/_/g, "-")}` : "/"} />;
 }
