@@ -24,10 +24,10 @@ export function ChallengeHeader({
   itemLabel,
 }: ChallengeHeaderProps) {
   return (
-    <div className="flex gap-6 rounded-lg bg-[#5D37BF]">
+    <div className="flex gap-2 rounded-lg bg-[#5D37BF]">
       <div className="min-w-0 flex-1 space-y-2 p-4">
-        <p className="text-muted-foreground text-primary text-sm font-semibold">{description}</p>
-        <h2 className="flex items-center gap-2 text-3xl font-bold">{title}</h2>
+        <p className="text-primary text-sm font-semibold">{description}</p>
+        <h2 className="text-3xl font-bold">{title}</h2>
         <blockquote className="border-primary/30 border-l-2 pl-3">
           <p className="text-sm text-white/60 italic">&ldquo;{quote}&rdquo;</p>
           <cite className="mt-0.5 block text-xs text-white/60 not-italic">— {author}</cite>

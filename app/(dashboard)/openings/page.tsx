@@ -22,14 +22,15 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
     : await getOpeningsWithVariantCount(supabase);
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 pt-4 pb-16">
-      <div className="flex rounded-lg bg-[#FCC469] p-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-accent text-2xl font-bold">Openings</h1>
-          <p className="text-secondary text-base">
+    <div className="container mx-auto max-w-5xl px-4 pt-6 pb-16">
+      <div className="flex gap-2 rounded-lg bg-[#9390F3]">
+        <div className="min-w-0 flex-1 space-y-2 p-4">
+          <p className="text-primary text-sm font-semibold">
             Openings are a collection of chess positions that are used to help you improve your chess skills.
           </p>
-          <div className="mt-1 flex flex-wrap items-center gap-2">
+          <h2 className="text-3xl font-bold">Openings</h2>
+
+          <div className="flex flex-wrap items-center gap-2">
             {TYPE_FILTER_LINKS.map(({ label, href, value }) => {
               const isActive = value === null ? filterType === "" : filterType.toLowerCase() === value.toLowerCase();
               return (
@@ -41,7 +42,7 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
                     "rounded-full px-3 py-1 text-xs font-semibold transition-colors",
                     isActive
                       ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                      : "bg-muted text-foreground hover:bg-muted/80 border",
+                      : "bg-muted/80 text-foreground hover:bg-muted/60 border",
                   )}
                 >
                   {label}
@@ -50,11 +51,17 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
             })}
           </div>
         </div>
-        <div className="ml-auto">
-          <Image src="/images/avatar/volt-avatar.jpg" alt="Opening" width={120} height={120} />
+        <div className="overflow-hidden rounded-lg">
+          <Image
+            src="/images/openings/bg-openings.png"
+            alt="Opening"
+            width={230}
+            height={180}
+            className="object-contain"
+          />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-6 py-3">
+      <div className="grid grid-cols-2 gap-6 py-5">
         {openings.length === 0 && filterType ? (
           <p className="text-muted-foreground col-span-2 text-center text-sm">
             No openings match this type. Set the opening&apos;s type in admin (e.g. white, black, popular).
