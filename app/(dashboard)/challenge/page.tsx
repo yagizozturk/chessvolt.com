@@ -52,7 +52,7 @@ export default async function ChallengePage() {
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">
+    <div className="container mx-auto max-w-6xl px-4 pt-6 pb-16">
       <div className="space-y-6">
         {groupGameTypes.map((gameType) => {
           const riddles = riddleGameTypeGroups[gameType] ?? [];
@@ -64,10 +64,10 @@ export default async function ChallengePage() {
           }
 
           return (
-            <div key={gameType}>
+            <div className="flex flex-col gap-2" key={gameType}>
               <ChallengeHeader
                 title={displayName}
-                imageSrc={`/images/challanges/bg-${gameType}.png`}
+                imageSrc={`/images/challanges/bg-${gameType}-4.png`}
                 imageAlt={displayName}
                 description={gameTypeConstants.description}
                 quote={gameTypeConstants.quote}

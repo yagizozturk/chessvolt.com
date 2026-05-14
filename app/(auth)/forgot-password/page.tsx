@@ -1,48 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { createClient } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import Link from "next/link";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { createClient } from "@/lib/supabase/client";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const supabase = createClient()
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const supabase = createClient();
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/login`,
-    })
+      redirectTo: `${window.location.origin}/auth/callback?next=/update-password`,
+    });
 
     if (error) {
-      setError(error.message)
-      setLoading(false)
-      return
+      setError(error.message);
+      setLoading(false);
+      return;
     }
 
-    setSuccess(true)
-    setLoading(false)
+    setSuccess(true);
+    setLoading(false);
   }
 
   return (
@@ -51,10 +41,7 @@ export default function ForgotPasswordPage() {
         <Card>
           <CardHeader>
             <CardTitle>Reset password</CardTitle>
-            <CardDescription>
-              Enter your email and we&apos;ll send you a link to reset your
-              password
-            </CardDescription>
+            <CardDescription>Enter your email and we&apos;ll send you a link to reset your password</CardDescription>
           </CardHeader>
           <CardContent>
             {success ? (
@@ -63,7 +50,7 @@ export default function ForgotPasswordPage() {
                   Check your email for the reset link.
                 </div>
                 <Link href="/login" className="block">
-                  <Button variant="outline" className="w-full">
+                  <Button variant="volt" className="w-full">
                     Back to login
                   </Button>
                 </Link>
@@ -72,9 +59,7 @@ export default function ForgotPasswordPage() {
               <form onSubmit={handleSubmit}>
                 <FieldGroup>
                   {error && (
-                    <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                      {error}
-                    </div>
+                    <div className="bg-destructive/10 text-destructive rounded-md px-4 py-3 text-sm">{error}</div>
                   )}
                   <Field>
                     <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -89,14 +74,11 @@ export default function ForgotPasswordPage() {
                     />
                   </Field>
                   <Field>
-                    <Button type="submit" disabled={loading} className="w-full">
+                    <Button variant="volt" type="submit" disabled={loading} className="w-full">
                       {loading ? "Sending..." : "Send reset link"}
                     </Button>
                     <FieldDescription className="text-center">
-                      <Link
-                        href="/login"
-                        className="underline underline-offset-4"
-                      >
+                      <Link href="/login" className="underline underline-offset-4">
                         Back to login
                       </Link>
                     </FieldDescription>
@@ -108,5 +90,5 @@ export default function ForgotPasswordPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

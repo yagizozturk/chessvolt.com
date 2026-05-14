@@ -19,11 +19,11 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        volt: "bg-[#1bbf33] text-white uppercase tracking-[0.1em] font-bold shadow-[0_5px_0_green] hover:brightness-95 active:shadow-none active:translate-y-[2px] rounded-2xl border-0",
+        volt: "bg-[#1bbf33] text-white uppercase tracking-[0.1em] font-bold shadow-[0_5px_0_green] hover:brightness-95 active:shadow-none active:translate-y-[2px]  border-0",
         voltMuted:
-          "bg-gray-500 text-white uppercase tracking-[0.1em] font-bold shadow-[0_5px_0_#4b5563] hover:bg-gray-600",
-        voltOutline:
-          "border-border bg-background border-2 border-volt text-volt hover:bg-volt/10 hover:text-volt active:shadow-none active:translate-y-[2px] rounded-2xl",
+          "bg-gray-500 text-white uppercase tracking-[0.1em] font-bold shadow-[0_5px_0_#4b5563] hover:brightness-95 active:shadow-none active:translate-y-[2px]  border-0",
+        voltCompact:
+          "bg-gray-500 text-white font-medium shadow-[0_3px_0_#4b5563] hover:brightness-95 active:shadow-none active:translate-y-[2px] border-0",
       },
       size: {
         default:
@@ -38,6 +38,17 @@ const buttonVariants = cva(
         "icon-lg": "size-10",
       },
     },
+    compoundVariants: [
+      // After variant + size in CVA, so this overrides xs/sm `rounded-[min(...)]` for volt styles.
+      {
+        variant: ["volt", "voltMuted"],
+        class: "rounded-2xl",
+      },
+      {
+        variant: ["voltCompact"],
+        class: "rounded-lg",
+      },
+    ],
     defaultVariants: {
       variant: "default",
       size: "default",

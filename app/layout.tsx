@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, IBM_Plex_Sans, Plus_Jakarta_Sans } from "next/font/google";
+import { Geist_Mono, IBM_Plex_Sans } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme-provider/theme-provider";
 import { Toaster } from "@/components/ui/sonner";

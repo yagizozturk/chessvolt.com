@@ -78,8 +78,10 @@ export function RiddleBoardCard({ riddle, game, num, size = 200, isComplete, hre
           )}
         </div>
 
-        <div className="mt-auto flex items-center justify-between gap-3">
-          <Button variant="voltOutline">Play</Button>
+        <div className="mt-auto flex items-center justify-end gap-3">
+          <Button variant="voltCompact" size="xs">
+            Play
+          </Button>
         </div>
       </div>
     </Link>

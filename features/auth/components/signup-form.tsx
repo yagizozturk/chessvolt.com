@@ -1,51 +1,41 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { createClient } from "@/lib/supabase/client";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const router = useRouter()
-  const supabase = createClient()
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      return
+      setError("Passwords do not match");
+      return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters long")
-      return
+      setError("Password must be at least 8 characters long");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
@@ -54,53 +44,51 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         data: { full_name: name },
         emailRedirectTo: `${window.location.origin}/auth/callback?next=/challenge`,
       },
-    })
+    });
 
     if (signUpError) {
-      setError(signUpError.message)
-      setLoading(false)
-      return
+      setError(signUpError.message);
+      setLoading(false);
+      return;
     }
 
     if (data.user?.identities?.length === 0) {
-      setError("An account with this email already exists. Please sign in.")
-      setLoading(false)
-      return
+      setError("An account with this email already exists. Please sign in.");
+      setLoading(false);
+      return;
     }
 
-    setLoading(false)
+    setLoading(false);
 
     // Supabase may require email confirmation - check auth config
     if (data.session) {
-      router.refresh()
-      router.push("/challenge")
+      router.refresh();
+      router.push("/challenge");
     } else {
-      setSuccess(true)
+      setSuccess(true);
     }
   }
 
   async function handleGoogleSignup() {
-    setError(null)
-    setLoading(true)
+    setError(null);
+    setLoading(true);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback?next=/challenge` },
-    })
+    });
 
     if (error) {
-      setError(error.message)
+      setError(error.message);
     }
-    setLoading(false)
+    setLoading(false);
   }
 
   return (
     <Card {...props}>
       <CardHeader>
         <CardTitle>Create an account</CardTitle>
-        <CardDescription>
-          Enter your information below to create your account
-        </CardDescription>
+        <CardDescription>Enter your information below to create your account</CardDescription>
       </CardHeader>
       <CardContent>
         {success ? (
@@ -110,11 +98,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         ) : (
           <form onSubmit={handleSubmit}>
             <FieldGroup>
-              {error && (
-                <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                  {error}
-                </div>
-              )}
+              {error && <div className="bg-destructive/10 text-destructive rounded-md px-4 py-3 text-sm">{error}</div>}
               <Field>
                 <FieldLabel htmlFor="name">Full Name</FieldLabel>
                 <Input
@@ -139,8 +123,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   disabled={loading}
                 />
                 <FieldDescription>
-                  We&apos;ll use this to contact you. We will not share your
-                  email with anyone else.
+                  We&apos;ll use this to contact you. We will not share your email with anyone else.
                 </FieldDescription>
               </Field>
               <Field>
@@ -153,14 +136,10 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   required
                   disabled={loading}
                 />
-                <FieldDescription>
-                  Must be at least 8 characters long.
-                </FieldDescription>
+                <FieldDescription>Must be at least 8 characters long.</FieldDescription>
               </Field>
               <Field>
-                <FieldLabel htmlFor="confirm-password">
-                  Confirm Password
-                </FieldLabel>
+                <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
                 <Input
                   id="confirm-password"
                   type="password"
@@ -169,15 +148,15 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   required
                   disabled={loading}
                 />
-                <FieldDescription>Please confirm your password.</FieldDescription>
               </Field>
               <FieldGroup>
                 <Field>
-                  <Button type="submit" disabled={loading}>
+                  <Button variant="volt" type="submit" disabled={loading}>
                     {loading ? "Creating..." : "Create Account"}
                   </Button>
                   <Button
-                    variant="outline"
+                    className="mt-1"
+                    variant="voltMuted"
                     type="button"
                     onClick={handleGoogleSignup}
                     disabled={loading}
@@ -186,10 +165,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   </Button>
                   <FieldDescription className="px-6 text-center">
                     Already have an account?{" "}
-                    <Link
-                      href="/login"
-                      className="underline underline-offset-4"
-                    >
+                    <Link href="/login" className="underline underline-offset-4">
                       Sign in
                     </Link>
                   </FieldDescription>
@@ -200,5 +176,5 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }
