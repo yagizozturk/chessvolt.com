@@ -8,10 +8,9 @@ import { ImageInfoCard } from "@/components/cards/image-info-card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useArrowsController } from "@/features/arrows/hooks/use-arrows-controller";
-import type { OpeningArrowGroup } from "@/features/openings/types/opening";
+import { flattenOpeningArrowGroups, type OpeningArrowGroup } from "@/features/openings/types/opening";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
-
-const GROUP_CARD_IMAGES = ["/images/cards/pawn-pyramid.png", "/images/cards/signature-move.png"] as const;
+import targetAnimationData from "@/public/images/animations/animation-target-blue.json";
 
 type ArrowsControllerProps = {
   openingId: string;
@@ -21,7 +20,7 @@ type ArrowsControllerProps = {
 
 export function ArrowsController({ openingId, arrowGroups, size = 620 }: ArrowsControllerProps) {
   const arrows = useMemo(
-    () => (arrowGroups.flatMap((group) => group.arrows) ?? []) as DrawShape[],
+    () => flattenOpeningArrowGroups(arrowGroups) as DrawShape[],
     [arrowGroups],
   );
   const boardRef = useRef<ArrowBoardHandle>(null);
@@ -64,11 +63,10 @@ export function ArrowsController({ openingId, arrowGroups, size = 620 }: ArrowsC
           </div>
           <Separator />
           <div className="flex flex-col items-center gap-4">
-            {arrowGroups.map((group, index) => (
+            {arrowGroups.map((group) => (
               <ImageInfoCard
                 key={group.id}
-                imageSrc={GROUP_CARD_IMAGES[index % GROUP_CARD_IMAGES.length]}
-                imageAlt={group.title}
+                animationData={targetAnimationData}
                 title={group.title}
                 description={group.description}
               />

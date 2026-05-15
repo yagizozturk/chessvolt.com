@@ -20,12 +20,14 @@ function isOpeningArrowGroup(value: unknown): value is OpeningArrowGroup {
     id?: unknown;
     title?: unknown;
     description?: unknown;
+    color?: unknown;
     arrows?: unknown;
   };
   return (
     typeof group.id === "string" &&
     typeof group.title === "string" &&
     typeof group.description === "string" &&
+    typeof group.color === "string" &&
     Array.isArray(group.arrows) &&
     group.arrows.every(isOpeningArrow)
   );

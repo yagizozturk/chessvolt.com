@@ -12,6 +12,7 @@ import {
   getOpeningVariantAttemptsForVariants,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
+import { flattenOpeningArrowGroups } from "@/features/openings/types/opening";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
@@ -60,7 +61,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const total = variants.length;
   const correct = attempts.filter((a) => a.isCorrect).length;
   const solveRate = total > 0 ? Math.round((correct / total) * 100) : 0;
-  const boardArrows = (opening.arrows?.flatMap((group) => group.arrows) ?? []) as DrawShape[];
+  const boardArrows = (opening.arrows ? flattenOpeningArrowGroups(opening.arrows) : []) as DrawShape[];
 
   return (
     <div className="container mx-auto max-w-6xl pt-10 pb-16">
