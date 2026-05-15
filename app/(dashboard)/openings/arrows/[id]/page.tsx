@@ -1,3 +1,4 @@
+import type { DrawShape } from "@lichess-org/chessground/draw";
 import { notFound } from "next/navigation";
 
 import { ArrowsController } from "@/features/arrows/components/arrows-controller/arrows-controller";
@@ -17,5 +18,7 @@ export default async function ArrowsPage({ params }: Params) {
     notFound();
   }
 
-  return <ArrowsController openingId={id} arrows={opening.arrows ?? []} />;
+  const boardArrows = (opening.arrows?.flatMap((group) => group.arrows) ?? []) as DrawShape[];
+
+  return <ArrowsController openingId={id} arrows={boardArrows} />;
 }

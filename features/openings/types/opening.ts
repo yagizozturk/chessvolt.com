@@ -1,4 +1,16 @@
-import type { DrawShape } from "@lichess-org/chessground/draw";
+export type OpeningArrow = {
+  orig: string;
+  dest: string;
+  brush?: string;
+  isCompleted?: boolean;
+};
+
+export type OpeningArrowGroup = {
+  id: string;
+  title: string;
+  description: string;
+  arrows: OpeningArrow[];
+};
 
 export type Opening = {
   id: string;
@@ -6,7 +18,7 @@ export type Opening = {
   slug: string | null;
   description: string | null;
   type: string | null;
-  arrows: DrawShape[] | null;
+  arrows: OpeningArrowGroup[] | null;
   displayFen: string;
   createdAt: string;
 };

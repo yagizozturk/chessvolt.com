@@ -2,10 +2,9 @@
  * Opening Repository
  * CRUD access to the openings table (parent of opening_variants).
  */
-import type { DrawShape } from "@lichess-org/chessground/draw";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { Opening } from "@/features/openings/types/opening";
+import type { Opening, OpeningArrowGroup } from "@/features/openings/types/opening";
 import { postgrestUserMessage } from "@/lib/supabase/postgrest-user-message";
 import { slugify } from "@/lib/utils/slugify";
 
@@ -19,7 +18,7 @@ type DbOpening = {
   slug: string | null;
   description: string | null;
   type: string | null;
-  arrows: DrawShape[] | null;
+  arrows: OpeningArrowGroup[] | null;
   display_fen: string | null;
   created_at: string;
 };
@@ -168,7 +167,7 @@ export type CreateOpeningInput = {
   slug?: string | null;
   description?: string | null;
   type?: string | null;
-  arrows?: DrawShape[] | null;
+  arrows?: OpeningArrowGroup[] | null;
   displayFen?: string | null;
 };
 
@@ -199,7 +198,7 @@ export type UpdateOpeningInput = {
   slug?: string | null;
   description?: string | null;
   type?: string | null;
-  arrows?: DrawShape[] | null;
+  arrows?: OpeningArrowGroup[] | null;
   displayFen?: string | null;
 };
 

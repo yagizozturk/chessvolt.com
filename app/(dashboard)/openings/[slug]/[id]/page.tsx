@@ -1,9 +1,9 @@
+import type { DrawShape } from "@lichess-org/chessground/draw";
 import { PartyPopper } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { ArrowsBoardCard } from "@/features/arrows/components/arrows-board-card/arrows-board-card";
-import { ArrowsController } from "@/features/arrows/components/arrows-controller/arrows-controller";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import OpeningMainSidebar from "@/features/openings/components/opening-main-sidebar/opening-main-sidebar";
 import {
@@ -60,6 +60,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const total = variants.length;
   const correct = attempts.filter((a) => a.isCorrect).length;
   const solveRate = total > 0 ? Math.round((correct / total) * 100) : 0;
+  const boardArrows = (opening.arrows?.flatMap((group) => group.arrows) ?? []) as DrawShape[];
 
   return (
     <div className="container mx-auto max-w-6xl pt-10 pb-16">
@@ -69,7 +70,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             openingId={opening.id}
             name={opening.name}
             description={opening.description ?? ""}
-            arrows={opening.arrows ?? []}
+            arrows={boardArrows}
             size={170}
           />
         </div>
