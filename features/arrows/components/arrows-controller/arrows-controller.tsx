@@ -1,23 +1,29 @@
 "use client";
 
 import type { DrawShape } from "@lichess-org/chessground/draw";
-import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import ArrowBoard, { type ArrowBoardHandle } from "@/components/boards/arrow-board/arrow-board";
 import { ImageInfoCard } from "@/components/cards/image-info-card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useArrowsController } from "@/features/arrows/hooks/use-arrows-controller";
+import type { OpeningArrowGroup } from "@/features/openings/types/opening";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
+
+const GROUP_CARD_IMAGES = ["/images/cards/pawn-pyramid.png", "/images/cards/signature-move.png"] as const;
 
 type ArrowsControllerProps = {
   openingId: string;
-  arrows: DrawShape[];
+  arrowGroups: OpeningArrowGroup[];
   size?: number;
 };
 
-export function ArrowsController({ openingId, arrows, size = 620 }: ArrowsControllerProps) {
+export function ArrowsController({ openingId, arrowGroups, size = 620 }: ArrowsControllerProps) {
+  const arrows = useMemo(
+    () => (arrowGroups.flatMap((group) => group.arrows) ?? []) as DrawShape[],
+    [arrowGroups],
+  );
   const boardRef = useRef<ArrowBoardHandle>(null);
   const previousApprovedCountRef = useRef(0);
   const { playCorrectSound } = useBoardSounds();
@@ -58,19 +64,15 @@ export function ArrowsController({ openingId, arrows, size = 620 }: ArrowsContro
           </div>
           <Separator />
           <div className="flex flex-col items-center gap-4">
-            <ImageInfoCard
-              imageSrc="/images/cards/pawn-pyramid.png"
-              imageAlt="Arrows"
-              title="Pawn Pyramid"
-              description="Pawn Pyramid is a chess opening that is played by moving the pawns to the center of the board."
-            />
-
-            <ImageInfoCard
-              imageSrc="/images/cards/signature-move.png"
-              imageAlt="Arrows"
-              title="Signature Move"
-              description="Signature Move is a chess opening that is played by moving the pawns to the center of the board."
-            />
+            {arrowGroups.map((group, index) => (
+              <ImageInfoCard
+                key={group.id}
+                imageSrc={GROUP_CARD_IMAGES[index % GROUP_CARD_IMAGES.length]}
+                imageAlt={group.title}
+                title={group.title}
+                description={group.description}
+              />
+            ))}
           </div>
           <div className="mt-auto">
             <Button variant="volt" onClick={handleClearArrows} className="w-full">
