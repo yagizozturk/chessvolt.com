@@ -17,5 +17,14 @@ export default async function ArrowsPage({ params }: Params) {
     notFound();
   }
 
-  return <ArrowsController openingId={id} arrowGroups={opening.arrows ?? []} />;
+  const destinationPath =
+    opening.slug && opening.id ? `/openings/${opening.slug}/${opening.id}` : "/openings";
+
+  return (
+    <ArrowsController
+      openingId={id}
+      arrowGroups={opening.arrows ?? []}
+      destinationPath={destinationPath}
+    />
+  );
 }

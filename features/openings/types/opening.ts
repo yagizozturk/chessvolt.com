@@ -13,6 +13,25 @@ export type OpeningArrowGroup = {
   arrows: OpeningArrow[];
 };
 
+export function isOpeningArrowGroupComplete(group: OpeningArrowGroup): boolean {
+  return group.arrows.length > 0 && group.arrows.every((arrow) => arrow.isCompleted);
+}
+
+export function areAllOpeningArrowGroupsComplete(groups: OpeningArrowGroup[]): boolean {
+  return groups.length > 0 && groups.every(isOpeningArrowGroupComplete);
+}
+
+function cloneArrowGroups(groups: OpeningArrowGroup[]): OpeningArrowGroup[] {
+  return groups.map((group) => ({
+    ...group,
+    arrows: group.arrows.map((arrow) => ({ ...arrow, isCompleted: arrow.isCompleted ?? false })),
+  }));
+}
+
+export function createArrowGroupsState(groups: OpeningArrowGroup[]): OpeningArrowGroup[] {
+  return cloneArrowGroups(groups);
+}
+
 /** Flatten groups for Chessground; arrow brush falls back to group color. */
 export function flattenOpeningArrowGroups(groups: OpeningArrowGroup[]) {
   return groups.flatMap((group) =>

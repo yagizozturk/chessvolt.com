@@ -1,50 +1,91 @@
 "use client";
 
 import type { DrawShape } from "@lichess-org/chessground/draw";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import ArrowBoard, { type ArrowBoardHandle } from "@/components/boards/arrow-board/arrow-board";
 import { ImageInfoCard } from "@/components/cards/image-info-card";
+import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useArrowsController } from "@/features/arrows/hooks/use-arrows-controller";
-import { flattenOpeningArrowGroups, type OpeningArrowGroup } from "@/features/openings/types/opening";
+import {
+  areAllOpeningArrowGroupsComplete,
+  createArrowGroupsState,
+  flattenOpeningArrowGroups,
+  isOpeningArrowGroupComplete,
+  type OpeningArrowGroup,
+} from "@/features/openings/types/opening";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import targetAnimationData from "@/public/images/animations/animation-target-blue.json";
 
 type ArrowsControllerProps = {
   openingId: string;
   arrowGroups: OpeningArrowGroup[];
+  destinationPath: string;
   size?: number;
 };
 
-export function ArrowsController({ openingId, arrowGroups, size = 620 }: ArrowsControllerProps) {
-  const arrows = useMemo(
-    () => flattenOpeningArrowGroups(arrowGroups) as DrawShape[],
-    [arrowGroups],
-  );
+function markArrowCompleted(groups: OpeningArrowGroup[], orig: string, dest: string): OpeningArrowGroup[] {
+  return groups.map((group) => ({
+    ...group,
+    arrows: group.arrows.map((arrow) =>
+      arrow.orig === orig && arrow.dest === dest ? { ...arrow, isCompleted: true } : arrow,
+    ),
+  }));
+}
+
+export function ArrowsController({ openingId, arrowGroups, destinationPath, size = 620 }: ArrowsControllerProps) {
+  const [groups, setGroups] = useState(() => createArrowGroupsState(arrowGroups));
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const arrows = useMemo(() => flattenOpeningArrowGroups(groups) as DrawShape[], [groups]);
   const boardRef = useRef<ArrowBoardHandle>(null);
-  const previousApprovedCountRef = useRef(0);
-  const { playCorrectSound } = useBoardSounds();
+  const previousApprovedKeysRef = useRef<Set<string>>(new Set());
+  const hasShownSuccessRef = useRef(false);
+  const { playCorrectSound, playLevelUpSound } = useBoardSounds();
   const { boardArrows, userApprovedArrows, handleDrawChange, clearDefaultArrows } = useArrowsController({ arrows });
 
   useEffect(() => {
-    const previousApprovedCount = previousApprovedCountRef.current;
-    const currentApprovedCount = userApprovedArrows.length;
-    if (currentApprovedCount > previousApprovedCount) {
+    const currentKeys = new Set(userApprovedArrows.map((arrow) => `${arrow.orig}-${arrow.dest}`));
+
+    for (const key of currentKeys) {
+      if (previousApprovedKeysRef.current.has(key)) continue;
+
+      const [orig, dest] = key.split("-");
+      setGroups((prev) => markArrowCompleted(prev, orig, dest));
       playCorrectSound();
     }
-    previousApprovedCountRef.current = currentApprovedCount;
+
+    previousApprovedKeysRef.current = currentKeys;
   }, [userApprovedArrows, playCorrectSound]);
 
+  useEffect(() => {
+    if (!areAllOpeningArrowGroupsComplete(groups) || hasShownSuccessRef.current) return;
+
+    hasShownSuccessRef.current = true;
+    setSuccessDialogOpen(true);
+    playLevelUpSound();
+  }, [groups, playLevelUpSound]);
+
   function handleClearArrows() {
+    setGroups(createArrowGroupsState(arrowGroups));
+    setSuccessDialogOpen(false);
+    hasShownSuccessRef.current = false;
     clearDefaultArrows();
-    previousApprovedCountRef.current = 0;
+    previousApprovedKeysRef.current = new Set();
     boardRef.current?.clearArrows();
   }
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-6">
+      <SolveSuccessDialog
+        open={successDialogOpen}
+        onOpenChange={setSuccessDialogOpen}
+        title="Congratulations!"
+        description="You drew every arrow correctly. Return to the opening when you are ready."
+        destinationPath={destinationPath}
+        buttonLabel="Back to opening"
+      />
       <div className="flex flex-col gap-4 lg:flex-row">
         <div className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
           <ArrowBoard
@@ -55,7 +96,6 @@ export function ArrowsController({ openingId, arrowGroups, size = 620 }: ArrowsC
             onDrawChange={handleDrawChange}
           />
         </div>
-        {/* min-w-0: allows the right panel to shrink within the flex row */}
 
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
           <div className="flex items-center justify-center px-4">
@@ -63,12 +103,13 @@ export function ArrowsController({ openingId, arrowGroups, size = 620 }: ArrowsC
           </div>
           <Separator />
           <div className="flex flex-col items-center gap-4">
-            {arrowGroups.map((group) => (
+            {groups.map((group) => (
               <ImageInfoCard
                 key={group.id}
                 animationData={targetAnimationData}
                 title={group.title}
                 description={group.description}
+                isComplete={isOpeningArrowGroupComplete(group)}
               />
             ))}
           </div>
