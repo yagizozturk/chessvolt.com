@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { BoardSoundsToggle } from "@/components/ui/board-sounds-toggle";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useProfile } from "@/features/profile/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
@@ -67,7 +68,7 @@ export function DashboardNavbar() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {/* Dark mode - right side, rounded */}
+      <BoardSoundsToggle className="rounded-full" />
       <ThemeToggle className="rounded-full" />
     </div>
   );
@@ -149,7 +150,10 @@ export function DashboardNavbar() {
                 )}
               </nav>
               <div className="border-border mt-4 flex flex-col gap-2 border-t pt-4">
-                <ThemeToggle className="rounded-full" />
+                <div className="flex items-center gap-2">
+                  <BoardSoundsToggle className="rounded-full" />
+                  <ThemeToggle className="rounded-full" />
+                </div>
               </div>
             </SheetContent>
           </Sheet>
