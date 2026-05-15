@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Notifier } from "@/components/notifier/notifier";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
@@ -32,6 +33,7 @@ export default function RiddleController({
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const { updateGameRiddleAnswerHook } = useUpdateGameRiddleAnswer();
   const { playLevelUpSound } = useBoardSounds();
   const {
@@ -50,12 +52,14 @@ export default function RiddleController({
 
   useEffect(() => {
     setIsCompleted(false);
+    setSuccessDialogOpen(false);
   }, [riddle.id]);
 
   useEffect(() => {
     if (currentCorrectMove != null || isCompleted) return;
 
     setIsCompleted(true);
+    setSuccessDialogOpen(true);
     playLevelUpSound();
     void updateGameRiddleAnswerHook(riddle.id, true);
   }, [currentCorrectMove, isCompleted, playLevelUpSound, riddle.id, updateGameRiddleAnswerHook]);
@@ -85,13 +89,29 @@ export default function RiddleController({
     boardRef.current?.showHint(nextHintCount);
   };
 
+  const successDestinationPath = nextRiddleId ? `/game-riddle/${nextRiddleId}` : parentChallengeUrl;
+  const successButtonLabel = nextRiddleId ? "Next riddle" : "Back to challenge";
+
   const handleContinueClick = () => {
-    const destinationPath = nextRiddleId ? `/game-riddle/${nextRiddleId}` : parentChallengeUrl;
-    router.push(destinationPath);
+    router.push(successDestinationPath);
   };
+
+  const successDescription = nextRiddleId
+    ? "You solved this riddle. Continue to the next one when you are ready."
+    : parentChallengeUrl === "/"
+      ? "You solved this riddle. Continue from the home page when you are ready."
+      : "You solved this riddle. Return to the challenge when you are ready.";
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-6">
+      <SolveSuccessDialog
+        open={successDialogOpen}
+        onOpenChange={setSuccessDialogOpen}
+        title="Riddle solved"
+        description={successDescription}
+        destinationPath={successDestinationPath}
+        buttonLabel={successButtonLabel}
+      />
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
         <div key={riddle.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
@@ -127,7 +147,7 @@ export default function RiddleController({
             ) : (
               <div className="mt-4">
                 <Button variant="volt" onClick={handleContinueClick} className="w-full">
-                  {nextRiddleId ? "Next riddle" : "Back to challenge"}
+                  {successButtonLabel}
                 </Button>
               </div>
             )}

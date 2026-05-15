@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { Notifier } from "@/components/notifier/notifier";
+import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
@@ -33,6 +34,7 @@ export default function OpeningVariantController({
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
   const { playLevelUpSound } = useBoardSounds();
   const {
@@ -53,8 +55,8 @@ export default function OpeningVariantController({
   // - varyantın tamamnlandımı bilgisi resetlenir
   // ============================================================================
   useEffect(() => {
-    console.log("variant", variant);
     setIsCompleted(false);
+    setSuccessDialogOpen(false);
   }, [variant.id]);
 
   // ============================================================================
@@ -64,9 +66,10 @@ export default function OpeningVariantController({
     if (currentCorrectMove != null || isCompleted) return;
 
     setIsCompleted(true);
+    setSuccessDialogOpen(true);
     playLevelUpSound();
     void updateOpeningVariantAnswerHook(variant.id, true);
-  }, [isCompleted, currentCorrectMove, updateOpeningVariantAnswerHook, variant.id]);
+  }, [isCompleted, currentCorrectMove, playLevelUpSound, updateOpeningVariantAnswerHook, variant.id]);
 
   // ============================================================================
   // handle metotları controller a aittir, _değişkenler hook a aittir.
@@ -110,13 +113,27 @@ export default function OpeningVariantController({
   // ============================================================================
   // Next variant veya opening sayfasına yönlendirir. Variant bitince gözükür
   // ============================================================================
+  const successDestinationPath = nextVariantId ? `/openings/variant/${nextVariantId}` : parentOpeningUrl;
+  const successButtonLabel = nextVariantId ? "Next variant" : "Back to opening";
+
   const handleContinueClick = () => {
-    const destinationPath = nextVariantId ? `/openings/variant/${nextVariantId}` : parentOpeningUrl;
-    router.push(destinationPath);
+    router.push(successDestinationPath);
   };
+
+  const successDescription = nextVariantId
+    ? "You completed this line. Continue to the next variant when you are ready."
+    : "You completed this line. Return to the opening when you are ready.";
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-6">
+      <SolveSuccessDialog
+        open={successDialogOpen}
+        onOpenChange={setSuccessDialogOpen}
+        title="Congratulations!"
+        description={successDescription}
+        destinationPath={successDestinationPath}
+        buttonLabel={successButtonLabel}
+      />
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
         <div key={variant.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
@@ -152,7 +169,7 @@ export default function OpeningVariantController({
             ) : (
               <div className="mt-4">
                 <Button variant="volt" onClick={handleContinueClick} className="w-full">
-                  {nextVariantId ? "Next variant" : "Back to opening"}
+                  {successButtonLabel}
                 </Button>
               </div>
             )}

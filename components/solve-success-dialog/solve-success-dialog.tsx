@@ -1,5 +1,10 @@
 "use client";
 
+import Lottie from "lottie-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,8 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import animationData from "@/public/images/animations/animation-trophy.json";
 
 export type SolveSuccessDialogProps = {
   open: boolean;
@@ -52,13 +56,15 @@ export function SolveSuccessDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="text-pretty">
-            {description}
-          </DialogDescription>
+          <div className="flex flex-col items-center">
+            <Lottie animationData={animationData} loop={true} autoplay={true} className="size-50" />
+          </div>
+          <DialogTitle className="text-center text-2xl font-bold">{title}</DialogTitle>
+          <DialogDescription className="mt-4 text-center text-lg text-pretty">{description}</DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="mt-4 items-center justify-center sm:justify-center">
           <Button
+            variant="volt"
             type="button"
             disabled={isPending}
             onClick={handleContinue}
