@@ -10,11 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useArrowsController } from "@/features/arrows/hooks/use-arrows-controller";
 import {
+  type OpeningArrowGroup,
   areAllOpeningArrowGroupsComplete,
   createArrowGroupsState,
   flattenOpeningArrowGroups,
   isOpeningArrowGroupComplete,
-  type OpeningArrowGroup,
 } from "@/features/openings/types/opening";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import targetAnimationData from "@/public/images/animations/animation-target-blue.json";
@@ -37,15 +37,19 @@ function markArrowCompleted(groups: OpeningArrowGroup[], orig: string, dest: str
 
 export function ArrowsController({ openingId, arrowGroups, destinationPath, size = 620 }: ArrowsControllerProps) {
   const [groups, setGroups] = useState(() => createArrowGroupsState(arrowGroups));
+  const [gameStarted, setGameStarted] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const arrows = useMemo(() => flattenOpeningArrowGroups(groups) as DrawShape[], [groups]);
   const boardRef = useRef<ArrowBoardHandle>(null);
   const previousApprovedKeysRef = useRef<Set<string>>(new Set());
   const hasShownSuccessRef = useRef(false);
   const { playCorrectSound, playLevelUpSound } = useBoardSounds();
-  const { boardArrows, userApprovedArrows, handleDrawChange, clearDefaultArrows } = useArrowsController({ arrows });
+  const { boardArrows, userApprovedArrows, handleDrawChange } = useArrowsController({ arrows });
+  const visibleBoardArrows = gameStarted ? [] : boardArrows;
 
   useEffect(() => {
+    if (!gameStarted) return;
+
     const currentKeys = new Set(userApprovedArrows.map((arrow) => `${arrow.orig}-${arrow.dest}`));
 
     for (const key of currentKeys) {
@@ -57,7 +61,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
     }
 
     previousApprovedKeysRef.current = currentKeys;
-  }, [userApprovedArrows, playCorrectSound]);
+  }, [gameStarted, userApprovedArrows, playCorrectSound]);
 
   useEffect(() => {
     if (!areAllOpeningArrowGroupsComplete(groups) || hasShownSuccessRef.current) return;
@@ -67,12 +71,8 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
     playLevelUpSound();
   }, [groups, playLevelUpSound]);
 
-  function handleClearArrows() {
-    setGroups(createArrowGroupsState(arrowGroups));
-    setSuccessDialogOpen(false);
-    hasShownSuccessRef.current = false;
-    clearDefaultArrows();
-    previousApprovedKeysRef.current = new Set();
+  function handleStartGame() {
+    setGameStarted(true);
     boardRef.current?.clearArrows();
   }
 
@@ -92,7 +92,8 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
             ref={boardRef}
             sourceId={openingId}
             size={size}
-            arrows={boardArrows}
+            arrows={visibleBoardArrows}
+            drawingEnabled={gameStarted}
             onDrawChange={handleDrawChange}
           />
         </div>
@@ -114,7 +115,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
             ))}
           </div>
           <div className="mt-auto">
-            <Button variant="volt" onClick={handleClearArrows} className="w-full">
+            <Button variant="volt" onClick={handleStartGame} disabled={gameStarted} className="w-full">
               Start Game
             </Button>
           </div>

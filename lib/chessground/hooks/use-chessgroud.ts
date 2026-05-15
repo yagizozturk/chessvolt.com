@@ -15,6 +15,7 @@ type UseChessgroundOptions = {
   orientationRef: RefObject<"white" | "black">;
   viewOnly?: boolean;
   coordinates?: boolean;
+  drawableEnabled?: boolean;
   lastMoveRef?: RefObject<[Key, Key] | undefined>;
   onMove: (from: string, to: string) => void;
   onDrawChange?: (shapes: DrawShape[]) => void;
@@ -27,6 +28,7 @@ export function useChessground({
   orientationRef,
   viewOnly = false,
   coordinates = true,
+  drawableEnabled = true,
   lastMoveRef,
   onMove,
   onDrawChange,
@@ -34,10 +36,15 @@ export function useChessground({
   const ground = useRef<ReturnType<typeof Chessground> | null>(null);
   const customSquareHighlightsRef = useRef<Map<Key, string>>(new Map());
   const onMoveRef = useRef(onMove);
+  const onDrawChangeRef = useRef(onDrawChange);
 
   useEffect(() => {
     onMoveRef.current = onMove;
   }, [onMove]);
+
+  useEffect(() => {
+    onDrawChangeRef.current = onDrawChange;
+  }, [onDrawChange]);
 
   const getBoardConfig = useCallback(() => {
     const turn: "white" | "black" = game.current.turn() === "w" ? "white" : "black";
@@ -69,14 +76,14 @@ export function useChessground({
         enabled: false,
       },
       drawable: {
-        enabled: true,
+        enabled: drawableEnabled,
         onChange: () => {
           const shapes = ground.current?.state.drawable.shapes ?? [];
-          onDrawChange?.(shapes);
+          onDrawChangeRef.current?.(shapes);
         },
       },
     };
-  }, [game, orientationRef, viewOnly, coordinates, lastMoveRef]);
+  }, [game, orientationRef, viewOnly, coordinates, drawableEnabled, lastMoveRef]);
 
   // ============================================================================
   // Loading Chessground

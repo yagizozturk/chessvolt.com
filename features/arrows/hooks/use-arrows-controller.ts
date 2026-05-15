@@ -56,10 +56,6 @@ export function useArrowsController({ arrows }: UseArrowsControllerParams) {
     });
   }, [defaultArrows, userApprovedArrows]);
 
-  function clearDefaultArrows() {
-    setDefaultArrows([]);
-  }
-
   function handleDrawChange(shapes: DrawShape[]) {
     const filteredShapes = shapes.filter((shape) => {
       if (!shape.orig || !shape.dest) return false;
@@ -76,6 +72,5 @@ export function useArrowsController({ arrows }: UseArrowsControllerParams) {
     drawnArrows,
     userApprovedArrows,
     handleDrawChange,
-    clearDefaultArrows,
   };
 }

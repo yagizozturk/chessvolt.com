@@ -20,6 +20,7 @@ type ArrowBoardProps = {
   viewOnly?: boolean;
   coordinates?: boolean;
   arrows: DrawShape[];
+  drawingEnabled?: boolean;
   onDrawChange?: (shapes: DrawShape[]) => DrawShape[];
 };
 
@@ -34,7 +35,7 @@ export type ArrowBoardHandle = {
 };
 
 const ArrowBoard = forwardRef<ArrowBoardHandle, ArrowBoardProps>(function ArrowBoard(
-  { sourceId, size = 620, viewOnly = false, coordinates = true, arrows, onDrawChange },
+  { sourceId, size = 620, viewOnly = false, coordinates = true, arrows, drawingEnabled = false, onDrawChange },
   ref,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
@@ -47,35 +48,42 @@ const ArrowBoard = forwardRef<ArrowBoardHandle, ArrowBoardProps>(function ArrowB
   const { playHintSound } = useBoardSounds();
 
   // 3. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
-  const { ground } = useChessground({
+  const { ground, updateBoard } = useChessground({
     boardRef,
     game,
     sourceId,
     orientationRef,
     viewOnly,
     coordinates,
+    drawableEnabled: drawingEnabled,
     lastMoveRef,
     onMove: () => {
       return;
     },
-    onDrawChange: (shapes) => {
-      const nextShapes = onDrawChange?.(shapes);
-      if (!nextShapes || !ground.current) return;
+    onDrawChange: drawingEnabled
+      ? (shapes) => {
+          const nextShapes = onDrawChange?.(shapes);
+          if (!nextShapes || !ground.current) return;
 
-      const changed =
-        nextShapes.length !== shapes.length ||
-        nextShapes.some((shape, index) => {
-          const current = shapes[index];
-          return (
-            !current || current.orig !== shape.orig || current.dest !== shape.dest || current.brush !== shape.brush
-          );
-        });
+          const changed =
+            nextShapes.length !== shapes.length ||
+            nextShapes.some((shape, index) => {
+              const current = shapes[index];
+              return (
+                !current || current.orig !== shape.orig || current.dest !== shape.dest || current.brush !== shape.brush
+              );
+            });
 
-      if (changed) {
-        ground.current.setShapes(nextShapes);
-      }
-    },
+          if (changed) {
+            ground.current.setShapes(nextShapes);
+          }
+        }
+      : undefined,
   });
+
+  useEffect(() => {
+    updateBoard();
+  }, [drawingEnabled, updateBoard]);
 
   // ============================================================================
   // Draw default arrows
