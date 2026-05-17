@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
-import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Notifier } from "@/components/notifier/notifier";
+import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
-import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
 import { useRiddleController } from "@/features/game-riddle/hooks/use-riddle-controller";
 import { useRiddleTour } from "@/features/game-riddle/hooks/use-riddle-tour";
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -122,7 +122,7 @@ export default function RiddleController({
             ref={boardRef}
             sourceId={riddle.id}
             initialFen={riddle.displayFen ?? undefined}
-            size={580}
+            size={540}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}

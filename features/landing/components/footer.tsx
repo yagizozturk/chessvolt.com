@@ -1,11 +1,11 @@
-import { BookOpenText, LogIn, Swords, TrendingUpDown, UserPlus, Zap } from "lucide-react";
+import { ArrowsUpFromLine, BookOpenText, LogIn, Swords, UserPlus, Zap } from "lucide-react";
 import Link from "next/link";
 
 export function Footer() {
   const links = [
     { href: "/openings", label: "Opening Crusher", icon: BookOpenText },
     { href: "/challenge", label: "Challenges", icon: Swords },
-    { href: "/arrows", label: "Arrows Game", icon: TrendingUpDown },
+    { href: "/arrows", label: "Arrows Game", icon: ArrowsUpFromLine },
   ];
 
   return (

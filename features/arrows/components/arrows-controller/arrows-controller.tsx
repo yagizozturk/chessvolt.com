@@ -1,6 +1,7 @@
 "use client";
 
 import type { DrawShape } from "@lichess-org/chessground/draw";
+import { Mouse } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import ArrowBoard, { type ArrowBoardHandle } from "@/components/boards/arrow-board/arrow-board";
@@ -18,7 +19,6 @@ import {
   isOpeningArrowGroupComplete,
 } from "@/features/openings/types/opening";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
-import targetAnimationData from "@/public/images/animations/animation-target-blue.json";
 
 type ArrowsControllerProps = {
   openingId: string;
@@ -36,15 +36,16 @@ function markArrowCompleted(groups: OpeningArrowGroup[], orig: string, dest: str
   }));
 }
 
-export function ArrowsController({ openingId, arrowGroups, destinationPath, size = 620 }: ArrowsControllerProps) {
+export function ArrowsController({ openingId, arrowGroups, destinationPath, size = 540 }: ArrowsControllerProps) {
   const [groups, setGroups] = useState(() => createArrowGroupsState(arrowGroups));
   const [gameStarted, setGameStarted] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const arrows = useMemo(() => flattenOpeningArrowGroups(groups) as DrawShape[], [groups]);
   const boardRef = useRef<ArrowBoardHandle>(null);
   const previousApprovedKeysRef = useRef<Set<string>>(new Set());
+  const completedGroupIdsRef = useRef<Set<string>>(new Set());
   const hasShownSuccessRef = useRef(false);
-  const { playCorrectSound, playLevelUpSound } = useBoardSounds();
+  const { playCorrectSound, playLevelUpSound, playMoveSound } = useBoardSounds();
   const { boardArrows, userApprovedArrows, handleDrawChange } = useArrowsController({ arrows });
   const { Tour } = useArrowsTour({ openingId });
   const visibleBoardArrows = gameStarted ? [] : boardArrows;
@@ -66,14 +67,25 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
   }, [gameStarted, userApprovedArrows, playCorrectSound]);
 
   useEffect(() => {
+    if (!gameStarted) return;
+
+    for (const group of groups) {
+      if (!isOpeningArrowGroupComplete(group) || completedGroupIdsRef.current.has(group.id)) continue;
+
+      completedGroupIdsRef.current.add(group.id);
+      playLevelUpSound();
+    }
+  }, [gameStarted, groups, playLevelUpSound]);
+
+  useEffect(() => {
     if (!areAllOpeningArrowGroupsComplete(groups) || hasShownSuccessRef.current) return;
 
     hasShownSuccessRef.current = true;
     setSuccessDialogOpen(true);
-    playLevelUpSound();
-  }, [groups, playLevelUpSound]);
+  }, [groups]);
 
   function handleStartGame() {
+    playMoveSound();
     setGameStarted(true);
     boardRef.current?.clearArrows();
   }
@@ -106,21 +118,42 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
             <span className="text-lg font-bold">Draw The Ideal Position</span>
           </div>
           <Separator />
-          <div className="flex flex-col items-center gap-4" data-tour="instructions">
+
+          <div className="flex flex-col items-center gap-2" data-tour="instructions">
             {groups.map((group) => (
               <ImageInfoCard
                 key={group.id}
-                animationData={targetAnimationData}
+                iconColor={group.color}
                 title={group.title}
                 description={group.description}
                 isComplete={isOpeningArrowGroupComplete(group)}
               />
             ))}
           </div>
-          <div className="mt-auto" data-tour="action-button">
-            <Button variant="volt" onClick={handleStartGame} disabled={gameStarted} className="w-full">
-              Start Game
-            </Button>
+
+          <div className="mt-auto">
+            <div
+              className="bg-destructive/30 mb-3 flex w-full flex-col gap-2 rounded-2xl px-4 py-2 transition-opacity"
+              data-tour="mouse-required"
+            >
+              <div className="flex items-center gap-4">
+                <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
+                  <Mouse className="text-primary size-6 shrink-0" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-muted-foreground text-sm">
+                    Mouse <span className="text-primary font-bold">right click</span> or trackpad{" "}
+                    <span className="text-primary font-bold">secondary click</span> to draw an arrow is{" "}
+                    <span className="text-primary font-bold">required</span>.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div data-tour="action-button">
+              <Button variant="volt" onClick={handleStartGame} disabled={gameStarted} className="w-full">
+                Start Game
+              </Button>
+            </div>
           </div>
         </div>
       </div>

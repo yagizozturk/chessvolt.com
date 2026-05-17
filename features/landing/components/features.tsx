@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpenText, Swords, TrendingUpDown } from "lucide-react";
+import { ArrowsUpFromLine, BookOpenText, Swords } from "lucide-react";
 
 import { FeatureItem } from "@/features/landing/components/featute-item";
 
@@ -22,7 +22,7 @@ const sharedFeatures = [
   {
     title: "Opening Position Drawer",
     description: "Deepen your game knowledge with built-in move explanations in every game.",
-    icon: TrendingUpDown,
+    icon: ArrowsUpFromLine,
     imageSrc: "/images/cards/bg-arrows-game.png",
     imageAlt: "Move explanations while you play",
   },

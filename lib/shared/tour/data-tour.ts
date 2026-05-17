@@ -4,6 +4,7 @@ export const TOUR_TARGETS = {
   progress: "progress",
   hintButton: "hint-button",
   instructions: "instructions",
+  mouseRequired: "mouse-required",
   actionButton: "action-button",
 } as const;
 

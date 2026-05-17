@@ -4,11 +4,18 @@ import { tourTargetSelector, TOUR_TARGETS } from "@/lib/shared/tour/data-tour";
 
 export const ARROWS_TOUR_STEPS: Step[] = [
   {
+    target: tourTargetSelector(TOUR_TARGETS.mouseRequired),
+    title: "Mouse required",
+    content:
+      "Use mouse right click or trackpad secondary click to draw arrows on the board. This input is required for the exercise.",
+    placement: "left",
+    skipBeacon: true,
+  },
+  {
     target: tourTargetSelector(TOUR_TARGETS.board),
     title: "Draw on the board",
     content: "After you start, draw arrows on the board to show the ideal plans for each group.",
     placement: "right",
-    skipBeacon: true,
   },
   {
     target: tourTargetSelector(TOUR_TARGETS.instructions),
