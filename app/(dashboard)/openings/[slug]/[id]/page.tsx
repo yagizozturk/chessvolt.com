@@ -87,15 +87,13 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-6">
-          {variants.map((variant, index) => {
-            const num = index + 1;
+          {variants.map((variant) => {
             return (
               <OpeningBoardCard
                 key={variant.id}
                 id={variant.id}
                 name={variant.title ?? ""}
                 group={variant.group}
-                num={num}
                 size={170}
                 href={`/openings/variant/${variant.id}`}
                 fen={variant.displayFen ?? variant.initialFen}

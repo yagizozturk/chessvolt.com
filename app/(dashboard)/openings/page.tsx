@@ -66,7 +66,7 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
               No openings match this type. Set the opening&apos;s type in admin (e.g. white, black, popular).
             </p>
           ) : null}
-          {openings.map((opening, index) => {
+          {openings.map((opening) => {
             return (
               <OpeningBoardCard
                 key={opening.id}
@@ -74,7 +74,6 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
                 name={opening.name}
                 description={opening.description}
                 variantCount={opening.variantCount}
-                num={index + 1}
                 size={160}
                 href={`/openings/${opening.slug}/${opening.id}`}
                 fen={opening.displayFen}
