@@ -1,3 +1,5 @@
+"use client";
+
 import VoltBoard from "@/components/boards/volt-board/volt-board";
 
 import { CodeViewer } from "../components/code-viewer";

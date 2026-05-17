@@ -60,7 +60,8 @@ export default function PgnNavigatorPage() {
             size={360}
             viewOnly
             onCheckMove={() => true}
-            onMovePlayed={() => ""}
+            onSuccessMovePlayed={() => {}}
+            onNextMoveRequest={() => undefined}
           />
         </div>
       </div>

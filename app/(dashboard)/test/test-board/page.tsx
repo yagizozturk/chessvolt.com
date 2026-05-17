@@ -9,13 +9,16 @@ export default function TestBoard() {
     return true;
   }
 
-  function handleMovePlayed(_move: Move) {
-    return "";
-  }
+  function handleSuccessMovePlayed(_move: Move) {}
 
   return (
     <div className="p-6">
-      <VoltBoard sourceId="test-board" onCheckMove={handleCheckMove} onMovePlayed={handleMovePlayed} />
+      <VoltBoard
+        sourceId="test-board"
+        onCheckMove={handleCheckMove}
+        onSuccessMovePlayed={handleSuccessMovePlayed}
+        onNextMoveRequest={() => undefined}
+      />
     </div>
   );
 }

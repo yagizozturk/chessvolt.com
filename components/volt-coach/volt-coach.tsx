@@ -20,7 +20,13 @@ export function VoltCoach({ title, message, ttsKey }: VoltCoachProps) {
     <div className="flex gap-4 rounded-xl p-4">
       <TTSController key={ttsKey} text={message} muted={muted} />
       <div className="shrink-0">
-        <Image src="/images/avatar/volt-avatar.jpg" alt="Volt Coach" width={80} height={80} className="rounded-xl" />
+        <Image
+          src="/images/avatar/volt-coach-avatar.png"
+          alt="Volt Coach"
+          width={100}
+          height={100}
+          className="rounded-xl"
+        />
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex">
