@@ -1,10 +1,11 @@
 "use client";
 
-import { BookOpen, LogOut, Map, Menu, Shield, User, Zap } from "lucide-react";
+import { ArrowsUpFromLine, BookOpenText, LogOut, Menu, Shield, Swords, User, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
 
+import { BoardSoundsToggle } from "@/components/ui/board-sounds-toggle";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,15 +14,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { BoardSoundsToggle } from "@/components/ui/board-sounds-toggle";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useProfile } from "@/features/profile/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 
 const navItems = [
-  { href: "/challenge", label: "Challenges", icon: Map },
-  { href: "/openings", label: "Opening Crusher", icon: BookOpen },
+  { href: "/openings", label: "Opening Crusher", icon: BookOpenText },
+  { href: "/challenge", label: "Challenges", icon: Swords },
+  { href: "/arrows", label: "Arrows Game", icon: ArrowsUpFromLine },
 ];
 
 export function DashboardNavbar() {
@@ -89,9 +90,11 @@ export function DashboardNavbar() {
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
           {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+            const Icon = item.icon;
             return (
               <Button key={item.href} variant={isActive ? "secondary" : "ghost"} size="sm" asChild>
                 <Link href={item.href} className={cn(isActive && "font-semibold")}>
+                  <Icon className="text-primary h-4 w-4 shrink-0" />
                   {item.label}
                 </Link>
               </Button>

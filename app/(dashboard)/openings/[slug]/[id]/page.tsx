@@ -65,49 +65,50 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
 
   return (
     <div className="container mx-auto max-w-6xl pt-10 pb-16">
-      <div className="flex gap-6 rounded-lg bg-[#C4E2FC]">
-        <div>
-          <ArrowsBoardCard
-            openingId={opening.id}
-            name={opening.name}
-            description={opening.description ?? ""}
-            arrows={boardArrows}
-            size={170}
-          />
-        </div>
-        <div className="p-4">
-          <Image
-            src="/images/openings/bg-london-opening-4.png"
-            alt="{opening.name}"
-            className="object-contain"
-            height={180}
-            width={350}
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-6 py-3">
-        {variants.map((variant, index) => {
-          const num = index + 1;
-          return (
-            <OpeningBoardCard
-              key={variant.id}
-              id={variant.id}
-              name={variant.title ?? ""}
-              group={variant.group}
-              num={num}
-              size={170}
-              href={`/openings/variant/${variant.id}`}
-              fen={variant.displayFen ?? variant.initialFen}
-              isComplete={solvedVariantIds.has(variant.id) ? true : undefined}
-              description={variant.description}
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-4 rounded-lg bg-[#FDCB15]">
+          <div className="min-w-0 flex-1 space-y-2 p-4">
+            <ArrowsBoardCard
+              openingId={opening.id}
+              name={opening.name}
+              description={opening.description ?? ""}
+              arrows={boardArrows}
+              size={160}
             />
-          );
-        })}
-        {/* <div className="space-y-4">
+          </div>
+          <div className="overflow-hidden rounded-lg">
+            <Image
+              src="/images/openings/bg-london-opening-5.png"
+              alt={opening.name}
+              width={400}
+              height={300}
+              className="object-contain"
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-6">
+          {variants.map((variant, index) => {
+            const num = index + 1;
+            return (
+              <OpeningBoardCard
+                key={variant.id}
+                id={variant.id}
+                name={variant.title ?? ""}
+                group={variant.group}
+                num={num}
+                size={170}
+                href={`/openings/variant/${variant.id}`}
+                fen={variant.displayFen ?? variant.initialFen}
+                isComplete={solvedVariantIds.has(variant.id) ? true : undefined}
+                description={variant.description}
+              />
+            );
+          })}
+          {/* <div className="space-y-4">
           <OpeningMainSidebar title={opening.name} subPlayCount={total} />
           <ProgressStatsCard percentage={solveRate} label="Solved Variants" icon={PartyPopper} className="w-full" />
         </div> */}
+        </div>
       </div>
     </div>
   );

@@ -64,7 +64,7 @@ export default async function ChallengePage() {
           }
 
           return (
-            <div className="flex flex-col gap-2" key={gameType}>
+            <div className="flex flex-col gap-4" key={gameType}>
               <ChallengeHeader
                 title={displayName}
                 imageSrc={`/images/challanges/bg-${gameType}.png`}

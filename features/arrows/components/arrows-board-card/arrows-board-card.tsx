@@ -16,7 +16,7 @@ type ArrowsBoardCardProps = {
 export function ArrowsBoardCard({ openingId, name, description, arrows, size = 200 }: ArrowsBoardCardProps) {
   return (
     <BlurFade duration={0.4} direction="down" blur="4px">
-      <Link href={`/openings/arrows/${openingId}`} className="flex flex-row items-stretch gap-6 rounded-lg p-6">
+      <Link href={`/openings/arrows/${openingId}`} className="flex flex-row items-stretch gap-6 rounded-lg px-2">
         <div>
           <ArrowBoard sourceId={openingId} size={size} arrows={arrows} coordinates={false} viewOnly={true} />
         </div>

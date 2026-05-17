@@ -39,8 +39,8 @@ export function OpeningBoardCard({
         className="bg-card border-b-card-shadow flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6"
       >
         <div>
-          {isComplete === true && <BoardStatusIcon status="solved" positionClassName="top-2 right-3" />}
-          {isComplete === false && <BoardStatusIcon status="wrong" positionClassName="top-2 right-3" />}
+          {isComplete === true && <BoardStatusIcon status="solved" positionClassName="top-3 right-3" />}
+          {isComplete === false && <BoardStatusIcon status="wrong" positionClassName="top-3 right-3" />}
           <DisplayBoard sourceId={id} initialFen={fen} size={size} coordinates={false} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">

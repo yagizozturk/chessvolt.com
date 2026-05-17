@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   title: "ChessVolt",
   description:
     "ChessVolt is a gamified, community-focused, and modern learning platform. Push your limits, shine with Volt.",
+  icons: {
+    icon: "/images/favicon/favicon.svg",
+  },
 };
 
 export default function RootLayout({

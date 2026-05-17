@@ -3,6 +3,7 @@
 import { ChevronRight, ChevronUp } from "lucide-react";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { RiddleBoardCard } from "@/features/game-riddle/components/riddle-board-card";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { Game } from "@/features/game/types/game";
@@ -33,7 +34,7 @@ export function ChallengeDataList({ riddles, gameMap, attemptByRiddleId }: Chall
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-6 py-3">
+      <div className="grid grid-cols-2 gap-6">
         {visibleRiddles.map((riddle, index) => {
           const game = gameMap[riddle.gameId]!;
           const num = index + 1;
@@ -52,14 +53,10 @@ export function ChallengeDataList({ riddles, gameMap, attemptByRiddleId }: Chall
       </div>
       {hasMore && (
         <div className="flex justify-end px-2">
-          <button
-            type="button"
-            onClick={() => setIsExpanded((p) => !p)}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 flex w-fit items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
-          >
+          <Button variant="voltCompact" onClick={() => setIsExpanded((p) => !p)}>
             {isExpanded ? "Show Less" : `Show More (${riddlesWithPgn.length})`}
             {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-          </button>
+          </Button>
         </div>
       )}
     </div>
