@@ -143,7 +143,7 @@ export default function OpeningVariantController({
           <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
-            size={580}
+            size={540}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}

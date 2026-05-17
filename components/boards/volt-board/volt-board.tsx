@@ -47,7 +47,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   {
     sourceId,
     initialFen,
-    size = 620,
+    size = 580,
     viewOnly = false,
     drawHintMove,
     onCheckMove,
@@ -227,7 +227,13 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     [drawHintMove, ground, playHintSound],
   );
 
-  return <div ref={boardRef} className="cardinal green" style={{ width: size, height: size }} />;
+  return (
+    <>
+      {/* <div className="board-wrapper"> In order to make board responsive */}
+      <div ref={boardRef} className="cardinal green" style={{ width: size, height: size }} />
+      {/* </div> */}
+    </>
+  );
 });
 
 export default VoltBoard;

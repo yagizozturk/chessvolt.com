@@ -9,6 +9,7 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useArrowsController } from "@/features/arrows/hooks/use-arrows-controller";
+import { useArrowsTour } from "@/features/arrows/hooks/use-arrows-tour";
 import {
   type OpeningArrowGroup,
   areAllOpeningArrowGroupsComplete,
@@ -45,6 +46,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
   const hasShownSuccessRef = useRef(false);
   const { playCorrectSound, playLevelUpSound } = useBoardSounds();
   const { boardArrows, userApprovedArrows, handleDrawChange } = useArrowsController({ arrows });
+  const { Tour } = useArrowsTour({ openingId });
   const visibleBoardArrows = gameStarted ? [] : boardArrows;
 
   useEffect(() => {
@@ -78,6 +80,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-6">
+      {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
@@ -87,7 +90,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
         buttonLabel="Back to opening"
       />
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
+        <div className="relative w-full min-w-0 lg:w-auto lg:shrink-0" data-tour="board">
           <ArrowBoard
             ref={boardRef}
             sourceId={openingId}
@@ -103,7 +106,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
             <span className="text-lg font-bold">Draw The Ideal Position</span>
           </div>
           <Separator />
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col items-center gap-4" data-tour="instructions">
             {groups.map((group) => (
               <ImageInfoCard
                 key={group.id}
@@ -114,7 +117,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
               />
             ))}
           </div>
-          <div className="mt-auto">
+          <div className="mt-auto" data-tour="action-button">
             <Button variant="volt" onClick={handleStartGame} disabled={gameStarted} className="w-full">
               Start Game
             </Button>

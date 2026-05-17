@@ -12,6 +12,7 @@ import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
 import { useRiddleController } from "@/features/game-riddle/hooks/use-riddle-controller";
+import { useRiddleTour } from "@/features/game-riddle/hooks/use-riddle-tour";
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
@@ -49,6 +50,7 @@ export default function RiddleController({
     sourceId: riddle.id,
     moves: riddle.moves,
   });
+  const { Tour } = useRiddleTour({ riddleId: riddle.id });
 
   useEffect(() => {
     setIsCompleted(false);
@@ -104,6 +106,7 @@ export default function RiddleController({
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-6">
+      {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
@@ -114,7 +117,7 @@ export default function RiddleController({
       />
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div key={riddle.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
+        <div key={riddle.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0" data-tour="board">
           <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}
@@ -130,14 +133,16 @@ export default function RiddleController({
           <div className="flex items-center justify-center">
             <span className="text-lg font-bold">{riddle.title ?? "Untitled riddle"}</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center" data-tour="progress">
             <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
             <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
               <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
             </div>
           </div>
-          <OpeningVariantGoalViewer goals={sortedGoals} />
-          <div className="mt-auto">
+          <div data-tour="goals">
+            <OpeningVariantGoalViewer goals={sortedGoals} />
+          </div>
+          <div className="mt-auto" data-tour="hint-button">
             {!isCompleted ? (
               <div>
                 <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="w-full">
