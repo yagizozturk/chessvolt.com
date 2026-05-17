@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useOpeningVariantController } from "@/features/openings/hooks/use-opening-variant-controller";
+import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
@@ -49,6 +50,7 @@ export default function OpeningVariantController({
   } = useOpeningVariantController({
     variant,
   });
+  const { Tour } = useOpeningVariantTour({ variantId: variant.id });
 
   // ============================================================================
   // Variant değiştiğinde local ekran state'i sıfırlanır:
@@ -126,6 +128,7 @@ export default function OpeningVariantController({
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-6">
+      {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
@@ -136,7 +139,7 @@ export default function OpeningVariantController({
       />
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div key={variant.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0">
+        <div key={variant.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0" data-tour="board">
           <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
@@ -152,14 +155,16 @@ export default function OpeningVariantController({
           <div className="flex items-center justify-center">
             <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center" data-tour="progress">
             <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
             <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
               <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
             </div>
           </div>
-          <OpeningVariantGoalViewer goals={sortedGoals} />
-          <div className="mt-auto">
+          <div data-tour="goals">
+            <OpeningVariantGoalViewer goals={sortedGoals} />
+          </div>
+          <div className="mt-auto" data-tour="hint-button">
             {!isCompleted ? (
               <div>
                 <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="w-full">

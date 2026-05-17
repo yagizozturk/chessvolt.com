@@ -13,7 +13,7 @@ export function OpeningVariantGoalViewer({ goals }: OpeningVariantGoalViewerProp
 
   return (
     <>
-      <div className="bg-muted/50 border-b-card-shadow flex flex-col rounded-xl border-b-[6px]">
+      <div className="bg-muted/50 border-b-card-shadow mb-3 flex flex-col rounded-xl border-b-[6px]">
         <ActiveGoalCard goal={activeGoal} />
         {nextGoal ? (
           <InactiveNextGoalRow
@@ -22,7 +22,7 @@ export function OpeningVariantGoalViewer({ goals }: OpeningVariantGoalViewerProp
           />
         ) : null}
       </div>
-      <GoalStepper goals={goals} />
+      <GoalStepper goals={goals} data-tour="goal-stepper-2" />
     </>
   );
 }

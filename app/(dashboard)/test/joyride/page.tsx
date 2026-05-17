@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { EVENTS, STATUS, useJoyride, type EventData } from "react-joyride";
+import { EVENTS, type EventData, STATUS, useJoyride } from "react-joyride";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -17,7 +17,8 @@ const STEPS = [
   {
     target: '[data-tour="board"]',
     title: "Chess board",
-    content: "Highlight DOM targets with data-tour attributes. For Chessground, spotlight the board wrapper—not individual squares.",
+    content:
+      "Highlight DOM targets with data-tour attributes. For Chessground, spotlight the board wrapper—not individual squares.",
     placement: "right" as const,
   },
   {
@@ -85,8 +86,8 @@ export default function TestJoyridePage() {
       <div className="flex flex-col gap-2" data-tour="welcome">
         <h1 className="text-2xl font-bold">React Joyride v3</h1>
         <p className="text-muted-foreground max-w-2xl text-sm">
-          Test page at <code className="text-foreground">/test/joyride</code>. Mock layout mirrors the arrows
-          exercise (board + sidebar). Status: <span className="text-foreground font-medium">{state.status}</span>
+          Test page at <code className="text-foreground">/test/joyride</code>. Mock layout mirrors the arrows exercise
+          (board + sidebar). Status: <span className="text-foreground font-medium">{state.status}</span>
           {state.index >= 0 ? ` · step ${state.index + 1} of ${state.size}` : null}
         </p>
       </div>
