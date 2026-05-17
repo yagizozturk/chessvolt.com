@@ -24,7 +24,7 @@ export function Hero() {
           </div>
         </div>
         <div className="mt-[-50px] flex-1">
-          <Image src="/images/hero/landing-page-1.png" alt="ChessVolt Dashboard Preview" width={600} height={503} />
+          <Image src="/images/hero/bg-landing-page.png" alt="ChessVolt Dashboard Preview" width={600} height={503} />
         </div>
       </div>
     </div>

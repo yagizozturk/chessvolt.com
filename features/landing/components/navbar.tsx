@@ -1,6 +1,6 @@
 "use client";
 
-import { LogIn, type LucideIcon, Menu, Zap } from "lucide-react";
+import { LogIn, type LucideIcon, Menu, UserPlus, Zap } from "lucide-react";
 import Link from "next/link";
 import { Fragment, useState } from "react";
 
@@ -18,6 +18,7 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/login", label: "Sign in", icon: LogIn, iconPosition: "left" },
+  { href: "/signup", label: "Sign up", icon: UserPlus, iconPosition: "left" },
   { href: "/challenge", label: "Start Playing", isCta: true },
 ];
 
@@ -61,11 +62,14 @@ function DesktopNavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () =
   }
 
   return (
-    <Button variant="ghost" size="sm" asChild>
-      <Link href={item.href} className="flex items-center gap-2" onClick={onNavigate}>
-        {content}
-      </Link>
-    </Button>
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      className="hover:text-primary text-foreground/80 flex items-center gap-2 p-2 text-sm font-medium transition-colors"
+    >
+      {Icon && <Icon className="h-5 w-5" />}
+      {item.label}
+    </Link>
   );
 }
 
