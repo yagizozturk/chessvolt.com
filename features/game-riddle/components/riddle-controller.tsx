@@ -122,7 +122,7 @@ export default function RiddleController({
             ref={boardRef}
             sourceId={riddle.id}
             initialFen={riddle.displayFen ?? undefined}
-            size={540}
+            size={580}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}

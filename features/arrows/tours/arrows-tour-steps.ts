@@ -1,6 +1,6 @@
 import type { Step } from "react-joyride";
 
-import { tourTargetSelector, TOUR_TARGETS } from "@/lib/shared/tour/data-tour";
+import { TOUR_TARGETS, tourTargetSelector } from "@/lib/shared/tour/data-tour";
 
 export const ARROWS_TOUR_STEPS: Step[] = [
   {
@@ -20,13 +20,15 @@ export const ARROWS_TOUR_STEPS: Step[] = [
   {
     target: tourTargetSelector(TOUR_TARGETS.instructions),
     title: "What to draw",
-    content: "Each card describes an arrow group. Complete every group to finish the exercise.",
+    content:
+      "Arrows on the board are grouped by color. Each card explains what one color group represents. Complete every color group to finish the exercise.",
     placement: "left",
   },
   {
     target: tourTargetSelector(TOUR_TARGETS.actionButton),
     title: "Start drawing",
-    content: "Press Start Game when you are ready. The reference arrows hide so you can draw your own.",
+    content:
+      "Press Start Game when you’re ready. The reference arrows will be hidden, so you can draw them on your own.",
     placement: "top",
   },
 ];

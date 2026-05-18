@@ -6,22 +6,23 @@ import { FeatureItem } from "@/features/landing/components/featute-item";
 
 const sharedFeatures = [
   {
-    title: "Replay Memorable Games",
-    description: "Replay famous chess games and find the masters' moves. Learn to think like grandmasters.",
+    title: "Play The Opening Crusher",
+    description:
+      "Master openings by solving key positions again and again, while learning the reason behind every move.",
     icon: BookOpenText,
     imageSrc: "/images/cards/bg-opening-crusher-game.png",
     imageAlt: "Replay memorable chess games",
   },
   {
-    title: "Structured Challenges",
-    description: "Work through puzzles by game type and theme. Pick up where you left off.",
+    title: "Solve Riddles From Real Games",
+    description: "Play through key moments from real chess games and discover the idea behind the winning move.",
     icon: Swords,
     imageSrc: "/images/cards/bg-masters-game.png",
     imageAlt: "Structured chess challenges",
   },
   {
-    title: "Opening Position Drawer",
-    description: "Deepen your game knowledge with built-in move explanations in every game.",
+    title: "Play The Arrows Game",
+    description: "Learn opening plans by drawing arrows that reveal where your pieces should go and why.",
     icon: ArrowsUpFromLine,
     imageSrc: "/images/cards/bg-arrows-game.png",
     imageAlt: "Move explanations while you play",

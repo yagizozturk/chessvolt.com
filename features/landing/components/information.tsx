@@ -17,8 +17,8 @@ type InformationProps = {
  */
 export function Information({
   step = "Volt Coaching ",
-  title = "Master Your Game with Volt Coaching",
-  description = "Get expert guidance and personalized feedback to take your chess skills to the next level. Whether you're a beginner or an experienced player, our coaches are here to help you improve your game.",
+  title = "Master Your Game with Volt",
+  description = "Train with Volt, a smart chess companion that explains moves, guides your decisions, and helps you improve one idea at a time. From openings to critical positions, it turns every lesson into a clear step toward better chess.",
   imageSrc = "/images/hero/bg-volt-confetti.png",
   imageAlt = "Volt Ninja",
 }: InformationProps) {
