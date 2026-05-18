@@ -44,7 +44,7 @@ export function ChallengeDataList({ riddles, gameMap, attemptByRiddleId }: Chall
               riddle={riddle}
               game={game}
               num={num}
-              size={170}
+              size={240}
               displayFen={riddle.displayFen}
               isComplete={attemptByRiddleId[riddle.id]}
             />

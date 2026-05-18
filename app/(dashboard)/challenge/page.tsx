@@ -52,7 +52,7 @@ export default async function ChallengePage() {
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 pt-6 pb-16">
+    <div className="container mx-auto max-w-6xl px-4 pt-6 pb-16">
       <div className="space-y-6">
         {groupGameTypes.map((gameType) => {
           const riddles = riddleGameTypeGroups[gameType] ?? [];

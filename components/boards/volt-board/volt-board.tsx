@@ -230,7 +230,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   return (
     <>
       {/* <div className="board-wrapper"> In order to make board responsive */}
-      <div ref={boardRef} className="cardinal green" style={{ width: size, height: size }} />
+      <div ref={boardRef} className="cardinal purple" style={{ width: size, height: size }} />
       {/* </div> */}
     </>
   );

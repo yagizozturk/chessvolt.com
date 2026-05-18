@@ -50,5 +50,5 @@ export default function DisplayBoard({
     updateBoard();
   }, [initialFen, playerOrientation, updateBoard]);
 
-  return <div ref={boardRef} className="cardinal green" style={{ width: size, height: size }} />;
+  return <div ref={boardRef} className="cardinal purple" style={{ width: size, height: size }} />;
 }

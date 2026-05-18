@@ -9,6 +9,10 @@
   background-image: url("../images/board/marble.jpg");
 }
 
+.purple cg-board {
+  background-image: url("../images/board/purple.png");
+}
+
 .turq cg-board {
   background-image: url("../images/board/turq.jpg");
 }

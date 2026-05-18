@@ -22,7 +22,7 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
     : await getOpeningsWithVariantCount(supabase);
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 pt-6 pb-16">
+    <div className="container mx-auto max-w-6xl px-4 pt-6 pb-16">
       <div className="flex flex-col gap-4">
         <div className="flex gap-2 rounded-lg bg-[#723FDE]">
           <div className="min-w-0 flex-1 space-y-2 p-4">
@@ -74,7 +74,7 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
                 name={opening.name}
                 description={opening.description}
                 variantCount={opening.variantCount}
-                size={160}
+                size={240}
                 href={`/openings/${opening.slug}/${opening.id}`}
                 fen={opening.displayFen}
               />
