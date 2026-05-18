@@ -3,7 +3,7 @@
 import { RIDDLE_TOUR_STEPS } from "@/features/game-riddle/tours/riddle-tour-steps";
 import { useProductTour } from "@/lib/shared/hooks/tour/use-product-tour";
 
-const RIDDLE_TOUR_ID = "game-riddle";
+const RIDDLE_TOUR_ID = "main-game";
 
 type UseRiddleTourParams = {
   riddleId: string;

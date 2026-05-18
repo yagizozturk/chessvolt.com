@@ -3,7 +3,7 @@
 import { OPENING_VARIANT_TOUR_STEPS } from "@/features/openings/tours/opening-variant-tour-steps";
 import { useProductTour } from "@/lib/shared/hooks/tour/use-product-tour";
 
-const OPENING_VARIANT_TOUR_ID = "opening-variant";
+const OPENING_VARIANT_TOUR_ID = "main-game";
 
 type UseOpeningVariantTourParams = {
   variantId: string;

@@ -1,12 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { EVENTS, STATUS, useJoyride, type Props, type Step } from "react-joyride";
+import { EVENTS, type Props, STATUS, type Step, useJoyride } from "react-joyride";
 
-import {
-  DEFAULT_PRODUCT_TOUR_JOYRIDE,
-  getProductTourStorageKey,
-} from "@/lib/shared/hooks/tour/product-tour-config";
+import { DEFAULT_PRODUCT_TOUR_JOYRIDE, getProductTourStorageKey } from "@/lib/shared/hooks/tour/product-tour-config";
 
 type ProductTourJoyrideOverrides = Omit<Partial<Props>, "steps">;
 
@@ -18,13 +15,7 @@ export type UseProductTourParams = {
   joyrideOverrides?: ProductTourJoyrideOverrides;
 };
 
-export function useProductTour({
-  tourId,
-  steps,
-  scopeId,
-  autoStart = true,
-  joyrideOverrides,
-}: UseProductTourParams) {
+export function useProductTour({ tourId, steps, scopeId, autoStart = true, joyrideOverrides }: UseProductTourParams) {
   const storageKey = getProductTourStorageKey(tourId);
   const isInitialScopeRef = useRef(true);
 
