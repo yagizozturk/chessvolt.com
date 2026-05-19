@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+
 import { openAi } from "@/lib/open-ai/open-ai";
 
 export const runtime = "edge"; // TODO: where is this used
@@ -6,11 +7,7 @@ export const runtime = "edge"; // TODO: where is this used
 export async function POST(req: NextRequest) {
   const { messages, prompt } = await req.json();
 
-  const validMessages = messages.filter(
-    (msg: any) => msg?.content != null && msg.content !== "",
-  );
-
-  console.log("prompt", prompt);
+  const validMessages = messages.filter((msg: any) => msg?.content != null && msg.content !== "");
 
   const stream = await openAi.chat.completions.create({
     model: "gpt-4.1",

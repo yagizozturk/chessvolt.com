@@ -1,5 +1,3 @@
-import { PartyPopper } from "lucide-react";
-
 import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import { ChallengeHeader } from "@/features/challenge/components/challenge-header";
 import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
@@ -59,9 +57,6 @@ export default async function ChallengePage() {
           const displayName = formatGameType(gameType);
           const gameTypeConstants = getGameTypeConstants(gameType);
           const stats = getGroupStats(riddles, attemptByRiddleId);
-          {
-            /** TODO: refactor */
-          }
 
           return (
             <div className="flex flex-col gap-4" key={gameType}>

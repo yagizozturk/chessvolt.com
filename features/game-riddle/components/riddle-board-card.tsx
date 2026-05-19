@@ -68,15 +68,15 @@ export function RiddleBoardCard({ riddle, game, num, size = 200, isComplete, hre
             <Calendar className="text-primary h-3.5 w-3.5" />
             {formatDate(game.playedAt)}
           </span>
-          {moveCount > 0 && (
-            <span className="flex items-center gap-1.5">
-              <Puzzle className="text-primary h-3.5 w-3.5" />
-              <span>
-                {moveCount} {moveCount === 1 ? "move" : "moves"}
-              </span>
-            </span>
-          )}
         </div>
+        {moveCount > 0 && (
+          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
+            <Puzzle className="text-primary h-3.5 w-3.5" />
+            <span>
+              {moveCount} {moveCount === 1 ? "move" : "moves"}
+            </span>
+          </div>
+        )}
 
         <div className="mt-auto flex items-center justify-end gap-3">
           <Button variant="voltCompact" size="xs">
