@@ -57,7 +57,7 @@ export function RiddleDetail({ riddle, game }: Props) {
             <Button
               variant="destructive"
               onClick={async () => {
-                if (!confirm("This game riddle will be deleted. Are you sure?"))
+                if (!confirm("This riddle will be deleted. Are you sure?"))
                   return;
                 await deleteRiddleAction(riddle.id);
               }}

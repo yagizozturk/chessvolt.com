@@ -39,8 +39,8 @@ export default async function AdminRiddleNewPage({ searchParams }: Props) {
 
       <Card>
         <CardHeader>
-          <CardTitle>New Game Riddle</CardTitle>
-          <CardDescription>Add a new game riddle</CardDescription>
+          <CardTitle>New Riddle</CardTitle>
+          <CardDescription>Add a new riddle</CardDescription>
         </CardHeader>
         <CardContent>
           <RiddleForm games={games} />

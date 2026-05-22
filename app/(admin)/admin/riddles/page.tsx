@@ -30,9 +30,9 @@ export default async function AdminRiddlesPage({ searchParams }: Props) {
       <AdminFormErrorAlert message={errorMessage} />
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Game Riddles</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Riddles</h1>
           <p className="text-muted-foreground">
-            {riddles.length} game riddle(s) listed
+            {riddles.length} riddle(s) listed
           </p>
         </div>
         <Button asChild>

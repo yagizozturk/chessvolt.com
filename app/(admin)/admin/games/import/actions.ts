@@ -54,7 +54,7 @@ export async function importPgnAction(formData: FormData) {
     if (game) {
       inserted.push(game.id);
 
-      // Default game_riddle at ply 0: title from ChapterName (description)
+      // Default riddle at ply 0: title from ChapterName (description)
       const movesAtPly0 = getUciMovesFromPgnAfterPlyAtMoveCount(
         parsed.pgn,
         0,

@@ -14,14 +14,14 @@ export function RiddlesList({ riddles }: Props) {
   async function handleDelete(e: React.MouseEvent, id: string) {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("This game riddle will be deleted. Are you sure?")) return;
+    if (!confirm("This riddle will be deleted. Are you sure?")) return;
     await deleteRiddleAction(id);
   }
 
   if (riddles.length === 0) {
     return (
       <p className="text-muted-foreground py-8 text-center">
-        No game riddles yet.
+        No riddles yet.
       </p>
     );
   }
