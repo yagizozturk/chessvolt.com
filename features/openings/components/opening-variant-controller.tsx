@@ -11,15 +11,18 @@ import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
-import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
+import {
+  buildAttemptCounters,
+  bumpCorrectStreak,
+} from "@/features/user-sequence-attempt/utilities/sequence-play-attempt-counters";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
-
-import type { OpeningVariant } from "../types/opening-variant";
-import { OpeningVariantGoalViewer } from "./opening-variant-goal-viewer/opening-variant-goal-viewer";
 
 type OpeningVariantControllerProps = {
   variant: OpeningVariant;
@@ -32,12 +35,17 @@ export default function OpeningVariantController({
   nextVariantId,
   parentOpeningUrl,
 }: OpeningVariantControllerProps) {
+  const sequenceId = variant.moveSequence.id;
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const { updateOpeningVariantAnswerHook } = useUpdateOpeningVariantAnswer();
+  const { updateAttemptStatus, recordEvent } = useSequenceAttempt(sequenceId);
   const { playLevelUpSound } = useBoardSounds();
+  const wrongMoveCountRef = useRef(0);
+  const totalHintCountRef = useRef(0);
+  const currentCorrectStreakRef = useRef(0);
+  const maxCorrectStreakRef = useRef(0);
   const {
     handleMoveCheck,
     handleSuccessMovePlayed,
@@ -55,45 +63,74 @@ export default function OpeningVariantController({
   });
   const { Tour } = useOpeningVariantTour({ variantId: variant.id });
 
-  // ============================================================================
-  // Variant değiştiğinde local ekran state'i sıfırlanır:
-  // - varyantın tamamnlandımı bilgisi resetlenir
-  // ============================================================================
   useEffect(() => {
     setIsCompleted(false);
     setSuccessDialogOpen(false);
+    wrongMoveCountRef.current = 0;
+    totalHintCountRef.current = 0;
+    currentCorrectStreakRef.current = 0;
+    maxCorrectStreakRef.current = 0;
   }, [variant.id]);
 
-  // ============================================================================
-  // isCompleted değiştiğinde ya da hamle değiştiğinde tamamlandı işaretliyoruz
-  // ============================================================================
   useEffect(() => {
     if (currentCorrectMove != null || isCompleted) return;
 
     setIsCompleted(true);
     setSuccessDialogOpen(true);
     playLevelUpSound();
-    void updateOpeningVariantAnswerHook(variant.id, true);
-  }, [isCompleted, currentCorrectMove, playLevelUpSound, updateOpeningVariantAnswerHook, variant.id]);
 
-  // ============================================================================
-  // handle metotları controller a aittir, _değişkenler hook a aittir.
-  // Oyuncu hamle denemesi yapınca önce onay verir/reddeder.
-  // ============================================================================
+    void (async () => {
+      await recordEvent({ eventType: "complete" });
+      await updateAttemptStatus(
+        "completed",
+        buildAttemptCounters(
+          sortedGoals,
+          wrongMoveCountRef.current,
+          totalHintCountRef.current,
+          maxCorrectStreakRef.current,
+        ),
+      );
+    })();
+  }, [currentCorrectMove, isCompleted, playLevelUpSound, recordEvent, sortedGoals, updateAttemptStatus]);
+
   function handleBoardCheckMove(move: MoveAttemptPayload) {
     const { isCorrect } = handleMoveCheck(move);
+
     if (!isCorrect && !isCompleted) {
-      // void, burada metodu çağırmak için değil, dönen Promise’i bilinçli olarak “await etmiyorum” demek için
-      void updateOpeningVariantAnswerHook(variant.id, false);
+      wrongMoveCountRef.current += 1;
+      currentCorrectStreakRef.current = 0;
+
+      void (async () => {
+        await recordEvent({
+          eventType: "move",
+          moveUci: move.uci,
+          expectedUci: currentCorrectMove ?? undefined,
+          isCorrect: false,
+        });
+        await updateAttemptStatus(
+          "failed",
+          buildAttemptCounters(
+            sortedGoals,
+            wrongMoveCountRef.current,
+            totalHintCountRef.current,
+            maxCorrectStreakRef.current,
+          ),
+        );
+      })();
+    } else if (isCorrect) {
+      bumpCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
+
+      void recordEvent({
+        eventType: "move",
+        moveUci: move.uci,
+        expectedUci: currentCorrectMove ?? undefined,
+        isCorrect: true,
+      });
     }
+
     return isCorrect;
   }
 
-  // ============================================================================
-  // After move played from the board, controller handleBoardMovePlayed is
-  // triggered that asks HOOK for nextMove information. nextMove is returned to
-  // volt-board to play the opponent move.
-  // ============================================================================
   function handleBoardSuccessMovePlayed(move: Move) {
     handleSuccessMovePlayed(move);
   }
@@ -103,21 +140,19 @@ export default function OpeningVariantController({
     return nextMove;
   }
 
-  // ============================================================================
-  // Hint politikası controller tarafında yönetilir:
-  // - Her step için en fazla 2 hint
-  // - Kaçıncı hint olduğu board'a parametre olarak gönderilir
-  // Hint değer hook da tutulur
-  // ============================================================================
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
     if (nextHintCount == null || !currentCorrectMove) return;
     boardRef.current?.showHint(nextHintCount);
+    totalHintCountRef.current += 1;
+
+    void recordEvent({
+      eventType: "hint",
+      hintLevel: nextHintCount as 1 | 2,
+      expectedUci: currentCorrectMove,
+    });
   };
 
-  // ============================================================================
-  // Next variant veya opening sayfasına yönlendirir. Variant bitince gözükür
-  // ============================================================================
   const successDestinationPath = nextVariantId ? `/openings/variant/${nextVariantId}` : parentOpeningUrl;
   const successButtonLabel = nextVariantId ? "Next variant" : "Back to opening";
 
@@ -146,6 +181,7 @@ export default function OpeningVariantController({
           <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
+            initialFen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}
             size={580}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
@@ -153,7 +189,6 @@ export default function OpeningVariantController({
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
         </div>
-        {/* min-w-0: allows the right panel to shrink within the flex row */}
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
           <div className="flex items-center justify-center">
             <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>

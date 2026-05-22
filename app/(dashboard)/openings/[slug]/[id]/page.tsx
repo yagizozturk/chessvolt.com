@@ -1,65 +1,41 @@
 import type { DrawShape } from "@lichess-org/chessground/draw";
-import { PartyPopper } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { ArrowsBoardCard } from "@/features/arrows/components/arrows-board-card/arrows-board-card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
-import OpeningMainSidebar from "@/features/openings/components/opening-main-sidebar/opening-main-sidebar";
 import {
-  getCorrectlySolvedVariantIds,
   getOpeningById,
-  getOpeningVariantAttemptsForVariants,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
 import { flattenOpeningArrowGroups } from "@/features/openings/types/opening";
+import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
+import { buildAttemptByVariantId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-variant-id";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
   params: Promise<{ slug: string; id: string }>;
 };
 
-/**
- * Fonksyon Bilgisi ✅
- * 1. İlgili opening id ye göre çekilir
- * 2. İlgili opening'ın tüm variantları çekilir
- * 3. Oyunucunun bu variantlarda daha önce deneyip denemediği, doğru yanlış bilgisi çekilir
- * 4. İstatistikler çekilen verilere göre hesaplanır
- */
 export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const { slug, id } = await params;
   const { user, supabase } = await getPublicUser();
 
-  // ========================================================================
-  // 1. İlgili opening id ye göre çekilir
-  // ========================================================================
   const opening = await getOpeningById(supabase, id);
   if (!opening) {
     notFound();
   }
 
-  // ========================================================================
-  // 2. İlgili opening'ın tüm variantları çekilir
-  // ========================================================================
   const variants = await getOpeningVariantsByOpeningId(supabase, opening.id);
-  const variantIds = variants.map((v) => v.id);
 
-  // ========================================================================
-  // 3. Auth user için doğru/yanlış bilgisi (sadece giriş yapmışsa)
-  // Eğer giriş yapmamışsa solvedVariantIds ve attempts boş array/set olacak.
-  // ========================================================================
-  const [solvedVariantIds, attempts] = user
-    ? await Promise.all([
-        getCorrectlySolvedVariantIds(supabase, user.id, variantIds),
-        getOpeningVariantAttemptsForVariants(supabase, user.id, variantIds),
-      ])
-    : [new Set<string>(), []];
+  const sequenceIds = [...new Set(variants.map((v) => v.moveSequence.id))];
+  const summaries = user
+    ? await attemptService.getLatestSummariesForSequences(supabase, user.id, sequenceIds)
+    : [];
+  const attemptByVariantId = buildAttemptByVariantId(variants, summaries);
 
-  // ========================================================================
-  // 4. İstatistikler
-  // ========================================================================
   const total = variants.length;
-  const correct = attempts.filter((a) => a.isCorrect).length;
+  const correct = Object.values(attemptByVariantId).filter((v) => v === true).length;
   const solveRate = total > 0 ? Math.round((correct / total) * 100) : 0;
   const boardArrows = (opening.arrows ? flattenOpeningArrowGroups(opening.arrows) : []) as DrawShape[];
 
@@ -97,15 +73,11 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 size={240}
                 href={`/openings/variant/${variant.id}`}
                 fen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}
-                isComplete={solvedVariantIds.has(variant.id) ? true : undefined}
+                isComplete={attemptByVariantId[variant.id]}
                 description={variant.description}
               />
             );
           })}
-          {/* <div className="space-y-4">
-          <OpeningMainSidebar title={opening.name} subPlayCount={total} />
-          <ProgressStatsCard percentage={solveRate} label="Solved Variants" icon={PartyPopper} className="w-full" />
-        </div> */}
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { Notifier } from "@/components/notifier/notifier";
@@ -11,11 +11,14 @@ import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { useRiddleTour } from "@/features/game-riddle/hooks/use-riddle-tour";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
+import {
+  buildAttemptCounters,
+  bumpCorrectStreak,
+} from "@/features/user-sequence-attempt/utilities/sequence-play-attempt-counters";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -26,29 +29,6 @@ type RiddleControllerProps = {
   nextRiddleId?: string | null;
   parentChallengeUrl?: string;
 };
-
-function buildAttemptCounters(
-  sortedGoals: MoveGoal[],
-  wrongMoveCount: number,
-  hintCount: number,
-  maxCorrectStreak: number,
-) {
-  const correctMoveCount = sortedGoals.filter((goal) => goal.isCompleted).length;
-
-  return {
-    correctMoveCount,
-    wrongMoveCount,
-    hintCount,
-    maxCorrectStreak,
-  };
-}
-
-function bumpCorrectStreak(currentStreakRef: RefObject<number>, maxStreakRef: RefObject<number>) {
-  currentStreakRef.current += 1;
-  if (currentStreakRef.current > maxStreakRef.current) {
-    maxStreakRef.current = currentStreakRef.current;
-  }
-}
 
 export default function RiddleController({
   riddle,
