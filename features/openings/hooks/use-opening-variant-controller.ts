@@ -5,7 +5,8 @@ import { useEffect, useMemo, useState } from "react";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
-import type { MoveGoal, OpeningVariant } from "../types/opening-variant";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { OpeningVariant } from "../types/opening-variant";
 
 type UseOpeningVariantControllerParams = {
   variant: OpeningVariant;

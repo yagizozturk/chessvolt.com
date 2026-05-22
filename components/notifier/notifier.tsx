@@ -4,7 +4,7 @@ import Lottie from "lottie-react";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
-import type { MoveGoal } from "@/features/openings/types/opening-variant";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { useAchievementSound } from "@/lib/shared/hooks/sound/use-achievement-sound";
 import coinAnimationData from "@/public/images/animations/animation-coin.json";
 

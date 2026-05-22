@@ -1,4 +1,4 @@
-import type { MoveGoal } from "@/features/openings/types/opening-variant";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 
 export type MoveSequence = {
   id: string;

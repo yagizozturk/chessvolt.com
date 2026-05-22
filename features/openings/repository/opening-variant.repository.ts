@@ -5,7 +5,8 @@
  */
 import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
-import type { MoveGoal, OpeningIdeas, OpeningVariant } from "@/features/openings/types/opening-variant";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { OpeningIdeas, OpeningVariant } from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function findAll(supabase: SupabaseClient): Promise<OpeningVariant[]> {

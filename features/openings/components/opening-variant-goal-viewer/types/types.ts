@@ -1,4 +1,4 @@
-import type { MoveGoal } from "../../../types/opening-variant";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 
 type GoalsProps = {
   goals: MoveGoal[];

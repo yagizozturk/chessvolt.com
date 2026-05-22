@@ -1,15 +1,6 @@
 import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
 
-export type MoveGoal = {
-  ply: number;
-  move: string;
-  card?: string;
-  title: string;
-  description: string;
-  isCompleted: boolean;
-  imageSrc?: string;
-  imageAlt?: string;
-};
+export type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 
 // TODO: _ case lerini düzelt
 export type OpeningIdeas = {

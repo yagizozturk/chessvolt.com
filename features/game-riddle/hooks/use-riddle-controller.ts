@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
-import type { MoveGoal } from "@/features/openings/types/opening-variant";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 
 type UseRiddleControllerParams = {
   sourceId: string;
