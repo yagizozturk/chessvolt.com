@@ -11,8 +11,8 @@ import type { Game } from "@/features/game/types/game";
 type ChallengeDataListProps = {
   riddles: GameRiddle[];
   gameMap: Record<string, Game>;
-  /** riddleId => isCorrect. Undefined = not attempted. */
-  attemptByRiddleId: Record<string, boolean>;
+  /** riddleId => solved (true), failed (false), or not attempted (undefined). */
+  attemptByRiddleId: Record<string, boolean | undefined>;
 };
 
 const INITIAL_COUNT = 4;

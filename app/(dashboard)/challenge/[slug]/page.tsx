@@ -1,7 +1,8 @@
 import { ChallengeHeader } from "@/features/challenge/components/challenge-header";
 import { RiddleBoardCard } from "@/features/game-riddle/components/riddle-board-card";
-import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle.service";
+import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
+import { buildAttemptByRiddleId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-riddle-id";
 import { formatGameType, getGameTypeConstants } from "@/features/game-riddle/utilities/game-type-helpers";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
@@ -13,8 +14,8 @@ type Params = {
 /**
  * Fonksyon Bilgisi ✅
  * 1. İlgili gameType'da(memorable games örn.) bütün riddle lar çekilir
- * 2. Oyunucunun bu riddle larda daha önce deneyip denemediği, doğru yanlış bilgisi çekilir. User auth değilse [] döner.
- * 3. fromEntries riddleId, isCorrect bilgisi ile birleştirilir ve yeni objeye çevrilir.
+ * 2. Oyuncunun move sequence attempt özetleri çekilir (auth yoksa []).
+ * 3. Riddle id → solved/wrong/undefined haritası oluşturulur.
  * 4. gameId ler bilindiğinden bu sefer Game bilgisinin tamamı çekilir Id ler aratılarak.
  * 5. Id ler ile game birleştirilip (fromEntries ile) listelenecek gameMap değeri çıkar
  * 6. İstatistikler çekilen verilere göre hesaplanır
@@ -28,15 +29,13 @@ export default async function ChallengePage({ params }: Params) {
   // ========================================================================
   // (1,2) Getting riddles and attempts for this game type
   // ========================================================================
-  const [gameRiddles, attemptedRiddles] = await Promise.all([
-    getGameRiddlesByGameType(supabase, gameType, { activeOnly: true }),
-    user ? userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id) : [],
-  ]);
+  const gameRiddles = await getGameRiddlesByGameType(supabase, gameType, { activeOnly: true });
 
-  // ========================================================================
-  // (3) Mapping. FromEntries example return: { "riddle-101": true }
-  // ========================================================================
-  const attemptByRiddleId = Object.fromEntries(attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]));
+  const sequenceIds = [...new Set(gameRiddles.map((r) => r.moveSequence.id))];
+  const summaries = user
+    ? await attemptService.getLatestSummariesForSequences(supabase, user.id, sequenceIds)
+    : [];
+  const attemptByRiddleId = buildAttemptByRiddleId(gameRiddles, summaries);
 
   // ========================================================================
   // (4, 5) Fetch games for riddles (unique gameIds) - single query

@@ -1,7 +1,8 @@
 import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import { ChallengeHeader } from "@/features/challenge/components/challenge-header";
-import * as userGameRiddleRepo from "@/features/game-riddle/repository/user-game-riddle.repository";
 import { getActiveGameRiddles } from "@/features/game-riddle/services/game-riddle.service";
+import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
+import { buildAttemptByRiddleId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-riddle-id";
 import { formatGameType, getGameTypeConstants } from "@/features/game-riddle/utilities/game-type-helpers";
 import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
 import { getGamesByIds } from "@/features/game/services/game.service";
@@ -12,8 +13,8 @@ import { groupBy } from "@/lib/utils/groupBy";
  * Fonksyon Bilgisi ✅
  * 1. Kullanıcı bilgileri alınır
  * 2. Tüm oyunlarıdaki tüm Riddle lar çekilir
- * 3. Oyunucunun çözülmeye çalıştığı game riddle ların attempt bilgisi çekilir
- * 4. fromEntries riddleId, isCorrect bilgisi ile birleştirilir ve yeni objeye çevrilir.
+ * 3. Oyuncunun move sequence attempt özetleri çekilir
+ * 4. Riddle id → solved/wrong/undefined haritası oluşturulur
  * Gets user, gets allRiddles, gets user attempted Riddles. Filters in allRiddles. Group them by gameType
  * Full PGN string
  *
@@ -23,15 +24,13 @@ export default async function ChallengePage() {
   // (1,2,3) Getting riddles and attempts for games
   // ========================================================================
   const { user, supabase } = await getPublicUser();
-  const [allRiddles, attemptedRiddles] = await Promise.all([
-    getActiveGameRiddles(supabase),
-    user ? userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id) : [],
-  ]);
+  const allRiddles = await getActiveGameRiddles(supabase);
 
-  // ========================================================================
-  // 4. Mapping. FromEntries example return: { "riddle-101": true }
-  // ========================================================================
-  const attemptByRiddleId = Object.fromEntries(attemptedRiddles.map((a) => [a.gameRiddleId, a.isCorrect]));
+  const sequenceIds = [...new Set(allRiddles.map((r) => r.moveSequence.id))];
+  const summaries = user
+    ? await attemptService.getLatestSummariesForSequences(supabase, user.id, sequenceIds)
+    : [];
+  const attemptByRiddleId = buildAttemptByRiddleId(allRiddles, summaries);
 
   // ========================================================================
   // 5. Grouping data by gameType in riddles. (gameType is required; filter legacy nulls)

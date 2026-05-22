@@ -10,23 +10,25 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
-import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-import { useRiddleTour } from "@/features/game-riddle/hooks/use-riddle-tour";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
-import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
+import type { MoveGoal } from "@/features/openings/types/opening-variant";
+import { useRiddleAttempt } from "@/features/riddle/hooks/use-riddle-attempt";
+import { useRiddleController } from "@/features/riddle/hooks/use-riddle-controller";
+import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
+import { getRiddlePlayable } from "@/lib/shared/utilities/move-sequence-playable";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
 type RiddleControllerProps = {
-  riddle: GameRiddle;
+  riddle: Riddle;
   nextRiddleId?: string | null;
   parentChallengeUrl?: string;
 };
 
+/** Derives attempt stats (correct moves, wrong moves, hints, streak) from completed goals. */
 function buildAttemptCounters(sortedGoals: MoveGoal[], wrongMoveCount: number, hintCount: number) {
   const correctMoveCount = sortedGoals.filter((goal) => goal.isCompleted).length;
 
@@ -38,17 +40,18 @@ function buildAttemptCounters(sortedGoals: MoveGoal[], wrongMoveCount: number, h
   };
 }
 
+/** Main riddle play UI: board, progress, hints, and completion flow. */
 export default function RiddleController({
   riddle,
   nextRiddleId = null,
   parentChallengeUrl = "/",
 }: RiddleControllerProps) {
-  const sequenceId = riddle.moveSequence.id;
+  const playable = getRiddlePlayable(riddle);
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const { updateAttemptStatus, recordEvent } = useSequenceAttempt(sequenceId);
+  const { updateAttemptStatus, recordEvent } = useRiddleAttempt(riddle.id);
   const { playLevelUpSound } = useBoardSounds();
   const wrongMoveCountRef = useRef(0);
   const totalHintCountRef = useRef(0);
@@ -61,11 +64,7 @@ export default function RiddleController({
     hintCount,
     hintRequested,
     currentCorrectMove,
-  } = useMoveSequenceController({
-    sourceId: riddle.id,
-    moves: riddle.moveSequence.moves,
-    goals: riddle.moveSequence.goals,
-  });
+  } = useRiddleController({ riddle });
   const { Tour } = useRiddleTour({ riddleId: riddle.id });
 
   useEffect(() => {
@@ -83,7 +82,7 @@ export default function RiddleController({
     playLevelUpSound();
 
     void (async () => {
-      await recordEvent({ eventType: "attempt_completed" });
+      await recordEvent({ eventType: "complete" });
       await updateAttemptStatus(
         "completed",
         buildAttemptCounters(sortedGoals, wrongMoveCountRef.current, totalHintCountRef.current),
@@ -91,6 +90,7 @@ export default function RiddleController({
     })();
   }, [currentCorrectMove, isCompleted, playLevelUpSound, recordEvent, sortedGoals, updateAttemptStatus]);
 
+  /** Validates a board move, records attempt events, and tracks wrong-move count. */
   function handleBoardCheckMove(move: MoveAttemptPayload) {
     const { isCorrect } = handleMoveCheck(move);
 
@@ -99,7 +99,7 @@ export default function RiddleController({
 
       void (async () => {
         await recordEvent({
-          eventType: "move_played",
+          eventType: "move",
           moveUci: move.uci,
           expectedUci: currentCorrectMove ?? undefined,
           isCorrect: false,
@@ -111,7 +111,7 @@ export default function RiddleController({
       })();
     } else if (isCorrect) {
       void recordEvent({
-        eventType: "move_played",
+        eventType: "move",
         moveUci: move.uci,
         expectedUci: currentCorrectMove ?? undefined,
         isCorrect: true,
@@ -121,15 +121,18 @@ export default function RiddleController({
     return isCorrect;
   }
 
+  /** Forwards a successfully played move to the riddle controller hook. */
   function handleBoardSuccessMovePlayed(move: Move) {
     handleSuccessMovePlayed(move);
   }
 
+  /** Returns the next move the board should play after a correct user move. */
   function handleBoardNextMoveRequest() {
     const nextMove = handleNextMoveRequest();
     return nextMove;
   }
 
+  /** Shows the next hint on the board and persists the hint event. */
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
     if (nextHintCount == null || !currentCorrectMove) return;
@@ -137,15 +140,16 @@ export default function RiddleController({
     totalHintCountRef.current += 1;
 
     void recordEvent({
-      eventType: "hint_used",
+      eventType: "hint",
       hintLevel: nextHintCount as 1 | 2,
       expectedUci: currentCorrectMove,
     });
   };
 
-  const successDestinationPath = nextRiddleId ? `/game-riddle/${nextRiddleId}` : parentChallengeUrl;
+  const successDestinationPath = nextRiddleId ? `/riddle/${nextRiddleId}` : parentChallengeUrl;
   const successButtonLabel = nextRiddleId ? "Next riddle" : "Back to challenge";
 
+  /** Navigates to the next riddle or back to the parent challenge after success. */
   const handleContinueClick = () => {
     router.push(successDestinationPath);
   };
@@ -172,8 +176,8 @@ export default function RiddleController({
         <div key={riddle.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0" data-tour="board">
           <VoltBoard
             ref={boardRef}
-            sourceId={riddle.id}
-            initialFen={riddle.moveSequence.displayFen ?? riddle.moveSequence.initialFen}
+            sourceId={playable.sourceId}
+            initialFen={playable.fen}
             size={580}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
