@@ -15,6 +15,7 @@ import {
 } from "@/features/openings/services/openings.service";
 import type { MoveGoal } from "@/features/openings/types/opening-variant";
 import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
+import { parseGoalsFromForm } from "@/lib/admin/parse-goals-from-form";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { getAdminUser } from "@/lib/supabase/auth";
@@ -30,21 +31,6 @@ type BulkVariantInput = {
   description?: string | null;
   goals?: unknown;
 };
-
-function parseGoalsFromForm(formData: FormData, errorRedirect: string): MoveGoal[] | null {
-  const raw = formData.get("goals");
-  if (raw === null) return null;
-  const str = typeof raw === "string" ? raw.trim() : "";
-  if (str === "") return null;
-  try {
-    const parsed = JSON.parse(str) as unknown;
-    if (parsed === null) return null;
-    if (!isMoveGoalsArray(parsed)) redirect(errorRedirect);
-    return parsed;
-  } catch {
-    redirect(errorRedirect);
-  }
-}
 
 /** Empty or missing → 0 (initial ply default). */
 function parseAdminPly(formData: FormData, key: string): number {

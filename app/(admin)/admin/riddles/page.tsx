@@ -6,19 +6,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { AdminFormErrorAlert } from "@/features/admin/components/admin-form-error-alert";
 import { getAllRiddles } from "@/features/riddle/services/riddle.service";
+import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { ChevronRight, Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { RiddlesList } from "./riddles-list";
 
-export default async function AdminRiddlesPage() {
+type Props = {
+  searchParams: Promise<{ error?: string }>;
+};
+
+export default async function AdminRiddlesPage({ searchParams }: Props) {
   const { supabase } = await getAdminUser();
   const riddles = await getAllRiddles(supabase);
+  const { error } = await searchParams;
+  const errorMessage = getRiddleAdminErrorMessage(error);
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <AdminFormErrorAlert message={errorMessage} />
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Game Riddles</h1>

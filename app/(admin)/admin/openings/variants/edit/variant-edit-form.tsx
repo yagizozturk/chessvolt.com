@@ -1,187 +1,22 @@
 "use client";
 
-import { Chess } from "chess.js";
 import { Save } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { updateOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
-import VoltBoard from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { AdminPgnBoardPicker } from "@/features/admin/components/admin-pgn-board-picker";
+import { START_FEN, useUciRowsFromPgn } from "@/features/admin/hooks/use-uci-rows-from-pgn";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
-import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 
 type Props = {
   variant: OpeningVariant;
   onCancel: () => void;
 };
-
-const START_FEN = new Chess().fen();
-
-function applyUci(game: Chess, uci: string) {
-  const from = uci.slice(0, 2);
-  const to = uci.slice(2, 4);
-  const promotion = uci.length > 4 ? (uci[4] as "q" | "r" | "b" | "n") : undefined;
-  return game.move({
-    from,
-    to,
-    ...(promotion ? { promotion } : {}),
-  });
-}
-
-function useUciRowsFromPgn(pgn: string) {
-  return useMemo(() => {
-    const trimmed = pgn.trim();
-    if (!trimmed) {
-      return {
-        rows: [] as { num: number; white: string; black?: string }[],
-        error: null as string | null,
-        fensByPly: [START_FEN] as string[],
-        uciMoves: [] as string[],
-      };
-    }
-    try {
-      const game = new Chess();
-      game.loadPgn(trimmed, { strict: false });
-
-      const uciMovesRaw = getUciMovesArrayFromPgn(pgn);
-      if (!uciMovesRaw || uciMovesRaw.length === 0) {
-        return {
-          rows: [] as { num: number; white: string; black?: string }[],
-          error: null,
-          fensByPly: [game.fen()],
-          uciMoves: [] as string[],
-        };
-      }
-
-      const uciMoves = uciMovesRaw;
-      const rows: { num: number; white: string; black?: string }[] = [];
-      for (let i = 0; i < uciMoves.length; i += 2) {
-        rows.push({
-          num: Math.floor(i / 2) + 1,
-          white: uciMoves[i]!,
-          ...(uciMoves[i + 1] !== undefined ? { black: uciMoves[i + 1] } : {}),
-        });
-      }
-
-      const replay = new Chess();
-      const fensByPly: string[] = [replay.fen()];
-      for (const uci of uciMoves) {
-        applyUci(replay, uci);
-        fensByPly.push(replay.fen());
-      }
-
-      return { rows, error: null, fensByPly, uciMoves };
-    } catch (e) {
-      return {
-        rows: [] as { num: number; white: string; black?: string }[],
-        error: e instanceof Error ? e.message : "PGN okunamadı",
-        fensByPly: [START_FEN] as string[],
-        uciMoves: [] as string[],
-      };
-    }
-  }, [pgn]);
-}
-
-type BoardWithMovesProps = {
-  sourceId: string;
-  title: string;
-  boardFen: string;
-  rows: { num: number; white: string; black?: string }[];
-  error: string | null;
-  uciMoves: string[];
-  safePly: number;
-  maxPly: number;
-  setSelectedPly: (ply: number) => void;
-};
-
-function BoardWithMoves({
-  sourceId,
-  title,
-  boardFen,
-  rows,
-  error,
-  uciMoves,
-  safePly,
-  maxPly,
-  setSelectedPly,
-}: BoardWithMovesProps) {
-  return (
-    <section className="flex flex-col gap-4" aria-labelledby={`${sourceId}-heading`}>
-      <h2 id={`${sourceId}-heading`} className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-        {title}
-      </h2>
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <VoltBoard
-          key={`${sourceId}-${boardFen}`}
-          sourceId={sourceId}
-          initialFen={boardFen}
-          size={380}
-          viewOnly
-          onCheckMove={() => true}
-          onSuccessMovePlayed={() => {}}
-          onNextMoveRequest={() => undefined}
-        />
-        <div className="min-h-[200px] min-w-0 flex-1">
-          <p className="text-muted-foreground mb-2 text-sm font-medium">UCI hamleler</p>
-          {error && <p className="text-destructive mb-2 text-sm">{error}</p>}
-          {uciMoves.length > 0 && (
-            <button
-              type="button"
-              className="text-muted-foreground hover:text-foreground mb-2 text-xs underline"
-              onClick={() => setSelectedPly(0)}
-            >
-              Başlangıç pozisyonu
-            </button>
-          )}
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-2 font-mono text-sm leading-relaxed" role="list">
-            {rows.map((r) => {
-              const whiteIdx = (r.num - 1) * 2;
-              const blackIdx = (r.num - 1) * 2 + 1;
-              return (
-                <div key={r.num} role="listitem" className="flex shrink-0 flex-wrap items-baseline gap-1">
-                  <span className="text-muted-foreground w-6 shrink-0 text-right">{r.num}.</span>
-                  <button
-                    type="button"
-                    className={`hover:bg-muted rounded px-1.5 py-0.5 transition-colors ${
-                      safePly === whiteIdx + 1 ? "bg-primary/20 font-medium" : ""
-                    }`}
-                    onClick={() => setSelectedPly(whiteIdx + 1)}
-                  >
-                    {r.white}
-                  </button>
-                  {r.black !== undefined && (
-                    <button
-                      type="button"
-                      className={`hover:bg-muted rounded px-1.5 py-0.5 transition-colors ${
-                        safePly === blackIdx + 1 ? "bg-primary/20 font-medium" : ""
-                      }`}
-                      onClick={() => setSelectedPly(blackIdx + 1)}
-                    >
-                      {r.black}
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          {uciMoves.length > 0 && (
-            <button
-              type="button"
-              className="text-muted-foreground hover:text-foreground mt-3 text-xs underline"
-              onClick={() => setSelectedPly(maxPly)}
-            >
-              Son pozisyon
-            </button>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function defaultDisplayPlyString(v: OpeningVariant): string {
   const df = v.moveSequence.displayFen?.trim();
@@ -310,7 +145,7 @@ export function VariantEditForm({ variant, onCancel }: Props) {
         </div>
       </div>
       <div className="grid gap-10 xl:grid-cols-2">
-        <BoardWithMoves
+        <AdminPgnBoardPicker
           sourceId="edit-variant-initial"
           title="Sol — initial"
           boardFen={initialFen}
@@ -321,7 +156,7 @@ export function VariantEditForm({ variant, onCancel }: Props) {
           maxPly={maxPly}
           setSelectedPly={(ply) => setInitialPly(String(ply))}
         />
-        <BoardWithMoves
+        <AdminPgnBoardPicker
           sourceId="edit-variant-display"
           title="Sağ — display"
           boardFen={displayFen}

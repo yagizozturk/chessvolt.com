@@ -10,8 +10,7 @@ import {
   updateRiddle,
 } from "@/features/riddle/services/riddle.service";
 import * as gameRepo from "@/features/game/repository/game.repository";
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";
+import { parseGoalsFromForm } from "@/lib/admin/parse-goals-from-form";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { getAdminUser } from "@/lib/supabase/auth";
@@ -29,21 +28,6 @@ function parseThemesFromForm(formData: FormData): string[] {
 
 function parseIsActiveFromForm(formData: FormData): boolean {
   return formData.get("isActive") === "on";
-}
-
-function parseGoalsFromForm(formData: FormData, errorRedirect: string): MoveGoal[] | null {
-  const raw = formData.get("goals");
-  if (raw === null) return null;
-  const str = typeof raw === "string" ? raw.trim() : "";
-  if (str === "") return null;
-  try {
-    const parsed = JSON.parse(str) as unknown;
-    if (parsed === null) return null;
-    if (!isMoveGoalsArray(parsed)) redirect(errorRedirect);
-    return parsed;
-  } catch {
-    redirect(errorRedirect);
-  }
 }
 
 export async function createRiddleAction(formData: FormData) {

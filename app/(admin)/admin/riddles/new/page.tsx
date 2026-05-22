@@ -9,12 +9,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { AdminFormErrorAlert } from "@/features/admin/components/admin-form-error-alert";
+import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { ArrowLeft } from "lucide-react";
 import { RiddleForm } from "../riddle-form";
 
-export default async function AdminRiddleNewPage() {
+type Props = {
+  searchParams: Promise<{ error?: string }>;
+};
+
+export default async function AdminRiddleNewPage({ searchParams }: Props) {
   const { supabase } = await getAdminUser();
   const games = await gameRepo.findAll(supabase);
+  const { error } = await searchParams;
+  const errorMessage = getRiddleAdminErrorMessage(error);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -26,6 +34,8 @@ export default async function AdminRiddleNewPage() {
           </Link>
         </Button>
       </div>
+
+      <AdminFormErrorAlert message={errorMessage} />
 
       <Card>
         <CardHeader>
