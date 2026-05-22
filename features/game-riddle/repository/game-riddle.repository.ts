@@ -8,6 +8,7 @@ import * as moveSequenceService from "@/features/move-sequence/services/move-seq
 import { toGameRiddle } from "@/features/game-riddle/mapper/game-riddle.mapper";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import { DEFAULT_INITIAL_FEN } from "@/features/move-sequence/mapper/move-sequence.mapper";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function findAll(supabase: SupabaseClient): Promise<GameRiddle[]> {
@@ -77,6 +78,7 @@ export type CreateGameRiddleInput = {
   moves?: string | null;
   gameType?: string | null;
   displayFen?: string | null;
+  goals?: MoveGoal[] | null;
 };
 
 export async function create(
@@ -90,6 +92,7 @@ export async function create(
     initialFen: displayFen ?? DEFAULT_INITIAL_FEN,
     moves,
     displayFen,
+    goals: input.goals,
   });
   if (!moveSequence) return null;
 
@@ -118,6 +121,7 @@ export type UpdateGameRiddleInput = {
   moves?: string | null;
   gameType?: string | null;
   displayFen?: string | null;
+  goals?: MoveGoal[] | null;
 };
 
 export async function update(
@@ -129,7 +133,9 @@ export async function update(
   if (!existing) return null;
 
   const hasSequenceUpdate =
-    input.moves !== undefined || input.displayFen !== undefined;
+    input.moves !== undefined ||
+    input.displayFen !== undefined ||
+    input.goals !== undefined;
 
   if (hasSequenceUpdate) {
     const displayFen =
@@ -138,6 +144,7 @@ export async function update(
       moves: input.moves ?? undefined,
       displayFen: input.displayFen,
       initialFen: displayFen ?? undefined,
+      goals: input.goals,
     });
     if (!updated) return null;
   }

@@ -2,38 +2,20 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-
 type UseRiddleControllerParams = {
-  sourceId: string;
-  moves: string | null;
-  goals?: MoveGoal[] | null;
+  riddle: GameRiddle;
 };
 
-function buildFallbackGoals(moves: string[]): MoveGoal[] {
-  return moves
-    .map((move, index) => ({ move, index }))
-    .filter(({ index }) => index % 2 === 0)
-    .map(({ move, index }, goalIndex) => ({
-      ply: index + 1,
-      move,
-      title: `Find move ${goalIndex + 1}`,
-      description: "Play the best move for this position.",
-      isCompleted: false,
-    }));
-}
-
-export function useRiddleController({ sourceId, moves: rawMoves, goals }: UseRiddleControllerParams) {
-  const moves = useMemo(() => {
-    return (rawMoves ?? "")
-      .trim()
-      .split(/\s+/)
-      .filter((m) => m.length > 0);
-  }, [rawMoves]);
-
+export function useRiddleController({ riddle }: UseRiddleControllerParams) {
+  const moves = riddle.moveSequence.moves
+    .trim()
+    .split(/\s+/)
+    .filter((m) => m.length > 0);
   const [nextExpectedMoveIndex, setNextExpectedMoveIndex] = useState<number>(0);
   const [hintCount, setHintCount] = useState(0);
   const [goalsState, setGoalsState] = useState<MoveGoal[]>([]);
@@ -52,14 +34,11 @@ export function useRiddleController({ sourceId, moves: rawMoves, goals }: UseRid
     setHintCount(0);
     setNextExpectedMoveIndex(0);
     setGoalsState(
-      [...(goals ?? buildFallbackGoals(moves))]
+      [...(riddle.moveSequence.goals ?? [])]
         .sort((a, b) => a.ply - b.ply)
-        .map((goal) => ({
-          ...goal,
-          isCompleted: false,
-        })),
+        .map((goal) => ({ ...goal })),
     );
-  }, [sourceId, goals, moves]);
+  }, [riddle.id, riddle.moveSequence.goals]);
 
   function handleMoveCheck(playedMove: MoveAttemptPayload) {
     const expectedMove = moves[nextExpectedMoveIndex];

@@ -46,10 +46,7 @@ export default function RiddleController({
     hintCount,
     hintRequested,
     currentCorrectMove,
-  } = useRiddleController({
-    sourceId: riddle.id,
-    moves: riddle.moveSequence.moves,
-  });
+  } = useRiddleController({ riddle });
   const { Tour } = useRiddleTour({ riddleId: riddle.id });
 
   useEffect(() => {

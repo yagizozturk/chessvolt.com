@@ -128,6 +128,17 @@ export function GameRiddleForm({ games }: Props) {
           <FieldLabel>Game Type</FieldLabel>
           <Input name="gameType" required placeholder="e.g. legend_games" />
         </Field>
+        <Field>
+          <FieldLabel>Goals (JSON)</FieldLabel>
+          <textarea
+            name="goals"
+            rows={6}
+            placeholder='[{"ply":1,"move":"e2e4","title":"...","description":"...","isCompleted":false}]'
+            className={cn(
+              "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+            )}
+          />
+        </Field>
       </FieldGroup>
       <Button type="submit">Create</Button>
     </form>
