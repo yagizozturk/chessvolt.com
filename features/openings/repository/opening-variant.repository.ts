@@ -6,7 +6,7 @@
 import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-import type { OpeningIdeas, OpeningVariant } from "@/features/openings/types/opening-variant";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function findAll(supabase: SupabaseClient): Promise<OpeningVariant[]> {
@@ -90,7 +90,6 @@ export type CreateOpeningVariantInput = {
   initialFen?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
-  ideas?: OpeningIdeas | null;
 };
 
 export async function create(
@@ -115,7 +114,6 @@ export async function create(
       title: input.title ?? null,
       description: input.description ?? null,
       ply: input.ply,
-      ideas: input.ideas ?? null,
       move_sequence_id: moveSequence.id,
     })
     .select("*, move_sequences (*)")
@@ -140,7 +138,6 @@ export type UpdateOpeningVariantInput = {
   initialFen?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
-  ideas?: OpeningIdeas | null;
 };
 
 export async function update(
@@ -175,7 +172,6 @@ export async function update(
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description;
   if (input.ply !== undefined) updates.ply = input.ply;
-  if (input.ideas !== undefined) updates.ideas = input.ideas;
 
   if (Object.keys(updates).length > 0) {
     const { error } = await supabase.from("opening_variants").update(updates).eq("id", id);

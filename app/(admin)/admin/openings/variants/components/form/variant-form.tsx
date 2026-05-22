@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
+
 import { createOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { Opening } from "@/features/openings/types/opening";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
-import { useState } from "react";
 
 type Props = {
   openings: Opening[];
@@ -17,9 +18,7 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
   const [pgn, setPgn] = useState("");
   const [ply, setPly] = useState("0");
   const plyNum = parseInt(ply, 10) >= 0 ? parseInt(ply, 10) : 0;
-  const derivedMoves = pgn
-    ? (getUciMovesFromPgnAfterPly(pgn, plyNum) ?? "")
-    : "";
+  const derivedMoves = pgn ? (getUciMovesFromPgnAfterPly(pgn, plyNum) ?? "") : "";
 
   return (
     <form action={createOpeningVariantAction} className="space-y-4">
@@ -42,13 +41,7 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
         </Field>
         <Field>
           <FieldLabel>Sort Key</FieldLabel>
-          <Input
-            name="sortKey"
-            type="number"
-            required
-            placeholder="Sıra numarası (örn: 1, 2)"
-            className="font-mono"
-          />
+          <Input name="sortKey" type="number" required placeholder="Sıra numarası (örn: 1, 2)" className="font-mono" />
         </Field>
         <Field>
           <FieldLabel>Group</FieldLabel>
@@ -60,15 +53,10 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
         </Field>
         <Field>
           <FieldLabel>Description</FieldLabel>
-          <Input
-            name="description"
-            placeholder="Optional variant description"
-          />
+          <Input name="description" placeholder="Optional variant description" />
         </Field>
         <Field>
-          <FieldLabel>
-            Ply (başlangıç hamle indeksi, 0 = tüm hamleler)
-          </FieldLabel>
+          <FieldLabel>Ply (başlangıç hamle indeksi, 0 = tüm hamleler)</FieldLabel>
           <Input
             name="ply"
             type="number"
@@ -92,28 +80,15 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
         </Field>
         <Field>
           <FieldLabel>Moves (UCI)</FieldLabel>
-          <Input
-            readOnly
-            value={derivedMoves}
-            placeholder="PGN'den hesaplanır"
-            className="font-mono text-sm"
-          />
+          <Input readOnly value={derivedMoves} placeholder="PGN'den hesaplanır" className="font-mono text-sm" />
         </Field>
         <Field>
           <FieldLabel>Initial FEN</FieldLabel>
-          <Input
-            name="initialFen"
-            placeholder="PGN+ply'den türetilir (opsiyonel)"
-            className="font-mono text-sm"
-          />
+          <Input name="initialFen" placeholder="PGN+ply'den türetilir (opsiyonel)" className="font-mono text-sm" />
         </Field>
         <Field>
           <FieldLabel>Display FEN</FieldLabel>
-          <Input
-            name="displayFen"
-            placeholder="Kart görüntüsü için (opsiyonel)"
-            className="font-mono text-sm"
-          />
+          <Input name="displayFen" placeholder="Kart görüntüsü için (opsiyonel)" className="font-mono text-sm" />
         </Field>
         <Field>
           <FieldLabel>Goals (JSON)</FieldLabel>
@@ -121,15 +96,6 @@ export function VariantForm({ openings, defaultOpeningId }: Props) {
             name="goals"
             rows={4}
             placeholder='[{"ply":1,"move":"Bf4","card":"...","title":"...","description":"...","isCompleted":false}]'
-            className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-          />
-        </Field>
-        <Field>
-          <FieldLabel>Ideas (JSON object)</FieldLabel>
-          <textarea
-            name="ideas"
-            rows={4}
-            placeholder='{"core_idea":"...","common_mistake":"..."}'
             className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           />
         </Field>

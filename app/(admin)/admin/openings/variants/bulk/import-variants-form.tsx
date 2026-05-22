@@ -14,10 +14,6 @@ const EXAMPLE_JSON = `{
   "initial_ply": 0,
   "display_ply": 4,
   "description": "Black attempts a disruptive check, but White's attack is too strong.",
-  "ideas": {
-    "core_idea": "Use the standard London setup with c3, Nbd2, Bd3, and castling before choosing between e4, Ne5, or kingside activity.",
-    "common_mistake": "Playing an early e4 without full development, which can leave the center overextended."
-  },
   "goals": [
     { "ply": 1, "move": "d4", "card": "Center", "title": "Build the center", "description": "Solid pawn structure.", "isCompleted": false },
     { "ply": 2, "move": "Nf3", "card": "Development", "title": "Piece activity", "description": "Coordinate pieces toward the king.", "isCompleted": false }
@@ -40,9 +36,7 @@ export function ImportVariantsForm() {
       <p className="text-muted-foreground text-sm">
         Zorunlu: <span className="font-mono">opening_id</span>,{" "}
         <span className="font-mono">group</span>,{" "}
-        <span className="font-mono">pgn</span>.{" "}
-        <span className="font-mono">ideas</span> gönderirseniz tek bir JSON
-        object olmalı (array olmamalı). Başlangıç pozisyonu{" "}
+        <span className="font-mono">pgn</span>. Başlangıç pozisyonu{" "}
         <span className="font-mono">initial_ply</span> (yarım hamle sayısı) ile
         PGN üzerinden hesaplanır; <span className="font-mono">initial_fen</span>{" "}
         göndermenize gerek yok.

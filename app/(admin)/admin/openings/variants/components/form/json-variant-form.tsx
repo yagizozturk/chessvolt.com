@@ -9,9 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { Opening } from "@/features/openings/types/opening";
-import type { MoveGoal, OpeningIdeas } from "@/features/openings/types/opening-variant";
+import type { MoveGoal } from "@/features/openings/types/opening-variant";
 import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
-import { isOpeningIdeas } from "@/features/openings/validation/opening-variant-ideas";
 import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 
@@ -250,23 +249,6 @@ function parseGoalsFromRecord(
   return { ok: true, goals: g };
 }
 
-/** `ideas` yalnızca ana JSON’dan okunur ve obje olmalıdır (array değil). */
-function parseIdeasFromRecord(
-  record: Record<string, unknown> | null,
-): { ok: true; ideas: OpeningIdeas | null } | { ok: false; error: string } {
-  if (!record) return { ok: true, ideas: null };
-  if (!("ideas" in record)) return { ok: true, ideas: null };
-  const i = record.ideas;
-  if (i === undefined || i === null) return { ok: true, ideas: null };
-  if (!isOpeningIdeas(i)) {
-    return {
-      ok: false,
-      error: "ideas must be an object with core_idea and common_mistake (both strings).",
-    };
-  }
-  return { ok: true, ideas: i };
-}
-
 type Props = {
   openings: Opening[];
   defaultOpeningId?: string;
@@ -336,19 +318,15 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
   }, [pgnFromJson, safePlyInitial]);
 
   const goalsFromJson = useMemo(() => parseGoalsFromRecord(jsonRecord), [jsonRecord]);
-  const ideasFromJson = useMemo(() => parseIdeasFromRecord(jsonRecord), [jsonRecord]);
 
   const goalsFormValue = useMemo(() => {
     if (!goalsFromJson.ok || goalsFromJson.goals === null) return "";
     return JSON.stringify(goalsFromJson.goals);
   }, [goalsFromJson]);
-  const ideasFormValue = useMemo(() => {
-    if (!ideasFromJson.ok || ideasFromJson.ideas === null) return "";
-    return JSON.stringify(ideasFromJson.ideas);
-  }, [ideasFromJson]);
 
   const mergedJsonForExport = useMemo(() => {
     const base = jsonRecord && !jsonError ? { ...jsonRecord } : ({} as Record<string, unknown>);
+    delete base.ideas;
     const out: Record<string, unknown> = {
       ...base,
       group: groupEdit,
@@ -365,13 +343,6 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
     } else if (goalsFromJson.goals === null) {
       delete out.goals;
     }
-    if (!ideasFromJson.ok) {
-      delete out.ideas;
-    } else if (ideasFromJson.ideas === null) {
-      delete out.ideas;
-    } else {
-      out.ideas = ideasFromJson.ideas;
-    }
     return out;
   }, [
     jsonRecord,
@@ -383,7 +354,6 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
     descriptionEdit,
     sortKeyNum,
     goalsFromJson,
-    ideasFromJson,
     movesFromInitialPly,
     safePlyInitial,
   ]);
@@ -396,8 +366,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
     Boolean(pgnFromJson.trim()) &&
     !jsonError &&
     !error &&
-    goalsFromJson.ok &&
-    ideasFromJson.ok;
+    goalsFromJson.ok;
 
   return (
     <div className="max-w-[110rem] space-y-6">
@@ -476,7 +445,6 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         <input type="hidden" name="initialFen" value={initialFen} />
         <input type="hidden" name="displayFen" value={displayFen} />
         <input type="hidden" name="goals" value={goalsFormValue} />
-        <input type="hidden" name="ideas" value={ideasFormValue} />
 
         <div className="border-input bg-muted/30 rounded-md border p-3">
           <div className="grid gap-6 sm:grid-cols-2">
@@ -536,8 +504,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
           <p className="text-muted-foreground text-sm font-medium">JSON</p>
           <p className="text-muted-foreground text-xs">
             Tahta <span className="font-mono">pgn</span> ile. <span className="font-mono">goals</span> dizi olarak bu
-            JSON içinde düzenlenir. <span className="font-mono">ideas</span> tek bir JSON object olmalıdır (array
-            değil).
+            JSON içinde düzenlenir.
           </p>
           <textarea
             value={jsonInput}
@@ -550,7 +517,6 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
           />
           {jsonError && <p className="text-destructive text-sm">{jsonError}</p>}
           {jsonRecord && !goalsFromJson.ok && <p className="text-destructive text-sm">{goalsFromJson.error}</p>}
-          {jsonRecord && !ideasFromJson.ok && <p className="text-destructive text-sm">{ideasFromJson.error}</p>}
         </div>
 
         <div className="border-input bg-muted/30 rounded-md border p-4">
@@ -572,8 +538,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
           <p className="text-muted-foreground text-xs">
             Select an opening, set a group, provide valid JSON and <span className="font-mono">pgn</span>; if{" "}
             <span className="font-mono">goals</span> is present, it must follow the schema (
-            <span className="font-mono">card</span> is optional). If <span className="font-mono">ideas</span> is
-            present, it must be a single object (not array).
+            <span className="font-mono">card</span> is optional).
           </p>
         )}
       </form>

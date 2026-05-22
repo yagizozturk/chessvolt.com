@@ -19,7 +19,6 @@ export default function StorybookUpdatedBoardPage() {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
-    ideas: null,
     createdAt: new Date().toISOString(),
   };
 

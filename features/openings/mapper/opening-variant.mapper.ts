@@ -1,7 +1,6 @@
 import { getEmbeddedMoveSequence } from "@/features/move-sequence/helpers/get-embedded-move-sequence";
 import { toMoveSequence, type DbMoveSequence } from "@/features/move-sequence/mapper/move-sequence.mapper";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { isOpeningIdeas } from "@/features/openings/validation/opening-variant-ideas";
 
 type DbOpeningVariant = {
   id: string;
@@ -11,7 +10,6 @@ type DbOpeningVariant = {
   title: string | null;
   description: string | null;
   ply: number;
-  ideas?: unknown;
   created_at: string;
   move_sequences?: DbMoveSequence | DbMoveSequence[] | null;
 };
@@ -31,7 +29,6 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     description: db.description ?? null,
     ply: db.ply ?? 0,
     moveSequence: toMoveSequence(seqRow),
-    ideas: db.ideas != null && isOpeningIdeas(db.ideas) ? db.ideas : null,
     createdAt: db.created_at,
   };
 }
