@@ -50,7 +50,7 @@ export async function recordMovePlayed(
 ): Promise<UserSequenceAttemptEvent | null> {
   return eventRepo.create(supabase, {
     attemptId,
-    eventType: "move_played",
+    eventType: "move",
     moveUci: options.moveUci,
     expectedUci: options.expectedUci,
     isCorrect: options.isCorrect,
@@ -68,7 +68,7 @@ export async function recordHintUsed(
 ): Promise<UserSequenceAttemptEvent | null> {
   return eventRepo.create(supabase, {
     attemptId,
-    eventType: "hint_used",
+    eventType: "hint",
     hintLevel: options.hintLevel,
     timeFromStartMs: options.timeFromStartMs,
   });

@@ -50,7 +50,7 @@ export function useSequenceAttempt(sequenceId: string) {
           startedAtRef.current = Date.now();
 
           await recordSequenceAttemptEvent(data.attemptId, {
-            eventType: "attempt_started",
+            eventType: "start",
           });
 
           return data.attemptId;

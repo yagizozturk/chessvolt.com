@@ -83,7 +83,7 @@ export default function RiddleController({
     playLevelUpSound();
 
     void (async () => {
-      await recordEvent({ eventType: "attempt_completed" });
+      await recordEvent({ eventType: "complete" });
       await updateAttemptStatus(
         "completed",
         buildAttemptCounters(sortedGoals, wrongMoveCountRef.current, totalHintCountRef.current),
@@ -99,7 +99,7 @@ export default function RiddleController({
 
       void (async () => {
         await recordEvent({
-          eventType: "move_played",
+          eventType: "move",
           moveUci: move.uci,
           expectedUci: currentCorrectMove ?? undefined,
           isCorrect: false,
@@ -111,7 +111,7 @@ export default function RiddleController({
       })();
     } else if (isCorrect) {
       void recordEvent({
-        eventType: "move_played",
+        eventType: "move",
         moveUci: move.uci,
         expectedUci: currentCorrectMove ?? undefined,
         isCorrect: true,
@@ -137,7 +137,7 @@ export default function RiddleController({
     totalHintCountRef.current += 1;
 
     void recordEvent({
-      eventType: "hint_used",
+      eventType: "hint",
       hintLevel: nextHintCount as 1 | 2,
       expectedUci: currentCorrectMove,
     });
