@@ -36,16 +36,16 @@ function getMoveCountFromMoves(moves: string | null): string {
 export function GameRiddleDetail({ riddle, game }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [ply, setPly] = useState(() => {
-    if (game?.pgn && riddle.displayFen?.trim()) {
-      const p = getPlyFromPgnAtFen(game.pgn, riddle.displayFen.trim());
+    if (game?.pgn && riddle.moveSequence.displayFen?.trim()) {
+      const p = getPlyFromPgnAtFen(game.pgn, riddle.moveSequence.displayFen.trim());
       return p != null ? String(p) : "0";
     }
     return "0";
   });
   const [moveCountForAnswer, setMoveCountForAnswer] = useState(() =>
-    getMoveCountFromMoves(riddle.moves),
+    getMoveCountFromMoves(riddle.moveSequence.moves),
   );
-  const [moves, setMoves] = useState(riddle.moves ?? "");
+  const [moves, setMoves] = useState(riddle.moveSequence.moves ?? "");
   const [displayFen, setDisplayFen] = useState<string | null>(null);
 
   useEffect(() => {
@@ -204,7 +204,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">Moves</dt>
                 <dd className="font-mono text-xs break-all">
-                  {riddle.moves ?? "—"}
+                  {riddle.moveSequence.moves ?? "—"}
                 </dd>
               </div>
               <div>
@@ -216,7 +216,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                   Display FEN
                 </dt>
                 <dd className="font-mono text-xs break-all">
-                  {riddle.displayFen ?? "—"}
+                  {riddle.moveSequence.displayFen ?? "—"}
                 </dd>
               </div>
             </dl>

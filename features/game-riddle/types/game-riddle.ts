@@ -1,9 +1,10 @@
+import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
+
 export type GameRiddle = {
   id: string;
   gameId: string;
   title: string;
-  moves: string | null;
   gameType: string | null;
-  displayFen: string | null;
+  moveSequence: MoveSequence;
   createdAt: string;
 };

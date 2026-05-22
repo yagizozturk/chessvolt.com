@@ -48,7 +48,7 @@ export default function RiddleController({
     currentCorrectMove,
   } = useRiddleController({
     sourceId: riddle.id,
-    moves: riddle.moves,
+    moves: riddle.moveSequence.moves,
   });
   const { Tour } = useRiddleTour({ riddleId: riddle.id });
 
@@ -121,7 +121,7 @@ export default function RiddleController({
           <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}
-            initialFen={riddle.displayFen ?? undefined}
+            initialFen={riddle.moveSequence.displayFen ?? riddle.moveSequence.initialFen}
             size={580}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}

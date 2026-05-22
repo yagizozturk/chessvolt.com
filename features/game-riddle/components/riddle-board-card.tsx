@@ -33,7 +33,7 @@ function formatDate(dateStr: string) {
 }
 
 export function RiddleBoardCard({ riddle, game, num, size = 200, isComplete, href, displayFen }: RiddleBoardCardProps) {
-  const moveCount = getFullMoveCountFromMoves(riddle.moves);
+  const moveCount = getFullMoveCountFromMoves(riddle.moveSequence.moves);
 
   return (
     <Link

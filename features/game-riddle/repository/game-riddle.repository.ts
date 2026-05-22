@@ -4,14 +4,16 @@
  * Responsibility: CRUD access to the game_riddles table.
  */
 
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
 import { toGameRiddle } from "@/features/game-riddle/mapper/game-riddle.mapper";
+import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import { DEFAULT_INITIAL_FEN } from "@/features/move-sequence/mapper/move-sequence.mapper";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function findAll(supabase: SupabaseClient): Promise<GameRiddle[]> {
   const { data: riddles, error } = await supabase
     .from("game_riddles")
-    .select("*")
+    .select("*, move_sequences (*)")
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -22,13 +24,10 @@ export async function findAll(supabase: SupabaseClient): Promise<GameRiddle[]> {
   return (riddles ?? []).map(toGameRiddle);
 }
 
-export async function findById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<GameRiddle | null> {
+export async function findById(supabase: SupabaseClient, id: string): Promise<GameRiddle | null> {
   const { data, error } = await supabase
     .from("game_riddles")
-    .select("*")
+    .select("*, move_sequences (*)")
     .eq("id", id)
     .maybeSingle();
 
@@ -42,13 +41,10 @@ export async function findById(
   return toGameRiddle(data);
 }
 
-export async function findByGameId(
-  supabase: SupabaseClient,
-  gameId: string,
-): Promise<GameRiddle[]> {
+export async function findByGameId(supabase: SupabaseClient, gameId: string): Promise<GameRiddle[]> {
   const { data: riddles, error } = await supabase
     .from("game_riddles")
-    .select("*")
+    .select("*, move_sequences (*)")
     .eq("game_id", gameId)
     .order("created_at", { ascending: true });
 
@@ -60,13 +56,10 @@ export async function findByGameId(
   return (riddles ?? []).map(toGameRiddle);
 }
 
-export async function findByGameType(
-  supabase: SupabaseClient,
-  gameType: string,
-): Promise<GameRiddle[]> {
+export async function findByGameType(supabase: SupabaseClient, gameType: string): Promise<GameRiddle[]> {
   const { data: riddles, error } = await supabase
     .from("game_riddles")
-    .select("*")
+    .select("*, move_sequences (*)")
     .eq("game_type", gameType)
     .order("created_at", { ascending: true });
 
@@ -90,16 +83,25 @@ export async function create(
   supabase: SupabaseClient,
   input: CreateGameRiddleInput,
 ): Promise<GameRiddle | null> {
+  const displayFen = input.displayFen ?? null;
+  const moves = input.moves?.trim() || "e2e4";
+
+  const moveSequence = await moveSequenceService.createMoveSequence(supabase, {
+    initialFen: displayFen ?? DEFAULT_INITIAL_FEN,
+    moves,
+    displayFen,
+  });
+  if (!moveSequence) return null;
+
   const { data, error } = await supabase
     .from("game_riddles")
     .insert({
       game_id: input.gameId,
       title: input.title,
-      moves: input.moves ?? null,
       game_type: input.gameType ?? null,
-      display_fen: input.displayFen ?? null,
+      move_sequence_id: moveSequence.id,
     })
-    .select()
+    .select("*, move_sequences (*)")
     .single();
 
   if (error) {
@@ -123,32 +125,40 @@ export async function update(
   id: string,
   input: UpdateGameRiddleInput,
 ): Promise<GameRiddle | null> {
+  const existing = await findById(supabase, id);
+  if (!existing) return null;
+
+  const hasSequenceUpdate =
+    input.moves !== undefined || input.displayFen !== undefined;
+
+  if (hasSequenceUpdate) {
+    const displayFen =
+      input.displayFen !== undefined ? input.displayFen : existing.moveSequence.displayFen;
+    const updated = await moveSequenceService.updateMoveSequence(supabase, existing.moveSequence.id, {
+      moves: input.moves ?? undefined,
+      displayFen: input.displayFen,
+      initialFen: displayFen ?? undefined,
+    });
+    if (!updated) return null;
+  }
+
   const updates: Record<string, unknown> = {};
   if (input.gameId !== undefined) updates.game_id = input.gameId;
   if (input.title !== undefined) updates.title = input.title;
-  if (input.moves !== undefined) updates.moves = input.moves;
   if (input.gameType !== undefined) updates.game_type = input.gameType;
-  if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 
-  const { data, error } = await supabase
-    .from("game_riddles")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("game-riddle.repository.update error:", error);
-    return null;
+  if (Object.keys(updates).length > 0) {
+    const { error } = await supabase.from("game_riddles").update(updates).eq("id", id);
+    if (error) {
+      console.error("game-riddle.repository.update error:", error);
+      return null;
+    }
   }
 
-  return toGameRiddle(data);
+  return findById(supabase, id);
 }
 
-export async function remove(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<boolean> {
+export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
   const { error } = await supabase.from("game_riddles").delete().eq("id", id);
 
   if (error) {

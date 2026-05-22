@@ -1,7 +1,7 @@
 import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
 import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 
-const DEFAULT_INITIAL_FEN =
+export const DEFAULT_INITIAL_FEN =
   "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 export type DbMoveSequence = {
