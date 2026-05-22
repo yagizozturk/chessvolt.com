@@ -41,7 +41,9 @@ export function RiddleDetail({ riddle, game }: Props) {
           <div>
             <CardTitle>{riddle.title}</CardTitle>
             <CardDescription>
-              Game: {game?.whitePlayer ?? "?"} vs {game?.blackPlayer ?? "?"}
+              {game
+                ? `Game: ${game.whitePlayer} vs ${game.blackPlayer}`
+                : "Standalone riddle (no linked game)"}
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -83,7 +85,7 @@ export function RiddleDetail({ riddle, game }: Props) {
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Game ID</dt>
-                <dd>{riddle.gameId}</dd>
+                <dd>{riddle.gameId ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Title</dt>

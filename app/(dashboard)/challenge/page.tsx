@@ -44,7 +44,9 @@ export default async function ChallengePage() {
   // Fetch games for riddles (unique gameIds) - single query
   // new Set(...) eliminates same values. [... ] converts it to array
   // ========================================================================
-  const gameIds = [...new Set(allRiddles.map((r) => r.gameId))];
+  const gameIds = [
+    ...new Set(allRiddles.map((r) => r.gameId).filter((id): id is string => id != null)),
+  ];
   const games = await getGamesByIds(supabase, gameIds);
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 

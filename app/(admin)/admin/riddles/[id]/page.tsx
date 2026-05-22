@@ -23,7 +23,7 @@ export default async function AdminRiddleDetailPage({ params, searchParams }: Pa
     notFound();
   }
 
-  const game = await getGameById(supabase, riddle.gameId);
+  const game = riddle.gameId ? await getGameById(supabase, riddle.gameId) : null;
 
   return (
     <div className="container mx-auto px-4 py-8">

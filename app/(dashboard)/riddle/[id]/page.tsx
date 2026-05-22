@@ -1,6 +1,5 @@
 import RiddleController from "@/features/riddle/components/riddle-controller";
 import { getRiddleById } from "@/features/riddle/services/riddle.service";
-import { getGameById } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
 
@@ -23,11 +22,12 @@ export default async function RiddlePage({ params }: Params) {
     notFound();
   }
 
-  const game = await getGameById(supabase, riddle.gameId);
-
-  if (!game) {
-    notFound();
-  }
-
-  return <RiddleController riddle={riddle} parentChallengeUrl={riddle.gameType ? `/challenge/${riddle.gameType.replace(/_/g, "-")}` : "/"} />;
+  return (
+    <RiddleController
+      riddle={riddle}
+      parentChallengeUrl={
+        riddle.gameType ? `/challenge/${riddle.gameType.replace(/_/g, "-")}` : "/"
+      }
+    />
+  );
 }

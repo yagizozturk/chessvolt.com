@@ -4,7 +4,7 @@ import type { Riddle } from "@/features/riddle/types/riddle";
 
 type DbRiddle = {
   id: string;
-  game_id: string;
+  game_id: string | null;
   title: string;
   game_type: string | null;
   themes: string[] | null;

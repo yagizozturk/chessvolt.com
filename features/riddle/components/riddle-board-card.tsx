@@ -10,7 +10,7 @@ import { getFullMoveCountFromMoves } from "@/lib/chess/getFullMoveCountFromMoves
 
 type RiddleBoardCardProps = {
   riddle: Riddle;
-  game: Game;
+  game: Game | null;
   num: number;
   size?: number;
   /** true = correct, false = wrong, undefined = not attempted, Undefined ı tipin bir parçası yapmak için ? ni ekleriz */
@@ -47,28 +47,34 @@ export function RiddleBoardCard({ riddle, game, num, size = 200, isComplete, hre
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <p className="text-xl font-bold">{riddle.title}</p>
-        <div className="flex flex-col rounded-lg">
-          <div className="flex items-center gap-2">
-            <Circle className="h-4 w-4 shrink-0 fill-white" />
-            <span className="truncate text-sm font-medium">{game.whitePlayer}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Circle className="h-4 w-4 shrink-0 fill-black" />
-            <span className="truncate text-sm font-medium">{game.blackPlayer}</span>
-          </div>
-        </div>
-        <div className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-          {game.event && (
-            <span className="flex max-w-full min-w-0 shrink items-center gap-1.5 overflow-hidden">
-              <Flag className="text-primary h-3.5 w-3.5 shrink-0" />
-              <span className="min-w-0 truncate">{game.event}</span>
-            </span>
-          )}
-          <span className="flex items-center gap-1.5">
-            <Calendar className="text-primary h-3.5 w-3.5" />
-            {formatDate(game.playedAt)}
-          </span>
-        </div>
+        {game ? (
+          <>
+            <div className="flex flex-col rounded-lg">
+              <div className="flex items-center gap-2">
+                <Circle className="h-4 w-4 shrink-0 fill-white" />
+                <span className="truncate text-sm font-medium">{game.whitePlayer}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Circle className="h-4 w-4 shrink-0 fill-black" />
+                <span className="truncate text-sm font-medium">{game.blackPlayer}</span>
+              </div>
+            </div>
+            <div className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+              {game.event && (
+                <span className="flex max-w-full min-w-0 shrink items-center gap-1.5 overflow-hidden">
+                  <Flag className="text-primary h-3.5 w-3.5 shrink-0" />
+                  <span className="min-w-0 truncate">{game.event}</span>
+                </span>
+              )}
+              <span className="flex items-center gap-1.5">
+                <Calendar className="text-primary h-3.5 w-3.5" />
+                {formatDate(game.playedAt)}
+              </span>
+            </div>
+          </>
+        ) : (
+          <p className="text-muted-foreground text-sm">Custom position</p>
+        )}
         {moveCount > 0 && (
           <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
             <Puzzle className="text-primary h-3.5 w-3.5" />

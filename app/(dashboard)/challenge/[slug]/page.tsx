@@ -40,7 +40,9 @@ export default async function ChallengePage({ params }: Params) {
   // ========================================================================
   // (4, 5) Fetch games for riddles (unique gameIds) - single query
   // ========================================================================
-  const gameIds = [...new Set(riddles.map((r) => r.gameId))];
+  const gameIds = [
+    ...new Set(riddles.map((r) => r.gameId).filter((id): id is string => id != null)),
+  ];
   const games = await getGamesByIds(supabase, gameIds);
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
@@ -68,8 +70,8 @@ export default async function ChallengePage({ params }: Params) {
         <div className="grid grid-cols-2 gap-6">
           {riddles
             .map((riddle, index) => {
-              const game = gameMap[riddle.gameId];
-              if (!game) return null;
+              const game = riddle.gameId ? gameMap[riddle.gameId] : null;
+              if (!game && !riddle.moveSequence.displayFen) return null;
               return { riddle, game, index };
             })
             .filter((x): x is NonNullable<typeof x> => x != null)

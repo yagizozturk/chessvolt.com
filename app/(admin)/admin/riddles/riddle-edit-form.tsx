@@ -34,7 +34,7 @@ function defaultDisplayPly(riddle: Riddle, game: Game | null): number {
 }
 
 export function RiddleEditForm({ riddle, game, onCancel }: Props) {
-  const pgn = game?.pgn ?? "";
+  const pgn = game?.pgn?.trim() || riddle.moveSequence.pgn?.trim() || "";
   const initialDisplayPly = defaultDisplayPly(riddle, game);
   const initialMoveCount = getMoveCountFromMoves(riddle.moveSequence.moves);
 
@@ -87,8 +87,8 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
     >
       <FieldGroup>
         <Field>
-          <FieldLabel>Game ID</FieldLabel>
-          <Input name="gameId" defaultValue={riddle.gameId} required />
+          <FieldLabel>Game ID (optional)</FieldLabel>
+          <Input name="gameId" defaultValue={riddle.gameId ?? ""} placeholder="Leave empty if none" />
         </Field>
         <Field>
           <FieldLabel>Display ply</FieldLabel>
@@ -168,6 +168,10 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
         </Field>
       </FieldGroup>
 
+      <input type="hidden" name="pgn" value={pgn} />
+      <input type="hidden" name="initialFen" value={displayFen} />
+      <input type="hidden" name="displayFen" value={displayFen} />
+
       {pgn.trim() ? (
         <>
           <div className="border-input bg-muted/30 rounded-md border p-3">
@@ -219,7 +223,7 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
         </>
       ) : (
         <p className="text-muted-foreground text-sm">
-          Link a game with a PGN to use the board pickers. You can still edit ply and answer length manually above.
+          Add a PGN on the linked move sequence or link a game with PGN to use the board pickers.
         </p>
       )}
 

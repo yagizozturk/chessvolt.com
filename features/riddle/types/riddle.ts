@@ -2,7 +2,7 @@ import type { MoveSequence } from "@/features/move-sequence/types/move-sequence"
 
 export type Riddle = {
   id: string;
-  gameId: string;
+  gameId: string | null;
   title: string;
   gameType: string | null;
   themes: string[];

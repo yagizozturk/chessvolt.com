@@ -96,10 +96,12 @@ export async function findByGameType(
 }
 
 export type CreateRiddleInput = {
-  gameId: string;
+  gameId?: string | null;
   title: string;
+  pgn?: string | null;
   moves?: string | null;
   gameType?: string | null;
+  initialFen?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
   themes?: string[];
@@ -111,11 +113,13 @@ export async function create(
   input: CreateRiddleInput,
 ): Promise<Riddle | null> {
   const displayFen = input.displayFen ?? null;
+  const initialFen = input.initialFen ?? displayFen ?? DEFAULT_INITIAL_FEN;
   const moves = input.moves?.trim() || "e2e4";
 
   const moveSequence = await moveSequenceService.createMoveSequence(supabase, {
-    initialFen: displayFen ?? DEFAULT_INITIAL_FEN,
+    initialFen,
     moves,
+    pgn: input.pgn ?? null,
     displayFen,
     goals: input.goals,
   });
@@ -124,7 +128,7 @@ export async function create(
   const { data, error } = await supabase
     .from("riddles")
     .insert({
-      game_id: input.gameId,
+      game_id: input.gameId ?? null,
       title: input.title,
       game_type: input.gameType ?? null,
       move_sequence_id: moveSequence.id,
@@ -143,7 +147,9 @@ export async function create(
 }
 
 export type UpdateRiddleInput = {
-  gameId?: string;
+  gameId?: string | null;
+  pgn?: string | null;
+  initialFen?: string | null;
   title?: string;
   moves?: string | null;
   gameType?: string | null;
@@ -164,22 +170,31 @@ export async function update(
   const hasSequenceUpdate =
     input.moves !== undefined ||
     input.displayFen !== undefined ||
+    input.initialFen !== undefined ||
+    input.pgn !== undefined ||
     input.goals !== undefined;
 
   if (hasSequenceUpdate) {
     const displayFen =
       input.displayFen !== undefined ? input.displayFen : existing.moveSequence.displayFen;
+    const initialFen =
+      input.initialFen !== undefined
+        ? input.initialFen
+        : input.displayFen !== undefined
+          ? input.displayFen
+          : undefined;
     const updated = await moveSequenceService.updateMoveSequence(supabase, existing.moveSequence.id, {
       moves: input.moves ?? undefined,
+      pgn: input.pgn,
       displayFen: input.displayFen,
-      initialFen: displayFen ?? undefined,
+      initialFen: initialFen ?? displayFen ?? undefined,
       goals: input.goals,
     });
     if (!updated) return null;
   }
 
   const updates: Record<string, unknown> = {};
-  if (input.gameId !== undefined) updates.game_id = input.gameId;
+  if (input.gameId !== undefined) updates.game_id = input.gameId || null;
   if (input.title !== undefined) updates.title = input.title;
   if (input.gameType !== undefined) updates.game_type = input.gameType;
   if (input.themes !== undefined) updates.themes = input.themes;
