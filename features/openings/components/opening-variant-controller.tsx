@@ -10,7 +10,7 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
-import { useOpeningVariantController } from "@/features/openings/hooks/use-opening-variant-controller";
+import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import { useUpdateOpeningVariantAnswer } from "@/features/openings/hooks/use-update-opening-variant";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
@@ -47,8 +47,11 @@ export default function OpeningVariantController({
     hintCount,
     hintRequested,
     currentCorrectMove,
-  } = useOpeningVariantController({
-    variant,
+  } = useMoveSequenceController({
+    sourceId: variant.id,
+    moves: variant.moveSequence.moves,
+    goals: variant.moveSequence.goals,
+    initialPly: variant.ply,
   });
   const { Tour } = useOpeningVariantTour({ variantId: variant.id });
 

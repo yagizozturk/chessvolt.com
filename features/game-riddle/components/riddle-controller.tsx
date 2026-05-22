@@ -10,7 +10,7 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
-import { useRiddleController } from "@/features/game-riddle/hooks/use-riddle-controller";
+import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useRiddleTour } from "@/features/game-riddle/hooks/use-riddle-tour";
 import { useUpdateGameRiddleAnswer } from "@/features/game-riddle/hooks/use-update-game-riddle";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
@@ -46,7 +46,11 @@ export default function RiddleController({
     hintCount,
     hintRequested,
     currentCorrectMove,
-  } = useRiddleController({ riddle });
+  } = useMoveSequenceController({
+    sourceId: riddle.id,
+    moves: riddle.moveSequence.moves,
+    goals: riddle.moveSequence.goals,
+  });
   const { Tour } = useRiddleTour({ riddleId: riddle.id });
 
   useEffect(() => {

@@ -2,27 +2,54 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
-type UseRiddleControllerParams = {
-  riddle: GameRiddle;
+export type UseMoveSequenceControllerParams = {
+  /** Resets play state when this id changes (variant id, riddle id, etc.) */
+  sourceId: string;
+  moves: string;
+  goals: MoveGoal[] | null;
+  /** When set, goals at or before this ply start as completed (opening variants). */
+  initialPly?: number;
 };
 
-export function useRiddleController({ riddle }: UseRiddleControllerParams) {
-  const moves = riddle.moveSequence.moves
+function parseMoves(rawMoves: string): string[] {
+  return rawMoves
     .trim()
     .split(/\s+/)
     .filter((m) => m.length > 0);
-  const [nextExpectedMoveIndex, setNextExpectedMoveIndex] = useState<number>(0);
+}
+
+function initializeGoals(goals: MoveGoal[] | null, initialPly?: number): MoveGoal[] {
+  return [...(goals ?? [])]
+    .sort((a, b) => a.ply - b.ply)
+    .map((goal) => ({
+      ...goal,
+      isCompleted:
+        goal.isCompleted || (initialPly !== undefined && initialPly >= goal.ply),
+    }));
+}
+
+export function useMoveSequenceController({
+  sourceId,
+  moves: rawMoves,
+  goals,
+  initialPly,
+}: UseMoveSequenceControllerParams) {
+  const moves = useMemo(() => parseMoves(rawMoves), [rawMoves]);
+  const [nextExpectedMoveIndex, setNextExpectedMoveIndex] = useState(0);
   const [hintCount, setHintCount] = useState(0);
   const [goalsState, setGoalsState] = useState<MoveGoal[]>([]);
 
   const sortedGoals = useMemo(() => {
     return [...goalsState].sort((a, b) => a.ply - b.ply);
   }, [goalsState]);
+
+  const nextGoal = useMemo(() => {
+    return sortedGoals.find((goal) => !goal.isCompleted) ?? null;
+  }, [sortedGoals]);
 
   const progressValue = useMemo(() => {
     if (!sortedGoals.length) return 0;
@@ -33,37 +60,39 @@ export function useRiddleController({ riddle }: UseRiddleControllerParams) {
   useEffect(() => {
     setHintCount(0);
     setNextExpectedMoveIndex(0);
-    setGoalsState(
-      [...(riddle.moveSequence.goals ?? [])]
-        .sort((a, b) => a.ply - b.ply)
-        .map((goal) => ({ ...goal })),
-    );
-  }, [riddle.id, riddle.moveSequence.goals]);
+    setGoalsState(initializeGoals(goals, initialPly));
+  }, [sourceId, initialPly, goals]);
 
   function handleMoveCheck(playedMove: MoveAttemptPayload) {
     const expectedMove = moves[nextExpectedMoveIndex];
     const isCorrect = playedMove.uci === expectedMove;
-
-    return {
-      isCorrect,
-    };
+    return { isCorrect };
   }
 
   function handleSuccessMovePlayed(move: Move) {
     const { uci } = move;
     if (!uci) return;
 
-    setGoalsState((prev) => prev.map((goal) => (goal.move === uci ? { ...goal, isCompleted: true } : goal)));
+    setGoalsState((prev) =>
+      prev.map((goal) => (goal.move === uci ? { ...goal, isCompleted: true } : goal)),
+    );
   }
 
   function handleNextMoveRequest() {
     const currentStep = nextExpectedMoveIndex;
     const nextMove = moves[currentStep + 1];
     const nextUserStep = nextMove ? currentStep + 2 : currentStep + 1;
-
     setNextExpectedMoveIndex(nextUserStep);
     setHintCount(0);
     return nextMove;
+  }
+
+  function incrementNextExpectedMoveIndex() {
+    setNextExpectedMoveIndex((prev) => prev + 1);
+  }
+
+  function resetNextExpectedMoveIndex() {
+    setNextExpectedMoveIndex(0);
   }
 
   const hintRequested = () => {
@@ -76,12 +105,16 @@ export function useRiddleController({ riddle }: UseRiddleControllerParams) {
   const currentCorrectMove = moves[nextExpectedMoveIndex] ?? null;
 
   return {
+    moves,
     sortedGoals,
+    nextGoal,
     hintCount,
     progressValue,
     handleMoveCheck,
     handleSuccessMovePlayed,
     handleNextMoveRequest,
+    incrementNextExpectedMoveIndex,
+    resetNextExpectedMoveIndex,
     hintRequested,
     currentCorrectMove,
   };
