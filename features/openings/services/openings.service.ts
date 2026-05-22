@@ -6,7 +6,6 @@
 import * as openingVariantRepo from "@/features/openings/repository/opening-variant.repository";
 import type { OpeningWithVariantCount } from "@/features/openings/repository/opening.repository";
 import * as openingRepo from "@/features/openings/repository/opening.repository";
-import * as userOpeningVariantRepo from "@/features/openings/repository/user-opening-variant.repository";
 import type { Opening } from "@/features/openings/types/opening";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -119,11 +118,6 @@ export async function deleteOpeningVariant(
   supabase: SupabaseClient,
   id: string,
 ): Promise<boolean> {
-  const cleared = await userOpeningVariantRepo.removeByOpeningVariantId(
-    supabase,
-    id,
-  );
-  if (!cleared) return false;
   return openingVariantRepo.remove(supabase, id);
 }
 

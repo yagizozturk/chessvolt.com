@@ -181,7 +181,7 @@ export default function OpeningVariantController({
           <VoltBoard
             ref={boardRef}
             sourceId={variant.id}
-            initialFen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}
+            initialFen={variant.moveSequence.initialFen}
             size={580}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
