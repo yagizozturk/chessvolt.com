@@ -12,7 +12,7 @@ type UseOpeningVariantControllerParams = {
 };
 
 export function useOpeningVariantController({ variant }: UseOpeningVariantControllerParams) {
-  const moves = variant.moves
+  const moves = variant.moveSequence.moves
     .trim()
     .split(/\s+/)
     .filter((m) => m.length > 0);
@@ -54,14 +54,14 @@ export function useOpeningVariantController({ variant }: UseOpeningVariantContro
     setHintCount(0);
     setNextExpectedMoveIndex(0);
     setGoalsState(
-      [...(variant.goals ?? [])]
+      [...(variant.moveSequence.goals ?? [])]
         .sort((a, b) => a.ply - b.ply)
         .map((goal) => ({
           ...goal,
           isCompleted: goal.isCompleted || variant.ply >= goal.ply,
         })),
     );
-  }, [variant.id, variant.ply, variant.goals]);
+  }, [variant.id, variant.ply, variant.moveSequence.goals]);
 
   // ============================================================================
   // Oyuncu hamle yapınca önce kontole girer(attempt) ve tetiklenir.

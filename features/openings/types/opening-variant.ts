@@ -1,3 +1,5 @@
+import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
+
 export type MoveGoal = {
   ply: number;
   move: string;
@@ -23,11 +25,7 @@ export type OpeningVariant = {
   title: string | null;
   description: string | null;
   ply: number;
-  moves: string;
-  pgn: string;
-  initialFen: string;
-  displayFen: string | null;
-  goals: MoveGoal[] | null;
+  moveSequence: MoveSequence;
   ideas: OpeningIdeas | null;
   createdAt: string;
 };

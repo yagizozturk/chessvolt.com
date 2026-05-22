@@ -184,16 +184,16 @@ function BoardWithMoves({
 }
 
 function defaultDisplayPlyString(v: OpeningVariant): string {
-  const df = v.displayFen?.trim();
+  const df = v.moveSequence.displayFen?.trim();
   if (df) {
-    const p = getPlyFromPgnAtFen(v.pgn, df);
+    const p = getPlyFromPgnAtFen(v.moveSequence.pgn ?? "", df);
     if (p !== null) return String(p);
   }
   return String(v.ply ?? 0);
 }
 
 export function VariantEditForm({ variant, onCancel }: Props) {
-  const [pgn, setPgn] = useState(variant.pgn);
+  const [pgn, setPgn] = useState(variant.moveSequence.pgn ?? "");
   const [initialPly, setInitialPly] = useState(String(variant.ply ?? 0));
   const [displayPly, setDisplayPly] = useState(() => defaultDisplayPlyString(variant));
   const { rows, error, fensByPly, uciMoves } = useUciRowsFromPgn(pgn);
@@ -202,7 +202,9 @@ export function VariantEditForm({ variant, onCancel }: Props) {
   const displayPlyNum = Math.min(Math.max(0, parseInt(displayPly, 10) || 0), maxPly);
   const initialFen = fensByPly[initialPlyNum] ?? START_FEN;
   const displayFen = fensByPly[displayPlyNum] ?? START_FEN;
-  const derivedMoves = pgn ? (getUciMovesFromPgnAfterPly(pgn, initialPlyNum) ?? variant.moves) : variant.moves;
+  const derivedMoves = pgn
+    ? (getUciMovesFromPgnAfterPly(pgn, initialPlyNum) ?? variant.moveSequence.moves)
+    : variant.moveSequence.moves;
 
   return (
     <form
@@ -278,7 +280,9 @@ export function VariantEditForm({ variant, onCancel }: Props) {
           <textarea
             name="goals"
             rows={6}
-            defaultValue={variant.goals != null ? JSON.stringify(variant.goals, null, 2) : ""}
+            defaultValue={
+              variant.moveSequence.goals != null ? JSON.stringify(variant.moveSequence.goals, null, 2) : ""
+            }
             className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           />
         </Field>

@@ -3,20 +3,15 @@
  *
  * Responsibility: CRUD access to the opening_variants table.
  */
+import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
-import type {
-  MoveGoal,
-  OpeningIdeas,
-  OpeningVariant,
-} from "@/features/openings/types/opening-variant";
+import type { MoveGoal, OpeningIdeas, OpeningVariant } from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function findAll(
-  supabase: SupabaseClient,
-): Promise<OpeningVariant[]> {
+export async function findAll(supabase: SupabaseClient): Promise<OpeningVariant[]> {
   const { data, error } = await supabase
     .from("opening_variants")
-    .select("*")
+    .select("*, move_sequences (*)")
     .order("sort_key", { ascending: true })
     .order("created_at", { ascending: true });
 
@@ -28,13 +23,10 @@ export async function findAll(
   return (data ?? []).map(toOpeningVariant);
 }
 
-export async function findById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<OpeningVariant | null> {
+export async function findById(supabase: SupabaseClient, id: string): Promise<OpeningVariant | null> {
   const { data, error } = await supabase
     .from("opening_variants")
-    .select("*")
+    .select("*, move_sequences (*)")
     .eq("id", id)
     .maybeSingle();
 
@@ -53,16 +45,10 @@ export async function getVariantCountsByOpeningIds(
   openingIds: string[],
 ): Promise<Record<string, number>> {
   if (openingIds.length === 0) return {};
-  const { data, error } = await supabase
-    .from("opening_variants")
-    .select("opening_id")
-    .in("opening_id", openingIds);
+  const { data, error } = await supabase.from("opening_variants").select("opening_id").in("opening_id", openingIds);
 
   if (error) {
-    console.error(
-      "opening-variant.repository.getVariantCountsByOpeningIds error:",
-      error,
-    );
+    console.error("opening-variant.repository.getVariantCountsByOpeningIds error:", error);
     return {};
   }
 
@@ -75,13 +61,10 @@ export async function getVariantCountsByOpeningIds(
   return counts;
 }
 
-export async function findByOpeningId(
-  supabase: SupabaseClient,
-  openingId: string,
-): Promise<OpeningVariant[]> {
+export async function findByOpeningId(supabase: SupabaseClient, openingId: string): Promise<OpeningVariant[]> {
   const { data, error } = await supabase
     .from("opening_variants")
-    .select("*")
+    .select("*, move_sequences (*)")
     .eq("opening_id", openingId)
     .order("sort_key", { ascending: true })
     .order("created_at", { ascending: true });
@@ -113,6 +96,15 @@ export async function create(
   supabase: SupabaseClient,
   input: CreateOpeningVariantInput,
 ): Promise<OpeningVariant | null> {
+  const moveSequence = await moveSequenceService.createMoveSequence(supabase, {
+    initialFen: input.initialFen ?? undefined,
+    moves: input.moves,
+    pgn: input.pgn,
+    displayFen: input.displayFen,
+    goals: input.goals,
+  });
+  if (!moveSequence) return null;
+
   const { data, error } = await supabase
     .from("opening_variants")
     .insert({
@@ -122,14 +114,10 @@ export async function create(
       title: input.title ?? null,
       description: input.description ?? null,
       ply: input.ply,
-      moves: input.moves,
-      pgn: input.pgn,
-      initial_fen: input.initialFen ?? null,
-      display_fen: input.displayFen ?? null,
-      goals: input.goals ?? null,
       ideas: input.ideas ?? null,
+      move_sequence_id: moveSequence.id,
     })
-    .select()
+    .select("*, move_sequences (*)")
     .single();
 
   if (error) {
@@ -159,43 +147,48 @@ export async function update(
   id: string,
   input: UpdateOpeningVariantInput,
 ): Promise<OpeningVariant | null> {
+  const existing = await findById(supabase, id);
+  if (!existing) return null;
+
+  const hasSequenceUpdate =
+    input.moves !== undefined ||
+    input.pgn !== undefined ||
+    input.initialFen !== undefined ||
+    input.displayFen !== undefined ||
+    input.goals !== undefined;
+
+  if (hasSequenceUpdate) {
+    const updated = await moveSequenceService.updateMoveSequence(supabase, existing.moveSequence.id, {
+      moves: input.moves,
+      pgn: input.pgn,
+      initialFen: input.initialFen ?? undefined,
+      displayFen: input.displayFen,
+      goals: input.goals,
+    });
+    if (!updated) return null;
+  }
+
   const updates: Record<string, unknown> = {};
   if (input.sortKey !== undefined) updates.sort_key = input.sortKey;
   if (input.group !== undefined) updates.group = input.group;
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description;
   if (input.ply !== undefined) updates.ply = input.ply;
-  if (input.moves !== undefined) updates.moves = input.moves;
-  if (input.pgn !== undefined) updates.pgn = input.pgn;
-  if (input.initialFen !== undefined) updates.initial_fen = input.initialFen;
-  if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
-  if (input.goals !== undefined) updates.goals = input.goals;
   if (input.ideas !== undefined) updates.ideas = input.ideas;
 
-  const { data, error } = await supabase
-    .from("opening_variants")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error("opening-variant.repository.update error:", error);
-    return null;
+  if (Object.keys(updates).length > 0) {
+    const { error } = await supabase.from("opening_variants").update(updates).eq("id", id);
+    if (error) {
+      console.error("opening-variant.repository.update error:", error);
+      return null;
+    }
   }
 
-  return toOpeningVariant(data);
+  return findById(supabase, id);
 }
 
-export async function remove(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<boolean> {
-  const { data, error } = await supabase
-    .from("opening_variants")
-    .delete()
-    .eq("id", id)
-    .select("id");
+export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
+  const { data, error } = await supabase.from("opening_variants").delete().eq("id", id).select("id");
 
   if (error) {
     console.error("opening-variant.repository.remove error:", error);
@@ -203,10 +196,7 @@ export async function remove(
   }
 
   if (!data?.length) {
-    console.error(
-      "opening-variant.repository.remove: no row deleted (missing or RLS)",
-      { id },
-    );
+    console.error("opening-variant.repository.remove: no row deleted (missing or RLS)", { id });
     return false;
   }
 

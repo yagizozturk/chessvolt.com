@@ -105,14 +105,14 @@ export function VariantDetail({ variant }: Props) {
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Moves</dt>
-                <dd className="font-mono text-xs break-all">{variant.moves}</dd>
+                <dd className="font-mono text-xs break-all">{variant.moveSequence.moves}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">
                   Initial FEN
                 </dt>
                 <dd className="font-mono text-xs break-all">
-                  {variant.initialFen || "—"}
+                  {variant.moveSequence.initialFen || "—"}
                 </dd>
               </div>
               <div>
@@ -120,23 +120,23 @@ export function VariantDetail({ variant }: Props) {
                   Display FEN
                 </dt>
                 <dd className="font-mono text-xs break-all">
-                  {variant.displayFen ?? "—"}
+                  {variant.moveSequence.displayFen ?? "—"}
                 </dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">PGN</dt>
                 <dd>
                   <span className="font-mono text-xs break-all whitespace-pre-wrap">
-                    {variant.pgn || "—"}
+                    {variant.moveSequence.pgn || "—"}
                   </span>
                 </dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Goals</dt>
                 <dd>
-                  {variant.goals != null ? (
+                  {variant.moveSequence.goals != null ? (
                     <pre className="bg-muted/30 max-h-64 overflow-auto rounded-md border p-3 font-mono text-xs whitespace-pre-wrap">
-                      {JSON.stringify(variant.goals, null, 2)}
+                      {JSON.stringify(variant.moveSequence.goals, null, 2)}
                     </pre>
                   ) : (
                     "—"
