@@ -14,9 +14,40 @@ import { parseGoalsFromForm } from "@/lib/admin/parse-goals-from-form";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+
+type BulkRiddleInput = {
+  title?: string;
+  game_type?: string;
+  game_id?: string | null;
+  pgn?: string;
+  initial_ply?: number;
+  display_ply?: number;
+  move_count_for_answer?: number;
+  answer_end_ply?: number;
+  moves?: string | null;
+  themes?: string[] | string | null;
+  is_active?: boolean;
+  goals?: unknown;
+};
+
+function parseBulkThemes(v: unknown): string[] {
+  if (v == null) return [];
+  if (Array.isArray(v)) {
+    return v.filter((t): t is string => typeof t === "string").map((t) => t.trim()).filter(Boolean);
+  }
+  if (typeof v === "string") {
+    return v
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
 
 function parseThemesFromForm(formData: FormData): string[] {
   const raw = (formData.get("themes") as string | null)?.trim() ?? "";
@@ -172,6 +203,131 @@ export async function updateRiddleAction(id: string, formData: FormData) {
   revalidatePath("/admin/riddles");
   revalidatePath(`/admin/riddles/${id}`);
   redirect(`/admin/riddles/${id}`);
+}
+
+export async function bulkCreateRiddlesAction(jsonData: string) {
+  const { supabase } = await getAdminUser();
+
+  let items: BulkRiddleInput | BulkRiddleInput[];
+  try {
+    const parsed = JSON.parse(jsonData.trim()) as unknown;
+    items = Array.isArray(parsed) ? parsed : [parsed];
+  } catch {
+    redirect("/admin/riddles/bulk?error=invalid_json");
+  }
+
+  const created: string[] = [];
+  const errors: { index: number; message: string }[] = [];
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const title = item?.title?.trim();
+    const gameType = item?.game_type?.trim();
+    const gameId = item?.game_id?.trim() || null;
+
+    if (!title || !gameType) {
+      errors.push({ index: i, message: "title and game_type are required" });
+      continue;
+    }
+
+    let pgn = item?.pgn?.trim() ?? "";
+    if (!pgn && gameId) {
+      const game = await gameRepo.findById(supabase, gameId);
+      pgn = game?.pgn?.trim() ?? "";
+    }
+
+    if (!pgn) {
+      errors.push({ index: i, message: "pgn is required (or provide game_id with a saved PGN)" });
+      continue;
+    }
+
+    const displayPly = Math.max(0, item.display_ply ?? item.initial_ply ?? 0);
+    const initialPly = Math.max(0, item.initial_ply ?? displayPly);
+
+    const displayFen = getFenFromPgnAtPly(pgn, displayPly);
+    if (!displayFen) {
+      errors.push({
+        index: i,
+        message: `display_ply (${displayPly}) exceeds PGN length`,
+      });
+      continue;
+    }
+
+    const initialFen = getFenFromPgnAtPly(pgn, initialPly);
+    if (!initialFen) {
+      errors.push({
+        index: i,
+        message: `initial_ply (${initialPly}) exceeds PGN length`,
+      });
+      continue;
+    }
+
+    let moves = item.moves?.trim() || null;
+    if (!moves) {
+      let moveCount = item.move_count_for_answer;
+      if (item.answer_end_ply != null && !Number.isNaN(item.answer_end_ply)) {
+        moveCount = Math.max(1, item.answer_end_ply - displayPly);
+      }
+      if (moveCount == null || moveCount < 1) {
+        errors.push({
+          index: i,
+          message: "moves or move_count_for_answer (or answer_end_ply) is required",
+        });
+        continue;
+      }
+      moves = getUciMovesFromPgnAfterPlyAtMoveCount(pgn, displayPly, moveCount) ?? null;
+    }
+
+    if (!moves?.trim()) {
+      errors.push({ index: i, message: "Invalid PGN or could not derive moves" });
+      continue;
+    }
+
+    let goals: MoveGoal[] | null | undefined;
+    if ("goals" in (item ?? {})) {
+      const g = item.goals;
+      if (g === null) {
+        goals = null;
+      } else if (isMoveGoalsArray(g)) {
+        goals = g;
+      } else {
+        errors.push({
+          index: i,
+          message:
+            "goals must be null or an array of { ply, move, title, description, isCompleted, card? }",
+        });
+        continue;
+      }
+    }
+
+    const input: CreateRiddleInput = {
+      gameId,
+      title,
+      pgn,
+      moves,
+      gameType,
+      initialFen,
+      displayFen,
+      themes: parseBulkThemes(item.themes),
+      isActive: item.is_active ?? true,
+      ...(goals !== undefined ? { goals } : {}),
+    };
+
+    const riddle = await createRiddle(supabase, input);
+    if (riddle) {
+      created.push(riddle.id);
+    } else {
+      errors.push({ index: i, message: "Could not be written to the database" });
+    }
+  }
+
+  const params = new URLSearchParams();
+  if (created.length > 0) params.set("created", created.length.toString());
+  if (errors.length > 0) params.set("errors", errors.length.toString());
+  if (errors.length > 0) params.set("errorDetails", JSON.stringify(errors));
+
+  revalidatePath("/admin/riddles");
+  redirect(`/admin/riddles/bulk?${params.toString()}`);
 }
 
 export async function deleteRiddleAction(id: string): Promise<void> {
