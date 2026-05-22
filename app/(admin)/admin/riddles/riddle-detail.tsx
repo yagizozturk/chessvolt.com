@@ -8,62 +8,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import type { Game } from "@/features/game/types/game";
-import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
-import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
-import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
-import { cn } from "@/lib/utils/cn";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { deleteRiddleAction, updateRiddleAction } from "./actions";
+import { deleteRiddleAction } from "./actions";
+import { RiddleEditForm } from "./riddle-edit-form";
 
 type Props = {
   riddle: Riddle;
   game: Game | null;
 };
 
-function getMoveCountFromMoves(moves: string | null): string {
-  if (!moves?.trim()) return "1";
-  const count = moves.trim().split(/\s+/).filter(Boolean).length;
-  return String(Math.max(1, count));
-}
-
 export function RiddleDetail({ riddle, game }: Props) {
   const [isEditing, setIsEditing] = useState(false);
-  const [ply, setPly] = useState(() => {
-    if (game?.pgn && riddle.moveSequence.displayFen?.trim()) {
-      const p = getPlyFromPgnAtFen(game.pgn, riddle.moveSequence.displayFen.trim());
-      return p != null ? String(p) : "0";
-    }
-    return "0";
-  });
-  const [moveCountForAnswer, setMoveCountForAnswer] = useState(() =>
-    getMoveCountFromMoves(riddle.moveSequence.moves),
-  );
-  const [moves, setMoves] = useState(riddle.moveSequence.moves ?? "");
-  const [displayFen, setDisplayFen] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!game?.pgn) return;
-    const plyNum = parseInt(ply, 10);
-    const moveCount = parseInt(moveCountForAnswer, 10);
-    if (isNaN(plyNum) || plyNum < 0) return;
-    const fen = getFenFromPgnAtPly(game.pgn, plyNum);
-    setDisplayFen(fen);
-    if (!isNaN(moveCount) && moveCount > 0) {
-      const uci = getUciMovesFromPgnAfterPlyAtMoveCount(
-        game.pgn,
-        plyNum,
-        moveCount,
-      );
-      setMoves(uci ?? "");
-    }
-  }, [game?.pgn, ply, moveCountForAnswer]);
 
   return (
     <div className="space-y-6">
@@ -109,116 +69,12 @@ export function RiddleDetail({ riddle, game }: Props) {
         </CardHeader>
         <CardContent>
           {isEditing ? (
-            <form
-              action={async (formData) => {
-                await updateRiddleAction(riddle.id, formData);
-              }}
-              className="space-y-4"
-            >
-              <FieldGroup>
-                <Field>
-                  <FieldLabel>Game ID</FieldLabel>
-                  <Input name="gameId" defaultValue={riddle.gameId} required />
-                </Field>
-                <Field>
-                  <FieldLabel>Ply</FieldLabel>
-                  <Input
-                    name="ply"
-                    type="number"
-                    required
-                    value={ply}
-                    onChange={(e) => setPly(e.target.value)}
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel>Move Count For Answer</FieldLabel>
-                  <Input
-                    name="moveCountForAnswer"
-                    type="number"
-                    min={1}
-                    placeholder="PGN'den UCI çıkarmak için"
-                    value={moveCountForAnswer}
-                    onChange={(e) => setMoveCountForAnswer(e.target.value)}
-                    className={cn(
-                      "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
-                      "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
-                    )}
-                  />
-                </Field>
-                {displayFen && (
-                  <Field>
-                    <FieldLabel>Pozisyon (PLY ile hesaplanan FEN)</FieldLabel>
-                    <Input
-                      readOnly
-                      value={displayFen}
-                      className="font-mono text-sm"
-                    />
-                  </Field>
-                )}
-                <Field>
-                  <FieldLabel>Title</FieldLabel>
-                  <Input name="title" defaultValue={riddle.title} required />
-                </Field>
-                <Field>
-                  <FieldLabel>Moves</FieldLabel>
-                  <Input
-                    name="moves"
-                    value={moves}
-                    onChange={(e) => setMoves(e.target.value)}
-                    placeholder="PLY + Move Count ile otomatik"
-                    className={cn(
-                      "border-input h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs",
-                      "focus-visible:ring-ring focus-visible:ring-2 focus-visible:outline-none",
-                    )}
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel>Game Type</FieldLabel>
-                  <Input
-                    name="gameType"
-                    required
-                    defaultValue={riddle.gameType ?? ""}
-                    placeholder="e.g. legend_games"
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel>Themes</FieldLabel>
-                  <Input
-                    name="themes"
-                    defaultValue={riddle.themes.join(", ")}
-                    placeholder="Comma-separated, e.g. tactics, endgame"
-                  />
-                </Field>
-                <Field className="flex flex-row items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="isActive"
-                    defaultChecked={riddle.isActive}
-                    className="size-4 rounded border"
-                  />
-                  <FieldLabel className="mb-0">Active (visible on challenge pages)</FieldLabel>
-                </Field>
-                <Field>
-                  <FieldLabel>Goals (JSON)</FieldLabel>
-                  <textarea
-                    name="goals"
-                    rows={6}
-                    defaultValue={
-                      riddle.moveSequence.goals != null
-                        ? JSON.stringify(riddle.moveSequence.goals, null, 2)
-                        : ""
-                    }
-                    className={cn(
-                      "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
-                    )}
-                  />
-                </Field>
-              </FieldGroup>
-              <Button type="submit">
-                <Save className="h-4 w-4" />
-                Save
-              </Button>
-            </form>
+            <RiddleEditForm
+              key={riddle.id}
+              riddle={riddle}
+              game={game}
+              onCancel={() => setIsEditing(false)}
+            />
           ) : (
             <dl className="grid gap-2 text-sm">
               <div>
