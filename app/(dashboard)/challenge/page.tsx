@@ -1,10 +1,10 @@
 import { ChallengeDataList } from "@/features/challenge/components/challenge-data-list";
 import { ChallengeHeader } from "@/features/challenge/components/challenge-header";
-import { getActiveGameRiddles } from "@/features/game-riddle/services/game-riddle.service";
+import { getActiveRiddles } from "@/features/riddle/services/riddle.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { buildAttemptByRiddleId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-riddle-id";
-import { formatGameType, getGameTypeConstants } from "@/features/game-riddle/utilities/game-type-helpers";
-import { getGroupStats } from "@/features/game-riddle/utilities/get-group-stats";
+import { formatGameType, getGameTypeConstants } from "@/features/riddle/utilities/game-type-helpers";
+import { getGroupStats } from "@/features/riddle/utilities/get-group-stats";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 import { groupBy } from "@/lib/utils/groupBy";
@@ -24,7 +24,7 @@ export default async function ChallengePage() {
   // (1,2,3) Getting riddles and attempts for games
   // ========================================================================
   const { user, supabase } = await getPublicUser();
-  const allRiddles = await getActiveGameRiddles(supabase);
+  const allRiddles = await getActiveRiddles(supabase);
 
   const sequenceIds = [...new Set(allRiddles.map((r) => r.moveSequence.id))];
   const summaries = user

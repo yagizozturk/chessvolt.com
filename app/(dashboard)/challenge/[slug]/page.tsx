@@ -1,9 +1,9 @@
 import { ChallengeHeader } from "@/features/challenge/components/challenge-header";
-import { RiddleBoardCard } from "@/features/game-riddle/components/riddle-board-card";
-import { getGameRiddlesByGameType } from "@/features/game-riddle/services/game-riddle.service";
+import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
+import { getRiddlesByGameType } from "@/features/riddle/services/riddle.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { buildAttemptByRiddleId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-riddle-id";
-import { formatGameType, getGameTypeConstants } from "@/features/game-riddle/utilities/game-type-helpers";
+import { formatGameType, getGameTypeConstants } from "@/features/riddle/utilities/game-type-helpers";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
@@ -29,18 +29,18 @@ export default async function ChallengePage({ params }: Params) {
   // ========================================================================
   // (1,2) Getting riddles and attempts for this game type
   // ========================================================================
-  const gameRiddles = await getGameRiddlesByGameType(supabase, gameType, { activeOnly: true });
+  const riddles = await getRiddlesByGameType(supabase, gameType, { activeOnly: true });
 
-  const sequenceIds = [...new Set(gameRiddles.map((r) => r.moveSequence.id))];
+  const sequenceIds = [...new Set(riddles.map((r) => r.moveSequence.id))];
   const summaries = user
     ? await attemptService.getLatestSummariesForSequences(supabase, user.id, sequenceIds)
     : [];
-  const attemptByRiddleId = buildAttemptByRiddleId(gameRiddles, summaries);
+  const attemptByRiddleId = buildAttemptByRiddleId(riddles, summaries);
 
   // ========================================================================
   // (4, 5) Fetch games for riddles (unique gameIds) - single query
   // ========================================================================
-  const gameIds = [...new Set(gameRiddles.map((r) => r.gameId))];
+  const gameIds = [...new Set(riddles.map((r) => r.gameId))];
   const games = await getGamesByIds(supabase, gameIds);
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
@@ -48,7 +48,7 @@ export default async function ChallengePage({ params }: Params) {
   const gameTypeConstants = getGameTypeConstants(gameType);
 
   // ========================================================================
-  // (6) Render -> ilgili challenge daki(memorable games) GameRiddle lar kadar dönüp
+  // (6) Render -> ilgili challenge daki(memorable games) Riddle lar kadar dönüp
   // onu RiddleBoard a atıcaz. Eğer record silinmiş ise, yani game silinmiş ise riddle silinmeden
   // o null kontrolüne girer. (satır 81)
   // ========================================================================
@@ -62,11 +62,11 @@ export default async function ChallengePage({ params }: Params) {
           description={gameTypeConstants.description}
           quote={gameTypeConstants.quote}
           author={gameTypeConstants.author}
-          itemCount={gameRiddles.length}
+          itemCount={riddles.length}
           itemLabel="riddles"
         />
         <div className="grid grid-cols-2 gap-6">
-          {gameRiddles
+          {riddles
             .map((riddle, index) => {
               const game = gameMap[riddle.gameId];
               if (!game) return null;

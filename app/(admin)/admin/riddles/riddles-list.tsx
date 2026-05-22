@@ -1,21 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { deleteGameRiddleAction } from "./actions";
+import { deleteRiddleAction } from "./actions";
 
 type Props = {
-  riddles: GameRiddle[];
+  riddles: Riddle[];
 };
 
-export function GameRiddlesList({ riddles }: Props) {
+export function RiddlesList({ riddles }: Props) {
   async function handleDelete(e: React.MouseEvent, id: string) {
     e.preventDefault();
     e.stopPropagation();
     if (!confirm("This game riddle will be deleted. Are you sure?")) return;
-    await deleteGameRiddleAction(id);
+    await deleteRiddleAction(id);
   }
 
   if (riddles.length === 0) {
@@ -31,7 +31,7 @@ export function GameRiddlesList({ riddles }: Props) {
       {riddles.map((r) => (
         <Link
           key={r.id}
-          href={`/admin/game-riddles/${r.id}`}
+          href={`/admin/riddles/${r.id}`}
           className="hover:bg-accent flex items-center justify-between rounded-lg border px-4 py-3 transition-colors"
         >
           <div className="flex items-center gap-4">

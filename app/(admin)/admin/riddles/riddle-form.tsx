@@ -9,13 +9,13 @@ import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFr
 import { cn } from "@/lib/utils/cn";
 import { useEffect, useState } from "react";
 
-import { createGameRiddleAction } from "./actions";
+import { createRiddleAction } from "./actions";
 
 type Props = {
   games: Game[];
 };
 
-export function GameRiddleForm({ games }: Props) {
+export function RiddleForm({ games }: Props) {
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
   const [gameId, setGameId] = useState("");
@@ -59,7 +59,7 @@ export function GameRiddleForm({ games }: Props) {
   }, [gameId, ply, gameMap]);
 
   return (
-    <form action={createGameRiddleAction} className="space-y-4">
+    <form action={createRiddleAction} className="space-y-4">
       <FieldGroup>
         <Field>
           <FieldLabel>Game</FieldLabel>

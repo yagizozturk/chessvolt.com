@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import type { Game } from "@/features/game/types/game";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
@@ -20,10 +20,10 @@ import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { deleteGameRiddleAction, updateGameRiddleAction } from "./actions";
+import { deleteRiddleAction, updateRiddleAction } from "./actions";
 
 type Props = {
-  riddle: GameRiddle;
+  riddle: Riddle;
   game: Game | null;
 };
 
@@ -33,7 +33,7 @@ function getMoveCountFromMoves(moves: string | null): string {
   return String(Math.max(1, count));
 }
 
-export function GameRiddleDetail({ riddle, game }: Props) {
+export function RiddleDetail({ riddle, game }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [ply, setPly] = useState(() => {
     if (game?.pgn && riddle.moveSequence.displayFen?.trim()) {
@@ -69,7 +69,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/admin/game-riddles" className="flex items-center gap-2">
+          <Link href="/admin/riddles" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to list
           </Link>
@@ -99,7 +99,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
               onClick={async () => {
                 if (!confirm("This game riddle will be deleted. Are you sure?"))
                   return;
-                await deleteGameRiddleAction(riddle.id);
+                await deleteRiddleAction(riddle.id);
               }}
             >
               <Trash2 className="h-4 w-4" />
@@ -111,7 +111,7 @@ export function GameRiddleDetail({ riddle, game }: Props) {
           {isEditing ? (
             <form
               action={async (formData) => {
-                await updateGameRiddleAction(riddle.id, formData);
+                await updateRiddleAction(riddle.id, formData);
               }}
               className="space-y-4"
             >

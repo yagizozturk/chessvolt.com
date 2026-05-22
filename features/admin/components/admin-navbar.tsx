@@ -14,7 +14,7 @@ const adminNavItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/games", label: "Games", icon: Gamepad2 },
-  { href: "/admin/game-riddles", label: "Game Riddles", icon: HelpCircle },
+  { href: "/admin/riddles", label: "Riddles", icon: HelpCircle },
   { href: "/admin/openings", label: "Openings", icon: BookOpen },
 ];
 

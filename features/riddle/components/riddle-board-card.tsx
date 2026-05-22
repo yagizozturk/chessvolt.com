@@ -4,12 +4,12 @@ import Link from "next/link";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Button } from "@/components/ui/button";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import type { Game } from "@/features/game/types/game";
 import { getFullMoveCountFromMoves } from "@/lib/chess/getFullMoveCountFromMoves";
 
 type RiddleBoardCardProps = {
-  riddle: GameRiddle;
+  riddle: Riddle;
   game: Game;
   num: number;
   size?: number;
@@ -37,7 +37,7 @@ export function RiddleBoardCard({ riddle, game, num, size = 200, isComplete, hre
 
   return (
     <Link
-      href={href ?? `/game-riddle/${riddle.id}`}
+      href={href ?? `/riddle/${riddle.id}`}
       className="bg-card border-b-card-shadow flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6"
     >
       <div>

@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
-import { useRiddleTour } from "@/features/game-riddle/hooks/use-riddle-tour";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import {
@@ -25,7 +25,7 @@ import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
 type RiddleControllerProps = {
-  riddle: GameRiddle;
+  riddle: Riddle;
   nextRiddleId?: string | null;
   parentChallengeUrl?: string;
 };
@@ -152,7 +152,7 @@ export default function RiddleController({
     });
   };
 
-  const successDestinationPath = nextRiddleId ? `/game-riddle/${nextRiddleId}` : parentChallengeUrl;
+  const successDestinationPath = nextRiddleId ? `/riddle/${nextRiddleId}` : parentChallengeUrl;
   const successButtonLabel = nextRiddleId ? "Next riddle" : "Back to challenge";
 
   const handleContinueClick = () => {

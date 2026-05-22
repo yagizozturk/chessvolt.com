@@ -1,19 +1,19 @@
-import { getGameRiddleById } from "@/features/game-riddle/services/game-riddle.service";
+import { getRiddleById } from "@/features/riddle/services/riddle.service";
 import { getGameById } from "@/features/game/services/game.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
 
-import { GameRiddleDetail } from "../game-riddle-detail";
+import { RiddleDetail } from "../riddle-detail";
 
 type Params = {
   params: Promise<{ id: string }>;
 };
 
-export default async function AdminGameRiddleDetailPage({ params }: Params) {
+export default async function AdminRiddleDetailPage({ params }: Params) {
   const { supabase } = await getAdminUser();
   const { id } = await params;
 
-  const riddle = await getGameRiddleById(supabase, id);
+  const riddle = await getRiddleById(supabase, id);
   if (!riddle) {
     notFound();
   }
@@ -22,7 +22,7 @@ export default async function AdminGameRiddleDetailPage({ params }: Params) {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <GameRiddleDetail riddle={riddle} game={game} />
+      <RiddleDetail riddle={riddle} game={game} />
     </div>
   );
 }

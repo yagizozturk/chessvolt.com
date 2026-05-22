@@ -6,16 +6,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAllGameRiddles } from "@/features/game-riddle/services/game-riddle.service";
+import { getAllRiddles } from "@/features/riddle/services/riddle.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { ChevronRight, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 
-import { GameRiddlesList } from "./game-riddles-list";
+import { RiddlesList } from "./riddles-list";
 
-export default async function AdminGameRiddlesPage() {
+export default async function AdminRiddlesPage() {
   const { supabase } = await getAdminUser();
-  const riddles = await getAllGameRiddles(supabase);
+  const riddles = await getAllRiddles(supabase);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -28,7 +28,7 @@ export default async function AdminGameRiddlesPage() {
         </div>
         <Button asChild>
           <Link
-            href="/admin/game-riddles/new"
+            href="/admin/riddles/new"
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -45,7 +45,7 @@ export default async function AdminGameRiddlesPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <GameRiddlesList riddles={riddles} />
+          <RiddlesList riddles={riddles} />
         </CardContent>
       </Card>
     </div>

@@ -1,85 +1,85 @@
 /**
- * Game Riddle Repository
+ * Riddle Repository
  *
- * Responsibility: CRUD access to the game_riddles table.
+ * Responsibility: CRUD access to the riddles table.
  */
 
 import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
-import { toGameRiddle } from "@/features/game-riddle/mapper/game-riddle.mapper";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import { toRiddle } from "@/features/riddle/mapper/riddle.mapper";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import { DEFAULT_INITIAL_FEN } from "@/features/move-sequence/mapper/move-sequence.mapper";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-const GAME_RIDDLE_SELECT = "*, move_sequences (*)";
+const RIDDLE_SELECT = "*, move_sequences (*)";
 
-export async function findAll(supabase: SupabaseClient): Promise<GameRiddle[]> {
+export async function findAll(supabase: SupabaseClient): Promise<Riddle[]> {
   const { data: riddles, error } = await supabase
-    .from("game_riddles")
-    .select(GAME_RIDDLE_SELECT)
+    .from("riddles")
+    .select(RIDDLE_SELECT)
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("game-riddle.repository.findAll error:", error);
+    console.error("riddle.repository.findAll error:", error);
     return [];
   }
 
-  return (riddles ?? []).map(toGameRiddle);
+  return (riddles ?? []).map(toRiddle);
 }
 
-export async function findAllActive(supabase: SupabaseClient): Promise<GameRiddle[]> {
+export async function findAllActive(supabase: SupabaseClient): Promise<Riddle[]> {
   const { data: riddles, error } = await supabase
-    .from("game_riddles")
-    .select(GAME_RIDDLE_SELECT)
+    .from("riddles")
+    .select(RIDDLE_SELECT)
     .eq("is_active", true)
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("game-riddle.repository.findAllActive error:", error);
+    console.error("riddle.repository.findAllActive error:", error);
     return [];
   }
 
-  return (riddles ?? []).map(toGameRiddle);
+  return (riddles ?? []).map(toRiddle);
 }
 
-export async function findById(supabase: SupabaseClient, id: string): Promise<GameRiddle | null> {
+export async function findById(supabase: SupabaseClient, id: string): Promise<Riddle | null> {
   const { data, error } = await supabase
-    .from("game_riddles")
-    .select(GAME_RIDDLE_SELECT)
+    .from("riddles")
+    .select(RIDDLE_SELECT)
     .eq("id", id)
     .maybeSingle();
 
   if (error) {
-    console.error("game-riddle.repository.findById error:", error);
+    console.error("riddle.repository.findById error:", error);
     return null;
   }
 
   if (!data) return null;
 
-  return toGameRiddle(data);
+  return toRiddle(data);
 }
 
-export async function findByGameId(supabase: SupabaseClient, gameId: string): Promise<GameRiddle[]> {
+export async function findByGameId(supabase: SupabaseClient, gameId: string): Promise<Riddle[]> {
   const { data: riddles, error } = await supabase
-    .from("game_riddles")
-    .select(GAME_RIDDLE_SELECT)
+    .from("riddles")
+    .select(RIDDLE_SELECT)
     .eq("game_id", gameId)
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("game-riddle.repository.findByGameId error:", error);
+    console.error("riddle.repository.findByGameId error:", error);
     return [];
   }
 
-  return (riddles ?? []).map(toGameRiddle);
+  return (riddles ?? []).map(toRiddle);
 }
 
 export async function findByGameType(
   supabase: SupabaseClient,
   gameType: string,
   options?: { activeOnly?: boolean },
-): Promise<GameRiddle[]> {
-  let query = supabase.from("game_riddles").select(GAME_RIDDLE_SELECT).eq("game_type", gameType);
+): Promise<Riddle[]> {
+  let query = supabase.from("riddles").select(RIDDLE_SELECT).eq("game_type", gameType);
 
   if (options?.activeOnly) {
     query = query.eq("is_active", true);
@@ -88,14 +88,14 @@ export async function findByGameType(
   const { data: riddles, error } = await query.order("created_at", { ascending: true });
 
   if (error) {
-    console.error("game-riddle.repository.findByGameType error:", error);
+    console.error("riddle.repository.findByGameType error:", error);
     return [];
   }
 
-  return (riddles ?? []).map(toGameRiddle);
+  return (riddles ?? []).map(toRiddle);
 }
 
-export type CreateGameRiddleInput = {
+export type CreateRiddleInput = {
   gameId: string;
   title: string;
   moves?: string | null;
@@ -108,8 +108,8 @@ export type CreateGameRiddleInput = {
 
 export async function create(
   supabase: SupabaseClient,
-  input: CreateGameRiddleInput,
-): Promise<GameRiddle | null> {
+  input: CreateRiddleInput,
+): Promise<Riddle | null> {
   const displayFen = input.displayFen ?? null;
   const moves = input.moves?.trim() || "e2e4";
 
@@ -122,7 +122,7 @@ export async function create(
   if (!moveSequence) return null;
 
   const { data, error } = await supabase
-    .from("game_riddles")
+    .from("riddles")
     .insert({
       game_id: input.gameId,
       title: input.title,
@@ -131,18 +131,18 @@ export async function create(
       themes: input.themes ?? [],
       is_active: input.isActive ?? true,
     })
-    .select(GAME_RIDDLE_SELECT)
+    .select(RIDDLE_SELECT)
     .single();
 
   if (error) {
-    console.error("game-riddle.repository.create error:", error);
+    console.error("riddle.repository.create error:", error);
     return null;
   }
 
-  return toGameRiddle(data);
+  return toRiddle(data);
 }
 
-export type UpdateGameRiddleInput = {
+export type UpdateRiddleInput = {
   gameId?: string;
   title?: string;
   moves?: string | null;
@@ -156,8 +156,8 @@ export type UpdateGameRiddleInput = {
 export async function update(
   supabase: SupabaseClient,
   id: string,
-  input: UpdateGameRiddleInput,
-): Promise<GameRiddle | null> {
+  input: UpdateRiddleInput,
+): Promise<Riddle | null> {
   const existing = await findById(supabase, id);
   if (!existing) return null;
 
@@ -186,9 +186,9 @@ export async function update(
   if (input.isActive !== undefined) updates.is_active = input.isActive;
 
   if (Object.keys(updates).length > 0) {
-    const { error } = await supabase.from("game_riddles").update(updates).eq("id", id);
+    const { error } = await supabase.from("riddles").update(updates).eq("id", id);
     if (error) {
-      console.error("game-riddle.repository.update error:", error);
+      console.error("riddle.repository.update error:", error);
       return null;
     }
   }
@@ -197,10 +197,10 @@ export async function update(
 }
 
 export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
-  const { error } = await supabase.from("game_riddles").delete().eq("id", id);
+  const { error } = await supabase.from("riddles").delete().eq("id", id);
 
   if (error) {
-    console.error("game-riddle.repository.remove error:", error);
+    console.error("riddle.repository.remove error:", error);
     return false;
   }
 

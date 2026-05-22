@@ -1,14 +1,14 @@
 "use server";
 
 import type {
-  CreateGameRiddleInput,
-  UpdateGameRiddleInput,
-} from "@/features/game-riddle/repository/game-riddle.repository";
+  CreateRiddleInput,
+  UpdateRiddleInput,
+} from "@/features/riddle/repository/riddle.repository";
 import {
-  createGameRiddle,
-  deleteGameRiddle,
-  updateGameRiddle,
-} from "@/features/game-riddle/services/game-riddle.service";
+  createRiddle,
+  deleteRiddle,
+  updateRiddle,
+} from "@/features/riddle/services/riddle.service";
 import * as gameRepo from "@/features/game/repository/game.repository";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";
@@ -46,7 +46,7 @@ function parseGoalsFromForm(formData: FormData, errorRedirect: string): MoveGoal
   }
 }
 
-export async function createGameRiddleAction(formData: FormData) {
+export async function createRiddleAction(formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const gameId = formData.get("gameId") as string;
@@ -54,18 +54,18 @@ export async function createGameRiddleAction(formData: FormData) {
   const title = formData.get("title") as string;
   const moves = (formData.get("moves") as string) || null;
   const gameType = (formData.get("gameType") as string)?.trim() || null;
-  const goals = parseGoalsFromForm(formData, "/admin/game-riddles/new?error=invalid_goals_json");
+  const goals = parseGoalsFromForm(formData, "/admin/riddles/new?error=invalid_goals_json");
   const themes = parseThemesFromForm(formData);
   const isActive = parseIsActiveFromForm(formData);
 
   if (!gameId || !title || !gameType || isNaN(ply) || ply < 0) {
-    redirect("/admin/game-riddles/new?error=missing_fields");
+    redirect("/admin/riddles/new?error=missing_fields");
   }
 
   const game = await gameRepo.findById(supabase, gameId);
   const displayFen = game?.pgn != null ? getFenFromPgnAtPly(game.pgn, ply) : null;
 
-  const input: CreateGameRiddleInput = {
+  const input: CreateRiddleInput = {
     gameId,
     title,
     moves: moves || null,
@@ -76,16 +76,16 @@ export async function createGameRiddleAction(formData: FormData) {
     isActive,
   };
 
-  const riddle = await createGameRiddle(supabase, input);
+  const riddle = await createRiddle(supabase, input);
   if (!riddle) {
-    redirect("/admin/game-riddles/new?error=create_failed");
+    redirect("/admin/riddles/new?error=create_failed");
   }
 
-  revalidatePath("/admin/game-riddles");
-  redirect(`/admin/game-riddles/${riddle.id}`);
+  revalidatePath("/admin/riddles");
+  redirect(`/admin/riddles/${riddle.id}`);
 }
 
-export async function updateGameRiddleAction(id: string, formData: FormData) {
+export async function updateRiddleAction(id: string, formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const gameId = formData.get("gameId") as string;
@@ -93,7 +93,7 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
   const moveCountForAnswer = parseInt(formData.get("moveCountForAnswer") as string, 10);
   const title = formData.get("title") as string;
   const gameType = (formData.get("gameType") as string)?.trim() || null;
-  const goals = parseGoalsFromForm(formData, `/admin/game-riddles/${id}?error=invalid_goals_json`);
+  const goals = parseGoalsFromForm(formData, `/admin/riddles/${id}?error=invalid_goals_json`);
   const themes = parseThemesFromForm(formData);
   const isActive = parseIsActiveFromForm(formData);
 
@@ -106,7 +106,7 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
     isNaN(moveCountForAnswer) ||
     moveCountForAnswer < 1
   ) {
-    redirect(`/admin/game-riddles/${id}?error=missing_fields`);
+    redirect(`/admin/riddles/${id}?error=missing_fields`);
   }
 
   const game = await gameRepo.findById(supabase, gameId);
@@ -116,7 +116,7 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
       ? (getUciMovesFromPgnAfterPlyAtMoveCount(game.pgn, ply, moveCountForAnswer) ?? null)
       : null;
 
-  const input: UpdateGameRiddleInput = {
+  const input: UpdateRiddleInput = {
     gameId,
     title,
     gameType,
@@ -127,24 +127,24 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
     isActive,
   };
 
-  const riddle = await updateGameRiddle(supabase, id, input);
+  const riddle = await updateRiddle(supabase, id, input);
   if (!riddle) {
-    redirect(`/admin/game-riddles/${id}?error=update_failed`);
+    redirect(`/admin/riddles/${id}?error=update_failed`);
   }
 
-  revalidatePath("/admin/game-riddles");
-  revalidatePath(`/admin/game-riddles/${id}`);
-  redirect(`/admin/game-riddles/${id}`);
+  revalidatePath("/admin/riddles");
+  revalidatePath(`/admin/riddles/${id}`);
+  redirect(`/admin/riddles/${id}`);
 }
 
-export async function deleteGameRiddleAction(id: string): Promise<void> {
+export async function deleteRiddleAction(id: string): Promise<void> {
   const { supabase } = await getAdminUser();
 
-  const ok = await deleteGameRiddle(supabase, id);
+  const ok = await deleteRiddle(supabase, id);
   if (!ok) {
-    redirect("/admin/game-riddles?error=delete_failed");
+    redirect("/admin/riddles?error=delete_failed");
   }
 
-  revalidatePath("/admin/game-riddles");
-  redirect("/admin/game-riddles");
+  revalidatePath("/admin/riddles");
+  redirect("/admin/riddles");
 }

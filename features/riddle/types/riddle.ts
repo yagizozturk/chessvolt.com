@@ -1,6 +1,6 @@
 import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
 
-export type GameRiddle = {
+export type Riddle = {
   id: string;
   gameId: string;
   title: string;

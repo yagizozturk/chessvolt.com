@@ -4,12 +4,12 @@ import { ChevronRight, ChevronUp } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { RiddleBoardCard } from "@/features/game-riddle/components/riddle-board-card";
-import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
+import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import type { Game } from "@/features/game/types/game";
 
 type ChallengeDataListProps = {
-  riddles: GameRiddle[];
+  riddles: Riddle[];
   gameMap: Record<string, Game>;
   /** riddleId => solved (true), failed (false), or not attempted (undefined). */
   attemptByRiddleId: Record<string, boolean | undefined>;

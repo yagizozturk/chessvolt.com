@@ -1,6 +1,6 @@
 "use server";
 
-import { createGameRiddle } from "@/features/game-riddle/services/game-riddle.service";
+import { createRiddle } from "@/features/riddle/services/riddle.service";
 import { createGame } from "@/features/game/services/game.service";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
@@ -65,7 +65,7 @@ export async function importPgnAction(formData: FormData) {
         `Find the first move - ${parsed.whitePlayer} vs ${parsed.blackPlayer}`;
       const displayFen = getFenFromPgnAtPly(parsed.pgn, 0);
 
-      await createGameRiddle(supabase, {
+      await createRiddle(supabase, {
         gameId: game.id,
         title: defaultTitle,
         moves: movesAtPly0 ?? "",
