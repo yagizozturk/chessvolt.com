@@ -2,7 +2,7 @@
 
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { Notifier } from "@/components/notifier/notifier";
@@ -27,15 +27,27 @@ type RiddleControllerProps = {
   parentChallengeUrl?: string;
 };
 
-function buildAttemptCounters(sortedGoals: MoveGoal[], wrongMoveCount: number, hintCount: number) {
+function buildAttemptCounters(
+  sortedGoals: MoveGoal[],
+  wrongMoveCount: number,
+  hintCount: number,
+  maxCorrectStreak: number,
+) {
   const correctMoveCount = sortedGoals.filter((goal) => goal.isCompleted).length;
 
   return {
     correctMoveCount,
     wrongMoveCount,
     hintCount,
-    maxCorrectStreak: correctMoveCount,
+    maxCorrectStreak,
   };
+}
+
+function bumpCorrectStreak(currentStreakRef: RefObject<number>, maxStreakRef: RefObject<number>) {
+  currentStreakRef.current += 1;
+  if (currentStreakRef.current > maxStreakRef.current) {
+    maxStreakRef.current = currentStreakRef.current;
+  }
 }
 
 export default function RiddleController({
@@ -52,6 +64,8 @@ export default function RiddleController({
   const { playLevelUpSound } = useBoardSounds();
   const wrongMoveCountRef = useRef(0);
   const totalHintCountRef = useRef(0);
+  const currentCorrectStreakRef = useRef(0);
+  const maxCorrectStreakRef = useRef(0);
   const {
     handleMoveCheck,
     handleSuccessMovePlayed,
@@ -73,6 +87,8 @@ export default function RiddleController({
     setSuccessDialogOpen(false);
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
+    currentCorrectStreakRef.current = 0;
+    maxCorrectStreakRef.current = 0;
   }, [riddle.id]);
 
   useEffect(() => {
@@ -86,7 +102,12 @@ export default function RiddleController({
       await recordEvent({ eventType: "complete" });
       await updateAttemptStatus(
         "completed",
-        buildAttemptCounters(sortedGoals, wrongMoveCountRef.current, totalHintCountRef.current),
+        buildAttemptCounters(
+          sortedGoals,
+          wrongMoveCountRef.current,
+          totalHintCountRef.current,
+          maxCorrectStreakRef.current,
+        ),
       );
     })();
   }, [currentCorrectMove, isCompleted, playLevelUpSound, recordEvent, sortedGoals, updateAttemptStatus]);
@@ -96,6 +117,7 @@ export default function RiddleController({
 
     if (!isCorrect && !isCompleted) {
       wrongMoveCountRef.current += 1;
+      currentCorrectStreakRef.current = 0;
 
       void (async () => {
         await recordEvent({
@@ -106,10 +128,17 @@ export default function RiddleController({
         });
         await updateAttemptStatus(
           "failed",
-          buildAttemptCounters(sortedGoals, wrongMoveCountRef.current, totalHintCountRef.current),
+          buildAttemptCounters(
+            sortedGoals,
+            wrongMoveCountRef.current,
+            totalHintCountRef.current,
+            maxCorrectStreakRef.current,
+          ),
         );
       })();
     } else if (isCorrect) {
+      bumpCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
+
       void recordEvent({
         eventType: "move",
         moveUci: move.uci,
