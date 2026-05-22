@@ -24,12 +24,12 @@ function defaultDisplayPlyString(v: OpeningVariant): string {
     const p = getPlyFromPgnAtFen(v.moveSequence.pgn ?? "", df);
     if (p !== null) return String(p);
   }
-  return String(v.ply ?? 0);
+  return String(v.initialPly ?? 0);
 }
 
 export function VariantEditForm({ variant, onCancel }: Props) {
   const [pgn, setPgn] = useState(variant.moveSequence.pgn ?? "");
-  const [initialPly, setInitialPly] = useState(String(variant.ply ?? 0));
+  const [initialPly, setInitialPly] = useState(String(variant.initialPly ?? 0));
   const [displayPly, setDisplayPly] = useState(() => defaultDisplayPlyString(variant));
   const { rows, error, fensByPly, uciMoves } = useUciRowsFromPgn(pgn);
   const maxPly = Math.max(0, fensByPly.length - 1);

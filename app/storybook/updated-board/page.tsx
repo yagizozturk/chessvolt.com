@@ -8,7 +8,7 @@ export default function StorybookUpdatedBoardPage() {
     group: "storybook",
     title: "Updated Board Storybook",
     description: "Storybook variant for updated board testing",
-    ply: 6,
+    initialPly: 6,
     moveSequence: {
       id: "storybook-move-sequence",
       initialFen: "start",

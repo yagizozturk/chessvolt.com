@@ -59,7 +59,7 @@ export default function OpeningVariantController({
     sourceId: variant.id,
     moves: variant.moveSequence.moves,
     goals: variant.moveSequence.goals,
-    initialPly: variant.ply,
+    initialPly: variant.initialPly,
   });
   const { Tour } = useOpeningVariantTour({ variantId: variant.id });
 

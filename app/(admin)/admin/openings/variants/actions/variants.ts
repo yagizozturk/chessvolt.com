@@ -67,14 +67,14 @@ export async function createOpeningVariantAction(formData: FormData) {
 
   const openingId = formData.get("openingId") as string;
   const pgn = (formData.get("pgn") as string)?.trim();
-  const ply = parseInt((formData.get("ply") as string) ?? "0", 10);
+  const initialPly = parseAdminPly(formData, "initialPly");
   const group = (formData.get("group") as string)?.trim();
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
   const sortKey = parseInt((formData.get("sortKey") as string)?.trim() ?? "", 10);
   const initialFen =
     (formData.get("initialFen") as string)?.trim() ||
-    getFenFromPgnAtPly(pgn ?? "", ply >= 0 ? ply : 0) ||
+    getFenFromPgnAtPly(pgn ?? "", initialPly) ||
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
   const displayFen = (formData.get("displayFen") as string)?.trim() || null;
   const goals = parseGoalsFromForm(formData, newVariantUrl(formData, "invalid_goals_json"));
@@ -83,7 +83,7 @@ export async function createOpeningVariantAction(formData: FormData) {
     redirect(newVariantUrl(formData, "missing_fields"));
   }
 
-  const moves = getUciMovesFromPgnAfterPly(pgn, ply >= 0 ? ply : 0);
+  const moves = getUciMovesFromPgnAfterPly(pgn, initialPly);
   if (!moves) {
     redirect(newVariantUrl(formData, "invalid_pgn"));
   }
@@ -94,7 +94,7 @@ export async function createOpeningVariantAction(formData: FormData) {
     group,
     title: title || null,
     description: description || null,
-    ply: ply >= 0 ? ply : 0,
+    initialPly,
     moves,
     pgn,
     initialFen,
@@ -193,7 +193,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       group,
       title: item.title?.trim() || null,
       description: item.description?.trim() || null,
-      ply: initialPly,
+      initialPly,
       moves,
       pgn: item.pgn.trim(),
       initialFen,
@@ -253,14 +253,14 @@ export async function updateOpeningVariantAction(id: string, formData: FormData)
     }
     input.pgn = pgn;
     input.moves = moves;
-    input.ply = initialPly;
+    input.initialPly = initialPly;
     const defaultStart = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     input.initialFen = initialFenManual || getFenFromPgnAtPly(pgn, initialPly) || defaultStart;
     input.displayFen = displayFenManual || getFenFromPgnAtPly(pgn, displayPly) || null;
   } else {
     if (initialFenManual) input.initialFen = initialFenManual;
     if (displayFenManual) input.displayFen = displayFenManual;
-    input.ply = initialPly;
+    input.initialPly = initialPly;
   }
   input.goals = goals;
 

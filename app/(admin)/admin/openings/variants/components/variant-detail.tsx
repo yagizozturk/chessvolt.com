@@ -93,9 +93,9 @@ export function VariantDetail({ variant }: Props) {
                 <dd>{variant.description ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">Ply</dt>
+                <dt className="text-muted-foreground font-medium">Initial ply</dt>
                 <dd>
-                  <span className="tabular-nums">{variant.ply ?? 0}</span>
+                  <span className="tabular-nums">{variant.initialPly ?? 0}</span>
                   <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed">
                     Half-move index in the PGN where this line begins (0 = start
                     position). Stored UCI moves and the default initial FEN

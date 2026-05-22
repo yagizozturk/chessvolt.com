@@ -9,7 +9,7 @@ export type OpeningVariant = {
   group: string;
   title: string | null;
   description: string | null;
-  ply: number;
+  initialPly: number;
   moveSequence: MoveSequence;
   createdAt: string;
 };

@@ -9,7 +9,7 @@ type DbOpeningVariant = {
   group: string | null;
   title: string | null;
   description: string | null;
-  ply: number;
+  initial_ply: number;
   created_at: string;
   move_sequences?: DbMoveSequence | DbMoveSequence[] | null;
 };
@@ -27,7 +27,7 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     group: db.group ?? "",
     title: db.title,
     description: db.description ?? null,
-    ply: db.ply ?? 0,
+    initialPly: db.initial_ply ?? 0,
     moveSequence: toMoveSequence(seqRow),
     createdAt: db.created_at,
   };

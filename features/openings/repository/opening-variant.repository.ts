@@ -84,7 +84,7 @@ export type CreateOpeningVariantInput = {
   group: string;
   title?: string | null;
   description?: string | null;
-  ply: number;
+  initialPly: number;
   moves: string;
   pgn: string;
   initialFen?: string | null;
@@ -113,7 +113,7 @@ export async function create(
       group: input.group,
       title: input.title ?? null,
       description: input.description ?? null,
-      ply: input.ply,
+      initial_ply: input.initialPly,
       move_sequence_id: moveSequence.id,
     })
     .select("*, move_sequences (*)")
@@ -132,7 +132,7 @@ export type UpdateOpeningVariantInput = {
   group?: string;
   title?: string | null;
   description?: string | null;
-  ply?: number;
+  initialPly?: number;
   moves?: string;
   pgn?: string;
   initialFen?: string | null;
@@ -171,7 +171,7 @@ export async function update(
   if (input.group !== undefined) updates.group = input.group;
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description;
-  if (input.ply !== undefined) updates.ply = input.ply;
+  if (input.initialPly !== undefined) updates.initial_ply = input.initialPly;
 
   if (Object.keys(updates).length > 0) {
     const { error } = await supabase.from("opening_variants").update(updates).eq("id", id);

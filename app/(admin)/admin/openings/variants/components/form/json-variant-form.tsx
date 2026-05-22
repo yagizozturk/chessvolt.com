@@ -169,7 +169,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
       initial_fen: initialFen,
       display_fen: displayFen,
       moves: movesFromInitialPly,
-      ply: safePlyInitial,
+      initial_ply: safePlyInitial,
     };
     if (!goalsFromJson.ok) {
       delete out.goals;
@@ -274,7 +274,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         </FieldGroup>
 
         <input type="hidden" name="pgn" value={pgnFromJson} />
-        <input type="hidden" name="ply" value={safePlyInitial} />
+        <input type="hidden" name="initialPly" value={safePlyInitial} />
         <input type="hidden" name="initialFen" value={initialFen} />
         <input type="hidden" name="displayFen" value={displayFen} />
         <input type="hidden" name="goals" value={goalsFormValue} />
