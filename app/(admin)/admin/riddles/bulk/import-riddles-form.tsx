@@ -44,13 +44,13 @@ export function ImportRiddlesForm() {
         Required per item: <span className="font-mono">title</span>,{" "}
         <span className="font-mono">game_type</span>, <span className="font-mono">pgn</span>, and
         either <span className="font-mono">moves</span> or{" "}
-        <span className="font-mono">move_count_for_answer</span> (with{" "}
-        <span className="font-mono">display_ply</span>). Optional:{" "}
-        <span className="font-mono">game_id</span>, <span className="font-mono">initial_ply</span>{" "}
-        (defaults to <span className="font-mono">display_ply</span>),{" "}
+        <span className="font-mono">move_count_for_answer</span> (sliced from{" "}
+        <span className="font-mono">initial_ply</span>). <span className="font-mono">display_ply</span>{" "}
+        sets <span className="font-mono">display_fen</span> only (defaults to{" "}
+        <span className="font-mono">initial_ply</span>). Optional: <span className="font-mono">game_id</span>,{" "}
         <span className="font-mono">answer_end_ply</span>, <span className="font-mono">themes</span>,{" "}
-        <span className="font-mono">is_active</span>, <span className="font-mono">goals</span>. Paste
-        a single object or an array.
+        <span className="font-mono">is_active</span>, <span className="font-mono">goals</span>. Paste a
+        single object or an array.
       </p>
       <FieldGroup>
         <Field>

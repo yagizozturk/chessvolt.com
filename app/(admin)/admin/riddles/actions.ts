@@ -91,26 +91,26 @@ export async function createRiddleAction(formData: FormData) {
     redirect("/admin/riddles/new?error=missing_pgn");
   }
 
+  const initialPlyRaw = parseInt(formData.get("initialPly") as string, 10);
   const displayPlyRaw = parseInt(formData.get("displayPly") as string, 10);
+  const initialPly = !isNaN(initialPlyRaw) && initialPlyRaw >= 0
+    ? initialPlyRaw
+    : initialFen != null
+      ? (getPlyFromPgnAtFen(pgn, initialFen) ?? 0)
+      : 0;
   const displayPly = !isNaN(displayPlyRaw) && displayPlyRaw >= 0
     ? displayPlyRaw
     : displayFen != null
-      ? (getPlyFromPgnAtFen(pgn, displayFen) ?? 0)
-      : 0;
+      ? (getPlyFromPgnAtFen(pgn, displayFen) ?? initialPly)
+      : initialPly;
+  const resolvedInitialFen = initialFen ?? getFenFromPgnAtPly(pgn, initialPly) ?? undefined;
   const resolvedDisplayFen =
     displayFen ?? getFenFromPgnAtPly(pgn, displayPly) ?? null;
-  const resolvedInitialFen =
-    initialFen ?? resolvedDisplayFen ?? undefined;
 
   let resolvedMoves = moves;
-  if (
-    !resolvedMoves &&
-    resolvedDisplayFen != null &&
-    !isNaN(moveCountForAnswer) &&
-    moveCountForAnswer >= 1
-  ) {
+  if (!resolvedMoves && !isNaN(moveCountForAnswer) && moveCountForAnswer >= 1) {
     resolvedMoves =
-      getUciMovesFromPgnAfterPlyAtMoveCount(pgn, displayPly, moveCountForAnswer) ?? null;
+      getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPly, moveCountForAnswer) ?? null;
   }
 
   if (!resolvedMoves?.trim()) {
@@ -144,22 +144,30 @@ export async function updateRiddleAction(id: string, formData: FormData) {
 
   const gameId = ((formData.get("gameId") as string) || "").trim() || null;
   const pgnInput = ((formData.get("pgn") as string) || "").trim();
-  const ply = parseInt(formData.get("ply") as string, 10);
+  const initialPlyRaw = parseInt(formData.get("initialPly") as string, 10);
+  const displayPlyRaw = parseInt(formData.get("displayPly") as string, 10);
+  const legacyDisplayPly = parseInt(formData.get("ply") as string, 10);
   const moveCountForAnswer = parseInt(formData.get("moveCountForAnswer") as string, 10);
   const title = formData.get("title") as string;
   const movesFromForm = ((formData.get("moves") as string) || "").trim() || null;
-  const initialFen = ((formData.get("initialFen") as string) || "").trim() || null;
+  const initialFenInput = ((formData.get("initialFen") as string) || "").trim() || null;
   const displayFenInput = ((formData.get("displayFen") as string) || "").trim() || null;
   const gameType = (formData.get("gameType") as string)?.trim() || null;
   const goals = parseGoalsFromForm(formData, `/admin/riddles/${id}?error=invalid_goals_json`);
   const themes = parseThemesFromForm(formData);
   const isActive = parseIsActiveFromForm(formData);
 
+  const displayPlyFromForm = !isNaN(displayPlyRaw) && displayPlyRaw >= 0
+    ? displayPlyRaw
+    : !isNaN(legacyDisplayPly) && legacyDisplayPly >= 0
+      ? legacyDisplayPly
+      : NaN;
+
   if (
     !title?.trim() ||
     !gameType ||
-    isNaN(ply) ||
-    ply < 0 ||
+    isNaN(displayPlyFromForm) ||
+    displayPlyFromForm < 0 ||
     isNaN(moveCountForAnswer) ||
     moveCountForAnswer < 1
   ) {
@@ -172,11 +180,19 @@ export async function updateRiddleAction(id: string, formData: FormData) {
     pgn = game?.pgn?.trim() ?? "";
   }
 
+  const initialPly = !isNaN(initialPlyRaw) && initialPlyRaw >= 0
+    ? initialPlyRaw
+    : initialFenInput && pgn
+      ? (getPlyFromPgnAtFen(pgn, initialFenInput) ?? 0)
+      : displayPlyFromForm;
+  const displayPly = displayPlyFromForm;
+  const initialFen =
+    initialFenInput ?? (pgn ? getFenFromPgnAtPly(pgn, initialPly) : null);
   const displayFen =
-    displayFenInput ?? (pgn ? getFenFromPgnAtPly(pgn, ply) : null);
+    displayFenInput ?? (pgn ? getFenFromPgnAtPly(pgn, displayPly) : null);
   const moves =
     movesFromForm ??
-    (pgn ? getUciMovesFromPgnAfterPlyAtMoveCount(pgn, ply, moveCountForAnswer) : null);
+    (pgn ? getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPly, moveCountForAnswer) : null);
 
   if (!moves?.trim()) {
     redirect(`/admin/riddles/${id}?error=invalid_pgn`);
@@ -241,8 +257,8 @@ export async function bulkCreateRiddlesAction(jsonData: string) {
       continue;
     }
 
-    const displayPly = Math.max(0, item.display_ply ?? item.initial_ply ?? 0);
-    const initialPly = Math.max(0, item.initial_ply ?? displayPly);
+    const initialPly = Math.max(0, item.initial_ply ?? 0);
+    const displayPly = Math.max(0, item.display_ply ?? initialPly);
 
     const displayFen = getFenFromPgnAtPly(pgn, displayPly);
     if (!displayFen) {
@@ -266,7 +282,7 @@ export async function bulkCreateRiddlesAction(jsonData: string) {
     if (!moves) {
       let moveCount = item.move_count_for_answer;
       if (item.answer_end_ply != null && !Number.isNaN(item.answer_end_ply)) {
-        moveCount = Math.max(1, item.answer_end_ply - displayPly);
+        moveCount = Math.max(1, item.answer_end_ply - initialPly);
       }
       if (moveCount == null || moveCount < 1) {
         errors.push({
@@ -275,7 +291,7 @@ export async function bulkCreateRiddlesAction(jsonData: string) {
         });
         continue;
       }
-      moves = getUciMovesFromPgnAfterPlyAtMoveCount(pgn, displayPly, moveCount) ?? null;
+      moves = getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPly, moveCount) ?? null;
     }
 
     if (!moves?.trim()) {
