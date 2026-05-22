@@ -19,7 +19,7 @@ export default async function GameRiddlePage({ params }: Params) {
   const { id } = await params;
   const riddle = await getGameRiddleById(supabase, id);
 
-  if (!riddle) {
+  if (!riddle || !riddle.isActive) {
     notFound();
   }
 

@@ -182,6 +182,23 @@ export function GameRiddleDetail({ riddle, game }: Props) {
                   />
                 </Field>
                 <Field>
+                  <FieldLabel>Themes</FieldLabel>
+                  <Input
+                    name="themes"
+                    defaultValue={riddle.themes.join(", ")}
+                    placeholder="Comma-separated, e.g. tactics, endgame"
+                  />
+                </Field>
+                <Field className="flex flex-row items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="isActive"
+                    defaultChecked={riddle.isActive}
+                    className="size-4 rounded border"
+                  />
+                  <FieldLabel className="mb-0">Active (visible on challenge pages)</FieldLabel>
+                </Field>
+                <Field>
                   <FieldLabel>Goals (JSON)</FieldLabel>
                   <textarea
                     name="goals"
@@ -225,6 +242,14 @@ export function GameRiddleDetail({ riddle, game }: Props) {
               <div>
                 <dt className="text-muted-foreground font-medium">Game Type</dt>
                 <dd>{riddle.gameType ?? "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">Themes</dt>
+                <dd>{riddle.themes.length > 0 ? riddle.themes.join(", ") : "—"}</dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground font-medium">Active</dt>
+                <dd>{riddle.isActive ? "Yes" : "No"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">

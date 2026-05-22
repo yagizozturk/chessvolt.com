@@ -5,6 +5,8 @@ export type GameRiddle = {
   gameId: string;
   title: string;
   gameType: string | null;
+  themes: string[];
+  isActive: boolean;
   moveSequence: MoveSequence;
   createdAt: string;
 };

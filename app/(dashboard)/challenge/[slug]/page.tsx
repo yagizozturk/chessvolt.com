@@ -29,7 +29,7 @@ export default async function ChallengePage({ params }: Params) {
   // (1,2) Getting riddles and attempts for this game type
   // ========================================================================
   const [gameRiddles, attemptedRiddles] = await Promise.all([
-    getGameRiddlesByGameType(supabase, gameType),
+    getGameRiddlesByGameType(supabase, gameType, { activeOnly: true }),
     user ? userGameRiddleRepo.findGameRiddleAttempts(supabase, user.id) : [],
   ]);
 

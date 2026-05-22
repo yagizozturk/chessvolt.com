@@ -7,6 +7,8 @@ type DbGameRiddle = {
   game_id: string;
   title: string;
   game_type: string | null;
+  themes: string[] | null;
+  is_active: boolean;
   created_at: string;
   move_sequences?: DbMoveSequence | DbMoveSequence[] | null;
 };
@@ -22,6 +24,8 @@ export function toGameRiddle(db: DbGameRiddle): GameRiddle {
     gameId: db.game_id,
     title: db.title,
     gameType: db.game_type,
+    themes: db.themes ?? [],
+    isActive: db.is_active,
     moveSequence: toMoveSequence(seqRow),
     createdAt: db.created_at,
   };

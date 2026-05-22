@@ -129,6 +129,14 @@ export function GameRiddleForm({ games }: Props) {
           <Input name="gameType" required placeholder="e.g. legend_games" />
         </Field>
         <Field>
+          <FieldLabel>Themes</FieldLabel>
+          <Input name="themes" placeholder="Comma-separated, e.g. tactics, endgame" />
+        </Field>
+        <Field className="flex flex-row items-center gap-2">
+          <input type="checkbox" name="isActive" defaultChecked className="size-4 rounded border" />
+          <FieldLabel className="mb-0">Active (visible on challenge pages)</FieldLabel>
+        </Field>
+        <Field>
           <FieldLabel>Goals (JSON)</FieldLabel>
           <textarea
             name="goals"

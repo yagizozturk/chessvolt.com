@@ -18,6 +18,19 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+function parseThemesFromForm(formData: FormData): string[] {
+  const raw = (formData.get("themes") as string | null)?.trim() ?? "";
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((t) => t.trim())
+    .filter((t) => t.length > 0);
+}
+
+function parseIsActiveFromForm(formData: FormData): boolean {
+  return formData.get("isActive") === "on";
+}
+
 function parseGoalsFromForm(formData: FormData, errorRedirect: string): MoveGoal[] | null {
   const raw = formData.get("goals");
   if (raw === null) return null;
@@ -42,6 +55,8 @@ export async function createGameRiddleAction(formData: FormData) {
   const moves = (formData.get("moves") as string) || null;
   const gameType = (formData.get("gameType") as string)?.trim() || null;
   const goals = parseGoalsFromForm(formData, "/admin/game-riddles/new?error=invalid_goals_json");
+  const themes = parseThemesFromForm(formData);
+  const isActive = parseIsActiveFromForm(formData);
 
   if (!gameId || !title || !gameType || isNaN(ply) || ply < 0) {
     redirect("/admin/game-riddles/new?error=missing_fields");
@@ -57,6 +72,8 @@ export async function createGameRiddleAction(formData: FormData) {
     gameType,
     displayFen,
     goals,
+    themes,
+    isActive,
   };
 
   const riddle = await createGameRiddle(supabase, input);
@@ -77,6 +94,8 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
   const title = formData.get("title") as string;
   const gameType = (formData.get("gameType") as string)?.trim() || null;
   const goals = parseGoalsFromForm(formData, `/admin/game-riddles/${id}?error=invalid_goals_json`);
+  const themes = parseThemesFromForm(formData);
+  const isActive = parseIsActiveFromForm(formData);
 
   if (
     !gameId ||
@@ -104,6 +123,8 @@ export async function updateGameRiddleAction(id: string, formData: FormData) {
     displayFen,
     moves,
     goals,
+    themes,
+    isActive,
   };
 
   const riddle = await updateGameRiddle(supabase, id, input);

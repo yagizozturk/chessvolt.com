@@ -9,10 +9,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { GameRiddle } from "@/features/game-riddle/types/game-riddle";
 import * as gameRiddleRepo from "@/features/game-riddle/repository/game-riddle.repository";
 
-export async function getAllGameRiddles(
-  supabase: SupabaseClient,
-): Promise<GameRiddle[]> {
+export async function getAllGameRiddles(supabase: SupabaseClient): Promise<GameRiddle[]> {
   return gameRiddleRepo.findAll(supabase);
+}
+
+export async function getActiveGameRiddles(supabase: SupabaseClient): Promise<GameRiddle[]> {
+  return gameRiddleRepo.findAllActive(supabase);
 }
 
 export async function getGameRiddleById(
@@ -32,8 +34,9 @@ export async function getGameRiddlesByGameId(
 export async function getGameRiddlesByGameType(
   supabase: SupabaseClient,
   gameType: string,
+  options?: { activeOnly?: boolean },
 ): Promise<GameRiddle[]> {
-  return gameRiddleRepo.findByGameType(supabase, gameType);
+  return gameRiddleRepo.findByGameType(supabase, gameType, options);
 }
 
 export async function createGameRiddle(

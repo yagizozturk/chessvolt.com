@@ -41,6 +41,16 @@ export function GameRiddlesList({ riddles }: Props) {
                 {r.gameType}
               </span>
             )}
+            {!r.isActive && (
+              <span className="bg-muted text-muted-foreground rounded px-2 py-0.5 text-xs">
+                inactive
+              </span>
+            )}
+            {r.themes.map((theme) => (
+              <span key={theme} className="bg-muted rounded px-2 py-0.5 text-xs">
+                {theme}
+              </span>
+            ))}
           </div>
           <Button
             variant="ghost"
