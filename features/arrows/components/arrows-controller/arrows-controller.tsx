@@ -45,8 +45,11 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
   const previousApprovedKeysRef = useRef<Set<string>>(new Set());
   const completedGroupIdsRef = useRef<Set<string>>(new Set());
   const hasShownSuccessRef = useRef(false);
-  const { playCorrectSound, playLevelUpSound, playMoveSound } = useBoardSounds();
-  const { boardArrows, userApprovedArrows, handleDrawChange } = useArrowsController({ arrows });
+  const { playCorrectSound, playLevelUpSound, playMoveSound, playWrongMoveSound } = useBoardSounds();
+  const { boardArrows, userApprovedArrows, handleDrawChange } = useArrowsController({
+    arrows,
+    onWrongArrow: playWrongMoveSound,
+  });
   const { Tour } = useArrowsTour({ openingId });
   const visibleBoardArrows = gameStarted ? [] : boardArrows;
 

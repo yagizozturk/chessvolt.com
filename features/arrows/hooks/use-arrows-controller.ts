@@ -2,15 +2,17 @@
 
 import type { DrawShape } from "@lichess-org/chessground/draw";
 import type { Key } from "@lichess-org/chessground/types";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type UseArrowsControllerParams = {
   arrows: DrawShape[] | null | undefined;
+  onWrongArrow?: () => void;
 };
 
-export function useArrowsController({ arrows }: UseArrowsControllerParams) {
+export function useArrowsController({ arrows, onWrongArrow }: UseArrowsControllerParams) {
   const [defaultArrows, setDefaultArrows] = useState<DrawShape[]>(() => arrows ?? []);
   const [drawnArrows, setDrawnArrows] = useState<DrawShape[]>([]);
+  const keptShapeKeysRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     setDefaultArrows(arrows ?? []);
@@ -57,10 +59,24 @@ export function useArrowsController({ arrows }: UseArrowsControllerParams) {
   }, [defaultArrows, userApprovedArrows]);
 
   function handleDrawChange(shapes: DrawShape[]) {
+    for (const shape of shapes) {
+      if (!shape.orig || !shape.dest) continue;
+
+      const key = `${shape.orig}-${shape.dest}`;
+      if (keptShapeKeysRef.current.has(key)) continue;
+      if (!defaultArrowKeySet.has(key)) {
+        onWrongArrow?.();
+      }
+    }
+
     const filteredShapes = shapes.filter((shape) => {
       if (!shape.orig || !shape.dest) return false;
       return defaultArrowKeySet.has(`${shape.orig}-${shape.dest}`);
     });
+
+    keptShapeKeysRef.current = new Set(
+      filteredShapes.map((shape) => `${shape.orig}-${shape.dest}`),
+    );
 
     setDrawnArrows(filteredShapes);
     return filteredShapes;
