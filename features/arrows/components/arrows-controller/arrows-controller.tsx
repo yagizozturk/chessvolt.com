@@ -114,7 +114,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
         </div>
 
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
-          <div className="flex items-center justify-center px-4">
+          <div className="flex items-center justify-center px-4" data-tour="title-bar">
             <span className="text-lg font-bold">Draw The Ideal Position</span>
           </div>
           <Separator />

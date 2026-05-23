@@ -22,7 +22,7 @@ export const GAME_TYPE_DETAILS: Record<string, GameTypeDetails> = {
     description:
       "Master your repertoire with Opening Crusher. Step into the shoes of the greats and dominate from move one.",
   },
-  "60_memorable_games_of_magnus_carlsen": {
+  "60-memorable-games-of-magnus-carlsen": {
     quote:
       "I started by just sitting by the board exploring things. I just played by myself. I learnt a lot from that.",
     author: "Magnus Carlsen",

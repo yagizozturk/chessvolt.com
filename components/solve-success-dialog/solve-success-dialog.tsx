@@ -1,7 +1,6 @@
 "use client";
 
 import Lottie from "lottie-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -14,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
 import animationData from "@/public/images/animations/animation-trophy.json";
 
@@ -55,6 +55,7 @@ export function SolveSuccessDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
+        <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
         <DialogHeader>
           <div className="flex flex-col items-center">
             <Lottie animationData={animationData} loop={true} autoplay={true} className="size-50" />

@@ -4,9 +4,9 @@ import { ChevronRight, ChevronUp } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import type { Game } from "@/features/game/types/game";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import type { Game } from "@/features/game/types/game";
 
 type ChallengeDataListProps = {
   riddles: Riddle[];
@@ -28,9 +28,7 @@ export function ChallengeDataList({ riddles, gameMap, attemptByRiddleId }: Chall
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Note: undefined.pgn hatası alnırsa. ?. ile bu durumda hata yerine undefined döner ve filter bu riddle’ı eler. Ancak bu durumun olması beklenemez tabi.
-  const riddlesWithPgn = riddles.filter(
-    (r) => gameMap[r.gameId ?? ""]?.pgn || r.moveSequence.displayFen,
-  );
+  const riddlesWithPgn = riddles.filter((r) => gameMap[r.gameId ?? ""]?.pgn || r.moveSequence.displayFen);
   const visibleRiddles = isExpanded ? riddlesWithPgn : riddlesWithPgn.slice(0, INITIAL_COUNT);
   const hasMore = riddlesWithPgn.length > INITIAL_COUNT;
 
@@ -38,7 +36,7 @@ export function ChallengeDataList({ riddles, gameMap, attemptByRiddleId }: Chall
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-6">
         {visibleRiddles.map((riddle, index) => {
-          const game = riddle.gameId ? gameMap[riddle.gameId] ?? null : null;
+          const game = riddle.gameId ? (gameMap[riddle.gameId] ?? null) : null;
           const num = index + 1;
           return (
             <RiddleBoardCard
@@ -54,8 +52,8 @@ export function ChallengeDataList({ riddles, gameMap, attemptByRiddleId }: Chall
         })}
       </div>
       {hasMore && (
-        <div className="flex justify-end px-2">
-          <Button variant="voltCompact" onClick={() => setIsExpanded((p) => !p)}>
+        <div className="flex justify-end">
+          <Button variant="voltAlternative" onClick={() => setIsExpanded((p) => !p)}>
             {isExpanded ? "Show Less" : `Show More (${riddlesWithPgn.length})`}
             {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </Button>

@@ -14,6 +14,8 @@ type UseChessgroundOptions = {
   sourceId: string;
   orientationRef: RefObject<"white" | "black">;
   viewOnly?: boolean;
+  /** When false, pieces cannot be dragged; drawable still works if viewOnly is false. */
+  piecesMovable?: boolean;
   coordinates?: boolean;
   drawableEnabled?: boolean;
   lastMoveRef?: RefObject<[Key, Key] | undefined>;
@@ -27,6 +29,7 @@ export function useChessground({
   sourceId,
   orientationRef,
   viewOnly = false,
+  piecesMovable = true,
   coordinates = true,
   drawableEnabled = true,
   lastMoveRef,
@@ -64,8 +67,9 @@ export function useChessground({
       },
       movable: {
         free: false,
-        color: turn,
-        dests: toDests(game.current),
+        color: piecesMovable ? turn : undefined,
+        dests: piecesMovable ? toDests(game.current) : undefined,
+        showDests: piecesMovable,
         events: {
           after: (from: string, to: string) => {
             onMoveRef.current(from, to);
@@ -83,7 +87,7 @@ export function useChessground({
         },
       },
     };
-  }, [game, orientationRef, viewOnly, coordinates, drawableEnabled, lastMoveRef]);
+  }, [game, orientationRef, viewOnly, piecesMovable, coordinates, drawableEnabled, lastMoveRef]);
 
   // ============================================================================
   // Loading Chessground

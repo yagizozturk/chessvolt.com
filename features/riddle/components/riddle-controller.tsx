@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,6 @@ import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import {
   buildAttemptCounters,
@@ -206,7 +206,12 @@ export default function RiddleController({
           <div className="mt-auto" data-tour="hint-button">
             {!isCompleted ? (
               <div>
-                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="w-full">
+                <Button
+                  variant="voltAlternative"
+                  onClick={handleHintClick}
+                  disabled={hintCount >= 2}
+                  className="w-full"
+                >
                   Hint
                 </Button>
               </div>
