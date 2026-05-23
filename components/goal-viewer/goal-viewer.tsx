@@ -1,9 +1,9 @@
 import { ActiveGoalCard } from "./active-goal-card/active-goal-card";
 import { GoalStepper } from "./goal-stepper/goal-stepper";
 import { InactiveNextGoalRow } from "./inactive-next-goal-row/inactive-next-goal-row";
-import type { OpeningVariantGoalViewerProps } from "./types/types";
+import type { GoalViewerProps } from "./types/types";
 
-export function OpeningVariantGoalViewer({ goals }: OpeningVariantGoalViewerProps) {
+export function GoalViewer({ goals }: GoalViewerProps) {
   if (!goals.length) return null;
 
   const activeGoal = goals.find((goal) => !goal.isCompleted) ?? goals.at(-1)!; // goals.at means the last complete one if all of them is complete

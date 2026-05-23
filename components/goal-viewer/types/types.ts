@@ -4,7 +4,7 @@ type GoalsProps = {
   goals: MoveGoal[];
 };
 
-export type OpeningVariantGoalViewerProps = GoalsProps;
+export type GoalViewerProps = GoalsProps;
 
 export type ActiveGoalCardProps = {
   goal: MoveGoal;

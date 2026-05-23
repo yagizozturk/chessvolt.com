@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
-import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
+import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
@@ -200,7 +200,7 @@ export default function OpeningVariantController({
             </div>
           </div>
           <div data-tour="goals">
-            <OpeningVariantGoalViewer goals={sortedGoals} />
+            <GoalViewer goals={sortedGoals} />
           </div>
           <div className="mt-auto" data-tour="hint-button">
             {!isCompleted ? (

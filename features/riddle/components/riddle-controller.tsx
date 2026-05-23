@@ -13,7 +13,7 @@ import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import { OpeningVariantGoalViewer } from "@/features/openings/components/opening-variant-goal-viewer/opening-variant-goal-viewer";
+import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import {
   buildAttemptCounters,
@@ -201,7 +201,7 @@ export default function RiddleController({
             </div>
           </div>
           <div data-tour="goals">
-            <OpeningVariantGoalViewer goals={sortedGoals} />
+            <GoalViewer goals={sortedGoals} />
           </div>
           <div className="mt-auto" data-tour="hint-button">
             {!isCompleted ? (
