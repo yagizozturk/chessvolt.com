@@ -47,7 +47,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   {
     sourceId,
     initialFen,
-    size = 580,
+    size = 584,
     viewOnly = false,
     drawHintMove,
     onCheckMove,

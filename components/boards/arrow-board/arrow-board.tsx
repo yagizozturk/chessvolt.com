@@ -35,7 +35,7 @@ export type ArrowBoardHandle = {
 };
 
 const ArrowBoard = forwardRef<ArrowBoardHandle, ArrowBoardProps>(function ArrowBoard(
-  { sourceId, size = 580, viewOnly = false, coordinates = true, arrows, drawingEnabled = false, onDrawChange },
+  { sourceId, size = 584, viewOnly = false, coordinates = true, arrows, drawingEnabled = false, onDrawChange },
   ref,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)

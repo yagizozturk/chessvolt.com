@@ -36,7 +36,7 @@ function markArrowCompleted(groups: OpeningArrowGroup[], orig: string, dest: str
   }));
 }
 
-export function ArrowsController({ openingId, arrowGroups, destinationPath, size = 580 }: ArrowsControllerProps) {
+export function ArrowsController({ openingId, arrowGroups, destinationPath, size = 584 }: ArrowsControllerProps) {
   const [groups, setGroups] = useState(() => createArrowGroupsState(arrowGroups));
   const [gameStarted, setGameStarted] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);

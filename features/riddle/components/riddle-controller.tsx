@@ -178,12 +178,16 @@ export default function RiddleController({
       />
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div key={riddle.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0" data-tour="board">
+        <div
+          key={riddle.id}
+          className="relative w-full min-w-0 rounded-2xl border-5 border-white/80 lg:w-auto lg:shrink-0"
+          data-tour="board"
+        >
           <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}
             initialFen={riddle.moveSequence.displayFen ?? riddle.moveSequence.initialFen}
-            size={580}
+            size={584}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}
