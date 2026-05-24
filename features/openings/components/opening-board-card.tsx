@@ -6,6 +6,7 @@ import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
+import { AttemptAccuracyStat } from "@/features/user-sequence-attempt/components/attempt-accuracy-stat";
 
 type OpeningBoardCardProps = {
   id: string;
@@ -13,6 +14,7 @@ type OpeningBoardCardProps = {
   group?: string | null;
   size?: number;
   isComplete?: boolean;
+  accuracyPercent?: number | null;
   href: string;
   fen: string;
   description?: string | null;
@@ -24,6 +26,7 @@ export function OpeningBoardCard({
   name,
   size = 200,
   isComplete,
+  accuracyPercent,
   href,
   fen,
   description,
@@ -43,6 +46,7 @@ export function OpeningBoardCard({
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <p className="text-xl font-bold">{name}</p>
           <p className="text-muted-foreground text-base">{description}</p>
+          <AttemptAccuracyStat accuracyPercent={accuracyPercent} />
           <div
             className={`mt-auto flex items-center gap-3 ${variantCount !== undefined ? "justify-between" : "justify-end"}`}
           >

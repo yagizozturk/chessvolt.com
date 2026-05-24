@@ -35,7 +35,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const attemptByVariantId = buildAttemptByVariantId(variants, summaries);
 
   const total = variants.length;
-  const correct = Object.values(attemptByVariantId).filter((v) => v === true).length;
+  const correct = Object.values(attemptByVariantId).filter((v) => v.isComplete === true).length;
   const solveRate = total > 0 ? Math.round((correct / total) * 100) : 0;
   const boardArrows = (opening.arrows ? flattenOpeningArrowGroups(opening.arrows) : []) as DrawShape[];
 
@@ -73,7 +73,8 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 size={240}
                 href={`/openings/variant/${variant.id}`}
                 fen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}
-                isComplete={attemptByVariantId[variant.id]}
+                isComplete={attemptByVariantId[variant.id]?.isComplete}
+                accuracyPercent={attemptByVariantId[variant.id]?.accuracyPercent}
                 description={variant.description}
               />
             );

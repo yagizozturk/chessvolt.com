@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import type { Game } from "@/features/game/types/game";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
 import type { Riddle } from "@/features/riddle/types/riddle";
+import type { SequenceAttemptBoardStats } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 
 type ChallengeDataListProps = {
   riddles: Riddle[];
   gameMap: Record<string, Game>;
-  /** riddleId => solved (true), failed (false), or not attempted (undefined). */
-  attemptByRiddleId: Record<string, boolean | undefined>;
+  attemptByRiddleId: Record<string, SequenceAttemptBoardStats | undefined>;
 };
 
 const INITIAL_COUNT = 4;
@@ -46,7 +46,8 @@ export function ChallengeDataList({ riddles, gameMap, attemptByRiddleId }: Chall
               num={num}
               size={240}
               displayFen={riddle.moveSequence.displayFen}
-              isComplete={attemptByRiddleId[riddle.id]}
+              isComplete={attemptByRiddleId[riddle.id]?.isComplete}
+              accuracyPercent={attemptByRiddleId[riddle.id]?.accuracyPercent}
             />
           );
         })}

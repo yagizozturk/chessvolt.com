@@ -6,6 +6,7 @@ import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Button } from "@/components/ui/button";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import type { Game } from "@/features/game/types/game";
+import { AttemptAccuracyStat } from "@/features/user-sequence-attempt/components/attempt-accuracy-stat";
 import { getFullMoveCountFromMoves } from "@/lib/chess/getFullMoveCountFromMoves";
 
 type RiddleBoardCardProps = {
@@ -15,6 +16,7 @@ type RiddleBoardCardProps = {
   size?: number;
   /** true = correct, false = wrong, undefined = not attempted, Undefined ı tipin bir parçası yapmak için ? ni ekleriz */
   isComplete?: boolean;
+  accuracyPercent?: number | null;
   href?: string;
   displayFen?: string | null;
 };
@@ -32,7 +34,16 @@ function formatDate(dateStr: string) {
   }
 }
 
-export function RiddleBoardCard({ riddle, game, num, size = 200, isComplete, href, displayFen }: RiddleBoardCardProps) {
+export function RiddleBoardCard({
+  riddle,
+  game,
+  num,
+  size = 200,
+  isComplete,
+  accuracyPercent,
+  href,
+  displayFen,
+}: RiddleBoardCardProps) {
   const moveCount = getFullMoveCountFromMoves(riddle.moveSequence.moves);
 
   return (
@@ -83,6 +94,7 @@ export function RiddleBoardCard({ riddle, game, num, size = 200, isComplete, hre
             </span>
           </div>
         )}
+        <AttemptAccuracyStat accuracyPercent={accuracyPercent} />
 
         <div className="mt-auto flex items-center justify-end gap-3">
           <Button variant="voltCompact" size="xs">

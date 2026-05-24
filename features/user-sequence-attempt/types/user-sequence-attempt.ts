@@ -21,6 +21,17 @@ export type SequenceAttemptSummary = {
   sequenceId: string;
   status: RiddleAttemptStatus;
   isCompleted: boolean;
+  correctMoveCount: number;
+  wrongMoveCount: number;
+  hintCount: number;
+  maxCorrectStreak: number;
+  durationMs: number | null;
+};
+
+/** Board list cards: completion badge + optional accuracy. */
+export type SequenceAttemptBoardStats = {
+  isComplete?: boolean;
+  accuracyPercent: number | null;
 };
 
 export type CreateUserSequenceAttemptInput = {

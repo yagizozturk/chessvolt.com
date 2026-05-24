@@ -52,5 +52,10 @@ export function toSequenceAttemptSummary(db: DbUserSequenceAttempt): SequenceAtt
     sequenceId: db.sequence_id,
     status,
     isCompleted: status === "completed",
+    correctMoveCount: db.correct_move_count,
+    wrongMoveCount: db.wrong_move_count,
+    hintCount: db.hint_count,
+    maxCorrectStreak: db.max_correct_streak,
+    durationMs: db.duration_ms,
   };
 }

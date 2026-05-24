@@ -85,7 +85,8 @@ export default async function ChallengePage({ params }: Params) {
                   game={game}
                   num={num}
                   size={170}
-                  isComplete={attemptByRiddleId[riddle.id]}
+                  isComplete={attemptByRiddleId[riddle.id]?.isComplete}
+                  accuracyPercent={attemptByRiddleId[riddle.id]?.accuracyPercent}
                   displayFen={riddle.moveSequence.displayFen}
                 />
               );
