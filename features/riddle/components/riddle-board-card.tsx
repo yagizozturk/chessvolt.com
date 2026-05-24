@@ -94,10 +94,9 @@ export function RiddleBoardCard({
             </span>
           </div>
         )}
-        <AttemptAccuracyStat accuracyPercent={accuracyPercent} />
-
-        <div className="mt-auto flex items-center justify-end gap-3">
-          <Button variant="voltCompact" size="xs">
+        <div className="mt-auto flex items-center gap-3">
+          <AttemptAccuracyStat accuracyPercent={accuracyPercent} />
+          <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
             Play
           </Button>
         </div>

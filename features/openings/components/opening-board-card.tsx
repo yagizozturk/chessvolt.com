@@ -46,17 +46,17 @@ export function OpeningBoardCard({
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <p className="text-xl font-bold">{name}</p>
           <p className="text-muted-foreground text-base">{description}</p>
-          <AttemptAccuracyStat accuracyPercent={accuracyPercent} />
-          <div
-            className={`mt-auto flex items-center gap-3 ${variantCount !== undefined ? "justify-between" : "justify-end"}`}
-          >
-            {variantCount !== undefined ? (
-              <Badge variant="secondary" className="rounded-lg p-3">
-                <BookOpen />
-                <span>{variantCount}</span>
-              </Badge>
-            ) : null}
-            <Button variant="voltCompact" size="xs">
+          <div className="mt-auto flex items-center gap-3">
+            <div className="flex min-w-0 flex-wrap items-center gap-3">
+              <AttemptAccuracyStat accuracyPercent={accuracyPercent} />
+              {variantCount !== undefined ? (
+                <Badge variant="secondary" className="rounded-lg p-3">
+                  <BookOpen />
+                  <span>{variantCount}</span>
+                </Badge>
+              ) : null}
+            </div>
+            <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
               Play
             </Button>
           </div>
