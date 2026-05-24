@@ -13,6 +13,12 @@ export type OpeningArrowGroup = {
   arrows: OpeningArrow[];
 };
 
+export function getOpeningArrowGroupProgress(group: OpeningArrowGroup) {
+  const total = group.arrows.length;
+  const completed = group.arrows.filter((arrow) => arrow.isCompleted).length;
+  return { completed, total };
+}
+
 export function isOpeningArrowGroupComplete(group: OpeningArrowGroup): boolean {
   return group.arrows.length > 0 && group.arrows.every((arrow) => arrow.isCompleted);
 }

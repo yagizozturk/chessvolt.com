@@ -5,7 +5,7 @@ import { Mouse } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import ArrowBoard, { type ArrowBoardHandle } from "@/components/boards/arrow-board/arrow-board";
-import { ImageInfoCard } from "@/components/cards/image-info-card";
+import { ArrowsGoalCard } from "@/features/arrows/components/arrows-goal-card/arrows-goal-card";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -16,10 +16,14 @@ import {
   areAllOpeningArrowGroupsComplete,
   createArrowGroupsState,
   flattenOpeningArrowGroups,
+  getOpeningArrowGroupProgress,
   isOpeningArrowGroupComplete,
 } from "@/features/openings/types/opening";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 
+// ============================================================================
+// Types
+// ============================================================================
 type ArrowsControllerProps = {
   openingId: string;
   arrowGroups: OpeningArrowGroup[];
@@ -27,6 +31,10 @@ type ArrowsControllerProps = {
   size?: number;
 };
 
+// ============================================================================
+// Arrow state helpers
+// Returns a copy of arrow groups with the matching arrow marked completed.
+// ============================================================================
 function markArrowCompleted(groups: OpeningArrowGroup[], orig: string, dest: string): OpeningArrowGroup[] {
   return groups.map((group) => ({
     ...group,
@@ -36,6 +44,9 @@ function markArrowCompleted(groups: OpeningArrowGroup[], orig: string, dest: str
   }));
 }
 
+// ============================================================================
+// Renders the arrows exercise: board, group progress cards, start flow, and success dialog.
+// ============================================================================
 export function ArrowsController({ openingId, arrowGroups, destinationPath, size = 584 }: ArrowsControllerProps) {
   const [groups, setGroups] = useState(() => createArrowGroupsState(arrowGroups));
   const [gameStarted, setGameStarted] = useState(false);
@@ -53,6 +64,9 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
   const { Tour } = useArrowsTour({ openingId });
   const visibleBoardArrows = gameStarted ? [] : boardArrows;
 
+  // ============================================================================
+  // Approved-arrow completion sync
+  // ============================================================================
   useEffect(() => {
     if (!gameStarted) return;
 
@@ -69,6 +83,9 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
     previousApprovedKeysRef.current = currentKeys;
   }, [gameStarted, userApprovedArrows, playCorrectSound]);
 
+  // ============================================================================
+  // Group completion sounds
+  // ============================================================================
   useEffect(() => {
     if (!gameStarted) return;
 
@@ -80,6 +97,9 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
     }
   }, [gameStarted, groups, playLevelUpSound]);
 
+  // ============================================================================
+  // All-groups success dialog
+  // ============================================================================
   useEffect(() => {
     if (!areAllOpeningArrowGroupsComplete(groups) || hasShownSuccessRef.current) return;
 
@@ -87,6 +107,9 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
     setSuccessDialogOpen(true);
   }, [groups]);
 
+  // ============================================================================
+  // Starts the exercise: plays a move sound, enables drawing, and clears preview arrows.
+  // ============================================================================
   function handleStartGame() {
     playMoveSound();
     setGameStarted(true);
@@ -123,15 +146,21 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
           <Separator />
 
           <div className="flex flex-col items-center gap-2" data-tour="instructions">
-            {groups.map((group) => (
-              <ImageInfoCard
-                key={group.id}
-                iconColor={group.color}
-                title={group.title}
-                description={group.description}
-                isComplete={isOpeningArrowGroupComplete(group)}
-              />
-            ))}
+            {groups.map((group) => {
+              const { completed, total } = getOpeningArrowGroupProgress(group);
+
+              return (
+                <ArrowsGoalCard
+                  key={group.id}
+                  iconColor={group.color}
+                  title={group.title}
+                  description={group.description}
+                  isComplete={isOpeningArrowGroupComplete(group)}
+                  completedCount={completed}
+                  totalCount={total}
+                />
+              );
+            })}
           </div>
 
           <div className="mt-auto">
