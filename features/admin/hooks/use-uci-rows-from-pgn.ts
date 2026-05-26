@@ -3,6 +3,7 @@
 import { Chess } from "chess.js";
 import { useMemo } from "react";
 
+import { buildUci } from "@/lib/chess/buildUci";
 import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 
 export const START_FEN = new Chess().fen();
@@ -42,8 +43,19 @@ export function useUciRowsFromPgn(pgn: string): UciRowsFromPgn {
       const game = new Chess();
       game.loadPgn(trimmed, { strict: false });
 
-      const uciMovesRaw = getUciMovesArrayFromPgn(pgn);
-      if (!uciMovesRaw || uciMovesRaw.length === 0) {
+      let uciMoves = getUciMovesArrayFromPgn(trimmed);
+      if (!uciMoves?.length) {
+        const history = game.history();
+        const replay = new Chess();
+        const rebuilt: string[] = [];
+        for (const san of history) {
+          const move = replay.move(san);
+          if (!move) break;
+          rebuilt.push(buildUci(move.from, move.to, move.promotion));
+        }
+        uciMoves = rebuilt.length > 0 ? rebuilt : null;
+      }
+      if (!uciMoves?.length) {
         return {
           rows: [],
           error: null,
@@ -51,8 +63,6 @@ export function useUciRowsFromPgn(pgn: string): UciRowsFromPgn {
           uciMoves: [],
         };
       }
-
-      const uciMoves = uciMovesRaw;
       const rows: UciMoveRow[] = [];
       for (let i = 0; i < uciMoves.length; i += 2) {
         rows.push({

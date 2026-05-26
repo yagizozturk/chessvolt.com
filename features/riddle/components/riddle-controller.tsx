@@ -186,7 +186,7 @@ export default function RiddleController({
           <VoltBoard
             ref={boardRef}
             sourceId={riddle.id}
-            initialFen={riddle.moveSequence.displayFen ?? riddle.moveSequence.initialFen}
+            initialFen={riddle.moveSequence.initialFen}
             size={584}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}

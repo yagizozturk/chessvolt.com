@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -34,20 +34,31 @@ export function RiddleForm({ games }: Props) {
 
   const [selectedPlyInitial, setSelectedPlyInitial] = useState(0);
   const [selectedPlyDisplay, setSelectedPlyDisplay] = useState(0);
-  const [answerEndPly, setAnswerEndPly] = useState("1");
+  const [answerLength, setAnswerLength] = useState(1);
+
+  const pendingPgnPlyInit = useRef(false);
 
   useEffect(() => {
-    setSelectedPlyInitial(maxPly);
+    const trimmed = pgn.trim();
+    pendingPgnPlyInit.current = Boolean(trimmed);
+    if (!trimmed) {
+      setSelectedPlyInitial(0);
+      setSelectedPlyDisplay(0);
+      setAnswerLength(1);
+    }
+  }, [pgn]);
+
+  useEffect(() => {
+    if (!pendingPgnPlyInit.current || maxPly < 1) return;
+    pendingPgnPlyInit.current = false;
+    setSelectedPlyInitial(Math.max(0, maxPly - 1));
     setSelectedPlyDisplay(maxPly);
-    setAnswerEndPly(String(maxPly));
-  }, [pgn, maxPly]);
+    setAnswerLength(1);
+  }, [maxPly, pgn]);
 
   const safePlyInitial = Math.min(Math.max(0, selectedPlyInitial), maxPly);
   const safePlyDisplay = Math.min(Math.max(0, selectedPlyDisplay), maxPly);
-  const answerEndPlyNum = Math.min(
-    Math.max(safePlyInitial + 1, parseInt(answerEndPly, 10) || safePlyInitial + 1),
-    maxPly,
-  );
+  const answerEndPlyNum = Math.min(safePlyInitial + answerLength, maxPly);
   const moveCountForAnswer = Math.max(1, answerEndPlyNum - safePlyInitial);
 
   const initialFen = fensByPly[safePlyInitial] ?? START_FEN;
@@ -56,16 +67,17 @@ export function RiddleForm({ games }: Props) {
 
   const derivedMoves = useMemo(() => {
     const trimmed = pgn.trim();
-    if (!trimmed) return "";
+    if (!trimmed || maxPly < 1) return "";
     return (
       getUciMovesFromPgnAfterPlyAtMoveCount(trimmed, safePlyInitial, moveCountForAnswer) ?? ""
     );
-  }, [pgn, safePlyInitial, moveCountForAnswer]);
+  }, [pgn, safePlyInitial, moveCountForAnswer, maxPly]);
 
   const setInitialPlyFromBoard = (ply: number) => {
-    const prevCount = Math.max(1, answerEndPlyNum - safePlyInitial);
     setSelectedPlyInitial(ply);
-    setAnswerEndPly(String(Math.min(ply + prevCount, maxPly)));
+    if (ply + answerLength > maxPly) {
+      setAnswerLength(Math.max(1, maxPly - ply));
+    }
   };
 
   const setDisplayPlyFromBoard = (ply: number) => {
@@ -74,10 +86,18 @@ export function RiddleForm({ games }: Props) {
 
   const setAnswerEndPlyFromBoard = (endPly: number) => {
     if (endPly <= safePlyInitial) {
-      setSelectedPlyInitial(endPly);
-      setAnswerEndPly(String(Math.min(endPly + 1, maxPly)));
-    } else {
-      setAnswerEndPly(String(endPly));
+      setSelectedPlyInitial(Math.max(0, endPly));
+      setAnswerLength(1);
+      return;
+    }
+    setAnswerLength(endPly - safePlyInitial);
+  };
+
+  const setAnswerLengthFromInput = (count: number) => {
+    const next = Math.max(1, count);
+    setAnswerLength(next);
+    if (safePlyInitial + next > maxPly) {
+      setSelectedPlyInitial(Math.max(0, maxPly - next));
     }
   };
 
@@ -132,14 +152,14 @@ export function RiddleForm({ games }: Props) {
           <Input
             type="number"
             min={1}
-            value={String(moveCountForAnswer)}
-            onChange={(e) => {
-              const count = Math.max(1, parseInt(e.target.value, 10) || 1);
-              setAnswerEndPly(String(Math.min(safePlyInitial + count, maxPly)));
-            }}
+            max={maxPly > 0 ? maxPly : undefined}
+            disabled={maxPly < 1}
+            value={String(answerLength)}
+            onChange={(e) => setAnswerLengthFromInput(parseInt(e.target.value, 10) || 1)}
           />
           <p className="text-muted-foreground mt-1 text-xs">
             UCI solution line is sliced from initial ply through this many half-moves (answer-end board).
+            {maxPly < 1 && pgn.trim() ? " Parse the PGN first (valid movetext required)." : null}
           </p>
         </Field>
         <Field>
@@ -265,7 +285,8 @@ export function RiddleForm({ games }: Props) {
       </Button>
       {!canSubmit && pgn.trim() && (
         <p className="text-muted-foreground text-xs">
-          Provide a valid PGN and select initial / answer-end positions so moves can be derived.
+          Provide a valid PGN with movetext and ensure initial ply is before the final ply so moves can be
+          derived.
         </p>
       )}
     </form>

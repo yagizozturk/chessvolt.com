@@ -37,23 +37,19 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
     defaultPlyFromFen(pgn, riddle.moveSequence.initialFen) ??
     defaultPlyFromFen(pgn, riddle.moveSequence.displayFen) ??
     0;
-  const displayPlyDefault =
-    defaultPlyFromFen(pgn, riddle.moveSequence.displayFen) ?? initialPlyDefault;
+  const displayPlyDefault = defaultPlyFromFen(pgn, riddle.moveSequence.displayFen) ?? initialPlyDefault;
   const initialMoveCount = getMoveCountFromMoves(riddle.moveSequence.moves);
 
   const [initialPly, setInitialPly] = useState(String(initialPlyDefault));
   const [displayPly, setDisplayPly] = useState(String(displayPlyDefault));
-  const [answerEndPly, setAnswerEndPly] = useState(String(initialPlyDefault + initialMoveCount));
+  const [answerLength, setAnswerLength] = useState(initialMoveCount);
 
   const { rows, error, fensByPly, uciMoves } = useUciRowsFromPgn(pgn);
   const maxPly = Math.max(0, fensByPly.length - 1);
 
   const initialPlyNum = Math.min(Math.max(0, parseInt(initialPly, 10) || 0), maxPly);
   const displayPlyNum = Math.min(Math.max(0, parseInt(displayPly, 10) || 0), maxPly);
-  const answerEndPlyNum = Math.min(
-    Math.max(initialPlyNum + 1, parseInt(answerEndPly, 10) || initialPlyNum + 1),
-    maxPly,
-  );
+  const answerEndPlyNum = Math.min(initialPlyNum + answerLength, maxPly);
   const moveCountForAnswer = Math.max(1, answerEndPlyNum - initialPlyNum);
 
   const initialFen = fensByPly[initialPlyNum] ?? START_FEN;
@@ -63,16 +59,15 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
   const derivedMoves = useMemo(() => {
     if (!pgn.trim()) return riddle.moveSequence.moves ?? "";
     return (
-      getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPlyNum, moveCountForAnswer) ??
-      riddle.moveSequence.moves ??
-      ""
+      getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPlyNum, moveCountForAnswer) ?? riddle.moveSequence.moves ?? ""
     );
   }, [pgn, initialPlyNum, moveCountForAnswer, riddle.moveSequence.moves]);
 
   const setInitialPlyFromBoard = (ply: number) => {
-    const prevCount = Math.max(1, answerEndPlyNum - initialPlyNum);
     setInitialPly(String(ply));
-    setAnswerEndPly(String(Math.min(ply + prevCount, maxPly)));
+    if (ply + answerLength > maxPly) {
+      setAnswerLength(Math.max(1, maxPly - ply));
+    }
   };
 
   const setDisplayPlyFromBoard = (ply: number) => {
@@ -81,10 +76,18 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
 
   const setAnswerEndPlyFromBoard = (endPly: number) => {
     if (endPly <= initialPlyNum) {
-      setInitialPly(String(endPly));
-      setAnswerEndPly(String(Math.min(endPly + 1, maxPly)));
-    } else {
-      setAnswerEndPly(String(endPly));
+      setInitialPly(String(Math.max(0, endPly)));
+      setAnswerLength(1);
+      return;
+    }
+    setAnswerLength(endPly - initialPlyNum);
+  };
+
+  const setAnswerLengthFromInput = (count: number) => {
+    const next = Math.max(1, count);
+    setAnswerLength(next);
+    if (initialPlyNum + next > maxPly) {
+      setInitialPly(String(Math.max(0, maxPly - next)));
     }
   };
 
@@ -108,12 +111,11 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
             min={0}
             required
             value={String(initialPlyNum)}
-            onChange={(e) =>
-              setInitialPlyFromBoard(Math.min(Math.max(0, parseInt(e.target.value, 10) || 0), maxPly))
-            }
+            onChange={(e) => setInitialPlyFromBoard(Math.min(Math.max(0, parseInt(e.target.value, 10) || 0), maxPly))}
           />
           <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
-            Half-move index where the stored UCI line starts (<span className="font-mono">initial_fen</span>).
+            Half-move index where the stored UCI line starts. Even for White orientation. Odd for Black orientation. (
+            <span className="font-mono">initial_fen</span>).
           </p>
         </Field>
         <Field>
@@ -124,12 +126,10 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
             min={0}
             required
             value={String(displayPlyNum)}
-            onChange={(e) =>
-              setDisplayPlyFromBoard(Math.min(Math.max(0, parseInt(e.target.value, 10) || 0), maxPly))
-            }
+            onChange={(e) => setDisplayPlyFromBoard(Math.min(Math.max(0, parseInt(e.target.value, 10) || 0), maxPly))}
           />
           <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
-            Half-move index for the puzzle position shown to the player (<span className="font-mono">display_fen</span>).
+            Even for White orientation. Odd for Black orientation.
           </p>
         </Field>
         <Field>
@@ -138,11 +138,10 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
           <Input
             type="number"
             min={1}
-            value={String(moveCountForAnswer)}
-            onChange={(e) => {
-              const count = Math.max(1, parseInt(e.target.value, 10) || 1);
-              setAnswerEndPly(String(Math.min(initialPlyNum + count, maxPly)));
-            }}
+            max={maxPly > 0 ? maxPly : undefined}
+            disabled={maxPly < 1}
+            value={String(answerLength)}
+            onChange={(e) => setAnswerLengthFromInput(parseInt(e.target.value, 10) || 1)}
           />
           <p className="text-muted-foreground mt-1 text-xs">
             UCI line is sliced from initial ply through this many half-moves (answer-end board).
@@ -159,12 +158,7 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
         </Field>
         <Field>
           <FieldLabel>Game Type</FieldLabel>
-          <Input
-            name="gameType"
-            required
-            defaultValue={riddle.gameType ?? ""}
-            placeholder="e.g. legend_games"
-          />
+          <Input name="gameType" required defaultValue={riddle.gameType ?? ""} placeholder="e.g. legend_games" />
         </Field>
         <Field>
           <FieldLabel>Themes</FieldLabel>
@@ -175,12 +169,7 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
           />
         </Field>
         <Field className="flex flex-row items-center gap-2">
-          <input
-            type="checkbox"
-            name="isActive"
-            defaultChecked={riddle.isActive}
-            className="size-4 rounded border"
-          />
+          <input type="checkbox" name="isActive" defaultChecked={riddle.isActive} className="size-4 rounded border" />
           <FieldLabel className="mb-0">Active (visible on challenge pages)</FieldLabel>
         </Field>
         <Field>
@@ -188,9 +177,7 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
           <textarea
             name="goals"
             rows={6}
-            defaultValue={
-              riddle.moveSequence.goals != null ? JSON.stringify(riddle.moveSequence.goals, null, 2) : ""
-            }
+            defaultValue={riddle.moveSequence.goals != null ? JSON.stringify(riddle.moveSequence.goals, null, 2) : ""}
             className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           />
         </Field>
@@ -205,27 +192,21 @@ export function RiddleEditForm({ riddle, game, onCancel }: Props) {
           <div className="border-input bg-muted/30 rounded-md border p-3">
             <div className="grid gap-6 sm:grid-cols-3">
               <div className="min-w-0">
-                <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">
-                  initialFen
-                </p>
+                <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">initialFen</p>
                 <p className="font-mono text-xs break-all">{initialFen}</p>
                 <p className="text-muted-foreground mt-2 text-xs">
                   Ply: <span className="text-foreground font-mono tabular-nums">{initialPlyNum}</span>
                 </p>
               </div>
               <div className="min-w-0">
-                <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">
-                  displayFen
-                </p>
+                <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">displayFen</p>
                 <p className="font-mono text-xs break-all">{displayFen}</p>
                 <p className="text-muted-foreground mt-2 text-xs">
                   Ply: <span className="text-foreground font-mono tabular-nums">{displayPlyNum}</span>
                 </p>
               </div>
               <div className="min-w-0">
-                <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">
-                  answer end
-                </p>
+                <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">answer end</p>
                 <p className="font-mono text-xs break-all">{answerEndFen}</p>
                 <p className="text-muted-foreground mt-2 text-xs">
                   Ply: <span className="text-foreground font-mono tabular-nums">{answerEndPlyNum}</span>
