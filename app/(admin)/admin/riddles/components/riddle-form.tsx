@@ -2,16 +2,16 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { START_FEN, useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
+import { AdminPgnBoardPicker } from "@/app/(admin)/admin/shared/components/admin-pgn-board-picker";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { AdminPgnBoardPicker } from "@/features/admin/components/admin-pgn-board-picker";
-import { START_FEN, useUciRowsFromPgn } from "@/features/admin/hooks/use-uci-rows-from-pgn";
 import type { Game } from "@/features/game/types/game";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { cn } from "@/lib/utils/cn";
 
-import { createRiddleAction } from "./actions";
+import { createRiddleAction } from "../actions/actions";
 
 type Props = {
   games: Game[];
@@ -68,9 +68,7 @@ export function RiddleForm({ games }: Props) {
   const derivedMoves = useMemo(() => {
     const trimmed = pgn.trim();
     if (!trimmed || maxPly < 1) return "";
-    return (
-      getUciMovesFromPgnAfterPlyAtMoveCount(trimmed, safePlyInitial, moveCountForAnswer) ?? ""
-    );
+    return getUciMovesFromPgnAfterPlyAtMoveCount(trimmed, safePlyInitial, moveCountForAnswer) ?? "";
   }, [pgn, safePlyInitial, moveCountForAnswer, maxPly]);
 
   const setInitialPlyFromBoard = (ply: number) => {
@@ -101,10 +99,7 @@ export function RiddleForm({ games }: Props) {
     }
   };
 
-  const canSubmit =
-    Boolean(pgn.trim()) &&
-    Boolean(derivedMoves.trim()) &&
-    !error;
+  const canSubmit = Boolean(pgn.trim()) && Boolean(derivedMoves.trim()) && !error;
 
   return (
     <form action={createRiddleAction} className="max-w-[110rem] space-y-6">
@@ -231,9 +226,8 @@ export function RiddleForm({ games }: Props) {
             </div>
             <p className="text-muted-foreground border-border mt-3 border-t pt-3 text-[11px] leading-relaxed">
               <span className="font-mono">display_fen</span> is the puzzle position shown to the player.{" "}
-              <span className="font-mono">initial_fen</span> is where the stored UCI line starts (often the
-              same ply). Moves are sliced from <span className="font-mono">initial_ply</span> to answer-end
-              ply.
+              <span className="font-mono">initial_fen</span> is where the stored UCI line starts (often the same ply).
+              Moves are sliced from <span className="font-mono">initial_ply</span> to answer-end ply.
             </p>
           </div>
           <div className="grid gap-10 xl:grid-cols-2">
@@ -285,8 +279,7 @@ export function RiddleForm({ games }: Props) {
       </Button>
       {!canSubmit && pgn.trim() && (
         <p className="text-muted-foreground text-xs">
-          Provide a valid PGN with movetext and ensure initial ply is before the final ply so moves can be
-          derived.
+          Provide a valid PGN with movetext and ensure initial ply is before the final ply so moves can be derived.
         </p>
       )}
     </form>

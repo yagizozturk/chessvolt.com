@@ -1,18 +1,14 @@
-import { getAdminUser } from "@/lib/supabase/auth";
-import * as gameRepo from "@/features/game/repository/game.repository";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { AdminFormErrorAlert } from "@/features/admin/components/admin-form-error-alert";
-import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { ArrowLeft } from "lucide-react";
-import { RiddleForm } from "../riddle-form";
+import Link from "next/link";
+
+import { AdminFormErrorAlert } from "@/app/(admin)/admin/shared/components/admin-form-error-alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import * as gameRepo from "@/features/game/repository/game.repository";
+import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
+import { getAdminUser } from "@/lib/supabase/auth";
+
+import { RiddleForm } from "../components/riddle-form";
 
 type Props = {
   searchParams: Promise<{ error?: string }>;
@@ -42,8 +38,8 @@ export default async function AdminRiddleNewPage({ searchParams }: Props) {
           <CardTitle>New Riddle</CardTitle>
           <CardDescription>
             Paste a PGN, pick <code className="text-xs">initial_fen</code> /{" "}
-            <code className="text-xs">display_fen</code> on the boards, and derive the solution line.
-            Linking a game is optional.
+            <code className="text-xs">display_fen</code> on the boards, and derive the solution line. Linking a game is
+            optional.
           </CardDescription>
         </CardHeader>
         <CardContent>

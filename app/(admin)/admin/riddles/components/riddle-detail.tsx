@@ -1,20 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { Riddle } from "@/features/riddle/types/riddle";
-import type { Game } from "@/features/game/types/game";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { deleteRiddleAction } from "./actions";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Game } from "@/features/game/types/game";
+import type { Riddle } from "@/features/riddle/types/riddle";
+
+import { deleteRiddleAction } from "../actions/actions";
 import { RiddleEditForm } from "./riddle-edit-form";
 
 type Props = {
@@ -41,9 +36,7 @@ export function RiddleDetail({ riddle, game }: Props) {
           <div>
             <CardTitle>{riddle.title}</CardTitle>
             <CardDescription>
-              {game
-                ? `Game: ${game.whitePlayer} vs ${game.blackPlayer}`
-                : "Standalone riddle (no linked game)"}
+              {game ? `Game: ${game.whitePlayer} vs ${game.blackPlayer}` : "Standalone riddle (no linked game)"}
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -59,8 +52,7 @@ export function RiddleDetail({ riddle, game }: Props) {
             <Button
               variant="destructive"
               onClick={async () => {
-                if (!confirm("This riddle will be deleted. Are you sure?"))
-                  return;
+                if (!confirm("This riddle will be deleted. Are you sure?")) return;
                 await deleteRiddleAction(riddle.id);
               }}
             >
@@ -71,12 +63,7 @@ export function RiddleDetail({ riddle, game }: Props) {
         </CardHeader>
         <CardContent>
           {isEditing ? (
-            <RiddleEditForm
-              key={riddle.id}
-              riddle={riddle}
-              game={game}
-              onCancel={() => setIsEditing(false)}
-            />
+            <RiddleEditForm key={riddle.id} riddle={riddle} game={game} onCancel={() => setIsEditing(false)} />
           ) : (
             <dl className="grid gap-2 text-sm">
               <div>
@@ -93,9 +80,7 @@ export function RiddleDetail({ riddle, game }: Props) {
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Moves</dt>
-                <dd className="font-mono text-xs break-all">
-                  {riddle.moveSequence.moves ?? "—"}
-                </dd>
+                <dd className="font-mono text-xs break-all">{riddle.moveSequence.moves ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Game Type</dt>
@@ -110,12 +95,8 @@ export function RiddleDetail({ riddle, game }: Props) {
                 <dd>{riddle.isActive ? "Yes" : "No"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">
-                  Display FEN
-                </dt>
-                <dd className="font-mono text-xs break-all">
-                  {riddle.moveSequence.displayFen ?? "—"}
-                </dd>
+                <dt className="text-muted-foreground font-medium">Display FEN</dt>
+                <dd className="font-mono text-xs break-all">{riddle.moveSequence.displayFen ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">Goals</dt>

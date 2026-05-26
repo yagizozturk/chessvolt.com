@@ -1,4 +1,4 @@
-import { AdminNavbar } from "@/features/admin/components/admin-navbar";
+import { AdminShell } from "@/app/(admin)/admin/shared/components/admin-shell";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 export default async function AdminLayout({
@@ -6,12 +6,11 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  await getAdminUser();
+  const { user } = await getAdminUser();
 
   return (
-    <div className="bg-background flex min-h-screen flex-col">
-      <AdminNavbar />
-      <main className="flex-1 overflow-auto">{children}</main>
+    <div className="bg-background flex min-h-svh w-full">
+      <AdminShell userEmail={user.email ?? "admin@chessvolt.com"}>{children}</AdminShell>
     </div>
   );
 }

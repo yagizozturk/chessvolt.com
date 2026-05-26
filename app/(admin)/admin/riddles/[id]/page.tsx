@@ -1,6 +1,6 @@
 import { getRiddleById } from "@/features/riddle/services/riddle.service";
 import { getGameById } from "@/features/game/services/game.service";
-import { AdminFormErrorAlert } from "@/features/admin/components/admin-form-error-alert";
+import { AdminFormErrorAlert } from "@/app/(admin)/admin/shared/components/admin-form-error-alert";
 import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { getAdminUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";

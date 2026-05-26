@@ -1,19 +1,9 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { AdminFormErrorAlert } from "@/features/admin/components/admin-form-error-alert";
+import { AdminFormErrorAlert } from "@/app/(admin)/admin/shared/components/admin-form-error-alert";
 import { getAllRiddles } from "@/features/riddle/services/riddle.service";
 import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 
-import { RiddlesList } from "./riddles-list";
+import { RiddlesList } from "./components/riddles-list";
 
 type Props = {
   searchParams: Promise<{ error?: string }>;
@@ -26,39 +16,16 @@ export default async function AdminRiddlesPage({ searchParams }: Props) {
   const errorMessage = getRiddleAdminErrorMessage(error);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <AdminFormErrorAlert message={errorMessage} />
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Riddles</h1>
-          <p className="text-muted-foreground">
-            {riddles.length} riddle(s) listed
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" asChild>
-            <Link href="/admin/riddles/bulk">Bulk JSON</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/admin/riddles/new" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add New
-            </Link>
-          </Button>
-        </div>
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+        <div className="bg-muted/50 aspect-video rounded-xl"></div>
+        <div className="bg-muted/50 aspect-video rounded-xl"></div>
+        <div className="bg-muted/50 aspect-video rounded-xl"></div>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>List</CardTitle>
-          <CardDescription>
-            Click a row to go to the detail page
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <RiddlesList riddles={riddles} />
-        </CardContent>
-      </Card>
+      <div className="min-h-[100vh] flex-1 md:min-h-min">
+        <AdminFormErrorAlert message={errorMessage} />
+        <RiddlesList riddles={riddles} />
+      </div>
     </div>
   );
 }

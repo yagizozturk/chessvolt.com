@@ -1,9 +1,10 @@
 "use client";
 
-import { bulkCreateRiddlesAction } from "@/app/(admin)/admin/riddles/actions";
+import { useState } from "react";
+
+import { bulkCreateRiddlesAction } from "@/app/(admin)/admin/riddles/actions/actions";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { useState } from "react";
 
 const EXAMPLE_JSON = `[
   {
@@ -41,16 +42,14 @@ export function ImportRiddlesForm() {
       className="space-y-4"
     >
       <p className="text-muted-foreground text-sm">
-        Required per item: <span className="font-mono">title</span>,{" "}
-        <span className="font-mono">game_type</span>, <span className="font-mono">pgn</span>, and
-        either <span className="font-mono">moves</span> or{" "}
+        Required per item: <span className="font-mono">title</span>, <span className="font-mono">game_type</span>,{" "}
+        <span className="font-mono">pgn</span>, and either <span className="font-mono">moves</span> or{" "}
         <span className="font-mono">move_count_for_answer</span> (sliced from{" "}
-        <span className="font-mono">initial_ply</span>). <span className="font-mono">display_ply</span>{" "}
-        sets <span className="font-mono">display_fen</span> only (defaults to{" "}
-        <span className="font-mono">initial_ply</span>). Optional: <span className="font-mono">game_id</span>,{" "}
-        <span className="font-mono">answer_end_ply</span>, <span className="font-mono">themes</span>,{" "}
-        <span className="font-mono">is_active</span>, <span className="font-mono">goals</span>. Paste a
-        single object or an array.
+        <span className="font-mono">initial_ply</span>). <span className="font-mono">display_ply</span> sets{" "}
+        <span className="font-mono">display_fen</span> only (defaults to <span className="font-mono">initial_ply</span>
+        ). Optional: <span className="font-mono">game_id</span>, <span className="font-mono">answer_end_ply</span>,{" "}
+        <span className="font-mono">themes</span>, <span className="font-mono">is_active</span>,{" "}
+        <span className="font-mono">goals</span>. Paste a single object or an array.
       </p>
       <FieldGroup>
         <Field>

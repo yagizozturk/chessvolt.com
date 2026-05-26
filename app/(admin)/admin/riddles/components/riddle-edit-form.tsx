@@ -3,12 +3,12 @@
 import { Save } from "lucide-react";
 import { useMemo, useState } from "react";
 
-import { updateRiddleAction } from "@/app/(admin)/admin/riddles/actions";
+import { START_FEN, useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
+import { updateRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { AdminPgnBoardPicker } from "@/features/admin/components/admin-pgn-board-picker";
-import { START_FEN, useUciRowsFromPgn } from "@/features/admin/hooks/use-uci-rows-from-pgn";
+import { AdminPgnBoardPicker } from "@/app/(admin)/admin/shared/components/admin-pgn-board-picker";
 import type { Game } from "@/features/game/types/game";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";

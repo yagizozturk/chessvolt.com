@@ -3,12 +3,12 @@
 import { Save } from "lucide-react";
 import { useState } from "react";
 
+import { START_FEN, useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { updateOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { AdminPgnBoardPicker } from "@/features/admin/components/admin-pgn-board-picker";
-import { START_FEN, useUciRowsFromPgn } from "@/features/admin/hooks/use-uci-rows-from-pgn";
+import { AdminPgnBoardPicker } from "@/app/(admin)/admin/shared/components/admin-pgn-board-picker";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
@@ -115,9 +115,7 @@ export function VariantEditForm({ variant, onCancel }: Props) {
           <textarea
             name="goals"
             rows={6}
-            defaultValue={
-              variant.moveSequence.goals != null ? JSON.stringify(variant.moveSequence.goals, null, 2) : ""
-            }
+            defaultValue={variant.moveSequence.goals != null ? JSON.stringify(variant.moveSequence.goals, null, 2) : ""}
             className="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 w-full min-w-0 rounded-md border bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
           />
         </Field>

@@ -2,7 +2,7 @@
 
 import VoltBoard from "@/components/boards/volt-board/volt-board";
 
-import type { UciMoveRow } from "../hooks/use-uci-rows-from-pgn";
+import type { UciMoveRow } from "../../hooks/use-uci-rows-from-pgn";
 
 type Props = {
   sourceId: string;
