@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { AdminFormErrorAlert } from "@/app/(admin)/admin/shared/components/admin-form-error-alert";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { getRiddleById } from "@/features/riddle/services/riddle.service";
 import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { getAdminUser } from "@/lib/supabase/auth";
 
-import { RiddleEditForm } from "../components/riddle-edit-form";
+import { RiddleEditForm } from "../edit/riddle-edit-form";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -40,7 +40,7 @@ export default async function AdminRiddleDetailPage({ params, searchParams }: Pa
         </Button>
       </div>
       <AdminFormErrorAlert message={errorMessage} />
-      <RiddleEditForm riddle={riddle} game={game} onCancel={() => {}} />
+      <RiddleEditForm riddle={riddle} game={game} />
     </div>
   );
 }

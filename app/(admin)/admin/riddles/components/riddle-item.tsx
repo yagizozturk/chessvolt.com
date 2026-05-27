@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 import DisplayBoard from "@/components/boards/display-board/display-board";
@@ -15,7 +15,7 @@ type Props = {
 export function RiddleItem({ riddle, onDelete }: Props) {
   return (
     <Link
-      href={`/admin/riddles/${riddle.id}`}
+      href={`/admin/riddles/edit?id=${riddle.id}`}
       className="bg-card border-b-card-shadow hover:bg-accent/60 flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6 transition-colors"
     >
       <div className="shrink-0">
@@ -38,6 +38,18 @@ export function RiddleItem({ riddle, onDelete }: Props) {
           ))}
         </div>
         <div className="mt-auto flex items-center justify-end">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.location.href = `/admin/riddles/edit?id=${riddle.id}`;
+            }}
+            title="Edit"
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"
