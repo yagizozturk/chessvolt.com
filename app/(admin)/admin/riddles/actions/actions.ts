@@ -1,24 +1,18 @@
 "use server";
 
-import type {
-  CreateRiddleInput,
-  UpdateRiddleInput,
-} from "@/features/riddle/repository/riddle.repository";
-import {
-  createRiddle,
-  deleteRiddle,
-  updateRiddle,
-} from "@/features/riddle/services/riddle.service";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
 import * as gameRepo from "@/features/game/repository/game.repository";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";
+import type { CreateRiddleInput, UpdateRiddleInput } from "@/features/riddle/repository/riddle.repository";
+import { createRiddle, deleteRiddle, updateRiddle } from "@/features/riddle/services/riddle.service";
 import { parseGoalsFromForm } from "@/lib/admin/parse-goals-from-form";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";
 import { getAdminUser } from "@/lib/supabase/auth";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 type BulkRiddleInput = {
   title?: string;
@@ -38,7 +32,10 @@ type BulkRiddleInput = {
 function parseBulkThemes(v: unknown): string[] {
   if (v == null) return [];
   if (Array.isArray(v)) {
-    return v.filter((t): t is string => typeof t === "string").map((t) => t.trim()).filter(Boolean);
+    return v
+      .filter((t): t is string => typeof t === "string")
+      .map((t) => t.trim())
+      .filter(Boolean);
   }
   if (typeof v === "string") {
     return v
@@ -93,24 +90,24 @@ export async function createRiddleAction(formData: FormData) {
 
   const initialPlyRaw = parseInt(formData.get("initialPly") as string, 10);
   const displayPlyRaw = parseInt(formData.get("displayPly") as string, 10);
-  const initialPly = !isNaN(initialPlyRaw) && initialPlyRaw >= 0
-    ? initialPlyRaw
-    : initialFen != null
-      ? (getPlyFromPgnAtFen(pgn, initialFen) ?? 0)
-      : 0;
-  const displayPly = !isNaN(displayPlyRaw) && displayPlyRaw >= 0
-    ? displayPlyRaw
-    : displayFen != null
-      ? (getPlyFromPgnAtFen(pgn, displayFen) ?? initialPly)
-      : initialPly;
+  const initialPly =
+    !isNaN(initialPlyRaw) && initialPlyRaw >= 0
+      ? initialPlyRaw
+      : initialFen != null
+        ? (getPlyFromPgnAtFen(pgn, initialFen) ?? 0)
+        : 0;
+  const displayPly =
+    !isNaN(displayPlyRaw) && displayPlyRaw >= 0
+      ? displayPlyRaw
+      : displayFen != null
+        ? (getPlyFromPgnAtFen(pgn, displayFen) ?? initialPly)
+        : initialPly;
   const resolvedInitialFen = initialFen ?? getFenFromPgnAtPly(pgn, initialPly) ?? undefined;
-  const resolvedDisplayFen =
-    displayFen ?? getFenFromPgnAtPly(pgn, displayPly) ?? null;
+  const resolvedDisplayFen = displayFen ?? getFenFromPgnAtPly(pgn, displayPly) ?? null;
 
   let resolvedMoves = moves;
   if (!resolvedMoves && !isNaN(moveCountForAnswer) && moveCountForAnswer >= 1) {
-    resolvedMoves =
-      getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPly, moveCountForAnswer) ?? null;
+    resolvedMoves = getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPly, moveCountForAnswer) ?? null;
   }
 
   if (!resolvedMoves?.trim()) {
@@ -157,11 +154,12 @@ export async function updateRiddleAction(id: string, formData: FormData) {
   const themes = parseThemesFromForm(formData);
   const isActive = parseIsActiveFromForm(formData);
 
-  const displayPlyFromForm = !isNaN(displayPlyRaw) && displayPlyRaw >= 0
-    ? displayPlyRaw
-    : !isNaN(legacyDisplayPly) && legacyDisplayPly >= 0
-      ? legacyDisplayPly
-      : NaN;
+  const displayPlyFromForm =
+    !isNaN(displayPlyRaw) && displayPlyRaw >= 0
+      ? displayPlyRaw
+      : !isNaN(legacyDisplayPly) && legacyDisplayPly >= 0
+        ? legacyDisplayPly
+        : NaN;
 
   if (
     !title?.trim() ||
@@ -180,19 +178,17 @@ export async function updateRiddleAction(id: string, formData: FormData) {
     pgn = game?.pgn?.trim() ?? "";
   }
 
-  const initialPly = !isNaN(initialPlyRaw) && initialPlyRaw >= 0
-    ? initialPlyRaw
-    : initialFenInput && pgn
-      ? (getPlyFromPgnAtFen(pgn, initialFenInput) ?? 0)
-      : displayPlyFromForm;
+  const initialPly =
+    !isNaN(initialPlyRaw) && initialPlyRaw >= 0
+      ? initialPlyRaw
+      : initialFenInput && pgn
+        ? (getPlyFromPgnAtFen(pgn, initialFenInput) ?? 0)
+        : displayPlyFromForm;
   const displayPly = displayPlyFromForm;
-  const initialFen =
-    initialFenInput ?? (pgn ? getFenFromPgnAtPly(pgn, initialPly) : null);
-  const displayFen =
-    displayFenInput ?? (pgn ? getFenFromPgnAtPly(pgn, displayPly) : null);
+  const initialFen = initialFenInput ?? (pgn ? getFenFromPgnAtPly(pgn, initialPly) : null);
+  const displayFen = displayFenInput ?? (pgn ? getFenFromPgnAtPly(pgn, displayPly) : null);
   const moves =
-    movesFromForm ??
-    (pgn ? getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPly, moveCountForAnswer) : null);
+    movesFromForm ?? (pgn ? getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPly, moveCountForAnswer) : null);
 
   if (!moves?.trim()) {
     redirect(`/admin/riddles/${id}?error=invalid_pgn`);
@@ -309,8 +305,7 @@ export async function bulkCreateRiddlesAction(jsonData: string) {
       } else {
         errors.push({
           index: i,
-          message:
-            "goals must be null or an array of { ply, move, title, description, isCompleted, card? }",
+          message: "goals must be null or an array of { ply, move, title, description, isCompleted, card? }",
         });
         continue;
       }

@@ -22,6 +22,11 @@ export const GAME_TYPE_DETAILS: Record<string, GameTypeDetails> = {
     description:
       "Master your repertoire with Opening Crusher. Step into the shoes of the greats and dominate from move one.",
   },
+  "best-move-contest-mate": {
+    quote: "The best way to learn is to play.",
+    author: "Bobby Fischer",
+    description: "Play the best games from the BMC book and learn from the best.",
+  },
   "60-memorable-games-of-magnus-carlsen": {
     quote:
       "I started by just sitting by the board exploring things. I just played by myself. I learnt a lot from that.",
