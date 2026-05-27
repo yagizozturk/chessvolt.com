@@ -4,17 +4,24 @@ import { useEffect, useMemo, useState } from "react";
 
 import { GOALS_JSON_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { createRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
-import DisplayBoard from "@/components/boards/display-board/display-board";
+import VoltBoardNavigator from "@/components/board-navigator/volt-board-navigator";
 import { JsonViewer } from "@/components/shared/json-viewer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Game } from "@/features/game/types/game";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
-import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
+import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { cn } from "@/lib/utils/cn";
 
 type Props = {
@@ -28,6 +35,7 @@ type Props = {
 export function RiddleFromGameForm({ games }: Props) {
   const [selectedGameId, setSelectedGameId] = useState("");
   const [initialFen, setInitialFen] = useState("");
+  const [endFen, setEndFen] = useState("");
   const [displayFen, setDisplayFen] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [goals, setGoals] = useState("");
@@ -43,28 +51,64 @@ export function RiddleFromGameForm({ games }: Props) {
   }, [initialFen]);
 
   const derive = useMemo(() => {
-    if (!pgn || !initialFen.trim()) {
-      return { moves: "", fenError: null as string | null };
+    if (!pgn || !initialFen.trim() || !endFen.trim()) {
+      return {
+        moves: "",
+        fenError: null as string | null,
+        initialPly: null as number | null,
+        endPly: null as number | null,
+      };
     }
 
-    const ply = getPlyFromPgnAtFen(pgn, initialFen.trim());
-    if (ply == null) {
-      return { moves: "", fenError: "Initial FEN was not found in selected game PGN." };
+    const initialPly = getPlyFromPgnAtFen(pgn, initialFen.trim());
+    if (initialPly == null) {
+      return {
+        moves: "",
+        fenError: "Initial FEN was not found in selected game PGN.",
+        initialPly: null,
+        endPly: null,
+      };
     }
 
-    const moves = getUciMovesFromPgnAfterPly(pgn, ply) ?? "";
+    const endPly = getPlyFromPgnAtFen(pgn, endFen.trim());
+    if (endPly == null) {
+      return {
+        moves: "",
+        fenError: "End FEN was not found in selected game PGN.",
+        initialPly,
+        endPly: null,
+      };
+    }
+
+    if (endPly <= initialPly) {
+      return {
+        moves: "",
+        fenError: "End FEN must be after Initial FEN in PGN move order.",
+        initialPly,
+        endPly,
+      };
+    }
+
+    const moveCount = endPly - initialPly;
+    const moves = getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPly, moveCount) ?? "";
     if (!moves.trim()) {
-      return { moves: "", fenError: "Could not derive moves from selected game and initial FEN." };
+      return {
+        moves: "",
+        fenError: "Could not derive moves from selected game between Initial and End FEN.",
+        initialPly,
+        endPly,
+      };
     }
 
-    return { moves, fenError: null };
-  }, [pgn, initialFen]);
+    return { moves, fenError: null, initialPly, endPly };
+  }, [pgn, initialFen, endFen]);
 
   const canSubmit =
     Boolean(selectedGameId) &&
     Boolean(title.trim()) &&
     Boolean(gameType.trim()) &&
     Boolean(initialFen.trim()) &&
+    Boolean(endFen.trim()) &&
     Boolean(derive.moves.trim()) &&
     !derive.fenError;
 
@@ -89,20 +133,39 @@ export function RiddleFromGameForm({ games }: Props) {
       gameType: gameType.trim() || null,
       pgn: pgn || null,
       initialFen: initialFen.trim() || null,
+      endFen: endFen.trim() || null,
       displayFen: displayFen.trim() || initialFen.trim() || null,
+      initialPly: derive.initialPly,
+      endPly: derive.endPly,
       moves: derive.moves || null,
       themes: parsedThemes,
       isActive,
       goals: parsedGoals,
     };
-  }, [selectedGameId, title, gameType, pgn, initialFen, displayFen, derive.moves, themes, isActive, goals]);
+  }, [
+    selectedGameId,
+    title,
+    gameType,
+    pgn,
+    initialFen,
+    endFen,
+    displayFen,
+    derive.initialPly,
+    derive.endPly,
+    derive.moves,
+    themes,
+    isActive,
+    goals,
+  ]);
 
   return (
-    <form action={createRiddleAction} className="grid gap-6 lg:grid-cols-3">
-      <Card className="ring-border rounded-lg ring-1 lg:col-span-2">
+    <form action={createRiddleAction} className="grid gap-6 lg:grid-cols-2">
+      <Card className="ring-border rounded-lg ring-1">
         <CardHeader>
           <CardTitle>New Riddle From Game</CardTitle>
-          <CardDescription>Select a game, provide initial FEN, then create the riddle with derived moves.</CardDescription>
+          <CardDescription>
+            Select a game, provide initial FEN, then create the riddle with derived moves.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <Field>
@@ -137,6 +200,15 @@ export function RiddleFromGameForm({ games }: Props) {
           <Field>
             <FieldLabel>Moves (UCI, derived)</FieldLabel>
             <input type="hidden" name="moves" value={derive.moves} />
+            <input
+              type="hidden"
+              name="moveCountForAnswer"
+              value={
+                derive.initialPly != null && derive.endPly != null && derive.endPly > derive.initialPly
+                  ? String(derive.endPly - derive.initialPly)
+                  : ""
+              }
+            />
             <Input readOnly disabled value={derive.moves} className="font-mono text-sm" />
             {derive.fenError ? <p className="text-destructive mt-1 text-xs">{derive.fenError}</p> : null}
           </Field>
@@ -224,16 +296,34 @@ export function RiddleFromGameForm({ games }: Props) {
 
       <Card className="ring-border rounded-lg ring-1">
         <CardHeader>
-          <CardTitle>Display Board</CardTitle>
-          <CardDescription>Preview from display FEN (or initial FEN).</CardDescription>
+          <CardTitle>Board Navigators</CardTitle>
+          <CardDescription>Pick Initial FEN and End FEN from game positions.</CardDescription>
         </CardHeader>
-        <CardContent className="flex justify-center">
-          <DisplayBoard
-            sourceId={`admin-new-riddle-game-${selectedGameId || "none"}`}
-            initialFen={(displayFen.trim() || initialFen.trim()) || undefined}
-            size={260}
-            coordinates={false}
-          />
+        <CardContent className="space-y-4">
+          {pgn ? (
+            <>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Initial FEN board</p>
+                <VoltBoardNavigator
+                  pgn={pgn}
+                  size={420}
+                  sourceId={`admin-new-riddle-game-initial-${selectedGameId || "none"}`}
+                  onFenChange={(fen) => setInitialFen(fen)}
+                />
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">End FEN board</p>
+                <VoltBoardNavigator
+                  pgn={pgn}
+                  size={420}
+                  sourceId={`admin-new-riddle-game-end-${selectedGameId || "none"}`}
+                  onFenChange={(fen) => setEndFen(fen)}
+                />
+              </div>
+            </>
+          ) : (
+            <p className="text-muted-foreground text-sm">Select a game to preview positions.</p>
+          )}
         </CardContent>
       </Card>
     </form>
