@@ -17,6 +17,12 @@ export type UciRowsFromPgn = {
   uciMoves: string[];
 };
 
+function extractFenFromPgn(pgn: string): string | null {
+  const match = pgn.match(/\[FEN\s+"([^"]+)"\]/i);
+  const fen = match?.[1]?.trim();
+  return fen ? fen : null;
+}
+
 function applyUci(game: Chess, uci: string) {
   const from = uci.slice(0, 2);
   const to = uci.slice(2, 4);
@@ -42,11 +48,12 @@ export function useUciRowsFromPgn(pgn: string): UciRowsFromPgn {
     try {
       const game = new Chess();
       game.loadPgn(trimmed, { strict: false });
+      const initialFen = extractFenFromPgn(trimmed);
 
       let uciMoves = getUciMovesArrayFromPgn(trimmed);
       if (!uciMoves?.length) {
         const history = game.history();
-        const replay = new Chess();
+        const replay = new Chess(initialFen ?? undefined);
         const rebuilt: string[] = [];
         for (const san of history) {
           const move = replay.move(san);
@@ -59,7 +66,7 @@ export function useUciRowsFromPgn(pgn: string): UciRowsFromPgn {
         return {
           rows: [],
           error: null,
-          fensByPly: [game.fen()],
+          fensByPly: [initialFen ?? game.fen()],
           uciMoves: [],
         };
       }
@@ -72,7 +79,7 @@ export function useUciRowsFromPgn(pgn: string): UciRowsFromPgn {
         });
       }
 
-      const replay = new Chess();
+      const replay = new Chess(initialFen ?? undefined);
       const fensByPly: string[] = [replay.fen()];
       for (const uci of uciMoves) {
         applyUci(replay, uci);

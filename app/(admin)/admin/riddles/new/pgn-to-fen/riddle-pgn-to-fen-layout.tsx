@@ -1,0 +1,186 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+
+import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
+import { createRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
+import DisplayBoard from "@/components/boards/display-board/display-board";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils/cn";
+
+const VALID_PGN_EXAMPLE = `[Event "BMC Book"]
+[Site "?"]
+[Date "2018.08.28"]
+[Round "?"]
+[White "1-1"]
+[Black "?"]
+[Result "*"]
+[SetUp "1"]
+[FEN "2Rr2k1/pp2Qppp/1q6/8/8/7P/PP1r1PP1/2R3K1 w - - 0 1"]
+[PlyCount "3"]
+
+1. Qe8+ Rxe8 2. Rxe8# *`;
+
+const GOALS_JSON_EXAMPLE = JSON.stringify(
+  [
+    {
+      ply: 1,
+      move: "e7e8",
+      title: "...",
+      description: "...",
+      isCompleted: false,
+    },
+  ],
+  null,
+  2,
+);
+
+function extractFenFromPgn(pgn: string): string | undefined {
+  const match = pgn.match(/\[FEN\s+"([^"]+)"\]/i);
+  const fen = match?.[1]?.trim();
+  return fen ? fen : undefined;
+}
+
+export function RiddlePgnToFenLayout() {
+  const [pgn, setPgn] = useState("");
+  const fen = useMemo(() => extractFenFromPgn(pgn), [pgn]);
+  const [displayFen, setDisplayFen] = useState("");
+  const [isActive, setIsActive] = useState(true);
+  const [goals, setGoals] = useState("");
+  const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
+  const derivedMoves = useMemo(() => uciMoves.join(" "), [uciMoves]);
+  const canSubmit = Boolean(pgn.trim()) && Boolean(derivedMoves.trim()) && !pgnError;
+
+  useEffect(() => {
+    setDisplayFen(fen ?? "");
+  }, [fen]);
+
+  return (
+    <form action={createRiddleAction} className="grid gap-6 lg:grid-cols-3">
+      <Card className="ring-border rounded-lg ring-1 lg:col-span-2">
+        <CardHeader>
+          <CardTitle>New PGN (FEN included)</CardTitle>
+          <CardDescription>
+            Paste your PGN here to build the riddle. The FEN is extracted from the PGN [FEN] tag. FEN is the initial
+            position of the riddle. FEN is required.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <Field>
+            <FieldLabel>PGN</FieldLabel>
+            <div className="relative">
+              {!pgn.trim() ? (
+                <pre
+                  aria-hidden
+                  className="border-input text-muted-foreground pointer-events-none absolute inset-0 overflow-hidden rounded-md border border-2 bg-transparent px-3 py-2 font-mono text-sm leading-relaxed whitespace-pre-wrap"
+                >
+                  {VALID_PGN_EXAMPLE}
+                </pre>
+              ) : null}
+              <textarea
+                name="pgn"
+                rows={16}
+                value={pgn}
+                onChange={(e) => setPgn(e.target.value)}
+                spellCheck={false}
+                className="border-input focus-visible:border-primary focus-visible:ring-primary/50 relative z-10 w-full rounded-md border border-2 bg-transparent px-3 py-2 font-mono text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+              />
+            </div>
+            {pgnError ? <p className="text-destructive mt-1 text-sm">{pgnError}</p> : null}
+          </Field>
+
+          <Field>
+            <FieldLabel>Moves (UCI, derived)</FieldLabel>
+            <input type="hidden" name="moves" value={derivedMoves} />
+            <Input readOnly disabled value={derivedMoves} className="font-mono text-sm" />
+          </Field>
+          <Field>
+            <FieldLabel>Initial FEN</FieldLabel>
+            <Input name="initialFen" value={fen ?? ""} readOnly disabled className="font-mono text-sm" />
+          </Field>
+          <Field>
+            <FieldLabel>Display FEN</FieldLabel>
+            <Input
+              name="displayFen"
+              value={displayFen}
+              onChange={(e) => setDisplayFen(e.target.value)}
+              placeholder="Defaults to initial FEN"
+              className="font-mono text-sm"
+            />
+          </Field>
+
+          <FieldGroup>
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Field className="min-w-0 flex-1">
+                <FieldLabel>Title</FieldLabel>
+                <Input name="title" required placeholder="e.g. Find the best move" />
+              </Field>
+              <Field className="min-w-0 flex-1">
+                <FieldLabel>Game Type</FieldLabel>
+                <Input name="gameType" required placeholder="e.g. legend_games" />
+              </Field>
+            </div>
+            <Field>
+              <FieldLabel>Themes</FieldLabel>
+              <Input name="themes" placeholder="Comma-separated, e.g. tactics, endgame" />
+            </Field>
+            <Field className="flex flex-row items-center gap-2">
+              <input type="hidden" name="isActive" value={isActive ? "on" : "off"} />
+              <Switch checked={isActive} onCheckedChange={setIsActive} />
+              <FieldLabel className="mb-0">Active (visible on challenge pages)</FieldLabel>
+            </Field>
+            <Field>
+              <FieldLabel>Goals (JSON)</FieldLabel>
+              <div className="relative">
+                {!goals.trim() ? (
+                  <pre
+                    aria-hidden
+                    className="border-input text-muted-foreground pointer-events-none absolute inset-0 overflow-hidden rounded-md border border-2 bg-transparent px-3 py-2 font-mono text-sm leading-relaxed whitespace-pre-wrap"
+                  >
+                    {GOALS_JSON_EXAMPLE}
+                  </pre>
+                ) : null}
+                <textarea
+                  name="goals"
+                  required
+                  rows={10}
+                  value={goals}
+                  onChange={(e) => setGoals(e.target.value)}
+                  spellCheck={false}
+                  className={cn(
+                    "border-input focus-visible:border-primary focus-visible:ring-primary/50 relative z-10 w-full min-w-0 rounded-md border border-2 bg-transparent px-3 py-2 font-mono text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+                  )}
+                />
+              </div>
+            </Field>
+          </FieldGroup>
+
+          <div className="flex justify-end">
+            <Button type="submit" disabled={!canSubmit}>
+              Insert riddle
+            </Button>
+          </div>
+          {!canSubmit && pgn.trim() ? (
+            <p className="text-muted-foreground text-xs">
+              Provide a valid PGN so moves can be derived before inserting.
+            </p>
+          ) : null}
+        </CardContent>
+      </Card>
+
+      <Card className="ring-border rounded-lg ring-1">
+        <CardHeader>
+          <CardTitle>Display Board</CardTitle>
+          <CardDescription>Position from PGN [FEN] tag.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex justify-center">
+          <DisplayBoard sourceId="admin-new-riddle-display" initialFen={fen} size={260} coordinates={false} />
+        </CardContent>
+      </Card>
+    </form>
+  );
+}

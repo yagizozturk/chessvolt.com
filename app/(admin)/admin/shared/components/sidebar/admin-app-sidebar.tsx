@@ -1,20 +1,8 @@
 "use client";
 
-import {
-  BookOpenIcon,
-  Gamepad2Icon,
-  HelpCircleIcon,
-  LayoutDashboardIcon,
-  UsersIcon,
-} from "lucide-react";
+import { BookOpenIcon, Gamepad2Icon, HelpCircleIcon, LayoutDashboardIcon, UsersIcon } from "lucide-react";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 
 import { AdminNavMain, type AdminNavMainItem } from "./admin-nav-main";
 import { AdminNavUser } from "./admin-nav-user";
@@ -47,7 +35,7 @@ const adminNavItems: AdminNavMainItem[] = [
     icon: <HelpCircleIcon />,
     items: [
       { title: "All riddles", url: "/admin/riddles" },
-      { title: "New riddle", url: "/admin/riddles/new" },
+      { title: "New FEN included PGN", url: "/admin/riddles/new/pgn-to-fen" },
       { title: "Bulk JSON", url: "/admin/riddles/bulk" },
     ],
   },

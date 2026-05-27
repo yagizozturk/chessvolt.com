@@ -14,16 +14,10 @@ export function getUciMovesArrayFromPgn(pgn: string): string[] | null {
     // PGN doğru parse edilemediği durumda try bloğu hata verir ve catch ile null döndürülür
     // Bu sebeple ana metot string[] dönmezse diye | null da döndürür.
     game.loadPgn(pgn.trim(), { strict: false });
-    const history = game.history();
-    const replayGame = new Chess();
-    const uciMoves: string[] = [];
-    // Oyun yeni bir objede tekrar oynatılır ve valid hamleler ise uciMoves a atılır.
-    for (const san of history) {
-      const move = replayGame.move(san);
-      if (!move) return null;
-      uciMoves.push(buildUci(move.from, move.to, move.promotion));
-    }
-    return uciMoves;
+    // verbose history already contains legal from/to squares from the loaded PGN
+    // (including SetUp/FEN-based games), so we should not replay from start position.
+    const history = game.history({ verbose: true });
+    return history.map((move) => buildUci(move.from, move.to, move.promotion));
   } catch {
     return null;
   }
