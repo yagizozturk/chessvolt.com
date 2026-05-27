@@ -51,9 +51,43 @@ export function RiddlePgnToFenLayout() {
   const [displayFen, setDisplayFen] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [goals, setGoals] = useState("");
+  const [title, setTitle] = useState("");
+  const [gameType, setGameType] = useState("");
+  const [themes, setThemes] = useState("");
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
   const derivedMoves = useMemo(() => uciMoves.join(" "), [uciMoves]);
   const canSubmit = Boolean(pgn.trim()) && Boolean(derivedMoves.trim()) && !pgnError;
+  const insertPreviewJson = useMemo(() => {
+    let parsedGoals: unknown = null;
+    if (goals.trim()) {
+      try {
+        parsedGoals = JSON.parse(goals);
+      } catch {
+        parsedGoals = "INVALID_JSON";
+      }
+    }
+
+    const parsedThemes = themes
+      .split(",")
+      .map((theme) => theme.trim())
+      .filter(Boolean);
+
+    return JSON.stringify(
+      {
+        title: title.trim() || null,
+        gameType: gameType.trim() || null,
+        pgn: pgn.trim() || null,
+        moves: derivedMoves || null,
+        initialFen: fen ?? null,
+        displayFen: displayFen.trim() || fen || null,
+        themes: parsedThemes,
+        isActive,
+        goals: parsedGoals,
+      },
+      null,
+      2,
+    );
+  }, [title, gameType, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
 
   useEffect(() => {
     setDisplayFen(fen ?? "");
@@ -117,16 +151,33 @@ export function RiddlePgnToFenLayout() {
             <div className="flex flex-col gap-4 sm:flex-row">
               <Field className="min-w-0 flex-1">
                 <FieldLabel>Title</FieldLabel>
-                <Input name="title" required placeholder="e.g. Find the best move" />
+                <Input
+                  name="title"
+                  required
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. Find the best move"
+                />
               </Field>
               <Field className="min-w-0 flex-1">
                 <FieldLabel>Game Type</FieldLabel>
-                <Input name="gameType" required placeholder="e.g. legend_games" />
+                <Input
+                  name="gameType"
+                  required
+                  value={gameType}
+                  onChange={(e) => setGameType(e.target.value)}
+                  placeholder="e.g. legend_games"
+                />
               </Field>
             </div>
             <Field>
               <FieldLabel>Themes</FieldLabel>
-              <Input name="themes" placeholder="Comma-separated, e.g. tactics, endgame" />
+              <Input
+                name="themes"
+                value={themes}
+                onChange={(e) => setThemes(e.target.value)}
+                placeholder="Comma-separated, e.g. tactics, endgame"
+              />
             </Field>
             <Field className="flex flex-row items-center gap-2">
               <input type="hidden" name="isActive" value={isActive ? "on" : "off"} />
@@ -158,6 +209,13 @@ export function RiddlePgnToFenLayout() {
               </div>
             </Field>
           </FieldGroup>
+
+          <div className="space-y-2">
+            <p className="text-muted-foreground text-xs">Last JSON to insert</p>
+            <pre className="text-muted-foreground bg-muted/30 max-h-52 overflow-auto rounded-md border p-3 font-mono text-xs whitespace-pre-wrap">
+              {insertPreviewJson}
+            </pre>
+          </div>
 
           <div className="flex justify-end">
             <Button type="submit" disabled={!canSubmit}>
