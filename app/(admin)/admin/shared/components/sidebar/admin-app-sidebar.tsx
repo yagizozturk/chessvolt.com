@@ -37,7 +37,7 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "All riddles", url: "/admin/riddles" },
       { title: "New FEN included PGN", url: "/admin/riddles/new" },
       { title: "Bulk FEN included PGN", url: "/admin/riddles/bulk" },
-      { title: "New Riddle From Game", url: "/admin/riddles/new/game-to-riddle" },
+      { title: "New Riddle From Game", url: "/admin/riddles/new/riddle-from-game" },
     ],
   },
   {
