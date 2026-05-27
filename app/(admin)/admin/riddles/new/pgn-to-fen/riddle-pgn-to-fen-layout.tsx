@@ -2,48 +2,18 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { GOALS_JSON_EXAMPLE, VALID_PGN_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { createRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
+import { extractFenFromPgn } from "@/app/(admin)/admin/utils/extract-fen-from-pgn";
 import DisplayBoard from "@/components/boards/display-board/display-board";
+import { JsonViewer } from "@/components/shared/json-viewer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils/cn";
-
-const VALID_PGN_EXAMPLE = `[Event "BMC Book"]
-[Site "?"]
-[Date "2018.08.28"]
-[Round "?"]
-[White "1-1"]
-[Black "?"]
-[Result "*"]
-[SetUp "1"]
-[FEN "2Rr2k1/pp2Qppp/1q6/8/8/7P/PP1r1PP1/2R3K1 w - - 0 1"]
-[PlyCount "3"]
-
-1. Qe8+ Rxe8 2. Rxe8# *`;
-
-const GOALS_JSON_EXAMPLE = JSON.stringify(
-  [
-    {
-      ply: 1,
-      move: "e7e8",
-      title: "...",
-      description: "...",
-      isCompleted: false,
-    },
-  ],
-  null,
-  2,
-);
-
-function extractFenFromPgn(pgn: string): string | undefined {
-  const match = pgn.match(/\[FEN\s+"([^"]+)"\]/i);
-  const fen = match?.[1]?.trim();
-  return fen ? fen : undefined;
-}
 
 export function RiddlePgnToFenLayout() {
   const [pgn, setPgn] = useState("");
@@ -210,12 +180,7 @@ export function RiddlePgnToFenLayout() {
             </Field>
           </FieldGroup>
 
-          <div className="space-y-2">
-            <p className="text-muted-foreground text-xs">Last JSON to insert</p>
-            <pre className="text-muted-foreground bg-muted/30 max-h-52 overflow-auto rounded-md border p-3 font-mono text-xs whitespace-pre-wrap">
-              {insertPreviewJson}
-            </pre>
-          </div>
+          <JsonViewer title="Last JSON to insert" data={insertPreviewJson} />
 
           <div className="flex justify-end">
             <Button type="submit" disabled={!canSubmit}>
