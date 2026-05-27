@@ -217,7 +217,7 @@ export async function updateRiddleAction(id: string, formData: FormData) {
   redirect(`/admin/riddles/${id}`);
 }
 
-export async function bulkCreateRiddlesAction(jsonData: string) {
+export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/admin/riddles/bulk") {
   const { supabase } = await getAdminUser();
 
   let items: BulkRiddleInput | BulkRiddleInput[];
@@ -225,7 +225,7 @@ export async function bulkCreateRiddlesAction(jsonData: string) {
     const parsed = JSON.parse(jsonData.trim()) as unknown;
     items = Array.isArray(parsed) ? parsed : [parsed];
   } catch {
-    redirect("/admin/riddles/bulk?error=invalid_json");
+    redirect(`${returnPath}?error=invalid_json`);
   }
 
   const created: string[] = [];
@@ -338,7 +338,12 @@ export async function bulkCreateRiddlesAction(jsonData: string) {
   if (errors.length > 0) params.set("errorDetails", JSON.stringify(errors));
 
   revalidatePath("/admin/riddles");
-  redirect(`/admin/riddles/bulk?${params.toString()}`);
+  redirect(`${returnPath}?${params.toString()}`);
+}
+
+export async function bulkCreateRiddlesFormAction(formData: FormData) {
+  const jsonData = ((formData.get("jsonData") as string) || "").trim();
+  await bulkCreateRiddlesAction(jsonData, "/admin/riddles/bulk");
 }
 
 export async function deleteRiddleAction(id: string): Promise<void> {
