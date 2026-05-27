@@ -39,6 +39,18 @@ function isGroupActive(pathname: string, item: AdminNavMainItem) {
   return isActivePath(pathname, item.url);
 }
 
+function getMostSpecificMatchingSubUrl(
+  pathname: string,
+  items: { title: string; url: string }[] | undefined,
+) {
+  if (!items?.length) return null;
+
+  const matches = items.filter((sub) => isActivePath(pathname, sub.url));
+  if (!matches.length) return null;
+
+  return matches.sort((a, b) => b.url.length - a.url.length)[0]?.url ?? null;
+}
+
 export function AdminNavMain({ items }: { items: AdminNavMainItem[] }) {
   const pathname = usePathname();
 
@@ -48,6 +60,7 @@ export function AdminNavMain({ items }: { items: AdminNavMainItem[] }) {
       <SidebarMenu>
         {items.map((item) => {
           const groupActive = isGroupActive(pathname, item);
+          const activeSubUrl = getMostSpecificMatchingSubUrl(pathname, item.items);
 
           if (!item.items?.length) {
             return (
@@ -83,7 +96,7 @@ export function AdminNavMain({ items }: { items: AdminNavMainItem[] }) {
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton
                           asChild
-                          isActive={isActivePath(pathname, subItem.url)}
+                          isActive={activeSubUrl === subItem.url}
                         >
                           <Link href={subItem.url}>
                             <span>{subItem.title}</span>
