@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils/cn";
 
-export function RiddlePgnToFenLayout() {
+export function RiddleNewForm() {
   const [pgn, setPgn] = useState("");
   const fen = useMemo(() => extractFenFromPgn(pgn), [pgn]);
   const [displayFen, setDisplayFen] = useState("");

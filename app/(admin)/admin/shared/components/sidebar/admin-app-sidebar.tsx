@@ -35,8 +35,9 @@ const adminNavItems: AdminNavMainItem[] = [
     icon: <HelpCircleIcon />,
     items: [
       { title: "All riddles", url: "/admin/riddles" },
-      { title: "New FEN included PGN", url: "/admin/riddles/new/pgn-to-fen" },
+      { title: "New FEN included PGN", url: "/admin/riddles/new" },
       { title: "Bulk FEN included PGN", url: "/admin/riddles/bulk/pgn-to-fen" },
+      { title: "New Riddle From Game", url: "/admin/riddles/new/game-to-riddle" },
     ],
   },
   {
