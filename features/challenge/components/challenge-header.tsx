@@ -7,6 +7,7 @@ type ChallengeHeaderProps = {
   description: string;
   quote: string;
   author: string;
+  backgroundColor: string;
   itemCount: number;
   itemLabel: string;
 };
@@ -18,11 +19,12 @@ export function ChallengeHeader({
   description,
   quote,
   author,
+  backgroundColor,
   itemCount,
   itemLabel,
 }: ChallengeHeaderProps) {
   return (
-    <div className="flex gap-2 rounded-lg bg-[#5D37BF]">
+    <div className="flex gap-2 rounded-lg" style={{ backgroundColor }}>
       <div className="min-w-0 flex-1 space-y-2 p-4">
         <p className="text-primary text-sm font-semibold">{description}</p>
         <h2 className="text-3xl font-bold">{title}</h2>

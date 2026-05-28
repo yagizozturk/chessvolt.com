@@ -60,6 +60,7 @@ export default async function ChallengePage({ params }: Params) {
           description={gameTypeConstants.description}
           quote={gameTypeConstants.quote}
           author={gameTypeConstants.author}
+          backgroundColor={gameTypeConstants.backgroundColor}
           itemCount={riddles.length}
           itemLabel="riddles"
         />

@@ -48,7 +48,7 @@ export default async function ChallengePage() {
 
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-6 pb-16">
-      <div className="space-y-6">
+      <div className="space-y-24">
         {groupGameTypes.map((gameType) => {
           const riddles = riddleGameTypeGroups[gameType] ?? [];
           const displayName = formatGameType(gameType);
@@ -64,6 +64,7 @@ export default async function ChallengePage() {
                 description={gameTypeConstants.description}
                 quote={gameTypeConstants.quote}
                 author={gameTypeConstants.author}
+                backgroundColor={gameTypeConstants.backgroundColor}
                 itemCount={riddles.length}
                 itemLabel="riddles"
               />

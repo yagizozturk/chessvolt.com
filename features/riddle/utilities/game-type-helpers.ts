@@ -7,6 +7,7 @@ export type GameTypeDetails = {
   description: string;
   quote: string;
   author: string;
+  backgroundColor: string;
 };
 
 export function formatGameType(slugOrGameType: string): string {
@@ -26,5 +27,6 @@ export function getGameTypeConstants(gameType: string): GameTypeDetails {
     description: details.description,
     quote: details.quote,
     author: details.author,
+    backgroundColor: details.backgroundColor,
   };
 }
