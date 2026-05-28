@@ -8,7 +8,6 @@ import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-seque
 import type { CreateRiddleInput } from "@/features/riddle/repository/riddle.repository";
 import { createRiddle } from "@/features/riddle/services/riddle.service";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
-import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 import {
@@ -38,7 +37,7 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
     const gameId = item?.gameId?.trim() || null;
 
     if (!title || !gameType) {
-      errors.push({ index: i, message: "title and game_type (or gameType) are required" });
+      errors.push({ index: i, message: "title and gameType are required" });
       continue;
     }
 
@@ -49,7 +48,7 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
     });
 
     if (!pgn) {
-      errors.push({ index: i, message: "pgn is required (or provide game_id with a saved PGN)" });
+      errors.push({ index: i, message: "pgn is required (or provide gameId with a saved PGN)" });
       continue;
     }
 
@@ -60,7 +59,7 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
     if (!displayFen) {
       errors.push({
         index: i,
-        message: `display_ply (${displayPly}) exceeds PGN length`,
+          message: `displayPly (${displayPly}) exceeds PGN length`,
       });
       continue;
     }
@@ -69,25 +68,19 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
     if (!initialFen) {
       errors.push({
         index: i,
-        message: `initial_ply (${initialPly}) exceeds PGN length`,
+          message: `initialPly (${initialPly}) exceeds PGN length`,
       });
       continue;
     }
 
-    let moves = item.moves?.trim() || null;
+    const moves = item.moves?.trim() || null;
+
     if (!moves) {
-      let moveCount = item.moveCountForAnswer;
-      if (item.answerEndPly != null && !Number.isNaN(item.answerEndPly)) {
-        moveCount = Math.max(1, item.answerEndPly - initialPly);
-      }
-      if (moveCount == null || moveCount < 1) {
-        errors.push({
-          index: i,
-          message: "moves or move_count_for_answer (or answer_end_ply) is required",
-        });
-        continue;
-      }
-      moves = getUciMovesFromPgnAfterPlyAtMoveCount(pgn, initialPly, moveCount) ?? null;
+      errors.push({
+        index: i,
+        message: "moves is required and must be a non-empty string",
+      });
+      continue;
     }
 
     if (!moves?.trim()) {

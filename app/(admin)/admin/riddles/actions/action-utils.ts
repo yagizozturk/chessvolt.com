@@ -5,18 +5,15 @@ import * as gameRepo from "@/features/game/repository/game.repository";
 type RawBulkRiddleInput = {
   title?: string;
   gameType?: string;
-  game_type?: string;
   gameId?: string | null;
-  game_id?: string | null;
   pgn?: string;
-  initial_ply?: number;
-  display_ply?: number;
-  move_count_for_answer?: number;
-  answer_end_ply?: number;
+  initialPly?: number;
+  displayPly?: number;
+  moveCountForAnswer?: number;
+  answerEndPly?: number;
   moves?: string | null;
   themes?: string[] | string | null;
   isActive?: boolean;
-  is_active?: boolean;
   goals?: unknown;
 };
 
@@ -38,16 +35,16 @@ export type BulkRiddleInput = {
 export function normalizeBulkRiddleInput(item: RawBulkRiddleInput): BulkRiddleInput {
   return {
     title: item.title,
-    gameType: item.gameType ?? item.game_type,
-    gameId: item.gameId ?? item.game_id,
+    gameType: item.gameType,
+    gameId: item.gameId,
     pgn: item.pgn,
-    initialPly: item.initial_ply,
-    displayPly: item.display_ply,
-    moveCountForAnswer: item.move_count_for_answer,
-    answerEndPly: item.answer_end_ply,
+    initialPly: item.initialPly,
+    displayPly: item.displayPly,
+    moveCountForAnswer: item.moveCountForAnswer,
+    answerEndPly: item.answerEndPly,
     moves: item.moves,
     themes: item.themes,
-    isActive: item.isActive ?? item.is_active,
+    isActive: item.isActive,
     goals: item.goals,
   };
 }

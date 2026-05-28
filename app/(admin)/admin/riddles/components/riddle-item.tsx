@@ -13,6 +13,8 @@ type Props = {
 };
 
 export function RiddleItem({ riddle, onDelete }: Props) {
+  const createdAtLabel = new Date(riddle.createdAt).toLocaleString();
+
   return (
     <Link
       href={`/admin/riddles/edit?id=${riddle.id}`}
@@ -29,6 +31,9 @@ export function RiddleItem({ riddle, onDelete }: Props) {
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <p className="truncate text-xl font-bold">{riddle.title}</p>
         <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+          <time dateTime={riddle.createdAt} className="bg-muted rounded px-2 py-0.5">
+            {createdAtLabel}
+          </time>
           {riddle.gameType && <span className="bg-muted rounded px-2 py-0.5">{riddle.gameType}</span>}
           {!riddle.isActive && <span className="bg-muted rounded px-2 py-0.5">inactive</span>}
           {riddle.themes.map((theme) => (

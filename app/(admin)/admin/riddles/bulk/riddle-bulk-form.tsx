@@ -15,8 +15,8 @@ import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 type BulkItem = {
   title?: string;
   gameType?: string;
-  game_type?: string;
   pgn?: string;
+  moves?: string;
   goals?: unknown;
 };
 
@@ -26,6 +26,7 @@ const BULK_JSON_EXAMPLE = JSON.stringify(
       title: "Mate in 2 from setup FEN",
       gameType: "legend_games",
       pgn: VALID_PGN_EXAMPLE,
+      moves: "e7e8 c8e8",
       themes: ["mate", "tactics"],
       isActive: true,
       goals: JSON.parse(GOALS_JSON_EXAMPLE),
@@ -62,11 +63,13 @@ export function RiddleBulkForm() {
       const row = index + 1;
       const errors: string[] = [];
       const title = item?.title?.trim();
-      const gameType = item?.gameType?.trim() || item?.game_type?.trim();
+      const gameType = item?.gameType?.trim();
       const pgn = item?.pgn?.trim();
+      const moves = item?.moves?.trim();
 
       if (!title) errors.push(`Row ${row}: title is required`);
-      if (!gameType) errors.push(`Row ${row}: gameType (or game_type) is required`);
+      if (!gameType) errors.push(`Row ${row}: gameType is required`);
+      if (!moves) errors.push(`Row ${row}: moves is required and must be a string`);
       if (!pgn) {
         errors.push(`Row ${row}: pgn is required`);
       } else {
