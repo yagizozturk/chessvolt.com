@@ -129,7 +129,9 @@ export function RiddleNewForm() {
                   placeholder="e.g. Find the best move"
                 />
               </Field>
-              <Field className="min-w-0 flex-1">
+            </div>
+            <div>
+              <Field className="min-w-0">
                 <FieldLabel>Game Type</FieldLabel>
                 <Input
                   name="gameType"

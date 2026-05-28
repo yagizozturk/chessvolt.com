@@ -10,11 +10,20 @@ import DisplayBoard from "@/components/boards/display-board/display-board";
 import { JsonViewer } from "@/components/shared/json-viewer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Game } from "@/features/game/types/game";
 import type { Riddle } from "@/features/riddle/types/riddle";
+import { GAME_TYPE_DETAILS } from "@/lib/shared/constants/game-type-details";
 import { cn } from "@/lib/utils/cn";
 
 type Props = {
@@ -40,6 +49,12 @@ export function RiddleEditForm({ riddle, game }: Props) {
   const [themes, setThemes] = useState(riddle.themes.join(", "));
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
   const derivedMoves = useMemo(() => uciMoves.join(" "), [uciMoves]);
+  const gameTypeOptions = useMemo(() => {
+    const fromStatic = Object.keys(GAME_TYPE_DETAILS);
+    const current = riddle.gameType?.trim() ?? "";
+
+    return Array.from(new Set([...fromStatic, current].filter(Boolean))).sort((a, b) => a.localeCompare(b));
+  }, [riddle.gameType]);
   const canSubmit =
     Boolean(title.trim()) &&
     Boolean(gameType.trim()) &&
@@ -148,15 +163,29 @@ export function RiddleEditForm({ riddle, game }: Props) {
                   placeholder="e.g. Find the best move"
                 />
               </Field>
-              <Field className="min-w-0 flex-1">
+            </div>
+            <div>
+              <Field className="min-w-0">
                 <FieldLabel>Game Type</FieldLabel>
-                <Input
-                  name="gameType"
-                  required
-                  value={gameType}
-                  onChange={(e) => setGameType(e.target.value)}
-                  placeholder="e.g. legend_games"
-                />
+                <input type="hidden" name="gameType" value={gameType} />
+                <Combobox value={gameType} onValueChange={(value) => setGameType(value ?? "")}>
+                  <ComboboxInput
+                    required
+                    placeholder="Select game type..."
+                    aria-label="Select game type"
+                    className="w-full min-w-0 rounded-xl border-2"
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>No game type found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {gameTypeOptions.map((type) => (
+                        <ComboboxItem key={type} value={type}>
+                          {type}
+                        </ComboboxItem>
+                      ))}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
               </Field>
             </div>
             <Field>
