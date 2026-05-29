@@ -11,7 +11,13 @@ import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { getAdminUser } from "@/lib/supabase/auth";
 
-import { parseIsActiveFromForm, parseThemesFromForm, resolvePgnFromFormInput } from "./action-utils";
+import {
+  parseDescriptionFromForm,
+  parseDifficultyFromForm,
+  parseIsActiveFromForm,
+  parseThemesFromForm,
+  resolvePgnFromFormInput,
+} from "./action-utils";
 
 export async function updateRiddleAction(id: string, formData: FormData) {
   const { supabase } = await getAdminUser();
@@ -23,6 +29,8 @@ export async function updateRiddleAction(id: string, formData: FormData) {
   const legacyDisplayPly = parseInt(formData.get("ply") as string, 10);
   const moveCountForAnswer = parseInt(formData.get("moveCountForAnswer") as string, 10);
   const title = formData.get("title") as string;
+  const description = parseDescriptionFromForm(formData);
+  const difficulty = parseDifficultyFromForm(formData);
   const movesFromForm = ((formData.get("moves") as string) || "").trim() || null;
   const initialFenInput = ((formData.get("initialFen") as string) || "").trim() || null;
   const displayFenInput = ((formData.get("displayFen") as string) || "").trim() || null;
@@ -70,6 +78,8 @@ export async function updateRiddleAction(id: string, formData: FormData) {
   const input: UpdateRiddleInput = {
     gameId,
     title,
+    description,
+    difficulty,
     pgn: pgn || null,
     gameType,
     initialFen,

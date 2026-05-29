@@ -11,7 +11,13 @@ import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { getAdminUser } from "@/lib/supabase/auth";
 
-import { parseIsActiveFromForm, parseThemesFromForm, resolvePgnFromFormInput } from "./action-utils";
+import {
+  parseDescriptionFromForm,
+  parseDifficultyFromForm,
+  parseIsActiveFromForm,
+  parseThemesFromForm,
+  resolvePgnFromFormInput,
+} from "./action-utils";
 
 export async function createRiddleAction(formData: FormData) {
   const { supabase } = await getAdminUser();
@@ -19,6 +25,8 @@ export async function createRiddleAction(formData: FormData) {
   const gameId = ((formData.get("gameId") as string) || "").trim() || null;
   const pgnInput = ((formData.get("pgn") as string) || "").trim();
   const title = (formData.get("title") as string)?.trim();
+  const description = parseDescriptionFromForm(formData);
+  const difficulty = parseDifficultyFromForm(formData);
   const moves = ((formData.get("moves") as string) || "").trim() || null;
   const gameType = (formData.get("gameType") as string)?.trim() || null;
   const initialFen = ((formData.get("initialFen") as string) || "").trim() || null;
@@ -67,6 +75,8 @@ export async function createRiddleAction(formData: FormData) {
   const input: CreateRiddleInput = {
     gameId,
     title,
+    description,
+    difficulty,
     pgn,
     moves: resolvedMoves,
     gameType,

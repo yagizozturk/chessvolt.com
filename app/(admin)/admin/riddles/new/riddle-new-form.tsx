@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { GOALS_JSON_EXAMPLE, VALID_PGN_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { createRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
+import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
 import { extractFenFromPgn } from "@/app/(admin)/admin/utils/extract-fen-from-pgn";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { JsonViewer } from "@/components/shared/json-viewer";
@@ -13,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { DEFAULT_RIDDLE_DIFFICULTY, type RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import { cn } from "@/lib/utils/cn";
 
 export function RiddleNewForm() {
@@ -22,6 +24,8 @@ export function RiddleNewForm() {
   const [isActive, setIsActive] = useState(true);
   const [goals, setGoals] = useState("");
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [difficulty, setDifficulty] = useState<RiddleDifficulty>(DEFAULT_RIDDLE_DIFFICULTY);
   const [gameType, setGameType] = useState("");
   const [themes, setThemes] = useState("");
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
@@ -45,6 +49,8 @@ export function RiddleNewForm() {
     return JSON.stringify(
       {
         title: title.trim() || null,
+        description: description.trim() || null,
+        difficulty,
         gameType: gameType.trim() || null,
         pgn: pgn.trim() || null,
         moves: derivedMoves || null,
@@ -57,7 +63,7 @@ export function RiddleNewForm() {
       null,
       2,
     );
-  }, [title, gameType, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
+  }, [title, description, difficulty, gameType, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
 
   useEffect(() => {
     setDisplayFen(fen ?? "");
@@ -130,6 +136,18 @@ export function RiddleNewForm() {
                 />
               </Field>
             </div>
+            <Field>
+              <FieldLabel>Description</FieldLabel>
+              <textarea
+                name="description"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Short summary shown on challenge cards"
+                className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+              />
+            </Field>
+            <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
             <div>
               <Field className="min-w-0">
                 <FieldLabel>Game Type</FieldLabel>
@@ -138,7 +156,7 @@ export function RiddleNewForm() {
                   required
                   value={gameType}
                   onChange={(e) => setGameType(e.target.value)}
-                  placeholder="e.g. legend_games"
+                  placeholder="e.g. legend-games"
                 />
               </Field>
             </div>

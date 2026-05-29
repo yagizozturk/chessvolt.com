@@ -1,9 +1,16 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as gameRepo from "@/features/game/repository/game.repository";
+import {
+  DEFAULT_RIDDLE_DIFFICULTY,
+  isRiddleDifficulty,
+  type RiddleDifficulty,
+} from "@/features/riddle/types/riddle-difficulty";
 
 type RawBulkRiddleInput = {
   title?: string;
+  description?: string | null;
+  difficulty?: string;
   gameType?: string;
   gameId?: string | null;
   pgn?: string;
@@ -19,6 +26,8 @@ type RawBulkRiddleInput = {
 
 export type BulkRiddleInput = {
   title?: string;
+  description?: string | null;
+  difficulty?: string;
   gameType?: string;
   gameId?: string | null;
   pgn?: string;
@@ -35,6 +44,8 @@ export type BulkRiddleInput = {
 export function normalizeBulkRiddleInput(item: RawBulkRiddleInput): BulkRiddleInput {
   return {
     title: item.title,
+    description: item.description,
+    difficulty: item.difficulty,
     gameType: item.gameType,
     gameId: item.gameId,
     pgn: item.pgn,
@@ -82,6 +93,24 @@ export function parseThemesFromForm(formData: FormData): string[] {
 
 export function parseIsActiveFromForm(formData: FormData): boolean {
   return formData.get("isActive") === "on";
+}
+
+export function parseDescriptionFromForm(formData: FormData): string | null {
+  const raw = (formData.get("description") as string | null)?.trim() ?? "";
+  return raw || null;
+}
+
+export function parseDifficultyFromForm(formData: FormData): RiddleDifficulty {
+  const raw = (formData.get("difficulty") as string | null)?.trim() ?? "";
+  if (isRiddleDifficulty(raw)) return raw;
+  return DEFAULT_RIDDLE_DIFFICULTY;
+}
+
+export function parseBulkDifficulty(value: unknown): RiddleDifficulty {
+  if (typeof value !== "string") return DEFAULT_RIDDLE_DIFFICULTY;
+  const trimmed = value.trim();
+  if (isRiddleDifficulty(trimmed)) return trimmed;
+  return DEFAULT_RIDDLE_DIFFICULTY;
 }
 
 export async function resolvePgnFromFormInput({

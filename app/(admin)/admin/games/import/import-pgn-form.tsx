@@ -1,10 +1,11 @@
 "use client";
 
+import { FileText, Upload } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { cn } from "@/lib/utils/cn";
-import { FileText, Upload } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
 
 import { importPgnAction } from "./actions";
 
@@ -80,19 +81,13 @@ export function ImportPgnForm() {
             )}
           />
           <p className="text-muted-foreground mt-1 text-xs">
-            Tüm oyunlara atanacak challenge tipi (boş bırakılırsa legend_games)
+            Tüm oyunlara atanacak challenge tipi (boş bırakılırsa legend-games)
           </p>
         </Field>
         <Field>
           <FieldLabel>Dosyadan Yükle</FieldLabel>
           <div className="flex flex-wrap items-center gap-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pgn,.txt"
-              onChange={handleFileChange}
-              className="hidden"
-            />
+            <input ref={fileInputRef} type="file" accept=".pgn,.txt" onChange={handleFileChange} className="hidden" />
             <Button
               type="button"
               variant="outline"
@@ -106,20 +101,14 @@ export function ImportPgnForm() {
               <span className="text-muted-foreground flex items-center gap-1 text-sm">
                 <FileText className="h-4 w-4" />
                 {pgn.split("\n").length} lines
-                {gameCount > 0 && (
-                  <span className="text-primary font-medium">
-                    • {gameCount} oyun tespit edildi
-                  </span>
-                )}
+                {gameCount > 0 && <span className="text-primary font-medium">• {gameCount} oyun tespit edildi</span>}
               </span>
             )}
           </div>
         </Field>
 
         <Field>
-          <FieldLabel>
-            veya PGN Yapıştır (oyunlar boş satırla ayrılmış)
-          </FieldLabel>
+          <FieldLabel>veya PGN Yapıştır (oyunlar boş satırla ayrılmış)</FieldLabel>
           <textarea
             value={pgn}
             onChange={(e) => setPgn(e.target.value)}
@@ -131,27 +120,15 @@ export function ImportPgnForm() {
               "placeholder:text-muted-foreground",
             )}
           />
-          {gameCount > 0 && (
-            <p className="text-muted-foreground mt-1 text-sm">
-              {gameCount} oyun içe aktarılacak
-            </p>
-          )}
+          {gameCount > 0 && <p className="text-muted-foreground mt-1 text-sm">{gameCount} oyun içe aktarılacak</p>}
         </Field>
       </FieldGroup>
 
       <div className="flex items-center gap-2">
         <Button type="submit" disabled={!pgn.trim() || isSubmitting}>
-          {isSubmitting
-            ? "İçe aktarılıyor…"
-            : gameCount > 0
-              ? `${gameCount} Oyunu İçe Aktar`
-              : "İçe Aktar"}
+          {isSubmitting ? "İçe aktarılıyor…" : gameCount > 0 ? `${gameCount} Oyunu İçe Aktar` : "İçe Aktar"}
         </Button>
-        {isSubmitting && (
-          <span className="text-muted-foreground text-sm">
-            Lütfen bekleyin…
-          </span>
-        )}
+        {isSubmitting && <span className="text-muted-foreground text-sm">Lütfen bekleyin…</span>}
       </div>
     </form>
   );

@@ -68,6 +68,8 @@ export async function importPgnAction(formData: FormData) {
       await createRiddle(supabase, {
         gameId: game.id,
         title: defaultTitle,
+        description: parsed.description?.trim() || null,
+        difficulty: "beginner",
         moves: movesAtPly0 ?? "",
         gameType,
         displayFen,

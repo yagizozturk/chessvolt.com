@@ -13,7 +13,7 @@ export const DEFAULT_GAME_TYPE_DETAILS: GameTypeDetails = {
 };
 
 export const GAME_TYPE_DETAILS: Record<string, GameTypeDetails> = {
-  "legend-games": {
+  "legend-games-from-tal-to-kasparov": {
     quote: "Chess is life in miniature.",
     author: "Garry Kasparov",
     description: "Replay historic games from chess legends. Find their moves and learn to think.",

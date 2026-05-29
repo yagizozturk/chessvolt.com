@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { FileJson, Upload } from "lucide-react";
+import { useMemo, useState } from "react";
 
 import { GOALS_JSON_EXAMPLE, VALID_PGN_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { bulkCreateRiddlesFormAction } from "@/app/(admin)/admin/riddles/actions/actions";
@@ -14,6 +14,8 @@ import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 
 type BulkItem = {
   title?: string;
+  description?: string;
+  difficulty?: string;
   gameType?: string;
   pgn?: string;
   moves?: string;
@@ -24,7 +26,9 @@ const BULK_JSON_EXAMPLE = JSON.stringify(
   [
     {
       title: "Mate in 2 from setup FEN",
-      gameType: "legend_games",
+      description: "Find the winning continuation from the diagram position.",
+      difficulty: "intermediate",
+      gameType: "legend-games",
       pgn: VALID_PGN_EXAMPLE,
       moves: "e7e8 c8e8",
       themes: ["mate", "tactics"],

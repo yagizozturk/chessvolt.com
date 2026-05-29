@@ -12,6 +12,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 
 import {
   normalizeBulkRiddleInputs,
+  parseBulkDifficulty,
   parseBulkThemes,
   resolvePgnFromFormInput,
 } from "./action-utils";
@@ -104,9 +105,13 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
       }
     }
 
+    const description = item.description?.trim() || null;
+
     const input: CreateRiddleInput = {
       gameId,
       title,
+      description,
+      difficulty: parseBulkDifficulty(item.difficulty),
       pgn,
       moves,
       gameType,

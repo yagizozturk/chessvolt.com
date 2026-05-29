@@ -4,8 +4,9 @@ import Link from "next/link";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Button } from "@/components/ui/button";
-import type { Riddle } from "@/features/riddle/types/riddle";
 import type { Game } from "@/features/game/types/game";
+import { formatRiddleDifficultyLabel } from "@/features/riddle/types/riddle-difficulty";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import { AttemptAccuracyStat } from "@/features/user-sequence-attempt/components/attempt-accuracy-stat";
 import { getFullMoveCountFromMoves } from "@/lib/chess/getFullMoveCountFromMoves";
 
@@ -83,17 +84,22 @@ export function RiddleBoardCard({
               </span>
             </div>
           </>
+        ) : riddle.description ? (
+          <p className="text-muted-foreground line-clamp-2 text-sm">{riddle.description}</p>
         ) : (
           <p className="text-muted-foreground text-sm">Custom position</p>
         )}
-        {moveCount > 0 && (
-          <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
-            <Puzzle className="text-primary h-3.5 w-3.5" />
-            <span>
-              {moveCount} {moveCount === 1 ? "move" : "moves"}
+        <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+          <span>{formatRiddleDifficultyLabel(riddle.difficulty)}</span>
+          {moveCount > 0 && (
+            <span className="flex items-center gap-1.5">
+              <Puzzle className="text-primary h-3.5 w-3.5" />
+              <span>
+                {moveCount} {moveCount === 1 ? "move" : "moves"}
+              </span>
             </span>
-          </div>
-        )}
+          )}
+        </div>
         <div className="mt-auto flex items-center gap-3">
           <AttemptAccuracyStat accuracyPercent={accuracyPercent} />
           <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">

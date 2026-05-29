@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Button } from "@/components/ui/button";
+import { formatRiddleDifficultyLabel } from "@/features/riddle/types/riddle-difficulty";
 import type { Riddle } from "@/features/riddle/types/riddle";
 
 type Props = {
@@ -30,10 +31,14 @@ export function RiddleItem({ riddle, onDelete }: Props) {
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <p className="truncate text-xl font-bold">{riddle.title}</p>
+        {riddle.description ? (
+          <p className="text-muted-foreground line-clamp-2 text-sm">{riddle.description}</p>
+        ) : null}
         <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
           <time dateTime={riddle.createdAt} className="bg-muted rounded px-2 py-0.5">
             {createdAtLabel}
           </time>
+          <span className="bg-muted rounded px-2 py-0.5">{formatRiddleDifficultyLabel(riddle.difficulty)}</span>
           {riddle.gameType && <span className="bg-muted rounded px-2 py-0.5">{riddle.gameType}</span>}
           {!riddle.isActive && <span className="bg-muted rounded px-2 py-0.5">inactive</span>}
           {riddle.themes.map((theme) => (

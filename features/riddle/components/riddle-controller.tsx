@@ -13,6 +13,7 @@ import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
+import { formatRiddleDifficultyLabel } from "@/features/riddle/types/riddle-difficulty";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import {
@@ -195,8 +196,12 @@ export default function RiddleController({
           />
         </div>
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
-          <div className="flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-1 text-center">
             <span className="text-lg font-bold">{riddle.title ?? "Untitled riddle"}</span>
+            <span className="text-muted-foreground text-sm">{formatRiddleDifficultyLabel(riddle.difficulty)}</span>
+            {riddle.description ? (
+              <p className="text-muted-foreground text-sm">{riddle.description}</p>
+            ) : null}
           </div>
           <div className="flex items-center" data-tour="progress">
             <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />

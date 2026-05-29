@@ -37,7 +37,7 @@ export function ChallengeHeader({
         </Badge>*/}
       </div>
       <div className="overflow-hidden rounded-lg">
-        <Image src={imageSrc} alt={imageAlt} width={300} height={180} className="object-contain" />
+        <Image src={imageSrc} alt={imageAlt} width={300} height={200} className="object-contain" />
       </div>
     </div>
   );

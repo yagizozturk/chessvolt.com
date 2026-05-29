@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { GOALS_JSON_EXAMPLE, VALID_PGN_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { updateRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
+import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
 import { extractFenFromPgn } from "@/app/(admin)/admin/utils/extract-fen-from-pgn";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { JsonViewer } from "@/components/shared/json-viewer";
@@ -22,6 +23,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Game } from "@/features/game/types/game";
+import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { GAME_TYPE_DETAILS } from "@/lib/shared/constants/game-type-details";
 import { cn } from "@/lib/utils/cn";
@@ -45,6 +47,8 @@ export function RiddleEditForm({ riddle, game }: Props) {
     riddle.moveSequence.goals != null ? JSON.stringify(riddle.moveSequence.goals, null, 2) : "",
   );
   const [title, setTitle] = useState(riddle.title);
+  const [description, setDescription] = useState(riddle.description ?? "");
+  const [difficulty, setDifficulty] = useState<RiddleDifficulty>(riddle.difficulty);
   const [gameType, setGameType] = useState(riddle.gameType ?? "");
   const [themes, setThemes] = useState(riddle.themes.join(", "));
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
@@ -86,6 +90,8 @@ export function RiddleEditForm({ riddle, game }: Props) {
     return {
       id: riddle.id,
       title: title.trim() || null,
+      description: description.trim() || null,
+      difficulty,
       gameType: gameType.trim() || null,
       pgn: pgn.trim() || null,
       moves: derivedMoves || null,
@@ -95,7 +101,7 @@ export function RiddleEditForm({ riddle, game }: Props) {
       isActive,
       goals: parsedGoals,
     };
-  }, [riddle.id, title, gameType, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
+  }, [riddle.id, title, description, difficulty, gameType, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
 
   return (
     <form action={async (formData) => updateRiddleAction(riddle.id, formData)} className="grid gap-6 lg:grid-cols-3">
@@ -164,6 +170,18 @@ export function RiddleEditForm({ riddle, game }: Props) {
                 />
               </Field>
             </div>
+            <Field>
+              <FieldLabel>Description</FieldLabel>
+              <textarea
+                name="description"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Short summary shown on challenge cards"
+                className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+              />
+            </Field>
+            <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
             <div>
               <Field className="min-w-0">
                 <FieldLabel>Game Type</FieldLabel>
