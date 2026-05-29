@@ -4,6 +4,7 @@ import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { SolveSuccessStats } from "@/components/solve-success-dialog/solve-success-stats";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
+import type { SequenceCompletionStats } from "@/features/user-sequence-attempt/types/sequence-completion-stats";
 import animationData from "@/public/images/animations/animation-trophy.json";
 
 export type SolveSuccessDialogProps = {
@@ -24,6 +26,7 @@ export type SolveSuccessDialogProps = {
   description: string;
   destinationPath: string;
   buttonLabel: string;
+  stats?: SequenceCompletionStats | null;
 };
 
 /**
@@ -43,6 +46,7 @@ export function SolveSuccessDialog({
   description,
   destinationPath,
   buttonLabel,
+  stats,
 }: SolveSuccessDialogProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);

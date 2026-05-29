@@ -15,6 +15,8 @@ import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-mo
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
+import type { SequenceCompletionStats } from "@/features/user-sequence-attempt/types/sequence-completion-stats";
+import { buildSequenceCompletionStats } from "@/features/user-sequence-attempt/utilities/build-sequence-completion-stats";
 import {
   buildAttemptCounters,
   bumpCorrectStreak,
@@ -40,7 +42,8 @@ export default function OpeningVariantController({
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const { updateAttemptStatus, recordEvent } = useSequenceAttempt(sequenceId);
+  const [completionStats, setCompletionStats] = useState<SequenceCompletionStats | null>(null);
+  const { updateAttemptStatus, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
   const { playLevelUpSound } = useBoardSounds();
   const wrongMoveCountRef = useRef(0);
   const totalHintCountRef = useRef(0);
@@ -66,6 +69,7 @@ export default function OpeningVariantController({
   useEffect(() => {
     setIsCompleted(false);
     setSuccessDialogOpen(false);
+    setCompletionStats(null);
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
     currentCorrectStreakRef.current = 0;
@@ -76,6 +80,15 @@ export default function OpeningVariantController({
     if (currentCorrectMove != null || isCompleted) return;
 
     setIsCompleted(true);
+    setCompletionStats(
+      buildSequenceCompletionStats(
+        sortedGoals,
+        wrongMoveCountRef.current,
+        totalHintCountRef.current,
+        maxCorrectStreakRef.current,
+        getTimeFromStartMs(),
+      ),
+    );
     setSuccessDialogOpen(true);
     playLevelUpSound();
 
@@ -91,7 +104,7 @@ export default function OpeningVariantController({
         ),
       );
     })();
-  }, [currentCorrectMove, isCompleted, playLevelUpSound, recordEvent, sortedGoals, updateAttemptStatus]);
+  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, playLevelUpSound, recordEvent, sortedGoals, updateAttemptStatus]);
 
   function handleBoardCheckMove(move: MoveAttemptPayload) {
     const { isCorrect } = handleMoveCheck(move);
@@ -174,6 +187,7 @@ export default function OpeningVariantController({
         description={successDescription}
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
+        stats={completionStats}
       />
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">

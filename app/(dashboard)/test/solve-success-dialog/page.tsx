@@ -19,6 +19,11 @@ export default function TestSolveSuccessDialogPage() {
         description="You found the best move. Continue to the next challenge when you are ready."
         destinationPath="/test/sonner"
         buttonLabel="Continue"
+        stats={{
+          accuracyPercent: 92,
+          maxCorrectStreak: 5,
+          durationMs: 84_000,
+        }}
       />
     </div>
   );

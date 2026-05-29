@@ -112,6 +112,7 @@ export function useSequenceAttempt(sequenceId: string) {
 
   return {
     getAttemptId,
+    getTimeFromStartMs,
     ensureAttemptStarted,
     updateAttemptStatus,
     recordEvent,
