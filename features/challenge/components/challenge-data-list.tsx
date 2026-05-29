@@ -54,7 +54,7 @@ export function ChallengeDataList({ riddles, gameMap, attemptByRiddleId }: Chall
       </div>
       {hasMore && (
         <div className="flex justify-end">
-          <Button variant="voltAlternative" onClick={() => setIsExpanded((p) => !p)}>
+          <Button variant="volt" onClick={() => setIsExpanded((p) => !p)}>
             {isExpanded ? "Show Less" : `Show More (${riddlesWithPgn.length})`}
             {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </Button>

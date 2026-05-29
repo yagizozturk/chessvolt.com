@@ -16,13 +16,9 @@ export function BoardCardMetaRow({ icon: Icon, label, className, truncate }: Boa
 
   return (
     <span
-      className={cn(
-        "flex items-center gap-1.5",
-        truncate && "max-w-full min-w-0 shrink overflow-hidden",
-        className,
-      )}
+      className={cn("flex items-center gap-1.5", truncate && "max-w-full min-w-0 shrink overflow-hidden", className)}
     >
-      <Icon className="text-primary h-3.5 w-3.5 shrink-0" />
+      <Icon className="text-primary h-4 w-4 shrink-0" />
       <span className={cn(truncate && "min-w-0 truncate")}>{label}</span>
     </span>
   );

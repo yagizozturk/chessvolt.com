@@ -22,14 +22,14 @@ import { groupBy } from "@/lib/utils/groupBy";
  */
 type ChallengePageProps = {
   searchParams: Promise<{
-    level?: string;
+    difficulty?: string;
     gameType?: string;
   }>;
 };
 
 export default async function ChallengePage({ searchParams }: ChallengePageProps) {
   const params = await searchParams;
-  const selectedLevel = params.level?.trim() || "all";
+  const selectedDifficulty = params.difficulty?.trim() || "all";
   const selectedGameType = params.gameType?.trim() || "all";
 
   // ========================================================================
@@ -40,7 +40,8 @@ export default async function ChallengePage({ searchParams }: ChallengePageProps
 
   const filteredRiddles = allRiddles.filter((riddle) => {
     const matchesGameType = selectedGameType === "all" || riddle.gameType?.trim() === selectedGameType;
-    return matchesGameType;
+    const matchesDifficulty = selectedDifficulty === "all" || riddle.difficulty === selectedDifficulty;
+    return matchesGameType && matchesDifficulty;
   });
 
   const sequenceIds = [...new Set(filteredRiddles.map((r) => r.moveSequence.id))];
@@ -71,7 +72,7 @@ export default async function ChallengePage({ searchParams }: ChallengePageProps
       <div className="space-y-10">
         <ChallengeFilters
           gameTypeOptions={allGameTypeOptions}
-          selectedLevel={selectedLevel}
+          selectedDifficulty={selectedDifficulty}
           selectedGameType={selectedGameType}
         />
       </div>
