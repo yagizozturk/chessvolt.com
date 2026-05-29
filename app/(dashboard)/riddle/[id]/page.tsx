@@ -1,18 +1,13 @@
-import RiddleController from "@/features/riddle/components/riddle-controller";
-import { getRiddleById } from "@/features/riddle/services/riddle.service";
-import { getPublicUser } from "@/lib/supabase/auth";
 import { notFound } from "next/navigation";
+
+import RiddleController from "@/features/riddle/components/riddle-controller";
+import { getRiddleById, getRiddlesByGameType } from "@/features/riddle/services/riddle.service";
+import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
   params: Promise<{ id: string }>;
 };
 
-/**
- * Fonksyon Bilgisi ✅
- * 1. İlgili riddle id ye göre çekilir
- * 2. İlgili game id ye göre çekilir
- * 3. RiddleController a verilir riddle ve game
- */
 export default async function RiddlePage({ params }: Params) {
   const { supabase } = await getPublicUser();
   const { id } = await params;
@@ -22,12 +17,27 @@ export default async function RiddlePage({ params }: Params) {
     notFound();
   }
 
+  // ======================================================================
+  // Get all riddles for this challenge (game type)
+  // Get the next riddle if it exists
+  // ======================================================================
+  const riddles = riddle.gameType
+    ? await getRiddlesByGameType(supabase, riddle.gameType, { activeOnly: true })
+    : [];
+
+  const currentIndex = riddles.findIndex((r) => r.id === riddle.id);
+  const nextRiddle =
+    currentIndex >= 0 && currentIndex < riddles.length - 1 ? riddles[currentIndex + 1] : null;
+
+  const parentChallengeUrl = riddle.gameType
+    ? `/challenge/${riddle.gameType.replace(/_/g, "-")}`
+    : "/";
+
   return (
     <RiddleController
       riddle={riddle}
-      parentChallengeUrl={
-        riddle.gameType ? `/challenge/${riddle.gameType.replace(/_/g, "-")}` : "/"
-      }
+      nextRiddleId={nextRiddle?.id ?? null}
+      parentChallengeUrl={parentChallengeUrl}
     />
   );
 }
