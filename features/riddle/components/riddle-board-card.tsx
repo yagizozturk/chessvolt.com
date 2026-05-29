@@ -1,14 +1,14 @@
-import { Calendar, Circle, Flag, Puzzle } from "lucide-react";
+import { Calendar, Circle, Flag, Gauge, Puzzle, Target } from "lucide-react";
 import Link from "next/link";
 
+import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Button } from "@/components/ui/button";
 import type { Game } from "@/features/game/types/game";
-import { formatRiddleDifficultyLabel } from "@/features/riddle/types/riddle-difficulty";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import { AttemptAccuracyStat } from "@/features/user-sequence-attempt/components/attempt-accuracy-stat";
-import { getFullMoveCountFromMoves } from "@/lib/chess/getFullMoveCountFromMoves";
+import { formatRiddleDifficultyLabel } from "@/features/riddle/types/riddle-difficulty";
+import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
 
 type RiddleBoardCardProps = {
   riddle: Riddle;
@@ -45,7 +45,7 @@ export function RiddleBoardCard({
   href,
   displayFen,
 }: RiddleBoardCardProps) {
-  const moveCount = getFullMoveCountFromMoves(riddle.moveSequence.moves);
+  const moveCountLabel = formatMoveCountLabel(riddle.moveSequence.moves);
 
   return (
     <Link
@@ -72,16 +72,8 @@ export function RiddleBoardCard({
               </div>
             </div>
             <div className="text-muted-foreground flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-              {game.event && (
-                <span className="flex max-w-full min-w-0 shrink items-center gap-1.5 overflow-hidden">
-                  <Flag className="text-primary h-3.5 w-3.5 shrink-0" />
-                  <span className="min-w-0 truncate">{game.event}</span>
-                </span>
-              )}
-              <span className="flex items-center gap-1.5">
-                <Calendar className="text-primary h-3.5 w-3.5" />
-                {formatDate(game.playedAt)}
-              </span>
+              {game.event ? <BoardCardMetaRow icon={Flag} label={game.event} truncate /> : null}
+              <BoardCardMetaRow icon={Calendar} label={formatDate(game.playedAt)} />
             </div>
           </>
         ) : riddle.description ? (
@@ -90,18 +82,19 @@ export function RiddleBoardCard({
           <p className="text-muted-foreground text-sm">Custom position</p>
         )}
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-          <span>{formatRiddleDifficultyLabel(riddle.difficulty)}</span>
-          {moveCount > 0 && (
-            <span className="flex items-center gap-1.5">
-              <Puzzle className="text-primary h-3.5 w-3.5" />
-              <span>
-                {moveCount} {moveCount === 1 ? "move" : "moves"}
-              </span>
-            </span>
-          )}
+          <BoardCardMetaRow icon={Gauge} label={formatRiddleDifficultyLabel(riddle.difficulty)} />
+        </div>
+        <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+          <BoardCardMetaRow icon={Puzzle} label={moveCountLabel ?? "No moves"} />
         </div>
         <div className="mt-auto flex items-center gap-3">
-          <AttemptAccuracyStat accuracyPercent={accuracyPercent} />
+          {accuracyPercent != null ? (
+            <BoardCardMetaRow
+              icon={Target}
+              label={`${accuracyPercent}% accuracy`}
+              className="text-muted-foreground text-sm"
+            />
+          ) : null}
           <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
             Play
           </Button>

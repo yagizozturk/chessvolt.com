@@ -1,12 +1,13 @@
-import { BookOpen } from "lucide-react";
+import { BookOpen, Puzzle, Target } from "lucide-react";
 import Link from "next/link";
 
+import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
-import { AttemptAccuracyStat } from "@/features/user-sequence-attempt/components/attempt-accuracy-stat";
+import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
 
 type OpeningBoardCardProps = {
   id: string;
@@ -19,6 +20,7 @@ type OpeningBoardCardProps = {
   fen: string;
   description?: string | null;
   variantCount?: number;
+  moves?: string | null;
 };
 
 export function OpeningBoardCard({
@@ -31,7 +33,10 @@ export function OpeningBoardCard({
   fen,
   description,
   variantCount,
+  moves,
 }: OpeningBoardCardProps) {
+  const moveCountLabel = formatMoveCountLabel(moves ?? null);
+
   return (
     <BlurFade duration={0.4} direction="down" blur="4px">
       <Link
@@ -46,9 +51,18 @@ export function OpeningBoardCard({
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <p className="text-xl font-bold">{name}</p>
           <p className="text-muted-foreground text-base">{description}</p>
+          {moveCountLabel ? (
+            <BoardCardMetaRow icon={Puzzle} label={moveCountLabel} className="text-muted-foreground text-sm" />
+          ) : null}
           <div className="mt-auto flex items-center gap-3">
             <div className="flex min-w-0 flex-wrap items-center gap-3">
-              <AttemptAccuracyStat accuracyPercent={accuracyPercent} />
+              {accuracyPercent != null ? (
+                <BoardCardMetaRow
+                  icon={Target}
+                  label={`${accuracyPercent}% accuracy`}
+                  className="text-muted-foreground text-sm"
+                />
+              ) : null}
               {variantCount !== undefined ? (
                 <Badge variant="secondary" className="rounded-lg p-3">
                   <BookOpen />

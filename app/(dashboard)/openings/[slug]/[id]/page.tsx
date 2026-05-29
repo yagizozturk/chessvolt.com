@@ -76,6 +76,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 isComplete={attemptByVariantId[variant.id]?.isComplete}
                 accuracyPercent={attemptByVariantId[variant.id]?.accuracyPercent}
                 description={variant.description}
+                moves={variant.moveSequence.moves}
               />
             );
           })}

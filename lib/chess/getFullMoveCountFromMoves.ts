@@ -7,3 +7,9 @@ export function getFullMoveCountFromMoves(moves: string | null): number {
     .filter((m) => m.length > 0);
   return Math.ceil(arr.length / 2);
 }
+
+export function formatMoveCountLabel(moves: string | null): string | null {
+  const moveCount = getFullMoveCountFromMoves(moves);
+  if (moveCount <= 0) return null;
+  return `${moveCount} ${moveCount === 1 ? "move" : "moves"}`;
+}
