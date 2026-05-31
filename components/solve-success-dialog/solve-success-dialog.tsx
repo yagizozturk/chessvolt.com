@@ -66,6 +66,7 @@ export function SolveSuccessDialog({
           </div>
           <DialogTitle className="text-center text-2xl font-bold">{title}</DialogTitle>
           <DialogDescription className="mt-4 text-center text-lg text-pretty">{description}</DialogDescription>
+          {stats ? <SolveSuccessStats stats={stats} className="mt-4" /> : null}
         </DialogHeader>
         <DialogFooter className="mt-4 items-center justify-center sm:justify-center">
           <Button
