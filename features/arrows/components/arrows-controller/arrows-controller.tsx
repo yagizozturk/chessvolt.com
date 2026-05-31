@@ -136,6 +136,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
             arrows={visibleBoardArrows}
             drawingEnabled={gameStarted}
             onDrawChange={handleDrawChange}
+            destinationPath={destinationPath}
           />
         </div>
 
