@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 
 import { AdminFormErrorAlert } from "@/app/(admin)/admin/shared/components/admin-form-error-alert";
 import { Button } from "@/components/ui/button";
+import { getAllCollections } from "@/features/collection/services/collection.service";
 import { getGameById } from "@/features/game/services/game.service";
+import { getRiddleCollectionsForRiddle } from "@/features/riddle-collection/services/riddle-collection.service";
 import { getRiddleById } from "@/features/riddle/services/riddle.service";
 import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { getAdminUser } from "@/lib/supabase/auth";
@@ -30,6 +32,11 @@ export default async function AdminRiddleEditPage({ searchParams }: Props) {
   }
 
   const game = riddle.gameId ? await getGameById(supabase, riddle.gameId) : null;
+  const [collections, riddleCollections] = await Promise.all([
+    getAllCollections(supabase),
+    getRiddleCollectionsForRiddle(supabase, id),
+  ]);
+  const collectionId = riddleCollections[0]?.collectionId ?? collections[0]?.id ?? "";
 
   return (
     <div className="container mx-auto max-w-6xl space-y-6 p-4">
@@ -42,7 +49,7 @@ export default async function AdminRiddleEditPage({ searchParams }: Props) {
         </Button>
       </div>
       <AdminFormErrorAlert message={errorMessage} />
-      <RiddleEditForm riddle={riddle} game={game} />
+      <RiddleEditForm riddle={riddle} game={game} collections={collections} collectionId={collectionId} />
     </div>
   );
 }

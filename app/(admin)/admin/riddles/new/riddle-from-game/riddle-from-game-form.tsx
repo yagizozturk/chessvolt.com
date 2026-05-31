@@ -20,21 +20,25 @@ import {
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import type { Collection } from "@/features/collection/types/collection";
 import type { Game } from "@/features/game/types/game";
 import { DEFAULT_RIDDLE_DIFFICULTY, type RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { cn } from "@/lib/utils/cn";
 
+import { RiddleCollectionSelect } from "../../components/riddle-collection-select";
+
 type Props = {
   games: Game[];
+  collections: Collection[];
 };
 
 // ============================================================================
 // Form
 // Create riddle from selected game PGN + admin provided initial FEN.
 // ============================================================================
-export function RiddleFromGameForm({ games }: Props) {
+export function RiddleFromGameForm({ games, collections }: Props) {
   const [selectedGameId, setSelectedGameId] = useState("");
   const [initialFen, setInitialFen] = useState("");
   const [endFen, setEndFen] = useState("");
@@ -45,6 +49,7 @@ export function RiddleFromGameForm({ games }: Props) {
   const [description, setDescription] = useState("");
   const [difficulty, setDifficulty] = useState<RiddleDifficulty>(DEFAULT_RIDDLE_DIFFICULTY);
   const [themes, setThemes] = useState("");
+  const [collectionId, setCollectionId] = useState(collections[0]?.id ?? "");
 
   const selectedGame = useMemo(() => games.find((game) => game.id === selectedGameId) ?? null, [games, selectedGameId]);
   const pgn = selectedGame?.pgn?.trim() ?? "";
@@ -112,6 +117,7 @@ export function RiddleFromGameForm({ games }: Props) {
     Boolean(initialFen.trim()) &&
     Boolean(endFen.trim()) &&
     Boolean(derive.moves.trim()) &&
+    Boolean(collectionId.trim()) &&
     !derive.fenError;
 
   const previewJson = useMemo(() => {
@@ -142,6 +148,7 @@ export function RiddleFromGameForm({ games }: Props) {
       endPly: derive.endPly,
       moves: derive.moves || null,
       themes: parsedThemes,
+      collectionId: collectionId.trim() || null,
       isActive,
       goals: parsedGoals,
     };
@@ -158,6 +165,7 @@ export function RiddleFromGameForm({ games }: Props) {
     derive.endPly,
     derive.moves,
     themes,
+    collectionId,
     isActive,
     goals,
   ]);
@@ -236,6 +244,11 @@ export function RiddleFromGameForm({ games }: Props) {
               />
             </Field>
             <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
+            <RiddleCollectionSelect
+              collections={collections}
+              value={collectionId}
+              onChange={setCollectionId}
+            />
             <Field>
               <FieldLabel>Initial FEN (admin input)</FieldLabel>
               <Input

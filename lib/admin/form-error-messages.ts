@@ -7,6 +7,8 @@ const RIDDLE_ADMIN_ERRORS: Record<string, string> = {
   create_failed: "Could not create the riddle. Please try again.",
   update_failed: "Could not save changes. Please try again.",
   delete_failed: "Could not delete the riddle. Please try again.",
+  missing_collection: "Please select a collection for this riddle.",
+  collection_link_failed: "Riddle was saved but could not be linked to the collection. Please try again.",
 };
 
 export function getRiddleAdminErrorMessage(code: string | undefined): string | null {

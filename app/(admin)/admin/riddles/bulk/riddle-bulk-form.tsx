@@ -16,7 +16,7 @@ type BulkItem = {
   title?: string;
   description?: string;
   difficulty?: string;
-  gameType?: string;
+  collectionId?: string;
   pgn?: string;
   moves?: string;
   goals?: unknown;
@@ -28,6 +28,7 @@ const BULK_JSON_EXAMPLE = JSON.stringify(
       title: "Mate in 2 from setup FEN",
       description: "Find the winning continuation from the diagram position.",
       difficulty: "intermediate",
+      collectionId: "your-collection-uuid",
       pgn: VALID_PGN_EXAMPLE,
       moves: "e7e8 c8e8",
       themes: ["mate", "tactics"],
@@ -68,8 +69,10 @@ export function RiddleBulkForm() {
       const title = item?.title?.trim();
       const pgn = item?.pgn?.trim();
       const moves = item?.moves?.trim();
+      const collectionId = item?.collectionId?.trim();
 
       if (!title) errors.push(`Row ${row}: title is required`);
+      if (!collectionId) errors.push(`Row ${row}: collectionId is required`);
       if (!moves) errors.push(`Row ${row}: moves is required and must be a string`);
       if (!pgn) {
         errors.push(`Row ${row}: pgn is required`);

@@ -23,6 +23,12 @@ export async function getActiveCollectionsWithRiddleCount(
   return collectionRepo.findAllActiveWithRiddleCount(supabase);
 }
 
+export async function getAllCollectionsWithRiddleCount(
+  supabase: SupabaseClient,
+): Promise<CollectionWithRiddleCount[]> {
+  return collectionRepo.findAllWithRiddleCount(supabase);
+}
+
 export async function getCollectionById(
   supabase: SupabaseClient,
   id: string,

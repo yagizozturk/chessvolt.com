@@ -11,7 +11,9 @@ import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 import {
+  linkRiddleToCollection,
   normalizeBulkRiddleInputs,
+  parseBulkCollectionId,
   parseBulkDifficulty,
   parseBulkThemes,
   resolvePgnFromFormInput,
@@ -35,9 +37,15 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
     const item = items[i];
     const title = item?.title?.trim();
     const gameId = item?.gameId?.trim() || null;
+    const collectionId = parseBulkCollectionId(item?.collectionId);
 
     if (!title) {
       errors.push({ index: i, message: "title is required" });
+      continue;
+    }
+
+    if (!collectionId) {
+      errors.push({ index: i, message: "collectionId is required" });
       continue;
     }
 
@@ -122,7 +130,12 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
 
     const riddle = await createRiddle(supabase, input);
     if (riddle) {
-      created.push(riddle.id);
+      const linked = await linkRiddleToCollection(supabase, riddle.id, collectionId);
+      if (linked) {
+        created.push(riddle.id);
+      } else {
+        errors.push({ index: i, message: "Riddle created but could not be linked to collection" });
+      }
     } else {
       errors.push({ index: i, message: "Could not be written to the database" });
     }
@@ -134,6 +147,7 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
   if (errors.length > 0) params.set("errorDetails", JSON.stringify(errors));
 
   revalidatePath("/admin/riddles");
+  revalidatePath("/collection");
   redirect(`${returnPath}?${params.toString()}`);
 }
 

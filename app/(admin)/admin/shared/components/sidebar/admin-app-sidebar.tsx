@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpenIcon, Gamepad2Icon, HelpCircleIcon, LayoutDashboardIcon, UsersIcon } from "lucide-react";
+import { BookOpenIcon, FolderOpenIcon, Gamepad2Icon, HelpCircleIcon, LayoutDashboardIcon, UsersIcon } from "lucide-react";
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 
@@ -38,6 +38,15 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "New FEN included PGN", url: "/admin/riddles/new" },
       { title: "Bulk FEN included PGN", url: "/admin/riddles/bulk" },
       { title: "New Riddle From Game", url: "/admin/riddles/new/riddle-from-game" },
+    ],
+  },
+  {
+    title: "Collections",
+    url: "/admin/collections",
+    icon: <FolderOpenIcon />,
+    items: [
+      { title: "All collections", url: "/admin/collections" },
+      { title: "New collection", url: "/admin/collections/create" },
     ],
   },
   {

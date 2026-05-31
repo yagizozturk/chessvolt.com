@@ -2,6 +2,11 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as gameRepo from "@/features/game/repository/game.repository";
 import {
+  addRiddleToCollection,
+  deleteRiddleCollectionsForRiddle,
+  getRiddleCollectionsForRiddle,
+} from "@/features/riddle-collection/services/riddle-collection.service";
+import {
   DEFAULT_RIDDLE_DIFFICULTY,
   isRiddleDifficulty,
   type RiddleDifficulty,
@@ -11,7 +16,7 @@ type RawBulkRiddleInput = {
   title?: string;
   description?: string | null;
   difficulty?: string;
-  gameType?: string;
+  collectionId?: string | null;
   gameId?: string | null;
   pgn?: string;
   initialPly?: number;
@@ -28,7 +33,7 @@ export type BulkRiddleInput = {
   title?: string;
   description?: string | null;
   difficulty?: string;
-  gameType?: string;
+  collectionId?: string | null;
   gameId?: string | null;
   pgn?: string;
   initialPly?: number;
@@ -46,7 +51,7 @@ export function normalizeBulkRiddleInput(item: RawBulkRiddleInput): BulkRiddleIn
     title: item.title,
     description: item.description,
     difficulty: item.difficulty,
-    gameType: item.gameType,
+    collectionId: item.collectionId,
     gameId: item.gameId,
     pgn: item.pgn,
     initialPly: item.initialPly,
@@ -104,6 +109,48 @@ export function parseDifficultyFromForm(formData: FormData): RiddleDifficulty {
   const raw = (formData.get("difficulty") as string | null)?.trim() ?? "";
   if (isRiddleDifficulty(raw)) return raw;
   return DEFAULT_RIDDLE_DIFFICULTY;
+}
+
+export function parseCollectionIdFromForm(formData: FormData): string | null {
+  const raw = (formData.get("collectionId") as string | null)?.trim() ?? "";
+  return raw || null;
+}
+
+export function parseBulkCollectionId(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed || null;
+}
+
+export async function linkRiddleToCollection(
+  supabase: SupabaseClient,
+  riddleId: string,
+  collectionId: string | null,
+): Promise<boolean> {
+  if (!collectionId) return true;
+
+  const link = await addRiddleToCollection(supabase, { riddleId, collectionId });
+  return link != null;
+}
+
+export async function syncRiddleCollection(
+  supabase: SupabaseClient,
+  riddleId: string,
+  collectionId: string | null,
+): Promise<boolean> {
+  if (!collectionId) return true;
+
+  const existing = await getRiddleCollectionsForRiddle(supabase, riddleId);
+  if (existing.some((row) => row.collectionId === collectionId) && existing.length === 1) {
+    return true;
+  }
+
+  if (existing.length > 0) {
+    const removed = await deleteRiddleCollectionsForRiddle(supabase, riddleId);
+    if (!removed) return false;
+  }
+
+  return linkRiddleToCollection(supabase, riddleId, collectionId);
 }
 
 export function parseBulkDifficulty(value: unknown): RiddleDifficulty {

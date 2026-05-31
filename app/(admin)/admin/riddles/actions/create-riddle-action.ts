@@ -12,10 +12,12 @@ import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFr
 import { getAdminUser } from "@/lib/supabase/auth";
 
 import {
+  parseCollectionIdFromForm,
   parseDescriptionFromForm,
   parseDifficultyFromForm,
   parseIsActiveFromForm,
   parseThemesFromForm,
+  linkRiddleToCollection,
   resolvePgnFromFormInput,
 } from "./action-utils";
 
@@ -34,9 +36,14 @@ export async function createRiddleAction(formData: FormData) {
   const goals = parseGoalsFromForm(formData, "/admin/riddles/new?error=invalid_goals_json");
   const themes = parseThemesFromForm(formData);
   const isActive = parseIsActiveFromForm(formData);
+  const collectionId = parseCollectionIdFromForm(formData);
 
   if (!title) {
     redirect("/admin/riddles/new?error=missing_fields");
+  }
+
+  if (!collectionId) {
+    redirect("/admin/riddles/new?error=missing_collection");
   }
 
   const pgn = await resolvePgnFromFormInput({ supabase, pgnInput, gameId });
@@ -90,6 +97,12 @@ export async function createRiddleAction(formData: FormData) {
     redirect("/admin/riddles/new?error=create_failed");
   }
 
+  const linked = await linkRiddleToCollection(supabase, riddle.id, collectionId);
+  if (!linked) {
+    redirect("/admin/riddles/new?error=collection_link_failed");
+  }
+
   revalidatePath("/admin/riddles");
+  revalidatePath("/collection");
   redirect(`/admin/riddles/${riddle.id}`);
 }

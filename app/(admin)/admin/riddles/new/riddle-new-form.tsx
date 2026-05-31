@@ -14,10 +14,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import type { Collection } from "@/features/collection/types/collection";
 import { DEFAULT_RIDDLE_DIFFICULTY, type RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import { cn } from "@/lib/utils/cn";
 
-export function RiddleNewForm() {
+import { RiddleCollectionSelect } from "../components/riddle-collection-select";
+
+type Props = {
+  collections: Collection[];
+};
+
+export function RiddleNewForm({ collections }: Props) {
   const [pgn, setPgn] = useState("");
   const fen = useMemo(() => extractFenFromPgn(pgn), [pgn]);
   const [displayFen, setDisplayFen] = useState("");
@@ -27,9 +34,11 @@ export function RiddleNewForm() {
   const [description, setDescription] = useState("");
   const [difficulty, setDifficulty] = useState<RiddleDifficulty>(DEFAULT_RIDDLE_DIFFICULTY);
   const [themes, setThemes] = useState("");
+  const [collectionId, setCollectionId] = useState(collections[0]?.id ?? "");
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
   const derivedMoves = useMemo(() => uciMoves.join(" "), [uciMoves]);
-  const canSubmit = Boolean(pgn.trim()) && Boolean(derivedMoves.trim()) && !pgnError;
+  const canSubmit =
+    Boolean(pgn.trim()) && Boolean(derivedMoves.trim()) && !pgnError && Boolean(collectionId.trim());
   const insertPreviewJson = useMemo(() => {
     let parsedGoals: unknown = null;
     if (goals.trim()) {
@@ -55,13 +64,14 @@ export function RiddleNewForm() {
         initialFen: fen ?? null,
         displayFen: displayFen.trim() || fen || null,
         themes: parsedThemes,
+        collectionId: collectionId.trim() || null,
         isActive,
         goals: parsedGoals,
       },
       null,
       2,
     );
-  }, [title, description, difficulty, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
+  }, [title, description, difficulty, pgn, derivedMoves, fen, displayFen, themes, collectionId, isActive, goals]);
 
   useEffect(() => {
     setDisplayFen(fen ?? "");
@@ -146,6 +156,11 @@ export function RiddleNewForm() {
               />
             </Field>
             <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
+            <RiddleCollectionSelect
+              collections={collections}
+              value={collectionId}
+              onChange={setCollectionId}
+            />
             <Field>
               <FieldLabel>Themes</FieldLabel>
               <Input

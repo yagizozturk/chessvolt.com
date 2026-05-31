@@ -59,6 +59,27 @@ type DbCollectionWithRiddleCount = {
   riddle_collections: [{ count: number }];
 };
 
+export async function findAllWithRiddleCount(
+  supabase: SupabaseClient,
+): Promise<CollectionWithRiddleCount[]> {
+  const { data, error } = await supabase
+    .from("collections")
+    .select("*, riddle_collections(count)")
+    .order("sort_order", { ascending: true })
+    .order("title", { ascending: true });
+
+  if (error) {
+    console.error("collection.repository.findAllWithRiddleCount error:", error);
+    return [];
+  }
+
+  return (data ?? []).map((row) => {
+    const db = row as DbCollectionWithRiddleCount;
+    const riddleCount = db.riddle_collections?.[0]?.count ?? 0;
+    return { ...toCollection(db), riddleCount };
+  });
+}
+
 export async function findAllActiveWithRiddleCount(
   supabase: SupabaseClient,
 ): Promise<CollectionWithRiddleCount[]> {
