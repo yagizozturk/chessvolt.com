@@ -1,20 +1,22 @@
 "use client";
 
+import { useState } from "react";
+
 import { createCollectionAction } from "@/app/(admin)/admin/collections/actions/collections";
 import {
-  COLLECTION_COVER_IMAGES,
   DEFAULT_COLLECTION_COVER_COLOR,
+  DEFAULT_COLLECTION_COVER_IMAGE,
 } from "@/app/(admin)/admin/collections/constants/cover-images";
+import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/utils/cn";
-import { useState } from "react";
+import { DEFAULT_RIDDLE_DIFFICULTY, type RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 
 export function CollectionForm() {
   const [isActive, setIsActive] = useState(true);
-  const defaultCover = COLLECTION_COVER_IMAGES[0]?.url ?? "";
+  const [difficulty, setDifficulty] = useState<RiddleDifficulty>(DEFAULT_RIDDLE_DIFFICULTY);
 
   return (
     <form action={createCollectionAction} className="space-y-4">
@@ -36,31 +38,26 @@ export function CollectionForm() {
             className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
           />
         </Field>
+        <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
         <Field>
           <FieldLabel>Cover image</FieldLabel>
-          <select
+          <Input
             name="coverImageUrl"
             required
-            defaultValue={defaultCover}
-            className={cn(
-              "border-input focus-visible:border-primary focus-visible:ring-primary/50 h-9 w-full rounded-md border border-2 bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]",
-            )}
-          >
-            {COLLECTION_COVER_IMAGES.map((image) => (
-              <option key={image.url} value={image.url}>
-                {image.label}
-              </option>
-            ))}
-          </select>
+            placeholder="e.g. from-tal-to-kasparov.png"
+            defaultValue={DEFAULT_COLLECTION_COVER_IMAGE}
+            className="font-mono text-sm"
+          />
+          <p className="text-muted-foreground mt-1 text-xs">Filename under public/images/collections/</p>
         </Field>
         <Field>
           <FieldLabel>Cover color</FieldLabel>
           <Input
             name="coverImageColor"
             required
-            type="color"
+            placeholder="#5D37BF"
             defaultValue={DEFAULT_COLLECTION_COVER_COLOR}
-            className="h-10 w-full cursor-pointer"
+            className="font-mono text-sm"
           />
         </Field>
         <Field>

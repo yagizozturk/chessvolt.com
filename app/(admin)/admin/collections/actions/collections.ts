@@ -9,6 +9,11 @@ import {
   deleteCollection,
   updateCollection,
 } from "@/features/collection/services/collection.service";
+import {
+  DEFAULT_RIDDLE_DIFFICULTY,
+  isRiddleDifficulty,
+  type RiddleDifficulty,
+} from "@/features/riddle/types/riddle-difficulty";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 function parseSortOrder(raw: FormDataEntryValue | null): number {
@@ -20,6 +25,12 @@ function parseIsActive(formData: FormData): boolean {
   return formData.get("isActive") === "on";
 }
 
+function parseDifficultyFromForm(formData: FormData): RiddleDifficulty {
+  const raw = (formData.get("difficulty") as string | null)?.trim() ?? "";
+  if (isRiddleDifficulty(raw)) return raw;
+  return DEFAULT_RIDDLE_DIFFICULTY;
+}
+
 export async function createCollectionAction(formData: FormData) {
   const { supabase, user } = await getAdminUser();
 
@@ -28,6 +39,7 @@ export async function createCollectionAction(formData: FormData) {
   const description = (formData.get("description") as string)?.trim() ?? "";
   const coverImageUrl = (formData.get("coverImageUrl") as string)?.trim();
   const coverImageColor = (formData.get("coverImageColor") as string)?.trim();
+  const difficulty = parseDifficultyFromForm(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
 
@@ -41,6 +53,7 @@ export async function createCollectionAction(formData: FormData) {
     description,
     coverImageUrl,
     coverImageColor,
+    difficulty,
     sortOrder,
     isActive,
     createdBy: user.id,
@@ -76,6 +89,7 @@ export async function updateCollectionAction(
   const description = (formData.get("description") as string)?.trim();
   const coverImageUrl = (formData.get("coverImageUrl") as string)?.trim();
   const coverImageColor = (formData.get("coverImageColor") as string)?.trim();
+  const difficulty = parseDifficultyFromForm(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
 
@@ -89,6 +103,7 @@ export async function updateCollectionAction(
     description,
     coverImageUrl,
     coverImageColor,
+    difficulty,
     sortOrder,
     isActive,
   };

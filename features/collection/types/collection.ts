@@ -1,3 +1,5 @@
+import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
+
 export type Collection = {
   id: string;
   title: string;
@@ -5,6 +7,7 @@ export type Collection = {
   description: string;
   coverImageUrl: string;
   coverImageColor: string;
+  difficulty: RiddleDifficulty;
   sortOrder: number;
   isActive: boolean;
   createdBy: string | null;

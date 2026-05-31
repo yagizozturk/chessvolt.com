@@ -6,16 +6,14 @@ import {
   type UpdateCollectionFormState,
   updateCollectionAction,
 } from "@/app/(admin)/admin/collections/actions/collections";
-import {
-  COLLECTION_COVER_IMAGES,
-  DEFAULT_COLLECTION_COVER_COLOR,
-} from "@/app/(admin)/admin/collections/constants/cover-images";
+import { DEFAULT_COLLECTION_COVER_COLOR } from "@/app/(admin)/admin/collections/constants/cover-images";
+import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Collection } from "@/features/collection/types/collection";
-import { cn } from "@/lib/utils/cn";
+import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 
 type Props = {
   collection: Collection;
@@ -26,6 +24,7 @@ const initialState: UpdateCollectionFormState = { error: null };
 export function CollectionEditForm({ collection }: Props) {
   const [state, formAction, isPending] = useActionState(updateCollectionAction, initialState);
   const [isActive, setIsActive] = useState(collection.isActive);
+  const [difficulty, setDifficulty] = useState<RiddleDifficulty>(collection.difficulty);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -53,34 +52,26 @@ export function CollectionEditForm({ collection }: Props) {
             className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
           />
         </Field>
+        <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
         <Field>
           <FieldLabel>Cover image</FieldLabel>
-          <select
+          <Input
             name="coverImageUrl"
             required
+            placeholder="e.g. from-tal-to-kasparov.png"
             defaultValue={collection.coverImageUrl}
-            className={cn(
-              "border-input focus-visible:border-primary focus-visible:ring-primary/50 h-9 w-full rounded-md border border-2 bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]",
-            )}
-          >
-            {COLLECTION_COVER_IMAGES.map((image) => (
-              <option key={image.url} value={image.url}>
-                {image.label}
-              </option>
-            ))}
-            {!COLLECTION_COVER_IMAGES.some((image) => image.url === collection.coverImageUrl) ? (
-              <option value={collection.coverImageUrl}>{collection.coverImageUrl}</option>
-            ) : null}
-          </select>
+            className="font-mono text-sm"
+          />
+          <p className="text-muted-foreground mt-1 text-xs">Filename under public/images/collections/</p>
         </Field>
         <Field>
           <FieldLabel>Cover color</FieldLabel>
           <Input
             name="coverImageColor"
             required
-            type="color"
+            placeholder="#5D37BF"
             defaultValue={collection.coverImageColor || DEFAULT_COLLECTION_COVER_COLOR}
-            className="h-10 w-full cursor-pointer"
+            className="font-mono text-sm"
           />
         </Field>
         <Field>

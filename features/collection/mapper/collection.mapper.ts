@@ -1,3 +1,5 @@
+import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
+
 import type { Collection } from "@/features/collection/types/collection";
 
 export type DbCollection = {
@@ -7,6 +9,7 @@ export type DbCollection = {
   description: string;
   cover_image_url: string;
   cover_image_color: string;
+  difficulty: RiddleDifficulty;
   sort_order: number;
   is_active: boolean;
   created_by: string | null;
@@ -22,6 +25,7 @@ export function toCollection(db: DbCollection): Collection {
     description: db.description,
     coverImageUrl: db.cover_image_url,
     coverImageColor: db.cover_image_color,
+    difficulty: db.difficulty,
     sortOrder: db.sort_order,
     isActive: db.is_active,
     createdBy: db.created_by,

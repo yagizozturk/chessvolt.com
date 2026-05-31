@@ -1,10 +1,12 @@
 "use client";
 
 import Lottie from "lottie-react";
+import { Clock, Flame, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { SolveSuccessStats } from "@/components/solve-success-dialog/solve-success-stats";
+import { ColumnBasedStats } from "@/components/stats/column-based-stats";
+import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +19,8 @@ import {
 import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
 import type { SequenceCompletionStats } from "@/features/user-sequence-attempt/types/sequence-completion-stats";
+import { formatAttemptDurationMs } from "@/features/user-sequence-attempt/utilities/format-attempt-duration";
+import { cn } from "@/lib/utils";
 import animationData from "@/public/images/animations/animation-trophy.json";
 
 export type SolveSuccessDialogProps = {
@@ -66,7 +70,17 @@ export function SolveSuccessDialog({
           </div>
           <DialogTitle className="text-center text-2xl font-bold">{title}</DialogTitle>
           <DialogDescription className="mt-4 text-center text-lg text-pretty">{description}</DialogDescription>
-          {stats ? <SolveSuccessStats stats={stats} className="mt-4" /> : null}
+          {stats ? (
+            <div className={cn("mt-4 grid grid-cols-3 gap-2")}>
+              <NumberTickerStats icon={Target} label="Accuracy" value={stats.accuracyPercent} suffix="%" />
+              <NumberTickerStats icon={Flame} label="Max streak" value={stats.maxCorrectStreak} />
+              <ColumnBasedStats
+                icon={Clock}
+                label="Time"
+                value={formatAttemptDurationMs(stats.durationMs) ?? "—"}
+              />
+            </div>
+          ) : null}
         </DialogHeader>
         <DialogFooter className="mt-4 items-center justify-center sm:justify-center">
           <Button
