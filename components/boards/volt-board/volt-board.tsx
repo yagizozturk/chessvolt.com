@@ -12,7 +12,6 @@ import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import {
-  BOARD_ANIMATION_DELAY_MS,
   CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS,
   DEFAULT_PROMOTION_PIECE,
   WRONG_MOVE_REVERT_DELAY_MS,
@@ -62,23 +61,13 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   const orientationRef = useRef<"white" | "black">("white");
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
   const clearCustomHighlightsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Defers parent callbacks + opponent move until user slide finishes (collection/riddle fix).
-  const postMoveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
   const { game, makeMove } = useChessOne(initialFen);
   const { playCorrectSound, playWrongMoveSound, playHintSound } = useBoardSounds();
 
   // 3. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
-  const {
-    ground,
-    updateBoardRef,
-    syncBoardAfterMove,
-    snapBoardToGameFen,
-    replayAnimatedMove,
-    setSquareCustomHighlight,
-    clearSquareCustomHighlights,
-  } = useChessground({
+  const { ground, updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } = useChessground({
     boardRef,
     game,
     sourceId,
@@ -88,24 +77,26 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     lastMoveRef,
     onMove: (from, to) => {
       clearCustomHighlightsTimeout();
-      clearPostMoveTimeout();
       const fenBefore = game.current.fen();
       const playedBy = game.current.turn() === "w" ? "white" : "black";
       const uci = buildMoveUci(from, to);
+      // Move is getting checked in hook if it is right or wrong
       const isCorrect = onCheckMove?.({
         uci,
         fenBefore,
         playedBy,
       });
 
+      // Incorrect move played
       if (isCorrect === false) {
         boardWrongMoveHandler(to);
         return;
+      } else {
+        // Correct move played
+        boardCorrectMoveHandler(from, to, uci);
       }
 
-      // fenBefore captured before makeMove — used to replay click-click animation.
-      boardCorrectMoveHandler(from, to, uci, fenBefore);
-      // No updateBoard() here — would pass fen and snap the piece mid-animation.
+      updateBoard();
     },
   });
 
@@ -122,16 +113,16 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   // Oyuncu yanlış hamle yapınca event bu metodu tetikler
   // ============================================================================
   function boardWrongMoveHandler(to: string) {
-    clearPostMoveTimeout(); // cancel any in-flight correct-move deferred work
     clearSquareCustomHighlights();
     clearHintShapes();
     setSquareCustomHighlight(to, "custom-wrong-move");
     playWrongMoveSound();
-    scheduleClearCustomHighlights(WRONG_MOVE_REVERT_DELAY_MS, true);
+    scheduleClearCustomHighlights(WRONG_MOVE_REVERT_DELAY_MS);
   }
 
   // ============================================================================
   // Clear custom highlights timeout
+  // Component state/ref/useEffect bağımlılığı varsa → component içinde kalsın.
   // ============================================================================
   function clearCustomHighlightsTimeout() {
     if (clearCustomHighlightsTimeoutRef.current) {
@@ -140,76 +131,41 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     }
   }
 
-  function clearPostMoveTimeout() {
-    if (postMoveTimeoutRef.current) {
-      clearTimeout(postMoveTimeoutRef.current);
-      postMoveTimeoutRef.current = null;
-    }
-  }
-
   // ============================================================================
   // Schedule custom highlight clear
-  // resetPosition: wrong move → full FEN reset; correct move → sync metadata only.
+  // Delay sonunda tüm custom highlight'ları temizler.
   // ============================================================================
-  function scheduleClearCustomHighlights(delayMs: number, resetPosition: boolean) {
+  function scheduleClearCustomHighlights(delayMs: number) {
     clearCustomHighlightsTimeout();
     clearCustomHighlightsTimeoutRef.current = setTimeout(() => {
       clearCustomHighlightsTimeoutRef.current = null;
       clearSquareCustomHighlights();
-      if (resetPosition) {
-        updateBoardRef.current(); // wrong move: snap pieces back to chess.js position
-        return;
-      }
-      syncBoardAfterMove(); // correct move: clear highlight without fen reset
+      updateBoard();
     }, delayMs);
   }
 
   // ============================================================================
   // Oyuncu doğru hamle yapınca event bu metodu tetikler
-  // Parent updates, highlights, and opponent reply wait until user slide finishes
-  // (collection/riddle calls onNextMoveRequest which re-renders and used to cut animation short).
   // ============================================================================
-  function boardCorrectMoveHandler(from: string, to: string, uci: string, fenBefore: string) {
+  function boardCorrectMoveHandler(from: string, to: string, uci: string) {
     clearHintShapes();
     clearSquareCustomHighlights();
-    clearPostMoveTimeout();
-
     const promotion = getPromotionPiece(game.current, from, to, DEFAULT_PROMOTION_PIECE);
     const move = makeMove(from, to, promotion ?? DEFAULT_PROMOTION_PIECE);
     if (!move) {
       return;
     }
+    onSuccessMovePlayed({ ...move, uci });
+    playCorrectSound();
+    setSquareCustomHighlight(to, "custom-correct-move");
+    scheduleClearCustomHighlights(CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS);
 
-    const isPromotion = Boolean(promotion);
-    const wasDragged = ground.current?.state.stats.dragged === true;
-    if (!wasDragged) {
-      replayAnimatedMove(from as Key, to as Key, fenBefore, isPromotion);
-    } else if (isPromotion) {
-      snapBoardToGameFen();
+    lastMoveRef.current = [from as Key, to as Key];
+    const nextMove = onNextMoveRequest?.();
+
+    if (nextMove) {
+      boardApplyOpponentMove(nextMove);
     }
-    // Drag: piece already at destination — skip replay (would snap back then forward).
-
-    const afterUserAnimationMs = wasDragged ? 0 : BOARD_ANIMATION_DELAY_MS;
-
-    // Defer onSuccessMovePlayed, highlights, onNextMoveRequest, opponent move until slide ends.
-    postMoveTimeoutRef.current = setTimeout(() => {
-      postMoveTimeoutRef.current = null;
-
-      onSuccessMovePlayed({ ...move, uci });
-      playCorrectSound();
-      setSquareCustomHighlight(to, "custom-correct-move");
-      scheduleClearCustomHighlights(CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS, false);
-      lastMoveRef.current = [from as Key, to as Key];
-
-      const nextMove = onNextMoveRequest?.();
-      if (nextMove) {
-        boardApplyOpponentMove(nextMove);
-        // Sync turn/dests after opponent slide — not immediately (would cut user animation).
-        window.setTimeout(() => syncBoardAfterMove(), BOARD_ANIMATION_DELAY_MS);
-      } else {
-        syncBoardAfterMove();
-      }
-    }, afterUserAnimationMs);
   }
 
   // ============================================================================
@@ -223,8 +179,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 
     if (opponentMove) {
       lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
-      // Animated opponent reply (makeMove only updates chess.js).
-      ground.current?.move(opponentFrom as Key, opponentTo as Key);
     }
   }
 
@@ -234,22 +188,20 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   useEffect(() => {
     return () => {
       clearCustomHighlightsTimeout();
-      clearPostMoveTimeout();
     };
   }, []);
 
   // ============================================================================
-  // External FEN sync (e.g. PGN navigator) — full fen reset is correct here, not after user moves.
-  // Uses updateBoardRef so this effect does not re-run when updateBoard callback identity changes.
+  // External FEN sync (e.g. PGN navigator)
+  // Keep same board instance and update position when parent changes initialFen.
   // ============================================================================
   useEffect(() => {
     clearCustomHighlightsTimeout();
-    clearPostMoveTimeout();
     clearSquareCustomHighlights();
     clearHintShapes();
     lastMoveRef.current = undefined;
-    updateBoardRef.current();
-  }, [initialFen, clearSquareCustomHighlights]);
+    updateBoard();
+  }, [initialFen, updateBoard, clearSquareCustomHighlights]);
 
   // ============================================================================
   // Hint (drawable shapes) - exposed via ref
@@ -277,7 +229,9 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 
   return (
     <>
+      {/* <div className="board-wrapper"> In order to make board responsive */}
       <div ref={boardRef} className="cardinal purple" style={{ width: size, height: size }} />
+      {/* </div> */}
     </>
   );
 });

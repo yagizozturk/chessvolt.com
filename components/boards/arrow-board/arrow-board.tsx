@@ -54,7 +54,6 @@ const ArrowBoard = forwardRef<ArrowBoardHandle, ArrowBoardProps>(function ArrowB
     sourceId,
     orientationRef,
     viewOnly,
-    piecesMovable: false,
     coordinates,
     drawableEnabled: drawingEnabled,
     lastMoveRef,
