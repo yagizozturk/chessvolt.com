@@ -48,9 +48,9 @@ type DbCollectionWithRiddleCount = {
   id: string;
   title: string;
   slug: string;
-  description: string | null;
-  cover_image_url: string | null;
-  cover_image_color: string | null;
+  description: string;
+  cover_image_url: string;
+  cover_image_color: string;
   sort_order: number;
   is_active: boolean;
   created_by: string | null;
@@ -114,9 +114,9 @@ export async function findBySlug(supabase: SupabaseClient, slug: string): Promis
 export type CreateCollectionInput = {
   title: string;
   slug?: string;
-  description?: string | null;
-  coverImageUrl?: string | null;
-  coverImageColor?: string | null;
+  description: string;
+  coverImageUrl: string;
+  coverImageColor: string;
   sortOrder?: number;
   isActive?: boolean;
   createdBy?: string | null;
@@ -131,9 +131,9 @@ export async function create(
     .insert({
       title: input.title.trim(),
       slug: input.slug?.trim() || slugFromTitle(input.title),
-      description: input.description?.trim() || null,
-      cover_image_url: input.coverImageUrl ?? null,
-      cover_image_color: input.coverImageColor ?? null,
+      description: input.description.trim(),
+      cover_image_url: input.coverImageUrl,
+      cover_image_color: input.coverImageColor,
       sort_order: input.sortOrder ?? 0,
       is_active: input.isActive ?? true,
       created_by: input.createdBy ?? null,
@@ -152,9 +152,9 @@ export async function create(
 export type UpdateCollectionInput = {
   title?: string;
   slug?: string;
-  description?: string | null;
-  coverImageUrl?: string | null;
-  coverImageColor?: string | null;
+  description?: string;
+  coverImageUrl?: string;
+  coverImageColor?: string;
   sortOrder?: number;
   isActive?: boolean;
 };
@@ -167,7 +167,7 @@ export async function update(
   const updates: Record<string, unknown> = {};
   if (input.title !== undefined) updates.title = input.title.trim();
   if (input.slug !== undefined) updates.slug = input.slug.trim();
-  if (input.description !== undefined) updates.description = input.description?.trim() || null;
+  if (input.description !== undefined) updates.description = input.description.trim();
   if (input.coverImageUrl !== undefined) updates.cover_image_url = input.coverImageUrl;
   if (input.coverImageColor !== undefined) updates.cover_image_color = input.coverImageColor;
   if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;

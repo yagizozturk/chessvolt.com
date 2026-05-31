@@ -44,12 +44,12 @@ export default async function CollectionDetailPage({ params, searchParams }: Par
       <div className="flex flex-col gap-4">
         <CollectionHeader
           title={collection.title}
-          imageSrc={`/images/challanges/${collection.coverImageUrl}`}
+          imageSrc={`/images/collections/${collection.coverImageUrl}`}
           imageAlt={collection.title}
-          description={collection.description ?? DEFAULT_GAME_TYPE_DETAILS.description}
+          description={collection.description}
           quote={DEFAULT_GAME_TYPE_DETAILS.quote}
           author={DEFAULT_GAME_TYPE_DETAILS.author}
-          backgroundColor={collection.coverImageColor ?? DEFAULT_GAME_TYPE_DETAILS.backgroundColor}
+          backgroundColor={collection.coverImageColor}
           itemCount={riddles.length}
           itemLabel="riddles"
         />

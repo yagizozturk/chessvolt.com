@@ -2,9 +2,9 @@ export type Collection = {
   id: string;
   title: string;
   slug: string;
-  description: string | null;
-  coverImageUrl: string | null;
-  coverImageColor: string | null;
+  description: string;
+  coverImageUrl: string;
+  coverImageColor: string;
   sortOrder: number;
   isActive: boolean;
   createdBy: string | null;

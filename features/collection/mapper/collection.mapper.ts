@@ -4,9 +4,9 @@ export type DbCollection = {
   id: string;
   title: string;
   slug: string;
-  description: string | null;
-  cover_image_url: string | null;
-  cover_image_color: string | null;
+  description: string;
+  cover_image_url: string;
+  cover_image_color: string;
   sort_order: number;
   is_active: boolean;
   created_by: string | null;
