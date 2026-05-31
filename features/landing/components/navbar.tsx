@@ -19,7 +19,7 @@ type NavItem = {
 const NAV_ITEMS: NavItem[] = [
   { href: "/login", label: "Sign in", icon: LogIn, iconPosition: "left" },
   { href: "/signup", label: "Sign up", icon: UserPlus, iconPosition: "left" },
-  { href: "/challenge", label: "Start Playing", isCta: true },
+  { href: "/collection", label: "Start Playing", isCta: true },
 ];
 
 function BrandLogo({ onNavigate, variant = "header" }: { onNavigate?: () => void; variant?: "header" | "sheet" }) {

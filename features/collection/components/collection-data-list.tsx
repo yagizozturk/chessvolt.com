@@ -9,7 +9,7 @@ import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card"
 import type { Riddle } from "@/features/riddle/types/riddle";
 import type { SequenceAttemptBoardStats } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 
-type ChallengeDataListProps = {
+type CollectionDataListProps = {
   riddles: Riddle[];
   gameMap: Record<string, Game>;
   attemptByRiddleId: Record<string, SequenceAttemptBoardStats | undefined>;
@@ -17,17 +17,9 @@ type ChallengeDataListProps = {
 
 const INITIAL_COUNT = 4;
 
-/**
- * Riddle lar gameId ler içinde bulunup, ilgili bilgiler döner. 4 tane döner ilk başta.
- * VisibleRiddles ona göre gösterilir.
- * @param riddles - O game type daki riddle lar vardır.
- * @param gameMap - GameMap i oyunlarla ilgili ana bilgileri içerir. Black Player örneğin.
- * @returns A list of puzzles for the given game type.
- */
-export function ChallengeDataList({ riddles, gameMap, attemptByRiddleId }: ChallengeDataListProps) {
+export function CollectionDataList({ riddles, gameMap, attemptByRiddleId }: CollectionDataListProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Note: undefined.pgn hatası alnırsa. ?. ile bu durumda hata yerine undefined döner ve filter bu riddle’ı eler. Ancak bu durumun olması beklenemez tabi.
   const riddlesWithPgn = riddles.filter((r) => gameMap[r.gameId ?? ""]?.pgn || r.moveSequence.displayFen);
   const visibleRiddles = isExpanded ? riddlesWithPgn : riddlesWithPgn.slice(0, INITIAL_COUNT);
   const hasMore = riddlesWithPgn.length > INITIAL_COUNT;

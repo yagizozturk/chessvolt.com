@@ -15,8 +15,8 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Game } from "@/features/game/types/game";
-import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import type { Riddle } from "@/features/riddle/types/riddle";
+import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import { cn } from "@/lib/utils/cn";
 
 type Props = {
@@ -43,11 +43,7 @@ export function RiddleEditForm({ riddle, game }: Props) {
   const [themes, setThemes] = useState(riddle.themes.join(", "));
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
   const derivedMoves = useMemo(() => uciMoves.join(" "), [uciMoves]);
-  const canSubmit =
-    Boolean(title.trim()) &&
-    Boolean(pgn.trim()) &&
-    Boolean(derivedMoves.trim()) &&
-    !pgnError;
+  const canSubmit = Boolean(title.trim()) && Boolean(pgn.trim()) && Boolean(derivedMoves.trim()) && !pgnError;
 
   useEffect(() => {
     if (!displayFen.trim()) {
@@ -159,7 +155,7 @@ export function RiddleEditForm({ riddle, game }: Props) {
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Short summary shown on challenge cards"
+                placeholder="Short summary shown on collection cards"
                 className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
               />
             </Field>
@@ -176,7 +172,7 @@ export function RiddleEditForm({ riddle, game }: Props) {
             <Field className="flex flex-row items-center gap-2">
               <input type="hidden" name="isActive" value={isActive ? "on" : "off"} />
               <Switch checked={isActive} onCheckedChange={setIsActive} />
-              <FieldLabel className="mb-0">Active (visible on challenge pages)</FieldLabel>
+              <FieldLabel className="mb-0">Active (visible on collection pages)</FieldLabel>
             </Field>
             <Field>
               <FieldLabel>Goals (JSON)</FieldLabel>

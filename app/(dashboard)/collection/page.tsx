@@ -1,11 +1,11 @@
 import Link from "next/link";
 
-import { ChallengeHeader } from "@/features/challenge/components/challenge-header";
+import { CollectionHeader } from "@/features/collection/components/collection-header";
 import { getActiveCollectionsWithRiddleCount } from "@/features/collection/services/collection.service";
 import { DEFAULT_GAME_TYPE_DETAILS } from "@/lib/shared/constants/game-type-details";
 import { getPublicUser } from "@/lib/supabase/auth";
 
-export default async function ChallengePage() {
+export default async function CollectionPage() {
   const { supabase } = await getPublicUser();
   const collections = await getActiveCollectionsWithRiddleCount(supabase);
 
@@ -19,18 +19,18 @@ export default async function ChallengePage() {
         )}
         {collections.map((collection) => (
           <Link
-            href={`/challenge/${collection.slug}`}
+            href={`/collection/${collection.slug}`}
             key={collection.id}
             className="block transition-opacity hover:opacity-90"
           >
-            <ChallengeHeader
+            <CollectionHeader
               title={collection.title}
               imageSrc={`/images/challanges/${collection.coverImageUrl}`}
               imageAlt={collection.title}
               description={collection.description ?? DEFAULT_GAME_TYPE_DETAILS.description}
               quote={DEFAULT_GAME_TYPE_DETAILS.quote}
               author={DEFAULT_GAME_TYPE_DETAILS.author}
-              backgroundColor={DEFAULT_GAME_TYPE_DETAILS.backgroundColor}
+              backgroundColor={collection.coverImageColor ?? DEFAULT_GAME_TYPE_DETAILS.backgroundColor}
               itemCount={collection.riddleCount}
               itemLabel="riddles"
             />

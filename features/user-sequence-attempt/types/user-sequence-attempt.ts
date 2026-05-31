@@ -16,7 +16,7 @@ export type UserSequenceAttempt = {
   updatedAt: string;
 };
 
-/** Latest attempt summary per sequence (e.g. challenge progress). */
+/** Latest attempt summary per sequence (e.g. collection progress). */
 export type SequenceAttemptSummary = {
   sequenceId: string;
   status: RiddleAttemptStatus;

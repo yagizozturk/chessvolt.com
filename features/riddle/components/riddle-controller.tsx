@@ -29,13 +29,13 @@ import animationData from "@/public/images/animations/animation-rocjet-launch.js
 type RiddleControllerProps = {
   riddle: Riddle;
   nextRiddleId?: string | null;
-  parentChallengeUrl?: string;
+  parentCollectionUrl?: string;
 };
 
 export default function RiddleController({
   riddle,
   nextRiddleId = null,
-  parentChallengeUrl = "/",
+  parentCollectionUrl = "/",
 }: RiddleControllerProps) {
   const sequenceId = riddle.moveSequence.id;
   const router = useRouter();
@@ -165,8 +165,8 @@ export default function RiddleController({
     });
   };
 
-  const successDestinationPath = nextRiddleId ? `/riddle/${nextRiddleId}` : parentChallengeUrl;
-  const successButtonLabel = nextRiddleId ? "Next riddle" : "Back to challenge";
+  const successDestinationPath = nextRiddleId ? `/riddle/${nextRiddleId}` : parentCollectionUrl;
+  const successButtonLabel = nextRiddleId ? "Next riddle" : "Back to collection";
 
   const handleContinueClick = () => {
     router.push(successDestinationPath);
@@ -174,9 +174,9 @@ export default function RiddleController({
 
   const successDescription = nextRiddleId
     ? "You solved this riddle. Continue to the next one when you are ready."
-    : parentChallengeUrl === "/"
+    : parentCollectionUrl === "/"
       ? "You solved this riddle. Continue from the home page when you are ready."
-      : "You solved this riddle. Return to the challenge when you are ready.";
+      : "You solved this riddle. Return to the collection when you are ready.";
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-6">

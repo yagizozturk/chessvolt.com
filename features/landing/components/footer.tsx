@@ -4,7 +4,7 @@ import Link from "next/link";
 export function Footer() {
   const links = [
     { href: "/openings", label: "Opening Crusher", icon: BookOpenText },
-    { href: "/challenge", label: "Challenges", icon: Swords },
+    { href: "/collection", label: "Cllections", icon: Swords },
     { href: "/arrows", label: "Arrows Game", icon: ArrowsUpFromLine },
   ];
 

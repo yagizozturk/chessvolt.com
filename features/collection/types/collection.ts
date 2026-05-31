@@ -4,6 +4,7 @@ export type Collection = {
   slug: string;
   description: string | null;
   coverImageUrl: string | null;
+  coverImageColor: string | null;
   sortOrder: number;
   isActive: boolean;
   createdBy: string | null;

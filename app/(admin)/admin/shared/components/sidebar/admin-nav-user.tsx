@@ -81,7 +81,7 @@ export function AdminNavUser({ email }: { email: string }) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/challenge">
+                <Link href="/collection">
                   <ArrowLeftIcon />
                   Main app
                 </Link>

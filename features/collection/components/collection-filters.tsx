@@ -12,22 +12,22 @@ export const DIFFICULTY_OPTIONS = [
   })),
 ];
 
-type ChallengeFiltersProps = {
+type CollectionFiltersProps = {
   gameTypeOptions: string[];
   selectedDifficulty: string;
   selectedGameType: string;
 };
 
-export function ChallengeFilters({
+export function CollectionFilters({
   gameTypeOptions,
   selectedDifficulty,
   selectedGameType,
-}: ChallengeFiltersProps) {
+}: CollectionFiltersProps) {
   return (
     <form className="bg-muted/50 flex flex-col gap-3 rounded-xl p-4 md:flex-row md:items-center">
       <div className="md:w-56">
         <select
-          id="challenge-difficulty"
+          id="collection-difficulty"
           name="difficulty"
           defaultValue={selectedDifficulty}
           aria-label="Filter by difficulty"
@@ -43,7 +43,7 @@ export function ChallengeFilters({
 
       <div className="md:w-64">
         <select
-          id="challenge-game-type"
+          id="collection-game-type"
           name="gameType"
           defaultValue={selectedGameType}
           aria-label="Filter by game type"

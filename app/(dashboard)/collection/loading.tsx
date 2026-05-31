@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function ChallengeLoading() {
+export default function CollectionLoading() {
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-10 pb-16">
       <div className="space-y-6">

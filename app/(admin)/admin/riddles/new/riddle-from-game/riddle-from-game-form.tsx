@@ -231,7 +231,7 @@ export function RiddleFromGameForm({ games }: Props) {
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Short summary shown on challenge cards"
+                placeholder="Short summary shown on collection cards"
                 className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
               />
             </Field>
@@ -268,7 +268,7 @@ export function RiddleFromGameForm({ games }: Props) {
             <Field className="flex flex-row items-center gap-2">
               <input type="hidden" name="isActive" value={isActive ? "on" : "off"} />
               <Switch checked={isActive} onCheckedChange={setIsActive} />
-              <FieldLabel className="mb-0">Active (visible on challenge pages)</FieldLabel>
+              <FieldLabel className="mb-0">Active (visible on collection pages)</FieldLabel>
             </Field>
             <Field>
               <FieldLabel>Goals (JSON)</FieldLabel>

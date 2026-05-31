@@ -22,7 +22,7 @@ export function Hero() {
           </p>
           <div className="flex w-full flex-wrap justify-end">
             <Button variant="volt" size="lg" asChild>
-              <Link href="/challenge">Start Playing</Link>
+              <Link href="/collection">Start Playing</Link>
             </Button>
           </div>
         </div>

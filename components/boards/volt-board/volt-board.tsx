@@ -62,7 +62,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   const orientationRef = useRef<"white" | "black">("white");
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
   const clearCustomHighlightsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Defers parent callbacks + opponent move until user slide finishes (challenge/riddle fix).
+  // Defers parent callbacks + opponent move until user slide finishes (collection/riddle fix).
   const postMoveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
@@ -167,7 +167,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   // ============================================================================
   // Oyuncu doğru hamle yapınca event bu metodu tetikler
   // Parent updates, highlights, and opponent reply wait until user slide finishes
-  // (challenge/riddle calls onNextMoveRequest which re-renders and used to cut animation short).
+  // (collection/riddle calls onNextMoveRequest which re-renders and used to cut animation short).
   // ============================================================================
   function boardCorrectMoveHandler(from: string, to: string, uci: string, fenBefore: string) {
     clearHintShapes();

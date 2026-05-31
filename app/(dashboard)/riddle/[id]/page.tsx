@@ -33,13 +33,13 @@ export default async function RiddlePage({ params }: Params) {
   const nextRiddle =
     currentIndex >= 0 && currentIndex < riddles.length - 1 ? riddles[currentIndex + 1] : null;
 
-  const parentChallengeUrl = primaryCollection ? `/challenge/${primaryCollection.slug}` : "/challenge";
+  const parentCollectionUrl = primaryCollection ? `/collection/${primaryCollection.slug}` : "/collection";
 
   return (
     <RiddleController
       riddle={riddle}
       nextRiddleId={nextRiddle?.id ?? null}
-      parentChallengeUrl={parentChallengeUrl}
+      parentCollectionUrl={parentCollectionUrl}
     />
   );
 }

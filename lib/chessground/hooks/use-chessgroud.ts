@@ -91,7 +91,7 @@ export function useChessground({
   }, [game, orientationRef, viewOnly, piecesMovable, coordinates, drawableEnabled, lastMoveRef]);
 
   // Latest config without putting getBoardConfig in the init effect deps (parent re-renders
-  // used to recreate Chessground and kill move animations on challenge/riddle screens).
+  // used to recreate Chessground and kill move animations on collection/riddle screens).
   const getBoardConfigRef = useRef(getBoardConfig);
   getBoardConfigRef.current = getBoardConfig;
 

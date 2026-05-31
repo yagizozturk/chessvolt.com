@@ -1,13 +1,14 @@
 "use client";
 
+import { CheckCircle2 } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2 } from "lucide-react";
 
 type SuccessOverlayProps = {
   /** Whether to show the overlay */
   show: boolean;
-  /** Optional earned points to display (e.g. for riddle challenges) */
+  /** Optional earned points to display (e.g. for riddle collection) */
   earnedPoints?: number;
 };
 
@@ -22,9 +23,7 @@ export function SuccessOverlay({ show, earnedPoints }: SuccessOverlayProps) {
             <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="space-y-3 text-center">
-            <p className="text-3xl font-semibold text-emerald-800 dark:text-emerald-200">
-              Doğru!
-            </p>
+            <p className="text-3xl font-semibold text-emerald-800 dark:text-emerald-200">Doğru!</p>
             {earnedPoints !== undefined && earnedPoints > 0 && (
               <Badge
                 variant="secondary"

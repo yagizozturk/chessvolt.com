@@ -50,6 +50,7 @@ type DbCollectionWithRiddleCount = {
   slug: string;
   description: string | null;
   cover_image_url: string | null;
+  cover_image_color: string | null;
   sort_order: number;
   is_active: boolean;
   created_by: string | null;
@@ -115,6 +116,7 @@ export type CreateCollectionInput = {
   slug?: string;
   description?: string | null;
   coverImageUrl?: string | null;
+  coverImageColor?: string | null;
   sortOrder?: number;
   isActive?: boolean;
   createdBy?: string | null;
@@ -131,6 +133,7 @@ export async function create(
       slug: input.slug?.trim() || slugFromTitle(input.title),
       description: input.description?.trim() || null,
       cover_image_url: input.coverImageUrl ?? null,
+      cover_image_color: input.coverImageColor ?? null,
       sort_order: input.sortOrder ?? 0,
       is_active: input.isActive ?? true,
       created_by: input.createdBy ?? null,
@@ -151,6 +154,7 @@ export type UpdateCollectionInput = {
   slug?: string;
   description?: string | null;
   coverImageUrl?: string | null;
+  coverImageColor?: string | null;
   sortOrder?: number;
   isActive?: boolean;
 };
@@ -165,6 +169,7 @@ export async function update(
   if (input.slug !== undefined) updates.slug = input.slug.trim();
   if (input.description !== undefined) updates.description = input.description?.trim() || null;
   if (input.coverImageUrl !== undefined) updates.cover_image_url = input.coverImageUrl;
+  if (input.coverImageColor !== undefined) updates.cover_image_color = input.coverImageColor;
   if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
 

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { ChallengeHeader } from "@/features/challenge/components/challenge-header";
+import { CollectionHeader } from "@/features/collection/components/collection-header";
 import { getCollectionBySlug } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
@@ -15,7 +15,7 @@ type Params = {
   searchParams: Promise<{ difficulty?: string }>;
 };
 
-export default async function ChallengeCollectionPage({ params, searchParams }: Params) {
+export default async function CollectionDetailPage({ params, searchParams }: Params) {
   const { slug } = await params;
   const { difficulty: selectedDifficulty = "all" } = await searchParams;
   const { user, supabase } = await getPublicUser();
@@ -42,14 +42,14 @@ export default async function ChallengeCollectionPage({ params, searchParams }: 
   return (
     <div className="container mx-auto max-w-6xl pt-10 pb-16">
       <div className="flex flex-col gap-4">
-        <ChallengeHeader
+        <CollectionHeader
           title={collection.title}
           imageSrc={`/images/challanges/${collection.coverImageUrl}`}
           imageAlt={collection.title}
           description={collection.description ?? DEFAULT_GAME_TYPE_DETAILS.description}
           quote={DEFAULT_GAME_TYPE_DETAILS.quote}
           author={DEFAULT_GAME_TYPE_DETAILS.author}
-          backgroundColor={DEFAULT_GAME_TYPE_DETAILS.backgroundColor}
+          backgroundColor={collection.coverImageColor ?? DEFAULT_GAME_TYPE_DETAILS.backgroundColor}
           itemCount={riddles.length}
           itemLabel="riddles"
         />

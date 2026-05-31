@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-type ChallengeHeaderProps = {
+type CollectionHeaderProps = {
   title: string;
   imageSrc: string;
   imageAlt: string;
@@ -12,7 +12,7 @@ type ChallengeHeaderProps = {
   itemLabel: string;
 };
 
-export function ChallengeHeader({
+export function CollectionHeader({
   title,
   imageSrc,
   imageAlt,
@@ -22,7 +22,7 @@ export function ChallengeHeader({
   backgroundColor,
   itemCount,
   itemLabel,
-}: ChallengeHeaderProps) {
+}: CollectionHeaderProps) {
   return (
     <div className="flex gap-2 rounded-lg" style={{ backgroundColor }}>
       <div className="min-w-0 flex-1 space-y-2 p-4">

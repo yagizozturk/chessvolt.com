@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
+
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 
 export default function TestSolveSuccessDialogPage() {
   const [open, setOpen] = useState(false);
@@ -16,7 +17,7 @@ export default function TestSolveSuccessDialogPage() {
         open={open}
         onOpenChange={setOpen}
         title="Completed"
-        description="You found the best move. Continue to the next challenge when you are ready."
+        description="You found the best move. Continue to the next collection when you are ready."
         destinationPath="/test/sonner"
         buttonLabel="Continue"
         stats={{

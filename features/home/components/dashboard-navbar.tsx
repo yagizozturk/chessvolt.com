@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils/cn";
 
 const navItems = [
   { href: "/openings", label: "Opening Crusher", icon: BookOpenText },
-  { href: "/challenge", label: "Challenges", icon: Swords },
+  { href: "/collection", label: "Collections", icon: Swords },
   //{ href: "/arrows", label: "Arrows Game", icon: ArrowsUpFromLine },
 ];
 

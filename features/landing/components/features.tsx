@@ -18,7 +18,7 @@ const sharedFeatures = [
     description: "Play through key moments from real chess games and discover the idea behind the winning move.",
     icon: Swords,
     imageSrc: "/images/cards/bg-masters-game.png",
-    imageAlt: "Structured chess challenges",
+    imageAlt: "Structured chess collections",
   },
   {
     title: "Play The Arrows Game",
