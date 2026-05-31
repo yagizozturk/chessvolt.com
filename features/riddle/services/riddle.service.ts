@@ -30,12 +30,12 @@ export async function getRiddlesByGameId(
   return riddleRepo.findByGameId(supabase, gameId);
 }
 
-export async function getRiddlesByGameType(
+export async function getRiddlesByCollectionId(
   supabase: SupabaseClient,
-  gameType: string,
+  collectionId: string,
   options?: { activeOnly?: boolean },
 ): Promise<Riddle[]> {
-  return riddleRepo.findByGameType(supabase, gameType, options);
+  return riddleRepo.findByCollectionId(supabase, collectionId, options);
 }
 
 export async function createRiddle(

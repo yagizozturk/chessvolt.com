@@ -10,3 +10,5 @@ export type Collection = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type CollectionWithRiddleCount = Collection & { riddleCount: number };

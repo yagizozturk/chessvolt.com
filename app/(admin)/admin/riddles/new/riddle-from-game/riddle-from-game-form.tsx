@@ -44,7 +44,6 @@ export function RiddleFromGameForm({ games }: Props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [difficulty, setDifficulty] = useState<RiddleDifficulty>(DEFAULT_RIDDLE_DIFFICULTY);
-  const [gameType, setGameType] = useState("");
   const [themes, setThemes] = useState("");
 
   const selectedGame = useMemo(() => games.find((game) => game.id === selectedGameId) ?? null, [games, selectedGameId]);
@@ -110,7 +109,6 @@ export function RiddleFromGameForm({ games }: Props) {
   const canSubmit =
     Boolean(selectedGameId) &&
     Boolean(title.trim()) &&
-    Boolean(gameType.trim()) &&
     Boolean(initialFen.trim()) &&
     Boolean(endFen.trim()) &&
     Boolean(derive.moves.trim()) &&
@@ -136,7 +134,6 @@ export function RiddleFromGameForm({ games }: Props) {
       title: title.trim() || null,
       description: description.trim() || null,
       difficulty,
-      gameType: gameType.trim() || null,
       pgn: pgn || null,
       initialFen: initialFen.trim() || null,
       endFen: endFen.trim() || null,
@@ -153,7 +150,6 @@ export function RiddleFromGameForm({ games }: Props) {
     title,
     description,
     difficulty,
-    gameType,
     pgn,
     initialFen,
     endFen,
@@ -226,10 +222,6 @@ export function RiddleFromGameForm({ games }: Props) {
               <Field className="min-w-0 flex-1">
                 <FieldLabel>Title</FieldLabel>
                 <Input name="title" required value={title} onChange={(e) => setTitle(e.target.value)} />
-              </Field>
-              <Field className="min-w-0 flex-1">
-                <FieldLabel>Game Type</FieldLabel>
-                <Input name="gameType" required value={gameType} onChange={(e) => setGameType(e.target.value)} />
               </Field>
             </div>
             <Field>

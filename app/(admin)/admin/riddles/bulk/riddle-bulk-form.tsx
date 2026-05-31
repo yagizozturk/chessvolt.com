@@ -28,7 +28,6 @@ const BULK_JSON_EXAMPLE = JSON.stringify(
       title: "Mate in 2 from setup FEN",
       description: "Find the winning continuation from the diagram position.",
       difficulty: "intermediate",
-      gameType: "legend-games",
       pgn: VALID_PGN_EXAMPLE,
       moves: "e7e8 c8e8",
       themes: ["mate", "tactics"],
@@ -67,12 +66,10 @@ export function RiddleBulkForm() {
       const row = index + 1;
       const errors: string[] = [];
       const title = item?.title?.trim();
-      const gameType = item?.gameType?.trim();
       const pgn = item?.pgn?.trim();
       const moves = item?.moves?.trim();
 
       if (!title) errors.push(`Row ${row}: title is required`);
-      if (!gameType) errors.push(`Row ${row}: gameType is required`);
       if (!moves) errors.push(`Row ${row}: moves is required and must be a string`);
       if (!pgn) {
         errors.push(`Row ${row}: pgn is required`);

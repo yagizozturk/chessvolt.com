@@ -3,13 +3,12 @@ import { toMoveSequence, type DbMoveSequence } from "@/features/move-sequence/ma
 import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import type { Riddle } from "@/features/riddle/types/riddle";
 
-type DbRiddle = {
+export type DbRiddle = {
   id: string;
   game_id: string | null;
   title: string;
   description: string | null;
   difficulty: RiddleDifficulty;
-  game_type: string | null;
   themes: string[] | null;
   is_active: boolean;
   created_at: string;
@@ -28,7 +27,6 @@ export function toRiddle(db: DbRiddle): Riddle {
     title: db.title,
     description: db.description,
     difficulty: db.difficulty,
-    gameType: db.game_type,
     themes: db.themes ?? [],
     isActive: db.is_active,
     moveSequence: toMoveSequence(seqRow),

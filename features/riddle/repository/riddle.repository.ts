@@ -5,7 +5,7 @@
  */
 
 import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
-import { toRiddle } from "@/features/riddle/mapper/riddle.mapper";
+import { toRiddle, type DbRiddle } from "@/features/riddle/mapper/riddle.mapper";
 import {
   DEFAULT_RIDDLE_DIFFICULTY,
   type RiddleDifficulty,
@@ -78,25 +78,38 @@ export async function findByGameId(supabase: SupabaseClient, gameId: string): Pr
   return (riddles ?? []).map(toRiddle);
 }
 
-export async function findByGameType(
+type DbRiddleCollectionJoinRow = {
+  sort_order: number;
+  created_at: string;
+  riddles: DbRiddle | DbRiddle[] | null;
+};
+
+export async function findByCollectionId(
   supabase: SupabaseClient,
-  gameType: string,
+  collectionId: string,
   options?: { activeOnly?: boolean },
 ): Promise<Riddle[]> {
-  let query = supabase.from("riddles").select(RIDDLE_SELECT).eq("game_type", gameType);
-
-  if (options?.activeOnly) {
-    query = query.eq("is_active", true);
-  }
-
-  const { data: riddles, error } = await query.order("created_at", { ascending: true });
+  const { data, error } = await supabase
+    .from("riddle_collections")
+    .select("sort_order, created_at, riddles (*, move_sequences (*))")
+    .eq("collection_id", collectionId)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("riddle.repository.findByGameType error:", error);
+    console.error("riddle.repository.findByCollectionId error:", error);
     return [];
   }
 
-  return (riddles ?? []).map(toRiddle);
+  return (data ?? [])
+    .map((row) => {
+      const joinRow = row as DbRiddleCollectionJoinRow;
+      const riddleRow = Array.isArray(joinRow.riddles) ? joinRow.riddles[0] : joinRow.riddles;
+      if (!riddleRow) return null;
+      if (options?.activeOnly && !riddleRow.is_active) return null;
+      return toRiddle(riddleRow);
+    })
+    .filter((riddle): riddle is Riddle => riddle != null);
 }
 
 export type CreateRiddleInput = {
@@ -106,7 +119,6 @@ export type CreateRiddleInput = {
   difficulty?: RiddleDifficulty;
   pgn?: string | null;
   moves?: string | null;
-  gameType?: string | null;
   initialFen?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
@@ -138,7 +150,6 @@ export async function create(
       title: input.title,
       description: input.description?.trim() || null,
       difficulty: input.difficulty ?? DEFAULT_RIDDLE_DIFFICULTY,
-      game_type: input.gameType ?? null,
       move_sequence_id: moveSequence.id,
       themes: input.themes ?? [],
       is_active: input.isActive ?? true,
@@ -162,7 +173,6 @@ export type UpdateRiddleInput = {
   description?: string | null;
   difficulty?: RiddleDifficulty;
   moves?: string | null;
-  gameType?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
   themes?: string[];
@@ -208,7 +218,6 @@ export async function update(
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description?.trim() || null;
   if (input.difficulty !== undefined) updates.difficulty = input.difficulty;
-  if (input.gameType !== undefined) updates.game_type = input.gameType;
   if (input.themes !== undefined) updates.themes = input.themes;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
 

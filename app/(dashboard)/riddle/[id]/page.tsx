@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 
+import { getCollectionById } from "@/features/collection/services/collection.service";
 import RiddleController from "@/features/riddle/components/riddle-controller";
-import { getRiddleById, getRiddlesByGameType } from "@/features/riddle/services/riddle.service";
+import { getRiddleCollectionsForRiddle } from "@/features/riddle-collection/services/riddle-collection.service";
+import { getRiddleById, getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
@@ -17,21 +19,21 @@ export default async function RiddlePage({ params }: Params) {
     notFound();
   }
 
-  // ======================================================================
-  // Get all riddles for this challenge (game type)
-  // Get the next riddle if it exists
-  // ======================================================================
-  const riddles = riddle.gameType
-    ? await getRiddlesByGameType(supabase, riddle.gameType, { activeOnly: true })
+  const riddleCollections = await getRiddleCollectionsForRiddle(supabase, riddle.id);
+  const primaryCollectionId = riddleCollections[0]?.collectionId ?? null;
+  const primaryCollection = primaryCollectionId
+    ? await getCollectionById(supabase, primaryCollectionId)
+    : null;
+
+  const riddles = primaryCollectionId
+    ? await getRiddlesByCollectionId(supabase, primaryCollectionId, { activeOnly: true })
     : [];
 
   const currentIndex = riddles.findIndex((r) => r.id === riddle.id);
   const nextRiddle =
     currentIndex >= 0 && currentIndex < riddles.length - 1 ? riddles[currentIndex + 1] : null;
 
-  const parentChallengeUrl = riddle.gameType
-    ? `/challenge/${riddle.gameType.replace(/_/g, "-")}`
-    : "/";
+  const parentChallengeUrl = primaryCollection ? `/challenge/${primaryCollection.slug}` : "/challenge";
 
   return (
     <RiddleController

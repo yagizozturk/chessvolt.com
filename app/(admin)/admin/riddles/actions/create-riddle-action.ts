@@ -28,7 +28,6 @@ export async function createRiddleAction(formData: FormData) {
   const description = parseDescriptionFromForm(formData);
   const difficulty = parseDifficultyFromForm(formData);
   const moves = ((formData.get("moves") as string) || "").trim() || null;
-  const gameType = (formData.get("gameType") as string)?.trim() || null;
   const initialFen = ((formData.get("initialFen") as string) || "").trim() || null;
   const displayFen = ((formData.get("displayFen") as string) || "").trim() || null;
   const moveCountForAnswer = parseInt(formData.get("moveCountForAnswer") as string, 10);
@@ -36,7 +35,7 @@ export async function createRiddleAction(formData: FormData) {
   const themes = parseThemesFromForm(formData);
   const isActive = parseIsActiveFromForm(formData);
 
-  if (!title || !gameType) {
+  if (!title) {
     redirect("/admin/riddles/new?error=missing_fields");
   }
 
@@ -79,7 +78,6 @@ export async function createRiddleAction(formData: FormData) {
     difficulty,
     pgn,
     moves: resolvedMoves,
-    gameType,
     initialFen: resolvedInitialFen ?? null,
     displayFen: resolvedDisplayFen,
     goals,

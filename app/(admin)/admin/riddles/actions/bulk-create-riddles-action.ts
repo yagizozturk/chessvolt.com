@@ -34,11 +34,10 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     const title = item?.title?.trim();
-    const gameType = item?.gameType?.trim();
     const gameId = item?.gameId?.trim() || null;
 
-    if (!title || !gameType) {
-      errors.push({ index: i, message: "title and gameType are required" });
+    if (!title) {
+      errors.push({ index: i, message: "title is required" });
       continue;
     }
 
@@ -114,7 +113,6 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
       difficulty: parseBulkDifficulty(item.difficulty),
       pgn,
       moves,
-      gameType,
       initialFen,
       displayFen,
       themes: parseBulkThemes(item.themes),

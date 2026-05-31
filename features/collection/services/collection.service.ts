@@ -6,7 +6,7 @@
  */
 
 import * as collectionRepo from "@/features/collection/repository/collection.repository";
-import type { Collection } from "@/features/collection/types/collection";
+import type { Collection, CollectionWithRiddleCount } from "@/features/collection/types/collection";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function getAllCollections(supabase: SupabaseClient): Promise<Collection[]> {
@@ -15,6 +15,12 @@ export async function getAllCollections(supabase: SupabaseClient): Promise<Colle
 
 export async function getActiveCollections(supabase: SupabaseClient): Promise<Collection[]> {
   return collectionRepo.findAllActive(supabase);
+}
+
+export async function getActiveCollectionsWithRiddleCount(
+  supabase: SupabaseClient,
+): Promise<CollectionWithRiddleCount[]> {
+  return collectionRepo.findAllActiveWithRiddleCount(supabase);
 }
 
 export async function getCollectionById(

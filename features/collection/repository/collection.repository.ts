@@ -5,7 +5,7 @@
  */
 
 import { toCollection } from "@/features/collection/mapper/collection.mapper";
-import type { Collection } from "@/features/collection/types/collection";
+import type { Collection, CollectionWithRiddleCount } from "@/features/collection/types/collection";
 import { slugify } from "@/lib/utils/slugify";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -42,6 +42,42 @@ export async function findAllActive(supabase: SupabaseClient): Promise<Collectio
   }
 
   return (data ?? []).map(toCollection);
+}
+
+type DbCollectionWithRiddleCount = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  cover_image_url: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  riddle_collections: [{ count: number }];
+};
+
+export async function findAllActiveWithRiddleCount(
+  supabase: SupabaseClient,
+): Promise<CollectionWithRiddleCount[]> {
+  const { data, error } = await supabase
+    .from("collections")
+    .select("*, riddle_collections(count)")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true })
+    .order("title", { ascending: true });
+
+  if (error) {
+    console.error("collection.repository.findAllActiveWithRiddleCount error:", error);
+    return [];
+  }
+
+  return (data ?? []).map((row) => {
+    const db = row as DbCollectionWithRiddleCount;
+    const riddleCount = db.riddle_collections?.[0]?.count ?? 0;
+    return { ...toCollection(db), riddleCount };
+  });
 }
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<Collection | null> {

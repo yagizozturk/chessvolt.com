@@ -39,7 +39,6 @@ export function RiddleItem({ riddle, onDelete }: Props) {
             {createdAtLabel}
           </time>
           <span className="bg-muted rounded px-2 py-0.5">{formatRiddleDifficultyLabel(riddle.difficulty)}</span>
-          {riddle.gameType && <span className="bg-muted rounded px-2 py-0.5">{riddle.gameType}</span>}
           {!riddle.isActive && <span className="bg-muted rounded px-2 py-0.5">inactive</span>}
           {riddle.themes.map((theme) => (
             <span key={theme} className="bg-muted rounded px-2 py-0.5">

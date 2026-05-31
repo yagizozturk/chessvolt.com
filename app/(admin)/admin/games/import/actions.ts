@@ -9,8 +9,6 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-const DEFAULT_GAME_TYPE = "legend_games";
-
 export async function importPgnAction(formData: FormData) {
   const { supabase } = await getAdminUser();
 
@@ -18,9 +16,6 @@ export async function importPgnAction(formData: FormData) {
   if (!pgnText?.trim()) {
     redirect("/admin/games/import?error=missing_pgn");
   }
-
-  const gameType =
-    (formData.get("gameType") as string)?.trim() || DEFAULT_GAME_TYPE;
 
   const games = splitPgnGames(pgnText);
   if (games.length === 0) {
@@ -54,7 +49,6 @@ export async function importPgnAction(formData: FormData) {
     if (game) {
       inserted.push(game.id);
 
-      // Default riddle at ply 0: title from ChapterName (description)
       const movesAtPly0 = getUciMovesFromPgnAfterPlyAtMoveCount(
         parsed.pgn,
         0,
@@ -71,7 +65,6 @@ export async function importPgnAction(formData: FormData) {
         description: parsed.description?.trim() || null,
         difficulty: "beginner",
         moves: movesAtPly0 ?? "",
-        gameType,
         displayFen,
       });
     } else {

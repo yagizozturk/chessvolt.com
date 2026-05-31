@@ -34,7 +34,6 @@ export async function updateRiddleAction(id: string, formData: FormData) {
   const movesFromForm = ((formData.get("moves") as string) || "").trim() || null;
   const initialFenInput = ((formData.get("initialFen") as string) || "").trim() || null;
   const displayFenInput = ((formData.get("displayFen") as string) || "").trim() || null;
-  const gameType = (formData.get("gameType") as string)?.trim() || null;
   const goals = parseGoalsFromForm(formData, `/admin/riddles/${id}?error=invalid_goals_json`);
   const themes = parseThemesFromForm(formData);
   const isActive = parseIsActiveFromForm(formData);
@@ -48,7 +47,6 @@ export async function updateRiddleAction(id: string, formData: FormData) {
 
   if (
     !title?.trim() ||
-    !gameType ||
     isNaN(displayPlyFromForm) ||
     displayPlyFromForm < 0 ||
     isNaN(moveCountForAnswer) ||
@@ -81,7 +79,6 @@ export async function updateRiddleAction(id: string, formData: FormData) {
     description,
     difficulty,
     pgn: pgn || null,
-    gameType,
     initialFen,
     displayFen,
     moves,

@@ -8,7 +8,6 @@ export type Riddle = {
   title: string;
   description: string | null;
   difficulty: RiddleDifficulty;
-  gameType: string | null;
   themes: string[];
   isActive: boolean;
   moveSequence: MoveSequence;

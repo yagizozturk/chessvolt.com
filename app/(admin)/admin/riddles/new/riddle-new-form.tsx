@@ -26,7 +26,6 @@ export function RiddleNewForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [difficulty, setDifficulty] = useState<RiddleDifficulty>(DEFAULT_RIDDLE_DIFFICULTY);
-  const [gameType, setGameType] = useState("");
   const [themes, setThemes] = useState("");
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
   const derivedMoves = useMemo(() => uciMoves.join(" "), [uciMoves]);
@@ -51,7 +50,6 @@ export function RiddleNewForm() {
         title: title.trim() || null,
         description: description.trim() || null,
         difficulty,
-        gameType: gameType.trim() || null,
         pgn: pgn.trim() || null,
         moves: derivedMoves || null,
         initialFen: fen ?? null,
@@ -63,7 +61,7 @@ export function RiddleNewForm() {
       null,
       2,
     );
-  }, [title, description, difficulty, gameType, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
+  }, [title, description, difficulty, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
 
   useEffect(() => {
     setDisplayFen(fen ?? "");
@@ -148,18 +146,6 @@ export function RiddleNewForm() {
               />
             </Field>
             <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
-            <div>
-              <Field className="min-w-0">
-                <FieldLabel>Game Type</FieldLabel>
-                <Input
-                  name="gameType"
-                  required
-                  value={gameType}
-                  onChange={(e) => setGameType(e.target.value)}
-                  placeholder="e.g. legend-games"
-                />
-              </Field>
-            </div>
             <Field>
               <FieldLabel>Themes</FieldLabel>
               <Input

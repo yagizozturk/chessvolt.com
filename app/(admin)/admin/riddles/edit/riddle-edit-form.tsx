@@ -11,21 +11,12 @@ import DisplayBoard from "@/components/boards/display-board/display-board";
 import { JsonViewer } from "@/components/shared/json-viewer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Game } from "@/features/game/types/game";
 import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import { GAME_TYPE_DETAILS } from "@/lib/shared/constants/game-type-details";
 import { cn } from "@/lib/utils/cn";
 
 type Props = {
@@ -49,19 +40,11 @@ export function RiddleEditForm({ riddle, game }: Props) {
   const [title, setTitle] = useState(riddle.title);
   const [description, setDescription] = useState(riddle.description ?? "");
   const [difficulty, setDifficulty] = useState<RiddleDifficulty>(riddle.difficulty);
-  const [gameType, setGameType] = useState(riddle.gameType ?? "");
   const [themes, setThemes] = useState(riddle.themes.join(", "));
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
   const derivedMoves = useMemo(() => uciMoves.join(" "), [uciMoves]);
-  const gameTypeOptions = useMemo(() => {
-    const fromStatic = Object.keys(GAME_TYPE_DETAILS);
-    const current = riddle.gameType?.trim() ?? "";
-
-    return Array.from(new Set([...fromStatic, current].filter(Boolean))).sort((a, b) => a.localeCompare(b));
-  }, [riddle.gameType]);
   const canSubmit =
     Boolean(title.trim()) &&
-    Boolean(gameType.trim()) &&
     Boolean(pgn.trim()) &&
     Boolean(derivedMoves.trim()) &&
     !pgnError;
@@ -92,7 +75,6 @@ export function RiddleEditForm({ riddle, game }: Props) {
       title: title.trim() || null,
       description: description.trim() || null,
       difficulty,
-      gameType: gameType.trim() || null,
       pgn: pgn.trim() || null,
       moves: derivedMoves || null,
       initialFen: fen ?? null,
@@ -101,7 +83,7 @@ export function RiddleEditForm({ riddle, game }: Props) {
       isActive,
       goals: parsedGoals,
     };
-  }, [riddle.id, title, description, difficulty, gameType, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
+  }, [riddle.id, title, description, difficulty, pgn, derivedMoves, fen, displayFen, themes, isActive, goals]);
 
   return (
     <form action={async (formData) => updateRiddleAction(riddle.id, formData)} className="grid gap-6 lg:grid-cols-3">
@@ -182,30 +164,6 @@ export function RiddleEditForm({ riddle, game }: Props) {
               />
             </Field>
             <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
-            <div>
-              <Field className="min-w-0">
-                <FieldLabel>Game Type</FieldLabel>
-                <input type="hidden" name="gameType" value={gameType} />
-                <Combobox value={gameType} onValueChange={(value) => setGameType(value ?? "")}>
-                  <ComboboxInput
-                    required
-                    placeholder="Select game type..."
-                    aria-label="Select game type"
-                    className="w-full min-w-0 rounded-xl border-2"
-                  />
-                  <ComboboxContent>
-                    <ComboboxEmpty>No game type found.</ComboboxEmpty>
-                    <ComboboxList>
-                      {gameTypeOptions.map((type) => (
-                        <ComboboxItem key={type} value={type}>
-                          {type}
-                        </ComboboxItem>
-                      ))}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
-              </Field>
-            </div>
             <Field>
               <FieldLabel>Themes</FieldLabel>
               <Input
