@@ -96,7 +96,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
         boardCorrectMoveHandler(from, to, uci);
       }
 
-      updateBoard();
+      //updateBoard();
     },
   });
 
