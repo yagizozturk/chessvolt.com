@@ -2,6 +2,7 @@
 
 import {
   BookOpenIcon,
+  ClipboardListIcon,
   FolderOpenIcon,
   Gamepad2Icon,
   HelpCircleIcon,
@@ -66,6 +67,20 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "New theme", url: "/admin/themes/create" },
       { title: "Content themes", url: "/admin/content-themes" },
       { title: "New content link", url: "/admin/content-themes/create" },
+    ],
+  },
+  {
+    title: "Onboarding",
+    url: "/admin/onboarding-questions",
+    icon: <ClipboardListIcon />,
+    items: [
+      { title: "All questions", url: "/admin/onboarding-questions" },
+      { title: "New question", url: "/admin/onboarding-questions/create" },
+      { title: "All options", url: "/admin/onboarding-options" },
+      { title: "New option", url: "/admin/onboarding-options/create" },
+      { title: "Option themes", url: "/admin/onboarding-option-themes" },
+      { title: "New option theme", url: "/admin/onboarding-option-themes/create" },
+      { title: "User answers", url: "/admin/user-onboarding-answers" },
     ],
   },
   {

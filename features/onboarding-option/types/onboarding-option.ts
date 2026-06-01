@@ -1,0 +1,13 @@
+export type OnboardingOption = {
+  id: string;
+  questionId: string;
+  value: string;
+  label: string;
+  description: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  initialRating: number | null;
+  initialRatingDeviation: number | null;
+  createdAt: string;
+  updatedAt: string;
+};
