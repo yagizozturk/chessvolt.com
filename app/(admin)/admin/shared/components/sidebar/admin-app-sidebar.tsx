@@ -64,6 +64,8 @@ const adminNavItems: AdminNavMainItem[] = [
     items: [
       { title: "All themes", url: "/admin/themes" },
       { title: "New theme", url: "/admin/themes/create" },
+      { title: "Content themes", url: "/admin/content-themes" },
+      { title: "New content link", url: "/admin/content-themes/create" },
     ],
   },
   {
