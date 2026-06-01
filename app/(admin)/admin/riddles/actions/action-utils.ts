@@ -8,7 +8,7 @@ import {
 } from "@/features/riddle-collection/services/riddle-collection.service";
 import {
   DEFAULT_RIDDLE_DIFFICULTY,
-  isRiddleDifficulty,
+  parseRiddleDifficulty,
   type RiddleDifficulty,
 } from "@/features/riddle/types/riddle-difficulty";
 
@@ -106,9 +106,7 @@ export function parseDescriptionFromForm(formData: FormData): string | null {
 }
 
 export function parseDifficultyFromForm(formData: FormData): RiddleDifficulty {
-  const raw = (formData.get("difficulty") as string | null)?.trim() ?? "";
-  if (isRiddleDifficulty(raw)) return raw;
-  return DEFAULT_RIDDLE_DIFFICULTY;
+  return parseRiddleDifficulty(formData.get("difficulty")) ?? DEFAULT_RIDDLE_DIFFICULTY;
 }
 
 export function parseCollectionIdFromForm(formData: FormData): string | null {
@@ -154,10 +152,7 @@ export async function syncRiddleCollection(
 }
 
 export function parseBulkDifficulty(value: unknown): RiddleDifficulty {
-  if (typeof value !== "string") return DEFAULT_RIDDLE_DIFFICULTY;
-  const trimmed = value.trim();
-  if (isRiddleDifficulty(trimmed)) return trimmed;
-  return DEFAULT_RIDDLE_DIFFICULTY;
+  return parseRiddleDifficulty(value) ?? DEFAULT_RIDDLE_DIFFICULTY;
 }
 
 export async function resolvePgnFromFormInput({

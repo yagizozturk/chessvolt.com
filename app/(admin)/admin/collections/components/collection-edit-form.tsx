@@ -7,13 +7,13 @@ import {
   updateCollectionAction,
 } from "@/app/(admin)/admin/collections/actions/collections";
 import { DEFAULT_COLLECTION_COVER_COLOR } from "@/app/(admin)/admin/collections/constants/cover-images";
-import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
+import { CollectionDifficultySelect } from "@/features/collection/components/collection-difficulty-select";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Collection } from "@/features/collection/types/collection";
-import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
+import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
 
 type Props = {
   collection: Collection;
@@ -24,7 +24,7 @@ const initialState: UpdateCollectionFormState = { error: null };
 export function CollectionEditForm({ collection }: Props) {
   const [state, formAction, isPending] = useActionState(updateCollectionAction, initialState);
   const [isActive, setIsActive] = useState(collection.isActive);
-  const [difficulty, setDifficulty] = useState<RiddleDifficulty>(collection.difficulty);
+  const [difficulty, setDifficulty] = useState<CollectionDifficulty>(collection.difficulty);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -52,7 +52,7 @@ export function CollectionEditForm({ collection }: Props) {
             className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
           />
         </Field>
-        <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
+        <CollectionDifficultySelect value={difficulty} onChange={setDifficulty} />
         <Field>
           <FieldLabel>Cover image</FieldLabel>
           <Input

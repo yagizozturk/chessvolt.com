@@ -10,6 +10,7 @@ type CollectionHeaderProps = {
   backgroundColor: string;
   itemCount: number;
   itemLabel: string;
+  difficultyLabel?: string;
 };
 
 export function CollectionHeader({
@@ -22,11 +23,17 @@ export function CollectionHeader({
   backgroundColor,
   itemCount,
   itemLabel,
+  difficultyLabel,
 }: CollectionHeaderProps) {
   return (
     <div className="flex gap-2 rounded-lg" style={{ backgroundColor }}>
       <div className="min-w-0 flex-1 space-y-2 p-4">
-        <p className="text-primary text-sm font-semibold">{description}</p>
+        <p className="text-primary text-sm font-semibold">
+          {description}
+          {difficultyLabel ? (
+            <span className="text-white/80 font-normal"> · {difficultyLabel}</span>
+          ) : null}
+        </p>
         <h2 className="text-3xl font-bold">{title}</h2>
         <blockquote className="border-primary/30 border-l-2 pl-3">
           <p className="text-sm text-white/60 italic">&ldquo;{quote}&rdquo;</p>

@@ -1,19 +1,22 @@
-export const RIDDLE_DIFFICULTIES = [
-  "beginner",
-  "intermediate",
-  "advanced",
-  "master",
-  "grandmaster",
-] as const;
+export type RiddleDifficulty = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
-export type RiddleDifficulty = (typeof RIDDLE_DIFFICULTIES)[number];
+export const DEFAULT_RIDDLE_DIFFICULTY: RiddleDifficulty = 4;
 
-export const DEFAULT_RIDDLE_DIFFICULTY: RiddleDifficulty = "beginner";
+export const RIDDLE_DIFFICULTY_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const satisfies readonly RiddleDifficulty[];
 
-export function isRiddleDifficulty(value: string): value is RiddleDifficulty {
-  return (RIDDLE_DIFFICULTIES as readonly string[]).includes(value);
+export function isRiddleDifficulty(value: unknown): value is RiddleDifficulty {
+  return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 10;
+}
+
+export function parseRiddleDifficulty(value: unknown): RiddleDifficulty | null {
+  const num = typeof value === "number" ? value : Number(String(value ?? "").trim());
+  return isRiddleDifficulty(num) ? num : null;
 }
 
 export function formatRiddleDifficultyLabel(difficulty: RiddleDifficulty): string {
-  return difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+  if (difficulty <= 2) return "Beginner";
+  if (difficulty <= 4) return "Intermediate";
+  if (difficulty <= 6) return "Advanced";
+  if (difficulty <= 8) return "Master";
+  return "Grandmaster";
 }

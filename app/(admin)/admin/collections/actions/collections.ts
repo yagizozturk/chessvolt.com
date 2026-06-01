@@ -10,10 +10,10 @@ import {
   updateCollection,
 } from "@/features/collection/services/collection.service";
 import {
-  DEFAULT_RIDDLE_DIFFICULTY,
-  isRiddleDifficulty,
-  type RiddleDifficulty,
-} from "@/features/riddle/types/riddle-difficulty";
+  DEFAULT_COLLECTION_DIFFICULTY,
+  parseCollectionDifficulty,
+  type CollectionDifficulty,
+} from "@/features/collection/types/collection-difficulty";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 function parseSortOrder(raw: FormDataEntryValue | null): number {
@@ -25,10 +25,8 @@ function parseIsActive(formData: FormData): boolean {
   return formData.get("isActive") === "on";
 }
 
-function parseDifficultyFromForm(formData: FormData): RiddleDifficulty {
-  const raw = (formData.get("difficulty") as string | null)?.trim() ?? "";
-  if (isRiddleDifficulty(raw)) return raw;
-  return DEFAULT_RIDDLE_DIFFICULTY;
+function parseDifficultyFromForm(formData: FormData): CollectionDifficulty {
+  return parseCollectionDifficulty(formData.get("difficulty")) ?? DEFAULT_COLLECTION_DIFFICULTY;
 }
 
 export async function createCollectionAction(formData: FormData) {

@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import {
-  RIDDLE_DIFFICULTIES,
+  RIDDLE_DIFFICULTY_LEVELS,
   formatRiddleDifficultyLabel,
 } from "@/features/riddle/types/riddle-difficulty";
 
 export const DIFFICULTY_OPTIONS = [
   { value: "all", label: "All difficulties" },
-  ...RIDDLE_DIFFICULTIES.map((difficulty) => ({
-    value: difficulty,
-    label: formatRiddleDifficultyLabel(difficulty),
+  ...RIDDLE_DIFFICULTY_LEVELS.map((difficulty) => ({
+    value: String(difficulty),
+    label: `${difficulty} — ${formatRiddleDifficultyLabel(difficulty)}`,
   })),
 ];
 

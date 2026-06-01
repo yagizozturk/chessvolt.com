@@ -1,4 +1,4 @@
-import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
+import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
 
 export type Collection = {
   id: string;
@@ -7,7 +7,7 @@ export type Collection = {
   description: string;
   coverImageUrl: string;
   coverImageColor: string;
-  difficulty: RiddleDifficulty;
+  difficulty: CollectionDifficulty;
   sortOrder: number;
   isActive: boolean;
   createdBy: string | null;

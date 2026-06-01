@@ -6,7 +6,10 @@
 
 import { toCollection } from "@/features/collection/mapper/collection.mapper";
 import type { Collection, CollectionWithRiddleCount } from "@/features/collection/types/collection";
-import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
+import {
+  DEFAULT_COLLECTION_DIFFICULTY,
+  type CollectionDifficulty,
+} from "@/features/collection/types/collection-difficulty";
 import { slugify } from "@/lib/utils/slugify";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -52,7 +55,7 @@ type DbCollectionWithRiddleCount = {
   description: string;
   cover_image_url: string;
   cover_image_color: string;
-  difficulty: RiddleDifficulty;
+  difficulty: CollectionDifficulty;
   sort_order: number;
   is_active: boolean;
   created_by: string | null;
@@ -140,7 +143,7 @@ export type CreateCollectionInput = {
   description: string;
   coverImageUrl: string;
   coverImageColor: string;
-  difficulty?: RiddleDifficulty;
+  difficulty?: CollectionDifficulty;
   sortOrder?: number;
   isActive?: boolean;
   createdBy?: string | null;
@@ -158,7 +161,7 @@ export async function create(
       description: input.description.trim(),
       cover_image_url: input.coverImageUrl,
       cover_image_color: input.coverImageColor,
-      difficulty: input.difficulty ?? "beginner",
+      difficulty: input.difficulty ?? DEFAULT_COLLECTION_DIFFICULTY,
       sort_order: input.sortOrder ?? 0,
       is_active: input.isActive ?? true,
       created_by: input.createdBy ?? null,
@@ -180,7 +183,7 @@ export type UpdateCollectionInput = {
   description?: string;
   coverImageUrl?: string;
   coverImageColor?: string;
-  difficulty?: RiddleDifficulty;
+  difficulty?: CollectionDifficulty;
   sortOrder?: number;
   isActive?: boolean;
 };

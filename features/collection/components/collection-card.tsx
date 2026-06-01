@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
+import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
 import type { CollectionWithRiddleCount } from "@/features/collection/types/collection";
 
 type CollectionCardProps = {
@@ -18,9 +19,14 @@ export function CollectionCard({ collection }: CollectionCardProps) {
     >
       <div style={{ backgroundColor: collection.coverImageColor }} className="flex overflow-hidden rounded-lg">
         <div className="flex min-w-0 flex-1 items-end p-4">
-          <Badge variant="default" className="font-normal">
-            {collection.riddleCount} {collection.riddleCount === 1 ? "riddle" : "riddles"}
-          </Badge>
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="default" className="font-normal">
+              {formatCollectionDifficultyLabel(collection.difficulty)}
+            </Badge>
+            <Badge variant="default" className="font-normal">
+              {collection.riddleCount} {collection.riddleCount === 1 ? "riddle" : "riddles"}
+            </Badge>
+          </div>
         </div>
         <div className="overflow-hidden">
           <Image src={imageSrc} alt={collection.title} className="object-contain" width={268} height={200} />

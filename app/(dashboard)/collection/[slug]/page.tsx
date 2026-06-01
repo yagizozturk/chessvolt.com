@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 
 import { CollectionHeader } from "@/features/collection/components/collection-header";
+import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
 import { getCollectionBySlug } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
+import { isRiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import { getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { buildAttemptByRiddleId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-riddle-id";
@@ -26,10 +28,11 @@ export default async function CollectionDetailPage({ params, searchParams }: Par
   }
 
   const allRiddles = await getRiddlesByCollectionId(supabase, collection.id, { activeOnly: true });
+  const difficultyFilter = Number(selectedDifficulty.trim());
   const riddles =
-    selectedDifficulty.trim() === "all"
+    selectedDifficulty.trim() === "all" || !isRiddleDifficulty(difficultyFilter)
       ? allRiddles
-      : allRiddles.filter((riddle) => riddle.difficulty === selectedDifficulty.trim());
+      : allRiddles.filter((riddle) => riddle.difficulty === difficultyFilter);
 
   const sequenceIds = [...new Set(riddles.map((r) => r.moveSequence.id))];
   const summaries = user ? await attemptService.getLatestSummariesForSequences(supabase, user.id, sequenceIds) : [];
@@ -52,6 +55,7 @@ export default async function CollectionDetailPage({ params, searchParams }: Par
           backgroundColor={collection.coverImageColor}
           itemCount={riddles.length}
           itemLabel="riddles"
+          difficultyLabel={formatCollectionDifficultyLabel(collection.difficulty)}
         />
         {riddles.length === 0 && (
           <div className="bg-muted/40 rounded-xl px-4 py-8 text-center">

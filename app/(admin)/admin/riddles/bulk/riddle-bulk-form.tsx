@@ -27,7 +27,7 @@ const BULK_JSON_EXAMPLE = JSON.stringify(
     {
       title: "Mate in 2 from setup FEN",
       description: "Find the winning continuation from the diagram position.",
-      difficulty: "intermediate",
+      difficulty: 4,
       collectionId: "your-collection-uuid",
       pgn: VALID_PGN_EXAMPLE,
       moves: "e7e8 c8e8",

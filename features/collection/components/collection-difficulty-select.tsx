@@ -1,19 +1,19 @@
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
-  RIDDLE_DIFFICULTY_LEVELS,
-  formatRiddleDifficultyLabel,
-  isRiddleDifficulty,
-  type RiddleDifficulty,
-} from "@/features/riddle/types/riddle-difficulty";
+  COLLECTION_DIFFICULTY_LEVELS,
+  formatCollectionDifficultyLabel,
+  isCollectionDifficulty,
+  type CollectionDifficulty,
+} from "@/features/collection/types/collection-difficulty";
 import { cn } from "@/lib/utils/cn";
 
 type Props = {
-  value: RiddleDifficulty;
-  onChange: (value: RiddleDifficulty) => void;
+  value: CollectionDifficulty;
+  onChange: (value: CollectionDifficulty) => void;
   name?: string;
 };
 
-export function RiddleDifficultySelect({ value, onChange, name = "difficulty" }: Props) {
+export function CollectionDifficultySelect({ value, onChange, name = "difficulty" }: Props) {
   return (
     <Field>
       <FieldLabel>Difficulty</FieldLabel>
@@ -23,15 +23,15 @@ export function RiddleDifficultySelect({ value, onChange, name = "difficulty" }:
         value={String(value)}
         onChange={(e) => {
           const num = Number(e.target.value);
-          if (isRiddleDifficulty(num)) onChange(num);
+          if (isCollectionDifficulty(num)) onChange(num);
         }}
         className={cn(
           "border-input focus-visible:border-primary focus-visible:ring-primary/50 h-9 w-full rounded-md border border-2 bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]",
         )}
       >
-        {RIDDLE_DIFFICULTY_LEVELS.map((level) => (
+        {COLLECTION_DIFFICULTY_LEVELS.map((level) => (
           <option key={level} value={level}>
-            {level} — {formatRiddleDifficultyLabel(level)}
+            {level} — {formatCollectionDifficultyLabel(level)}
           </option>
         ))}
       </select>
