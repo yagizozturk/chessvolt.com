@@ -1,6 +1,14 @@
 "use client";
 
-import { BookOpenIcon, FolderOpenIcon, Gamepad2Icon, HelpCircleIcon, LayoutDashboardIcon, UsersIcon } from "lucide-react";
+import {
+  BookOpenIcon,
+  FolderOpenIcon,
+  Gamepad2Icon,
+  HelpCircleIcon,
+  LayoutDashboardIcon,
+  TagsIcon,
+  UsersIcon,
+} from "lucide-react";
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 
@@ -47,6 +55,15 @@ const adminNavItems: AdminNavMainItem[] = [
     items: [
       { title: "All collections", url: "/admin/collections" },
       { title: "New collection", url: "/admin/collections/create" },
+    ],
+  },
+  {
+    title: "Themes",
+    url: "/admin/themes",
+    icon: <TagsIcon />,
+    items: [
+      { title: "All themes", url: "/admin/themes" },
+      { title: "New theme", url: "/admin/themes/create" },
     ],
   },
   {
