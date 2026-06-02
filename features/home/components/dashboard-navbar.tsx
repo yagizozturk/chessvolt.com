@@ -19,8 +19,16 @@ import { useProfile } from "@/features/profile/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 
-const navItems = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  requiresAuth?: boolean;
+};
+
+const navItems: NavItem[] = [
   { href: "/openings", label: "Opening Crusher", icon: BookOpenText },
+  { href: "/my-collections", label: "My Collections", icon: ArrowsUpFromLine, requiresAuth: true },
   { href: "/collection", label: "Collections", icon: Swords },
   //{ href: "/arrows", label: "Arrows Game", icon: ArrowsUpFromLine },
 ];
@@ -30,6 +38,7 @@ export function DashboardNavbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { profile } = useProfile();
+  const visibleNavItems = navItems.filter((item) => !item.requiresAuth || profile);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -88,7 +97,7 @@ export function DashboardNavbar() {
 
         {/* Center: Nav items (desktop) */}
         <nav className="hidden flex-1 items-center justify-center gap-1 md:flex">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
             const Icon = item.icon;
             return (
@@ -122,7 +131,7 @@ export function DashboardNavbar() {
                 </Link>
               </SheetTitle>
               <nav className="flex flex-col gap-1">
-                {navItems.map((item) => {
+                {visibleNavItems.map((item) => {
                   const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
                   return (
                     <Link
