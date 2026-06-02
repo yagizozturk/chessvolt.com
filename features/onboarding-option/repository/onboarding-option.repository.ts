@@ -88,6 +88,23 @@ export async function findByQuestionId(
   return toOnboardingOptions((data ?? []) as DbOnboardingOption[]);
 }
 
+export async function findByIds(supabase: SupabaseClient, ids: string[]): Promise<OnboardingOption[]> {
+  const uniqueIds = [...new Set(ids.map((id) => id.trim()).filter(Boolean))];
+  if (uniqueIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("onboarding_options")
+    .select(OPTION_SELECT)
+    .in("id", uniqueIds);
+
+  if (error) {
+    console.error("onboarding-option.repository.findByIds error:", error);
+    return [];
+  }
+
+  return toOnboardingOptions((data ?? []) as DbOnboardingOption[]);
+}
+
 export async function findById(supabase: SupabaseClient, id: string): Promise<OnboardingOption | null> {
   const { data, error } = await supabase
     .from("onboarding_options")

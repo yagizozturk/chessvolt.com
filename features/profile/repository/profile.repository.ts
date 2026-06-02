@@ -7,6 +7,59 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 
+export type ProfileOnboardingStatus = {
+  onboardingCompleted: boolean;
+};
+
+export async function getProfileOnboardingStatus(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<ProfileOnboardingStatus | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("onboarding_completed")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("profile.repository.getProfileOnboardingStatus error:", {
+      message: error.message,
+      code: error.code,
+    });
+    return null;
+  }
+
+  if (!data) return null;
+
+  return {
+    onboardingCompleted: data.onboarding_completed ?? false,
+  };
+}
+
+export async function completeProfileOnboarding(
+  supabase: SupabaseClient,
+  userId: string,
+  input: { initialRating: number },
+): Promise<boolean> {
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      initial_rating: input.initialRating,
+      onboarding_completed: true,
+    })
+    .eq("id", userId);
+
+  if (error) {
+    console.error("profile.repository.completeProfileOnboarding error:", {
+      message: error.message,
+      code: error.code,
+    });
+    return false;
+  }
+
+  return true;
+}
+
 /** Ensures a profile exists for the user. Creates one if missing. */
 export async function ensureProfileExists(
   supabase: SupabaseClient,

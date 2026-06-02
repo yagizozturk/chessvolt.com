@@ -1,5 +1,21 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import {
+  isDashboardPath,
+  isOnboardingPath,
+  ONBOARDING_PATH,
+  shouldSkipOnboardingCheck,
+} from '@/features/onboarding/lib/onboarding-routes'
+
+function redirectWithSession(request: NextRequest, pathname: string, supabaseResponse: NextResponse) {
+  const url = request.nextUrl.clone()
+  url.pathname = pathname
+  const redirectResponse = NextResponse.redirect(url)
+  supabaseResponse.cookies.getAll().forEach((cookie) => {
+    redirectResponse.cookies.set(cookie.name, cookie.value)
+  })
+  return redirectResponse
+}
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -35,11 +51,33 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  const pathname = request.nextUrl.pathname
+
   // Only require auth for /admin paths
-  if (!user && request.nextUrl.pathname.startsWith('/admin')) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+  if (!user && pathname.startsWith('/admin')) {
+    return redirectWithSession(request, '/login', supabaseResponse)
+  }
+
+  if (!user && isOnboardingPath(pathname)) {
+    return redirectWithSession(request, '/login', supabaseResponse)
+  }
+
+  if (user && !shouldSkipOnboardingCheck(pathname)) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('onboarding_completed')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    const onboardingCompleted = profile?.onboarding_completed ?? false
+
+    if (!onboardingCompleted && isDashboardPath(pathname)) {
+      return redirectWithSession(request, ONBOARDING_PATH, supabaseResponse)
+    }
+
+    if (onboardingCompleted && isOnboardingPath(pathname)) {
+      return redirectWithSession(request, '/collection', supabaseResponse)
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

@@ -32,6 +32,13 @@ export async function getOnboardingOptionsForQuestion(
   return onboardingOptionRepo.findByQuestionId(supabase, questionId, options);
 }
 
+export async function getOnboardingOptionsByIds(
+  supabase: SupabaseClient,
+  ids: string[],
+): Promise<OnboardingOption[]> {
+  return onboardingOptionRepo.findByIds(supabase, ids);
+}
+
 export async function getOnboardingOptionById(
   supabase: SupabaseClient,
   id: string,
