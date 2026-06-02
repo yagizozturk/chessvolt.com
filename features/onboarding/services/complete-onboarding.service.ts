@@ -7,7 +7,7 @@
 import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboarding-questions";
 import { getOnboardingOptionsByIds } from "@/features/onboarding-option/services/onboarding-option.service";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
-import { getOnboardingQuestionBySlug } from "@/features/onboarding-question/services/onboarding-question.service";
+import { getActiveOnboardingQuestions } from "@/features/onboarding-question/services/onboarding-question.service";
 import * as profileRepo from "@/features/profile/repository/profile.repository";
 import { saveUserOnboardingAnswer } from "@/features/user-onboarding-answer/services/user-onboarding-answer.service";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -22,21 +22,26 @@ export async function completeOnboarding(
   optionIds: string[],
 ): Promise<CompleteOnboardingResult> {
   const trimmedIds = optionIds.map((id) => id.trim()).filter(Boolean);
-  if (trimmedIds.length !== 2) {
-    return { success: false, error: "Please answer both onboarding questions." };
+  if (trimmedIds.length === 0) {
+    return { success: false, error: "Please answer all onboarding questions." };
   }
 
-  const [chessQuestion, improvementQuestion] = await Promise.all([
-    getOnboardingQuestionBySlug(supabase, ONBOARDING_QUESTION_SLUG.chessFamiliarity),
-    getOnboardingQuestionBySlug(supabase, ONBOARDING_QUESTION_SLUG.improvementGoal),
-  ]);
-
-  if (!chessQuestion?.isActive || !improvementQuestion?.isActive) {
+  const activeQuestions = await getActiveOnboardingQuestions(supabase);
+  if (activeQuestions.length === 0) {
     return { success: false, error: "Onboarding is not available right now. Please try again later." };
   }
 
-  const options = await getOnboardingOptionsByIds(supabase, trimmedIds);
-  if (options.length !== trimmedIds.length) {
+  if (trimmedIds.length !== activeQuestions.length) {
+    return { success: false, error: "Please answer all onboarding questions." };
+  }
+
+  const uniqueIds = [...new Set(trimmedIds)];
+  if (uniqueIds.length !== trimmedIds.length) {
+    return { success: false, error: "Please select only one answer per onboarding question." };
+  }
+
+  const options = await getOnboardingOptionsByIds(supabase, uniqueIds);
+  if (options.length !== activeQuestions.length) {
     return { success: false, error: "One or more selected answers are invalid." };
   }
 
@@ -45,11 +50,34 @@ export async function completeOnboarding(
     return { success: false, error: "One or more selected answers are no longer available." };
   }
 
-  const chessOption = findOptionForQuestion(options, chessQuestion.id);
-  const improvementOption = findOptionForQuestion(options, improvementQuestion.id);
+  const activeQuestionIds = new Set(activeQuestions.map((question) => question.id));
+  const optionOutsideOnboarding = options.find((option) => !activeQuestionIds.has(option.questionId));
+  if (optionOutsideOnboarding) {
+    return { success: false, error: "One or more selected answers are invalid." };
+  }
 
-  if (!chessOption || !improvementOption) {
-    return { success: false, error: "Please select one answer for each onboarding question." };
+  const optionByQuestionId = new Map<string, OnboardingOption>();
+  for (const option of options) {
+    if (optionByQuestionId.has(option.questionId)) {
+      return { success: false, error: "Please select only one answer per onboarding question." };
+    }
+    optionByQuestionId.set(option.questionId, option);
+  }
+
+  if (optionByQuestionId.size !== activeQuestions.length) {
+    return { success: false, error: "Please answer all onboarding questions." };
+  }
+
+  const chessQuestion = activeQuestions.find(
+    (question) => question.slug === ONBOARDING_QUESTION_SLUG.chessFamiliarity,
+  );
+  if (!chessQuestion) {
+    return { success: false, error: "Onboarding is not available right now. Please try again later." };
+  }
+
+  const chessOption = optionByQuestionId.get(chessQuestion.id);
+  if (!chessOption) {
+    return { success: false, error: "Please answer all onboarding questions." };
   }
 
   if (chessOption.initialRating == null) {
@@ -59,7 +87,7 @@ export async function completeOnboarding(
     };
   }
 
-  for (const option of [chessOption, improvementOption]) {
+  for (const option of options) {
     const saved = await saveUserOnboardingAnswer(supabase, {
       userId,
       questionId: option.questionId,
@@ -80,8 +108,4 @@ export async function completeOnboarding(
   }
 
   return { success: true };
-}
-
-function findOptionForQuestion(options: OnboardingOption[], questionId: string): OnboardingOption | null {
-  return options.find((option) => option.questionId === questionId) ?? null;
 }
