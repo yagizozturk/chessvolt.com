@@ -3,6 +3,7 @@ import {
   parseCollectionDifficulty,
   type CollectionDifficulty,
 } from "@/features/collection/types/collection-difficulty";
+import { parseCollectionType, type CollectionType } from "@/features/collection/types/collection-type";
 
 import type { Collection } from "@/features/collection/types/collection";
 
@@ -14,6 +15,7 @@ export type DbCollection = {
   cover_image_url: string;
   cover_image_color: string;
   difficulty: CollectionDifficulty;
+  collection_type: CollectionType;
   sort_order: number;
   is_active: boolean;
   created_by: string | null;
@@ -30,6 +32,7 @@ export function toCollection(db: DbCollection): Collection {
     coverImageUrl: db.cover_image_url,
     coverImageColor: db.cover_image_color,
     difficulty: parseCollectionDifficulty(db.difficulty) ?? DEFAULT_COLLECTION_DIFFICULTY,
+    collectionType: parseCollectionType(db.collection_type) ?? "admin",
     sortOrder: db.sort_order,
     isActive: db.is_active,
     createdBy: db.created_by,

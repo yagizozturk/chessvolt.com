@@ -10,6 +10,7 @@ import {
   DEFAULT_COLLECTION_DIFFICULTY,
   type CollectionDifficulty,
 } from "@/features/collection/types/collection-difficulty";
+import type { CollectionType } from "@/features/collection/types/collection-type";
 import { slugify } from "@/lib/utils/slugify";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -56,6 +57,7 @@ type DbCollectionWithRiddleCount = {
   cover_image_url: string;
   cover_image_color: string;
   difficulty: CollectionDifficulty;
+  collection_type: CollectionType;
   sort_order: number;
   is_active: boolean;
   created_by: string | null;
@@ -144,6 +146,7 @@ export type CreateCollectionInput = {
   coverImageUrl: string;
   coverImageColor: string;
   difficulty?: CollectionDifficulty;
+  collectionType?: CollectionType;
   sortOrder?: number;
   isActive?: boolean;
   createdBy?: string | null;
@@ -162,6 +165,7 @@ export async function create(
       cover_image_url: input.coverImageUrl,
       cover_image_color: input.coverImageColor,
       difficulty: input.difficulty ?? DEFAULT_COLLECTION_DIFFICULTY,
+      collection_type: input.collectionType ?? "admin",
       sort_order: input.sortOrder ?? 0,
       is_active: input.isActive ?? true,
       created_by: input.createdBy ?? null,
@@ -184,6 +188,7 @@ export type UpdateCollectionInput = {
   coverImageUrl?: string;
   coverImageColor?: string;
   difficulty?: CollectionDifficulty;
+  collectionType?: CollectionType;
   sortOrder?: number;
   isActive?: boolean;
 };
@@ -200,6 +205,7 @@ export async function update(
   if (input.coverImageUrl !== undefined) updates.cover_image_url = input.coverImageUrl;
   if (input.coverImageColor !== undefined) updates.cover_image_color = input.coverImageColor;
   if (input.difficulty !== undefined) updates.difficulty = input.difficulty;
+  if (input.collectionType !== undefined) updates.collection_type = input.collectionType;
   if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
 
