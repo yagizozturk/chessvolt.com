@@ -17,6 +17,13 @@ export async function getActiveCollections(supabase: SupabaseClient): Promise<Co
   return collectionRepo.findAllActive(supabase);
 }
 
+export async function getMyCustomCollections(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<Collection[]> {
+  return collectionRepo.findCustomByUserId(supabase, userId);
+}
+
 export async function getActiveCollectionsWithRiddleCount(
   supabase: SupabaseClient,
 ): Promise<CollectionWithRiddleCount[]> {
@@ -63,4 +70,25 @@ export async function deleteCollection(
   id: string,
 ): Promise<boolean> {
   return collectionRepo.remove(supabase, id);
+}
+
+export async function createMyCustomCollection(
+  supabase: SupabaseClient,
+  input: collectionRepo.CreateCustomCollectionForUserInput,
+): Promise<Collection | null> {
+  return collectionRepo.createCustomForUser(supabase, input);
+}
+
+export async function updateMyCustomCollection(
+  supabase: SupabaseClient,
+  input: { id: string; userId: string; title: string; description?: string },
+): Promise<Collection | null> {
+  return collectionRepo.updateCustomForUser(supabase, input);
+}
+
+export async function deleteMyCustomCollection(
+  supabase: SupabaseClient,
+  input: { id: string; userId: string },
+): Promise<boolean> {
+  return collectionRepo.removeCustomForUser(supabase, input);
 }

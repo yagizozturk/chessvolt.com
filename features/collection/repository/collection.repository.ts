@@ -49,6 +49,25 @@ export async function findAllActive(supabase: SupabaseClient): Promise<Collectio
   return (data ?? []).map(toCollection);
 }
 
+export async function findCustomByUserId(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<Collection[]> {
+  const { data, error } = await supabase
+    .from("collections")
+    .select("*")
+    .eq("created_by", userId)
+    .eq("collection_type", "custom")
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    console.error("collection.repository.findCustomByUserId error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toCollection);
+}
+
 type DbCollectionWithRiddleCount = {
   id: string;
   title: string;
@@ -152,6 +171,14 @@ export type CreateCollectionInput = {
   createdBy?: string | null;
 };
 
+export type CreateCustomCollectionForUserInput = {
+  title: string;
+  description?: string;
+  createdBy: string;
+  coverImageUrl: string;
+  coverImageColor: string;
+};
+
 export async function create(
   supabase: SupabaseClient,
   input: CreateCollectionInput,
@@ -175,6 +202,36 @@ export async function create(
 
   if (error) {
     console.error("collection.repository.create error:", error);
+    return null;
+  }
+
+  return toCollection(data);
+}
+
+export async function createCustomForUser(
+  supabase: SupabaseClient,
+  input: CreateCustomCollectionForUserInput,
+): Promise<Collection | null> {
+  const description = input.description?.trim() ?? "";
+
+  const { data, error } = await supabase
+    .from("collections")
+    .insert({
+      title: input.title.trim(),
+      slug: slugFromTitle(input.title),
+      description,
+      cover_image_url: input.coverImageUrl,
+      cover_image_color: input.coverImageColor,
+      difficulty: null,
+      collection_type: "custom",
+      is_active: true,
+      created_by: input.createdBy,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("collection.repository.createCustomForUser error:", error);
     return null;
   }
 
@@ -233,4 +290,51 @@ export async function remove(supabase: SupabaseClient, id: string): Promise<bool
   }
 
   return true;
+}
+
+export async function updateCustomForUser(
+  supabase: SupabaseClient,
+  input: { id: string; userId: string; title: string; description?: string },
+): Promise<Collection | null> {
+  const description = input.description?.trim() ?? "";
+
+  const { data, error } = await supabase
+    .from("collections")
+    .update({
+      title: input.title.trim(),
+      slug: slugFromTitle(input.title),
+      description,
+    })
+    .eq("id", input.id)
+    .eq("created_by", input.userId)
+    .eq("collection_type", "custom")
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    console.error("collection.repository.updateCustomForUser error:", error);
+    return null;
+  }
+
+  if (!data) return null;
+  return toCollection(data);
+}
+
+export async function removeCustomForUser(
+  supabase: SupabaseClient,
+  input: { id: string; userId: string },
+): Promise<boolean> {
+  const { error, count } = await supabase
+    .from("collections")
+    .delete({ count: "exact" })
+    .eq("id", input.id)
+    .eq("created_by", input.userId)
+    .eq("collection_type", "custom");
+
+  if (error) {
+    console.error("collection.repository.removeCustomForUser error:", error);
+    return false;
+  }
+
+  return Boolean((count ?? 0) > 0);
 }
