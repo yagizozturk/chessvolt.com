@@ -4,4 +4,5 @@ export type ProfileRole = "user" | "admin";
 export type Profile = {
   username: string | null;
   role: ProfileRole;
+  onboardingCompleted: boolean;
 } | null;
