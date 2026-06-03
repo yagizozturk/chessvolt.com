@@ -19,8 +19,8 @@ export function Information({
   step = "Volt Coaching ",
   title = "Master Your Game with Volt",
   description = "Train with Volt, a smart chess companion that explains moves, guides your decisions, and helps you improve one idea at a time. From openings to critical positions, it turns every lesson into a clear step toward better chess.",
-  imageSrc = "/images/hero/bg-volt-confetti.png",
-  imageAlt = "Volt Ninja",
+  imageSrc = "/images/hero/bg-lets-meet.png",
+  imageAlt = "Volt Coach",
 }: InformationProps) {
   return (
     <div className="container mx-auto max-w-5xl px-4 py-10 md:px-6">
@@ -30,7 +30,7 @@ export function Information({
           <h2 className="text-secondary mt-4 text-4xl font-bold">{title}</h2>
           <p className="text-secondary/80 text-lg leading-relaxed">{description}</p>
         </div>
-        <div className="-mt-12 overflow-hidden rounded-full">
+        <div className="-mt-14 overflow-hidden rounded-full">
           <Image src={imageSrc} alt={imageAlt} width={300} height={300} priority={false} />
         </div>
       </div>
