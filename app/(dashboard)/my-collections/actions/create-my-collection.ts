@@ -1,5 +1,7 @@
 "use server";
 
+import { redirect } from "next/navigation";
+
 import { createMyCustomCollection } from "@/features/collection/services/collection.service";
 
 import {
@@ -17,7 +19,7 @@ export async function createMyCollectionAction(formData: FormData): Promise<void
 
   if (!title) return;
 
-  await createMyCustomCollection(supabase, {
+  const collection = await createMyCustomCollection(supabase, {
     title,
     description,
     createdBy: user.id,
@@ -26,4 +28,8 @@ export async function createMyCollectionAction(formData: FormData): Promise<void
   });
 
   revalidateMyCollectionsPage();
+
+  if (collection) {
+    redirect("/my-collections");
+  }
 }

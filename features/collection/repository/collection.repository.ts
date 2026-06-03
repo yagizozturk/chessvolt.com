@@ -68,6 +68,29 @@ export async function findCustomByUserId(
   return (data ?? []).map(toCollection);
 }
 
+export async function findCustomByUserIdWithRiddleCount(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<CollectionWithRiddleCount[]> {
+  const { data, error } = await supabase
+    .from("collections")
+    .select("*, riddle_collections(count)")
+    .eq("created_by", userId)
+    .eq("collection_type", "custom")
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    console.error("collection.repository.findCustomByUserIdWithRiddleCount error:", error);
+    return [];
+  }
+
+  return (data ?? []).map((row) => {
+    const db = row as DbCollectionWithRiddleCount;
+    const riddleCount = db.riddle_collections?.[0]?.count ?? 0;
+    return { ...toCollection(db), riddleCount };
+  });
+}
+
 type DbCollectionWithRiddleCount = {
   id: string;
   title: string;

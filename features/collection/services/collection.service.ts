@@ -24,6 +24,13 @@ export async function getMyCustomCollections(
   return collectionRepo.findCustomByUserId(supabase, userId);
 }
 
+export async function getMyCustomCollectionsWithRiddleCount(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<CollectionWithRiddleCount[]> {
+  return collectionRepo.findCustomByUserIdWithRiddleCount(supabase, userId);
+}
+
 export async function getActiveCollectionsWithRiddleCount(
   supabase: SupabaseClient,
 ): Promise<CollectionWithRiddleCount[]> {

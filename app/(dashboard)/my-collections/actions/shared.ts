@@ -11,4 +11,5 @@ export async function getMyCollectionsActionContext() {
 
 export function revalidateMyCollectionsPage() {
   revalidatePath("/my-collections");
+  revalidatePath("/my-collections/create");
 }
