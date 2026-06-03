@@ -1,3 +1,4 @@
+import { ChessKnight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -13,7 +14,7 @@ export function Hero() {
             <span className="text-primary decoration-foreground/20 text-8xl underline underline-offset-8">
               Why
             </span>{" "}
-            <br /> Behind Moves
+            <br /> And Repeat
           </h1>
           <p className="text-foreground text-xl leading-relaxed">
             Learn openings, solve riddles from real famous games, <br /> and train with interactive chess games that{" "}
@@ -22,12 +23,15 @@ export function Hero() {
           </p>
           <div className="flex w-full flex-wrap justify-end">
             <Button variant="volt" size="lg" asChild>
-              <Link href="/collection">Start Playing</Link>
+              <Link href="/collection" className="flex items-center gap-2">
+                <ChessKnight className="h-4 w-4" />
+                Start Playing
+              </Link>
             </Button>
           </div>
         </div>
         <div className="mt-[-50px] flex-1">
-          <Image src="/images/hero/bg-landing-page.png" alt="ChessVolt Dashboard Preview" width={600} height={503} />
+          <Image src="/images/hero/bg-hero-volt-play.png" alt="ChessVolt Dashboard Preview" width={963} height={800} />
         </div>
       </div>
     </div>
