@@ -8,6 +8,10 @@ import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
+import {
+  AddToMyCollectionPicker,
+  type MyCollectionOption,
+} from "@/features/riddle/components/add-to-my-collection-picker";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
@@ -30,12 +34,18 @@ type RiddleControllerProps = {
   riddle: Riddle;
   nextRiddleId?: string | null;
   parentCollectionUrl?: string;
+  canSaveToMyCollections?: boolean;
+  myCollections?: MyCollectionOption[];
+  savedMyCollectionIds?: string[];
 };
 
 export default function RiddleController({
   riddle,
   nextRiddleId = null,
   parentCollectionUrl = "/",
+  canSaveToMyCollections = false,
+  myCollections = [],
+  savedMyCollectionIds = [],
 }: RiddleControllerProps) {
   const sequenceId = riddle.moveSequence.id;
   const router = useRouter();
@@ -222,6 +232,13 @@ export default function RiddleController({
             <GoalViewer goals={sortedGoals} />
           </div>
           <div className="mt-auto" data-tour="hint-button">
+            {canSaveToMyCollections ? (
+              <AddToMyCollectionPicker
+                riddleId={riddle.id}
+                collections={myCollections}
+                savedCollectionIds={savedMyCollectionIds}
+              />
+            ) : null}
             {!isCompleted ? (
               <div>
                 <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="w-full">
