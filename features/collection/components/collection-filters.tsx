@@ -1,39 +1,43 @@
-import { Button } from "@/components/ui/button";
-import {
-  RIDDLE_DIFFICULTY_LEVELS,
-  formatRiddleDifficultyLabel,
-} from "@/features/riddle/types/riddle-difficulty";
+"use client";
 
-export const DIFFICULTY_OPTIONS = [
-  { value: "all", label: "All difficulties" },
-  ...RIDDLE_DIFFICULTY_LEVELS.map((difficulty) => ({
-    value: String(difficulty),
-    label: `${difficulty} — ${formatRiddleDifficultyLabel(difficulty)}`,
-  })),
-];
+import { Button } from "@/components/ui/button";
+import { COLLECTION_DIFFICULTY_BAND_OPTIONS } from "@/features/collection/utils/collection-filter.utils";
+import type { Theme } from "@/features/theme/types/theme";
+
+const selectClassName =
+  "border-input focus-visible:ring-primary/50 h-9 w-full rounded-xl border-2 bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-3";
 
 type CollectionFiltersProps = {
-  gameTypeOptions: string[];
-  selectedDifficulty: string;
-  selectedGameType: string;
+  themeOptions: Theme[];
+  difficultyBand: string;
+  themeSlug: string;
+  onDifficultyBandChange: (value: string) => void;
+  onThemeSlugChange: (value: string) => void;
+  onClear?: () => void;
 };
 
 export function CollectionFilters({
-  gameTypeOptions,
-  selectedDifficulty,
-  selectedGameType,
+  themeOptions,
+  difficultyBand,
+  themeSlug,
+  onDifficultyBandChange,
+  onThemeSlugChange,
+  onClear,
 }: CollectionFiltersProps) {
   return (
-    <form className="bg-muted/50 flex flex-col gap-3 rounded-xl p-4 md:flex-row md:items-center">
-      <div className="md:w-56">
+    <div className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 md:flex-row md:items-end">
+      <div className="flex min-w-0 flex-1 flex-col gap-1 md:max-w-56">
+        <label htmlFor="collection-difficulty" className="text-muted-foreground text-xs font-medium">
+          Difficulty
+        </label>
         <select
           id="collection-difficulty"
-          name="difficulty"
-          defaultValue={selectedDifficulty}
+          value={difficultyBand}
+          onChange={(e) => onDifficultyBandChange(e.target.value)}
           aria-label="Filter by difficulty"
-          className="border-input focus-visible:ring-primary/50 h-9 w-full rounded-xl border-2 bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-3"
+          className={selectClassName}
         >
-          {DIFFICULTY_OPTIONS.map((option) => (
+          {COLLECTION_DIFFICULTY_BAND_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -41,28 +45,34 @@ export function CollectionFilters({
         </select>
       </div>
 
-      <div className="md:w-64">
+      <div className="flex min-w-0 flex-1 flex-col gap-1 md:max-w-64">
+        <label htmlFor="collection-theme" className="text-muted-foreground text-xs font-medium">
+          Theme
+        </label>
         <select
-          id="collection-game-type"
-          name="gameType"
-          defaultValue={selectedGameType}
-          aria-label="Filter by game type"
-          className="border-input focus-visible:ring-primary/50 h-9 w-full rounded-xl border-2 bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-3"
+          id="collection-theme"
+          value={themeSlug}
+          onChange={(e) => onThemeSlugChange(e.target.value)}
+          aria-label="Filter by theme"
+          className={selectClassName}
+          disabled={themeOptions.length === 0}
         >
-          <option value="all">All game types</option>
-          {gameTypeOptions.map((gameType) => (
-            <option key={gameType} value={gameType}>
-              {gameType}
+          <option value="all">All themes</option>
+          {themeOptions.map((theme) => (
+            <option key={theme.slug} value={theme.slug}>
+              {theme.title}
             </option>
           ))}
         </select>
       </div>
 
-      <div className="flex justify-end md:ml-auto">
-        <Button type="submit" variant="volt">
-          Apply
-        </Button>
-      </div>
-    </form>
+      {onClear && (
+        <div className="flex justify-end md:ml-auto">
+          <Button type="button" variant="outline" size="sm" onClick={onClear}>
+            Clear filters
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import { CollectionCard } from "@/features/collection/components/collection-card";
+import { CollectionListWithFilters } from "@/features/collection/components/collection-list-with-filters";
 import { getActiveCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
@@ -8,18 +8,7 @@ export default async function CollectionPage() {
 
   return (
     <div className="container mx-auto max-w-5xl px-4 pt-6 pb-16">
-      <div className="mt-12">
-        {collections.length === 0 && (
-          <div className="bg-muted/50 rounded-xl px-4 py-8 text-center">
-            <p className="text-muted-foreground">No collections available yet.</p>
-          </div>
-        )}
-        <div className="grid grid-cols-2 gap-6">
-          {collections.map((collection) => (
-            <CollectionCard key={collection.id} collection={collection} />
-          ))}
-        </div>
-      </div>
+      <CollectionListWithFilters collections={collections} emptyMessage="No collections available yet." />
     </div>
   );
 }
