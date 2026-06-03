@@ -1,8 +1,8 @@
 "use client";
 
-import { LogIn, type LucideIcon, Menu, UserPlus, Zap } from "lucide-react";
+import { ChessKnight, LogIn, type LucideIcon, Menu, Zap } from "lucide-react";
 import Link from "next/link";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -13,13 +13,11 @@ type NavItem = {
   label: string;
   icon?: LucideIcon;
   iconPosition?: "left" | "right";
-  isCta?: boolean;
 };
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/login", label: "Sign in", icon: LogIn, iconPosition: "left" },
-  { href: "/signup", label: "Sign up", icon: UserPlus, iconPosition: "left" },
-  { href: "/collection", label: "Start Playing", isCta: true },
+  { href: "/collection", label: "Start Playing", icon: ChessKnight },
 ];
 
 function BrandLogo({ onNavigate, variant = "header" }: { onNavigate?: () => void; variant?: "header" | "sheet" }) {
@@ -40,61 +38,35 @@ function BrandLogo({ onNavigate, variant = "header" }: { onNavigate?: () => void
   );
 }
 
-function DesktopNavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) {
+function NavLinkContent({ item }: { item: NavItem }) {
   const Icon = item.icon;
   const pos = item.iconPosition ?? "left";
-  const content = (
+  return (
     <>
       {Icon && pos === "left" && <Icon className="h-4 w-4" />}
       {item.label}
       {Icon && pos === "right" && <Icon className="h-4 w-4" />}
     </>
   );
+}
 
-  if (item.isCta) {
-    return (
-      <Button variant="volt" asChild>
-        <Link href={item.href} className="flex items-center gap-2" onClick={onNavigate}>
-          {content}
-        </Link>
-      </Button>
-    );
-  }
-
+function DesktopNavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) {
   return (
-    <Link
-      href={item.href}
-      onClick={onNavigate}
-      className="hover:text-primary text-foreground/80 flex items-center gap-2 p-2 text-sm font-medium transition-colors"
-    >
-      {Icon && <Icon className="h-5 w-5" />}
-      {item.label}
-    </Link>
+    <Button variant="volt" asChild>
+      <Link href={item.href} className="flex items-center gap-2" onClick={onNavigate}>
+        <NavLinkContent item={item} />
+      </Link>
+    </Button>
   );
 }
 
 function MobileNavLink({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
-  const Icon = item.icon;
-
-  if (item.isCta) {
-    return (
-      <Button className="bg-primary text-primary-foreground h-12 w-full text-base font-semibold" asChild>
-        <Link href={item.href} className="flex items-center justify-center gap-2" onClick={onNavigate}>
-          {item.label}
-        </Link>
-      </Button>
-    );
-  }
-
   return (
-    <Link
-      href={item.href}
-      onClick={onNavigate}
-      className="hover:text-primary flex items-center gap-2 py-2 text-lg font-medium text-white/80 transition-colors"
-    >
-      {Icon && <Icon className="h-5 w-5" />}
-      {item.label}
-    </Link>
+    <Button variant="volt" className="h-12 w-full text-base" asChild>
+      <Link href={item.href} className="flex items-center justify-center gap-2" onClick={onNavigate}>
+        <NavLinkContent item={item} />
+      </Link>
+    </Button>
   );
 }
 
@@ -114,6 +86,7 @@ export function Navbar() {
         </nav>
 
         <div className="md:hidden">
+          {/* Mobile menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button
@@ -131,12 +104,9 @@ export function Navbar() {
                 <BrandLogo variant="sheet" onNavigate={closeSheet} />
               </div>
 
-              <nav className="flex flex-col gap-6" aria-label="Mobile menu">
+              <nav className="flex flex-col gap-4" aria-label="Mobile menu">
                 {NAV_ITEMS.map((item) => (
-                  <Fragment key={item.href}>
-                    {item.isCta && <div className="my-2 h-px bg-white/10" aria-hidden />}
-                    <MobileNavLink item={item} onNavigate={closeSheet} />
-                  </Fragment>
+                  <MobileNavLink key={item.href} item={item} onNavigate={closeSheet} />
                 ))}
               </nav>
             </SheetContent>
