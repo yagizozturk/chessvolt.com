@@ -4,6 +4,7 @@
  * Responsibility: Collection business logic and orchestration.
  * - Uses repository (does not touch Supabase directly)
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as collectionRepo from "@/features/collection/repository/collection.repository";
 import type {
@@ -12,7 +13,6 @@ import type {
   CollectionWithRiddleCountAndThemes,
 } from "@/features/collection/types/collection";
 import { getTopContentThemesGroupedByContentId } from "@/features/content-theme/services/content-theme.service";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 async function attachTopCollectionThemes(
   supabase: SupabaseClient,
@@ -40,10 +40,7 @@ export async function getActiveCollections(supabase: SupabaseClient): Promise<Co
   return collectionRepo.findAllActive(supabase);
 }
 
-export async function getMyCustomCollections(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<Collection[]> {
+export async function getMyCustomCollections(supabase: SupabaseClient, userId: string): Promise<Collection[]> {
   return collectionRepo.findCustomByUserId(supabase, userId);
 }
 
@@ -75,23 +72,15 @@ export async function getActiveCollectionsWithRiddleCountAndThemes(
   return attachTopCollectionThemes(supabase, collections);
 }
 
-export async function getAllCollectionsWithRiddleCount(
-  supabase: SupabaseClient,
-): Promise<CollectionWithRiddleCount[]> {
+export async function getAllCollectionsWithRiddleCount(supabase: SupabaseClient): Promise<CollectionWithRiddleCount[]> {
   return collectionRepo.findAllWithRiddleCount(supabase);
 }
 
-export async function getCollectionById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<Collection | null> {
+export async function getCollectionById(supabase: SupabaseClient, id: string): Promise<Collection | null> {
   return collectionRepo.findById(supabase, id);
 }
 
-export async function getCollectionBySlug(
-  supabase: SupabaseClient,
-  slug: string,
-): Promise<Collection | null> {
+export async function getCollectionBySlug(supabase: SupabaseClient, slug: string): Promise<Collection | null> {
   return collectionRepo.findBySlug(supabase, slug);
 }
 
@@ -110,10 +99,7 @@ export async function updateCollection(
   return collectionRepo.update(supabase, id, input);
 }
 
-export async function deleteCollection(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<boolean> {
+export async function deleteCollection(supabase: SupabaseClient, id: string): Promise<boolean> {
   return collectionRepo.remove(supabase, id);
 }
 

@@ -4,16 +4,13 @@
  * Responsibility: Business logic for content_themes join rows.
  * - Uses repository (does not touch Supabase directly)
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as contentThemeRepo from "@/features/content-theme/repository/content-theme.repository";
 import type { ContentTheme, ContentThemeWithTheme } from "@/features/content-theme/types/content-theme";
 import type { ContentType } from "@/features/content-theme/types/content-type";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getContentThemeById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<ContentTheme | null> {
+export async function getContentThemeById(supabase: SupabaseClient, id: string): Promise<ContentTheme | null> {
   return contentThemeRepo.findById(supabase, id);
 }
 
@@ -28,9 +25,7 @@ export async function getAllContentThemes(supabase: SupabaseClient): Promise<Con
   return contentThemeRepo.findAll(supabase);
 }
 
-export async function getAllContentThemesWithTheme(
-  supabase: SupabaseClient,
-): Promise<ContentThemeWithTheme[]> {
+export async function getAllContentThemesWithTheme(supabase: SupabaseClient): Promise<ContentThemeWithTheme[]> {
   return contentThemeRepo.findAllWithTheme(supabase);
 }
 
@@ -71,10 +66,7 @@ export async function getTopContentThemesGroupedByContentId(
   return grouped;
 }
 
-export async function getContentThemesForTheme(
-  supabase: SupabaseClient,
-  themeId: string,
-): Promise<ContentTheme[]> {
+export async function getContentThemesForTheme(supabase: SupabaseClient, themeId: string): Promise<ContentTheme[]> {
   return contentThemeRepo.findByThemeId(supabase, themeId);
 }
 

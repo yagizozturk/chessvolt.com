@@ -4,9 +4,9 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ContentThemeList } from "@/features/content-theme/components/content-theme-list";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
+import { ThemeBadge } from "@/features/theme/components/theme-badge";
 
 type CollectionCardProps = {
   collection: CollectionWithRiddleCountAndThemes;
@@ -31,6 +31,9 @@ export function CollectionCard({ collection }: CollectionCardProps) {
               <ChessPawn data-icon="inline-start" />
               {collection.riddleCount} {collection.riddleCount === 1 ? "riddle" : "riddles"}
             </Badge>
+            {collection.themes.map((item) => (
+              <ThemeBadge key={item.id} theme={item.theme} />
+            ))}
           </div>
         </div>
         <div className="overflow-hidden">
@@ -40,7 +43,6 @@ export function CollectionCard({ collection }: CollectionCardProps) {
       <div className="flex flex-1 flex-col gap-2 p-6">
         <h2 className="text-3xl font-bold">{collection.title}</h2>
         <p className="text-muted-foreground text-base">{collection.description}</p>
-        {collection.themes.length > 0 ? <ContentThemeList items={collection.themes} showWeight={false} /> : null}
         <div className="mt-auto flex items-center gap-3">
           <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
             Play
