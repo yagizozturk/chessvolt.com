@@ -113,6 +113,7 @@ export async function findAllActiveWithRiddleCount(
     .from("collections")
     .select("*, riddle_collections(count)")
     .eq("is_active", true)
+    .eq("collection_type", "admin")
     .order("sort_order", { ascending: true })
     .order("title", { ascending: true });
 
