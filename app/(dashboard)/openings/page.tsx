@@ -54,8 +54,8 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
             <Image
               src="/images/openings/bg-openings.png"
               alt="Opening"
-              width={250}
-              height={140}
+              width={268}
+              height={200}
               className="object-contain"
             />
           </div>
