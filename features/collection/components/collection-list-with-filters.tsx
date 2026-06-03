@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import { CollectionFilters } from "@/features/collection/components/collection-filters";
@@ -17,7 +17,6 @@ type CollectionListWithFiltersProps = {
   collections: CollectionWithRiddleCountAndThemes[];
   emptyMessage: string;
   noResultsMessage?: string;
-  toolbar?: ReactNode;
   className?: string;
 };
 
@@ -25,7 +24,6 @@ export function CollectionListWithFilters({
   collections,
   emptyMessage,
   noResultsMessage = "No collections match your filters.",
-  toolbar,
   className,
 }: CollectionListWithFiltersProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,7 +45,6 @@ export function CollectionListWithFilters({
   if (collections.length === 0) {
     return (
       <div className={className}>
-        {toolbar && <div className="mb-6 flex justify-end">{toolbar}</div>}
         <div className="bg-muted/50 rounded-xl px-4 py-8 text-center">
           <p className="text-muted-foreground">{emptyMessage}</p>
         </div>
@@ -57,29 +54,26 @@ export function CollectionListWithFilters({
 
   return (
     <div className={cn("flex flex-col gap-6", className)}>
-      <div className={cn("flex flex-col gap-4", toolbar && "lg:flex-row lg:items-start lg:justify-between")}>
-        {showFilters && (
-          <CollectionFilters
-            themeOptions={themeOptions}
-            searchQuery={searchQuery}
-            difficultyBand={difficultyBand}
-            themeSlug={themeSlug}
-            onSearchQueryChange={setSearchQuery}
-            onDifficultyBandChange={(value) => setDifficultyBand(value as CollectionDifficultyBand)}
-            onThemeSlugChange={setThemeSlug}
-            onClear={
-              hasActiveFilters
-                ? () => {
-                    setSearchQuery("");
-                    setDifficultyBand("all");
-                    setThemeSlug("all");
-                  }
-                : undefined
-            }
-          />
-        )}
-        {toolbar && <div className="flex shrink-0 justify-end lg:pt-6">{toolbar}</div>}
-      </div>
+      {showFilters && (
+        <CollectionFilters
+          themeOptions={themeOptions}
+          searchQuery={searchQuery}
+          difficultyBand={difficultyBand}
+          themeSlug={themeSlug}
+          onSearchQueryChange={setSearchQuery}
+          onDifficultyBandChange={(value) => setDifficultyBand(value as CollectionDifficultyBand)}
+          onThemeSlugChange={setThemeSlug}
+          onClear={
+            hasActiveFilters
+              ? () => {
+                  setSearchQuery("");
+                  setDifficultyBand("all");
+                  setThemeSlug("all");
+                }
+              : undefined
+          }
+        />
+      )}
 
       {hasActiveFilters && (
         <p className="text-muted-foreground text-xs">
