@@ -28,18 +28,21 @@ export function CollectionListWithFilters({
   toolbar,
   className,
 }: CollectionListWithFiltersProps) {
+  const [searchQuery, setSearchQuery] = useState("");
   const [difficultyBand, setDifficultyBand] = useState<CollectionDifficultyBand>("all");
   const [themeSlug, setThemeSlug] = useState("all");
 
   const themeOptions = useMemo(() => getThemeFilterOptions(collections), [collections]);
 
+  const filterState = { searchQuery, difficultyBand, themeSlug };
+
   const filteredCollections = useMemo(
-    () => filterCollections(collections, { difficultyBand, themeSlug }),
-    [collections, difficultyBand, themeSlug],
+    () => filterCollections(collections, filterState),
+    [collections, searchQuery, difficultyBand, themeSlug],
   );
 
   const showFilters = collections.length > 0;
-  const hasActiveFilters = hasActiveCollectionFilters({ difficultyBand, themeSlug });
+  const hasActiveFilters = hasActiveCollectionFilters(filterState);
 
   if (collections.length === 0) {
     return (
@@ -58,13 +61,16 @@ export function CollectionListWithFilters({
         {showFilters && (
           <CollectionFilters
             themeOptions={themeOptions}
+            searchQuery={searchQuery}
             difficultyBand={difficultyBand}
             themeSlug={themeSlug}
+            onSearchQueryChange={setSearchQuery}
             onDifficultyBandChange={(value) => setDifficultyBand(value as CollectionDifficultyBand)}
             onThemeSlugChange={setThemeSlug}
             onClear={
               hasActiveFilters
                 ? () => {
+                    setSearchQuery("");
                     setDifficultyBand("all");
                     setThemeSlug("all");
                   }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { COLLECTION_DIFFICULTY_BAND_OPTIONS } from "@/features/collection/utils/collection-filter.utils";
 import type { Theme } from "@/features/theme/types/theme";
 
@@ -9,8 +10,10 @@ const selectClassName =
 
 type CollectionFiltersProps = {
   themeOptions: Theme[];
+  searchQuery: string;
   difficultyBand: string;
   themeSlug: string;
+  onSearchQueryChange: (value: string) => void;
   onDifficultyBandChange: (value: string) => void;
   onThemeSlugChange: (value: string) => void;
   onClear?: () => void;
@@ -18,14 +21,25 @@ type CollectionFiltersProps = {
 
 export function CollectionFilters({
   themeOptions,
+  searchQuery,
   difficultyBand,
   themeSlug,
+  onSearchQueryChange,
   onDifficultyBandChange,
   onThemeSlugChange,
   onClear,
 }: CollectionFiltersProps) {
   return (
-    <div className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 md:flex-row md:items-end">
+    <div className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 md:flex-row md:flex-wrap md:items-end">
+      <div className="flex min-w-0 flex-1 md:min-w-[12rem] md:basis-full lg:max-w-sm lg:basis-auto">
+        <Input
+          value={searchQuery}
+          onChange={(e) => onSearchQueryChange(e.target.value)}
+          placeholder="Search collections..."
+          aria-label="Search collections"
+        />
+      </div>
+
       <div className="flex min-w-0 flex-1 flex-col gap-1 md:max-w-56">
         <label htmlFor="collection-difficulty" className="text-muted-foreground text-xs font-medium">
           Difficulty

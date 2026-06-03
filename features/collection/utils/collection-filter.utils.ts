@@ -23,6 +23,7 @@ export const COLLECTION_DIFFICULTY_BAND_OPTIONS: { value: CollectionDifficultyBa
 ];
 
 export type CollectionFilterState = {
+  searchQuery: string;
   difficultyBand: CollectionDifficultyBand;
   themeSlug: string;
 };
@@ -50,6 +51,21 @@ export function getThemeFilterOptions(collections: CollectionWithRiddleCountAndT
   return [...themesBySlug.values()].sort((a, b) => a.title.localeCompare(b.title));
 }
 
+function matchesSearchQuery(collection: CollectionWithRiddleCountAndThemes, searchQuery: string): boolean {
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  if (!normalizedQuery) return true;
+
+  const searchableText = [
+    collection.title,
+    collection.description,
+    ...collection.themes.map((item) => item.theme.title),
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  return searchableText.includes(normalizedQuery);
+}
+
 export function filterCollections(
   collections: CollectionWithRiddleCountAndThemes[],
   filters: CollectionFilterState,
@@ -57,14 +73,19 @@ export function filterCollections(
   const themeSlug = filters.themeSlug.trim();
 
   return collections.filter((collection) => {
+    const matchesSearch = matchesSearchQuery(collection, filters.searchQuery);
     const matchesDifficulty = matchesDifficultyBand(collection.difficulty, filters.difficultyBand);
     const matchesTheme =
       themeSlug === "all" || themeSlug === "" || collection.themes.some((item) => item.theme.slug === themeSlug);
 
-    return matchesDifficulty && matchesTheme;
+    return matchesSearch && matchesDifficulty && matchesTheme;
   });
 }
 
 export function hasActiveCollectionFilters(filters: CollectionFilterState): boolean {
-  return filters.difficultyBand !== "all" || (filters.themeSlug !== "all" && filters.themeSlug.trim() !== "");
+  return (
+    filters.searchQuery.trim() !== "" ||
+    filters.difficultyBand !== "all" ||
+    (filters.themeSlug !== "all" && filters.themeSlug.trim() !== "")
+  );
 }
