@@ -36,11 +36,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   failed: "Could not add the riddle. Please try again.",
 };
 
-export function AddToMyCollectionPicker({
-  riddleId,
-  collections,
-  savedCollectionIds,
-}: AddToMyCollectionPickerProps) {
+export function AddToMyCollectionPicker({ riddleId, collections, savedCollectionIds }: AddToMyCollectionPickerProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [savedIds, setSavedIds] = useState(() => new Set(savedCollectionIds));
@@ -69,14 +65,8 @@ export function AddToMyCollectionPicker({
   };
 
   return (
-    <div className="mb-3">
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full"
-        onClick={() => setOpen(true)}
-        disabled={isPending}
-      >
+    <div className="mb-4">
+      <Button type="button" variant="voltGreen" className="w-full" onClick={() => setOpen(true)} disabled={isPending}>
         <FolderPlus data-icon="inline-start" />
         Add to my collection
       </Button>
