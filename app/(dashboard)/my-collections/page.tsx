@@ -3,12 +3,12 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { CollectionCard } from "@/features/collection/components/collection-card";
-import { getMyCustomCollectionsWithRiddleCount } from "@/features/collection/services/collection.service";
+import { getMyCustomCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export default async function MyCollectionsPage() {
   const { user, supabase } = await getAuthenticatedUser();
-  const collections = await getMyCustomCollectionsWithRiddleCount(supabase, user.id);
+  const collections = await getMyCustomCollectionsWithRiddleCountAndThemes(supabase, user.id);
 
   return (
     <div className="container mx-auto max-w-5xl px-4 pt-6 pb-16">

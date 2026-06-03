@@ -130,6 +130,30 @@ export async function findByContentWithTheme(
   return toContentThemesWithTheme((data ?? []) as DbContentThemeWithTheme[]);
 }
 
+export async function findByContentTypeForContentIds(
+  supabase: SupabaseClient,
+  contentType: ContentType,
+  contentIds: string[],
+): Promise<ContentThemeWithTheme[]> {
+  const uniqueIds = [...new Set(contentIds.map((id) => id.trim()).filter(Boolean))];
+  if (uniqueIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("content_themes")
+    .select(CONTENT_THEME_WITH_THEME_SELECT)
+    .eq("content_type", contentType)
+    .in("content_id", uniqueIds)
+    .order("weight", { ascending: false })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("content-theme.repository.findByContentTypeForContentIds error:", error);
+    return [];
+  }
+
+  return toContentThemesWithTheme((data ?? []) as DbContentThemeWithTheme[]);
+}
+
 export async function findByThemeId(supabase: SupabaseClient, themeId: string): Promise<ContentTheme[]> {
   const { data, error } = await supabase
     .from("content_themes")

@@ -1,3 +1,4 @@
+import type { ContentThemeWithTheme } from "@/features/content-theme/types/content-theme";
 import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
 import type { CollectionType } from "@/features/collection/types/collection-type";
 
@@ -18,3 +19,7 @@ export type Collection = {
 };
 
 export type CollectionWithRiddleCount = Collection & { riddleCount: number };
+
+export type CollectionWithRiddleCountAndThemes = CollectionWithRiddleCount & {
+  themes: ContentThemeWithTheme[];
+};

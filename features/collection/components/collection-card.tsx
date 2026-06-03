@@ -4,11 +4,12 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { CollectionWithRiddleCount } from "@/features/collection/types/collection";
+import { ContentThemeList } from "@/features/content-theme/components/content-theme-list";
+import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
 
 type CollectionCardProps = {
-  collection: CollectionWithRiddleCount;
+  collection: CollectionWithRiddleCountAndThemes;
 };
 
 export function CollectionCard({ collection }: CollectionCardProps) {
@@ -39,6 +40,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
       <div className="flex flex-1 flex-col gap-2 p-6">
         <h2 className="text-3xl font-bold">{collection.title}</h2>
         <p className="text-muted-foreground text-base">{collection.description}</p>
+        {collection.themes.length > 0 ? <ContentThemeList items={collection.themes} showWeight={false} /> : null}
         <div className="mt-auto flex items-center gap-3">
           <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
             Play

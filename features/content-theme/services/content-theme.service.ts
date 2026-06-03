@@ -50,6 +50,27 @@ export async function getContentThemesForContentWithTheme(
   return contentThemeRepo.findByContentWithTheme(supabase, contentType, contentId);
 }
 
+export const DEFAULT_TOP_CONTENT_THEME_COUNT = 2;
+
+export async function getTopContentThemesGroupedByContentId(
+  supabase: SupabaseClient,
+  contentType: ContentType,
+  contentIds: string[],
+  limit = DEFAULT_TOP_CONTENT_THEME_COUNT,
+): Promise<Map<string, ContentThemeWithTheme[]>> {
+  const items = await contentThemeRepo.findByContentTypeForContentIds(supabase, contentType, contentIds);
+  const grouped = new Map<string, ContentThemeWithTheme[]>();
+
+  for (const item of items) {
+    const existing = grouped.get(item.contentId) ?? [];
+    if (existing.length >= limit) continue;
+    existing.push(item);
+    grouped.set(item.contentId, existing);
+  }
+
+  return grouped;
+}
+
 export async function getContentThemesForTheme(
   supabase: SupabaseClient,
   themeId: string,
