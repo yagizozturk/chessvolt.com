@@ -25,10 +25,5 @@ export function isDashboardPath(pathname: string): boolean {
 }
 
 export function shouldSkipOnboardingCheck(pathname: string): boolean {
-  return (
-    isAuthPath(pathname) ||
-    isAdminPath(pathname) ||
-    pathname.startsWith("/http") ||
-    pathname.startsWith("/storybook")
-  );
+  return isAuthPath(pathname) || isAdminPath(pathname) || pathname.startsWith("/http");
 }

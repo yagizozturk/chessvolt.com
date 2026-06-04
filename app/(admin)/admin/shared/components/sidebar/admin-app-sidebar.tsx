@@ -7,6 +7,7 @@ import {
   Gamepad2Icon,
   HelpCircleIcon,
   LayoutDashboardIcon,
+  PaletteIcon,
   TagsIcon,
   UsersIcon,
 } from "lucide-react";
@@ -91,6 +92,20 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "All openings", url: "/admin/openings" },
       { title: "Create opening", url: "/admin/openings/create" },
       { title: "Bulk variants", url: "/admin/openings/variants/bulk" },
+    ],
+  },
+  {
+    title: "Storybook",
+    url: "/admin/storybook/buttons",
+    icon: <PaletteIcon />,
+    items: [
+      { title: "Buttons", url: "/admin/storybook/buttons" },
+      { title: "Badges", url: "/admin/storybook/badges" },
+      { title: "Board", url: "/admin/storybook/board" },
+      { title: "Cards", url: "/admin/storybook/cards" },
+      { title: "Colors", url: "/admin/storybook/colors" },
+      { title: "Misc", url: "/admin/storybook/misc" },
+      { title: "Updated board", url: "/admin/storybook/updated-board" },
     ],
   },
 ];

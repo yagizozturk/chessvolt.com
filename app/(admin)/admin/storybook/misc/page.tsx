@@ -1,13 +1,11 @@
 import { IterationBadge } from "@/components/badge/number-badge/number-badge";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 
-import { CodeViewer } from "../components/code-viewer";
-import { StorybookPage } from "../page";
+import { CodeViewer } from "@/app/(admin)/admin/storybook/components/code-viewer";
 
 export default function MiscPage() {
   return (
-    <StorybookPage>
-      <section className="space-y-6">
+    <section className="space-y-6">
         <div>
           <h2 className="text-foreground text-2xl font-semibold tracking-tight">Misc</h2>
           <p className="text-muted-foreground mt-1 text-sm">IterationBadge bileseninin ornek kullanimi.</p>
@@ -59,7 +57,6 @@ export default function MiscPage() {
             />
           </div>
         </div>
-      </section>
-    </StorybookPage>
+    </section>
   );
 }

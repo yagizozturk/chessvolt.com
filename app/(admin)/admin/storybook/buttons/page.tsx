@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-import { CodeViewer } from "../components/code-viewer";
-import { StorybookPage } from "../page";
+import { CodeViewer } from "@/app/(admin)/admin/storybook/components/code-viewer";
 
 const buttonExamples = [
   {
@@ -45,8 +44,7 @@ const buttonExamples = [
 
 export default function StorybookButtonsPage() {
   return (
-    <StorybookPage>
-      <section id="buttons" className="space-y-6">
+    <section id="buttons" className="space-y-6">
         <div>
           <h2 className="text-foreground text-2xl font-semibold tracking-tight">Buttons</h2>
           <p className="text-muted-foreground mt-1 text-sm">Sayfada yalnizca ornek buton varyasyonlari gosterilir.</p>
@@ -75,7 +73,6 @@ export default function StorybookButtonsPage() {
             </div>
           ))}
         </div>
-      </section>
-    </StorybookPage>
+    </section>
   );
 }

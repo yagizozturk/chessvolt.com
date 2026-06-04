@@ -1,11 +1,8 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { StorybookPage } from "../page";
-
 export default function StorybookCardsPage() {
   return (
-    <StorybookPage>
-      <section id="cards" className="space-y-6">
+    <section id="cards" className="space-y-6">
         <div>
           <h2 className="text-foreground text-2xl font-semibold tracking-tight">Cards</h2>
           <p className="text-muted-foreground mt-1 text-sm">Projede kullanilan kart komponentlerinin ornekleri.</p>
@@ -24,7 +21,6 @@ export default function StorybookCardsPage() {
             <p className="text-muted-foreground text-sm">Card Footer</p>
           </CardFooter>
         </Card>
-      </section>
-    </StorybookPage>
+    </section>
   );
 }

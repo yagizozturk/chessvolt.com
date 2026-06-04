@@ -1,4 +1,3 @@
-import { StorybookPage } from "../page";
 
 type ColorItem = {
   name: string;
@@ -253,8 +252,7 @@ function ColorSwatch({ color }: { color: ColorItem }) {
 
 export default function StorybookColorsPage() {
   return (
-    <StorybookPage>
-      <section id="colors" className="space-y-12">
+    <section id="colors" className="space-y-12">
         <div>
           <h2 className="text-foreground text-2xl font-semibold tracking-tight">Colors</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl text-sm">
@@ -281,7 +279,6 @@ export default function StorybookColorsPage() {
             </div>
           </section>
         ))}
-      </section>
-    </StorybookPage>
+    </section>
   );
 }

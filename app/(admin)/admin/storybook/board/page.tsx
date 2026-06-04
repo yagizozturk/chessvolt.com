@@ -2,13 +2,11 @@
 
 import VoltBoard from "@/components/boards/volt-board/volt-board";
 
-import { CodeViewer } from "../components/code-viewer";
-import { StorybookPage } from "../page";
+import { CodeViewer } from "@/app/(admin)/admin/storybook/components/code-viewer";
 
 export default function StorybookBoardPage() {
   return (
-    <StorybookPage>
-      <section className="space-y-6">
+    <section className="space-y-6">
         <div>
           <h2 className="text-foreground text-2xl font-semibold tracking-tight">Board</h2>
           <p className="text-muted-foreground mt-1 text-sm">
@@ -59,7 +57,6 @@ export default function StorybookBoardPage() {
             />
           </div>
         </div>
-      </section>
-    </StorybookPage>
+    </section>
   );
 }
