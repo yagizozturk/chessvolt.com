@@ -1,10 +1,20 @@
 import { notFound } from "next/navigation";
 
+import { buildVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
+import { riddleDifficultyToRating } from "@/components/calculator/rating-timing-calculator/compute-rating-timing";
 import { getCollectionById, getMyCustomCollections } from "@/features/collection/services/collection.service";
 import RiddleController from "@/features/riddle/components/riddle-controller";
 import { getRiddleCollectionsForRiddle } from "@/features/riddle-collection/services/riddle-collection.service";
 import { getRiddleById, getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
+import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { getPublicUser } from "@/lib/supabase/auth";
+
+function getSequenceMoveCount(moves: string): number {
+  return moves
+    .trim()
+    .split(/\s+/)
+    .filter((move) => move.length > 0).length;
+}
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -41,9 +51,22 @@ export default async function RiddlePage({ params }: Params) {
     .map((link) => link.collectionId)
     .filter((collectionId) => myCollectionIds.has(collectionId));
 
+  const voltScore = user
+    ? buildVoltScore({
+        attempts: await attemptService.getAttemptsByUserAndSequence(
+          supabase,
+          user.id,
+          riddle.moveSequence.id,
+        ),
+        totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
+        rating: riddleDifficultyToRating(riddle.difficulty),
+      })
+    : null;
+
   return (
     <RiddleController
       riddle={riddle}
+      voltScore={voltScore}
       nextRiddleId={nextRiddle?.id ?? null}
       parentCollectionUrl={parentCollectionUrl}
       canSaveToMyCollections={Boolean(user)}

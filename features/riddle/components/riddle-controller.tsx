@@ -9,6 +9,8 @@ import { AccuracyCalculator } from "@/components/calculator/accuracy-calculator/
 import { riddleDifficultyToRating } from "@/components/calculator/rating-timing-calculator/compute-rating-timing";
 import { RatingTimingCalculator } from "@/components/calculator/rating-timing-calculator/rating-timing-calculator";
 import { StreakCalculator } from "@/components/calculator/streak-calculator/streak-calculator";
+import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
@@ -41,6 +43,7 @@ type RiddleControllerProps = {
   canSaveToMyCollections?: boolean;
   myCollections?: MyCollectionOption[];
   savedMyCollectionIds?: string[];
+  voltScore?: VoltScoreResult | null;
 };
 
 export default function RiddleController({
@@ -50,6 +53,7 @@ export default function RiddleController({
   canSaveToMyCollections = false,
   myCollections = [],
   savedMyCollectionIds = [],
+  voltScore = null,
 }: RiddleControllerProps) {
   const sequenceId = riddle.moveSequence.id;
   const router = useRouter();
@@ -276,6 +280,7 @@ export default function RiddleController({
               maxCorrectStreak={liveAttemptStats.maxCorrectStreak}
               totalMoveCount={moves.length}
             />
+            <VoltCalculator result={voltScore} className="mt-2 w-full" />
           </div>
           <div className="flex items-center" data-tour="progress">
             <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
