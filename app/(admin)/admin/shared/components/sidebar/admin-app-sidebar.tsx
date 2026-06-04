@@ -9,6 +9,7 @@ import {
   LayoutDashboardIcon,
   PaletteIcon,
   TagsIcon,
+  ListChecksIcon,
   TestTubeDiagonalIcon,
   UsersIcon,
 } from "lucide-react";
@@ -108,6 +109,11 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "Misc", url: "/admin/storybook/misc" },
       { title: "Updated board", url: "/admin/storybook/updated-board" },
     ],
+  },
+  {
+    title: "Refactor",
+    url: "/admin/refactor",
+    icon: <ListChecksIcon />,
   },
   {
     title: "Test",
