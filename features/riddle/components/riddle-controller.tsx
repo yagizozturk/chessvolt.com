@@ -2,20 +2,24 @@
 
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { AccuracyCalculator } from "@/components/calculator/accuracy-calculator/accuracy-calculator";
+import { riddleDifficultyToRating } from "@/components/calculator/rating-timing-calculator/compute-rating-timing";
+import { RatingTimingCalculator } from "@/components/calculator/rating-timing-calculator/rating-timing-calculator";
+import { StreakCalculator } from "@/components/calculator/streak-calculator/streak-calculator";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
-import {
-  AddToMyCollectionPicker,
-  type MyCollectionOption,
-} from "@/features/riddle/components/add-to-my-collection-picker";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import {
+  AddToMyCollectionPicker,
+  type MyCollectionOption,
+} from "@/features/riddle/components/add-to-my-collection-picker";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
@@ -53,6 +57,8 @@ export default function RiddleController({
   const [isCompleted, setIsCompleted] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<SequenceCompletionStats | null>(null);
+  const [attemptStatsTick, setAttemptStatsTick] = useState(0);
+  const [elapsedMs, setElapsedMs] = useState(0);
   const { updateAttemptStatus, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
   const { playLevelUpSound } = useBoardSounds();
   const wrongMoveCountRef = useRef(0);
@@ -63,6 +69,7 @@ export default function RiddleController({
     handleMoveCheck,
     handleSuccessMovePlayed,
     handleNextMoveRequest,
+    moves,
     sortedGoals,
     progressValue,
     hintCount,
@@ -83,19 +90,46 @@ export default function RiddleController({
     totalHintCountRef.current = 0;
     currentCorrectStreakRef.current = 0;
     maxCorrectStreakRef.current = 0;
+    setAttemptStatsTick(0);
+    setElapsedMs(0);
   }, [riddle.id]);
+
+  useEffect(() => {
+    if (isCompleted) return;
+
+    const tick = () => setElapsedMs(getTimeFromStartMs() ?? 0);
+
+    tick();
+    const intervalId = window.setInterval(tick, 500);
+
+    return () => window.clearInterval(intervalId);
+  }, [getTimeFromStartMs, isCompleted, attemptStatsTick]);
+
+  const timingRating = useMemo(() => riddleDifficultyToRating(riddle.difficulty), [riddle.difficulty]);
+
+  const liveAttemptStats = useMemo(
+    () => ({
+      wrongMoveCount: wrongMoveCountRef.current,
+      hintCount: totalHintCountRef.current,
+      maxCorrectStreak: maxCorrectStreakRef.current,
+    }),
+    [attemptStatsTick],
+  );
 
   useEffect(() => {
     if (currentCorrectMove != null || isCompleted) return;
 
+    const finalDurationMs = getTimeFromStartMs();
+
     setIsCompleted(true);
+    setElapsedMs(finalDurationMs ?? 0);
     setCompletionStats(
       buildSequenceCompletionStats(
         sortedGoals,
         wrongMoveCountRef.current,
         totalHintCountRef.current,
         maxCorrectStreakRef.current,
-        getTimeFromStartMs(),
+        finalDurationMs,
       ),
     );
     setSuccessDialogOpen(true);
@@ -113,7 +147,15 @@ export default function RiddleController({
         ),
       );
     })();
-  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, playLevelUpSound, recordEvent, sortedGoals, updateAttemptStatus]);
+  }, [
+    currentCorrectMove,
+    getTimeFromStartMs,
+    isCompleted,
+    playLevelUpSound,
+    recordEvent,
+    sortedGoals,
+    updateAttemptStatus,
+  ]);
 
   function handleBoardCheckMove(move: MoveAttemptPayload) {
     const { isCorrect } = handleMoveCheck(move);
@@ -121,6 +163,7 @@ export default function RiddleController({
     if (!isCorrect && !isCompleted) {
       wrongMoveCountRef.current += 1;
       currentCorrectStreakRef.current = 0;
+      setAttemptStatsTick((tick) => tick + 1);
 
       void (async () => {
         await recordEvent({
@@ -141,6 +184,7 @@ export default function RiddleController({
       })();
     } else if (isCorrect) {
       bumpCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
+      setAttemptStatsTick((tick) => tick + 1);
 
       void recordEvent({
         eventType: "move",
@@ -167,6 +211,7 @@ export default function RiddleController({
     if (nextHintCount == null || !currentCorrectMove) return;
     boardRef.current?.showHint(nextHintCount);
     totalHintCountRef.current += 1;
+    setAttemptStatsTick((tick) => tick + 1);
 
     void recordEvent({
       eventType: "hint",
@@ -221,6 +266,16 @@ export default function RiddleController({
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
           <div className="flex flex-col items-center justify-center gap-1 text-center">
             <span className="text-lg font-bold">{riddle.title ?? "Untitled riddle"}</span>
+            <AccuracyCalculator
+              wrongMoveCount={liveAttemptStats.wrongMoveCount}
+              hintCount={liveAttemptStats.hintCount}
+              totalMoveCount={moves.length}
+            />
+            <RatingTimingCalculator rating={timingRating} durationMs={elapsedMs} />
+            <StreakCalculator
+              maxCorrectStreak={liveAttemptStats.maxCorrectStreak}
+              totalMoveCount={moves.length}
+            />
           </div>
           <div className="flex items-center" data-tour="progress">
             <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
