@@ -153,6 +153,29 @@ export async function findByUserAndOpeningVariantId(
   return toUserPracticeOpeningVariant(data as DbUserPracticeOpeningVariant);
 }
 
+export async function create(
+  supabase: SupabaseClient,
+  input: SaveUserPracticeOpeningVariantInput,
+): Promise<UserPracticeOpeningVariant | null> {
+  const { data, error } = await supabase
+    .from("user_practice_opening_variants")
+    .insert({
+      user_id: input.userId,
+      opening_variant_id: input.openingVariantId,
+      is_active: input.isActive ?? true,
+      sort_order: input.sortOrder ?? 0,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("user-practice-opening-variant.repository.create error:", error);
+    return null;
+  }
+
+  return toUserPracticeOpeningVariant(data as DbUserPracticeOpeningVariant);
+}
+
 export async function upsert(
   supabase: SupabaseClient,
   input: SaveUserPracticeOpeningVariantInput,

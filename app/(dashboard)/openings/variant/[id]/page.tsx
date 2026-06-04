@@ -6,7 +6,8 @@ import {
   getOpeningVariantById,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
-import { createClient } from "@/lib/supabase/server";
+import { getUserPracticeOpeningVariantByUserAndOpeningVariant } from "@/features/user-practice-opening-variant/services/user-practice-opening-variant.service";
+import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
   params: Promise<{ id: string }>;
@@ -24,7 +25,7 @@ type Params = {
  */
 export default async function OpeningVariantPage({ params }: Params) {
   const { id } = await params;
-  const supabase = await createClient();
+  const { user, supabase } = await getPublicUser();
   const variant = await getOpeningVariantById(supabase, id);
 
   if (!variant) {
@@ -50,12 +51,19 @@ export default async function OpeningVariantPage({ params }: Params) {
   const opening = await getOpeningById(supabase, variant.openingId);
   const parentOpeningUrl = opening?.slug && opening?.id ? `/openings/${opening.slug}/${opening.id}` : "/openings";
 
+  const practiceRow = user
+    ? await getUserPracticeOpeningVariantByUserAndOpeningVariant(supabase, user.id, variant.id)
+    : null;
+  const isInPracticeList = Boolean(practiceRow?.isActive);
+
   return (
     <>
       <OpeningVariantController
         variant={variant}
         nextVariantId={nextVariant?.id ?? null}
         parentOpeningUrl={parentOpeningUrl}
+        canAddToPracticeList={Boolean(user)}
+        isInPracticeList={isInPracticeList}
       />
     </>
   );

@@ -14,6 +14,7 @@ import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+import { AddToPracticeButton } from "@/features/user-practice-opening-variant/components/add-to-practice-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { SequenceCompletionStats } from "@/features/user-sequence-attempt/types/sequence-completion-stats";
 import { buildSequenceCompletionStats } from "@/features/user-sequence-attempt/utilities/build-sequence-completion-stats";
@@ -30,12 +31,16 @@ type OpeningVariantControllerProps = {
   variant: OpeningVariant;
   nextVariantId: string | null;
   parentOpeningUrl: string;
+  canAddToPracticeList?: boolean;
+  isInPracticeList?: boolean;
 };
 
 export default function OpeningVariantController({
   variant,
   nextVariantId,
   parentOpeningUrl,
+  canAddToPracticeList = false,
+  isInPracticeList = false,
 }: OpeningVariantControllerProps) {
   const sequenceId = variant.moveSequence.id;
   const router = useRouter();
@@ -216,9 +221,12 @@ export default function OpeningVariantController({
           <div data-tour="goals">
             <GoalViewer goals={sortedGoals} />
           </div>
-          <div className="mt-auto" data-tour="hint-button">
+          <div className="mt-auto">
+            {canAddToPracticeList ? (
+              <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />
+            ) : null}
             {!isCompleted ? (
-              <div>
+              <div data-tour="hint-button"> 
                 <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="w-full">
                   Hint
                 </Button>
