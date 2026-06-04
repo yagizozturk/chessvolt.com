@@ -22,6 +22,7 @@ export async function addOpeningVariantToPracticeAction(
 
   if (result.ok) {
     revalidatePath(`/openings/variant/${openingVariantId}`);
+    revalidatePath("/my-collections");
   }
 
   return result;
