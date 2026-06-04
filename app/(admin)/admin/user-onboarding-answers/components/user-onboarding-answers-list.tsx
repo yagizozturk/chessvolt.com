@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { deleteUserOnboardingAnswerAction } from "@/app/(admin)/admin/user-onboarding-answers/actions/user-onboarding-answers";
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Button } from "@/components/ui/button";
 import type { UserOnboardingAnswerWithDetails } from "@/features/user-onboarding-answer/types/user-onboarding-answer";
 
@@ -17,7 +18,7 @@ export function UserOnboardingAnswersList({ answers }: Props) {
   }
 
   if (answers.length === 0) {
-    return <p className="text-muted-foreground text-sm">No user onboarding answers yet.</p>;
+    return <EmptyDataMessage message="No user onboarding answers yet." />;
   }
 
   return (

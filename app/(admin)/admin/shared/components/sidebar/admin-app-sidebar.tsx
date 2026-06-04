@@ -9,6 +9,7 @@ import {
   LayoutDashboardIcon,
   PaletteIcon,
   TagsIcon,
+  TestTubeDiagonalIcon,
   UsersIcon,
 } from "lucide-react";
 
@@ -106,6 +107,25 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "Colors", url: "/admin/storybook/colors" },
       { title: "Misc", url: "/admin/storybook/misc" },
       { title: "Updated board", url: "/admin/storybook/updated-board" },
+    ],
+  },
+  {
+    title: "Test",
+    url: "/admin/test/test-board",
+    icon: <TestTubeDiagonalIcon />,
+    items: [
+      { title: "Animate", url: "/admin/test/animate" },
+      { title: "Animated list", url: "/admin/test/animated-list" },
+      { title: "Confetti", url: "/admin/test/confetti" },
+      { title: "Joyride", url: "/admin/test/joyride" },
+      { title: "PGN navigator", url: "/admin/test/pgn-navigator" },
+      { title: "PGN reader", url: "/admin/test/pgn-reader" },
+      { title: "Progressive blur", url: "/admin/test/progressive-blur" },
+      { title: "Shine border", url: "/admin/test/shine-border" },
+      { title: "Skeleton", url: "/admin/test/skeleton" },
+      { title: "Solve success dialog", url: "/admin/test/solve-success-dialog" },
+      { title: "Sonner", url: "/admin/test/sonner" },
+      { title: "Test board", url: "/admin/test/test-board" },
     ],
   },
 ];

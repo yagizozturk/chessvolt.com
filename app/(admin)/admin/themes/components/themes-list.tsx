@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { deleteThemeAction } from "@/app/(admin)/admin/themes/actions/themes";
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Theme } from "@/features/theme/types/theme";
@@ -19,7 +20,7 @@ export function ThemesList({ themes }: Props) {
   }
 
   if (themes.length === 0) {
-    return <p className="text-muted-foreground text-sm">No themes yet.</p>;
+    return <EmptyDataMessage message="No themes yet." />;
   }
 
   return (

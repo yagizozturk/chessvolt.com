@@ -18,7 +18,7 @@ export default function TestSolveSuccessDialogPage() {
         onOpenChange={setOpen}
         title="Completed"
         description="You found the best move. Continue to the next collection when you are ready."
-        destinationPath="/test/sonner"
+        destinationPath="/admin/test/sonner"
         buttonLabel="Continue"
         stats={{
           accuracyPercent: 92,

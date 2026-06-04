@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { deleteContentThemeAction } from "@/app/(admin)/admin/content-themes/actions/content-themes";
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatContentTypeLabel } from "@/features/content-theme/types/content-type";
@@ -19,7 +20,7 @@ export function ContentThemesList({ items }: Props) {
   }
 
   if (items.length === 0) {
-    return <p className="text-muted-foreground text-sm">No content–theme links yet.</p>;
+    return <EmptyDataMessage message="No content–theme links yet." />;
   }
 
   return (

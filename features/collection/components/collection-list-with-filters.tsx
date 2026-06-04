@@ -2,14 +2,15 @@
 
 import { useMemo, useState } from "react";
 
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import { CollectionFilters } from "@/features/collection/components/collection-filters";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import {
+  type CollectionDifficultyBand,
   filterCollections,
   getThemeFilterOptions,
   hasActiveCollectionFilters,
-  type CollectionDifficultyBand,
 } from "@/features/collection/utils/collection-filter.utils";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +24,7 @@ type CollectionListWithFiltersProps = {
 export function CollectionListWithFilters({
   collections,
   emptyMessage,
-  noResultsMessage = "No collections match your filters.",
+  noResultsMessage = "No collections match your filters.", // TODO: Move to a constants file
   className,
 }: CollectionListWithFiltersProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,9 +46,7 @@ export function CollectionListWithFilters({
   if (collections.length === 0) {
     return (
       <div className={className}>
-        <div className="bg-muted/50 rounded-xl px-4 py-8 text-center">
-          <p className="text-muted-foreground">{emptyMessage}</p>
-        </div>
+        <EmptyDataMessage message={emptyMessage} />
       </div>
     );
   }
@@ -75,16 +74,8 @@ export function CollectionListWithFilters({
         />
       )}
 
-      {hasActiveFilters && (
-        <p className="text-muted-foreground text-xs">
-          Showing {filteredCollections.length} of {collections.length} collections
-        </p>
-      )}
-
       {filteredCollections.length === 0 ? (
-        <div className="bg-muted/50 rounded-xl px-4 py-8 text-center">
-          <p className="text-muted-foreground">{noResultsMessage}</p>
-        </div>
+        <EmptyDataMessage message={noResultsMessage} />
       ) : (
         <div className="grid grid-cols-2 gap-6">
           {filteredCollections.map((collection) => (

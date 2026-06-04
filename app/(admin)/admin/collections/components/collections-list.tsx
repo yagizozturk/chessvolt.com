@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { deleteCollectionAction } from "@/app/(admin)/admin/collections/actions/collections";
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { CollectionWithRiddleCount } from "@/features/collection/types/collection";
@@ -20,7 +21,7 @@ export function CollectionsList({ collections }: Props) {
   }
 
   if (collections.length === 0) {
-    return <p className="text-muted-foreground text-sm">No collections yet.</p>;
+    return <EmptyDataMessage message="No collections yet." />;
   }
 
   return (

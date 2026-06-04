@@ -8,7 +8,7 @@ import { updateRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions"
 import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
 import { extractFenFromPgn } from "@/app/(admin)/admin/utils/extract-fen-from-pgn";
 import DisplayBoard from "@/components/boards/display-board/display-board";
-import { JsonViewer } from "@/components/shared/json-viewer";
+import { JsonViewer } from "@/app/(admin)/admin/shared/components/json-viewer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";

@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Button } from "@/components/ui/button";
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import { getMyCustomCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
@@ -22,9 +23,7 @@ export default async function MyCollectionsPage() {
       </div>
       <div className="container mx-auto max-w-5xl px-4 pt-6 pb-16">
         {collections.length === 0 ? (
-          <div className="bg-muted/50 rounded-xl px-4 py-8 text-center">
-            <p className="text-muted-foreground">You don't have any collections yet.</p>
-          </div>
+          <EmptyDataMessage message="You don't have any collections yet." />
         ) : (
           <div className="grid grid-cols-2 gap-6">
             {collections.map((collection) => (

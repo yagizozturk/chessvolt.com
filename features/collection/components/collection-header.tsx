@@ -30,9 +30,7 @@ export function CollectionHeader({
       <div className="min-w-0 flex-1 space-y-2 p-4">
         <p className="text-primary text-sm font-semibold">
           {description}
-          {difficultyLabel ? (
-            <span className="text-white/80 font-normal"> · {difficultyLabel}</span>
-          ) : null}
+          {difficultyLabel ? <span className="font-normal text-white/80"> · {difficultyLabel}</span> : null}
         </p>
         <h2 className="text-3xl font-bold">{title}</h2>
         <blockquote className="border-primary/30 border-l-2 pl-3">

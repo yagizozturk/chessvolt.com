@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { deleteOnboardingOptionThemeAction } from "@/app/(admin)/admin/onboarding-option-themes/actions/onboarding-option-themes";
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Button } from "@/components/ui/button";
 import type { OnboardingOptionThemeWithDetails } from "@/features/onboarding-option-theme/types/onboarding-option-theme";
 
@@ -17,7 +18,7 @@ export function OnboardingOptionThemesList({ items }: Props) {
   }
 
   if (items.length === 0) {
-    return <p className="text-muted-foreground text-sm">No option–theme links yet.</p>;
+    return <EmptyDataMessage message="No option–theme links yet." />;
   }
 
   return (

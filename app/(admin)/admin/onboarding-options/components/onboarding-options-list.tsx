@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { deleteOnboardingOptionAction } from "@/app/(admin)/admin/onboarding-options/actions/onboarding-options";
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { OnboardingOptionWithQuestion } from "@/features/onboarding-option/types/onboarding-option-with-question";
@@ -18,7 +19,7 @@ export function OnboardingOptionsList({ options }: Props) {
   }
 
   if (options.length === 0) {
-    return <p className="text-muted-foreground text-sm">No onboarding options yet.</p>;
+    return <EmptyDataMessage message="No onboarding options yet." />;
   }
 
   return (

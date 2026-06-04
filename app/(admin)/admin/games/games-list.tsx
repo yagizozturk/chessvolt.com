@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import Link from "next/link";
 import type { Game } from "@/features/game/types/game";
 import { Button } from "@/components/ui/button";
@@ -19,9 +20,7 @@ export function GamesList({ games }: Props) {
   }
 
   if (games.length === 0) {
-    return (
-      <p className="text-muted-foreground py-8 text-center">No games yet.</p>
-    );
+    return <EmptyDataMessage message="No games yet." />;
   }
 
   return (

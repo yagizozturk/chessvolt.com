@@ -86,7 +86,7 @@ export default function TestJoyridePage() {
       <div className="flex flex-col gap-2" data-tour="welcome">
         <h1 className="text-2xl font-bold">React Joyride v3</h1>
         <p className="text-muted-foreground max-w-2xl text-sm">
-          Test page at <code className="text-foreground">/test/joyride</code>. Mock layout mirrors the arrows exercise
+          Test page at <code className="text-foreground">/admin/test/joyride</code>. Mock layout mirrors the arrows exercise
           (board + sidebar). Status: <span className="text-foreground font-medium">{state.status}</span>
           {state.index >= 0 ? ` · step ${state.index + 1} of ${state.size}` : null}
         </p>

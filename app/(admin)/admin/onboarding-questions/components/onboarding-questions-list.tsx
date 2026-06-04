@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { deleteOnboardingQuestionAction } from "@/app/(admin)/admin/onboarding-questions/actions/onboarding-questions";
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
@@ -18,7 +19,7 @@ export function OnboardingQuestionsList({ questions }: Props) {
   }
 
   if (questions.length === 0) {
-    return <p className="text-muted-foreground text-sm">No onboarding questions yet.</p>;
+    return <EmptyDataMessage message="No onboarding questions yet." />;
   }
 
   return (

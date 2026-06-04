@@ -1,6 +1,7 @@
 "use client";
 
 import { deleteOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Button } from "@/components/ui/button";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import Link from "next/link";
@@ -16,11 +17,7 @@ export function OpeningVariantsList({ variants }: Props) {
   }
 
   if (variants.length === 0) {
-    return (
-      <p className="text-muted-foreground py-8 text-center">
-        No opening variants yet.
-      </p>
-    );
+    return <EmptyDataMessage message="No opening variants yet." />;
   }
 
   return (

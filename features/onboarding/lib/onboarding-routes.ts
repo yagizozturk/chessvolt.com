@@ -2,7 +2,7 @@ export const ONBOARDING_PATH = "/onboarding";
 
 const AUTH_PATH_PREFIXES = ["/login", "/signup", "/forgot-password", "/auth"] as const;
 
-const DASHBOARD_PATH_PREFIXES = ["/collection", "/openings", "/riddle", "/test"] as const;
+const DASHBOARD_PATH_PREFIXES = ["/collection", "/openings", "/riddle"] as const;
 
 export function isAuthPath(pathname: string): boolean {
   return AUTH_PATH_PREFIXES.some(

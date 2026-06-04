@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import type { Riddle } from "@/features/riddle/types/riddle";
 
 import { deleteRiddleAction } from "../actions/actions";
@@ -18,7 +19,7 @@ export function RiddlesList({ riddles }: Props) {
   }
 
   if (riddles.length === 0) {
-    return <p className="text-muted-foreground py-8 text-center">No riddles yet.</p>;
+    return <EmptyDataMessage message="No riddles yet." />;
   }
 
   return (

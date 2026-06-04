@@ -6,7 +6,7 @@ import { GOALS_JSON_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-example
 import { createRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
 import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
 import VoltBoardNavigator from "@/components/board-navigator/volt-board-navigator";
-import { JsonViewer } from "@/components/shared/json-viewer";
+import { JsonViewer } from "@/app/(admin)/admin/shared/components/json-viewer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {

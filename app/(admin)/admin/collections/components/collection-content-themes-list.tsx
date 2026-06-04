@@ -13,6 +13,7 @@ import {
   isContentThemeWeight,
   type ContentThemeWeight,
 } from "@/features/content-theme/types/content-theme-weight";
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
@@ -24,7 +25,7 @@ type Props = {
 
 export function CollectionContentThemesList({ collectionId, items }: Props) {
   if (items.length === 0) {
-    return <p className="text-muted-foreground text-sm">No themes linked to this collection yet.</p>;
+    return <EmptyDataMessage message="No themes linked to this collection yet." />;
   }
 
   return (

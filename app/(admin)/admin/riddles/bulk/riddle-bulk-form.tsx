@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { GOALS_JSON_EXAMPLE, VALID_PGN_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { bulkCreateRiddlesFormAction } from "@/app/(admin)/admin/riddles/actions/actions";
 import { extractFenFromPgn } from "@/app/(admin)/admin/utils/extract-fen-from-pgn";
-import { JsonViewer } from "@/components/shared/json-viewer";
+import { JsonViewer } from "@/app/(admin)/admin/shared/components/json-viewer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
