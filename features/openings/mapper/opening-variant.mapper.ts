@@ -2,7 +2,7 @@ import { getEmbeddedMoveSequence } from "@/features/move-sequence/helpers/get-em
 import { toMoveSequence, type DbMoveSequence } from "@/features/move-sequence/mapper/move-sequence.mapper";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 
-type DbOpeningVariant = {
+export type DbOpeningVariant = {
   id: string;
   opening_id: string;
   sort_key: number;
