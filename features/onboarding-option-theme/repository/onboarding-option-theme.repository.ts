@@ -126,6 +126,26 @@ export async function findByOptionIdWithTheme(
   return toOnboardingOptionThemesWithTheme((data ?? []) as DbOnboardingOptionThemeWithTheme[]);
 }
 
+export async function findByOptionIdsWithTheme(
+  supabase: SupabaseClient,
+  optionIds: string[],
+): Promise<OnboardingOptionThemeWithTheme[]> {
+  if (optionIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("onboarding_option_themes")
+    .select(LINK_WITH_THEME_SELECT)
+    .in("option_id", optionIds)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("onboarding-option-theme.repository.findByOptionIdsWithTheme error:", error);
+    return [];
+  }
+
+  return toOnboardingOptionThemesWithTheme((data ?? []) as DbOnboardingOptionThemeWithTheme[]);
+}
+
 export async function findByThemeId(supabase: SupabaseClient, themeId: string): Promise<OnboardingOptionTheme[]> {
   const { data, error } = await supabase
     .from("onboarding_option_themes")

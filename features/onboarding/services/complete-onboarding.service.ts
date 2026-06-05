@@ -9,6 +9,7 @@ import {
   ONBOARDING_QUESTION_SLUG,
 } from "@/features/onboarding/constants/onboarding-questions";
 import type { OnboardingQuestionAnswerInput } from "@/features/onboarding/actions/complete-onboarding";
+import { createOnboardingStarterCollection } from "@/features/onboarding/services/create-onboarding-starter-collection.service";
 import { getOnboardingOptionsByIds } from "@/features/onboarding-option/services/onboarding-option.service";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import { getActiveOnboardingQuestions } from "@/features/onboarding-question/services/onboarding-question.service";
@@ -125,6 +126,36 @@ export async function completeOnboarding(
     if (!saved) {
       return { success: false, error: "Could not save your answers. Please try again." };
     }
+  }
+
+  const improvementQuestion = activeQuestions.find(
+    (question) => question.slug === ONBOARDING_QUESTION_SLUG.improvementGoal,
+  );
+  const starterQuestion = activeQuestions.find(
+    (question) => question.slug === ONBOARDING_QUESTION_SLUG.starterCollection,
+  );
+
+  const improvementAnswer = improvementQuestion
+    ? answers.find((answer) => answer.questionId === improvementQuestion.id)
+    : undefined;
+  const starterAnswer = starterQuestion
+    ? answers.find((answer) => answer.questionId === starterQuestion.id)
+    : undefined;
+
+  const starterOption = starterAnswer
+    ? optionById.get(starterAnswer.optionIds[0]?.trim() ?? "")
+    : null;
+
+  const starterResult = await createOnboardingStarterCollection(supabase, {
+    userId,
+    userRating: chessOption.initialRating,
+    activeQuestions,
+    improvementGoalOptionIds: improvementAnswer?.optionIds.map((id) => id.trim()).filter(Boolean) ?? [],
+    starterCollectionOption: starterOption ?? null,
+  });
+
+  if (starterResult.created === false && starterResult.reason === "failed") {
+    console.error("completeOnboarding: starter collection creation failed", { userId });
   }
 
   const profileUpdated = await profileRepo.completeProfileOnboarding(supabase, userId, {

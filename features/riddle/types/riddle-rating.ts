@@ -48,6 +48,19 @@ export function isRiddleRatingBand(value: unknown): value is RiddleRatingBand {
   );
 }
 
+export function isRiddleRatingWithinTolerance(
+  rating: number | null,
+  targetRating: number,
+  tolerance: number,
+): boolean {
+  if (rating == null) return false;
+  return Math.abs(rating - targetRating) <= tolerance;
+}
+
+export function ratingDistanceFromTarget(rating: number | null, targetRating: number): number {
+  return Math.abs(getRiddleRatingForScoring(rating) - targetRating);
+}
+
 export function matchesRiddleRatingBand(rating: number | null, band: RiddleRatingBand): boolean {
   if (band === "all") return true;
   if (rating == null) return false;

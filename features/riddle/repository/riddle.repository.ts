@@ -108,6 +108,93 @@ export async function findByCollectionId(
     .filter((riddle): riddle is Riddle => riddle != null);
 }
 
+export type FindActiveRiddlesByThemesInput = {
+  themeSlugs: string[];
+  limit?: number;
+};
+
+export async function findActiveByThemes(
+  supabase: SupabaseClient,
+  input: FindActiveRiddlesByThemesInput,
+): Promise<Riddle[]> {
+  if (input.themeSlugs.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("riddles")
+    .select(RIDDLE_SELECT)
+    .eq("is_active", true)
+    .overlaps("themes", input.themeSlugs)
+    .order("created_at", { ascending: true })
+    .limit(input.limit ?? 100);
+
+  if (error) {
+    console.error("riddle.repository.findActiveByThemes error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toRiddle);
+}
+
+export type FindActiveRiddlesByThemesAndRatingRangeInput = {
+  themeSlugs: string[];
+  minRating: number;
+  maxRating: number;
+  limit?: number;
+};
+
+export async function findActiveByThemesAndRatingRange(
+  supabase: SupabaseClient,
+  input: FindActiveRiddlesByThemesAndRatingRangeInput,
+): Promise<Riddle[]> {
+  if (input.themeSlugs.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("riddles")
+    .select(RIDDLE_SELECT)
+    .eq("is_active", true)
+    .overlaps("themes", input.themeSlugs)
+    .not("rating", "is", null)
+    .gte("rating", input.minRating)
+    .lte("rating", input.maxRating)
+    .order("rating", { ascending: true })
+    .limit(input.limit ?? 100);
+
+  if (error) {
+    console.error("riddle.repository.findActiveByThemesAndRatingRange error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toRiddle);
+}
+
+export type FindActiveRiddlesByRatingRangeInput = {
+  minRating: number;
+  maxRating: number;
+  limit?: number;
+};
+
+export async function findActiveByRatingRange(
+  supabase: SupabaseClient,
+  input: FindActiveRiddlesByRatingRangeInput,
+): Promise<Riddle[]> {
+  const { data, error } = await supabase
+    .from("riddles")
+    .select(RIDDLE_SELECT)
+    .eq("is_active", true)
+    .not("rating", "is", null)
+    .gte("rating", input.minRating)
+    .lte("rating", input.maxRating)
+    .order("rating", { ascending: true })
+    .limit(input.limit ?? 100);
+
+  if (error) {
+    console.error("riddle.repository.findActiveByRatingRange error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toRiddle);
+}
+
 export type CreateRiddleInput = {
   gameId?: string | null;
   title: string;

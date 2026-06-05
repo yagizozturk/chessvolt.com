@@ -68,6 +68,28 @@ export async function findCustomByUserId(
   return (data ?? []).map(toCollection);
 }
 
+export async function findOnboardingStarterForUser(
+  supabase: SupabaseClient,
+  userId: string,
+  slug: string,
+): Promise<Collection | null> {
+  const { data, error } = await supabase
+    .from("collections")
+    .select("*")
+    .eq("created_by", userId)
+    .eq("collection_type", "custom")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) {
+    console.error("collection.repository.findOnboardingStarterForUser error:", error);
+    return null;
+  }
+
+  if (!data) return null;
+  return toCollection(data);
+}
+
 export async function findCustomByUserIdWithRiddleCount(
   supabase: SupabaseClient,
   userId: string,
@@ -198,6 +220,7 @@ export type CreateCollectionInput = {
 export type CreateCustomCollectionForUserInput = {
   title: string;
   description?: string;
+  slug?: string;
   createdBy: string;
   coverImageUrl: string;
   coverImageColor: string;
@@ -242,7 +265,7 @@ export async function createCustomForUser(
     .from("collections")
     .insert({
       title: input.title.trim(),
-      slug: slugFromTitle(input.title),
+      slug: input.slug?.trim() || slugFromTitle(input.title),
       description,
       cover_image_url: input.coverImageUrl,
       cover_image_color: input.coverImageColor,

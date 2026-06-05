@@ -1,6 +1,7 @@
 export const ONBOARDING_QUESTION_SLUG = {
   chessFamiliarity: "chess_familiarity",
   improvementGoal: "improvement_goal",
+  starterCollection: "starter_collection",
 } as const;
 
 export type OnboardingQuestionSlug =

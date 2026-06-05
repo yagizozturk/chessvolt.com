@@ -51,6 +51,13 @@ export async function getOnboardingOptionThemesForOptionWithTheme(
   return onboardingOptionThemeRepo.findByOptionIdWithTheme(supabase, optionId);
 }
 
+export async function getOnboardingOptionThemesForOptionsWithTheme(
+  supabase: SupabaseClient,
+  optionIds: string[],
+): Promise<OnboardingOptionThemeWithTheme[]> {
+  return onboardingOptionThemeRepo.findByOptionIdsWithTheme(supabase, optionIds);
+}
+
 export async function getOnboardingOptionThemesForTheme(
   supabase: SupabaseClient,
   themeId: string,
