@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 
@@ -58,11 +59,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
-        </CardHeader>
+      <Card className="pt-0">
+        <div className="flex overflow-hidden rounded-t-xl">
+          <div className="flex min-w-0 flex-1 items-end p-4" style={{ backgroundColor: "#5C21D2" }}>
+            <div className="text-foreground flex flex-col gap-1 text-lg font-bold">Login to ChessVolt</div>
+          </div>
+          <div className="overflow-hidden">
+            <img src="/images/form/login-form-header.png" alt="ChessVolt" height={70} width={130} />
+          </div>
+        </div>
         <CardContent>
           <form onSubmit={handleSubmit}>
             <FieldGroup>
@@ -102,15 +107,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 <Button variant="volt" type="submit" disabled={loading}>
                   {loading ? "Loading..." : "Login"}
                 </Button>
-                <Button
-                  className="mt-1"
-                  variant="voltMuted"
+
+                <RainbowButton
+                  variant="default"
+                  className="mt-1 rounded-2xl"
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={loading}
                 >
-                  Login with Google
-                </Button>
+                  LOGIN WITH GOOGLE
+                </RainbowButton>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{" "}
                   <Link href="/signup" className="underline underline-offset-4">
