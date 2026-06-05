@@ -1,4 +1,4 @@
-import { ArrowsUpFromLine, BookOpenText, LogIn, Swords, UserPlus, Zap } from "lucide-react";
+import { ArrowsUpFromLine, BookOpenText, LogIn, Mail, Swords, UserPlus, Zap } from "lucide-react";
 import Link from "next/link";
 
 export function Footer() {
@@ -6,6 +6,7 @@ export function Footer() {
     { href: "/openings", label: "Opening Crusher", icon: BookOpenText },
     { href: "/collection", label: "Cllections", icon: Swords },
     { href: "/arrows", label: "Arrows Game", icon: ArrowsUpFromLine },
+    { href: "/contact", label: "Contact", icon: Mail },
   ];
 
   return (
