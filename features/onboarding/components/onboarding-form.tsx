@@ -5,28 +5,26 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { OnboardingOptionList } from "@/features/onboarding-option/components/onboarding-option-list";
+import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
+import { OnboardingQuestionStep } from "@/features/onboarding-question/components/onboarding-question-step";
+import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
 import { completeOnboardingAction } from "@/features/onboarding/actions/complete-onboarding";
 import { isMultiSelectOnboardingQuestion } from "@/features/onboarding/constants/onboarding-questions";
-import { OnboardingOptionList } from "@/features/onboarding-option/components/onboarding-option-list";
-import { OnboardingQuestionStep } from "@/features/onboarding-question/components/onboarding-question-step";
-import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
-import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
 
 type OnboardingStepData = {
   question: OnboardingQuestion;
   options: OnboardingOption[];
 };
 
-type OnboardingFlowProps = {
+type OnboardingFormProps = {
   steps: OnboardingStepData[];
 };
 
-export function OnboardingFlow({ steps }: OnboardingFlowProps) {
+export function OnboardingForm({ steps }: OnboardingFormProps) {
   const router = useRouter();
   const [stepIndex, setStepIndex] = useState(0);
-  const [selectedOptionIdsByQuestionId, setSelectedOptionIdsByQuestionId] = useState<
-    Record<string, string[]>
-  >({});
+  const [selectedOptionIdsByQuestionId, setSelectedOptionIdsByQuestionId] = useState<Record<string, string[]>>({});
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -59,9 +57,7 @@ export function OnboardingFlow({ steps }: OnboardingFlowProps) {
   function handleContinue() {
     if (!hasCurrentStepAnswer) {
       setError(
-        isMultiSelect
-          ? "Please select at least one option to continue."
-          : "Please select an option to continue.",
+        isMultiSelect ? "Please select at least one option to continue." : "Please select an option to continue.",
       );
       return;
     }
@@ -72,9 +68,7 @@ export function OnboardingFlow({ steps }: OnboardingFlowProps) {
       return;
     }
 
-    const missingAnswer = steps.some(
-      (step) => (selectedOptionIdsByQuestionId[step.question.id] ?? []).length === 0,
-    );
+    const missingAnswer = steps.some((step) => (selectedOptionIdsByQuestionId[step.question.id] ?? []).length === 0);
     if (missingAnswer) {
       setError("Please answer all onboarding questions.");
       return;

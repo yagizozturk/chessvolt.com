@@ -17,13 +17,11 @@ import {
   type FolderTreeNode,
 } from "../lib/build-folder-tree";
 
-const STORAGE_KEY = "chessvolt-admin-refactor-done";
-
-function loadCheckedFromStorage(): Record<string, boolean> {
+function loadCheckedFromStorage(storageKey: string): Record<string, boolean> {
   if (typeof window === "undefined") return {};
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(storageKey);
     if (!raw) return {};
     const paths = JSON.parse(raw) as string[];
     if (!Array.isArray(paths)) return {};
@@ -33,11 +31,11 @@ function loadCheckedFromStorage(): Record<string, boolean> {
   }
 }
 
-function saveCheckedToStorage(checked: Record<string, boolean>) {
+function saveCheckedToStorage(storageKey: string, checked: Record<string, boolean>) {
   const done = Object.entries(checked)
     .filter(([, value]) => value)
     .map(([path]) => path);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(done));
+  localStorage.setItem(storageKey, JSON.stringify(done));
 }
 
 function fileMatchesQuery(filePath: string, query: string) {
@@ -146,27 +144,39 @@ function FolderSection({
 type Props = {
   tree: FolderTreeNode[];
   allPaths: string[];
+  storageKey: string;
+  itemLabel: string;
+  emptyMessage?: string;
 };
 
-export function RefactorChecklist({ tree, allPaths }: Props) {
+export function RefactorChecklist({
+  tree,
+  allPaths,
+  storageKey,
+  itemLabel,
+  emptyMessage = "No items match your filters.",
+}: Props) {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [hydrated, setHydrated] = useState(false);
   const [query, setQuery] = useState("");
   const [hideDone, setHideDone] = useState(false);
 
   useEffect(() => {
-    setChecked(loadCheckedFromStorage());
+    setChecked(loadCheckedFromStorage(storageKey));
     setHydrated(true);
-  }, []);
+  }, [storageKey]);
 
-  const toggle = useCallback((path: string) => {
-    setChecked((prev) => {
-      const next = { ...prev, [path]: !prev[path] };
-      if (!next[path]) delete next[path];
-      saveCheckedToStorage(next);
-      return next;
-    });
-  }, []);
+  const toggle = useCallback(
+    (path: string) => {
+      setChecked((prev) => {
+        const next = { ...prev, [path]: !prev[path] };
+        if (!next[path]) delete next[path];
+        saveCheckedToStorage(storageKey, next);
+        return next;
+      });
+    },
+    [storageKey],
+  );
 
   const normalizedQuery = query.trim().toLowerCase();
 
@@ -202,7 +212,7 @@ export function RefactorChecklist({ tree, allPaths }: Props) {
               <>
                 <span className="font-medium text-foreground">{done}</span> of{" "}
                 <span className="font-medium text-foreground">{total}</span>{" "}
-                components marked refactored
+                {itemLabel} marked refactored
               </>
             ) : (
               "Loading saved progress…"
@@ -238,7 +248,7 @@ export function RefactorChecklist({ tree, allPaths }: Props) {
       <div className="rounded-lg border bg-card p-3 md:p-4">
         {filteredTree.length === 0 ? (
           <p className="px-2 py-6 text-center text-sm text-muted-foreground">
-            No components match your filters.
+            {emptyMessage}
           </p>
         ) : (
           <div className="space-y-1">

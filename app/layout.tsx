@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={cn(ibmPlexSans.variable, geistMono.variable, "font-sans")}>
-      <body className="bg-background min-h-screen antialiased">
+      <body className="bg-background min-h-svh antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />

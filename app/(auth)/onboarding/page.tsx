@@ -1,30 +1,33 @@
 import { redirect } from "next/navigation";
 
-import { OnboardingFlow } from "@/features/onboarding/components/onboarding-flow";
+import { OnboardingForm } from "@/features/onboarding/components/onboarding-form";
 import { getOnboardingOptionsForQuestion } from "@/features/onboarding-option/services/onboarding-option.service";
 import { getActiveOnboardingQuestions } from "@/features/onboarding-question/services/onboarding-question.service";
 import { getProfileOnboardingStatus } from "@/features/profile/repository/profile.repository";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
+// ======================================================================
+// Onboarding page
+// ======================================================================
 export default async function OnboardingPage() {
   const { user, supabase } = await getAuthenticatedUser();
 
-  const profileStatus = await getProfileOnboardingStatus(supabase, user.id);
-  if (profileStatus?.onboardingCompleted) {
+  // ======================================================================
+  // Checking if the user has already completed onboarding. If ok, redirect
+  // ======================================================================
+  const onboardingStatus = await getProfileOnboardingStatus(supabase, user.id);
+  if (onboardingStatus?.onboardingCompleted) {
     redirect("/collection");
   }
 
+  // ======================================================================
+  // Getting the active onboarding questions
+  // ======================================================================
   const questions = await getActiveOnboardingQuestions(supabase);
-  if (questions.length === 0) {
-    return (
-      <div className="flex min-h-svh items-center justify-center p-6">
-        <p className="text-muted-foreground text-center text-sm">
-          Onboarding is not configured yet. Please try again later.
-        </p>
-      </div>
-    );
-  }
 
+  // ======================================================================
+  // Getting the active onboarding options for the questions
+  // ======================================================================
   const optionGroups = await Promise.all(
     questions.map(async (question) => ({
       question,
@@ -32,19 +35,9 @@ export default async function OnboardingPage() {
     })),
   );
 
-  if (optionGroups.some((group) => group.options.length === 0)) {
-    return (
-      <div className="flex min-h-svh items-center justify-center p-6">
-        <p className="text-muted-foreground text-center text-sm">
-          Onboarding options are not available yet. Please try again later.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <OnboardingFlow steps={optionGroups} />
+      <OnboardingForm steps={optionGroups} />
     </div>
   );
 }
