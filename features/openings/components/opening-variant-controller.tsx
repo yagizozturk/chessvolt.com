@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
@@ -33,6 +35,7 @@ type OpeningVariantControllerProps = {
   parentOpeningUrl: string;
   canAddToPracticeList?: boolean;
   isInPracticeList?: boolean;
+  voltScore?: VoltScoreResult | null;
 };
 
 export default function OpeningVariantController({
@@ -41,6 +44,7 @@ export default function OpeningVariantController({
   parentOpeningUrl,
   canAddToPracticeList = false,
   isInPracticeList = false,
+  voltScore = null,
 }: OpeningVariantControllerProps) {
   const sequenceId = variant.moveSequence.id;
   const router = useRouter();
@@ -209,8 +213,9 @@ export default function OpeningVariantController({
           />
         </div>
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
-          <div className="flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-1 text-center">
             <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>
+            {voltScore ? <VoltCalculator result={voltScore} className="mt-2 w-full" /> : null}
           </div>
           <div className="flex items-center" data-tour="progress">
             <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />

@@ -2,6 +2,8 @@ import { BookOpen, Puzzle } from "lucide-react";
 import Link from "next/link";
 
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
+import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,9 +12,10 @@ import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
 
 type PracticeOpeningVariantCardProps = {
   practice: UserPracticeOpeningVariantWithDetails;
+  voltScore?: VoltScoreResult | null;
 };
 
-export function PracticeOpeningVariantCard({ practice }: PracticeOpeningVariantCardProps) {
+export function PracticeOpeningVariantCard({ practice, voltScore = null }: PracticeOpeningVariantCardProps) {
   const { openingVariant } = practice;
   const fen = openingVariant.moveSequence.displayFen ?? openingVariant.moveSequence.initialFen;
   const moveCountLabel = formatMoveCountLabel(openingVariant.moveSequence.moves);
@@ -41,10 +44,13 @@ export function PracticeOpeningVariantCard({ practice }: PracticeOpeningVariantC
         {moveCountLabel ? (
           <BoardCardMetaRow icon={Puzzle} label={moveCountLabel} className="text-muted-foreground text-sm" />
         ) : null}
-        <div className="mt-auto flex items-center gap-3">
-          <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
-            Practice
-          </Button>
+        <div className="mt-auto flex flex-col gap-2">
+          {voltScore ? <VoltCalculator result={voltScore} showDetails={false} /> : null}
+          <div className="flex items-center gap-3">
+            <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
+              Practice
+            </Button>
+          </div>
         </div>
       </div>
     </Link>

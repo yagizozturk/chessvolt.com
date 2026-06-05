@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 
+import { buildVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
+import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { CollectionHeader } from "@/features/collection/components/collection-header";
 import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
 import { getCollectionBySlug } from "@/features/collection/services/collection.service";
@@ -11,6 +13,7 @@ import {
   type RiddleRatingBand,
 } from "@/features/riddle/types/riddle-rating";
 import { getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
+import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { buildAttemptByRiddleId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-riddle-id";
 import { DEFAULT_GAME_TYPE_DETAILS } from "@/lib/shared/constants/game-type-details";
@@ -42,6 +45,21 @@ export default async function CollectionDetailPage({ params, searchParams }: Par
   const sequenceIds = [...new Set(riddles.map((r) => r.moveSequence.id))];
   const summaries = user ? await attemptService.getLatestSummariesForSequences(supabase, user.id, sequenceIds) : [];
   const attemptByRiddleId = buildAttemptByRiddleId(riddles, summaries);
+
+  const isOwnerCustomCollection =
+    Boolean(user) && collection.collectionType === "custom" && collection.createdBy === user?.id;
+
+  const voltBySequenceId =
+    isOwnerCustomCollection && riddles.length > 0
+      ? buildVoltScoresBySequenceId(
+          await attemptService.getAttemptsByUserAndSequenceIds(supabase, user!.id, sequenceIds),
+          riddles.map((riddle) => ({
+            sequenceId: riddle.moveSequence.id,
+            totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
+            rating: getRiddleRatingForScoring(riddle.rating),
+          })),
+        )
+      : {};
 
   const gameIds = [...new Set(riddles.map((r) => r.gameId).filter((id): id is string => id != null))];
   const games = await getGamesByIds(supabase, gameIds);
@@ -88,6 +106,7 @@ export default async function CollectionDetailPage({ params, searchParams }: Par
                   isComplete={attemptByRiddleId[riddle.id]?.isComplete}
                   accuracyPercent={attemptByRiddleId[riddle.id]?.accuracyPercent}
                   displayFen={riddle.moveSequence.displayFen}
+                  voltScore={voltBySequenceId[riddle.moveSequence.id] ?? null}
                 />
               );
             })}

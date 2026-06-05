@@ -73,6 +73,28 @@ export async function findByUserAndSequenceId(
   return (data ?? []).map(toUserSequenceAttempt);
 }
 
+export async function findByUserAndSequenceIds(
+  supabase: SupabaseClient,
+  userId: string,
+  sequenceIds: string[],
+): Promise<UserSequenceAttempt[]> {
+  if (sequenceIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("user_sequence_attempts")
+    .select("*")
+    .eq("user_id", userId)
+    .in("sequence_id", sequenceIds)
+    .order("started_at", { ascending: false });
+
+  if (error) {
+    console.error("user-sequence-attempt.repository.findByUserAndSequenceIds error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toUserSequenceAttempt);
+}
+
 export async function findLatestByUserAndSequenceId(
   supabase: SupabaseClient,
   userId: string,

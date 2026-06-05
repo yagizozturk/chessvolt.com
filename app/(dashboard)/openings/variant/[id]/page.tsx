@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 
+import { buildVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
+import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
+import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import OpeningVariantController from "@/features/openings/components/opening-variant-controller";
+import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import {
   getOpeningById,
   getOpeningVariantById,
@@ -56,6 +60,19 @@ export default async function OpeningVariantPage({ params }: Params) {
     : null;
   const isInPracticeList = Boolean(practiceRow?.isActive);
 
+  const voltScore =
+    user && isInPracticeList
+      ? buildVoltScore({
+          attempts: await attemptService.getAttemptsByUserAndSequence(
+            supabase,
+            user.id,
+            variant.moveSequence.id,
+          ),
+          totalMoveCount: getSequenceMoveCount(variant.moveSequence.moves),
+          rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
+        })
+      : null;
+
   return (
     <>
       <OpeningVariantController
@@ -64,6 +81,7 @@ export default async function OpeningVariantPage({ params }: Params) {
         parentOpeningUrl={parentOpeningUrl}
         canAddToPracticeList={Boolean(user)}
         isInPracticeList={isInPracticeList}
+        voltScore={voltScore}
       />
     </>
   );

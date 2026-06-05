@@ -42,6 +42,14 @@ export async function getAttemptsByUserAndSequence(
   return userSequenceAttemptRepo.findByUserAndSequenceId(supabase, userId, sequenceId);
 }
 
+export async function getAttemptsByUserAndSequenceIds(
+  supabase: SupabaseClient,
+  userId: string,
+  sequenceIds: string[],
+): Promise<UserSequenceAttempt[]> {
+  return userSequenceAttemptRepo.findByUserAndSequenceIds(supabase, userId, sequenceIds);
+}
+
 export async function getLatestSummariesForSequences(
   supabase: SupabaseClient,
   userId: string,

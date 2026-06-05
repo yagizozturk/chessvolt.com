@@ -9,14 +9,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import { PracticeOpeningVariantCard } from "@/features/user-practice-opening-variant/components/practice-opening-variant-card";
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import type { UserPracticeOpeningVariantWithDetails } from "@/features/user-practice-opening-variant/types/user-practice-opening-variant";
 
 type MyCollectionsTabsProps = {
   collections: CollectionWithRiddleCountAndThemes[];
   practiceVariants: UserPracticeOpeningVariantWithDetails[];
+  voltBySequenceId?: Record<string, VoltScoreResult>;
 };
 
-export function MyCollectionsTabs({ collections, practiceVariants }: MyCollectionsTabsProps) {
+export function MyCollectionsTabs({
+  collections,
+  practiceVariants,
+  voltBySequenceId = {},
+}: MyCollectionsTabsProps) {
   return (
     <Tabs defaultValue="collections" className="flex flex-col gap-6">
       <TabsList className="w-full max-w-md">
@@ -50,7 +56,11 @@ export function MyCollectionsTabs({ collections, practiceVariants }: MyCollectio
         ) : (
           <div className="flex flex-col gap-6">
             {practiceVariants.map((practice) => (
-              <PracticeOpeningVariantCard key={practice.id} practice={practice} />
+              <PracticeOpeningVariantCard
+                key={practice.id}
+                practice={practice}
+                voltScore={voltBySequenceId[practice.openingVariant.moveSequence.id] ?? null}
+              />
             ))}
           </div>
         )}
