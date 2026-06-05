@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { completeOnboardingAction } from "@/features/onboarding/actions/complete-onboarding";
+import { isMultiSelectOnboardingQuestion } from "@/features/onboarding/constants/onboarding-questions";
 import { OnboardingOptionList } from "@/features/onboarding-option/components/onboarding-option-list";
 import { OnboardingQuestionStep } from "@/features/onboarding-question/components/onboarding-question-step";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
@@ -23,28 +24,45 @@ type OnboardingFlowProps = {
 export function OnboardingFlow({ steps }: OnboardingFlowProps) {
   const router = useRouter();
   const [stepIndex, setStepIndex] = useState(0);
-  const [selectedOptionByQuestionId, setSelectedOptionByQuestionId] = useState<Record<string, string>>({});
+  const [selectedOptionIdsByQuestionId, setSelectedOptionIdsByQuestionId] = useState<
+    Record<string, string[]>
+  >({});
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const currentStep = steps[stepIndex];
-  const selectedOptionId = selectedOptionByQuestionId[currentStep.question.id] ?? null;
-  const selectedValue =
-    currentStep.options.find((option) => option.id === selectedOptionId)?.value ?? null;
+  const isMultiSelect = isMultiSelectOnboardingQuestion(currentStep.question.slug);
+  const selectedOptionIds = selectedOptionIdsByQuestionId[currentStep.question.id] ?? [];
+  const selectedValues = currentStep.options
+    .filter((option) => selectedOptionIds.includes(option.id))
+    .map((option) => option.value);
+  const hasCurrentStepAnswer = selectedOptionIds.length > 0;
   const isLastStep = stepIndex === steps.length - 1;
   const progressValue = ((stepIndex + 1) / steps.length) * 100;
 
   function handleSelect(option: OnboardingOption) {
     setError(null);
-    setSelectedOptionByQuestionId((prev) => ({
-      ...prev,
-      [currentStep.question.id]: option.id,
-    }));
+    setSelectedOptionIdsByQuestionId((prev) => {
+      const currentIds = prev[currentStep.question.id] ?? [];
+
+      if (isMultiSelect) {
+        const nextIds = currentIds.includes(option.id)
+          ? currentIds.filter((id) => id !== option.id)
+          : [...currentIds, option.id];
+        return { ...prev, [currentStep.question.id]: nextIds };
+      }
+
+      return { ...prev, [currentStep.question.id]: [option.id] };
+    });
   }
 
   function handleContinue() {
-    if (!selectedOptionId) {
-      setError("Please select an option to continue.");
+    if (!hasCurrentStepAnswer) {
+      setError(
+        isMultiSelect
+          ? "Please select at least one option to continue."
+          : "Please select an option to continue.",
+      );
       return;
     }
 
@@ -54,16 +72,21 @@ export function OnboardingFlow({ steps }: OnboardingFlowProps) {
       return;
     }
 
-    const missingAnswer = steps.some((step) => !selectedOptionByQuestionId[step.question.id]);
+    const missingAnswer = steps.some(
+      (step) => (selectedOptionIdsByQuestionId[step.question.id] ?? []).length === 0,
+    );
     if (missingAnswer) {
       setError("Please answer all onboarding questions.");
       return;
     }
 
-    const optionIds = steps.map((step) => selectedOptionByQuestionId[step.question.id]);
+    const answers = steps.map((step) => ({
+      questionId: step.question.id,
+      optionIds: selectedOptionIdsByQuestionId[step.question.id] ?? [],
+    }));
 
     startTransition(async () => {
-      const result = await completeOnboardingAction(optionIds);
+      const result = await completeOnboardingAction(answers);
       if (!result.success) {
         setError(result.error);
         return;
@@ -92,12 +115,17 @@ export function OnboardingFlow({ steps }: OnboardingFlowProps) {
         </p>
       </div>
 
-      <OnboardingQuestionStep question={currentStep.question} stepNumber={stepIndex + 1}>
+      <OnboardingQuestionStep
+        question={currentStep.question}
+        stepNumber={stepIndex + 1}
+        hint={isMultiSelect ? "Select all that apply." : undefined}
+      >
         <OnboardingOptionList
           options={currentStep.options}
-          selectedValue={selectedValue}
+          selectedValues={selectedValues}
           onSelect={handleSelect}
           disabled={isPending}
+          multiple={isMultiSelect}
         />
       </OnboardingQuestionStep>
 
@@ -120,7 +148,7 @@ export function OnboardingFlow({ steps }: OnboardingFlowProps) {
           variant="volt"
           className="sm:ml-auto"
           onClick={handleContinue}
-          disabled={isPending || !selectedOptionId}
+          disabled={isPending || !hasCurrentStepAnswer}
         >
           {isPending ? "Saving..." : isLastStep ? "Finish" : "Continue"}
         </Button>

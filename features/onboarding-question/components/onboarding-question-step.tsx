@@ -3,10 +3,16 @@ import type { OnboardingQuestion } from "@/features/onboarding-question/types/on
 type OnboardingQuestionStepProps = {
   question: OnboardingQuestion;
   stepNumber?: number;
+  hint?: string;
   children?: React.ReactNode;
 };
 
-export function OnboardingQuestionStep({ question, stepNumber, children }: OnboardingQuestionStepProps) {
+export function OnboardingQuestionStep({
+  question,
+  stepNumber,
+  hint,
+  children,
+}: OnboardingQuestionStepProps) {
   return (
     <section className="space-y-4" aria-labelledby={`onboarding-question-${question.id}`}>
       {stepNumber != null ? (
@@ -19,6 +25,7 @@ export function OnboardingQuestionStep({ question, stepNumber, children }: Onboa
         {question.description ? (
           <p className="text-muted-foreground text-base">{question.description}</p>
         ) : null}
+        {hint ? <p className="text-muted-foreground text-sm font-medium">{hint}</p> : null}
       </div>
       {children ? <div className="pt-2">{children}</div> : null}
     </section>

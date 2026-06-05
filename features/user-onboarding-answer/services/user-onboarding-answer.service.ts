@@ -7,6 +7,7 @@
 
 import * as userOnboardingAnswerRepo from "@/features/user-onboarding-answer/repository/user-onboarding-answer.repository";
 import type {
+  ReplaceUserOnboardingAnswersInput,
   SaveUserOnboardingAnswerInput,
   UpdateUserOnboardingAnswerInput,
   UserOnboardingAnswer,
@@ -77,6 +78,18 @@ export async function saveUserOnboardingAnswer(
   input: SaveUserOnboardingAnswerInput,
 ): Promise<UserOnboardingAnswer | null> {
   return userOnboardingAnswerRepo.upsert(supabase, input);
+}
+
+export async function replaceUserOnboardingAnswersForQuestion(
+  supabase: SupabaseClient,
+  input: ReplaceUserOnboardingAnswersInput,
+): Promise<UserOnboardingAnswer[] | null> {
+  return userOnboardingAnswerRepo.replaceForQuestion(
+    supabase,
+    input.userId,
+    input.questionId,
+    input.optionIds,
+  );
 }
 
 export async function updateUserOnboardingAnswer(

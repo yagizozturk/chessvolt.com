@@ -26,13 +26,17 @@ export function OnboardingAnswerPicker({ question, options, selectedOptionId, on
     });
   }
 
-  const selectedValue = options.find((o) => o.id === selectedOptionId)?.value ?? null;
+  const selectedValues = selectedOptionId
+    ? [options.find((o) => o.id === selectedOptionId)?.value].filter((value): value is string =>
+        Boolean(value),
+      )
+    : [];
 
   return (
     <div className={isPending ? "pointer-events-none opacity-60" : undefined}>
       <OnboardingOptionList
         options={options}
-        selectedValue={selectedValue ?? null}
+        selectedValues={selectedValues}
         onSelect={handleSelect}
         disabled={isPending}
       />

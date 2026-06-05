@@ -147,25 +147,73 @@ export async function upsert(
   supabase: SupabaseClient,
   input: SaveUserOnboardingAnswerInput,
 ): Promise<UserOnboardingAnswer | null> {
+  const { error: deleteError } = await supabase
+    .from("user_onboarding_answers")
+    .delete()
+    .eq("user_id", input.userId)
+    .eq("question_id", input.questionId);
+
+  if (deleteError) {
+    console.error("user-onboarding-answer.repository.upsert delete error:", deleteError);
+    return null;
+  }
+
   const { data, error } = await supabase
     .from("user_onboarding_answers")
-    .upsert(
-      {
-        user_id: input.userId,
-        question_id: input.questionId,
-        option_id: input.optionId,
-      },
-      { onConflict: "user_id,question_id" },
-    )
+    .insert({
+      user_id: input.userId,
+      question_id: input.questionId,
+      option_id: input.optionId,
+    })
     .select()
     .single();
 
   if (error) {
-    console.error("user-onboarding-answer.repository.upsert error:", error);
+    console.error("user-onboarding-answer.repository.upsert insert error:", error);
     return null;
   }
 
   return toUserOnboardingAnswer(data as DbUserOnboardingAnswer);
+}
+
+export async function replaceForQuestion(
+  supabase: SupabaseClient,
+  userId: string,
+  questionId: string,
+  optionIds: string[],
+): Promise<UserOnboardingAnswer[] | null> {
+  const { error: deleteError } = await supabase
+    .from("user_onboarding_answers")
+    .delete()
+    .eq("user_id", userId)
+    .eq("question_id", questionId);
+
+  if (deleteError) {
+    console.error("user-onboarding-answer.repository.replaceForQuestion delete error:", deleteError);
+    return null;
+  }
+
+  if (optionIds.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("user_onboarding_answers")
+    .insert(
+      optionIds.map((optionId) => ({
+        user_id: userId,
+        question_id: questionId,
+        option_id: optionId,
+      })),
+    )
+    .select();
+
+  if (error) {
+    console.error("user-onboarding-answer.repository.replaceForQuestion insert error:", error);
+    return null;
+  }
+
+  return toUserOnboardingAnswers((data ?? []) as DbUserOnboardingAnswer[]);
 }
 
 export async function update(

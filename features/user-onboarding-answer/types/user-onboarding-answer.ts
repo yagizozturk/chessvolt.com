@@ -20,6 +20,12 @@ export type SaveUserOnboardingAnswerInput = {
   optionId: string;
 };
 
+export type ReplaceUserOnboardingAnswersInput = {
+  userId: string;
+  questionId: string;
+  optionIds: string[];
+};
+
 export type UpdateUserOnboardingAnswerInput = {
   optionId: string;
 };

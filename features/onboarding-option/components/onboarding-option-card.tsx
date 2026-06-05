@@ -8,6 +8,7 @@ type OnboardingOptionCardProps = {
   selected?: boolean;
   disabled?: boolean;
   onSelect?: (option: OnboardingOption) => void;
+  multiple?: boolean;
 };
 
 export function OnboardingOptionCard({
@@ -15,6 +16,7 @@ export function OnboardingOptionCard({
   selected = false,
   disabled = false,
   onSelect,
+  multiple = false,
 }: OnboardingOptionCardProps) {
   const isInteractive = Boolean(onSelect) && !disabled;
 
@@ -29,7 +31,9 @@ export function OnboardingOptionCard({
         selected && "border-primary ring-primary/30 ring-2",
         disabled && "opacity-60",
       )}
-      aria-pressed={selected}
+      aria-pressed={multiple ? selected : undefined}
+      aria-checked={multiple ? selected : undefined}
+      role={multiple ? "checkbox" : undefined}
     >
       <span className="block font-medium">{option.label}</span>
       {option.description ? (

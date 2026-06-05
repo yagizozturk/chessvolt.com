@@ -4,12 +4,16 @@
  * Persists onboarding answers and marks the user profile as onboarded.
  */
 
-import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboarding-questions";
+import {
+  isMultiSelectOnboardingQuestion,
+  ONBOARDING_QUESTION_SLUG,
+} from "@/features/onboarding/constants/onboarding-questions";
+import type { OnboardingQuestionAnswerInput } from "@/features/onboarding/actions/complete-onboarding";
 import { getOnboardingOptionsByIds } from "@/features/onboarding-option/services/onboarding-option.service";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import { getActiveOnboardingQuestions } from "@/features/onboarding-question/services/onboarding-question.service";
 import * as profileRepo from "@/features/profile/repository/profile.repository";
-import { saveUserOnboardingAnswer } from "@/features/user-onboarding-answer/services/user-onboarding-answer.service";
+import { replaceUserOnboardingAnswersForQuestion } from "@/features/user-onboarding-answer/services/user-onboarding-answer.service";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type CompleteOnboardingResult =
@@ -19,10 +23,9 @@ export type CompleteOnboardingResult =
 export async function completeOnboarding(
   supabase: SupabaseClient,
   userId: string,
-  optionIds: string[],
+  answers: OnboardingQuestionAnswerInput[],
 ): Promise<CompleteOnboardingResult> {
-  const trimmedIds = optionIds.map((id) => id.trim()).filter(Boolean);
-  if (trimmedIds.length === 0) {
+  if (answers.length === 0) {
     return { success: false, error: "Please answer all onboarding questions." };
   }
 
@@ -31,17 +34,44 @@ export async function completeOnboarding(
     return { success: false, error: "Onboarding is not available right now. Please try again later." };
   }
 
-  if (trimmedIds.length !== activeQuestions.length) {
+  if (answers.length !== activeQuestions.length) {
     return { success: false, error: "Please answer all onboarding questions." };
   }
 
-  const uniqueIds = [...new Set(trimmedIds)];
-  if (uniqueIds.length !== trimmedIds.length) {
-    return { success: false, error: "Please select only one answer per onboarding question." };
+  const activeQuestionById = new Map(activeQuestions.map((question) => [question.id, question]));
+  const answeredQuestionIds = new Set<string>();
+
+  for (const answer of answers) {
+    const questionId = answer.questionId.trim();
+    const optionIds = answer.optionIds.map((id) => id.trim()).filter(Boolean);
+
+    if (!questionId || optionIds.length === 0) {
+      return { success: false, error: "Please answer all onboarding questions." };
+    }
+
+    const question = activeQuestionById.get(questionId);
+    if (!question) {
+      return { success: false, error: "One or more selected answers are invalid." };
+    }
+
+    if (answeredQuestionIds.has(questionId)) {
+      return { success: false, error: "Please answer all onboarding questions." };
+    }
+    answeredQuestionIds.add(questionId);
+
+    const uniqueOptionIds = [...new Set(optionIds)];
+    if (uniqueOptionIds.length !== optionIds.length) {
+      return { success: false, error: "Please remove duplicate selections." };
+    }
+
+    if (!isMultiSelectOnboardingQuestion(question.slug) && uniqueOptionIds.length !== 1) {
+      return { success: false, error: "Please select only one answer for this question." };
+    }
   }
 
-  const options = await getOnboardingOptionsByIds(supabase, uniqueIds);
-  if (options.length !== activeQuestions.length) {
+  const allOptionIds = answers.flatMap((answer) => answer.optionIds.map((id) => id.trim()).filter(Boolean));
+  const options = await getOnboardingOptionsByIds(supabase, allOptionIds);
+  if (options.length !== allOptionIds.length) {
     return { success: false, error: "One or more selected answers are invalid." };
   }
 
@@ -50,22 +80,18 @@ export async function completeOnboarding(
     return { success: false, error: "One or more selected answers are no longer available." };
   }
 
-  const activeQuestionIds = new Set(activeQuestions.map((question) => question.id));
-  const optionOutsideOnboarding = options.find((option) => !activeQuestionIds.has(option.questionId));
-  if (optionOutsideOnboarding) {
-    return { success: false, error: "One or more selected answers are invalid." };
-  }
+  const optionById = new Map<string, OnboardingOption>(options.map((option) => [option.id, option]));
 
-  const optionByQuestionId = new Map<string, OnboardingOption>();
-  for (const option of options) {
-    if (optionByQuestionId.has(option.questionId)) {
-      return { success: false, error: "Please select only one answer per onboarding question." };
+  for (const answer of answers) {
+    const question = activeQuestionById.get(answer.questionId.trim());
+    if (!question) continue;
+
+    for (const optionId of answer.optionIds) {
+      const option = optionById.get(optionId.trim());
+      if (!option || option.questionId !== question.id) {
+        return { success: false, error: "One or more selected answers are invalid." };
+      }
     }
-    optionByQuestionId.set(option.questionId, option);
-  }
-
-  if (optionByQuestionId.size !== activeQuestions.length) {
-    return { success: false, error: "Please answer all onboarding questions." };
   }
 
   const chessQuestion = activeQuestions.find(
@@ -75,7 +101,8 @@ export async function completeOnboarding(
     return { success: false, error: "Onboarding is not available right now. Please try again later." };
   }
 
-  const chessOption = optionByQuestionId.get(chessQuestion.id);
+  const chessAnswer = answers.find((answer) => answer.questionId === chessQuestion.id);
+  const chessOption = chessAnswer ? optionById.get(chessAnswer.optionIds[0]?.trim() ?? "") : undefined;
   if (!chessOption) {
     return { success: false, error: "Please answer all onboarding questions." };
   }
@@ -87,11 +114,12 @@ export async function completeOnboarding(
     };
   }
 
-  for (const option of options) {
-    const saved = await saveUserOnboardingAnswer(supabase, {
+  for (const answer of answers) {
+    const optionIds = answer.optionIds.map((id) => id.trim()).filter(Boolean);
+    const saved = await replaceUserOnboardingAnswersForQuestion(supabase, {
       userId,
-      questionId: option.questionId,
-      optionId: option.id,
+      questionId: answer.questionId.trim(),
+      optionIds,
     });
 
     if (!saved) {
