@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { AccuracyCalculator } from "@/components/calculator/accuracy-calculator/accuracy-calculator";
-import { riddleDifficultyToRating } from "@/components/calculator/rating-timing-calculator/compute-rating-timing";
+import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { RatingTimingCalculator } from "@/components/calculator/rating-timing-calculator/rating-timing-calculator";
 import { StreakCalculator } from "@/components/calculator/streak-calculator/streak-calculator";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
@@ -109,7 +109,7 @@ export default function RiddleController({
     return () => window.clearInterval(intervalId);
   }, [getTimeFromStartMs, isCompleted, attemptStatsTick]);
 
-  const timingRating = useMemo(() => riddleDifficultyToRating(riddle.difficulty), [riddle.difficulty]);
+  const timingRating = useMemo(() => getRiddleRatingForScoring(riddle.rating), [riddle.rating]);
 
   const liveAttemptStats = useMemo(
     () => ({

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { GOALS_JSON_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { createRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
-import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
+import { RiddleRatingInput } from "@/app/(admin)/admin/riddles/components/riddle-rating-input";
 import VoltBoardNavigator from "@/components/board-navigator/volt-board-navigator";
 import { JsonViewer } from "@/app/(admin)/admin/shared/components/json-viewer";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Collection } from "@/features/collection/types/collection";
 import type { Game } from "@/features/game/types/game";
-import { DEFAULT_RIDDLE_DIFFICULTY, type RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
+import { DEFAULT_RIDDLE_RATING } from "@/features/riddle/types/riddle-rating";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { cn } from "@/lib/utils/cn";
@@ -47,7 +47,7 @@ export function RiddleFromGameForm({ games, collections }: Props) {
   const [goals, setGoals] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [difficulty, setDifficulty] = useState<RiddleDifficulty>(DEFAULT_RIDDLE_DIFFICULTY);
+  const [rating, setRating] = useState<number | null>(DEFAULT_RIDDLE_RATING);
   const [themes, setThemes] = useState("");
   const [collectionId, setCollectionId] = useState(collections[0]?.id ?? "");
 
@@ -139,7 +139,7 @@ export function RiddleFromGameForm({ games, collections }: Props) {
       gameId: selectedGameId || null,
       title: title.trim() || null,
       description: description.trim() || null,
-      difficulty,
+      rating,
       pgn: pgn || null,
       initialFen: initialFen.trim() || null,
       endFen: endFen.trim() || null,
@@ -156,7 +156,7 @@ export function RiddleFromGameForm({ games, collections }: Props) {
     selectedGameId,
     title,
     description,
-    difficulty,
+    rating,
     pgn,
     initialFen,
     endFen,
@@ -243,7 +243,7 @@ export function RiddleFromGameForm({ games, collections }: Props) {
                 className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
               />
             </Field>
-            <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
+            <RiddleRatingInput value={rating} onChange={setRating} />
             <RiddleCollectionSelect
               collections={collections}
               value={collectionId}

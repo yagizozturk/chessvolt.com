@@ -63,7 +63,7 @@ export async function importPgnAction(formData: FormData) {
         gameId: game.id,
         title: defaultTitle,
         description: parsed.description?.trim() || null,
-        difficulty: 2,
+        rating: 1200,
         moves: movesAtPly0 ?? "",
         displayFen,
       });

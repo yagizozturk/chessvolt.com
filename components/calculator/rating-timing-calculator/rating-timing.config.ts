@@ -4,11 +4,6 @@ export type RatingTimingInterval = {
   fullTimeMs: number;
 };
 
-export type RatingTimingDifficultyAnchors = {
-  minDifficulty: number;
-  maxDifficulty: number;
-};
-
 /**
  * Rating tiers for full-score time (piecewise linear between adjacent rows).
  * Add or edit rows to calibrate; keep sorted by ascending `rating`.
@@ -36,11 +31,6 @@ export const RATING_TIMING_CONFIG = {
    */
   graceDurationRatio: 2 / 3,
   ratingIntervals: RATING_TIMING_INTERVALS,
-  /** Maps riddle difficulty (1–10) onto the rating scale for timing thresholds. */
-  riddleDifficultyAnchors: {
-    minDifficulty: 1,
-    maxDifficulty: 10,
-  } satisfies RatingTimingDifficultyAnchors,
-  /** Default rating when an opening variant has no difficulty field. */
+  /** Default rating when an opening variant has no rating field. */
   defaultOpeningVariantRating: 2000,
 } as const;

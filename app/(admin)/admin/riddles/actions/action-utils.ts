@@ -6,16 +6,12 @@ import {
   deleteRiddleCollectionsForRiddle,
   getRiddleCollectionsForRiddle,
 } from "@/features/riddle-collection/services/riddle-collection.service";
-import {
-  DEFAULT_RIDDLE_DIFFICULTY,
-  parseRiddleDifficulty,
-  type RiddleDifficulty,
-} from "@/features/riddle/types/riddle-difficulty";
+import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
 
 type RawBulkRiddleInput = {
   title?: string;
   description?: string | null;
-  difficulty?: string;
+  rating?: string | number | null;
   collectionId?: string | null;
   gameId?: string | null;
   pgn?: string;
@@ -32,7 +28,7 @@ type RawBulkRiddleInput = {
 export type BulkRiddleInput = {
   title?: string;
   description?: string | null;
-  difficulty?: string;
+  rating?: string | number | null;
   collectionId?: string | null;
   gameId?: string | null;
   pgn?: string;
@@ -50,7 +46,7 @@ export function normalizeBulkRiddleInput(item: RawBulkRiddleInput): BulkRiddleIn
   return {
     title: item.title,
     description: item.description,
-    difficulty: item.difficulty,
+    rating: item.rating,
     collectionId: item.collectionId,
     gameId: item.gameId,
     pgn: item.pgn,
@@ -105,8 +101,8 @@ export function parseDescriptionFromForm(formData: FormData): string | null {
   return raw || null;
 }
 
-export function parseDifficultyFromForm(formData: FormData): RiddleDifficulty {
-  return parseRiddleDifficulty(formData.get("difficulty")) ?? DEFAULT_RIDDLE_DIFFICULTY;
+export function parseRatingFromForm(formData: FormData): number | null {
+  return parseRiddleRating(formData.get("rating"));
 }
 
 export function parseCollectionIdFromForm(formData: FormData): string | null {
@@ -151,8 +147,8 @@ export async function syncRiddleCollection(
   return linkRiddleToCollection(supabase, riddleId, collectionId);
 }
 
-export function parseBulkDifficulty(value: unknown): RiddleDifficulty {
-  return parseRiddleDifficulty(value) ?? DEFAULT_RIDDLE_DIFFICULTY;
+export function parseBulkRating(value: unknown): number | null {
+  return parseRiddleRating(value);
 }
 
 export async function resolvePgnFromFormInput({

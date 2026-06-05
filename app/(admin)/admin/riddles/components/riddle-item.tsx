@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Button } from "@/components/ui/button";
-import { formatRiddleDifficultyLabel } from "@/features/riddle/types/riddle-difficulty";
+import { formatRiddleRatingLabel } from "@/features/riddle/types/riddle-rating";
 import type { Riddle } from "@/features/riddle/types/riddle";
 
 type Props = {
@@ -38,7 +38,7 @@ export function RiddleItem({ riddle, onDelete }: Props) {
           <time dateTime={riddle.createdAt} className="bg-muted rounded px-2 py-0.5">
             {createdAtLabel}
           </time>
-          <span className="bg-muted rounded px-2 py-0.5">{formatRiddleDifficultyLabel(riddle.difficulty)}</span>
+          <span className="bg-muted rounded px-2 py-0.5">{formatRiddleRatingLabel(riddle.rating)}</span>
           {!riddle.isActive && <span className="bg-muted rounded px-2 py-0.5">inactive</span>}
           {riddle.themes.map((theme) => (
             <span key={theme} className="bg-muted rounded px-2 py-0.5">

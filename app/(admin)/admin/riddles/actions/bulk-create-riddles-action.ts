@@ -14,7 +14,7 @@ import {
   linkRiddleToCollection,
   normalizeBulkRiddleInputs,
   parseBulkCollectionId,
-  parseBulkDifficulty,
+  parseBulkRating,
   parseBulkThemes,
   resolvePgnFromFormInput,
 } from "./action-utils";
@@ -118,7 +118,7 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
       gameId,
       title,
       description,
-      difficulty: parseBulkDifficulty(item.difficulty),
+      rating: parseBulkRating(item.rating),
       pgn,
       moves,
       initialFen,

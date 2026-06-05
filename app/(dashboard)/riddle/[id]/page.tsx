@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { buildVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
-import { riddleDifficultyToRating } from "@/components/calculator/rating-timing-calculator/compute-rating-timing";
+import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { getCollectionById, getMyCustomCollections } from "@/features/collection/services/collection.service";
 import RiddleController from "@/features/riddle/components/riddle-controller";
 import { getRiddleCollectionsForRiddle } from "@/features/riddle-collection/services/riddle-collection.service";
@@ -59,7 +59,7 @@ export default async function RiddlePage({ params }: Params) {
           riddle.moveSequence.id,
         ),
         totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
-        rating: riddleDifficultyToRating(riddle.difficulty),
+        rating: getRiddleRatingForScoring(riddle.rating),
       })
     : null;
 

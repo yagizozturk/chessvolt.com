@@ -15,7 +15,7 @@ import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
 type BulkItem = {
   title?: string;
   description?: string;
-  difficulty?: string;
+  rating?: string | number | null;
   collectionId?: string;
   pgn?: string;
   moves?: string;
@@ -27,7 +27,7 @@ const BULK_JSON_EXAMPLE = JSON.stringify(
     {
       title: "Mate in 2 from setup FEN",
       description: "Find the winning continuation from the diagram position.",
-      difficulty: 4,
+      rating: 1600,
       collectionId: "your-collection-uuid",
       pgn: VALID_PGN_EXAMPLE,
       moves: "e7e8 c8e8",

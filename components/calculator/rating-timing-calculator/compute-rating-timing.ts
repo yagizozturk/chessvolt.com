@@ -114,17 +114,3 @@ export function computeRatingTimingPercent({ rating, durationMs }: RatingTimingI
   return Math.round(Math.max(0, Math.min(basePercent, raw)));
 }
 
-/** Maps riddle difficulty (1–10) to the configured rating scale. */
-export function riddleDifficultyToRating(difficulty: number): number {
-  const { minRating, maxRating } = getRatingBounds();
-  const { minDifficulty, maxDifficulty } = RATING_TIMING_CONFIG.riddleDifficultyAnchors;
-
-  const difficultySpan = maxDifficulty - minDifficulty;
-
-  if (difficultySpan === 0) {
-    return maxRating;
-  }
-
-  const t = (difficulty - minDifficulty) / difficultySpan;
-  return Math.round(minRating + t * (maxRating - minRating));
-}

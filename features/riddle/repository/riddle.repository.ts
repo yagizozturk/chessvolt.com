@@ -6,10 +6,6 @@
 
 import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
 import { toRiddle, type DbRiddle } from "@/features/riddle/mapper/riddle.mapper";
-import {
-  DEFAULT_RIDDLE_DIFFICULTY,
-  type RiddleDifficulty,
-} from "@/features/riddle/types/riddle-difficulty";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { DEFAULT_INITIAL_FEN } from "@/features/move-sequence/mapper/move-sequence.mapper";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
@@ -116,7 +112,7 @@ export type CreateRiddleInput = {
   gameId?: string | null;
   title: string;
   description?: string | null;
-  difficulty?: RiddleDifficulty;
+  rating?: number | null;
   pgn?: string | null;
   moves?: string | null;
   initialFen?: string | null;
@@ -149,7 +145,7 @@ export async function create(
       game_id: input.gameId ?? null,
       title: input.title,
       description: input.description?.trim() || null,
-      difficulty: input.difficulty ?? DEFAULT_RIDDLE_DIFFICULTY,
+      rating: input.rating ?? null,
       move_sequence_id: moveSequence.id,
       themes: input.themes ?? [],
       is_active: input.isActive ?? true,
@@ -171,7 +167,7 @@ export type UpdateRiddleInput = {
   initialFen?: string | null;
   title?: string;
   description?: string | null;
-  difficulty?: RiddleDifficulty;
+  rating?: number | null;
   moves?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
@@ -217,7 +213,7 @@ export async function update(
   if (input.gameId !== undefined) updates.game_id = input.gameId || null;
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description?.trim() || null;
-  if (input.difficulty !== undefined) updates.difficulty = input.difficulty;
+  if (input.rating !== undefined) updates.rating = input.rating;
   if (input.themes !== undefined) updates.themes = input.themes;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
 

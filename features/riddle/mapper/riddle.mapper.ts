@@ -1,10 +1,6 @@
 import { getEmbeddedMoveSequence } from "@/features/move-sequence/helpers/get-embedded-move-sequence";
 import { toMoveSequence, type DbMoveSequence } from "@/features/move-sequence/mapper/move-sequence.mapper";
-import {
-  DEFAULT_RIDDLE_DIFFICULTY,
-  parseRiddleDifficulty,
-  type RiddleDifficulty,
-} from "@/features/riddle/types/riddle-difficulty";
+import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
 import type { Riddle } from "@/features/riddle/types/riddle";
 
 export type DbRiddle = {
@@ -12,7 +8,7 @@ export type DbRiddle = {
   game_id: string | null;
   title: string;
   description: string | null;
-  difficulty: RiddleDifficulty;
+  rating: number | null;
   themes: string[] | null;
   is_active: boolean;
   created_at: string;
@@ -30,7 +26,7 @@ export function toRiddle(db: DbRiddle): Riddle {
     gameId: db.game_id,
     title: db.title,
     description: db.description,
-    difficulty: parseRiddleDifficulty(db.difficulty) ?? DEFAULT_RIDDLE_DIFFICULTY,
+    rating: parseRiddleRating(db.rating),
     themes: db.themes ?? [],
     isActive: db.is_active,
     moveSequence: toMoveSequence(seqRow),

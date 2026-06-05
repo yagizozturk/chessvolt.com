@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { GOALS_JSON_EXAMPLE, VALID_PGN_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { createRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
-import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
+import { RiddleRatingInput } from "@/app/(admin)/admin/riddles/components/riddle-rating-input";
 import { extractFenFromPgn } from "@/app/(admin)/admin/utils/extract-fen-from-pgn";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { JsonViewer } from "@/app/(admin)/admin/shared/components/json-viewer";
@@ -15,7 +15,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Collection } from "@/features/collection/types/collection";
-import { DEFAULT_RIDDLE_DIFFICULTY, type RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
+import { DEFAULT_RIDDLE_RATING } from "@/features/riddle/types/riddle-rating";
 import { cn } from "@/lib/utils/cn";
 
 import { RiddleCollectionSelect } from "../components/riddle-collection-select";
@@ -32,7 +32,7 @@ export function RiddleNewForm({ collections }: Props) {
   const [goals, setGoals] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [difficulty, setDifficulty] = useState<RiddleDifficulty>(DEFAULT_RIDDLE_DIFFICULTY);
+  const [rating, setRating] = useState<number | null>(DEFAULT_RIDDLE_RATING);
   const [themes, setThemes] = useState("");
   const [collectionId, setCollectionId] = useState(collections[0]?.id ?? "");
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
@@ -58,7 +58,7 @@ export function RiddleNewForm({ collections }: Props) {
       {
         title: title.trim() || null,
         description: description.trim() || null,
-        difficulty,
+        rating,
         pgn: pgn.trim() || null,
         moves: derivedMoves || null,
         initialFen: fen ?? null,
@@ -71,7 +71,7 @@ export function RiddleNewForm({ collections }: Props) {
       null,
       2,
     );
-  }, [title, description, difficulty, pgn, derivedMoves, fen, displayFen, themes, collectionId, isActive, goals]);
+  }, [title, description, rating, pgn, derivedMoves, fen, displayFen, themes, collectionId, isActive, goals]);
 
   useEffect(() => {
     setDisplayFen(fen ?? "");
@@ -155,7 +155,7 @@ export function RiddleNewForm({ collections }: Props) {
                 className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
               />
             </Field>
-            <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
+            <RiddleRatingInput value={rating} onChange={setRating} />
             <RiddleCollectionSelect
               collections={collections}
               value={collectionId}

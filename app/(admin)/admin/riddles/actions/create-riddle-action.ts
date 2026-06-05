@@ -14,7 +14,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import {
   parseCollectionIdFromForm,
   parseDescriptionFromForm,
-  parseDifficultyFromForm,
+  parseRatingFromForm,
   parseIsActiveFromForm,
   parseThemesFromForm,
   linkRiddleToCollection,
@@ -28,7 +28,7 @@ export async function createRiddleAction(formData: FormData) {
   const pgnInput = ((formData.get("pgn") as string) || "").trim();
   const title = (formData.get("title") as string)?.trim();
   const description = parseDescriptionFromForm(formData);
-  const difficulty = parseDifficultyFromForm(formData);
+  const rating = parseRatingFromForm(formData);
   const moves = ((formData.get("moves") as string) || "").trim() || null;
   const initialFen = ((formData.get("initialFen") as string) || "").trim() || null;
   const displayFen = ((formData.get("displayFen") as string) || "").trim() || null;
@@ -82,7 +82,7 @@ export async function createRiddleAction(formData: FormData) {
     gameId,
     title,
     description,
-    difficulty,
+    rating,
     pgn,
     moves: resolvedMoves,
     initialFen: resolvedInitialFen ?? null,

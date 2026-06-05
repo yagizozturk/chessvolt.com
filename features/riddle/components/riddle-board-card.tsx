@@ -7,7 +7,7 @@ import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Button } from "@/components/ui/button";
 import type { Game } from "@/features/game/types/game";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import { formatRiddleDifficultyLabel } from "@/features/riddle/types/riddle-difficulty";
+import { formatRiddleRatingLabel } from "@/features/riddle/types/riddle-rating";
 import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
 
 type RiddleBoardCardProps = {
@@ -82,7 +82,7 @@ export function RiddleBoardCard({
           <p className="text-muted-foreground text-sm">Custom position</p>
         )}
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-          <BoardCardMetaRow icon={Gauge} label={formatRiddleDifficultyLabel(riddle.difficulty)} />
+          <BoardCardMetaRow icon={Gauge} label={formatRiddleRatingLabel(riddle.rating)} />
         </div>
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           <BoardCardMetaRow icon={Puzzle} label={moveCountLabel ?? "No moves"} />

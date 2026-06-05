@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { GOALS_JSON_EXAMPLE, VALID_PGN_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { updateRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
-import { RiddleDifficultySelect } from "@/app/(admin)/admin/riddles/components/riddle-difficulty-select";
+import { RiddleRatingInput } from "@/app/(admin)/admin/riddles/components/riddle-rating-input";
 import { extractFenFromPgn } from "@/app/(admin)/admin/utils/extract-fen-from-pgn";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { JsonViewer } from "@/app/(admin)/admin/shared/components/json-viewer";
@@ -17,7 +17,6 @@ import { Switch } from "@/components/ui/switch";
 import type { Collection } from "@/features/collection/types/collection";
 import type { Game } from "@/features/game/types/game";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import type { RiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
 import { cn } from "@/lib/utils/cn";
 
 import { RiddleCollectionSelect } from "../components/riddle-collection-select";
@@ -44,7 +43,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
   );
   const [title, setTitle] = useState(riddle.title);
   const [description, setDescription] = useState(riddle.description ?? "");
-  const [difficulty, setDifficulty] = useState<RiddleDifficulty>(riddle.difficulty);
+  const [rating, setRating] = useState<number | null>(riddle.rating);
   const [themes, setThemes] = useState(riddle.themes.join(", "));
   const [collectionId, setCollectionId] = useState(initialCollectionId);
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
@@ -81,7 +80,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
       id: riddle.id,
       title: title.trim() || null,
       description: description.trim() || null,
-      difficulty,
+      rating,
       pgn: pgn.trim() || null,
       moves: derivedMoves || null,
       initialFen: fen ?? null,
@@ -95,7 +94,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
     riddle.id,
     title,
     description,
-    difficulty,
+    rating,
     pgn,
     derivedMoves,
     fen,
@@ -184,7 +183,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
                 className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
               />
             </Field>
-            <RiddleDifficultySelect value={difficulty} onChange={setDifficulty} />
+            <RiddleRatingInput value={rating} onChange={setRating} />
             <RiddleCollectionSelect
               collections={collections}
               value={collectionId}

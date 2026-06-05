@@ -5,7 +5,11 @@ import { formatCollectionDifficultyLabel } from "@/features/collection/types/col
 import { getCollectionBySlug } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
-import { isRiddleDifficulty } from "@/features/riddle/types/riddle-difficulty";
+import {
+  isRiddleRatingBand,
+  matchesRiddleRatingBand,
+  type RiddleRatingBand,
+} from "@/features/riddle/types/riddle-rating";
 import { getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { buildAttemptByRiddleId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-riddle-id";
@@ -14,12 +18,12 @@ import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ difficulty?: string }>;
+  searchParams: Promise<{ ratingBand?: string }>;
 };
 
 export default async function CollectionDetailPage({ params, searchParams }: Params) {
   const { slug } = await params;
-  const { difficulty: selectedDifficulty = "all" } = await searchParams;
+  const { ratingBand: selectedRatingBand = "all" } = await searchParams;
   const { user, supabase } = await getPublicUser();
 
   const collection = await getCollectionBySlug(supabase, slug);
@@ -28,11 +32,12 @@ export default async function CollectionDetailPage({ params, searchParams }: Par
   }
 
   const allRiddles = await getRiddlesByCollectionId(supabase, collection.id, { activeOnly: true });
-  const difficultyFilter = Number(selectedDifficulty.trim());
+  const trimmedRatingBand = selectedRatingBand.trim();
+  const ratingBand: RiddleRatingBand = isRiddleRatingBand(trimmedRatingBand) ? trimmedRatingBand : "all";
   const riddles =
-    selectedDifficulty.trim() === "all" || !isRiddleDifficulty(difficultyFilter)
+    ratingBand === "all"
       ? allRiddles
-      : allRiddles.filter((riddle) => riddle.difficulty === difficultyFilter);
+      : allRiddles.filter((riddle) => matchesRiddleRatingBand(riddle.rating, ratingBand));
 
   const sequenceIds = [...new Set(riddles.map((r) => r.moveSequence.id))];
   const summaries = user ? await attemptService.getLatestSummariesForSequences(supabase, user.id, sequenceIds) : [];
