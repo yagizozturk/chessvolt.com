@@ -11,7 +11,7 @@ import {
   ONBOARDING_STARTER_COLLECTION_SLUG,
 } from "@/features/onboarding/constants/onboarding-starter-collection.config";
 import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboarding-questions";
-import { selectOnboardingStarterRiddles } from "@/features/onboarding/lib/select-onboarding-starter-riddles";
+import { selectOnboardingStarterRiddles } from "@/features/onboarding/utilities/select-onboarding-starter-riddles";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
 import {
@@ -87,9 +87,7 @@ export async function createOnboardingStarterCollection(
   });
 
   const title = input.starterCollectionOption.label.trim();
-  const description =
-    input.starterCollectionOption.description?.trim() ||
-    "Your personalized starter collection based on your onboarding answers.";
+  const description = "Your personalized starter collection based on your onboarding answers.";
 
   const collection = await createMyCustomCollection(supabase, {
     title,

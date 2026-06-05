@@ -11,7 +11,7 @@ import {
   filterCollections,
   getThemeFilterOptions,
   hasActiveCollectionFilters,
-} from "@/features/collection/utils/collection-filter.utils";
+} from "@/features/collection/utilities/collection-filter.utils";
 import { cn } from "@/lib/utils";
 
 type CollectionListWithFiltersProps = {

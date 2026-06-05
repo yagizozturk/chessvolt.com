@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { COLLECTION_DIFFICULTY_BAND_OPTIONS } from "@/features/collection/utils/collection-filter.utils";
+import { COLLECTION_DIFFICULTY_BAND_OPTIONS } from "@/features/collection/utilities/collection-filter.utils";
 import type { Theme } from "@/features/theme/types/theme";
 
 const selectClassName =

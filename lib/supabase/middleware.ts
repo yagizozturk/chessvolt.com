@@ -4,7 +4,7 @@ import {
   isDashboardPath,
   isOnboardingPath,
   shouldSkipOnboardingCheck,
-} from '@/features/onboarding/lib/onboarding-routes'
+} from '@/features/onboarding/utilities/onboarding-routes'
 import { ONBOARDING_PATH, POST_ONBOARDING_URL } from '@/features/onboarding/constants/onboarding-routes'
 
 function redirectWithSession(request: NextRequest, pathname: string, supabaseResponse: NextResponse) {

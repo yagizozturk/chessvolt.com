@@ -1,4 +1,4 @@
-import { TtsConfigError, TtsSynthesisError, resolveTtsAudio } from "@/features/tts/lib/resolve-tts-audio";
+import { TtsConfigError, TtsSynthesisError, resolveTtsAudio } from "@/features/tts/utilities/resolve-tts-audio";
 
 function audioResponse(audio: ArrayBuffer) {
   return new Response(audio, {
