@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 
-import { OnboardingForm } from "@/features/onboarding/components/onboarding-form";
 import { getOnboardingOptionsForQuestion } from "@/features/onboarding-option/services/onboarding-option.service";
 import { getActiveOnboardingQuestions } from "@/features/onboarding-question/services/onboarding-question.service";
+import { OnboardingForm } from "@/features/onboarding/components/onboarding-form";
+import { POST_ONBOARDING_URL } from "@/features/onboarding/constants/onboarding-routes";
 import { getProfileOnboardingStatus } from "@/features/profile/repository/profile.repository";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
@@ -17,7 +18,7 @@ export default async function OnboardingPage() {
   // ======================================================================
   const onboardingStatus = await getProfileOnboardingStatus(supabase, user.id);
   if (onboardingStatus?.onboardingCompleted) {
-    redirect("/collection");
+    redirect(POST_ONBOARDING_URL);
   }
 
   // ======================================================================
@@ -28,7 +29,7 @@ export default async function OnboardingPage() {
   // ======================================================================
   // Getting the active onboarding options for the questions
   // ======================================================================
-  const optionGroups = await Promise.all(
+  const questionGroups = await Promise.all(
     questions.map(async (question) => ({
       question,
       options: await getOnboardingOptionsForQuestion(supabase, question.id, { activeOnly: true }),
@@ -37,7 +38,7 @@ export default async function OnboardingPage() {
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <OnboardingForm steps={optionGroups} />
+      <OnboardingForm steps={questionGroups} />
     </div>
   );
 }

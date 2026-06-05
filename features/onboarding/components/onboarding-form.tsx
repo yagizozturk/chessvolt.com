@@ -10,6 +10,7 @@ import type { OnboardingOption } from "@/features/onboarding-option/types/onboar
 import { OnboardingQuestionStep } from "@/features/onboarding-question/components/onboarding-question-step";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
 import { completeOnboardingAction } from "@/features/onboarding/actions/complete-onboarding";
+import { POST_ONBOARDING_URL } from "@/features/onboarding/constants/onboarding-routes";
 import { isMultiSelectOnboardingQuestion } from "@/features/onboarding/constants/onboarding-questions";
 
 type OnboardingStepData = {
@@ -87,7 +88,7 @@ export function OnboardingForm({ steps }: OnboardingFormProps) {
       }
 
       router.refresh();
-      router.push("/collection");
+      router.push(POST_ONBOARDING_URL);
     });
   }
 

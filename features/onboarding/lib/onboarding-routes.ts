@@ -1,8 +1,8 @@
-export const ONBOARDING_PATH = "/onboarding";
-
-const AUTH_PATH_PREFIXES = ["/login", "/signup", "/forgot-password", "/auth"] as const;
-
-const DASHBOARD_PATH_PREFIXES = ["/collection", "/openings", "/riddle"] as const;
+import {
+  AUTH_PATH_PREFIXES,
+  DASHBOARD_PATH_PREFIXES,
+  ONBOARDING_PATH,
+} from "@/features/onboarding/constants/onboarding-routes";
 
 export function isAuthPath(pathname: string): boolean {
   return AUTH_PATH_PREFIXES.some(

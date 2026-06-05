@@ -3,9 +3,9 @@ import { NextResponse, type NextRequest } from 'next/server'
 import {
   isDashboardPath,
   isOnboardingPath,
-  ONBOARDING_PATH,
   shouldSkipOnboardingCheck,
 } from '@/features/onboarding/lib/onboarding-routes'
+import { ONBOARDING_PATH, POST_ONBOARDING_URL } from '@/features/onboarding/constants/onboarding-routes'
 
 function redirectWithSession(request: NextRequest, pathname: string, supabaseResponse: NextResponse) {
   const url = request.nextUrl.clone()
@@ -76,7 +76,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     if (onboardingCompleted && isOnboardingPath(pathname)) {
-      return redirectWithSession(request, '/collection', supabaseResponse)
+      return redirectWithSession(request, POST_ONBOARDING_URL, supabaseResponse)
     }
   }
 
