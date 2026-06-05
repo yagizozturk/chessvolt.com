@@ -9,9 +9,19 @@ const techTopics = [
     href: "/admin/storybook/tech/use-state",
   },
   {
+    title: "useTransition",
+    description: "Mark updates as non-urgent and track isPending while async work runs.",
+    href: "/admin/storybook/tech/use-transition",
+  },
+  {
     title: "Record<string, string[]>",
     description: "A typed key-value map — like Dictionary<string, List<string>> in C#.",
     href: "/admin/storybook/tech/record",
+  },
+  {
+    title: "Set",
+    description: "A collection of unique values with fast .has() lookups — like HashSet<T> in C#.",
+    href: "/admin/storybook/tech/set",
   },
 ] as const;
 

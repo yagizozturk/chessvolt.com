@@ -14,7 +14,10 @@ import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboar
 import { selectOnboardingStarterRiddles } from "@/features/onboarding/lib/select-onboarding-starter-riddles";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
-import * as collectionRepo from "@/features/collection/repository/collection.repository";
+import {
+  createMyCustomCollection,
+  getOnboardingStarterCollectionForUser,
+} from "@/features/collection/services/collection.service";
 import type { Collection } from "@/features/collection/types/collection";
 import { getOnboardingOptionThemesForOptionsWithTheme } from "@/features/onboarding-option-theme/services/onboarding-option-theme.service";
 import { addRiddlesToCollection } from "@/features/riddle-collection/services/riddle-collection.service";
@@ -62,7 +65,7 @@ export async function createOnboardingStarterCollection(
     return { created: false, reason: "skipped" };
   }
 
-  const existing = await collectionRepo.findOnboardingStarterForUser(
+  const existing = await getOnboardingStarterCollectionForUser(
     supabase,
     input.userId,
     ONBOARDING_STARTER_COLLECTION_SLUG,
@@ -88,7 +91,7 @@ export async function createOnboardingStarterCollection(
     input.starterCollectionOption.description?.trim() ||
     "Your personalized starter collection based on your onboarding answers.";
 
-  const collection = await collectionRepo.createCustomForUser(supabase, {
+  const collection = await createMyCustomCollection(supabase, {
     title,
     description,
     slug: ONBOARDING_STARTER_COLLECTION_SLUG,

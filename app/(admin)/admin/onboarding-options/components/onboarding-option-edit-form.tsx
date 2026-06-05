@@ -6,7 +6,7 @@ import {
   type UpdateOnboardingOptionFormState,
   updateOnboardingOptionAction,
 } from "@/app/(admin)/admin/onboarding-options/actions/onboarding-options";
-import { OnboardingQuestionSelect } from "@/features/onboarding-option/components/onboarding-question-select";
+import { OnboardingQuestionSelect } from "@/app/(admin)/admin/onboarding-options/components/onboarding-question-select";
 import type { OnboardingOptionWithQuestion } from "@/features/onboarding-option/types/onboarding-option-with-question";
 import {
   MAX_ONBOARDING_INITIAL_RATING,

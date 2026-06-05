@@ -13,7 +13,7 @@ import { createOnboardingStarterCollection } from "@/features/onboarding/service
 import { getOnboardingOptionsByIds } from "@/features/onboarding-option/services/onboarding-option.service";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import { getActiveOnboardingQuestions } from "@/features/onboarding-question/services/onboarding-question.service";
-import * as profileRepo from "@/features/profile/repository/profile.repository";
+import { completeProfileOnboarding } from "@/features/profile/services/profile.service";
 import { replaceUserOnboardingAnswersForQuestion } from "@/features/user-onboarding-answer/services/user-onboarding-answer.service";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -158,7 +158,7 @@ export async function completeOnboarding(
     console.error("completeOnboarding: starter collection creation failed", { userId });
   }
 
-  const profileUpdated = await profileRepo.completeProfileOnboarding(supabase, userId, {
+  const profileUpdated = await completeProfileOnboarding(supabase, userId, {
     initialRating: chessOption.initialRating,
   });
 

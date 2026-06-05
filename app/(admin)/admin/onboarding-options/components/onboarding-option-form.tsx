@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { createOnboardingOptionAction } from "@/app/(admin)/admin/onboarding-options/actions/onboarding-options";
-import { OnboardingQuestionSelect } from "@/features/onboarding-option/components/onboarding-question-select";
+import { OnboardingQuestionSelect } from "@/app/(admin)/admin/onboarding-options/components/onboarding-question-select";
 import {
   MAX_ONBOARDING_INITIAL_RATING,
   MAX_ONBOARDING_INITIAL_RATING_DEVIATION,

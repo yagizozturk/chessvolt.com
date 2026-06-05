@@ -84,6 +84,14 @@ export async function getCollectionBySlug(supabase: SupabaseClient, slug: string
   return collectionRepo.findBySlug(supabase, slug);
 }
 
+export async function getOnboardingStarterCollectionForUser(
+  supabase: SupabaseClient,
+  userId: string,
+  slug: string,
+): Promise<Collection | null> {
+  return collectionRepo.findOnboardingStarterForUser(supabase, userId, slug);
+}
+
 export async function createCollection(
   supabase: SupabaseClient,
   input: collectionRepo.CreateCollectionInput,
