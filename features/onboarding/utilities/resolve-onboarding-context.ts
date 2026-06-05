@@ -1,3 +1,11 @@
+/**
+ * Resolve Onboarding Completion Context
+ *
+ * Maps validated answers into the values needed to finish onboarding:
+ * initial rating, improvement-goal options, and starter collection choice.
+ * Assumes all validation has already passed — does not return errors.
+ */
+
 import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboarding-questions";
 import type { OnboardingQuestionAnswerInput } from "@/features/onboarding/types/onboarding-answer-input";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
@@ -9,35 +17,23 @@ export type OnboardingCompletionContext = {
   starterCollectionOption: OnboardingOption | null;
 };
 
-export type ResolveOnboardingContextResult =
-  | { ok: true; context: OnboardingCompletionContext }
-  | { ok: false; error: string };
-
+// ============================================================================
+// resolveOnboardingCompletionContext
+//
+// Extracts completion payload from validated data (no I/O, no validation):
+//   - initialRating from the chess familiarity option (required upstream).
+//   - improvementGoalOptionIds from the multi-select improvement_goal answer
+//     (empty array when that question is not in the active set).
+//   - starterCollectionOption from the starter_collection answer, or null when
+//     the user skipped it or the question is absent — starter collection
+//     creation treats null as "skipped".
+// ============================================================================
 export function resolveOnboardingCompletionContext(
   activeQuestions: OnboardingQuestion[],
   normalizedAnswers: OnboardingQuestionAnswerInput[],
   optionById: Map<string, OnboardingOption>,
-): ResolveOnboardingContextResult {
-  const chessQuestion = activeQuestions.find(
-    (question) => question.slug === ONBOARDING_QUESTION_SLUG.chessFamiliarity,
-  );
-  if (!chessQuestion) {
-    return { ok: false, error: "Onboarding is not available right now. Please try again later." };
-  }
-
-  const chessAnswer = normalizedAnswers.find((answer) => answer.questionId === chessQuestion.id);
-  const chessOption = chessAnswer ? optionById.get(chessAnswer.optionIds[0] ?? "") : undefined;
-  if (!chessOption) {
-    return { ok: false, error: "Please answer all onboarding questions." };
-  }
-
-  if (chessOption.initialRating == null) {
-    return {
-      ok: false,
-      error: "Your chess familiarity answer is missing a rating. Please contact support.",
-    };
-  }
-
+  chessOption: OnboardingOption,
+): OnboardingCompletionContext {
   const improvementQuestion = activeQuestions.find(
     (question) => question.slug === ONBOARDING_QUESTION_SLUG.improvementGoal,
   );
@@ -55,11 +51,8 @@ export function resolveOnboardingCompletionContext(
   const starterOption = starterAnswer ? (optionById.get(starterAnswer.optionIds[0] ?? "") ?? null) : null;
 
   return {
-    ok: true,
-    context: {
-      initialRating: chessOption.initialRating,
-      improvementGoalOptionIds: improvementAnswer?.optionIds ?? [],
-      starterCollectionOption: starterOption,
-    },
+    initialRating: chessOption.initialRating!,
+    improvementGoalOptionIds: improvementAnswer?.optionIds ?? [],
+    starterCollectionOption: starterOption,
   };
 }

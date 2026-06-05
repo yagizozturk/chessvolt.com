@@ -1,3 +1,11 @@
+/**
+ * Select Onboarding Starter Riddles
+ *
+ * Picks riddles for the personalized starter collection created after onboarding.
+ * Uses improvement-goal themes and the user's initial rating from chess familiarity.
+ * Falls back through progressively wider search criteria when strict matches are sparse.
+ */
+
 import {
   ONBOARDING_RIDDLE_RATING_TOLERANCE,
   ONBOARDING_RIDDLE_RATING_TOLERANCE_FALLBACK,
@@ -11,6 +19,13 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 const FETCH_BUFFER = 2;
 
+// ============================================================================
+// pickClosestRiddles
+//
+// Deduplicates riddles by id, sorts by closest rating to userRating (ties broken
+// by createdAt), and returns up to limit items. Used after each repo query to
+// shrink a buffered fetch down to the final collection size.
+// ============================================================================
 function pickClosestRiddles(riddles: Riddle[], userRating: number, limit: number): Riddle[] {
   const uniqueById = new Map<string, Riddle>();
   for (const riddle of riddles) {
@@ -27,10 +42,35 @@ function pickClosestRiddles(riddles: Riddle[], userRating: number, limit: number
     .slice(0, limit);
 }
 
+// ============================================================================
+// hasEnoughMatches
+//
+// True when the picked set meets ONBOARDING_STARTER_COLLECTION_MIN_RIDDLES.
+// When the pool itself is smaller than the minimum, callers accept whatever
+// was found rather than widening search again.
+// ============================================================================
 function hasEnoughMatches(riddles: Riddle[]): boolean {
   return riddles.length >= ONBOARDING_STARTER_COLLECTION_MIN_RIDDLES;
 }
 
+// ============================================================================
+// selectOnboardingStarterRiddles
+//
+// Chooses up to ONBOARDING_STARTER_COLLECTION_RIDDLE_LIMIT active riddles for
+// the user's starter collection. Search strategy (first satisfactory result wins):
+//
+// When themeSlugs from improvement goals are non-empty:
+//   1. Themes + tight rating band (± ONBOARDING_RIDDLE_RATING_TOLERANCE).
+//   2. Themes + wide rating band (± ONBOARDING_RIDDLE_RATING_TOLERANCE_FALLBACK).
+//   3. Themes only (any rating).
+//
+// When no themes or theme search returned nothing:
+//   4. Tight rating band across all themes.
+//   5. Wide rating band across all themes.
+//
+// Each query fetches limit * FETCH_BUFFER rows so pickClosestRiddles can rank
+// by rating proximity before slicing to the final limit.
+// ============================================================================
 export async function selectOnboardingStarterRiddles(
   supabase: SupabaseClient,
   input: { themeSlugs: string[]; userRating: number },

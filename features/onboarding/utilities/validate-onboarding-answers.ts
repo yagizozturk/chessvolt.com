@@ -1,3 +1,11 @@
+/**
+ * Validate Onboarding Answers
+ *
+ * Two-step validation of submitted onboarding answers:
+ *   1. Structure — shape, completeness, and selection rules (pure, no DB).
+ *   2. Options — existence, active state, and question ownership (loads options).
+ */
+
 import { isMultiSelectOnboardingQuestion } from "@/features/onboarding/constants/onboarding-questions";
 import type { OnboardingQuestionAnswerInput } from "@/features/onboarding/types/onboarding-answer-input";
 import { getOnboardingOptionsByIds } from "@/features/onboarding-option/services/onboarding-option.service";
@@ -22,6 +30,21 @@ export type ValidateOnboardingAnswersWithOptionsResult =
     }
   | { ok: false; error: string };
 
+// ============================================================================
+// validateOnboardingAnswersStructure
+//
+// Pure validation of the submitted payload before any option rows are loaded.
+// Checks:
+//   - At least one answer; count matches active question count.
+//   - Each answer has a trimmed questionId and at least one optionId.
+//   - Each questionId refers to an active question (guards tampered IDs).
+//   - No duplicate answers for the same question.
+//   - No duplicate optionIds within one answer.
+//   - Single-select questions have exactly one option; multi-select may have many.
+//
+// On success, returns normalizedAnswers (trimmed, deduped option IDs) and a
+// question lookup map reused by the options validator.
+// ============================================================================
 export function validateOnboardingAnswersStructure(
   answers: OnboardingQuestionAnswerInput[],
   activeQuestions: OnboardingQuestion[],
@@ -71,6 +94,19 @@ export function validateOnboardingAnswersStructure(
   return { ok: true, normalizedAnswers, activeQuestionById };
 }
 
+// ============================================================================
+// validateOnboardingAnswersWithOptions
+//
+// Database-backed validation after structure checks pass. Loads all referenced
+// options in one query, then verifies:
+//   - Every optionId exists (count match — catches unknown/fake IDs).
+//   - Every option is still is_active (admin may have deactivated an option
+//     after the user loaded the form).
+//   - Each option belongs to the question it was submitted under (prevents
+//     pairing a valid option ID with the wrong question).
+//
+// Returns optionById for chess-familiarity validation and context resolution.
+// ============================================================================
 export async function validateOnboardingAnswersWithOptions(
   supabase: SupabaseClient,
   normalizedAnswers: OnboardingQuestionAnswerInput[],
