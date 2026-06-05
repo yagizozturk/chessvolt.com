@@ -40,15 +40,6 @@ export function OnboardingQuestionEditForm({ question }: Props) {
           <Input name="slug" defaultValue={question.slug} className="font-mono text-sm" />
         </Field>
         <Field>
-          <FieldLabel>Description</FieldLabel>
-          <textarea
-            name="description"
-            rows={3}
-            defaultValue={question.description ?? ""}
-            className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
-          />
-        </Field>
-        <Field>
           <FieldLabel>Sort order</FieldLabel>
           <Input name="sortOrder" type="number" defaultValue={String(question.sortOrder)} />
         </Field>

@@ -23,17 +23,11 @@ function parseIsActive(formData: FormData): boolean {
   return formData.get("isActive") === "on";
 }
 
-function parseDescription(formData: FormData): string | null {
-  const raw = (formData.get("description") as string | null)?.trim() ?? "";
-  return raw || null;
-}
-
 export async function createOnboardingQuestionAction(formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const title = (formData.get("title") as string)?.trim();
   const slug = ((formData.get("slug") as string) || "").trim() || undefined;
-  const description = parseDescription(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
 
@@ -44,7 +38,6 @@ export async function createOnboardingQuestionAction(formData: FormData) {
   const input: CreateOnboardingQuestionInput = {
     title,
     slug,
-    description,
     sortOrder,
     isActive,
   };
@@ -75,7 +68,6 @@ export async function updateOnboardingQuestionAction(
 
   const title = (formData.get("title") as string)?.trim();
   const slug = ((formData.get("slug") as string) || "").trim() || undefined;
-  const description = parseDescription(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
 
@@ -86,7 +78,6 @@ export async function updateOnboardingQuestionAction(
   const input: UpdateOnboardingQuestionInput = {
     title,
     slug,
-    description,
     sortOrder,
     isActive,
   };

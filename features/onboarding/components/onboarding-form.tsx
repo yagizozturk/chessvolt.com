@@ -1,44 +1,44 @@
 "use client";
 
+import { Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Text } from "@/components/ui/text";
 import { OnboardingOptionList } from "@/features/onboarding-option/components/onboarding-option-list";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
-import { OnboardingQuestionStep } from "@/features/onboarding-question/components/onboarding-question-step";
-import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
+import { OnboardingQuestion } from "@/features/onboarding-question/components/onboarding-question";
 import { completeOnboardingAction } from "@/features/onboarding/actions/complete-onboarding";
-import { POST_ONBOARDING_URL } from "@/features/onboarding/constants/onboarding-routes";
 import { isMultiSelectOnboardingQuestion } from "@/features/onboarding/constants/onboarding-questions";
-
-type OnboardingStepData = {
-  question: OnboardingQuestion;
-  options: OnboardingOption[];
-};
+import { POST_ONBOARDING_URL } from "@/features/onboarding/constants/onboarding-routes";
+import type { OnboardingStepData } from "@/features/onboarding/types/onboarding-step-data";
 
 type OnboardingFormProps = {
-  steps: OnboardingStepData[];
+  questionGroups: OnboardingStepData[];
 };
 
-export function OnboardingForm({ steps }: OnboardingFormProps) {
+export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
   const router = useRouter();
-  const [stepIndex, setStepIndex] = useState(0);
-  const [selectedOptionIdsByQuestionId, setSelectedOptionIdsByQuestionId] = useState<Record<string, string[]>>({});
+  const [stepIndex, setStepIndex] = useState(0); // Current step index
+  const [selectedOptionIdsByQuestionId, setSelectedOptionIdsByQuestionId] = useState<Record<string, string[]>>({}); // Selected option IDs by question ID in map format
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const currentStep = steps[stepIndex];
+  const currentStep = questionGroups[stepIndex]; // Current step of the question
   const isMultiSelect = isMultiSelectOnboardingQuestion(currentStep.question.slug);
   const selectedOptionIds = selectedOptionIdsByQuestionId[currentStep.question.id] ?? [];
   const selectedValues = currentStep.options
     .filter((option) => selectedOptionIds.includes(option.id))
     .map((option) => option.value);
   const hasCurrentStepAnswer = selectedOptionIds.length > 0;
-  const isLastStep = stepIndex === steps.length - 1;
-  const progressValue = ((stepIndex + 1) / steps.length) * 100;
+  const isLastStep = stepIndex === questionGroups.length - 1;
+  const progressValue = ((stepIndex + 1) / questionGroups.length) * 100;
 
+  // ======================================================================
+  // Handles the selection of an option
+  // ======================================================================
   function handleSelect(option: OnboardingOption) {
     setError(null);
     setSelectedOptionIdsByQuestionId((prev) => {
@@ -55,6 +55,9 @@ export function OnboardingForm({ steps }: OnboardingFormProps) {
     });
   }
 
+  // ======================================================================
+  // Handles the continuation to the next step
+  // ======================================================================
   function handleContinue() {
     if (!hasCurrentStepAnswer) {
       setError(
@@ -69,15 +72,17 @@ export function OnboardingForm({ steps }: OnboardingFormProps) {
       return;
     }
 
-    const missingAnswer = steps.some((step) => (selectedOptionIdsByQuestionId[step.question.id] ?? []).length === 0);
+    const missingAnswer = questionGroups.some(
+      (group) => (selectedOptionIdsByQuestionId[group.question.id] ?? []).length === 0,
+    );
     if (missingAnswer) {
       setError("Please answer all onboarding questions.");
       return;
     }
 
-    const answers = steps.map((step) => ({
-      questionId: step.question.id,
-      optionIds: selectedOptionIdsByQuestionId[step.question.id] ?? [],
+    const answers = questionGroups.map((group) => ({
+      questionId: group.question.id,
+      optionIds: selectedOptionIdsByQuestionId[group.question.id] ?? [],
     }));
 
     startTransition(async () => {
@@ -92,44 +97,49 @@ export function OnboardingForm({ steps }: OnboardingFormProps) {
     });
   }
 
+  // ======================================================================
+  // Handles the back to the previous step
+  // ======================================================================
   function handleBack() {
     setError(null);
     setStepIndex((prev) => Math.max(0, prev - 1));
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
-      <div className="space-y-2 text-center">
-        <p className="text-muted-foreground text-sm font-medium">
-          Step {stepIndex + 1} of {steps.length}
-        </p>
-        <Progress value={progressValue} className="mx-auto h-2 w-full max-w-md" />
-        <h1 className="text-3xl font-bold tracking-tight">Welcome to Chessvolt</h1>
-        <p className="text-muted-foreground text-base">
-          Tell us a bit about yourself so we can personalize your training.
-        </p>
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+      {/* Heading of the page Brand */}
+      <div className="space-y-6 text-center">
+        <div className="text-foreground flex items-center justify-center gap-2 text-3xl font-bold tracking-tighter">
+          <Zap className="fill-primary text-primary h-7 w-7" aria-hidden />
+          <span>ChessVolt</span>
+        </div>
+        <Text variant="subtitle" as="p">
+          Please tell us a bit about yourself so we can personalize your training.
+        </Text>
       </div>
 
-      <OnboardingQuestionStep
+      {/* Current step of the question and show options */}
+      <OnboardingQuestion
         question={currentStep.question}
-        stepNumber={stepIndex + 1}
-        hint={isMultiSelect ? "Select all that apply." : undefined}
-      >
-        <OnboardingOptionList
-          options={currentStep.options}
-          selectedValues={selectedValues}
-          onSelect={handleSelect}
-          disabled={isPending}
-          multiple={isMultiSelect}
-        />
-      </OnboardingQuestionStep>
+        options={
+          <OnboardingOptionList
+            options={currentStep.options}
+            selectedValues={selectedValues}
+            onSelect={handleSelect}
+            disabled={isPending}
+            multiple={isMultiSelect}
+          />
+        }
+      />
 
+      {/* Error message */}
       {error ? (
         <p className="text-destructive text-center text-sm" role="alert">
           {error}
         </p>
       ) : null}
 
+      {/* Buttons to navigate between steps */}
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
         {stepIndex > 0 ? (
           <Button type="button" variant="outline" onClick={handleBack} disabled={isPending}>
@@ -147,6 +157,14 @@ export function OnboardingForm({ steps }: OnboardingFormProps) {
         >
           {isPending ? "Saving..." : isLastStep ? "Finish" : "Continue"}
         </Button>
+      </div>
+
+      {/* Progress bar */}
+      <div className="space-y-2 text-center">
+        <Text variant="subtitle" as="p">
+          Step {stepIndex + 1} of {questionGroups.length}
+        </Text>
+        <Progress value={progressValue} className="mx-auto h-3 w-full max-w-md" />
       </div>
     </div>
   );

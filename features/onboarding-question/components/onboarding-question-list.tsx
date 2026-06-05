@@ -1,9 +1,9 @@
-import { OnboardingQuestionStep } from "@/features/onboarding-question/components/onboarding-question-step";
-import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
+import { OnboardingQuestion } from "@/features/onboarding-question/components/onboarding-question";
+import type { OnboardingQuestion as OnboardingQuestionModel } from "@/features/onboarding-question/types/onboarding-question";
 
 type OnboardingQuestionListProps = {
-  questions: OnboardingQuestion[];
-  renderOptions?: (question: OnboardingQuestion, index: number) => React.ReactNode;
+  questions: OnboardingQuestionModel[];
+  renderOptions: (question: OnboardingQuestionModel, index: number) => React.ReactNode;
 };
 
 export function OnboardingQuestionList({ questions, renderOptions }: OnboardingQuestionListProps) {
@@ -14,9 +14,11 @@ export function OnboardingQuestionList({ questions, renderOptions }: OnboardingQ
   return (
     <div className="space-y-10">
       {questions.map((question, index) => (
-        <OnboardingQuestionStep key={question.id} question={question} stepNumber={index + 1}>
-          {renderOptions?.(question, index)}
-        </OnboardingQuestionStep>
+        <OnboardingQuestion
+          key={question.id}
+          question={question}
+          options={renderOptions(question, index)}
+        />
       ))}
     </div>
   );

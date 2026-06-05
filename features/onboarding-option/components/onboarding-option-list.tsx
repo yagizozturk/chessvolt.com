@@ -1,3 +1,4 @@
+import { Text } from "@/components/ui/text";
 import { OnboardingOptionCard } from "@/features/onboarding-option/components/onboarding-option-card";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 
@@ -17,7 +18,7 @@ export function OnboardingOptionList({
   multiple = false,
 }: OnboardingOptionListProps) {
   if (options.length === 0) {
-    return <p className="text-muted-foreground text-sm">No options available.</p>;
+    return <Text variant="muted">No options available.</Text>;
   }
 
   const selectedValueSet = new Set(selectedValues);

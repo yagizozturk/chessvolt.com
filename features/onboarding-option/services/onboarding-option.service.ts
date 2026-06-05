@@ -4,11 +4,11 @@
  * Responsibility: Business logic for onboarding_options rows.
  * - Uses repository (does not touch Supabase directly)
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as onboardingOptionRepo from "@/features/onboarding-option/repository/onboarding-option.repository";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import type { OnboardingOptionWithQuestion } from "@/features/onboarding-option/types/onboarding-option-with-question";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function getAllOnboardingOptions(supabase: SupabaseClient): Promise<OnboardingOption[]> {
   return onboardingOptionRepo.findAll(supabase);
@@ -24,6 +24,9 @@ export async function getActiveOnboardingOptions(supabase: SupabaseClient): Prom
   return onboardingOptionRepo.findAllActive(supabase);
 }
 
+// ======================================================================
+// Gets the active onboarding options for a question
+// ======================================================================
 export async function getOnboardingOptionsForQuestion(
   supabase: SupabaseClient,
   questionId: string,
@@ -32,17 +35,11 @@ export async function getOnboardingOptionsForQuestion(
   return onboardingOptionRepo.findByQuestionId(supabase, questionId, options);
 }
 
-export async function getOnboardingOptionsByIds(
-  supabase: SupabaseClient,
-  ids: string[],
-): Promise<OnboardingOption[]> {
+export async function getOnboardingOptionsByIds(supabase: SupabaseClient, ids: string[]): Promise<OnboardingOption[]> {
   return onboardingOptionRepo.findByIds(supabase, ids);
 }
 
-export async function getOnboardingOptionById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<OnboardingOption | null> {
+export async function getOnboardingOptionById(supabase: SupabaseClient, id: string): Promise<OnboardingOption | null> {
   return onboardingOptionRepo.findById(supabase, id);
 }
 

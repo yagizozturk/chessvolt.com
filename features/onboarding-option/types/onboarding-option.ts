@@ -3,7 +3,6 @@ export type OnboardingOption = {
   questionId: string;
   value: string;
   label: string;
-  description: string | null;
   sortOrder: number;
   isActive: boolean;
   initialRating: number | null;

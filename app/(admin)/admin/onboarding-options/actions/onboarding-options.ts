@@ -27,11 +27,6 @@ function parseIsActive(formData: FormData): boolean {
   return formData.get("isActive") === "on";
 }
 
-function parseDescription(formData: FormData): string | null {
-  const raw = (formData.get("description") as string | null)?.trim() ?? "";
-  return raw || null;
-}
-
 function parseQuestionId(formData: FormData): string | null {
   const raw = (formData.get("questionId") as string | null)?.trim() ?? "";
   return raw || null;
@@ -57,7 +52,6 @@ export async function createOnboardingOptionAction(formData: FormData) {
   const questionId = parseQuestionId(formData);
   const value = (formData.get("value") as string)?.trim();
   const label = (formData.get("label") as string)?.trim();
-  const description = parseDescription(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
   const initialRating = parseOptionalRating(formData);
@@ -75,7 +69,6 @@ export async function createOnboardingOptionAction(formData: FormData) {
     questionId,
     value,
     label,
-    description,
     sortOrder,
     isActive,
     initialRating,
@@ -110,7 +103,6 @@ export async function updateOnboardingOptionAction(
   const questionId = parseQuestionId(formData);
   const value = (formData.get("value") as string)?.trim();
   const label = (formData.get("label") as string)?.trim();
-  const description = parseDescription(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
   const initialRating = parseOptionalRating(formData);
@@ -128,7 +120,6 @@ export async function updateOnboardingOptionAction(
     questionId,
     value,
     label,
-    description,
     sortOrder,
     isActive,
     initialRating,

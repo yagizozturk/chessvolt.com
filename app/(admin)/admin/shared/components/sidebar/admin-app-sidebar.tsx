@@ -107,6 +107,7 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "Cards", url: "/admin/storybook/cards" },
       { title: "Colors", url: "/admin/storybook/colors" },
       { title: "Misc", url: "/admin/storybook/misc" },
+      { title: "Tech", url: "/admin/storybook/tech" },
       { title: "Updated board", url: "/admin/storybook/updated-board" },
     ],
   },

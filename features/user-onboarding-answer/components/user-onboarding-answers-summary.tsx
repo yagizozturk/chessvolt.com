@@ -14,9 +14,6 @@ export function UserOnboardingAnswersSummary({ answers }: Props) {
       {answers.map((answer) => (
         <li key={answer.id} className="border-border rounded-lg border p-4">
           <p className="font-medium">{answer.question.title}</p>
-          {answer.question.description ? (
-            <p className="text-muted-foreground mt-1 text-sm">{answer.question.description}</p>
-          ) : null}
           <p className="mt-2 text-sm">
             <span className="text-muted-foreground">Your answer: </span>
             {answer.option.label}

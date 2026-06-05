@@ -85,7 +85,6 @@ export async function findBySlug(supabase: SupabaseClient, slug: string): Promis
 export type CreateOnboardingQuestionInput = {
   title: string;
   slug?: string;
-  description?: string | null;
   sortOrder?: number;
   isActive?: boolean;
 };
@@ -94,14 +93,11 @@ export async function create(
   supabase: SupabaseClient,
   input: CreateOnboardingQuestionInput,
 ): Promise<OnboardingQuestion | null> {
-  const description = input.description?.trim() ?? null;
-
   const { data, error } = await supabase
     .from("onboarding_questions")
     .insert({
       title: input.title.trim(),
       slug: input.slug?.trim() || slugFromTitle(input.title),
-      description: description || null,
       sort_order: input.sortOrder ?? 0,
       is_active: input.isActive ?? true,
     })
@@ -119,7 +115,6 @@ export async function create(
 export type UpdateOnboardingQuestionInput = {
   title?: string;
   slug?: string;
-  description?: string | null;
   sortOrder?: number;
   isActive?: boolean;
 };
@@ -132,10 +127,6 @@ export async function update(
   const updates: Record<string, unknown> = {};
   if (input.title !== undefined) updates.title = input.title.trim();
   if (input.slug !== undefined) updates.slug = input.slug.trim();
-  if (input.description !== undefined) {
-    const trimmed = input.description?.trim() ?? "";
-    updates.description = trimmed || null;
-  }
   if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
 

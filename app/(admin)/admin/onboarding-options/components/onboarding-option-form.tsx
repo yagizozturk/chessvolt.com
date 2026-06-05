@@ -52,15 +52,6 @@ export function OnboardingOptionForm({ questions, defaultQuestionId }: Props) {
           <Input name="label" required placeholder="e.g. Improve my tactics" />
         </Field>
         <Field>
-          <FieldLabel>Description</FieldLabel>
-          <textarea
-            name="description"
-            rows={3}
-            placeholder="Optional subtitle on the option card"
-            className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
-          />
-        </Field>
-        <Field>
           <FieldLabel>Sort order</FieldLabel>
           <Input name="sortOrder" type="number" defaultValue="0" />
         </Field>

@@ -41,9 +41,6 @@ export function OnboardingOptionsList({ options }: Props) {
               <td className="px-4 py-3">
                 <div className="font-medium">{option.label}</div>
                 <div className="text-muted-foreground font-mono text-xs">{option.value}</div>
-                {option.description ? (
-                  <p className="text-muted-foreground mt-1 line-clamp-2 text-xs">{option.description}</p>
-                ) : null}
               </td>
               <td className="px-4 py-3">
                 <div className="font-medium">{option.question.title}</div>

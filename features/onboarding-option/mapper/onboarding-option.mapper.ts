@@ -14,7 +14,6 @@ export type DbOnboardingOption = {
   question_id: string;
   value: string;
   label: string;
-  description: string | null;
   sort_order: number;
   is_active: boolean;
   initial_rating: number | null;
@@ -49,7 +48,6 @@ export function toOnboardingOption(db: DbOnboardingOption): OnboardingOption | n
     questionId: db.question_id,
     value: db.value,
     label: db.label,
-    description: db.description,
     sortOrder: db.sort_order,
     isActive: db.is_active,
     initialRating,

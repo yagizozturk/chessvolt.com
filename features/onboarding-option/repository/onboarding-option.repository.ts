@@ -168,7 +168,6 @@ export type CreateOnboardingOptionInput = {
   questionId: string;
   value: string;
   label: string;
-  description?: string | null;
   sortOrder?: number;
   isActive?: boolean;
   initialRating?: number | null;
@@ -179,15 +178,12 @@ export async function create(
   supabase: SupabaseClient,
   input: CreateOnboardingOptionInput,
 ): Promise<OnboardingOption | null> {
-  const description = input.description?.trim() ?? null;
-
   const { data, error } = await supabase
     .from("onboarding_options")
     .insert({
       question_id: input.questionId,
       value: input.value.trim(),
       label: input.label.trim(),
-      description: description || null,
       sort_order: input.sortOrder ?? 0,
       is_active: input.isActive ?? true,
       initial_rating: input.initialRating ?? null,
@@ -208,7 +204,6 @@ export type UpdateOnboardingOptionInput = {
   questionId?: string;
   value?: string;
   label?: string;
-  description?: string | null;
   sortOrder?: number;
   isActive?: boolean;
   initialRating?: number | null;
@@ -224,10 +219,6 @@ export async function update(
   if (input.questionId !== undefined) updates.question_id = input.questionId;
   if (input.value !== undefined) updates.value = input.value.trim();
   if (input.label !== undefined) updates.label = input.label.trim();
-  if (input.description !== undefined) {
-    const trimmed = input.description?.trim() ?? "";
-    updates.description = trimmed || null;
-  }
   if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
   if (input.initialRating !== undefined) updates.initial_rating = input.initialRating;

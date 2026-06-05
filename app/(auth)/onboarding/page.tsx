@@ -29,7 +29,7 @@ export default async function OnboardingPage() {
   // ======================================================================
   // Getting the active onboarding options for the questions
   // ======================================================================
-  const questionGroups = await Promise.all(
+  const questionSteps = await Promise.all(
     questions.map(async (question) => ({
       question,
       options: await getOnboardingOptionsForQuestion(supabase, question.id, { activeOnly: true }),
@@ -38,7 +38,7 @@ export default async function OnboardingPage() {
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <OnboardingForm steps={questionGroups} />
+      <OnboardingForm questionGroups={questionSteps} />
     </div>
   );
 }

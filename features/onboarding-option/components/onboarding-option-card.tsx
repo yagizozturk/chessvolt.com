@@ -36,9 +36,6 @@ export function OnboardingOptionCard({
       role={multiple ? "checkbox" : undefined}
     >
       <span className="block font-medium">{option.label}</span>
-      {option.description ? (
-        <span className="text-muted-foreground mt-1 block text-sm">{option.description}</span>
-      ) : null}
     </button>
   );
 }

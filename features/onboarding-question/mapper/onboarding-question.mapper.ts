@@ -4,7 +4,6 @@ export type DbOnboardingQuestion = {
   id: string;
   slug: string;
   title: string;
-  description: string | null;
   sort_order: number;
   is_active: boolean;
   created_at: string;
@@ -16,7 +15,6 @@ export function toOnboardingQuestion(db: DbOnboardingQuestion): OnboardingQuesti
     id: db.id,
     slug: db.slug,
     title: db.title,
-    description: db.description,
     sortOrder: db.sort_order,
     isActive: db.is_active,
     createdAt: db.created_at,
