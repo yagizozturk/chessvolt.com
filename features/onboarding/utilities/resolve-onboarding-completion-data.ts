@@ -5,12 +5,11 @@
  * initial rating, improvement-goal options, and starter collection choice.
  * Assumes all validation has already passed — does not return errors.
  */
-
+import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
+import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
 import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboarding-questions";
 import type { OnboardingCompletionData } from "@/features/onboarding/types/onboarding-completion-data";
 import type { OnboardingQuestionAnswers } from "@/features/onboarding/types/onboarding-question-answers";
-import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
-import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
 
 // ============================================================================
 // resolveOnboardingCompletionData

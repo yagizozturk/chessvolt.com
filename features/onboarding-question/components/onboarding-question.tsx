@@ -8,7 +8,7 @@ type OnboardingQuestionProps = {
 
 export function OnboardingQuestion({ question, options }: OnboardingQuestionProps) {
   return (
-    <section className="space-y-4" aria-labelledby={`onboarding-question-${question.id}`}>
+    <section className="min-h-[255px] space-y-4" aria-labelledby={`onboarding-question-${question.id}`}>
       <Text as="h2" variant="heading" id={`onboarding-question-${question.id}`} className="text-center">
         {question.title}
       </Text>

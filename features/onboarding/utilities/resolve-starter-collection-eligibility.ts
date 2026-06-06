@@ -20,7 +20,7 @@ export async function resolveStarterCollectionEligibility(
   // ============================================================================
   // Check if the starter collection option is accepted
   // ============================================================================
-  if (!hasStarterCollection(data.starterCollectionOption)) {
+  if (!data.starterCollectionOption || !hasStarterCollection(data.starterCollectionOption)) {
     return { ok: false, reason: "declined" };
   }
 
