@@ -2,15 +2,15 @@
 
 import { completeOnboarding } from "@/features/onboarding/services/complete-onboarding.service";
 import type { CompleteOnboardingResult } from "@/features/onboarding/types/complete-onboarding-result";
-import type { OnboardingQuestionAnswerInput } from "@/features/onboarding/types/onboarding-answer-input";
+import type { OnboardingQuestionAnswers } from "@/features/onboarding/types/onboarding-question-answers";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
-export type { OnboardingQuestionAnswerInput } from "@/features/onboarding/types/onboarding-answer-input";
+export type { OnboardingQuestionAnswers } from "@/features/onboarding/types/onboarding-question-answers";
 
 export type CompleteOnboardingActionResult = CompleteOnboardingResult;
 
 export async function completeOnboardingAction(
-  answers: OnboardingQuestionAnswerInput[],
+  answers: OnboardingQuestionAnswers[],
 ): Promise<CompleteOnboardingActionResult> {
   const { user, supabase } = await getAuthenticatedUser();
   return completeOnboarding(supabase, user.id, answers);

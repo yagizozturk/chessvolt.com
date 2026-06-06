@@ -1,18 +1,13 @@
-/**
- * Validate Chess Familiarity Answer
- *
- * Confirms the chess_familiarity question was answered with an option that
- * carries an initial_rating. That rating drives profile setup and riddle selection.
- */
-
-import type { OnboardingQuestionAnswerInput } from "@/features/onboarding/types/onboarding-answer-input";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
+import type { OnboardingQuestionAnswers } from "@/features/onboarding/types/onboarding-question-answers";
+import type { ValidateChessFamiliarityAnswerResult } from "@/features/onboarding/types/validate-chess-familiarity-answer-result";
 
-export type ValidateChessFamiliarityAnswerResult =
-  | { ok: true; chessOption: OnboardingOption }
-  | { ok: false; error: string };
-
+// ============================================================================
+// Validate Chess Familiarity Answer
+//
+// Confirms the chess_familiarity question was answered with an option that
+// carries an initial_rating. That rating drives profile setup and riddle selection.
 // ============================================================================
 // validateChessFamiliarityAnswer
 //
@@ -26,7 +21,7 @@ export type ValidateChessFamiliarityAnswerResult =
 // ============================================================================
 export function validateChessFamiliarityAnswer(
   chessQuestion: OnboardingQuestion,
-  normalizedAnswers: OnboardingQuestionAnswerInput[],
+  normalizedAnswers: OnboardingQuestionAnswers[],
   optionById: Map<string, OnboardingOption>,
 ): ValidateChessFamiliarityAnswerResult {
   const chessAnswer = normalizedAnswers.find((answer) => answer.questionId === chessQuestion.id);

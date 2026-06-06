@@ -1,101 +1,62 @@
-/**
- * Validate Onboarding Answers
- *
- * Two-step validation of submitted onboarding answers:
- *   1. Structure — shape, completeness, and selection rules (pure, no DB).
- *   2. Options — existence, active state, and question ownership (loads options).
- */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { isMultiSelectOnboardingQuestion } from "@/features/onboarding/constants/onboarding-questions";
-import type { OnboardingQuestionAnswerInput } from "@/features/onboarding/types/onboarding-answer-input";
 import { getOnboardingOptionsByIds } from "@/features/onboarding-option/services/onboarding-option.service";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
-import type { SupabaseClient } from "@supabase/supabase-js";
-
-export type ValidateOnboardingAnswersStructureResult =
-  | {
-      ok: true;
-      normalizedAnswers: OnboardingQuestionAnswerInput[];
-      activeQuestionById: Map<string, OnboardingQuestion>;
-    }
-  | { ok: false; error: string };
-
-export type ValidateOnboardingAnswersWithOptionsResult =
-  | {
-      ok: true;
-      normalizedAnswers: OnboardingQuestionAnswerInput[];
-      activeQuestionById: Map<string, OnboardingQuestion>;
-      optionById: Map<string, OnboardingOption>;
-    }
-  | { ok: false; error: string };
+import { isMultiSelectOnboardingQuestion } from "@/features/onboarding/constants/onboarding-questions";
+import type { OnboardingQuestionAnswers } from "@/features/onboarding/types/onboarding-question-answers";
+import type { ValidateOnboardingAnswersStructureResult } from "@/features/onboarding/types/validate-onboarding-answers-structure-result";
+import type { ValidateOnboardingAnswersWithOptionsResult } from "@/features/onboarding/types/validate-onboarding-answers-with-options-result";
 
 // ============================================================================
-// validateOnboardingAnswersStructure
+// Two-step validation of submitted onboarding answers:
+//   A. Structure — completeness and single-select rules (pure, no DB).
+//   B. Options — existence, active state, and question ownership (loads options).
+// ============================================================================
+// A. validateOnboardingAnswersStructure
 //
-// Pure validation of the submitted payload before any option rows are loaded.
-// Checks:
-//   - At least one answer; count matches active question count.
-//   - Each answer has a trimmed questionId and at least one optionId.
-//   - Each questionId refers to an active question (guards tampered IDs).
-//   - No duplicate answers for the same question.
-//   - No duplicate optionIds within one answer.
-//   - Single-select questions have exactly one option; multi-select may have many.
-//
-// On success, returns normalizedAnswers (trimmed, deduped option IDs) and a
-// question lookup map reused by the options validator.
+// Ensures every active question is answered once and single-select rules hold.
+// Option existence, activity, and ownership are checked in
+// validateOnboardingAnswersWithOptions.
 // ============================================================================
 export function validateOnboardingAnswersStructure(
-  answers: OnboardingQuestionAnswerInput[],
+  answers: OnboardingQuestionAnswers[],
   activeQuestions: OnboardingQuestion[],
 ): ValidateOnboardingAnswersStructureResult {
-  if (answers.length === 0) {
-    return { ok: false, error: "Please answer all onboarding questions." };
-  }
-
   if (answers.length !== activeQuestions.length) {
     return { ok: false, error: "Please answer all onboarding questions." };
   }
 
   const activeQuestionById = new Map(activeQuestions.map((question) => [question.id, question]));
   const answeredQuestionIds = new Set<string>();
-  const normalizedAnswers: OnboardingQuestionAnswerInput[] = [];
+  const normalizedAnswers: OnboardingQuestionAnswers[] = [];
 
   for (const answer of answers) {
     const questionId = answer.questionId.trim();
-    const optionIds = answer.optionIds.map((id) => id.trim()).filter(Boolean);
+    const optionIds = [...new Set(answer.optionIds.map((id) => id.trim()).filter(Boolean))];
 
     if (!questionId || optionIds.length === 0) {
       return { ok: false, error: "Please answer all onboarding questions." };
     }
 
     const question = activeQuestionById.get(questionId);
-    if (!question) {
-      return { ok: false, error: "One or more selected answers are invalid." };
-    }
-
-    if (answeredQuestionIds.has(questionId)) {
+    if (!question || answeredQuestionIds.has(questionId)) {
       return { ok: false, error: "Please answer all onboarding questions." };
     }
     answeredQuestionIds.add(questionId);
 
-    const uniqueOptionIds = [...new Set(optionIds)];
-    if (uniqueOptionIds.length !== optionIds.length) {
-      return { ok: false, error: "Please remove duplicate selections." };
-    }
-
-    if (!isMultiSelectOnboardingQuestion(question.slug) && uniqueOptionIds.length !== 1) {
+    if (!isMultiSelectOnboardingQuestion(question.slug) && optionIds.length !== 1) {
       return { ok: false, error: "Please select only one answer for this question." };
     }
 
-    normalizedAnswers.push({ questionId, optionIds: uniqueOptionIds });
+    normalizedAnswers.push({ questionId, optionIds });
   }
 
   return { ok: true, normalizedAnswers, activeQuestionById };
 }
 
 // ============================================================================
-// validateOnboardingAnswersWithOptions
+// B. validateOnboardingAnswersWithOptions
 //
 // Database-backed validation after structure checks pass. Loads all referenced
 // options in one query, then verifies:
@@ -105,11 +66,11 @@ export function validateOnboardingAnswersStructure(
 //   - Each option belongs to the question it was submitted under (prevents
 //     pairing a valid option ID with the wrong question).
 //
-// Returns optionById for chess-familiarity validation and context resolution.
+// Returns optionById for chess-familiarity validation and completion data resolution.
 // ============================================================================
 export async function validateOnboardingAnswersWithOptions(
   supabase: SupabaseClient,
-  normalizedAnswers: OnboardingQuestionAnswerInput[],
+  normalizedAnswers: OnboardingQuestionAnswers[],
   activeQuestionById: Map<string, OnboardingQuestion>,
 ): Promise<ValidateOnboardingAnswersWithOptionsResult> {
   const allOptionIds = normalizedAnswers.flatMap((answer) => answer.optionIds);

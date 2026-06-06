@@ -38,7 +38,7 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
   const progressValue = ((stepIndex + 1) / questionGroups.length) * 100;
 
   // ======================================================================
-  // Handles the selection of an option
+  // Handles the selection of an option for a questionId and handles multiselect
   // ======================================================================
   function handleSelect(option: OnboardingOption) {
     setError(null);
@@ -98,7 +98,7 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
         return;
       }
 
-      // Redirect to the next step
+      // Redirect to the collection page
       router.refresh();
       router.push(POST_ONBOARDING_URL);
     });
@@ -160,6 +160,7 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
         ) : (
           <span />
         )}
+        {/* TODO: Total loading icon can be used in order to Saving text change */}
         <Button
           type="button"
           variant="volt"

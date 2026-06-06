@@ -1,66 +1,43 @@
-/**
- * Validate Onboarding Submission
- *
- * Orchestrates the full server-side validation pipeline for complete onboarding.
- * Loads active questions, runs each validator in order, and returns everything
- * the completion service needs to persist answers and run side effects.
- */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { OnboardingQuestionAnswerInput } from "@/features/onboarding/types/onboarding-answer-input";
-import {
-  resolveOnboardingCompletionContext,
-  type OnboardingCompletionContext,
-} from "@/features/onboarding/utilities/resolve-onboarding-context";
-import { validateActiveOnboardingQuestions } from "@/features/onboarding/utilities/validate-active-onboarding-questions";
+import { getActiveOnboardingQuestions } from "@/features/onboarding-question/services/onboarding-question.service";
+import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboarding-questions";
+import type { OnboardingQuestionAnswers } from "@/features/onboarding/types/onboarding-question-answers";
+import type { ValidateOnboardingSubmissionResult } from "@/features/onboarding/types/validate-onboarding-submission-result";
+import { resolveOnboardingCompletionData } from "@/features/onboarding/utilities/resolve-onboarding-completion-data";
 import { validateChessFamiliarityAnswer } from "@/features/onboarding/utilities/validate-chess-familiarity-answer";
 import {
   validateOnboardingAnswersStructure,
   validateOnboardingAnswersWithOptions,
 } from "@/features/onboarding/utilities/validate-onboarding-answers";
-import { getActiveOnboardingQuestions } from "@/features/onboarding-question/services/onboarding-question.service";
-import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
-import type { SupabaseClient } from "@supabase/supabase-js";
-
-export type ValidateOnboardingSubmissionResult =
-  | {
-      ok: true;
-      activeQuestions: OnboardingQuestion[];
-      normalizedAnswers: OnboardingQuestionAnswerInput[];
-      context: OnboardingCompletionContext;
-    }
-  | { ok: false; error: string };
 
 // ============================================================================
-// validateOnboardingSubmission
-//
-// Single entry point for validating a complete onboarding form submission.
-// Pipeline (stops at first failure):
-//   1. Load active questions from onboarding_questions.
-//   2. validateActiveOnboardingQuestions — config exists + chess_familiarity.
-//   3. validateOnboardingAnswersStructure — payload shape and selection rules.
-//   4. validateOnboardingAnswersWithOptions — DB option integrity.
-//   5. validateChessFamiliarityAnswer — initial_rating present on chess option.
-//   6. resolveOnboardingCompletionContext — build rating / theme / starter data.
-//
-// Does not write to the database. On success, returns normalized answers and
-// context for completeOnboarding to persist and apply profile/collection changes.
+// Validate Onboarding Submission
+// Orchestrates the full server-side validation pipeline for complete onboarding.
+// Loads active questions, runs each validator in order, and returns everything
+// the completion service needs to persist answers and run side effects.
 // ============================================================================
 export async function validateOnboardingSubmission(
   supabase: SupabaseClient,
-  answers: OnboardingQuestionAnswerInput[],
+  answers: OnboardingQuestionAnswers[],
 ): Promise<ValidateOnboardingSubmissionResult> {
   const activeQuestions = await getActiveOnboardingQuestions(supabase);
 
-  const availability = validateActiveOnboardingQuestions(activeQuestions);
-  if (!availability.ok) {
-    return availability;
-  }
+  const chessQuestion = activeQuestions.find(
+    (question) => question.slug === ONBOARDING_QUESTION_SLUG.chessFamiliarity,
+  )!;
 
-  const structureValidation = validateOnboardingAnswersStructure(answers, availability.activeQuestions);
+  // ============================================================================
+  // Validate Onboarding Answers Structure, Server side check
+  // ============================================================================
+  const structureValidation = validateOnboardingAnswersStructure(answers, activeQuestions);
   if (!structureValidation.ok) {
     return structureValidation;
   }
 
+  // ============================================================================
+  // Validate Onboarding Answers With Options, Database check
+  // ============================================================================
   const optionsValidation = await validateOnboardingAnswersWithOptions(
     supabase,
     structureValidation.normalizedAnswers,
@@ -70,8 +47,11 @@ export async function validateOnboardingSubmission(
     return optionsValidation;
   }
 
+  // ============================================================================
+  // Validate Chess Familiarity Answer, Server side check
+  // ============================================================================
   const chessFamiliarityValidation = validateChessFamiliarityAnswer(
-    availability.chessQuestion,
+    chessQuestion,
     optionsValidation.normalizedAnswers,
     optionsValidation.optionById,
   );
@@ -79,8 +59,11 @@ export async function validateOnboardingSubmission(
     return chessFamiliarityValidation;
   }
 
-  const context = resolveOnboardingCompletionContext(
-    availability.activeQuestions,
+  // ============================================================================
+  // Resolve Onboarding Completion Data
+  // ============================================================================
+  const completionData = resolveOnboardingCompletionData(
+    activeQuestions,
     optionsValidation.normalizedAnswers,
     optionsValidation.optionById,
     chessFamiliarityValidation.chessOption,
@@ -88,8 +71,8 @@ export async function validateOnboardingSubmission(
 
   return {
     ok: true,
-    activeQuestions: availability.activeQuestions,
+    activeQuestions,
     normalizedAnswers: optionsValidation.normalizedAnswers,
-    context,
+    completionData,
   };
 }

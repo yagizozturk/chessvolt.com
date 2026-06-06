@@ -4,6 +4,7 @@
  * Responsibility: Business logic for user_onboarding_answers rows.
  * - Uses repository (does not touch Supabase directly)
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as userOnboardingAnswerRepo from "@/features/user-onboarding-answer/repository/user-onboarding-answer.repository";
 import type {
@@ -13,7 +14,6 @@ import type {
   UserOnboardingAnswer,
   UserOnboardingAnswerWithDetails,
 } from "@/features/user-onboarding-answer/types/user-onboarding-answer";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function getUserOnboardingAnswerById(
   supabase: SupabaseClient,
@@ -80,16 +80,15 @@ export async function saveUserOnboardingAnswer(
   return userOnboardingAnswerRepo.upsert(supabase, input);
 }
 
+// ============================================================================
+// Replace User Onboarding Answers For Question.
+// See replaceForQuestion — delete-then-insert makes Finish retries idempotent.
+// ============================================================================
 export async function replaceUserOnboardingAnswersForQuestion(
   supabase: SupabaseClient,
   input: ReplaceUserOnboardingAnswersInput,
 ): Promise<UserOnboardingAnswer[] | null> {
-  return userOnboardingAnswerRepo.replaceForQuestion(
-    supabase,
-    input.userId,
-    input.questionId,
-    input.optionIds,
-  );
+  return userOnboardingAnswerRepo.replaceForQuestion(supabase, input.userId, input.questionId, input.optionIds);
 }
 
 export async function updateUserOnboardingAnswer(
@@ -104,17 +103,11 @@ export async function deleteUserOnboardingAnswer(supabase: SupabaseClient, id: s
   return userOnboardingAnswerRepo.remove(supabase, id);
 }
 
-export async function deleteUserOnboardingAnswersForUser(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<boolean> {
+export async function deleteUserOnboardingAnswersForUser(supabase: SupabaseClient, userId: string): Promise<boolean> {
   return userOnboardingAnswerRepo.removeByUserId(supabase, userId);
 }
 
-export function hasCompletedOnboarding(
-  answers: UserOnboardingAnswer[],
-  activeQuestionCount: number,
-): boolean {
+export function hasCompletedOnboarding(answers: UserOnboardingAnswer[], activeQuestionCount: number): boolean {
   if (activeQuestionCount <= 0) return false;
   const answeredQuestionIds = new Set(answers.map((a) => a.questionId));
   return answeredQuestionIds.size >= activeQuestionCount;

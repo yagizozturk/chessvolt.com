@@ -3,14 +3,15 @@
  *
  * Responsibility: CRUD access to the user_onboarding_answers table.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
-  toUserOnboardingAnswer,
-  toUserOnboardingAnswers,
-  toUserOnboardingAnswersWithDetails,
-  toUserOnboardingAnswerWithDetails,
   type DbUserOnboardingAnswer,
   type DbUserOnboardingAnswerWithDetails,
+  toUserOnboardingAnswer,
+  toUserOnboardingAnswerWithDetails,
+  toUserOnboardingAnswers,
+  toUserOnboardingAnswersWithDetails,
 } from "@/features/user-onboarding-answer/mapper/user-onboarding-answer.mapper";
 import type {
   SaveUserOnboardingAnswerInput,
@@ -18,7 +19,6 @@ import type {
   UserOnboardingAnswer,
   UserOnboardingAnswerWithDetails,
 } from "@/features/user-onboarding-answer/types/user-onboarding-answer";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 const ANSWER_SELECT = "*";
 const ANSWER_WITH_DETAILS_SELECT = "*, onboarding_questions (*), onboarding_options (*)";
@@ -176,6 +176,13 @@ export async function upsert(
   return toUserOnboardingAnswer(data as DbUserOnboardingAnswer);
 }
 
+// ============================================================================
+// Replace User Onboarding Answers For Question.
+// Delete first so a retry is safe: completeOnboarding saves question-by-question,
+// and if a later step fails the user can click Finish again (button re-enables on
+// error). Without delete, already-saved questions would get duplicate rows.
+// On first submit there are no old rows — delete is a no-op.
+// ============================================================================
 export async function replaceForQuestion(
   supabase: SupabaseClient,
   userId: string,
