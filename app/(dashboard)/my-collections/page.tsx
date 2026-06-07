@@ -2,7 +2,7 @@ import { buildVoltScoresBySequenceId } from "@/components/calculator/volt-calcul
 import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { MyCollectionsTabs } from "@/features/collection/components/my-collections-tabs";
-import { getMyCustomCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
+import { getUserCustomCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
 import { getUserPracticeOpeningVariantsForUserWithDetails } from "@/features/user-practice-opening-variant/services/user-practice-opening-variant.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
@@ -10,7 +10,7 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 export default async function MyCollectionsPage() {
   const { user, supabase } = await getAuthenticatedUser();
   const [collections, practiceVariants] = await Promise.all([
-    getMyCustomCollectionsWithRiddleCountAndThemes(supabase, user.id),
+    getUserCustomCollectionsWithRiddleCountAndThemes(supabase, user.id),
     getUserPracticeOpeningVariantsForUserWithDetails(supabase, user.id, { activeOnly: true }),
   ]);
 

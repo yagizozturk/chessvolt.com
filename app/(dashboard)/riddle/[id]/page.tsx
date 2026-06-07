@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { buildVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
 import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
-import { getCollectionById, getMyCustomCollections } from "@/features/collection/services/collection.service";
+import { getCollectionById, getUserCustomCollections } from "@/features/collection/services/collection.service";
 import RiddleController from "@/features/riddle/components/riddle-controller";
 import { getRiddleCollectionsForRiddle } from "@/features/riddle-collection/services/riddle-collection.service";
 import { getRiddleById, getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
@@ -39,7 +39,7 @@ export default async function RiddlePage({ params }: Params) {
 
   const parentCollectionUrl = primaryCollection ? `/collection/${primaryCollection.slug}` : "/collection";
 
-  const myCollections = user ? await getMyCustomCollections(supabase, user.id) : [];
+  const myCollections = user ? await getUserCustomCollections(supabase, user.id) : [];
   const myCollectionIds = new Set(myCollections.map((collection) => collection.id));
   const savedMyCollectionIds = riddleCollections
     .map((link) => link.collectionId)

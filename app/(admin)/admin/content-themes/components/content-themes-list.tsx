@@ -2,21 +2,22 @@
 
 import Link from "next/link";
 
-import { deleteContentThemeAction } from "@/app/(admin)/admin/content-themes/actions/content-themes";
+import { deleteThemeLinkAction } from "@/app/(admin)/admin/content-themes/actions/content-themes";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { formatContentTypeLabel } from "@/features/content-theme/types/content-type";
-import type { ContentThemeWithTheme } from "@/features/content-theme/types/content-theme";
+import type { AdminThemeLink } from "@/features/theme-link/types/admin-theme-link";
+import { formatThemeLinkKindLabel } from "@/features/theme-link/types/theme-link-kind";
 
 type Props = {
-  items: ContentThemeWithTheme[];
+  items: AdminThemeLink[];
 };
 
 export function ContentThemesList({ items }: Props) {
-  async function handleDelete(id: string, label: string) {
+  async function handleDelete(item: AdminThemeLink) {
+    const label = `${formatThemeLinkKindLabel(item.kind)} · ${item.theme.title}`;
     if (!confirm(`Delete link "${label}"?`)) return;
-    await deleteContentThemeAction(id);
+    await deleteThemeLinkAction(item.kind, item.id);
   }
 
   if (items.length === 0) {
@@ -36,12 +37,12 @@ export function ContentThemesList({ items }: Props) {
         </thead>
         <tbody>
           {items.map((item) => {
-            const label = `${formatContentTypeLabel(item.contentType)} · ${item.theme.title}`;
+            const label = `${formatThemeLinkKindLabel(item.kind)} · ${item.theme.title}`;
             return (
-              <tr key={item.id} className="border-b last:border-b-0">
+              <tr key={`${item.kind}-${item.id}`} className="border-b last:border-b-0">
                 <td className="px-4 py-3">
-                  <div className="font-medium">{formatContentTypeLabel(item.contentType)}</div>
-                  <div className="text-muted-foreground font-mono text-xs">{item.contentId}</div>
+                  <div className="font-medium">{formatThemeLinkKindLabel(item.kind)}</div>
+                  <div className="text-muted-foreground font-mono text-xs">{item.parentId}</div>
                 </td>
                 <td className="px-4 py-3">
                   <div className="font-medium">{item.theme.title}</div>
@@ -54,7 +55,7 @@ export function ContentThemesList({ items }: Props) {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-2">
-                    <Link href={`/admin/content-themes/edit/${item.id}`}>
+                    <Link href={`/admin/content-themes/edit/${item.kind}/${item.id}`}>
                       <Button variant="outline" size="sm">
                         Edit
                       </Button>
@@ -63,7 +64,7 @@ export function ContentThemesList({ items }: Props) {
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDelete(item.id, label)}
+                      onClick={() => handleDelete(item)}
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     >
                       Delete

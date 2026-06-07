@@ -1,7 +1,7 @@
 import {
-  clampContentThemeWeight,
-  type ContentThemeWeight,
-} from "@/features/content-theme/types/content-theme-weight";
+  clampThemeLinkWeight,
+  type ThemeLinkWeight,
+} from "@/features/theme-link/types/theme-link-weight";
 
 import type {
   LichessThemeMap,
@@ -25,7 +25,7 @@ function weightByOrder(index: number, rules: LichessThemeMap["weightRules"]): nu
 function applyWeightCaps(
   item: { slug: string; category: string; weight: number },
   rules: LichessThemeMap["weightRules"],
-): ContentThemeWeight {
+): ThemeLinkWeight {
   let weight = item.weight;
 
   if (item.category === "phase") {
@@ -43,7 +43,7 @@ function applyWeightCaps(
     weight = Math.min(10, weight + rules.specificMatePatternWeightBonus);
   }
 
-  return clampContentThemeWeight(weight);
+  return clampThemeLinkWeight(weight);
 }
 
 export function resolveEducationalThemes(
@@ -115,7 +115,7 @@ export function resolveOpeningThemes(openingTagsRaw: string): ResolvedContentThe
       slug,
       name: slugToTitle(slug),
       category: "opening",
-      weight: clampContentThemeWeight(defaultByOrder[index] ?? 1),
+      weight: clampThemeLinkWeight(defaultByOrder[index] ?? 1),
     };
   });
 }

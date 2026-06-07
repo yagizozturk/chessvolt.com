@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { createMyCustomCollection } from "@/features/collection/services/collection.service";
+import { createUserCustomCollection } from "@/features/collection/services/collection.service";
 
 import {
   DEFAULT_COLLECTION_COVER_COLOR,
@@ -19,7 +19,7 @@ export async function createMyCollectionAction(formData: FormData): Promise<void
 
   if (!title) return;
 
-  const collection = await createMyCustomCollection(supabase, {
+  const collection = await createUserCustomCollection(supabase, {
     title,
     description,
     createdBy: user.id,

@@ -1,7 +1,7 @@
 import themeMapJson from "./lichess-theme-map.json";
 
-import type { ContentThemeWeight } from "@/features/content-theme/types/content-theme-weight";
-import * as contentThemeService from "@/features/content-theme/services/content-theme.service";
+import * as riddleThemeService from "@/features/riddle-theme/services/riddle-theme.service";
+import type { ThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
 import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
 import type { Theme } from "@/features/theme/types/theme";
@@ -91,7 +91,7 @@ export async function importLichessRiddlesFromCsv(
 
       for (const tag of resolved.unknownTags) unknownSet.add(tag);
 
-      const themeLinks: { themeId: string; weight: ContentThemeWeight }[] = [];
+      const themeLinks: { themeId: string; weight: ThemeLinkWeight }[] = [];
 
       for (const item of resolved.contentThemes) {
         const theme = await ensureTheme(supabase, themeCache, {
@@ -126,18 +126,17 @@ export async function importLichessRiddlesFromCsv(
       if (!riddle) throw new Error("Could not create riddle");
 
       if (themeLinks.length > 0) {
-        const links = await contentThemeService.addContentThemes(
+        const ok = await riddleThemeService.addRiddleThemes(
           supabase,
           themeLinks.map((item) => ({
-            contentType: "riddle" as const,
-            contentId: riddle.id,
+            riddleId: riddle.id,
             themeId: item.themeId,
             weight: item.weight,
           })),
         );
 
-        if (links.length !== themeLinks.length) {
-          throw new Error("Could not create all content theme links");
+        if (!ok) {
+          throw new Error("Could not create all riddle theme links");
         }
       }
 

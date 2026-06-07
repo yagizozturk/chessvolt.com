@@ -1,11 +1,11 @@
 import { CollectionContentThemeAddForm } from "@/app/(admin)/admin/collections/components/collection-content-theme-add-form";
 import { CollectionContentThemesList } from "@/app/(admin)/admin/collections/components/collection-content-themes-list";
-import type { ContentThemeWithTheme } from "@/features/content-theme/types/content-theme";
+import type { CollectionThemeWithTheme } from "@/features/collection-theme/types/collection-theme";
 import type { Theme } from "@/features/theme/types/theme";
 
 type Props = {
   collectionId: string;
-  linkedThemes: ContentThemeWithTheme[];
+  linkedThemes: CollectionThemeWithTheme[];
   themes: Theme[];
 };
 

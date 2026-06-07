@@ -6,13 +6,13 @@ import {
   deleteCollectionContentThemeAction,
   updateCollectionContentThemeAction,
 } from "@/app/(admin)/admin/collections/actions/collection-content-themes";
-import type { ContentThemeWithTheme } from "@/features/content-theme/types/content-theme";
+import type { CollectionThemeWithTheme } from "@/features/collection-theme/types/collection-theme";
 import {
-  CONTENT_THEME_WEIGHTS,
-  formatContentThemeWeightLabel,
-  isContentThemeWeight,
-  type ContentThemeWeight,
-} from "@/features/content-theme/types/content-theme-weight";
+  formatThemeLinkWeightLabel,
+  isThemeLinkWeight,
+  THEME_LINK_WEIGHTS,
+  type ThemeLinkWeight,
+} from "@/features/theme-link/types/theme-link-weight";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils/cn";
 
 type Props = {
   collectionId: string;
-  items: ContentThemeWithTheme[];
+  items: CollectionThemeWithTheme[];
 };
 
 export function CollectionContentThemesList({ collectionId, items }: Props) {
@@ -55,12 +55,12 @@ export function CollectionContentThemesList({ collectionId, items }: Props) {
 
 type RowProps = {
   collectionId: string;
-  item: ContentThemeWithTheme;
+  item: CollectionThemeWithTheme;
   showTopTwoHint: boolean;
 };
 
 function CollectionContentThemeRow({ collectionId, item, showTopTwoHint }: RowProps) {
-  const [weight, setWeight] = useState<ContentThemeWeight>(item.weight);
+  const [weight, setWeight] = useState<ThemeLinkWeight>(item.weight);
 
   async function handleDelete() {
     const label = item.theme.title;
@@ -86,21 +86,21 @@ function CollectionContentThemeRow({ collectionId, item, showTopTwoHint }: RowPr
       <td className="px-4 py-3">
         <form action={updateCollectionContentThemeAction} className="flex items-center gap-2">
           <input type="hidden" name="collectionId" value={collectionId} />
-          <input type="hidden" name="contentThemeId" value={item.id} />
+          <input type="hidden" name="collectionThemeId" value={item.id} />
           <select
             name="weight"
             required
             value={String(weight)}
             onChange={(e) => {
               const num = Number(e.target.value);
-              if (isContentThemeWeight(num)) setWeight(num);
+              if (isThemeLinkWeight(num)) setWeight(num);
             }}
-            title={formatContentThemeWeightLabel(weight)}
+            title={formatThemeLinkWeightLabel(weight)}
             className={cn(
               "border-input focus-visible:border-primary focus-visible:ring-primary/50 h-9 min-w-[4.5rem] rounded-md border border-2 bg-transparent px-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]",
             )}
           >
-            {CONTENT_THEME_WEIGHTS.map((option) => (
+            {THEME_LINK_WEIGHTS.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>

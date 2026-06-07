@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import type { CreateCollectionInput, UpdateCollectionInput } from "@/features/collection/repository/collection.repository";
+import type { CreateCollectionPayload, UpdateCollectionPayload } from "@/features/collection/types/collection-payload";
 import {
   createCollection,
   deleteCollection,
@@ -54,7 +54,7 @@ export async function createCollectionAction(formData: FormData) {
     redirect("/admin/collections/create?error=missing_fields");
   }
 
-  const input: CreateCollectionInput = {
+  const payload: CreateCollectionPayload = {
     title,
     slug,
     description,
@@ -67,7 +67,7 @@ export async function createCollectionAction(formData: FormData) {
     createdBy: user.id,
   };
 
-  const collection = await createCollection(supabase, input);
+  const collection = await createCollection(supabase, payload);
   if (!collection) {
     redirect("/admin/collections/create?error=create_failed");
   }
@@ -106,7 +106,7 @@ export async function updateCollectionAction(
     return { error: "Title, cover image, and cover color are required." };
   }
 
-  const input: UpdateCollectionInput = {
+  const payload: UpdateCollectionPayload = {
     title,
     slug,
     description,
@@ -118,7 +118,7 @@ export async function updateCollectionAction(
     isActive,
   };
 
-  const collection = await updateCollection(supabase, id, input);
+  const collection = await updateCollection(supabase, id, payload);
   if (!collection) {
     return { error: "Could not save changes. Please try again." };
   }

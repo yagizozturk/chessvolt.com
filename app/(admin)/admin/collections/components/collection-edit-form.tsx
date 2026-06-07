@@ -7,8 +7,8 @@ import {
   updateCollectionAction,
 } from "@/app/(admin)/admin/collections/actions/collections";
 import { DEFAULT_COLLECTION_COVER_COLOR } from "@/app/(admin)/admin/collections/constants/cover-images";
-import { CollectionDifficultySelect } from "@/features/collection/components/collection-difficulty-select";
-import { CollectionTypeSelect } from "@/features/collection/components/collection-type-select";
+import { CollectionDifficultySelect } from "@/app/(admin)/admin/collections/components/collection-difficulty-select";
+import { CollectionTypeSelect } from "@/app/(admin)/admin/collections/components/collection-type-select";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";

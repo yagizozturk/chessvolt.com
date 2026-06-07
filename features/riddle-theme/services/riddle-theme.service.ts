@@ -1,16 +1,16 @@
 /**
  * Riddle Theme Service
  *
- * Responsibility: Link riddles to themes through content_themes only.
+ * Responsibility: Link riddles to themes through riddle_themes.
  */
 
-import * as contentThemeRepo from "@/features/content-theme/repository/content-theme.repository";
-import * as contentThemeService from "@/features/content-theme/services/content-theme.service";
-import { clampContentThemeWeight } from "@/features/content-theme/types/content-theme-weight";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+import * as riddleThemeRepo from "@/features/riddle-theme/repository/riddle-theme.repository";
 import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 import type { Riddle } from "@/features/riddle/types/riddle";
+import { clampThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 import * as themeRepo from "@/features/theme/repository/theme.repository";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function findRiddleIdsByThemeSlugs(
   supabase: SupabaseClient,
@@ -22,25 +22,10 @@ export async function findRiddleIdsByThemeSlugs(
   const themes = await themeRepo.findBySlugs(supabase, uniqueSlugs);
   if (themes.length === 0) return [];
 
-  const themeIds = themes.map((theme) => theme.id);
-  const { data, error } = await supabase
-    .from("content_themes")
-    .select("content_id")
-    .eq("content_type", "riddle")
-    .in("theme_id", themeIds);
-
-  if (error) {
-    console.error("riddle-theme.service.findRiddleIdsByThemeSlugs error:", error);
-    return [];
-  }
-
-  return [
-    ...new Set(
-      (data ?? [])
-        .map((row) => row.content_id)
-        .filter((id): id is string => typeof id === "string" && id.length > 0),
-    ),
-  ];
+  return riddleThemeRepo.findRiddleIdsByThemeIds(
+    supabase,
+    themes.map((theme) => theme.id),
+  );
 }
 
 export async function getThemeSlugsByRiddleIds(
@@ -51,16 +36,12 @@ export async function getThemeSlugsByRiddleIds(
   const slugsByRiddleId = new Map<string, string[]>();
   if (uniqueIds.length === 0) return slugsByRiddleId;
 
-  const contentThemes = await contentThemeRepo.findByContentTypeForContentIds(
-    supabase,
-    "riddle",
-    uniqueIds,
-  );
+  const riddleThemes = await riddleThemeRepo.findByRiddleIdsWithTheme(supabase, uniqueIds);
 
-  for (const row of contentThemes) {
-    const existing = slugsByRiddleId.get(row.contentId) ?? [];
+  for (const row of riddleThemes) {
+    const existing = slugsByRiddleId.get(row.riddleId) ?? [];
     existing.push(row.theme.slug);
-    slugsByRiddleId.set(row.contentId, existing);
+    slugsByRiddleId.set(row.riddleId, existing);
   }
 
   return slugsByRiddleId;
@@ -81,9 +62,7 @@ export async function attachThemeSlugsToRiddles(
     riddles.map((riddle) => riddle.id),
   );
 
-  return riddles.map((riddle) =>
-    withThemeSlugs(riddle, slugsByRiddleId.get(riddle.id) ?? []),
-  );
+  return riddles.map((riddle) => withThemeSlugs(riddle, slugsByRiddleId.get(riddle.id) ?? []));
 }
 
 export async function syncRiddleThemesFromSlugs(
@@ -94,7 +73,7 @@ export async function syncRiddleThemesFromSlugs(
   const uniqueSlugs = [...new Set(themeSlugs.map((slug) => slug.trim()).filter(Boolean))];
 
   if (uniqueSlugs.length === 0) {
-    return contentThemeService.deleteContentThemesForContent(supabase, "riddle", riddleId);
+    return riddleThemeRepo.removeByRiddleId(supabase, riddleId);
   }
 
   const themes = await themeRepo.findBySlugs(supabase, uniqueSlugs);
@@ -106,18 +85,20 @@ export async function syncRiddleThemesFromSlugs(
 
   const defaultByOrder = [10, 8, 7, 6, 5];
   const inputs = orderedThemes.map((theme, index) => ({
-    contentType: "riddle" as const,
-    contentId: riddleId,
+    riddleId,
     themeId: theme.id,
-    weight: clampContentThemeWeight(defaultByOrder[index] ?? 1),
+    weight: clampThemeLinkWeight(defaultByOrder[index] ?? 1),
   }));
 
-  const result = await contentThemeService.setContentThemesForContent(
-    supabase,
-    "riddle",
-    riddleId,
-    inputs,
-  );
+  const result = await riddleThemeRepo.replaceForRiddle(supabase, riddleId, inputs);
 
+  return result.length === inputs.length;
+}
+
+export async function addRiddleThemes(
+  supabase: SupabaseClient,
+  inputs: riddleThemeRepo.CreateRiddleThemeInput[],
+): Promise<boolean> {
+  const result = await riddleThemeRepo.createMany(supabase, inputs);
   return result.length === inputs.length;
 }

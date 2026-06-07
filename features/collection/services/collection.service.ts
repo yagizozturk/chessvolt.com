@@ -1,9 +1,3 @@
-/**
- * Collection Service
- *
- * Responsibility: Collection business logic and orchestration.
- * - Uses repository (does not touch Supabase directly)
- */
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as collectionRepo from "@/features/collection/repository/collection.repository";
@@ -12,122 +6,135 @@ import type {
   CollectionWithRiddleCount,
   CollectionWithRiddleCountAndThemes,
 } from "@/features/collection/types/collection";
-import { getTopContentThemesGroupedByContentId } from "@/features/content-theme/services/content-theme.service";
+import type {
+  CreateCollectionPayload,
+  CreateCustomCollectionForUserPayload,
+  DeleteCustomCollectionForUserPayload,
+  UpdateCollectionPayload,
+  UpdateCustomCollectionForUserPayload,
+} from "@/features/collection/types/collection-payload";
 
-async function attachTopCollectionThemes(
-  supabase: SupabaseClient,
-  collections: CollectionWithRiddleCount[],
-): Promise<CollectionWithRiddleCountAndThemes[]> {
-  if (collections.length === 0) return [];
-
-  const themesByCollectionId = await getTopContentThemesGroupedByContentId(
-    supabase,
-    "collection",
-    collections.map((collection) => collection.id),
-  );
-
-  return collections.map((collection) => ({
-    ...collection,
-    themes: themesByCollectionId.get(collection.id) ?? [],
-  }));
-}
-
+// ============================================================================
+// Getting all collections
+// ============================================================================
 export async function getAllCollections(supabase: SupabaseClient): Promise<Collection[]> {
-  return collectionRepo.findAll(supabase);
+  return collectionRepo.findAllCollections(supabase);
 }
 
-export async function getActiveCollections(supabase: SupabaseClient): Promise<Collection[]> {
-  return collectionRepo.findAllActive(supabase);
+// ============================================================================
+// Getting all collections with Riddle Count
+// ============================================================================
+export async function getAllCollectionsWithRiddleCount(supabase: SupabaseClient): Promise<CollectionWithRiddleCount[]> {
+  return collectionRepo.findAllCollectionsWithRiddleCount(supabase);
 }
 
-export async function getMyCustomCollections(supabase: SupabaseClient, userId: string): Promise<Collection[]> {
-  return collectionRepo.findCustomByUserId(supabase, userId);
+// ============================================================================
+// Getting collection by Id
+// ============================================================================
+export async function getCollectionById(supabase: SupabaseClient, id: string): Promise<Collection | null> {
+  return collectionRepo.findCollectionById(supabase, id);
 }
 
-export async function getMyCustomCollectionsWithRiddleCount(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<CollectionWithRiddleCount[]> {
-  return collectionRepo.findCustomByUserIdWithRiddleCount(supabase, userId);
+// ============================================================================
+// Getting collection by Slug
+// ============================================================================
+export async function getCollectionBySlug(supabase: SupabaseClient, slug: string): Promise<Collection | null> {
+  return collectionRepo.findCollectionBySlug(supabase, slug);
 }
 
-export async function getMyCustomCollectionsWithRiddleCountAndThemes(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<CollectionWithRiddleCountAndThemes[]> {
-  const collections = await getMyCustomCollectionsWithRiddleCount(supabase, userId);
-  return attachTopCollectionThemes(supabase, collections);
-}
-
-export async function getActiveCollectionsWithRiddleCount(
-  supabase: SupabaseClient,
-): Promise<CollectionWithRiddleCount[]> {
-  return collectionRepo.findAllActiveWithRiddleCount(supabase);
-}
-
+// ============================================================================
+// Getting ACTIVE collections with Riddle Count and Themes related
+// ============================================================================
 export async function getActiveCollectionsWithRiddleCountAndThemes(
   supabase: SupabaseClient,
 ): Promise<CollectionWithRiddleCountAndThemes[]> {
-  const collections = await getActiveCollectionsWithRiddleCount(supabase);
-  return attachTopCollectionThemes(supabase, collections);
+  return collectionRepo.findAllActiveCollectionsWithRiddleCountAndThemes(supabase);
 }
 
-export async function getAllCollectionsWithRiddleCount(supabase: SupabaseClient): Promise<CollectionWithRiddleCount[]> {
-  return collectionRepo.findAllWithRiddleCount(supabase);
+// ============================================================================
+// Getting user custom collections by User Id
+// ============================================================================
+export async function getUserCustomCollections(supabase: SupabaseClient, userId: string): Promise<Collection[]> {
+  return collectionRepo.findUserCustomCollectionByUserId(supabase, userId);
 }
 
-export async function getCollectionById(supabase: SupabaseClient, id: string): Promise<Collection | null> {
-  return collectionRepo.findById(supabase, id);
+// ============================================================================
+// Getting user custom collections by User Id with Riddle Count and Themes
+// ============================================================================
+export async function getUserCustomCollectionsWithRiddleCountAndThemes(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<CollectionWithRiddleCountAndThemes[]> {
+  return collectionRepo.findUserCustomCollectionsByUserIdWithRiddleCountAndThemes(supabase, userId);
 }
 
-export async function getCollectionBySlug(supabase: SupabaseClient, slug: string): Promise<Collection | null> {
-  return collectionRepo.findBySlug(supabase, slug);
-}
-
-export async function getOnboardingStarterCollectionForUser(
+// ============================================================================
+// Getting onboarding starter collection for user.
+// It checks whether the user already has a custom collection with the onboarding
+// starter slug (ONBOARDING_STARTER_COLLECTION_SLUG) before creating a new one.
+// ============================================================================
+export async function getUserOnboardingStarterCollection(
   supabase: SupabaseClient,
   userId: string,
   slug: string,
 ): Promise<Collection | null> {
-  return collectionRepo.findOnboardingStarterForUser(supabase, userId, slug);
+  return collectionRepo.findUserOnboardingStarterCollection(supabase, userId, slug);
 }
 
+// ============================================================================
+// Creating a collection
+// ============================================================================
 export async function createCollection(
   supabase: SupabaseClient,
-  input: collectionRepo.CreateCollectionInput,
+  payload: CreateCollectionPayload,
 ): Promise<Collection | null> {
-  return collectionRepo.create(supabase, input);
+  return collectionRepo.createCollection(supabase, payload);
 }
 
+// ============================================================================
+// Updating a collection
+// ============================================================================
 export async function updateCollection(
   supabase: SupabaseClient,
   id: string,
-  input: collectionRepo.UpdateCollectionInput,
+  payload: UpdateCollectionPayload,
 ): Promise<Collection | null> {
-  return collectionRepo.update(supabase, id, input);
+  return collectionRepo.updateCollection(supabase, id, payload);
 }
 
+// ============================================================================
+// Deleting a collection
+// ============================================================================
 export async function deleteCollection(supabase: SupabaseClient, id: string): Promise<boolean> {
-  return collectionRepo.remove(supabase, id);
+  return collectionRepo.removeCollection(supabase, id);
 }
 
-export async function createMyCustomCollection(
+// ============================================================================
+// Creating a user custom collection
+// ============================================================================
+export async function createUserCustomCollection(
   supabase: SupabaseClient,
-  input: collectionRepo.CreateCustomCollectionForUserInput,
+  payload: CreateCustomCollectionForUserPayload,
 ): Promise<Collection | null> {
-  return collectionRepo.createCustomForUser(supabase, input);
+  return collectionRepo.createUserCustomCollection(supabase, payload);
 }
 
-export async function updateMyCustomCollection(
+// ============================================================================
+// Updating a user custom collection
+// ============================================================================
+export async function updateUserCustomCollection(
   supabase: SupabaseClient,
-  input: { id: string; userId: string; title: string; description?: string },
+  payload: UpdateCustomCollectionForUserPayload,
 ): Promise<Collection | null> {
-  return collectionRepo.updateCustomForUser(supabase, input);
+  return collectionRepo.updateUserCustomCollection(supabase, payload);
 }
 
-export async function deleteMyCustomCollection(
+// ============================================================================
+// Deleting a user custom collection
+// ============================================================================
+export async function deleteUserCustomCollection(
   supabase: SupabaseClient,
-  input: { id: string; userId: string },
+  payload: DeleteCustomCollectionForUserPayload,
 ): Promise<boolean> {
-  return collectionRepo.removeCustomForUser(supabase, input);
+  return collectionRepo.removeUserCustomCollection(supabase, payload);
 }

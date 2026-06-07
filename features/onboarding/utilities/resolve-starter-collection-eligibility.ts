@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { getOnboardingStarterCollectionForUser } from "@/features/collection/services/collection.service";
+import { getUserOnboardingStarterCollection } from "@/features/collection/services/collection.service";
 import {
   ONBOARDING_STARTER_COLLECTION_SLUG,
   hasStarterCollection,
@@ -27,7 +27,7 @@ export async function resolveStarterCollectionEligibility(
   // ============================================================================
   // Check if the starter collection already exists
   // ============================================================================
-  const existing = await getOnboardingStarterCollectionForUser(
+  const existing = await getUserOnboardingStarterCollection(
     supabase,
     data.userId,
     ONBOARDING_STARTER_COLLECTION_SLUG,

@@ -3,17 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import type { CreateContentThemeInput } from "@/features/content-theme/repository/content-theme.repository";
+import type { CreateCollectionThemeInput } from "@/features/collection-theme/repository/collection-theme.repository";
 import {
-  addContentTheme,
-  deleteContentTheme,
-  updateContentTheme,
-} from "@/features/content-theme/services/content-theme.service";
+  addCollectionTheme,
+  deleteCollectionTheme,
+  updateCollectionTheme,
+} from "@/features/collection-theme/services/collection-theme.service";
 import {
-  DEFAULT_CONTENT_THEME_WEIGHT,
-  parseContentThemeWeight,
-  type ContentThemeWeight,
-} from "@/features/content-theme/types/content-theme-weight";
+  DEFAULT_THEME_LINK_WEIGHT,
+  parseThemeLinkWeight,
+  type ThemeLinkWeight,
+} from "@/features/theme-link/types/theme-link-weight";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 function collectionEditPath(collectionId: string) {
@@ -37,13 +37,13 @@ function parseThemeId(formData: FormData): string | null {
   return raw || null;
 }
 
-function parseContentThemeId(formData: FormData): string | null {
-  const raw = (formData.get("contentThemeId") as string | null)?.trim() ?? "";
+function parseCollectionThemeId(formData: FormData): string | null {
+  const raw = (formData.get("collectionThemeId") as string | null)?.trim() ?? "";
   return raw || null;
 }
 
-function parseWeightFromForm(formData: FormData): ContentThemeWeight {
-  return parseContentThemeWeight(formData.get("weight")) ?? DEFAULT_CONTENT_THEME_WEIGHT;
+function parseWeightFromForm(formData: FormData): ThemeLinkWeight {
+  return parseThemeLinkWeight(formData.get("weight")) ?? DEFAULT_THEME_LINK_WEIGHT;
 }
 
 export async function createCollectionContentThemeAction(formData: FormData) {
@@ -57,14 +57,13 @@ export async function createCollectionContentThemeAction(formData: FormData) {
     redirect(`/admin/collections?themes_error=missing_fields`);
   }
 
-  const input: CreateContentThemeInput = {
-    contentType: "collection",
-    contentId: collectionId,
+  const input: CreateCollectionThemeInput = {
+    collectionId,
     themeId,
     weight,
   };
 
-  const link = await addContentTheme(supabase, input);
+  const link = await addCollectionTheme(supabase, input);
   if (!link) {
     redirect(`${collectionEditPath(collectionId)}?themes_error=create_failed`);
   }
@@ -77,14 +76,14 @@ export async function updateCollectionContentThemeAction(formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const collectionId = parseCollectionId(formData);
-  const contentThemeId = parseContentThemeId(formData);
+  const collectionThemeId = parseCollectionThemeId(formData);
   const weight = parseWeightFromForm(formData);
 
-  if (!collectionId || !contentThemeId) {
+  if (!collectionId || !collectionThemeId) {
     redirect(`/admin/collections?themes_error=missing_fields`);
   }
 
-  const link = await updateContentTheme(supabase, contentThemeId, { weight });
+  const link = await updateCollectionTheme(supabase, collectionThemeId, { weight });
   if (!link) {
     redirect(`${collectionEditPath(collectionId)}?themes_error=update_failed`);
   }
@@ -94,12 +93,12 @@ export async function updateCollectionContentThemeAction(formData: FormData) {
 }
 
 export async function deleteCollectionContentThemeAction(
-  contentThemeId: string,
+  collectionThemeId: string,
   collectionId: string,
 ): Promise<void> {
   const { supabase } = await getAdminUser();
 
-  const ok = await deleteContentTheme(supabase, contentThemeId);
+  const ok = await deleteCollectionTheme(supabase, collectionThemeId);
   if (!ok) {
     redirect(`${collectionEditPath(collectionId)}?themes_error=delete_failed`);
   }

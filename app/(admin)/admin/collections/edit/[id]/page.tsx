@@ -6,7 +6,7 @@ import { CollectionContentThemesSection } from "@/app/(admin)/admin/collections/
 import { CollectionEditForm } from "@/app/(admin)/admin/collections/components/collection-edit-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCollectionById } from "@/features/collection/services/collection.service";
-import { getContentThemesForContentWithTheme } from "@/features/content-theme/services/content-theme.service";
+import { getCollectionThemesForCollectionWithTheme } from "@/features/collection-theme/services/collection-theme.service";
 import { getAllThemes } from "@/features/theme/services/theme.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 
@@ -30,7 +30,7 @@ export default async function AdminCollectionEditPage({ params, searchParams }: 
 
   const [collection, linkedThemes, themes] = await Promise.all([
     getCollectionById(supabase, id),
-    getContentThemesForContentWithTheme(supabase, "collection", id),
+    getCollectionThemesForCollectionWithTheme(supabase, id),
     getAllThemes(supabase),
   ]);
 

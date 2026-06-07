@@ -1,6 +1,6 @@
 "use server";
 
-import { updateMyCustomCollection } from "@/features/collection/services/collection.service";
+import { updateUserCustomCollection } from "@/features/collection/services/collection.service";
 
 import { getMyCollectionsActionContext, revalidateMyCollectionsPage } from "./shared";
 
@@ -13,7 +13,7 @@ export async function updateMyCollectionAction(formData: FormData): Promise<void
 
   if (!id || !title) return;
 
-  await updateMyCustomCollection(supabase, {
+  await updateUserCustomCollection(supabase, {
     id,
     userId: user.id,
     title,

@@ -4,17 +4,24 @@ import { notFound } from "next/navigation";
 
 import { ContentThemeEditForm } from "@/app/(admin)/admin/content-themes/components/content-theme-edit-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getContentThemeByIdWithTheme } from "@/features/content-theme/services/content-theme.service";
+import { getAdminThemeLinkByKindAndId } from "@/features/theme-link/services/theme-link-admin.service";
+import { parseThemeLinkKind } from "@/features/theme-link/types/theme-link-kind";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 type Params = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ kind: string; id: string }>;
 };
 
-export default async function AdminContentThemeEditPage({ params }: Params) {
+export default async function AdminThemeLinkEditPage({ params }: Params) {
   const { supabase } = await getAdminUser();
-  const { id } = await params;
-  const item = await getContentThemeByIdWithTheme(supabase, id);
+  const { kind: kindRaw, id } = await params;
+  const kind = parseThemeLinkKind(kindRaw);
+
+  if (!kind) {
+    notFound();
+  }
+
+  const item = await getAdminThemeLinkByKindAndId(supabase, kind, id);
 
   if (!item) {
     notFound();
@@ -27,13 +34,13 @@ export default async function AdminContentThemeEditPage({ params }: Params) {
         className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to content themes
+        Back to theme links
       </Link>
       <Card>
         <CardHeader>
-          <CardTitle>Edit content–theme link</CardTitle>
+          <CardTitle>Edit theme link</CardTitle>
           <CardDescription>
-            {item.theme.title} on {item.contentType} {item.contentId}
+            {item.theme.title} on {item.kind} {item.parentId}
           </CardDescription>
         </CardHeader>
         <CardContent>

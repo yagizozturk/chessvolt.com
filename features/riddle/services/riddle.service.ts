@@ -8,7 +8,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
-import * as riddleThemeService from "@/features/riddle/services/riddle-theme.service";
+import * as riddleThemeService from "@/features/riddle-theme/services/riddle-theme.service";
 
 export async function getAllRiddles(supabase: SupabaseClient): Promise<Riddle[]> {
   return riddleRepo.findAll(supabase);

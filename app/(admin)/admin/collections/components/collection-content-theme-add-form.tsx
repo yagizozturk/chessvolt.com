@@ -3,13 +3,13 @@
 import { useMemo, useState } from "react";
 
 import { createCollectionContentThemeAction } from "@/app/(admin)/admin/collections/actions/collection-content-themes";
-import { ContentThemeWeightSelect } from "@/features/content-theme/components/content-theme-weight-select";
-import { ThemeSelect } from "@/features/content-theme/components/theme-select";
-import type { ContentThemeWithTheme } from "@/features/content-theme/types/content-theme";
+import type { CollectionThemeWithTheme } from "@/features/collection-theme/types/collection-theme";
+import { ThemeLinkWeightSelect } from "@/features/theme-link/components/theme-link-weight-select";
 import {
-  DEFAULT_CONTENT_THEME_WEIGHT,
-  type ContentThemeWeight,
-} from "@/features/content-theme/types/content-theme-weight";
+  DEFAULT_THEME_LINK_WEIGHT,
+  type ThemeLinkWeight,
+} from "@/features/theme-link/types/theme-link-weight";
+import { ThemeSelect } from "@/features/theme/components/theme-select";
 import type { Theme } from "@/features/theme/types/theme";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
@@ -17,7 +17,7 @@ import { FieldGroup } from "@/components/ui/field";
 type Props = {
   collectionId: string;
   themes: Theme[];
-  linkedThemes: ContentThemeWithTheme[];
+  linkedThemes: CollectionThemeWithTheme[];
 };
 
 export function CollectionContentThemeAddForm({ collectionId, themes, linkedThemes }: Props) {
@@ -27,7 +27,7 @@ export function CollectionContentThemeAddForm({ collectionId, themes, linkedThem
   );
 
   const [themeId, setThemeId] = useState(availableThemes[0]?.id ?? "");
-  const [weight, setWeight] = useState<ContentThemeWeight>(DEFAULT_CONTENT_THEME_WEIGHT);
+  const [weight, setWeight] = useState<ThemeLinkWeight>(DEFAULT_THEME_LINK_WEIGHT);
 
   if (themes.length === 0) {
     return (
@@ -46,7 +46,7 @@ export function CollectionContentThemeAddForm({ collectionId, themes, linkedThem
       <input type="hidden" name="collectionId" value={collectionId} />
       <FieldGroup>
         <ThemeSelect themes={availableThemes} value={themeId} onChange={setThemeId} />
-        <ContentThemeWeightSelect value={weight} onChange={setWeight} />
+        <ThemeLinkWeightSelect value={weight} onChange={setWeight} />
       </FieldGroup>
       <Button type="submit">Add theme</Button>
     </form>

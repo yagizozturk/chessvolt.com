@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { createMyCustomCollection } from "@/features/collection/services/collection.service";
+import { createUserCustomCollection } from "@/features/collection/services/collection.service";
 import type { Collection } from "@/features/collection/types/collection";
 import { getOnboardingOptionThemesByOptionIds } from "@/features/onboarding-option-theme/services/onboarding-option-theme.service";
 import {
@@ -39,7 +39,7 @@ export async function buildOnboardingStarterCollection(
     userRating: data.userRating,
   });
 
-  const collection = await createMyCustomCollection(supabase, {
+  const collection = await createUserCustomCollection(supabase, {
     title: ONBOARDING_STARTER_COLLECTION_TITLE,
     description: "Your personalized starter collection based on your onboarding answers.",
     slug: ONBOARDING_STARTER_COLLECTION_SLUG,

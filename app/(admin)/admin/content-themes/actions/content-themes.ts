@@ -3,22 +3,21 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import type { CreateContentThemeInput } from "@/features/content-theme/repository/content-theme.repository";
 import {
-  addContentTheme,
-  deleteContentTheme,
-  updateContentTheme,
-} from "@/features/content-theme/services/content-theme.service";
-import { parseContentType, type ContentType } from "@/features/content-theme/types/content-type";
+  createAdminThemeLink,
+  deleteAdminThemeLink,
+  updateAdminThemeLink,
+} from "@/features/theme-link/services/theme-link-admin.service";
+import { parseThemeLinkKind, type ThemeLinkKind } from "@/features/theme-link/types/theme-link-kind";
 import {
-  DEFAULT_CONTENT_THEME_WEIGHT,
-  parseContentThemeWeight,
-  type ContentThemeWeight,
-} from "@/features/content-theme/types/content-theme-weight";
+  DEFAULT_THEME_LINK_WEIGHT,
+  parseThemeLinkWeight,
+  type ThemeLinkWeight,
+} from "@/features/theme-link/types/theme-link-weight";
 import { getAdminUser } from "@/lib/supabase/auth";
 
-function parseContentId(formData: FormData): string | null {
-  const raw = (formData.get("contentId") as string | null)?.trim() ?? "";
+function parseParentId(formData: FormData): string | null {
+  const raw = (formData.get("parentId") as string | null)?.trim() ?? "";
   return raw || null;
 }
 
@@ -27,34 +26,27 @@ function parseThemeId(formData: FormData): string | null {
   return raw || null;
 }
 
-function parseWeightFromForm(formData: FormData): ContentThemeWeight {
-  return parseContentThemeWeight(formData.get("weight")) ?? DEFAULT_CONTENT_THEME_WEIGHT;
+function parseWeightFromForm(formData: FormData): ThemeLinkWeight {
+  return parseThemeLinkWeight(formData.get("weight")) ?? DEFAULT_THEME_LINK_WEIGHT;
 }
 
-function parseContentTypeFromForm(formData: FormData): ContentType | null {
-  return parseContentType(formData.get("contentType"));
+function parseKindFromForm(formData: FormData): ThemeLinkKind | null {
+  return parseThemeLinkKind(formData.get("kind"));
 }
 
-export async function createContentThemeAction(formData: FormData) {
+export async function createThemeLinkAction(formData: FormData) {
   const { supabase } = await getAdminUser();
 
-  const contentType = parseContentTypeFromForm(formData);
-  const contentId = parseContentId(formData);
+  const kind = parseKindFromForm(formData);
+  const parentId = parseParentId(formData);
   const themeId = parseThemeId(formData);
   const weight = parseWeightFromForm(formData);
 
-  if (!contentType || !contentId || !themeId) {
+  if (!kind || !parentId || !themeId) {
     redirect("/admin/content-themes/create?error=missing_fields");
   }
 
-  const input: CreateContentThemeInput = {
-    contentType,
-    contentId,
-    themeId,
-    weight,
-  };
-
-  const link = await addContentTheme(supabase, input);
+  const link = await createAdminThemeLink(supabase, { kind, parentId, themeId, weight });
   if (!link) {
     redirect("/admin/content-themes/create?error=create_failed");
   }
@@ -63,24 +55,25 @@ export async function createContentThemeAction(formData: FormData) {
   redirect("/admin/content-themes");
 }
 
-export type UpdateContentThemeFormState = {
+export type UpdateThemeLinkFormState = {
   error: string | null;
 };
 
-export async function updateContentThemeAction(
-  _prevState: UpdateContentThemeFormState,
+export async function updateThemeLinkAction(
+  _prevState: UpdateThemeLinkFormState,
   formData: FormData,
-): Promise<UpdateContentThemeFormState> {
+): Promise<UpdateThemeLinkFormState> {
   const { supabase } = await getAdminUser();
 
-  const id = (formData.get("contentThemeId") as string)?.trim();
-  if (!id) {
-    return { error: "Missing link id. Refresh the page and try again." };
+  const kind = parseKindFromForm(formData);
+  const id = (formData.get("themeLinkId") as string)?.trim();
+  if (!kind || !id) {
+    return { error: "Missing link details. Refresh the page and try again." };
   }
 
   const weight = parseWeightFromForm(formData);
 
-  const link = await updateContentTheme(supabase, id, { weight });
+  const link = await updateAdminThemeLink(supabase, kind, id, { weight });
   if (!link) {
     return { error: "Could not save changes. Please try again." };
   }
@@ -89,10 +82,10 @@ export async function updateContentThemeAction(
   redirect("/admin/content-themes");
 }
 
-export async function deleteContentThemeAction(id: string): Promise<void> {
+export async function deleteThemeLinkAction(kind: ThemeLinkKind, id: string): Promise<void> {
   const { supabase } = await getAdminUser();
 
-  const ok = await deleteContentTheme(supabase, id);
+  const ok = await deleteAdminThemeLink(supabase, kind, id);
   if (!ok) {
     redirect("/admin/content-themes?error=delete_failed");
   }

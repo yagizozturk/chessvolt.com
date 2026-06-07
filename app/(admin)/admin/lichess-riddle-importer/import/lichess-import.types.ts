@@ -1,4 +1,4 @@
-import type { ContentThemeWeight } from "@/features/content-theme/types/content-theme-weight";
+import type { ThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 
 export type LichessThemeMapEntry = {
   slug: string;
@@ -28,7 +28,7 @@ export type ResolvedContentTheme = {
   slug: string;
   name: string;
   category: string;
-  weight: ContentThemeWeight;
+  weight: ThemeLinkWeight;
 };
 
 export type ResolvedLichessThemes = {

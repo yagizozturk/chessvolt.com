@@ -8,7 +8,7 @@ import {
 } from "@/app/(admin)/admin/onboarding-option-themes/actions/onboarding-option-themes";
 import { OnboardingOptionSelect } from "@/features/onboarding-option-theme/components/onboarding-option-select";
 import type { OnboardingOptionThemeWithDetails } from "@/features/onboarding-option-theme/types/onboarding-option-theme";
-import { ThemeSelect } from "@/features/content-theme/components/theme-select";
+import { ThemeSelect } from "@/features/theme/components/theme-select";
 import type { OnboardingOptionWithQuestion } from "@/features/onboarding-option/types/onboarding-option-with-question";
 import type { Theme } from "@/features/theme/types/theme";
 import { Button } from "@/components/ui/button";

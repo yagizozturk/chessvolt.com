@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 
-import { createContentThemeAction } from "@/app/(admin)/admin/content-themes/actions/content-themes";
-import { ContentThemeWeightSelect } from "@/features/content-theme/components/content-theme-weight-select";
-import { ContentTypeSelect } from "@/features/content-theme/components/content-type-select";
-import { ThemeSelect } from "@/features/content-theme/components/theme-select";
-import type { ContentType } from "@/features/content-theme/types/content-type";
+import { createThemeLinkAction } from "@/app/(admin)/admin/content-themes/actions/content-themes";
+import { ThemeLinkKindSelect } from "@/features/theme-link/components/theme-link-kind-select";
+import { ThemeLinkWeightSelect } from "@/features/theme-link/components/theme-link-weight-select";
+import type { ThemeLinkKind } from "@/features/theme-link/types/theme-link-kind";
 import {
-  DEFAULT_CONTENT_THEME_WEIGHT,
-  type ContentThemeWeight,
-} from "@/features/content-theme/types/content-theme-weight";
+  DEFAULT_THEME_LINK_WEIGHT,
+  type ThemeLinkWeight,
+} from "@/features/theme-link/types/theme-link-weight";
+import { ThemeSelect } from "@/features/theme/components/theme-select";
 import type { Theme } from "@/features/theme/types/theme";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -20,12 +20,12 @@ type Props = {
   themes: Theme[];
 };
 
-const DEFAULT_CONTENT_TYPE: ContentType = "riddle";
+const DEFAULT_KIND: ThemeLinkKind = "riddle";
 
 export function ContentThemeForm({ themes }: Props) {
-  const [contentType, setContentType] = useState<ContentType>(DEFAULT_CONTENT_TYPE);
+  const [kind, setKind] = useState<ThemeLinkKind>(DEFAULT_KIND);
   const [themeId, setThemeId] = useState(themes[0]?.id ?? "");
-  const [weight, setWeight] = useState<ContentThemeWeight>(DEFAULT_CONTENT_THEME_WEIGHT);
+  const [weight, setWeight] = useState<ThemeLinkWeight>(DEFAULT_THEME_LINK_WEIGHT);
 
   if (themes.length === 0) {
     return (
@@ -36,23 +36,23 @@ export function ContentThemeForm({ themes }: Props) {
   }
 
   return (
-    <form action={createContentThemeAction} className="space-y-4">
+    <form action={createThemeLinkAction} className="space-y-4">
       <FieldGroup>
-        <ContentTypeSelect value={contentType} onChange={setContentType} />
+        <ThemeLinkKindSelect value={kind} onChange={setKind} />
         <Field>
           <FieldLabel>Content ID</FieldLabel>
           <Input
-            name="contentId"
+            name="parentId"
             required
-            placeholder="UUID of the riddle, game, etc."
+            placeholder="UUID of the riddle, collection, or opening variant"
             className="font-mono text-sm"
           />
           <p className="text-muted-foreground mt-1 text-xs">
-            Must match an existing row for the selected content type (validated by the database).
+            Must match an existing row for the selected content type.
           </p>
         </Field>
         <ThemeSelect themes={themes} value={themeId} onChange={setThemeId} />
-        <ContentThemeWeightSelect value={weight} onChange={setWeight} />
+        <ThemeLinkWeightSelect value={weight} onChange={setWeight} />
       </FieldGroup>
       <Button type="submit">Add link</Button>
     </form>
