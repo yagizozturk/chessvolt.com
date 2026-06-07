@@ -3,17 +3,20 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
+import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover.utils";
+import { formatRiddleCountLabel } from "@/features/collection/utilities/collection-display.utils";
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
+import { cn } from "@/lib/utils";
 
 type CollectionCardProps = {
   collection: CollectionWithRiddleCountAndThemes;
 };
 
 export function CollectionCard({ collection }: CollectionCardProps) {
-  const imageSrc = `/images/collections/${collection.coverImageUrl}`;
+  const imageSrc = getCollectionCoverImageSrc(collection.coverImageUrl);
 
   return (
     <Link
@@ -29,7 +32,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
             </Badge>
             <Badge variant="default" className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
               <ChessPawn data-icon="inline-start" />
-              {collection.riddleCount} {collection.riddleCount === 1 ? "riddle" : "riddles"}
+              {formatRiddleCountLabel(collection.riddleCount)}
             </Badge>
             {collection.themes.map((item) => (
               <ThemeBadge key={item.id} theme={item.theme} />
@@ -44,9 +47,14 @@ export function CollectionCard({ collection }: CollectionCardProps) {
         <h2 className="text-3xl font-bold">{collection.title}</h2>
         <p className="text-muted-foreground text-base">{collection.description}</p>
         <div className="mt-auto flex items-center gap-3">
-          <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
+          <span
+            className={cn(
+              buttonVariants({ variant: "voltCompact", size: "xs" }),
+              "pointer-events-none ml-auto shrink-0",
+            )}
+          >
             Play
-          </Button>
+          </span>
         </div>
       </div>
     </Link>

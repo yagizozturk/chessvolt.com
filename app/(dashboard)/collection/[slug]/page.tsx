@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { buildVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
 import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { CollectionHeader } from "@/features/collection/components/collection-header";
-import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
 import { getCollectionBySlug } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
@@ -16,7 +15,6 @@ import { getRiddlesByCollectionId } from "@/features/riddle/services/riddle.serv
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { buildAttemptByRiddleId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-riddle-id";
-import { DEFAULT_GAME_TYPE_DETAILS } from "@/lib/shared/constants/game-type-details";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
@@ -68,18 +66,7 @@ export default async function CollectionDetailPage({ params, searchParams }: Par
   return (
     <div className="container mx-auto max-w-6xl pt-10 pb-16">
       <div className="flex flex-col gap-4">
-        <CollectionHeader
-          title={collection.title}
-          imageSrc={`/images/collections/${collection.coverImageUrl}`}
-          imageAlt={collection.title}
-          description={collection.description}
-          quote={DEFAULT_GAME_TYPE_DETAILS.quote}
-          author={DEFAULT_GAME_TYPE_DETAILS.author}
-          backgroundColor={collection.coverImageColor}
-          itemCount={riddles.length}
-          itemLabel="riddles"
-          difficultyLabel={formatCollectionDifficultyLabel(collection.difficulty)}
-        />
+        <CollectionHeader collection={collection} />
         {riddles.length === 0 && (
           <div className="bg-muted/40 rounded-xl px-4 py-8 text-center">
             <p className="text-muted-foreground">No riddles found in this collection.</p>

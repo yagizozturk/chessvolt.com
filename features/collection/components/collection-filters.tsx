@@ -2,7 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { COLLECTION_DIFFICULTY_BAND_OPTIONS } from "@/features/collection/utilities/collection-filter.utils";
+import {
+  type CollectionDifficultyBand,
+  COLLECTION_DIFFICULTY_BAND_OPTIONS,
+} from "@/features/collection/utilities/collection-filter.utils";
 import type { Theme } from "@/features/theme/types/theme";
 
 const selectClassName =
@@ -11,10 +14,10 @@ const selectClassName =
 type CollectionFiltersProps = {
   themeOptions: Theme[];
   searchQuery: string;
-  difficultyBand: string;
+  difficultyBand: CollectionDifficultyBand;
   themeSlug: string;
   onSearchQueryChange: (value: string) => void;
-  onDifficultyBandChange: (value: string) => void;
+  onDifficultyBandChange: (value: CollectionDifficultyBand) => void;
   onThemeSlugChange: (value: string) => void;
   onClear?: () => void;
 };
@@ -47,7 +50,7 @@ export function CollectionFilters({
         <select
           id="collection-difficulty"
           value={difficultyBand}
-          onChange={(e) => onDifficultyBandChange(e.target.value)}
+          onChange={(e) => onDifficultyBandChange(e.target.value as CollectionDifficultyBand)}
           aria-label="Filter by difficulty"
           className={selectClassName}
         >
