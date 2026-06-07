@@ -116,6 +116,8 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
 
     const input: CreateRiddleInput = {
       gameId,
+      sourceId: item.sourceId?.trim() || null,
+      source: item.source?.trim() || null,
       title,
       description,
       rating: parseBulkRating(item.rating),

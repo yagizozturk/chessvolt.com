@@ -15,6 +15,8 @@ import {
   parseCollectionIdFromForm,
   parseDescriptionFromForm,
   parseRatingFromForm,
+  parseSourceFromForm,
+  parseSourceIdFromForm,
   parseIsActiveFromForm,
   parseThemesFromForm,
   resolvePgnFromFormInput,
@@ -32,6 +34,8 @@ export async function updateRiddleAction(id: string, formData: FormData) {
   const moveCountForAnswer = parseInt(formData.get("moveCountForAnswer") as string, 10);
   const title = formData.get("title") as string;
   const description = parseDescriptionFromForm(formData);
+  const sourceId = parseSourceIdFromForm(formData);
+  const source = parseSourceFromForm(formData);
   const rating = parseRatingFromForm(formData);
   const movesFromForm = ((formData.get("moves") as string) || "").trim() || null;
   const initialFenInput = ((formData.get("initialFen") as string) || "").trim() || null;
@@ -82,6 +86,8 @@ export async function updateRiddleAction(id: string, formData: FormData) {
 
   const input: UpdateRiddleInput = {
     gameId,
+    sourceId,
+    source,
     title,
     description,
     rating,

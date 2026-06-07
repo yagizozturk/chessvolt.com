@@ -197,6 +197,8 @@ export async function findActiveByRatingRange(
 
 export type CreateRiddleInput = {
   gameId?: string | null;
+  sourceId?: string | null;
+  source?: string | null;
   title: string;
   description?: string | null;
   rating?: number | null;
@@ -230,6 +232,8 @@ export async function create(
     .from("riddles")
     .insert({
       game_id: input.gameId ?? null,
+      source_id: input.sourceId?.trim() || null,
+      source: input.source?.trim() || null,
       title: input.title,
       description: input.description?.trim() || null,
       rating: input.rating ?? null,
@@ -250,6 +254,8 @@ export async function create(
 
 export type UpdateRiddleInput = {
   gameId?: string | null;
+  sourceId?: string | null;
+  source?: string | null;
   pgn?: string | null;
   initialFen?: string | null;
   title?: string;
@@ -298,6 +304,8 @@ export async function update(
 
   const updates: Record<string, unknown> = {};
   if (input.gameId !== undefined) updates.game_id = input.gameId || null;
+  if (input.sourceId !== undefined) updates.source_id = input.sourceId?.trim() || null;
+  if (input.source !== undefined) updates.source = input.source?.trim() || null;
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description?.trim() || null;
   if (input.rating !== undefined) updates.rating = input.rating;

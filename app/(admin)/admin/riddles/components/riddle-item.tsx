@@ -40,6 +40,12 @@ export function RiddleItem({ riddle, onDelete }: Props) {
           </time>
           <span className="bg-muted rounded px-2 py-0.5">{formatRiddleRatingLabel(riddle.rating)}</span>
           {!riddle.isActive && <span className="bg-muted rounded px-2 py-0.5">inactive</span>}
+          {riddle.source ? (
+            <span className="bg-muted rounded px-2 py-0.5">
+              {riddle.source}
+              {riddle.sourceId ? `: ${riddle.sourceId}` : ""}
+            </span>
+          ) : null}
           {riddle.themes.map((theme) => (
             <span key={theme} className="bg-muted rounded px-2 py-0.5">
               {theme}

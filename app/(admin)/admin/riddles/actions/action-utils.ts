@@ -14,6 +14,8 @@ type RawBulkRiddleInput = {
   rating?: string | number | null;
   collectionId?: string | null;
   gameId?: string | null;
+  sourceId?: string | null;
+  source?: string | null;
   pgn?: string;
   initialPly?: number;
   displayPly?: number;
@@ -31,6 +33,8 @@ export type BulkRiddleInput = {
   rating?: string | number | null;
   collectionId?: string | null;
   gameId?: string | null;
+  sourceId?: string | null;
+  source?: string | null;
   pgn?: string;
   initialPly?: number;
   displayPly?: number;
@@ -49,6 +53,8 @@ export function normalizeBulkRiddleInput(item: RawBulkRiddleInput): BulkRiddleIn
     rating: item.rating,
     collectionId: item.collectionId,
     gameId: item.gameId,
+    sourceId: item.sourceId,
+    source: item.source,
     pgn: item.pgn,
     initialPly: item.initialPly,
     displayPly: item.displayPly,
@@ -98,6 +104,16 @@ export function parseIsActiveFromForm(formData: FormData): boolean {
 
 export function parseDescriptionFromForm(formData: FormData): string | null {
   const raw = (formData.get("description") as string | null)?.trim() ?? "";
+  return raw || null;
+}
+
+export function parseSourceIdFromForm(formData: FormData): string | null {
+  const raw = (formData.get("sourceId") as string | null)?.trim() ?? "";
+  return raw || null;
+}
+
+export function parseSourceFromForm(formData: FormData): string | null {
+  const raw = (formData.get("source") as string | null)?.trim() ?? "";
   return raw || null;
 }
 

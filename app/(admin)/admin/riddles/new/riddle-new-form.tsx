@@ -34,6 +34,8 @@ export function RiddleNewForm({ collections }: Props) {
   const [description, setDescription] = useState("");
   const [rating, setRating] = useState<number | null>(DEFAULT_RIDDLE_RATING);
   const [themes, setThemes] = useState("");
+  const [sourceId, setSourceId] = useState("");
+  const [source, setSource] = useState("");
   const [collectionId, setCollectionId] = useState(collections[0]?.id ?? "");
   const { uciMoves, error: pgnError } = useUciRowsFromPgn(pgn);
   const derivedMoves = useMemo(() => uciMoves.join(" "), [uciMoves]);
@@ -64,6 +66,8 @@ export function RiddleNewForm({ collections }: Props) {
         initialFen: fen ?? null,
         displayFen: displayFen.trim() || fen || null,
         themes: parsedThemes,
+        sourceId: sourceId.trim() || null,
+        source: source.trim() || null,
         collectionId: collectionId.trim() || null,
         isActive,
         goals: parsedGoals,
@@ -71,7 +75,7 @@ export function RiddleNewForm({ collections }: Props) {
       null,
       2,
     );
-  }, [title, description, rating, pgn, derivedMoves, fen, displayFen, themes, collectionId, isActive, goals]);
+  }, [title, description, rating, pgn, derivedMoves, fen, displayFen, themes, sourceId, source, collectionId, isActive, goals]);
 
   useEffect(() => {
     setDisplayFen(fen ?? "");
@@ -170,6 +174,26 @@ export function RiddleNewForm({ collections }: Props) {
                 placeholder="Comma-separated, e.g. tactics, endgame"
               />
             </Field>
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Field className="min-w-0 flex-1">
+                <FieldLabel>Source</FieldLabel>
+                <Input
+                  name="source"
+                  value={source}
+                  onChange={(e) => setSource(e.target.value)}
+                  placeholder="e.g. lichess"
+                />
+              </Field>
+              <Field className="min-w-0 flex-1">
+                <FieldLabel>Source ID</FieldLabel>
+                <Input
+                  name="sourceId"
+                  value={sourceId}
+                  onChange={(e) => setSourceId(e.target.value)}
+                  placeholder="External puzzle ID"
+                />
+              </Field>
+            </div>
             <Field className="flex flex-row items-center gap-2">
               <input type="hidden" name="isActive" value={isActive ? "on" : "off"} />
               <Switch checked={isActive} onCheckedChange={setIsActive} />

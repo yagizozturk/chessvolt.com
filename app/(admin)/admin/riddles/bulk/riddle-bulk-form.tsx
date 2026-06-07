@@ -17,6 +17,8 @@ type BulkItem = {
   description?: string;
   rating?: string | number | null;
   collectionId?: string;
+  sourceId?: string;
+  source?: string;
   pgn?: string;
   moves?: string;
   goals?: unknown;
@@ -29,6 +31,8 @@ const BULK_JSON_EXAMPLE = JSON.stringify(
       description: "Find the winning continuation from the diagram position.",
       rating: 1600,
       collectionId: "your-collection-uuid",
+      source: "lichess",
+      sourceId: "external-puzzle-id",
       pgn: VALID_PGN_EXAMPLE,
       moves: "e7e8 c8e8",
       themes: ["mate", "tactics"],
