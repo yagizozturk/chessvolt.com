@@ -21,6 +21,7 @@ import {
   parseThemesFromForm,
   resolvePgnFromFormInput,
   syncRiddleCollection,
+  syncRiddleThemesFromSlugs,
 } from "./action-utils";
 
 export async function updateRiddleAction(id: string, formData: FormData) {
@@ -96,13 +97,17 @@ export async function updateRiddleAction(id: string, formData: FormData) {
     displayFen,
     moves,
     goals,
-    themes,
     isActive,
   };
 
   const riddle = await updateRiddle(supabase, id, input);
   if (!riddle) {
     redirect(`/admin/riddles/${id}?error=update_failed`);
+  }
+
+  const themesSynced = await syncRiddleThemesFromSlugs(supabase, id, themes);
+  if (!themesSynced) {
+    redirect(`/admin/riddles/${id}?error=themes_sync_failed`);
   }
 
   const synced = await syncRiddleCollection(supabase, id, collectionId);

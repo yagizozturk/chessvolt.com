@@ -6,7 +6,7 @@ import {
   ONBOARDING_STARTER_COLLECTION_MIN_RIDDLES,
   ONBOARDING_STARTER_COLLECTION_RIDDLE_LIMIT,
 } from "@/features/onboarding/constants/onboarding-starter-collection.config";
-import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
+import * as riddleService from "@/features/riddle/services/riddle.service";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { ratingDistanceFromTarget } from "@/features/riddle/types/riddle-rating";
 
@@ -86,7 +86,7 @@ export async function selectOnboardingStarterRiddles(
     // Find strict matches in rating range
     // right themes, tight rating band (±200). Best fit.
     // ============================================================================
-    const strictMatches = await riddleRepo.findActiveByThemesAndRatingRange(supabase, {
+    const strictMatches = await riddleService.findActiveRiddlesByThemesAndRatingRange(supabase, {
       themeSlugs,
       minRating: userRating - ONBOARDING_RIDDLE_RATING_TOLERANCE,
       maxRating: userRating + ONBOARDING_RIDDLE_RATING_TOLERANCE,
@@ -104,7 +104,7 @@ export async function selectOnboardingStarterRiddles(
     // Find wide matches in rating range
     // same themes, wider band (±400). Fallback when strict finds too few riddles (under 5).
     // ============================================================================
-    const wideMatches = await riddleRepo.findActiveByThemesAndRatingRange(supabase, {
+    const wideMatches = await riddleService.findActiveRiddlesByThemesAndRatingRange(supabase, {
       themeSlugs,
       minRating: userRating - ONBOARDING_RIDDLE_RATING_TOLERANCE_FALLBACK,
       maxRating: userRating + ONBOARDING_RIDDLE_RATING_TOLERANCE_FALLBACK,
@@ -121,7 +121,7 @@ export async function selectOnboardingStarterRiddles(
     // ============================================================================
     // Get Active riddles By Themes
     // ============================================================================
-    const riddlesMatchedByThemes = await riddleRepo.findActiveByThemes(supabase, {
+    const riddlesMatchedByThemes = await riddleService.findActiveRiddlesByThemes(supabase, {
       themeSlugs,
       limit: fetchLimit,
     });
@@ -134,7 +134,7 @@ export async function selectOnboardingStarterRiddles(
   // ============================================================================
   // Get Active riddles By Rating Range
   // ============================================================================
-  const riddlesMatchedByRatingRange = await riddleRepo.findActiveByRatingRange(supabase, {
+  const riddlesMatchedByRatingRange = await riddleService.findActiveRiddlesByRatingRange(supabase, {
     minRating: userRating - ONBOARDING_RIDDLE_RATING_TOLERANCE,
     maxRating: userRating + ONBOARDING_RIDDLE_RATING_TOLERANCE,
     limit: fetchLimit,
@@ -147,7 +147,7 @@ export async function selectOnboardingStarterRiddles(
   // ============================================================================
   // Get Active riddles By Rating Range (fallback) Wide range
   // ============================================================================
-  const wideRatingMatches = await riddleRepo.findActiveByRatingRange(supabase, {
+  const wideRatingMatches = await riddleService.findActiveRiddlesByRatingRange(supabase, {
     minRating: userRating - ONBOARDING_RIDDLE_RATING_TOLERANCE_FALLBACK,
     maxRating: userRating + ONBOARDING_RIDDLE_RATING_TOLERANCE_FALLBACK,
     limit: fetchLimit,

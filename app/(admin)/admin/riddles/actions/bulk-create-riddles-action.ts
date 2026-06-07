@@ -17,6 +17,7 @@ import {
   parseBulkRating,
   parseBulkThemes,
   resolvePgnFromFormInput,
+  syncRiddleThemesFromSlugs,
 } from "./action-utils";
 
 export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/admin/riddles/bulk") {
@@ -113,6 +114,7 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
     }
 
     const description = item.description?.trim() || null;
+    const themeSlugs = parseBulkThemes(item.themes);
 
     const input: CreateRiddleInput = {
       gameId,
@@ -125,13 +127,18 @@ export async function bulkCreateRiddlesAction(jsonData: string, returnPath = "/a
       moves,
       initialFen,
       displayFen,
-      themes: parseBulkThemes(item.themes),
       isActive: item.isActive ?? true,
       ...(goals !== undefined ? { goals } : {}),
     };
 
     const riddle = await createRiddle(supabase, input);
     if (riddle) {
+      const themesSynced = await syncRiddleThemesFromSlugs(supabase, riddle.id, themeSlugs);
+      if (!themesSynced) {
+        errors.push({ index: i, message: "Riddle created but content themes could not be synced" });
+        continue;
+      }
+
       const linked = await linkRiddleToCollection(supabase, riddle.id, collectionId);
       if (linked) {
         created.push(riddle.id);

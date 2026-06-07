@@ -16,13 +16,13 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Collection } from "@/features/collection/types/collection";
 import type { Game } from "@/features/game/types/game";
-import type { Riddle } from "@/features/riddle/types/riddle";
+import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 import { cn } from "@/lib/utils/cn";
 
 import { RiddleCollectionSelect } from "../components/riddle-collection-select";
 
 type Props = {
-  riddle: Riddle;
+  riddle: RiddleWithThemes;
   game: Game | null;
   collections: Collection[];
   collectionId: string;
@@ -44,7 +44,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
   const [title, setTitle] = useState(riddle.title);
   const [description, setDescription] = useState(riddle.description ?? "");
   const [rating, setRating] = useState<number | null>(riddle.rating);
-  const [themes, setThemes] = useState(riddle.themes.join(", "));
+  const [themes, setThemes] = useState(riddle.themeSlugs.join(", "));
   const [sourceId, setSourceId] = useState(riddle.sourceId ?? "");
   const [source, setSource] = useState(riddle.source ?? "");
   const [collectionId, setCollectionId] = useState(initialCollectionId);

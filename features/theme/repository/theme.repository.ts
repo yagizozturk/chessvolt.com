@@ -94,6 +94,20 @@ export async function findBySlug(supabase: SupabaseClient, slug: string): Promis
   return toTheme(data as DbTheme);
 }
 
+export async function findBySlugs(supabase: SupabaseClient, slugs: string[]): Promise<Theme[]> {
+  const unique = [...new Set(slugs.map((slug) => slug.trim()).filter(Boolean))];
+  if (unique.length === 0) return [];
+
+  const { data, error } = await supabase.from("themes").select("*").in("slug", unique);
+
+  if (error) {
+    console.error("theme.repository.findBySlugs error:", error);
+    return [];
+  }
+
+  return toThemes((data ?? []) as DbTheme[]);
+}
+
 export type CreateThemeInput = {
   title: string;
   slug?: string;

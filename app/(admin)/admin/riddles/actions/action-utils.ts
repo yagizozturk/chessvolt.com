@@ -7,6 +7,9 @@ import {
   getRiddleCollectionsForRiddle,
 } from "@/features/riddle-collection/services/riddle-collection.service";
 import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
+import { syncRiddleThemesFromSlugs } from "@/features/riddle/services/riddle-theme.service";
+
+export { syncRiddleThemesFromSlugs };
 
 type RawBulkRiddleInput = {
   title?: string;

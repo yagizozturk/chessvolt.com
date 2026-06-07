@@ -1,5 +1,5 @@
 import { AdminFormErrorAlert } from "@/app/(admin)/admin/shared/components/admin-form-error-alert";
-import { getAllRiddles } from "@/features/riddle/services/riddle.service";
+import { getAllRiddlesWithThemes } from "@/features/riddle/services/riddle.service";
 import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { getAdminUser } from "@/lib/supabase/auth";
 
@@ -11,7 +11,7 @@ type Props = {
 
 export default async function AdminRiddlesPage({ searchParams }: Props) {
   const { supabase } = await getAdminUser();
-  const riddles = await getAllRiddles(supabase);
+  const riddles = await getAllRiddlesWithThemes(supabase);
   const { error } = await searchParams;
   const errorMessage = getRiddleAdminErrorMessage(error);
 

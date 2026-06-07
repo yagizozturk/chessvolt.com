@@ -3,12 +3,12 @@
 import { useMemo, useState } from "react";
 
 import { Input } from "@/components/ui/input";
-import type { Riddle } from "@/features/riddle/types/riddle";
+import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 
 import { RiddlesList } from "./riddles-list";
 
 type Props = {
-  riddles: Riddle[];
+  riddles: RiddleWithThemes[];
 };
 
 export function RiddlesFilters({ riddles }: Props) {

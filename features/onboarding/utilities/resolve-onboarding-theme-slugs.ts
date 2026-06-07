@@ -4,7 +4,7 @@ import type { OnboardingOptionThemeWithTheme } from "@/features/onboarding-optio
 // resolveOnboardingThemeSlugs
 //
 // Maps onboarding option themes to active theme slugs for riddle queries.
-// Riddle selection filters on riddles.themes (slug array), not theme IDs.
+// Riddle selection filters via content_themes (theme slugs resolved to theme IDs).
 // ============================================================================
 export function resolveOnboardingThemeSlugs(optionThemes: OnboardingOptionThemeWithTheme[]): string[] {
   const slugs = new Set<string>();

@@ -11,7 +11,6 @@ export type DbRiddle = {
   title: string;
   description: string | null;
   rating: number | null;
-  themes: string[] | null;
   is_active: boolean;
   created_at: string;
   move_sequences?: DbMoveSequence | DbMoveSequence[] | null;
@@ -31,7 +30,6 @@ export function toRiddle(db: DbRiddle): Riddle {
     title: db.title,
     description: db.description,
     rating: parseRiddleRating(db.rating),
-    themes: db.themes ?? [],
     isActive: db.is_active,
     moveSequence: toMoveSequence(seqRow),
     createdAt: db.created_at,

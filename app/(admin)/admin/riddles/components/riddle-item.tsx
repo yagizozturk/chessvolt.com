@@ -6,10 +6,10 @@ import Link from "next/link";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Button } from "@/components/ui/button";
 import { formatRiddleRatingLabel } from "@/features/riddle/types/riddle-rating";
-import type { Riddle } from "@/features/riddle/types/riddle";
+import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 
 type Props = {
-  riddle: Riddle;
+  riddle: RiddleWithThemes;
   onDelete: (e: React.MouseEvent, id: string) => Promise<void>;
 };
 
@@ -46,9 +46,9 @@ export function RiddleItem({ riddle, onDelete }: Props) {
               {riddle.sourceId ? `: ${riddle.sourceId}` : ""}
             </span>
           ) : null}
-          {riddle.themes.map((theme) => (
-            <span key={theme} className="bg-muted rounded px-2 py-0.5">
-              {theme}
+          {riddle.themeSlugs.map((themeSlug) => (
+            <span key={themeSlug} className="bg-muted rounded px-2 py-0.5">
+              {themeSlug}
             </span>
           ))}
         </div>

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { getGameById } from "@/features/game/services/game.service";
 import { getRiddleCollectionsForRiddle } from "@/features/riddle-collection/services/riddle-collection.service";
 import { getAllCollections } from "@/features/collection/services/collection.service";
-import { getRiddleById } from "@/features/riddle/services/riddle.service";
+import { getRiddleByIdWithThemes } from "@/features/riddle/services/riddle.service";
 import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { getAdminUser } from "@/lib/supabase/auth";
 
@@ -24,7 +24,7 @@ export default async function AdminRiddleDetailPage({ params, searchParams }: Pa
   const { error } = await searchParams;
   const errorMessage = getRiddleAdminErrorMessage(error);
 
-  const riddle = await getRiddleById(supabase, id);
+  const riddle = await getRiddleByIdWithThemes(supabase, id);
   if (!riddle) {
     notFound();
   }

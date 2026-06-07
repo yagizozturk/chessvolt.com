@@ -1,13 +1,13 @@
 "use client";
 
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
-import type { Riddle } from "@/features/riddle/types/riddle";
+import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 
 import { deleteRiddleAction } from "../actions/actions";
 import { RiddleItem } from "./riddle-item";
 
 type Props = {
-  riddles: Riddle[];
+  riddles: RiddleWithThemes[];
 };
 
 export function RiddlesList({ riddles }: Props) {

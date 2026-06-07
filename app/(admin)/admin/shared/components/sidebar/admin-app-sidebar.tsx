@@ -49,6 +49,7 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "All riddles", url: "/admin/riddles" },
       { title: "New FEN included PGN", url: "/admin/riddles/new" },
       { title: "Bulk FEN included PGN", url: "/admin/riddles/bulk" },
+      { title: "Lichess CSV import", url: "/admin/lichess-riddle-importer" },
       { title: "New Riddle From Game", url: "/admin/riddles/new/riddle-from-game" },
     ],
   },

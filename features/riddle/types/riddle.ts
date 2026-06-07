@@ -8,7 +8,6 @@ export type Riddle = {
   title: string;
   description: string | null;
   rating: number | null;
-  themes: string[];
   isActive: boolean;
   moveSequence: MoveSequence;
   createdAt: string;

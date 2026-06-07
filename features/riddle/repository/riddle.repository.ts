@@ -108,59 +108,41 @@ export async function findByCollectionId(
     .filter((riddle): riddle is Riddle => riddle != null);
 }
 
-export type FindActiveRiddlesByThemesInput = {
-  themeSlugs: string[];
+export type FindActiveRiddlesByIdsInput = {
+  ids: string[];
   limit?: number;
+  minRating?: number;
+  maxRating?: number;
+  orderBy?: "created_at" | "rating";
 };
 
-export async function findActiveByThemes(
+export async function findActiveByIds(
   supabase: SupabaseClient,
-  input: FindActiveRiddlesByThemesInput,
+  input: FindActiveRiddlesByIdsInput,
 ): Promise<Riddle[]> {
-  if (input.themeSlugs.length === 0) return [];
+  const uniqueIds = [...new Set(input.ids.map((id) => id.trim()).filter(Boolean))];
+  if (uniqueIds.length === 0) return [];
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("riddles")
     .select(RIDDLE_SELECT)
     .eq("is_active", true)
-    .overlaps("themes", input.themeSlugs)
-    .order("created_at", { ascending: true })
-    .limit(input.limit ?? 100);
+    .in("id", uniqueIds);
 
-  if (error) {
-    console.error("riddle.repository.findActiveByThemes error:", error);
-    return [];
+  if (input.minRating != null && input.maxRating != null) {
+    query = query
+      .not("rating", "is", null)
+      .gte("rating", input.minRating)
+      .lte("rating", input.maxRating);
   }
 
-  return (data ?? []).map(toRiddle);
-}
+  const orderBy = input.orderBy ?? "created_at";
+  query = query.order(orderBy, { ascending: true }).limit(input.limit ?? 100);
 
-export type FindActiveRiddlesByThemesAndRatingRangeInput = {
-  themeSlugs: string[];
-  minRating: number;
-  maxRating: number;
-  limit?: number;
-};
-
-export async function findActiveByThemesAndRatingRange(
-  supabase: SupabaseClient,
-  input: FindActiveRiddlesByThemesAndRatingRangeInput,
-): Promise<Riddle[]> {
-  if (input.themeSlugs.length === 0) return [];
-
-  const { data, error } = await supabase
-    .from("riddles")
-    .select(RIDDLE_SELECT)
-    .eq("is_active", true)
-    .overlaps("themes", input.themeSlugs)
-    .not("rating", "is", null)
-    .gte("rating", input.minRating)
-    .lte("rating", input.maxRating)
-    .order("rating", { ascending: true })
-    .limit(input.limit ?? 100);
+  const { data, error } = await query;
 
   if (error) {
-    console.error("riddle.repository.findActiveByThemesAndRatingRange error:", error);
+    console.error("riddle.repository.findActiveByIds error:", error);
     return [];
   }
 
@@ -207,7 +189,6 @@ export type CreateRiddleInput = {
   initialFen?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
-  themes?: string[];
   isActive?: boolean;
 };
 
@@ -238,7 +219,6 @@ export async function create(
       description: input.description?.trim() || null,
       rating: input.rating ?? null,
       move_sequence_id: moveSequence.id,
-      themes: input.themes ?? [],
       is_active: input.isActive ?? true,
     })
     .select(RIDDLE_SELECT)
@@ -264,7 +244,6 @@ export type UpdateRiddleInput = {
   moves?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
-  themes?: string[];
   isActive?: boolean;
 };
 
@@ -309,7 +288,6 @@ export async function update(
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description?.trim() || null;
   if (input.rating !== undefined) updates.rating = input.rating;
-  if (input.themes !== undefined) updates.themes = input.themes;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
 
   if (Object.keys(updates).length > 0) {
@@ -332,4 +310,52 @@ export async function remove(supabase: SupabaseClient, id: string): Promise<bool
   }
 
   return true;
+}
+
+export async function findBySourceAndSourceId(
+  supabase: SupabaseClient,
+  source: string,
+  sourceId: string,
+): Promise<Riddle | null> {
+  const { data, error } = await supabase
+    .from("riddles")
+    .select(RIDDLE_SELECT)
+    .eq("source", source)
+    .eq("source_id", sourceId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("riddle.repository.findBySourceAndSourceId error:", error);
+    return null;
+  }
+
+  if (!data) return null;
+
+  return toRiddle(data);
+}
+
+export async function findExistingSourceIds(
+  supabase: SupabaseClient,
+  source: string,
+  sourceIds: string[],
+): Promise<Set<string>> {
+  const unique = [...new Set(sourceIds.map((id) => id.trim()).filter(Boolean))];
+  if (unique.length === 0) return new Set();
+
+  const { data, error } = await supabase
+    .from("riddles")
+    .select("source_id")
+    .eq("source", source)
+    .in("source_id", unique);
+
+  if (error) {
+    console.error("riddle.repository.findExistingSourceIds error:", error);
+    return new Set();
+  }
+
+  return new Set(
+    (data ?? [])
+      .map((row) => row.source_id)
+      .filter((id): id is string => typeof id === "string" && id.length > 0),
+  );
 }
