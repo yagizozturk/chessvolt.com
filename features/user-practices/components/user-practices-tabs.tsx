@@ -3,9 +3,9 @@
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CollectionCard } from "@/features/collection/components/collection-card";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import { CreateUserListDialog } from "@/features/user-practices/components/create-user-list-dialog";
+import { UserCollectionCard } from "@/features/user-practices/components/user-collection-card";
 import { UserPracticeOpeningsTab } from "@/features/user-practice-opening-variant/components/user-practice-opening-variant";
 import type { UserPracticeOpeningVariantWithDetails } from "@/features/user-practice-opening-variant/types/user-practice-opening-variant";
 
@@ -30,7 +30,7 @@ export function UserPractices({ collections, practiceVariants, voltBySequenceId 
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               {collections.map((collection) => (
-                <CollectionCard key={collection.id} collection={collection} />
+                <UserCollectionCard key={collection.id} collection={collection} />
               ))}
             </div>
           )}

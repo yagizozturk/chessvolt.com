@@ -26,6 +26,8 @@ const buttonVariants = cva(
           "bg-gray-500 text-white uppercase tracking-[0.1em] font-bold shadow-[0_5px_0_#4b5563] hover:brightness-95 active:shadow-none active:translate-y-[2px] border-0",
         voltCompact:
           "bg-primary text-white font-medium shadow-[0_3px_0_#bc8a00] hover:brightness-95 active:shadow-none active:translate-y-[2px] border-0",
+        voltIcon:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground shadow-[0_3px_0_var(--card-shadow)] active:shadow-none active:translate-y-[2px] border-0",
       },
       size: {
         default:
@@ -47,7 +49,7 @@ const buttonVariants = cva(
         class: "rounded-2xl",
       },
       {
-        variant: ["voltCompact"],
+        variant: ["voltCompact", "voltIcon"],
         class: "rounded-lg",
       },
     ],
