@@ -10,6 +10,6 @@ export async function getMyCollectionsActionContext() {
 }
 
 export function revalidateMyCollectionsPage() {
-  revalidatePath("/my-collections");
-  revalidatePath("/my-collections/create");
+  revalidatePath("/my-volts");
+  revalidatePath("/my-volts/create");
 }

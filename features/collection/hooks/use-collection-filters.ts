@@ -4,46 +4,64 @@ import { useCallback, useMemo, useState } from "react";
 
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import {
-  type CollectionDifficultyBand,
+  type CollectionDifficultyOptions,
   type CollectionFilterState,
   filterCollections,
   getThemeFilterOptions,
   hasActiveCollectionFilters,
 } from "@/features/collection/utilities/collection-filter.utils";
 
+/** Client-side filter state for a collection list. Filtering logic lives in `collection-filter.utils`. */
 export function useCollectionFilters(collections: CollectionWithRiddleCountAndThemes[]) {
+  // "All" means no filter for difficulty and theme
   const [searchQuery, setSearchQuery] = useState("");
-  const [difficultyBand, setDifficultyBand] = useState<CollectionDifficultyBand>("all");
-  const [themeSlug, setThemeSlug] = useState("all");
+  const [difficultyFilter, setDifficultyFilter] = useState<CollectionDifficultyOptions>("All");
+  const [themeFilter, setThemeFilter] = useState("all");
 
-  const filterState: CollectionFilterState = useMemo(
-    () => ({ searchQuery, difficultyBand, themeSlug }),
-    [searchQuery, difficultyBand, themeSlug],
+  // ============================================================================
+  // Without the filterState memo, FE get a new object each render, so React would treat
+  // the dependency as changed even when searchQuery, difficultyFilter, and themeFilter didn't.
+  // ============================================================================
+  const collectionFilterState: CollectionFilterState = useMemo(
+    () => ({ searchQuery, difficultyFilter, themeFilter }),
+    [searchQuery, difficultyFilter, themeFilter],
   );
 
+  // ============================================================================
+  // Gets the theme filter options
+  // ============================================================================
   const themeOptions = useMemo(() => getThemeFilterOptions(collections), [collections]);
 
+  // ============================================================================
+  // Filters the collections
+  // ============================================================================
   const filteredCollections = useMemo(
-    () => filterCollections(collections, filterState),
-    [collections, filterState],
+    () => filterCollections(collections, collectionFilterState),
+    [collections, collectionFilterState],
   );
 
-  const hasActiveFilters = hasActiveCollectionFilters(filterState);
+  // ============================================================================
+  // Checks if there are any active filters
+  // ============================================================================
+  const hasActiveFilters = hasActiveCollectionFilters(collectionFilterState);
 
+  // ============================================================================
+  // Resets to the same defaults used on initial mount
+  // ============================================================================
   const clearFilters = useCallback(() => {
     setSearchQuery("");
-    setDifficultyBand("all");
-    setThemeSlug("all");
+    setDifficultyFilter("All");
+    setThemeFilter("all");
   }, []);
 
   return {
-    filterState,
+    collectionFilterState,
     themeOptions,
     filteredCollections,
     hasActiveFilters,
     setSearchQuery,
-    setDifficultyBand,
-    setThemeSlug,
+    setDifficultyFilter,
+    setThemeFilter,
     clearFilters,
   };
 }

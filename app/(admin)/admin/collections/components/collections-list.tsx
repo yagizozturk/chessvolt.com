@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { CollectionWithRiddleCount } from "@/features/collection/types/collection";
 import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
-import { formatRiddleCountLabel } from "@/features/collection/utilities/collection-display.utils";
+import { formatCollectionRiddleCount } from "@/features/collection/utilities/collection-riddle-count-format.utils";
 import { formatCollectionTypeLabel } from "@/features/collection/types/collection-type";
 
 type Props = {
@@ -42,7 +42,7 @@ export function CollectionsList({ collections }: Props) {
           </div>
           <p className="text-muted-foreground line-clamp-2 text-xs">{collection.description || "No description"}</p>
           <p className="text-muted-foreground text-xs">
-            {formatCollectionDifficultyLabel(collection.difficulty)} · {formatRiddleCountLabel(collection.riddleCount)} ·
+            {formatCollectionDifficultyLabel(collection.difficulty)} · {formatCollectionRiddleCount(collection.riddleCount)} ·
             /{collection.slug}
           </p>
           <p className="text-muted-foreground text-xs">

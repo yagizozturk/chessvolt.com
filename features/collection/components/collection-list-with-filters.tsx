@@ -21,13 +21,13 @@ export function CollectionListWithFilters({
   className,
 }: CollectionListWithFiltersProps) {
   const {
-    filterState,
+    collectionFilterState,
     themeOptions,
     filteredCollections,
     hasActiveFilters,
     setSearchQuery,
-    setDifficultyBand,
-    setThemeSlug,
+    setDifficultyFilter,
+    setThemeFilter,
     clearFilters,
   } = useCollectionFilters(collections);
 
@@ -43,12 +43,12 @@ export function CollectionListWithFilters({
     <div className={cn("flex flex-col gap-6", className)}>
       <CollectionFilters
         themeOptions={themeOptions}
-        searchQuery={filterState.searchQuery}
-        difficultyBand={filterState.difficultyBand}
-        themeSlug={filterState.themeSlug}
+        searchQuery={collectionFilterState.searchQuery}
+        difficultyFilter={collectionFilterState.difficultyFilter}
+        themeFilter={collectionFilterState.themeFilter}
         onSearchQueryChange={setSearchQuery}
-        onDifficultyBandChange={setDifficultyBand}
-        onThemeSlugChange={setThemeSlug}
+        onDifficultyFilterChange={setDifficultyFilter}
+        onThemeFilterChange={setThemeFilter}
         onClear={hasActiveFilters ? clearFilters : undefined}
       />
 

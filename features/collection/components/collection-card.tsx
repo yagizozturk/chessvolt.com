@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
-import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover.utils";
-import { formatRiddleCountLabel } from "@/features/collection/utilities/collection-display.utils";
+import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
+import { formatCollectionRiddleCount } from "@/features/collection/utilities/collection-riddle-count-format.utils";
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +32,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
             </Badge>
             <Badge variant="default" className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
               <ChessPawn data-icon="inline-start" />
-              {formatRiddleCountLabel(collection.riddleCount)}
+              {formatCollectionRiddleCount(collection.riddleCount)}
             </Badge>
             {collection.themes.map((item) => (
               <ThemeBadge key={item.id} theme={item.theme} />

@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-import { createMyCollectionAction } from "@/app/(dashboard)/my-collections/actions";
+import { createMyCollectionAction } from "@/app/(dashboard)/my-volts/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ export default function CreateMyCollectionPage() {
   return (
     <div className="container mx-auto max-w-5xl space-y-6 px-4 pt-6 pb-16">
       <Link
-        href="/my-collections"
+        href="/my-volts"
         className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />

@@ -2,39 +2,38 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  type CollectionDifficultyBand,
-  COLLECTION_DIFFICULTY_BAND_OPTIONS,
+  COLLECTION_DIFFICULTY_OPTIONS,
+  type CollectionDifficultyOptions,
 } from "@/features/collection/utilities/collection-filter.utils";
 import type { Theme } from "@/features/theme/types/theme";
-
-const selectClassName =
-  "border-input focus-visible:ring-primary/50 h-9 w-full rounded-xl border-2 bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:ring-3";
 
 type CollectionFiltersProps = {
   themeOptions: Theme[];
   searchQuery: string;
-  difficultyBand: CollectionDifficultyBand;
-  themeSlug: string;
+  difficultyFilter: CollectionDifficultyOptions;
+  themeFilter: string;
   onSearchQueryChange: (value: string) => void;
-  onDifficultyBandChange: (value: CollectionDifficultyBand) => void;
-  onThemeSlugChange: (value: string) => void;
+  onDifficultyFilterChange: (value: CollectionDifficultyOptions) => void;
+  onThemeFilterChange: (value: string) => void;
   onClear?: () => void;
 };
 
 export function CollectionFilters({
   themeOptions,
   searchQuery,
-  difficultyBand,
-  themeSlug,
+  difficultyFilter,
+  themeFilter,
   onSearchQueryChange,
-  onDifficultyBandChange,
-  onThemeSlugChange,
+  onDifficultyFilterChange,
+  onThemeFilterChange,
   onClear,
 }: CollectionFiltersProps) {
   return (
-    <div className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 md:flex-row md:flex-wrap md:items-end">
-      <div className="flex min-w-0 flex-1 md:min-w-[12rem] md:basis-full lg:max-w-sm lg:basis-auto">
+    <div className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 sm:flex-row sm:flex-wrap sm:items-center">
+      {/* Search input */}
+      <div className="min-w-0 flex-1 sm:min-w-[12rem] sm:basis-full lg:max-w-sm lg:basis-auto">
         <Input
           value={searchQuery}
           onChange={(e) => onSearchQueryChange(e.target.value)}
@@ -42,50 +41,49 @@ export function CollectionFilters({
           aria-label="Search collections"
         />
       </div>
-
-      <div className="flex min-w-0 flex-1 flex-col gap-1 md:max-w-56">
-        <label htmlFor="collection-difficulty" className="text-muted-foreground text-xs font-medium">
-          Difficulty
-        </label>
-        <select
-          id="collection-difficulty"
-          value={difficultyBand}
-          onChange={(e) => onDifficultyBandChange(e.target.value as CollectionDifficultyBand)}
-          aria-label="Filter by difficulty"
-          className={selectClassName}
-        >
-          {COLLECTION_DIFFICULTY_BAND_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+      {/* Difficulty filter */}
+      <div className="min-w-0 flex-1 sm:max-w-56">
+        <Select value={difficultyFilter} onValueChange={onDifficultyFilterChange}>
+          <SelectTrigger
+            id="collection-difficulty"
+            className="w-full rounded-xl border-2"
+            aria-label="Filter by difficulty"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {COLLECTION_DIFFICULTY_OPTIONS.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
-
-      <div className="flex min-w-0 flex-1 flex-col gap-1 md:max-w-64">
-        <label htmlFor="collection-theme" className="text-muted-foreground text-xs font-medium">
-          Theme
-        </label>
-        <select
-          id="collection-theme"
-          value={themeSlug}
-          onChange={(e) => onThemeSlugChange(e.target.value)}
-          aria-label="Filter by theme"
-          className={selectClassName}
-          disabled={themeOptions.length === 0}
-        >
-          <option value="all">All themes</option>
-          {themeOptions.map((theme) => (
-            <option key={theme.slug} value={theme.slug}>
-              {theme.title}
-            </option>
-          ))}
-        </select>
+      {/* Theme filter */}
+      <div className="min-w-0 flex-1 sm:max-w-64">
+        <Select value={themeFilter} onValueChange={onThemeFilterChange} disabled={themeOptions.length === 0}>
+          <SelectTrigger id="collection-theme" className="w-full rounded-xl border-2" aria-label="Filter by theme">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="all">All themes</SelectItem>
+              {themeOptions.map((theme) => (
+                <SelectItem key={theme.slug} value={theme.slug}>
+                  {theme.title}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
-
+      {/* Clear filters button */}
       {onClear && (
-        <div className="flex justify-end md:ml-auto">
-          <Button type="button" variant="outline" size="sm" onClick={onClear}>
+        <div className="-mt-1 flex justify-end sm:ml-auto">
+          <Button type="button" variant="volt" size="sm" onClick={onClear}>
             Clear filters
           </Button>
         </div>

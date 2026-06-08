@@ -30,6 +30,6 @@ export async function createMyCollectionAction(formData: FormData): Promise<void
   revalidateMyCollectionsPage();
 
   if (collection) {
-    redirect("/my-collections");
+    redirect("/my-volts");
   }
 }

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import type { Collection } from "@/features/collection/types/collection";
 import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
-import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover.utils";
+import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
 import { DEFAULT_GAME_TYPE_DETAILS } from "@/lib/shared/constants/game-type-details";
 
 type CollectionHeaderCollection = Pick<

@@ -28,7 +28,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { href: "/collection", label: "Collections", icon: Swords },
-  { href: "/my-collections", label: "My Collections", icon: ArrowsUpFromLine, requiresAuth: true },
+  { href: "/my-volts", label: "My Volts", icon: ArrowsUpFromLine, requiresAuth: true },
   { href: "/openings", label: "Opening Crusher", icon: BookOpenText },
   //{ href: "/arrows", label: "Arrows Game", icon: ArrowsUpFromLine },
 ];
