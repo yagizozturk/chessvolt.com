@@ -86,7 +86,7 @@ export async function findByCollectionId(
   options?: { activeOnly?: boolean },
 ): Promise<Riddle[]> {
   const { data, error } = await supabase
-    .from("riddle_collections")
+    .from("collection_riddles")
     .select("sort_order, created_at, riddles (*, move_sequences (*))")
     .eq("collection_id", collectionId)
     .order("sort_order", { ascending: true })

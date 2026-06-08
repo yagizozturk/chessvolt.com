@@ -1,7 +1,7 @@
 /**
  * Collection Riddle Repository
  *
- * Responsibility: CRUD access to the riddle_collections join table.
+ * Responsibility: CRUD access to the collection_riddles join table.
  */
 
 import { toCollectionRiddle } from "@/features/collection-riddles/mapper/collection-riddle.mapper";
@@ -13,7 +13,7 @@ export async function findById(
   id: string,
 ): Promise<CollectionRiddle | null> {
   const { data, error } = await supabase
-    .from("riddle_collections")
+    .from("collection_riddles")
     .select("*")
     .eq("id", id)
     .maybeSingle();
@@ -33,7 +33,7 @@ export async function findByCollectionId(
   collectionId: string,
 ): Promise<CollectionRiddle[]> {
   const { data, error } = await supabase
-    .from("riddle_collections")
+    .from("collection_riddles")
     .select("*")
     .eq("collection_id", collectionId)
     .order("sort_order", { ascending: true })
@@ -52,7 +52,7 @@ export async function findByRiddleId(
   riddleId: string,
 ): Promise<CollectionRiddle[]> {
   const { data, error } = await supabase
-    .from("riddle_collections")
+    .from("collection_riddles")
     .select("*")
     .eq("riddle_id", riddleId)
     .order("sort_order", { ascending: true })
@@ -72,7 +72,7 @@ export async function findByPair(
   collectionId: string,
 ): Promise<CollectionRiddle | null> {
   const { data, error } = await supabase
-    .from("riddle_collections")
+    .from("collection_riddles")
     .select("*")
     .eq("riddle_id", riddleId)
     .eq("collection_id", collectionId)
@@ -99,7 +99,7 @@ export async function create(
   input: CreateCollectionRiddleInput,
 ): Promise<CollectionRiddle | null> {
   const { data, error } = await supabase
-    .from("riddle_collections")
+    .from("collection_riddles")
     .insert({
       riddle_id: input.riddleId,
       collection_id: input.collectionId,
@@ -128,7 +128,7 @@ export async function createMany(
     sort_order: input.sortOrder ?? 0,
   }));
 
-  const { data, error } = await supabase.from("riddle_collections").insert(rows).select();
+  const { data, error } = await supabase.from("collection_riddles").insert(rows).select();
 
   if (error) {
     console.error("collection-riddle.repository.createMany error:", error);
@@ -155,7 +155,7 @@ export async function update(
   }
 
   const { data, error } = await supabase
-    .from("riddle_collections")
+    .from("collection_riddles")
     .update(updates)
     .eq("id", id)
     .select()
@@ -170,7 +170,7 @@ export async function update(
 }
 
 export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
-  const { error } = await supabase.from("riddle_collections").delete().eq("id", id);
+  const { error } = await supabase.from("collection_riddles").delete().eq("id", id);
 
   if (error) {
     console.error("collection-riddle.repository.remove error:", error);
@@ -185,7 +185,7 @@ export async function removeByCollectionId(
   collectionId: string,
 ): Promise<boolean> {
   const { error } = await supabase
-    .from("riddle_collections")
+    .from("collection_riddles")
     .delete()
     .eq("collection_id", collectionId);
 
@@ -198,7 +198,7 @@ export async function removeByCollectionId(
 }
 
 export async function removeByRiddleId(supabase: SupabaseClient, riddleId: string): Promise<boolean> {
-  const { error } = await supabase.from("riddle_collections").delete().eq("riddle_id", riddleId);
+  const { error } = await supabase.from("collection_riddles").delete().eq("riddle_id", riddleId);
 
   if (error) {
     console.error("collection-riddle.repository.removeByRiddleId error:", error);
@@ -214,7 +214,7 @@ export async function removeByPair(
   collectionId: string,
 ): Promise<boolean> {
   const { error } = await supabase
-    .from("riddle_collections")
+    .from("collection_riddles")
     .delete()
     .eq("riddle_id", riddleId)
     .eq("collection_id", collectionId);

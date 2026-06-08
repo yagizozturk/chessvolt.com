@@ -1,7 +1,7 @@
 /**
  * Collection Riddles Service
  *
- * Responsibility: Business logic for riddle_collections join rows.
+ * Responsibility: Business logic for collection_riddles join rows.
  * - Uses repository (does not touch Supabase directly)
  */
 

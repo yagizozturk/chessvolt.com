@@ -87,7 +87,7 @@ export async function findUserOnboardingStarterCollection(
 }
 
 const COLLECTION_WITH_RIDDLE_COUNT_AND_THEMES_SELECT =
-  "*, riddle_collections(count), collection_themes(id, collection_id, theme_id, weight, created_at, themes(*))";
+  "*, collection_riddles(count), collection_themes(id, collection_id, theme_id, weight, created_at, themes(*))";
 
 // ============================================================================
 // Finding all collections with Riddle Count
@@ -97,7 +97,7 @@ export async function findAllCollectionsWithRiddleCount(
 ): Promise<CollectionWithRiddleCount[]> {
   const { data, error } = await supabase
     .from("collections")
-    .select("*, riddle_collections(count)")
+    .select("*, collection_riddles(count)")
     .order("sort_order", { ascending: true })
     .order("title", { ascending: true });
 

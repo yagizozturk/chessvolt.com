@@ -27,12 +27,12 @@ export type DbCollection = {
 
 // ============================================================================
 // Row shape when a collection query embeds a riddle count aggregate,
-// e.g. `select("*, riddle_collections(count)")`.
+// e.g. `select("*, collection_riddles(count)")`.
 // PostgREST returns the aggregate as an array with one object: `[{ count: N }]`.
 // Moved here from the repository so DB shapes and mapping live in one place.
 // ============================================================================
 export type DbCollectionWithRiddleCount = DbCollection & {
-  riddle_collections: [{ count: number }] | null;
+  collection_riddles: [{ count: number }] | null;
 };
 
 // ============================================================================
@@ -57,11 +57,11 @@ export function toCollection(db: DbCollection): Collection {
 }
 
 // ============================================================================
-// Maps a collection row that includes `riddle_collections(count)` to `CollectionWithRiddleCount`.
-// Reads the aggregate count from `riddle_collections[0].count`, defaulting to 0 when missing.
+// Maps a collection row that includes `collection_riddles(count)` to `CollectionWithRiddleCount`.
+// Reads the aggregate count from `collection_riddles[0].count`, defaulting to 0 when missing.
 // Shared by collection repository queries and extended by `toCollectionWithRiddleCountAndThemes`.
 // ============================================================================
 export function toCollectionWithRiddleCount(db: DbCollectionWithRiddleCount): CollectionWithRiddleCount {
-  const riddleCount = db.riddle_collections?.[0]?.count ?? 0;
+  const riddleCount = db.collection_riddles?.[0]?.count ?? 0;
   return { ...toCollection(db), riddleCount };
 }
