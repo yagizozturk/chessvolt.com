@@ -9,16 +9,16 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
-import { MyPracticeOpeningsTab } from "@/features/user-practice-opening-variant/components/my-practice-openings-tab";
+import { UserPracticeOpeningsTab } from "@/features/user-practice-opening-variant/components/user-practice-opening-variant";
 import type { UserPracticeOpeningVariantWithDetails } from "@/features/user-practice-opening-variant/types/user-practice-opening-variant";
 
-type MyCollectionsTabsProps = {
+type UserPracticesProps = {
   collections: CollectionWithRiddleCountAndThemes[];
   practiceVariants: UserPracticeOpeningVariantWithDetails[];
   voltBySequenceId?: Record<string, VoltScoreResult>;
 };
 
-export function MyCollectionsTabs({ collections, practiceVariants, voltBySequenceId = {} }: MyCollectionsTabsProps) {
+export function UserPractices({ collections, practiceVariants, voltBySequenceId = {} }: UserPracticesProps) {
   return (
     <>
       <Tabs defaultValue="collections" className="flex flex-col items-center gap-6">
@@ -27,7 +27,7 @@ export function MyCollectionsTabs({ collections, practiceVariants, voltBySequenc
           <TabsTrigger value="openings">Openings</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="collections" className="flex flex-col gap-6">
+        <TabsContent value="collections" className="flex w-full flex-col gap-6">
           {collections.length === 0 ? (
             <EmptyDataMessage message="You don't have any collections yet." />
           ) : (
@@ -39,12 +39,12 @@ export function MyCollectionsTabs({ collections, practiceVariants, voltBySequenc
           )}
         </TabsContent>
 
-        <TabsContent value="openings">
-          <MyPracticeOpeningsTab practiceVariants={practiceVariants} voltBySequenceId={voltBySequenceId} />
+        <TabsContent value="openings" className="w-full">
+          <UserPracticeOpeningsTab practiceVariants={practiceVariants} voltBySequenceId={voltBySequenceId} />
         </TabsContent>
       </Tabs>
 
-      <div className="flex justify-end">
+      <div className="mt-6 flex justify-end">
         <Button variant="volt" asChild>
           <Link href="/my-volts/create" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />

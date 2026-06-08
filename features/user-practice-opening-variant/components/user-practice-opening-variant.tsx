@@ -2,19 +2,15 @@ import Link from "next/link";
 
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
-import { Button } from "@/components/ui/button";
 import { PracticeOpeningVariantCard } from "@/features/user-practice-opening-variant/components/practice-opening-variant-card";
 import type { UserPracticeOpeningVariantWithDetails } from "@/features/user-practice-opening-variant/types/user-practice-opening-variant";
 
-type MyPracticeOpeningsTabProps = {
+type UserPracticeOpeningsTabProps = {
   practiceVariants: UserPracticeOpeningVariantWithDetails[];
   voltBySequenceId?: Record<string, VoltScoreResult>;
 };
 
-export function MyPracticeOpeningsTab({
-  practiceVariants,
-  voltBySequenceId = {},
-}: MyPracticeOpeningsTabProps) {
+export function UserPracticeOpeningsTab({ practiceVariants, voltBySequenceId = {} }: UserPracticeOpeningsTabProps) {
   return (
     <div className="flex flex-col gap-6">
       {practiceVariants.length === 0 ? (
@@ -30,11 +26,6 @@ export function MyPracticeOpeningsTab({
           ))}
         </div>
       )}
-      <div className="flex justify-center">
-        <Button variant="outline" asChild>
-          <Link href="/openings">Browse openings</Link>
-        </Button>
-      </div>
     </div>
   );
 }
