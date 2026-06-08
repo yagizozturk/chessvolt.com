@@ -19,7 +19,7 @@ export async function addRiddleToMyCollectionAction(
   });
 
   if (result.ok) {
-    revalidatePath("/my-volts");
+    revalidatePath("/my-practices");
     revalidatePath(`/riddle/${riddleId}`);
   }
 

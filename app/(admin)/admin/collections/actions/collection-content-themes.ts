@@ -24,7 +24,7 @@ function revalidateCollectionThemePaths(collectionId: string) {
   revalidatePath(collectionEditPath(collectionId));
   revalidatePath("/admin/collections");
   revalidatePath("/collection");
-  revalidatePath("/my-volts");
+  revalidatePath("/my-practices");
 }
 
 function parseCollectionId(formData: FormData): string | null {

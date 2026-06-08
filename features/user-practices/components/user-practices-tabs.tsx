@@ -1,14 +1,11 @@
 "use client";
 
-import { Plus } from "lucide-react";
-import Link from "next/link";
-
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
+import { CreateUserListDialog } from "@/features/user-practices/components/create-user-list-dialog";
 import { UserPracticeOpeningsTab } from "@/features/user-practice-opening-variant/components/user-practice-opening-variant";
 import type { UserPracticeOpeningVariantWithDetails } from "@/features/user-practice-opening-variant/types/user-practice-opening-variant";
 
@@ -45,12 +42,7 @@ export function UserPractices({ collections, practiceVariants, voltBySequenceId 
       </Tabs>
 
       <div className="mt-6 flex justify-end">
-        <Button variant="volt" asChild>
-          <Link href="/my-volts/create" className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Create VOLT List
-          </Link>
-        </Button>
+        <CreateUserListDialog />
       </div>
     </>
   );
