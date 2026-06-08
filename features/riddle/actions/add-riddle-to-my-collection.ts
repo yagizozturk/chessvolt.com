@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import { addRiddleToUserCustomCollection } from "@/features/riddle-collection/services/add-riddle-to-user-custom-collection";
-import type { AddRiddleToUserCustomCollectionResult } from "@/features/riddle-collection/services/add-riddle-to-user-custom-collection";
+import { addRiddleToUserCustomCollection } from "@/features/collection-riddles/services/add-riddle-to-user-custom-collection";
+import type { AddRiddleToUserCustomCollectionResult } from "@/features/collection-riddles/services/add-riddle-to-user-custom-collection";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export async function addRiddleToMyCollectionAction(

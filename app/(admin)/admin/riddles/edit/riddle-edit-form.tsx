@@ -19,7 +19,7 @@ import type { Game } from "@/features/game/types/game";
 import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 import { cn } from "@/lib/utils/cn";
 
-import { RiddleCollectionSelect } from "../components/riddle-collection-select";
+import { CollectionRiddleSelect } from "../components/collection-riddle-select";
 
 type Props = {
   riddle: RiddleWithThemes;
@@ -190,7 +190,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
               />
             </Field>
             <RiddleRatingInput value={rating} onChange={setRating} />
-            <RiddleCollectionSelect
+            <CollectionRiddleSelect
               collections={collections}
               value={collectionId}
               onChange={setCollectionId}

@@ -5,7 +5,7 @@ import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/ge
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { getCollectionById, getUserCustomCollections } from "@/features/collection/services/collection.service";
 import RiddleController from "@/features/riddle/components/riddle-controller";
-import { getRiddleCollectionsForRiddle } from "@/features/riddle-collection/services/riddle-collection.service";
+import { getCollectionRiddlesForRiddle } from "@/features/collection-riddles/services/collection-riddles.service";
 import { getRiddleById, getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { getPublicUser } from "@/lib/supabase/auth";
@@ -23,8 +23,8 @@ export default async function RiddlePage({ params }: Params) {
     notFound();
   }
 
-  const riddleCollections = await getRiddleCollectionsForRiddle(supabase, riddle.id);
-  const primaryCollectionId = riddleCollections[0]?.collectionId ?? null;
+  const collectionRiddles = await getCollectionRiddlesForRiddle(supabase, riddle.id);
+  const primaryCollectionId = collectionRiddles[0]?.collectionId ?? null;
   const primaryCollection = primaryCollectionId
     ? await getCollectionById(supabase, primaryCollectionId)
     : null;
@@ -41,7 +41,7 @@ export default async function RiddlePage({ params }: Params) {
 
   const myCollections = user ? await getUserCustomCollections(supabase, user.id) : [];
   const myCollectionIds = new Set(myCollections.map((collection) => collection.id));
-  const savedMyCollectionIds = riddleCollections
+  const savedMyCollectionIds = collectionRiddles
     .map((link) => link.collectionId)
     .filter((collectionId) => myCollectionIds.has(collectionId));
 

@@ -27,7 +27,7 @@ import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { cn } from "@/lib/utils/cn";
 
-import { RiddleCollectionSelect } from "../../components/riddle-collection-select";
+import { CollectionRiddleSelect } from "../../components/collection-riddle-select";
 
 type Props = {
   games: Game[];
@@ -244,7 +244,7 @@ export function RiddleFromGameForm({ games, collections }: Props) {
               />
             </Field>
             <RiddleRatingInput value={rating} onChange={setRating} />
-            <RiddleCollectionSelect
+            <CollectionRiddleSelect
               collections={collections}
               value={collectionId}
               onChange={setCollectionId}

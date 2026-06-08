@@ -74,7 +74,7 @@ export async function findByGameId(supabase: SupabaseClient, gameId: string): Pr
   return (riddles ?? []).map(toRiddle);
 }
 
-type DbRiddleCollectionJoinRow = {
+type DbCollectionRiddleJoinRow = {
   sort_order: number;
   created_at: string;
   riddles: DbRiddle | DbRiddle[] | null;
@@ -99,7 +99,7 @@ export async function findByCollectionId(
 
   return (data ?? [])
     .map((row) => {
-      const joinRow = row as DbRiddleCollectionJoinRow;
+      const joinRow = row as DbCollectionRiddleJoinRow;
       const riddleRow = Array.isArray(joinRow.riddles) ? joinRow.riddles[0] : joinRow.riddles;
       if (!riddleRow) return null;
       if (options?.activeOnly && !riddleRow.is_active) return null;

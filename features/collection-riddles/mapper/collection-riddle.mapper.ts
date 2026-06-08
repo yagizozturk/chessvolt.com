@@ -1,6 +1,6 @@
-import type { RiddleCollection } from "@/features/riddle-collection/types/riddle-collection";
+import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
 
-export type DbRiddleCollection = {
+export type DbCollectionRiddle = {
   id: string;
   riddle_id: string;
   collection_id: string;
@@ -8,7 +8,7 @@ export type DbRiddleCollection = {
   created_at: string;
 };
 
-export function toRiddleCollection(db: DbRiddleCollection): RiddleCollection {
+export function toCollectionRiddle(db: DbCollectionRiddle): CollectionRiddle {
   return {
     id: db.id,
     riddleId: db.riddle_id,

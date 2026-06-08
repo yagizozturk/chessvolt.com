@@ -10,7 +10,7 @@ type Props = {
   required?: boolean;
 };
 
-export function RiddleCollectionSelect({
+export function CollectionRiddleSelect({
   collections,
   value,
   onChange,

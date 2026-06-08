@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowsUpFromLine, BookOpenText, LogOut, Menu, Shield, Swords, User, Zap } from "lucide-react";
+import { BookOpenText, LogOut, Menu, Shield, Swords, User, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
@@ -28,7 +28,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { href: "/collection", label: "Collections", icon: Swords },
-  { href: "/my-volts", label: "My Volts", icon: ArrowsUpFromLine, requiresAuth: true },
+  { href: "/my-volts", label: "My Volts", icon: Zap, requiresAuth: true },
   { href: "/openings", label: "Opening Crusher", icon: BookOpenText },
   //{ href: "/arrows", label: "Arrows Game", icon: ArrowsUpFromLine },
 ];

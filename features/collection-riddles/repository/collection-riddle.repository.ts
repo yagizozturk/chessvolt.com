@@ -1,17 +1,17 @@
 /**
- * Riddle Collection Repository
+ * Collection Riddle Repository
  *
  * Responsibility: CRUD access to the riddle_collections join table.
  */
 
-import { toRiddleCollection } from "@/features/riddle-collection/mapper/riddle-collection.mapper";
-import type { RiddleCollection } from "@/features/riddle-collection/types/riddle-collection";
+import { toCollectionRiddle } from "@/features/collection-riddles/mapper/collection-riddle.mapper";
+import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function findById(
   supabase: SupabaseClient,
   id: string,
-): Promise<RiddleCollection | null> {
+): Promise<CollectionRiddle | null> {
   const { data, error } = await supabase
     .from("riddle_collections")
     .select("*")
@@ -19,19 +19,19 @@ export async function findById(
     .maybeSingle();
 
   if (error) {
-    console.error("riddle-collection.repository.findById error:", error);
+    console.error("collection-riddle.repository.findById error:", error);
     return null;
   }
 
   if (!data) return null;
 
-  return toRiddleCollection(data);
+  return toCollectionRiddle(data);
 }
 
 export async function findByCollectionId(
   supabase: SupabaseClient,
   collectionId: string,
-): Promise<RiddleCollection[]> {
+): Promise<CollectionRiddle[]> {
   const { data, error } = await supabase
     .from("riddle_collections")
     .select("*")
@@ -40,17 +40,17 @@ export async function findByCollectionId(
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("riddle-collection.repository.findByCollectionId error:", error);
+    console.error("collection-riddle.repository.findByCollectionId error:", error);
     return [];
   }
 
-  return (data ?? []).map(toRiddleCollection);
+  return (data ?? []).map(toCollectionRiddle);
 }
 
 export async function findByRiddleId(
   supabase: SupabaseClient,
   riddleId: string,
-): Promise<RiddleCollection[]> {
+): Promise<CollectionRiddle[]> {
   const { data, error } = await supabase
     .from("riddle_collections")
     .select("*")
@@ -59,18 +59,18 @@ export async function findByRiddleId(
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("riddle-collection.repository.findByRiddleId error:", error);
+    console.error("collection-riddle.repository.findByRiddleId error:", error);
     return [];
   }
 
-  return (data ?? []).map(toRiddleCollection);
+  return (data ?? []).map(toCollectionRiddle);
 }
 
 export async function findByPair(
   supabase: SupabaseClient,
   riddleId: string,
   collectionId: string,
-): Promise<RiddleCollection | null> {
+): Promise<CollectionRiddle | null> {
   const { data, error } = await supabase
     .from("riddle_collections")
     .select("*")
@@ -79,16 +79,16 @@ export async function findByPair(
     .maybeSingle();
 
   if (error) {
-    console.error("riddle-collection.repository.findByPair error:", error);
+    console.error("collection-riddle.repository.findByPair error:", error);
     return null;
   }
 
   if (!data) return null;
 
-  return toRiddleCollection(data);
+  return toCollectionRiddle(data);
 }
 
-export type CreateRiddleCollectionInput = {
+export type CreateCollectionRiddleInput = {
   riddleId: string;
   collectionId: string;
   sortOrder?: number;
@@ -96,8 +96,8 @@ export type CreateRiddleCollectionInput = {
 
 export async function create(
   supabase: SupabaseClient,
-  input: CreateRiddleCollectionInput,
-): Promise<RiddleCollection | null> {
+  input: CreateCollectionRiddleInput,
+): Promise<CollectionRiddle | null> {
   const { data, error } = await supabase
     .from("riddle_collections")
     .insert({
@@ -109,17 +109,17 @@ export async function create(
     .single();
 
   if (error) {
-    console.error("riddle-collection.repository.create error:", error);
+    console.error("collection-riddle.repository.create error:", error);
     return null;
   }
 
-  return toRiddleCollection(data);
+  return toCollectionRiddle(data);
 }
 
 export async function createMany(
   supabase: SupabaseClient,
-  inputs: CreateRiddleCollectionInput[],
-): Promise<RiddleCollection[]> {
+  inputs: CreateCollectionRiddleInput[],
+): Promise<CollectionRiddle[]> {
   if (inputs.length === 0) return [];
 
   const rows = inputs.map((input) => ({
@@ -131,22 +131,22 @@ export async function createMany(
   const { data, error } = await supabase.from("riddle_collections").insert(rows).select();
 
   if (error) {
-    console.error("riddle-collection.repository.createMany error:", error);
+    console.error("collection-riddle.repository.createMany error:", error);
     return [];
   }
 
-  return (data ?? []).map(toRiddleCollection);
+  return (data ?? []).map(toCollectionRiddle);
 }
 
-export type UpdateRiddleCollectionInput = {
+export type UpdateCollectionRiddleInput = {
   sortOrder?: number;
 };
 
 export async function update(
   supabase: SupabaseClient,
   id: string,
-  input: UpdateRiddleCollectionInput,
-): Promise<RiddleCollection | null> {
+  input: UpdateCollectionRiddleInput,
+): Promise<CollectionRiddle | null> {
   const updates: Record<string, unknown> = {};
   if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
 
@@ -162,18 +162,18 @@ export async function update(
     .single();
 
   if (error) {
-    console.error("riddle-collection.repository.update error:", error);
+    console.error("collection-riddle.repository.update error:", error);
     return null;
   }
 
-  return toRiddleCollection(data);
+  return toCollectionRiddle(data);
 }
 
 export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
   const { error } = await supabase.from("riddle_collections").delete().eq("id", id);
 
   if (error) {
-    console.error("riddle-collection.repository.remove error:", error);
+    console.error("collection-riddle.repository.remove error:", error);
     return false;
   }
 
@@ -190,7 +190,7 @@ export async function removeByCollectionId(
     .eq("collection_id", collectionId);
 
   if (error) {
-    console.error("riddle-collection.repository.removeByCollectionId error:", error);
+    console.error("collection-riddle.repository.removeByCollectionId error:", error);
     return false;
   }
 
@@ -201,7 +201,7 @@ export async function removeByRiddleId(supabase: SupabaseClient, riddleId: strin
   const { error } = await supabase.from("riddle_collections").delete().eq("riddle_id", riddleId);
 
   if (error) {
-    console.error("riddle-collection.repository.removeByRiddleId error:", error);
+    console.error("collection-riddle.repository.removeByRiddleId error:", error);
     return false;
   }
 
@@ -220,7 +220,7 @@ export async function removeByPair(
     .eq("collection_id", collectionId);
 
   if (error) {
-    console.error("riddle-collection.repository.removeByPair error:", error);
+    console.error("collection-riddle.repository.removeByPair error:", error);
     return false;
   }
 

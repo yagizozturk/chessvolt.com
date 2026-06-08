@@ -18,7 +18,7 @@ import type { Collection } from "@/features/collection/types/collection";
 import { DEFAULT_RIDDLE_RATING } from "@/features/riddle/types/riddle-rating";
 import { cn } from "@/lib/utils/cn";
 
-import { RiddleCollectionSelect } from "../components/riddle-collection-select";
+import { CollectionRiddleSelect } from "../components/collection-riddle-select";
 
 type Props = {
   collections: Collection[];
@@ -160,7 +160,7 @@ export function RiddleNewForm({ collections }: Props) {
               />
             </Field>
             <RiddleRatingInput value={rating} onChange={setRating} />
-            <RiddleCollectionSelect
+            <CollectionRiddleSelect
               collections={collections}
               value={collectionId}
               onChange={setCollectionId}

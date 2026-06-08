@@ -1,14 +1,14 @@
 import { getCollectionById } from "@/features/collection/services/collection.service";
 import {
   addRiddleToCollection,
-  getRiddleCollectionByPair,
-  getRiddleCollectionsForCollection,
-} from "@/features/riddle-collection/services/riddle-collection.service";
-import type { RiddleCollection } from "@/features/riddle-collection/types/riddle-collection";
+  getCollectionRiddleByPair,
+  getCollectionRiddlesForCollection,
+} from "@/features/collection-riddles/services/collection-riddles.service";
+import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type AddRiddleToUserCustomCollectionResult =
-  | { ok: true; link: RiddleCollection }
+  | { ok: true; link: CollectionRiddle }
   | { ok: false; reason: "unauthorized" | "collection_not_found" | "not_custom_collection" | "already_added" | "failed" };
 
 export async function addRiddleToUserCustomCollection(
@@ -25,12 +25,12 @@ export async function addRiddleToUserCustomCollection(
     return { ok: false, reason: "not_custom_collection" };
   }
 
-  const existing = await getRiddleCollectionByPair(supabase, input.riddleId, input.collectionId);
+  const existing = await getCollectionRiddleByPair(supabase, input.riddleId, input.collectionId);
   if (existing) {
     return { ok: false, reason: "already_added" };
   }
 
-  const links = await getRiddleCollectionsForCollection(supabase, input.collectionId);
+  const links = await getCollectionRiddlesForCollection(supabase, input.collectionId);
   const sortOrder =
     links.length === 0 ? 0 : Math.max(...links.map((link) => link.sortOrder)) + 1;
 

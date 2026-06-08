@@ -3,9 +3,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import * as gameRepo from "@/features/game/repository/game.repository";
 import {
   addRiddleToCollection,
-  deleteRiddleCollectionsForRiddle,
-  getRiddleCollectionsForRiddle,
-} from "@/features/riddle-collection/services/riddle-collection.service";
+  deleteCollectionRiddlesForRiddle,
+  getCollectionRiddlesForRiddle,
+} from "@/features/collection-riddles/services/collection-riddles.service";
 import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
 import { syncRiddleThemesFromSlugs } from "@/features/riddle-theme/services/riddle-theme.service";
 
@@ -146,20 +146,20 @@ export async function linkRiddleToCollection(
   return link != null;
 }
 
-export async function syncRiddleCollection(
+export async function syncCollectionRiddle(
   supabase: SupabaseClient,
   riddleId: string,
   collectionId: string | null,
 ): Promise<boolean> {
   if (!collectionId) return true;
 
-  const existing = await getRiddleCollectionsForRiddle(supabase, riddleId);
+  const existing = await getCollectionRiddlesForRiddle(supabase, riddleId);
   if (existing.some((row) => row.collectionId === collectionId) && existing.length === 1) {
     return true;
   }
 
   if (existing.length > 0) {
-    const removed = await deleteRiddleCollectionsForRiddle(supabase, riddleId);
+    const removed = await deleteCollectionRiddlesForRiddle(supabase, riddleId);
     if (!removed) return false;
   }
 

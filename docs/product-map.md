@@ -30,8 +30,8 @@ Content is managed through an **admin** panel. Auth and data are backed by **Sup
 | Auth callback        | `/auth/callback`                                            | `lib/supabase`                                                                                                           | OAuth / email confirmation                      |
 | Onboarding           | `/onboarding`                                               | `onboarding`, `onboarding-question`, `onboarding-option`, `onboarding-option-theme`, `user-onboarding-answer`, `profile` | Gated by middleware; creates starter collection |
 | Browse collections   | `/collection`                                               | `collection`, `content-theme`, `theme`                                                                                   | Filterable list with themes                     |
-| Collection detail    | `/collection/[slug]`                                        | `collection`, `riddle`, `riddle-collection`, `game`, `user-sequence-attempt`                                             | Riddle cards with progress + volt               |
-| Play a riddle        | `/riddle/[id]`                                              | `riddle`, `move-sequence`, `user-sequence-attempt`, `user-sequence-attempt-event`, `riddle-collection`                   | Core play loop                                  |
+| Collection detail    | `/collection/[slug]`                                        | `collection`, `riddle`, `collection-riddles`, `game`, `user-sequence-attempt`                                             | Riddle cards with progress + volt               |
+| Play a riddle        | `/riddle/[id]`                                              | `riddle`, `move-sequence`, `user-sequence-attempt`, `user-sequence-attempt-event`, `collection-riddles`                   | Core play loop                                  |
 | My Volts             | `/my-volts`, `/my-volts/create`                               | `collection`, `user-practice-opening-variant`                                                                            | Custom collections + practice openings tabs     |
 | Openings list        | `/openings`                                                 | `openings`                                                                                                               | Filter by opening type                          |
 | Opening detail       | `/openings/[slug]/[id]`                                     | `openings`                                                                                                               | Variants for one opening                        |
@@ -114,7 +114,7 @@ types/ → repository/ → mapper/ → services/ → components/ | hooks/ | acti
 | `openings`                      | Openings, variants, practice UI                    |
 | `profile`                       | User profile + onboarding status                   |
 | `riddle`                        | Riddles, board cards, play controller              |
-| `riddle-collection`             | Many-to-many: riddles ↔ collections                |
+| `collection-riddles`            | Many-to-many: riddles ↔ collections                |
 | `theme`                         | Theme categories and badges                        |
 | `tts`                           | Text-to-speech config, cache, controller           |
 | `user-onboarding-answer`        | Saved onboarding answers per user                  |

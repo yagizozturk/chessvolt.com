@@ -12,7 +12,7 @@ import {
 import type { CreateOnboardingStarterCollectionData } from "@/features/onboarding/types/create-onboarding-starter-collection-data";
 import { resolveOnboardingThemeSlugs } from "@/features/onboarding/utilities/resolve-onboarding-theme-slugs";
 import { selectOnboardingStarterRiddles } from "@/features/onboarding/utilities/select-onboarding-starter-riddles";
-import { addRiddlesToCollection } from "@/features/riddle-collection/services/riddle-collection.service";
+import { addRiddlesToCollection } from "@/features/collection-riddles/services/collection-riddles.service";
 
 // ============================================================================
 // Loads Q2 themes, selects matching riddles, creates the onboarding-starter

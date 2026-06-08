@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { AdminFormErrorAlert } from "@/app/(admin)/admin/shared/components/admin-form-error-alert";
 import { Button } from "@/components/ui/button";
 import { getGameById } from "@/features/game/services/game.service";
-import { getRiddleCollectionsForRiddle } from "@/features/riddle-collection/services/riddle-collection.service";
+import { getCollectionRiddlesForRiddle } from "@/features/collection-riddles/services/collection-riddles.service";
 import { getAllCollections } from "@/features/collection/services/collection.service";
 import { getRiddleByIdWithThemes } from "@/features/riddle/services/riddle.service";
 import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
@@ -29,12 +29,12 @@ export default async function AdminRiddleDetailPage({ params, searchParams }: Pa
     notFound();
   }
 
-  const [game, collections, riddleCollections] = await Promise.all([
+  const [game, collections, collectionRiddles] = await Promise.all([
     riddle.gameId ? getGameById(supabase, riddle.gameId) : Promise.resolve(null),
     getAllCollections(supabase),
-    getRiddleCollectionsForRiddle(supabase, id),
+    getCollectionRiddlesForRiddle(supabase, id),
   ]);
-  const collectionId = riddleCollections[0]?.collectionId ?? collections[0]?.id ?? "";
+  const collectionId = collectionRiddles[0]?.collectionId ?? collections[0]?.id ?? "";
 
   return (
     <div className="container mx-auto px-4 py-8">

@@ -1,4 +1,4 @@
-export type RiddleCollection = {
+export type CollectionRiddle = {
   id: string;
   riddleId: string;
   collectionId: string;

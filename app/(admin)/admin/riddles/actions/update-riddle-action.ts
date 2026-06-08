@@ -20,7 +20,7 @@ import {
   parseIsActiveFromForm,
   parseThemesFromForm,
   resolvePgnFromFormInput,
-  syncRiddleCollection,
+  syncCollectionRiddle,
   syncRiddleThemesFromSlugs,
 } from "./action-utils";
 
@@ -110,7 +110,7 @@ export async function updateRiddleAction(id: string, formData: FormData) {
     redirect(`/admin/riddles/${id}?error=themes_sync_failed`);
   }
 
-  const synced = await syncRiddleCollection(supabase, id, collectionId);
+  const synced = await syncCollectionRiddle(supabase, id, collectionId);
   if (!synced) {
     redirect(`/admin/riddles/${id}?error=collection_link_failed`);
   }
