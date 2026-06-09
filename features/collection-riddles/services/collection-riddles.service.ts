@@ -4,15 +4,12 @@
  * Responsibility: Business logic for collection_riddles join rows.
  * - Uses repository (does not touch Supabase directly)
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as collectionRiddleRepo from "@/features/collection-riddles/repository/collection-riddle.repository";
 import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getCollectionRiddleById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<CollectionRiddle | null> {
+export async function getCollectionRiddleById(supabase: SupabaseClient, id: string): Promise<CollectionRiddle | null> {
   return collectionRiddleRepo.findById(supabase, id);
 }
 
@@ -23,7 +20,12 @@ export async function getCollectionRiddlesForCollection(
   return collectionRiddleRepo.findByCollectionId(supabase, collectionId);
 }
 
-export async function getCollectionRiddlesForRiddle(
+// ================================================================================================
+// Getting collection riddles by riddle id.
+// Existing riddle Id is supplied to get other riddles in the MULTIPLE collections
+// There is no one single collection. There can be one riddle in two collections.
+// ================================================================================================
+export async function getCollectionRiddlesByRiddleId(
   supabase: SupabaseClient,
   riddleId: string,
 ): Promise<CollectionRiddle[]> {
@@ -60,10 +62,7 @@ export async function updateCollectionRiddle(
   return collectionRiddleRepo.update(supabase, id, input);
 }
 
-export async function deleteCollectionRiddle(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<boolean> {
+export async function deleteCollectionRiddle(supabase: SupabaseClient, id: string): Promise<boolean> {
   return collectionRiddleRepo.remove(supabase, id);
 }
 
@@ -74,10 +73,7 @@ export async function deleteCollectionRiddlesForCollection(
   return collectionRiddleRepo.removeByCollectionId(supabase, collectionId);
 }
 
-export async function deleteCollectionRiddlesForRiddle(
-  supabase: SupabaseClient,
-  riddleId: string,
-): Promise<boolean> {
+export async function deleteCollectionRiddlesForRiddle(supabase: SupabaseClient, riddleId: string): Promise<boolean> {
   return collectionRiddleRepo.removeByRiddleId(supabase, riddleId);
 }
 

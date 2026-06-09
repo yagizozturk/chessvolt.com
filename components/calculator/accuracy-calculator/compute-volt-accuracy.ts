@@ -7,16 +7,12 @@ export type VoltAccuracyInput = {
   totalMoveCount: number;
 };
 
-/**
- * Volt accuracy starts at {@link VOLT_ACCURACY_CONFIG.basePercent} and decreases when
- * the user makes wrong moves or uses hints. Each category applies its share of moves
- * (count / totalMoveCount) against a configurable max penalty weight.
- */
-export function computeVoltAccuracy({
-  wrongMoveCount,
-  hintCount,
-  totalMoveCount,
-}: VoltAccuracyInput): number {
+// ====================================================================================
+// Volt accuracy starts at {@link VOLT_ACCURACY_CONFIG.basePercent} and decreases when
+// the user makes wrong moves or uses hints. Each category applies its share of moves
+// (count / totalMoveCount) against a configurable max penalty weight.
+// ====================================================================================
+export function computeVoltAccuracy({ wrongMoveCount, hintCount, totalMoveCount }: VoltAccuracyInput): number {
   const { basePercent, wrongMovePenaltyWeight, hintPenaltyWeight } = VOLT_ACCURACY_CONFIG;
 
   if (totalMoveCount <= 0) {

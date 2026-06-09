@@ -40,9 +40,9 @@ type RiddleControllerProps = {
   riddle: Riddle;
   nextRiddleId?: string | null;
   parentCollectionUrl?: string;
-  canSaveToMyCollections?: boolean;
-  myCollections?: MyCollectionOption[];
-  savedMyCollectionIds?: string[];
+  userCanSaveToUserCollections?: boolean;
+  userCollections?: MyCollectionOption[];
+  savedUserCollectionsIds?: string[];
   voltScore?: VoltScoreResult | null;
 };
 
@@ -50,9 +50,9 @@ export default function RiddleController({
   riddle,
   nextRiddleId = null,
   parentCollectionUrl = "/",
-  canSaveToMyCollections = false,
-  myCollections = [],
-  savedMyCollectionIds = [],
+  userCanSaveToUserCollections = false,
+  userCollections = [],
+  savedUserCollectionsIds = [],
   voltScore = null,
 }: RiddleControllerProps) {
   const sequenceId = riddle.moveSequence.id;
@@ -292,11 +292,11 @@ export default function RiddleController({
             <GoalViewer goals={sortedGoals} />
           </div>
           <div className="mt-auto" data-tour="hint-button">
-            {canSaveToMyCollections ? (
+            {userCanSaveToUserCollections ? (
               <AddToMyCollectionPicker
                 riddleId={riddle.id}
-                collections={myCollections}
-                savedCollectionIds={savedMyCollectionIds}
+                collections={userCollections}
+                savedCollectionIds={savedUserCollectionsIds}
               />
             ) : null}
             {!isCompleted ? (

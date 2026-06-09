@@ -6,7 +6,7 @@ import { AdminFormErrorAlert } from "@/app/(admin)/admin/shared/components/admin
 import { Button } from "@/components/ui/button";
 import { getAllCollections } from "@/features/collection/services/collection.service";
 import { getGameById } from "@/features/game/services/game.service";
-import { getCollectionRiddlesForRiddle } from "@/features/collection-riddles/services/collection-riddles.service";
+import { getCollectionRiddlesByRiddleId } from "@/features/collection-riddles/services/collection-riddles.service";
 import { getRiddleByIdWithThemes } from "@/features/riddle/services/riddle.service";
 import { getRiddleAdminErrorMessage } from "@/lib/admin/form-error-messages";
 import { getAdminUser } from "@/lib/supabase/auth";
@@ -34,7 +34,7 @@ export default async function AdminRiddleEditPage({ searchParams }: Props) {
   const game = riddle.gameId ? await getGameById(supabase, riddle.gameId) : null;
   const [collections, collectionRiddles] = await Promise.all([
     getAllCollections(supabase),
-    getCollectionRiddlesForRiddle(supabase, id),
+    getCollectionRiddlesByRiddleId(supabase, id),
   ]);
   const collectionId = collectionRiddles[0]?.collectionId ?? collections[0]?.id ?? "";
 

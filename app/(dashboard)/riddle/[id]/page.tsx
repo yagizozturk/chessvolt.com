@@ -2,11 +2,11 @@ import { notFound } from "next/navigation";
 
 import { buildVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
 import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
-import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
+import { getCollectionRiddlesByRiddleId } from "@/features/collection-riddles/services/collection-riddles.service";
 import { getCollectionById, getUserCustomCollections } from "@/features/collection/services/collection.service";
 import RiddleController from "@/features/riddle/components/riddle-controller";
-import { getCollectionRiddlesForRiddle } from "@/features/collection-riddles/services/collection-riddles.service";
 import { getRiddleById, getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
+import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
@@ -23,38 +23,35 @@ export default async function RiddlePage({ params }: Params) {
     notFound();
   }
 
-  const collectionRiddles = await getCollectionRiddlesForRiddle(supabase, riddle.id);
+  // ================================================================================================
+  // Getting collection's other riddles with giving a riddleId selected to play
+  // User actively plays this riddle
+  // ================================================================================================
+  const collectionRiddles = await getCollectionRiddlesByRiddleId(supabase, riddle.id);
   const primaryCollectionId = collectionRiddles[0]?.collectionId ?? null;
-  const primaryCollection = primaryCollectionId
-    ? await getCollectionById(supabase, primaryCollectionId)
-    : null;
+  const primaryCollection = primaryCollectionId ? await getCollectionById(supabase, primaryCollectionId) : null;
 
   const riddles = primaryCollectionId
     ? await getRiddlesByCollectionId(supabase, primaryCollectionId, { activeOnly: true })
     : [];
 
   const currentIndex = riddles.findIndex((r) => r.id === riddle.id);
-  const nextRiddle =
-    currentIndex >= 0 && currentIndex < riddles.length - 1 ? riddles[currentIndex + 1] : null;
+  const nextRiddle = currentIndex >= 0 && currentIndex < riddles.length - 1 ? riddles[currentIndex + 1] : null;
 
   const parentCollectionUrl = primaryCollection ? `/collection/${primaryCollection.slug}` : "/collection";
 
-  const myCollections = user ? await getUserCustomCollections(supabase, user.id) : [];
-  const myCollectionIds = new Set(myCollections.map((collection) => collection.id));
-  const savedMyCollectionIds = collectionRiddles
+  const userCollections = user ? await getUserCustomCollections(supabase, user.id) : [];
+  const userCollectionIds = new Set(userCollections.map((collection) => collection.id));
+  const savedUserCollectionsIds = collectionRiddles
     .map((link) => link.collectionId)
-    .filter((collectionId) => myCollectionIds.has(collectionId));
+    .filter((collectionId) => userCollectionIds.has(collectionId));
 
-  const isInMyCustomCollection = savedMyCollectionIds.length > 0;
+  const isInUserCustomCollection = savedUserCollectionsIds.length > 0;
 
   const voltScore =
-    user && isInMyCustomCollection
+    user && isInUserCustomCollection
       ? buildVoltScore({
-          attempts: await attemptService.getAttemptsByUserAndSequence(
-            supabase,
-            user.id,
-            riddle.moveSequence.id,
-          ),
+          attempts: await attemptService.getAttemptsByUserAndSequence(supabase, user.id, riddle.moveSequence.id),
           totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
           rating: getRiddleRatingForScoring(riddle.rating),
         })
@@ -66,12 +63,12 @@ export default async function RiddlePage({ params }: Params) {
       voltScore={voltScore}
       nextRiddleId={nextRiddle?.id ?? null}
       parentCollectionUrl={parentCollectionUrl}
-      canSaveToMyCollections={Boolean(user)}
-      myCollections={myCollections.map((collection) => ({
+      userCanSaveToUserCollections={Boolean(user)}
+      userCollections={userCollections.map((collection) => ({
         id: collection.id,
         title: collection.title,
       }))}
-      savedMyCollectionIds={savedMyCollectionIds}
+      savedUserCollectionsIds={savedUserCollectionsIds}
     />
   );
 }

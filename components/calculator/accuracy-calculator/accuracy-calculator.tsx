@@ -11,6 +11,7 @@ type AccuracyCalculatorProps = {
 };
 
 export function AccuracyCalculator({ wrongMoveCount, hintCount, totalMoveCount }: AccuracyCalculatorProps) {
+  // useMemo helps to recompute only when counts change, not on every parent re-render.
   const accuracyPercent = useMemo(
     () => computeVoltAccuracy({ wrongMoveCount, hintCount, totalMoveCount }),
     [wrongMoveCount, hintCount, totalMoveCount],

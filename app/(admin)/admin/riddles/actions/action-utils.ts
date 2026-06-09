@@ -4,7 +4,7 @@ import * as gameRepo from "@/features/game/repository/game.repository";
 import {
   addRiddleToCollection,
   deleteCollectionRiddlesForRiddle,
-  getCollectionRiddlesForRiddle,
+  getCollectionRiddlesByRiddleId,
 } from "@/features/collection-riddles/services/collection-riddles.service";
 import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
 import { syncRiddleThemesFromSlugs } from "@/features/riddle-theme/services/riddle-theme.service";
@@ -153,7 +153,7 @@ export async function syncCollectionRiddle(
 ): Promise<boolean> {
   if (!collectionId) return true;
 
-  const existing = await getCollectionRiddlesForRiddle(supabase, riddleId);
+  const existing = await getCollectionRiddlesByRiddleId(supabase, riddleId);
   if (existing.some((row) => row.collectionId === collectionId) && existing.length === 1) {
     return true;
   }

@@ -3,20 +3,13 @@
  *
  * Responsibility: CRUD access to the collection_riddles join table.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { toCollectionRiddle } from "@/features/collection-riddles/mapper/collection-riddle.mapper";
 import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function findById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<CollectionRiddle | null> {
-  const { data, error } = await supabase
-    .from("collection_riddles")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+export async function findById(supabase: SupabaseClient, id: string): Promise<CollectionRiddle | null> {
+  const { data, error } = await supabase.from("collection_riddles").select("*").eq("id", id).maybeSingle();
 
   if (error) {
     console.error("collection-riddle.repository.findById error:", error);
@@ -28,10 +21,7 @@ export async function findById(
   return toCollectionRiddle(data);
 }
 
-export async function findByCollectionId(
-  supabase: SupabaseClient,
-  collectionId: string,
-): Promise<CollectionRiddle[]> {
+export async function findByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<CollectionRiddle[]> {
   const { data, error } = await supabase
     .from("collection_riddles")
     .select("*")
@@ -47,10 +37,12 @@ export async function findByCollectionId(
   return (data ?? []).map(toCollectionRiddle);
 }
 
-export async function findByRiddleId(
-  supabase: SupabaseClient,
-  riddleId: string,
-): Promise<CollectionRiddle[]> {
+// ================================================================================================
+// Getting collection riddles by riddle id.
+// Existing riddle Id is supplied to get other riddles in the MULTIPLE collections
+// There is no one single collection. There can be one riddle in two collections.
+// ================================================================================================
+export async function findByRiddleId(supabase: SupabaseClient, riddleId: string): Promise<CollectionRiddle[]> {
   const { data, error } = await supabase
     .from("collection_riddles")
     .select("*")
@@ -154,12 +146,7 @@ export async function update(
     return findById(supabase, id);
   }
 
-  const { data, error } = await supabase
-    .from("collection_riddles")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("collection_riddles").update(updates).eq("id", id).select().single();
 
   if (error) {
     console.error("collection-riddle.repository.update error:", error);
@@ -180,14 +167,8 @@ export async function remove(supabase: SupabaseClient, id: string): Promise<bool
   return true;
 }
 
-export async function removeByCollectionId(
-  supabase: SupabaseClient,
-  collectionId: string,
-): Promise<boolean> {
-  const { error } = await supabase
-    .from("collection_riddles")
-    .delete()
-    .eq("collection_id", collectionId);
+export async function removeByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<boolean> {
+  const { error } = await supabase.from("collection_riddles").delete().eq("collection_id", collectionId);
 
   if (error) {
     console.error("collection-riddle.repository.removeByCollectionId error:", error);
@@ -208,11 +189,7 @@ export async function removeByRiddleId(supabase: SupabaseClient, riddleId: strin
   return true;
 }
 
-export async function removeByPair(
-  supabase: SupabaseClient,
-  riddleId: string,
-  collectionId: string,
-): Promise<boolean> {
+export async function removeByPair(supabase: SupabaseClient, riddleId: string, collectionId: string): Promise<boolean> {
   const { error } = await supabase
     .from("collection_riddles")
     .delete()
