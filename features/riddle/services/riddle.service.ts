@@ -7,6 +7,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as riddleThemeService from "@/features/riddle-theme/services/riddle-theme.service";
 import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
+import type { CollectionRiddle } from "@/features/riddle/types/collection-riddle";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 
@@ -42,12 +43,32 @@ export async function getRiddlesByGameId(supabase: SupabaseClient, gameId: strin
 // ================================================================================================
 // Getting riddles by collection id
 // ================================================================================================
-export async function getRiddlesByCollectionId(
+export async function getRiddlesByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<Riddle[]> {
+  return riddleRepo.findByCollectionId(supabase, collectionId);
+}
+
+export async function getActiveRiddlesByCollectionId(
   supabase: SupabaseClient,
   collectionId: string,
-  options?: { activeOnly?: boolean },
 ): Promise<Riddle[]> {
-  return riddleRepo.findByCollectionId(supabase, collectionId, options);
+  return riddleRepo.findActiveByCollectionId(supabase, collectionId);
+}
+
+// ================================================================================================
+// Getting riddles by collection ids
+// ================================================================================================
+export async function getRiddlesByCollectionIds(
+  supabase: SupabaseClient,
+  collectionIds: string[],
+): Promise<CollectionRiddle[]> {
+  return riddleRepo.findByCollectionIds(supabase, collectionIds);
+}
+
+export async function getActiveRiddlesByCollectionIds(
+  supabase: SupabaseClient,
+  collectionIds: string[],
+): Promise<CollectionRiddle[]> {
+  return riddleRepo.findActiveByCollectionIds(supabase, collectionIds);
 }
 
 export type FindActiveRiddlesByThemesInput = {

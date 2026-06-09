@@ -4,20 +4,29 @@ import type { VoltScoreResult } from "@/components/calculator/volt-calculator/vo
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
+import type { Game } from "@/features/game/types/game";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import { CreateUserListDialog } from "@/features/user-practices/components/create-user-list-dialog";
-import { UserRiddleBoardCard } from "@/features/user-practices/components/user-riddle-board-card";
+import { UserPracticeCollectionTab } from "@/features/user-practices/components/user-practice-collection-tab";
 import { UserPracticeOpeningsTab } from "@/features/user-practice-opening-variant/components/user-practice-opening-variant";
 import type { UserPracticeOpeningVariantWithDetails } from "@/features/user-practice-opening-variant/types/user-practice-opening-variant";
+import type { SequenceAttemptStats } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 
 type UserPracticesProps = {
   userCollections: CollectionWithRiddleCountAndThemes[];
   userPracticeVariants: UserPracticeOpeningVariantWithDetails[];
+  riddlesByCollectionId: Record<string, Riddle[]>;
+  gameMap: Record<string, Game>;
+  riddleAttemptStatsBySequenceId: Record<string, SequenceAttemptStats>;
   voltBySequenceId?: Record<string, VoltScoreResult>;
 };
 
 export function UserPracticesTabs({
   userCollections,
   userPracticeVariants,
+  riddlesByCollectionId,
+  gameMap,
+  riddleAttemptStatsBySequenceId,
   voltBySequenceId = {},
 }: UserPracticesProps) {
   return (
@@ -32,9 +41,15 @@ export function UserPracticesTabs({
           {userCollections.length === 0 ? (
             <EmptyDataMessage message="You don't have any collections yet." />
           ) : (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="flex flex-col gap-8">
               {userCollections.map((collection) => (
-                <UserRiddleBoardCard key={collection.id} collection={collection} />
+                <UserPracticeCollectionTab
+                  key={collection.id}
+                  collection={collection}
+                  riddles={riddlesByCollectionId[collection.id] ?? []}
+                  gameMap={gameMap}
+                  riddleAttemptStatsBySequenceId={riddleAttemptStatsBySequenceId}
+                />
               ))}
             </div>
           )}

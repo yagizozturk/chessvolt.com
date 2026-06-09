@@ -6,7 +6,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
-  toSequenceAttemptStats,
+  mapDbToSequenceAttemptStats,
   toUserSequenceAttempt,
 } from "@/features/user-sequence-attempt/mapper/user-sequence-attempt.mapper";
 import type {
@@ -151,7 +151,7 @@ export async function findLatestAttemptStatsForSequences(
   for (const row of data ?? []) {
     if (sequenceIdSet.has(row.sequence_id)) continue;
     sequenceIdSet.add(row.sequence_id);
-    sequenceAttemptStats.push(toSequenceAttemptStats(row));
+    sequenceAttemptStats.push(mapDbToSequenceAttemptStats(row));
   }
 
   return sequenceAttemptStats;

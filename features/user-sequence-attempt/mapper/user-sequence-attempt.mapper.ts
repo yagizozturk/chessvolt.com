@@ -46,7 +46,7 @@ export function toUserSequenceAttempt(db: DbUserSequenceAttempt): UserSequenceAt
   };
 }
 
-export function toSequenceAttemptStats(db: DbUserSequenceAttempt): SequenceAttemptStats {
+export function mapDbToSequenceAttemptStats(db: DbUserSequenceAttempt): SequenceAttemptStats {
   const status = toStatus(db.status);
   return {
     sequenceId: db.sequence_id,

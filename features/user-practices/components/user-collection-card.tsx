@@ -15,11 +15,11 @@ import { DeleteUserListDialog } from "@/features/user-practices/components/delet
 import { EditUserListDialog } from "@/features/user-practices/components/edit-user-list-dialog";
 import { cn } from "@/lib/utils";
 
-type UserRiddleBoardCardProps = {
+type UserCollectionCardProps = {
   collection: CollectionWithRiddleCountAndThemes;
 };
 
-export function UserRiddleBoardCard({ collection }: UserRiddleBoardCardProps) {
+export function UserCollectionCard({ collection }: UserCollectionCardProps) {
   const imageSrc = getCollectionCoverImageSrc(collection.coverImageUrl);
 
   return (

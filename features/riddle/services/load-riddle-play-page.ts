@@ -7,7 +7,7 @@ import { getCollectionRiddleByPair, getCollectionRiddlesByRiddleId } from "@/fea
 import type { Collection } from "@/features/collection/types/collection";
 import { getUserCustomCollections } from "@/features/collection/services/collection.service";
 import type { MyCollectionOption } from "@/features/riddle/components/add-to-my-collection-picker";
-import { getRiddleById, getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
+import { getRiddleById, getActiveRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
@@ -53,7 +53,7 @@ export async function loadRiddlePlayPage({
   const playCollectionId = collection?.id ?? null;
 
   const riddles = playCollectionId
-    ? await getRiddlesByCollectionId(supabase, playCollectionId, { activeOnly: true })
+    ? await getActiveRiddlesByCollectionId(supabase, playCollectionId)
     : [];
 
   const currentIndex = riddles.findIndex((item) => item.id === riddle.id);

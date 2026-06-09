@@ -4,11 +4,11 @@ import { CollectionHeader } from "@/features/collection/components/collection-he
 import { getCollectionBySlug } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
-import { getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
+import { getActiveRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
 import { buildCollectionRiddlePath } from "@/features/riddle/utilities/build-collection-riddle-path";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
-import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { mapAttemptStatsBySequenceId as buildMapAttemptStatsBySequenceId } from "@/features/user-sequence-attempt/utilities/map-attempt-stats-by-sequence-id";
+import { toSequenceAttemptStats } from "@/features/user-sequence-attempt/utilities/to-sequence-attempt-stats";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
@@ -30,7 +30,7 @@ export default async function CollectionDetailPage({ params }: Params) {
   // ================================================================================================
   // Getting all riddles in this collection by id
   // ================================================================================================
-  const riddles = await getRiddlesByCollectionId(supabase, collection.id, { activeOnly: true });
+  const riddles = await getActiveRiddlesByCollectionId(supabase, collection.id);
 
   // ================================================================================================
   // Getting move sequence ids for riddles. Move sequence table holds e1e2 like moves
@@ -96,17 +96,24 @@ export default async function CollectionDetailPage({ params }: Params) {
               return { riddle, game };
             })
             .filter((x): x is NonNullable<typeof x> => x != null) // Skip unrenderable riddles: if there’s no game and no displayFen, return null.
-            .map(({ riddle, game }) => (
+            .map(({ riddle, game }) => {
+              const attemptStats = toSequenceAttemptStats(
+                mapAttemptStatsBySequenceId[riddle.moveSequence.id],
+              );
+
+              return (
               <RiddleBoardCard
                 key={riddle.id}
                 riddle={riddle}
                 game={game}
                 size={240}
                 href={buildCollectionRiddlePath(collection.slug, riddle.id)}
-                isComplete={attemptStatusToIsComplete(mapAttemptStatsBySequenceId[riddle.moveSequence.id]?.status)}
+                isComplete={attemptStats.isComplete}
+                accuracyPercent={attemptStats.accuracyPercent}
                 displayFen={riddle.moveSequence.displayFen} // Fen value and PGN value are stored in move sequence table
               />
-            ))}
+              );
+            })}
         </div>
       </div>
     </div>

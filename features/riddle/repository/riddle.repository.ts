@@ -9,6 +9,7 @@ import { toRiddle, type DbRiddle } from "@/features/riddle/mapper/riddle.mapper"
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { DEFAULT_INITIAL_FEN } from "@/features/move-sequence/mapper/move-sequence.mapper";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { CollectionRiddle } from "@/features/riddle/types/collection-riddle";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const RIDDLE_SELECT = "*, move_sequences (*)";
@@ -83,7 +84,6 @@ type DbCollectionRiddleJoinRow = {
 export async function findByCollectionId(
   supabase: SupabaseClient,
   collectionId: string,
-  options?: { activeOnly?: boolean },
 ): Promise<Riddle[]> {
   const { data, error } = await supabase
     .from("collection_riddles")
@@ -102,10 +102,105 @@ export async function findByCollectionId(
       const joinRow = row as DbCollectionRiddleJoinRow;
       const riddleRow = Array.isArray(joinRow.riddles) ? joinRow.riddles[0] : joinRow.riddles;
       if (!riddleRow) return null;
-      if (options?.activeOnly && !riddleRow.is_active) return null;
       return toRiddle(riddleRow);
     })
     .filter((riddle): riddle is Riddle => riddle != null);
+}
+
+export async function findActiveByCollectionId(
+  supabase: SupabaseClient,
+  collectionId: string,
+): Promise<Riddle[]> {
+  const { data, error } = await supabase
+    .from("collection_riddles")
+    .select("sort_order, created_at, riddles (*, move_sequences (*))")
+    .eq("collection_id", collectionId)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("riddle.repository.findActiveByCollectionId error:", error);
+    return [];
+  }
+
+  return (data ?? [])
+    .map((row) => {
+      const joinRow = row as DbCollectionRiddleJoinRow;
+      const riddleRow = Array.isArray(joinRow.riddles) ? joinRow.riddles[0] : joinRow.riddles;
+      if (!riddleRow) return null;
+      if (!riddleRow.is_active) return null;
+      return toRiddle(riddleRow);
+    })
+    .filter((riddle): riddle is Riddle => riddle != null);
+}
+
+export async function findByCollectionIds(
+  supabase: SupabaseClient,
+  collectionIds: string[],
+): Promise<CollectionRiddle[]> {
+  if (collectionIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("collection_riddles")
+    .select("collection_id, sort_order, created_at, riddles (*, move_sequences (*))")
+    .in("collection_id", collectionIds)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("riddle.repository.findByCollectionIds error:", error);
+    return [];
+  }
+
+  const rows: CollectionRiddle[] = [];
+
+  for (const row of data ?? []) {
+    const joinRow = row as DbCollectionRiddleJoinRow & { collection_id: string };
+    const riddleRow = Array.isArray(joinRow.riddles) ? joinRow.riddles[0] : joinRow.riddles;
+    if (!riddleRow) continue;
+
+    rows.push({
+      collectionId: joinRow.collection_id,
+      riddle: toRiddle(riddleRow),
+    });
+  }
+
+  return rows;
+}
+
+export async function findActiveByCollectionIds(
+  supabase: SupabaseClient,
+  collectionIds: string[],
+): Promise<CollectionRiddle[]> {
+  if (collectionIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("collection_riddles")
+    .select("collection_id, sort_order, created_at, riddles (*, move_sequences (*))")
+    .in("collection_id", collectionIds)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("riddle.repository.findActiveByCollectionIds error:", error);
+    return [];
+  }
+
+  const rows: CollectionRiddle[] = [];
+
+  for (const row of data ?? []) {
+    const joinRow = row as DbCollectionRiddleJoinRow & { collection_id: string };
+    const riddleRow = Array.isArray(joinRow.riddles) ? joinRow.riddles[0] : joinRow.riddles;
+    if (!riddleRow) continue;
+    if (!riddleRow.is_active) continue;
+
+    rows.push({
+      collectionId: joinRow.collection_id,
+      riddle: toRiddle(riddleRow),
+    });
+  }
+
+  return rows;
 }
 
 export type FindActiveRiddlesByIdsInput = {
