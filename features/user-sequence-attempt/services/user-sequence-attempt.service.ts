@@ -3,26 +3,21 @@
  *
  * Responsibility: Business logic for user_sequence_attempts.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import * as userSequenceAttemptRepo from "@/features/user-sequence-attempt/repository/user-sequence-attempt.repository";
 import type {
   CreateUserSequenceAttemptInput,
-  SequenceAttemptSummary,
+  SequenceAttemptStats,
   UpdateUserSequenceAttemptInput,
   UserSequenceAttempt,
 } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getAttemptById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<UserSequenceAttempt | null> {
+export async function getAttemptById(supabase: SupabaseClient, id: string): Promise<UserSequenceAttempt | null> {
   return userSequenceAttemptRepo.findById(supabase, id);
 }
 
-export async function getAttemptsByUserId(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<UserSequenceAttempt[]> {
+export async function getAttemptsByUserId(supabase: SupabaseClient, userId: string): Promise<UserSequenceAttempt[]> {
   return userSequenceAttemptRepo.findByUserId(supabase, userId);
 }
 
@@ -50,12 +45,15 @@ export async function getAttemptsByUserAndSequenceIds(
   return userSequenceAttemptRepo.findByUserAndSequenceIds(supabase, userId, sequenceIds);
 }
 
-export async function getLatestSummariesForSequences(
+// ================================================================================================
+// Getting latest attempt stats by user for sequence ids
+// ================================================================================================
+export async function getLatestAttemptStatsForSequences(
   supabase: SupabaseClient,
   userId: string,
   sequenceIds: string[],
-): Promise<SequenceAttemptSummary[]> {
-  return userSequenceAttemptRepo.findLatestSummariesForSequences(supabase, userId, sequenceIds);
+): Promise<SequenceAttemptStats[]> {
+  return userSequenceAttemptRepo.findLatestAttemptStatsForSequences(supabase, userId, sequenceIds);
 }
 
 export async function getCompletedSequenceIds(

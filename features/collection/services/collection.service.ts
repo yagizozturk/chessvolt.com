@@ -59,9 +59,9 @@ export async function getUserCustomCollections(supabase: SupabaseClient, userId:
 }
 
 // ============================================================================
-// Getting user custom collections by User Id with Riddle Count and Themes
+// Getting user created collections by User Id with Riddle Count and Themes
 // ============================================================================
-export async function getUserCustomCollectionsWithRiddleCountAndThemes(
+export async function getUserCollectionsWithRiddleCountAndThemes(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<CollectionWithRiddleCountAndThemes[]> {

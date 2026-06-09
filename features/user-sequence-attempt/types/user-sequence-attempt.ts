@@ -16,8 +16,10 @@ export type UserSequenceAttempt = {
   updatedAt: string;
 };
 
-/** Latest attempt summary per sequence (e.g. collection progress). */
-export type SequenceAttemptSummary = {
+// ================================================================================================
+// Attempt stats per sequence (e.g. collection progress).
+// ================================================================================================
+export type SequenceAttemptStats = {
   sequenceId: string;
   status: RiddleAttemptStatus;
   isCompleted: boolean;
@@ -26,12 +28,6 @@ export type SequenceAttemptSummary = {
   hintCount: number;
   maxCorrectStreak: number;
   durationMs: number | null;
-};
-
-/** Board list cards: completion badge + optional accuracy. */
-export type SequenceAttemptBoardStats = {
-  isComplete?: boolean;
-  accuracyPercent: number | null;
 };
 
 export type CreateUserSequenceAttemptInput = {

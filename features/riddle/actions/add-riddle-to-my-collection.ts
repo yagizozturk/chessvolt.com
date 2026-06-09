@@ -21,6 +21,7 @@ export async function addRiddleToMyCollectionAction(
   if (result.ok) {
     revalidatePath("/my-practices");
     revalidatePath(`/riddle/${riddleId}`);
+    revalidatePath("/collection", "layout");
   }
 
   return result;

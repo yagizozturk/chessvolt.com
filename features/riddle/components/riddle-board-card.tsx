@@ -15,7 +15,6 @@ import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
 type RiddleBoardCardProps = {
   riddle: Riddle;
   game: Game | null;
-  num: number;
   size?: number;
   /** true = correct, false = wrong, undefined = not attempted, Undefined ı tipin bir parçası yapmak için ? ni ekleriz */
   isComplete?: boolean;
@@ -41,7 +40,6 @@ function formatDate(dateStr: string) {
 export function RiddleBoardCard({
   riddle,
   game,
-  num,
   size = 200,
   isComplete,
   accuracyPercent,

@@ -1,64 +1,80 @@
 import { notFound } from "next/navigation";
 
-import { buildVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
-import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { CollectionHeader } from "@/features/collection/components/collection-header";
 import { getCollectionBySlug } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
-import {
-  isRiddleRatingBand,
-  matchesRiddleRatingBand,
-  type RiddleRatingBand,
-} from "@/features/riddle/types/riddle-rating";
 import { getRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
-import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
+import { buildCollectionRiddlePath } from "@/features/riddle/utilities/build-collection-riddle-path";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
-import { buildAttemptByRiddleId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-riddle-id";
+import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
+import { mapAttemptStatsBySequenceId as buildMapAttemptStatsBySequenceId } from "@/features/user-sequence-attempt/utilities/map-attempt-stats-by-sequence-id";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ ratingBand?: string }>;
 };
 
-export default async function CollectionDetailPage({ params, searchParams }: Params) {
+export default async function CollectionDetailPage({ params }: Params) {
   const { slug } = await params;
-  const { ratingBand: selectedRatingBand = "all" } = await searchParams;
   const { user, supabase } = await getPublicUser();
 
+  // ================================================================================================
+  // Getting collection informatin by its slug(params)
+  // ================================================================================================
   const collection = await getCollectionBySlug(supabase, slug);
   if (!collection || !collection.isActive) {
     notFound();
   }
 
-  const allRiddles = await getRiddlesByCollectionId(supabase, collection.id, { activeOnly: true });
-  const trimmedRatingBand = selectedRatingBand.trim();
-  const ratingBand: RiddleRatingBand = isRiddleRatingBand(trimmedRatingBand) ? trimmedRatingBand : "all";
-  const riddles =
-    ratingBand === "all"
-      ? allRiddles
-      : allRiddles.filter((riddle) => matchesRiddleRatingBand(riddle.rating, ratingBand));
+  // ================================================================================================
+  // Getting all riddles in this collection by id
+  // ================================================================================================
+  const riddles = await getRiddlesByCollectionId(supabase, collection.id, { activeOnly: true });
 
-  const sequenceIds = [...new Set(riddles.map((r) => r.moveSequence.id))];
-  const summaries = user ? await attemptService.getLatestSummariesForSequences(supabase, user.id, sequenceIds) : [];
-  const attemptByRiddleId = buildAttemptByRiddleId(riddles, summaries);
+  // ================================================================================================
+  // Getting move sequence ids for riddles. Move sequence table holds e1e2 like moves
+  // ================================================================================================
+  const riddleSequenceIds = [...new Set(riddles.map((r) => r.moveSequence.id))];
 
-  const isOwnerCustomCollection =
-    Boolean(user) && collection.collectionType === "custom" && collection.createdBy === user?.id;
+  // ================================================================================================
+  // Getting latest attempt stats by user for a single riddle for multiple SequenceIds
+  // ================================================================================================
+  const stats = user
+    ? await attemptService.getLatestAttemptStatsForSequences(supabase, user.id, riddleSequenceIds)
+    : [];
 
-  const voltBySequenceId =
-    isOwnerCustomCollection && riddles.length > 0
-      ? buildVoltScoresBySequenceId(
-          await attemptService.getAttemptsByUserAndSequenceIds(supabase, user!.id, sequenceIds),
-          riddles.map((riddle) => ({
-            sequenceId: riddle.moveSequence.id,
-            totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
-            rating: getRiddleRatingForScoring(riddle.rating),
-          })),
-        )
-      : {};
+  // ================================================================================================
+  // Mapping attempt stats by sequence id
+  // example data of mapAttemptStatsBySequenceId:
+  //  "seq-aaa-111": {
+  //   sequenceId: "seq-aaa-111",
+  //   status: "completed",
+  //   isCompleted: true,
+  //   correctMoveCount: 8,
+  //   wrongMoveCount: 1,
+  //   hintCount: 0,
+  //   maxCorrectStreak: 5,
+  //   durationMs: 42000,
+  // },
+  // "seq-bbb-222": {
+  //   sequenceId: "seq-bbb-222",
+  //   status: "failed",
+  //   isCompleted: false,
+  //   correctMoveCount: 3,
+  //   wrongMoveCount: 2,
+  //   hintCount: 1,
+  //   maxCorrectStreak: 2,
+  //   durationMs: 18000,
+  // },
+  // ================================================================================================
+  const mapAttemptStatsBySequenceId = buildMapAttemptStatsBySequenceId(stats);
 
+  // ================================================================================================
+  // The collection may have a riddle that is based on a real GAME.
+  // Riddle table has a FK of gameId.
+  // If there is a game. gameIds set is created. and used for selecting from DB and creating a map.
+  // ================================================================================================
   const gameIds = [...new Set(riddles.map((r) => r.gameId).filter((id): id is string => id != null))];
   const games = await getGamesByIds(supabase, gameIds);
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
@@ -74,29 +90,23 @@ export default async function CollectionDetailPage({ params, searchParams }: Par
         )}
         <div className="grid grid-cols-2 gap-6">
           {riddles
-            .map((riddle, index) => {
+            .map((riddle) => {
               const game = riddle.gameId ? gameMap[riddle.gameId] : null;
               if (!game && !riddle.moveSequence.displayFen) return null;
-              return { riddle, game, index };
+              return { riddle, game };
             })
-            .filter((x): x is NonNullable<typeof x> => x != null)
-            .map(({ riddle, game, index }) => {
-              const num = index + 1;
-
-              return (
-                <RiddleBoardCard
-                  key={riddle.id}
-                  riddle={riddle}
-                  game={game}
-                  num={num}
-                  size={240}
-                  isComplete={attemptByRiddleId[riddle.id]?.isComplete}
-                  accuracyPercent={attemptByRiddleId[riddle.id]?.accuracyPercent}
-                  displayFen={riddle.moveSequence.displayFen}
-                  voltScore={voltBySequenceId[riddle.moveSequence.id] ?? null}
-                />
-              );
-            })}
+            .filter((x): x is NonNullable<typeof x> => x != null) // Skip unrenderable riddles: if there’s no game and no displayFen, return null.
+            .map(({ riddle, game }) => (
+              <RiddleBoardCard
+                key={riddle.id}
+                riddle={riddle}
+                game={game}
+                size={240}
+                href={buildCollectionRiddlePath(collection.slug, riddle.id)}
+                isComplete={attemptStatusToIsComplete(mapAttemptStatsBySequenceId[riddle.moveSequence.id]?.status)}
+                displayFen={riddle.moveSequence.displayFen} // Fen value and PGN value are stored in move sequence table
+              />
+            ))}
         </div>
       </div>
     </div>

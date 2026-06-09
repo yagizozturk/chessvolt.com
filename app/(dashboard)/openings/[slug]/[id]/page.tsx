@@ -10,7 +10,9 @@ import {
 } from "@/features/openings/services/openings.service";
 import { flattenOpeningArrowGroups } from "@/features/openings/types/opening";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
-import { buildAttemptByVariantId } from "@/features/user-sequence-attempt/utilities/build-attempt-by-variant-id";
+import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
+import { computeSequenceAttemptAccuracy } from "@/features/user-sequence-attempt/utilities/compute-sequence-attempt-accuracy";
+import { mapAttemptStatsBySequenceId as buildMapAttemptStatsBySequenceId } from "@/features/user-sequence-attempt/utilities/map-attempt-stats-by-sequence-id";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
@@ -29,13 +31,13 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const variants = await getOpeningVariantsByOpeningId(supabase, opening.id);
 
   const sequenceIds = [...new Set(variants.map((v) => v.moveSequence.id))];
-  const summaries = user
-    ? await attemptService.getLatestSummariesForSequences(supabase, user.id, sequenceIds)
-    : [];
-  const attemptByVariantId = buildAttemptByVariantId(variants, summaries);
+  const stats = user ? await attemptService.getLatestAttemptStatsForSequences(supabase, user.id, sequenceIds) : [];
+  const mapAttemptStatsBySequenceId = buildMapAttemptStatsBySequenceId(stats);
 
   const total = variants.length;
-  const correct = Object.values(attemptByVariantId).filter((v) => v.isComplete === true).length;
+  const correct = variants.filter(
+    (variant) => attemptStatusToIsComplete(mapAttemptStatsBySequenceId[variant.moveSequence.id]?.status) === true,
+  ).length;
   const solveRate = total > 0 ? Math.round((correct / total) * 100) : 0;
   const boardArrows = (opening.arrows ? flattenOpeningArrowGroups(opening.arrows) : []) as DrawShape[];
 
@@ -64,6 +66,8 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
         </div>
         <div className="grid grid-cols-2 gap-6">
           {variants.map((variant) => {
+            const attemptStats = mapAttemptStatsBySequenceId[variant.moveSequence.id];
+
             return (
               <OpeningBoardCard
                 key={variant.id}
@@ -73,8 +77,8 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 size={240}
                 href={`/openings/variant/${variant.id}`}
                 fen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}
-                isComplete={attemptByVariantId[variant.id]?.isComplete}
-                accuracyPercent={attemptByVariantId[variant.id]?.accuracyPercent}
+                isComplete={attemptStatusToIsComplete(attemptStats?.status)}
+                accuracyPercent={attemptStats ? computeSequenceAttemptAccuracy(attemptStats) : null}
                 description={variant.description}
                 moves={variant.moveSequence.moves}
               />

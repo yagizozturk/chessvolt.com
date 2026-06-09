@@ -3,14 +3,15 @@
  *
  * Responsibility: CRUD access to the user_practice_opening_variants table.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
-  toUserPracticeOpeningVariant,
-  toUserPracticeOpeningVariants,
-  toUserPracticeOpeningVariantsWithDetails,
-  toUserPracticeOpeningVariantWithDetails,
   type DbUserPracticeOpeningVariant,
   type DbUserPracticeOpeningVariantWithDetails,
+  toUserPracticeOpeningVariant,
+  toUserPracticeOpeningVariantWithDetails,
+  toUserPracticeOpeningVariants,
+  toUserPracticeOpeningVariantsWithDetails,
 } from "@/features/user-practice-opening-variant/mapper/user-practice-opening-variant.mapper";
 import type {
   SaveUserPracticeOpeningVariantInput,
@@ -18,20 +19,9 @@ import type {
   UserPracticeOpeningVariant,
   UserPracticeOpeningVariantWithDetails,
 } from "@/features/user-practice-opening-variant/types/user-practice-opening-variant";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-const ROW_SELECT = "*";
-const ROW_WITH_DETAILS_SELECT = "*, opening_variants (*, move_sequences (*))";
-
-export async function findById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<UserPracticeOpeningVariant | null> {
-  const { data, error } = await supabase
-    .from("user_practice_opening_variants")
-    .select(ROW_SELECT)
-    .eq("id", id)
-    .maybeSingle();
+export async function findById(supabase: SupabaseClient, id: string): Promise<UserPracticeOpeningVariant | null> {
+  const { data, error } = await supabase.from("user_practice_opening_variants").select("*").eq("id", id).maybeSingle();
 
   if (error) {
     console.error("user-practice-opening-variant.repository.findById error:", error);
@@ -49,7 +39,7 @@ export async function findByIdWithDetails(
 ): Promise<UserPracticeOpeningVariantWithDetails | null> {
   const { data, error } = await supabase
     .from("user_practice_opening_variants")
-    .select(ROW_WITH_DETAILS_SELECT)
+    .select("*, opening_variants (*, move_sequences (*))")
     .eq("id", id)
     .maybeSingle();
 
@@ -63,13 +53,10 @@ export async function findByIdWithDetails(
   return toUserPracticeOpeningVariantWithDetails(data as DbUserPracticeOpeningVariantWithDetails);
 }
 
-export async function findByUserId(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<UserPracticeOpeningVariant[]> {
+export async function findByUserId(supabase: SupabaseClient, userId: string): Promise<UserPracticeOpeningVariant[]> {
   const { data, error } = await supabase
     .from("user_practice_opening_variants")
-    .select(ROW_SELECT)
+    .select("*")
     .eq("user_id", userId)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
@@ -88,7 +75,7 @@ export async function findActiveByUserId(
 ): Promise<UserPracticeOpeningVariant[]> {
   const { data, error } = await supabase
     .from("user_practice_opening_variants")
-    .select(ROW_SELECT)
+    .select("*")
     .eq("user_id", userId)
     .eq("is_active", true)
     .order("sort_order", { ascending: true })
@@ -102,26 +89,45 @@ export async function findActiveByUserId(
   return toUserPracticeOpeningVariants((data ?? []) as DbUserPracticeOpeningVariant[]);
 }
 
-export async function findByUserIdWithDetails(
+// ================================================================================================
+// Finding user practice opening variants by user id with details
+// ================================================================================================
+export async function findByUserIdWithSequences(
   supabase: SupabaseClient,
   userId: string,
-  options?: { activeOnly?: boolean },
 ): Promise<UserPracticeOpeningVariantWithDetails[]> {
-  let query = supabase
+  const { data, error } = await supabase
     .from("user_practice_opening_variants")
-    .select(ROW_WITH_DETAILS_SELECT)
-    .eq("user_id", userId);
-
-  if (options?.activeOnly) {
-    query = query.eq("is_active", true);
-  }
-
-  const { data, error } = await query
+    .select("*, opening_variants (*, move_sequences (*))")
+    .eq("user_id", userId)
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("user-practice-opening-variant.repository.findByUserIdWithDetails error:", error);
+    console.error("user-practice-opening-variant.repository.findByUserIdWithSequences error:", error);
+    return [];
+  }
+
+  return toUserPracticeOpeningVariantsWithDetails((data ?? []) as DbUserPracticeOpeningVariantWithDetails[]);
+}
+
+// ================================================================================================
+// Finding active user practice opening variants by user id with sequences
+// ================================================================================================
+export async function findActiveByUserIdWithSequences(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<UserPracticeOpeningVariantWithDetails[]> {
+  const { data, error } = await supabase
+    .from("user_practice_opening_variants")
+    .select("*, opening_variants (*, move_sequences (*))")
+    .eq("user_id", userId)
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("user-practice-opening-variant.repository.findActiveByUserIdWithSequences error:", error);
     return [];
   }
 
@@ -135,16 +141,13 @@ export async function findByUserAndOpeningVariantId(
 ): Promise<UserPracticeOpeningVariant | null> {
   const { data, error } = await supabase
     .from("user_practice_opening_variants")
-    .select(ROW_SELECT)
+    .select("*")
     .eq("user_id", userId)
     .eq("opening_variant_id", openingVariantId)
     .maybeSingle();
 
   if (error) {
-    console.error(
-      "user-practice-opening-variant.repository.findByUserAndOpeningVariantId error:",
-      error,
-    );
+    console.error("user-practice-opening-variant.repository.findByUserAndOpeningVariantId error:", error);
     return null;
   }
 
@@ -242,10 +245,7 @@ export async function remove(supabase: SupabaseClient, id: string): Promise<bool
 }
 
 export async function removeByUserId(supabase: SupabaseClient, userId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from("user_practice_opening_variants")
-    .delete()
-    .eq("user_id", userId);
+  const { error } = await supabase.from("user_practice_opening_variants").delete().eq("user_id", userId);
 
   if (error) {
     console.error("user-practice-opening-variant.repository.removeByUserId error:", error);

@@ -4,6 +4,7 @@
  * Responsibility: Business logic for user_practice_opening_variants rows.
  * - Uses repository (does not touch Supabase directly)
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as userPracticeOpeningVariantRepo from "@/features/user-practice-opening-variant/repository/user-practice-opening-variant.repository";
 import type {
@@ -12,7 +13,6 @@ import type {
   UserPracticeOpeningVariant,
   UserPracticeOpeningVariantWithDetails,
 } from "@/features/user-practice-opening-variant/types/user-practice-opening-variant";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function getUserPracticeOpeningVariantById(
   supabase: SupabaseClient,
@@ -42,12 +42,24 @@ export async function getActiveUserPracticeOpeningVariantsForUser(
   return userPracticeOpeningVariantRepo.findActiveByUserId(supabase, userId);
 }
 
-export async function getUserPracticeOpeningVariantsForUserWithDetails(
+// ================================================================================================
+// Getting user practice opening variants by user id with sequences
+// ================================================================================================
+export async function getUserPracticeOpeningVariantsForUserWithSequences(
   supabase: SupabaseClient,
   userId: string,
-  options?: { activeOnly?: boolean },
 ): Promise<UserPracticeOpeningVariantWithDetails[]> {
-  return userPracticeOpeningVariantRepo.findByUserIdWithDetails(supabase, userId, options);
+  return userPracticeOpeningVariantRepo.findByUserIdWithSequences(supabase, userId);
+}
+
+// ================================================================================================
+// Getting active user practice opening variants by user id with sequences
+// ================================================================================================
+export async function getActiveUserPracticeOpeningVariantsForUserWithSequences(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<UserPracticeOpeningVariantWithDetails[]> {
+  return userPracticeOpeningVariantRepo.findActiveByUserIdWithSequences(supabase, userId);
 }
 
 export async function getUserPracticeOpeningVariantByUserAndOpeningVariant(
@@ -55,11 +67,7 @@ export async function getUserPracticeOpeningVariantByUserAndOpeningVariant(
   userId: string,
   openingVariantId: string,
 ): Promise<UserPracticeOpeningVariant | null> {
-  return userPracticeOpeningVariantRepo.findByUserAndOpeningVariantId(
-    supabase,
-    userId,
-    openingVariantId,
-  );
+  return userPracticeOpeningVariantRepo.findByUserAndOpeningVariantId(supabase, userId, openingVariantId);
 }
 
 export async function getUserPracticeOpeningVariantsByOpeningVariantId(
@@ -89,10 +97,7 @@ export async function updateUserPracticeOpeningVariant(
   return userPracticeOpeningVariantRepo.update(supabase, id, input);
 }
 
-export async function deleteUserPracticeOpeningVariant(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<boolean> {
+export async function deleteUserPracticeOpeningVariant(supabase: SupabaseClient, id: string): Promise<boolean> {
   return userPracticeOpeningVariantRepo.remove(supabase, id);
 }
 
@@ -103,9 +108,6 @@ export async function deleteUserPracticeOpeningVariantsForUser(
   return userPracticeOpeningVariantRepo.removeByUserId(supabase, userId);
 }
 
-export function isOpeningVariantInPracticeList(
-  rows: UserPracticeOpeningVariant[],
-  openingVariantId: string,
-): boolean {
+export function isOpeningVariantInPracticeList(rows: UserPracticeOpeningVariant[], openingVariantId: string): boolean {
   return rows.some((row) => row.openingVariantId === openingVariantId && row.isActive);
 }

@@ -5,17 +5,21 @@ import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-mes
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import { CreateUserListDialog } from "@/features/user-practices/components/create-user-list-dialog";
-import { UserCollectionCard } from "@/features/user-practices/components/user-collection-card";
+import { UserRiddleBoardCard } from "@/features/user-practices/components/user-riddle-board-card";
 import { UserPracticeOpeningsTab } from "@/features/user-practice-opening-variant/components/user-practice-opening-variant";
 import type { UserPracticeOpeningVariantWithDetails } from "@/features/user-practice-opening-variant/types/user-practice-opening-variant";
 
 type UserPracticesProps = {
-  collections: CollectionWithRiddleCountAndThemes[];
-  practiceVariants: UserPracticeOpeningVariantWithDetails[];
+  userCollections: CollectionWithRiddleCountAndThemes[];
+  userPracticeVariants: UserPracticeOpeningVariantWithDetails[];
   voltBySequenceId?: Record<string, VoltScoreResult>;
 };
 
-export function UserPractices({ collections, practiceVariants, voltBySequenceId = {} }: UserPracticesProps) {
+export function UserPracticesTabs({
+  userCollections,
+  userPracticeVariants,
+  voltBySequenceId = {},
+}: UserPracticesProps) {
   return (
     <>
       <Tabs defaultValue="collections" className="flex flex-col items-center gap-6">
@@ -25,19 +29,22 @@ export function UserPractices({ collections, practiceVariants, voltBySequenceId 
         </TabsList>
 
         <TabsContent value="collections" className="flex w-full flex-col gap-6">
-          {collections.length === 0 ? (
+          {userCollections.length === 0 ? (
             <EmptyDataMessage message="You don't have any collections yet." />
           ) : (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {collections.map((collection) => (
-                <UserCollectionCard key={collection.id} collection={collection} />
+              {userCollections.map((collection) => (
+                <UserRiddleBoardCard key={collection.id} collection={collection} />
               ))}
             </div>
           )}
         </TabsContent>
 
         <TabsContent value="openings" className="w-full">
-          <UserPracticeOpeningsTab practiceVariants={practiceVariants} voltBySequenceId={voltBySequenceId} />
+          <UserPracticeOpeningsTab
+            practiceVariants={userPracticeVariants}
+            voltBySequenceId={voltBySequenceId}
+          />
         </TabsContent>
       </Tabs>
 

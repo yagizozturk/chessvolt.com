@@ -3,27 +3,21 @@
  *
  * Responsibility: CRUD access to user_sequence_attempts.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import {
-  toSequenceAttemptSummary,
+  toSequenceAttemptStats,
   toUserSequenceAttempt,
 } from "@/features/user-sequence-attempt/mapper/user-sequence-attempt.mapper";
 import type {
   CreateUserSequenceAttemptInput,
-  SequenceAttemptSummary,
+  SequenceAttemptStats,
   UpdateUserSequenceAttemptInput,
   UserSequenceAttempt,
 } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function findById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<UserSequenceAttempt | null> {
-  const { data, error } = await supabase
-    .from("user_sequence_attempts")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+export async function findById(supabase: SupabaseClient, id: string): Promise<UserSequenceAttempt | null> {
+  const { data, error } = await supabase.from("user_sequence_attempts").select("*").eq("id", id).maybeSingle();
 
   if (error) {
     console.error("user-sequence-attempt.repository.findById error:", error);
@@ -35,10 +29,7 @@ export async function findById(
   return toUserSequenceAttempt(data);
 }
 
-export async function findByUserId(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<UserSequenceAttempt[]> {
+export async function findByUserId(supabase: SupabaseClient, userId: string): Promise<UserSequenceAttempt[]> {
   const { data, error } = await supabase
     .from("user_sequence_attempts")
     .select("*")
@@ -119,12 +110,27 @@ export async function findLatestByUserAndSequenceId(
   return toUserSequenceAttempt(data);
 }
 
-/** Latest attempt per sequence for the given ids (one row per sequence). */
-export async function findLatestSummariesForSequences(
+// ================================================================================================
+// Getting latest attempt summaries by user and sequence ids. Last date one on particular sequenceId
+// Collection has multiple riddles. Riddles have multiple solving attempts.
+// This function returns the latest attempt summary for each sequenceId in the collection.
+// example output:
+// [{
+//    "sequenceId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+//    "status": "failed",
+//    "isCompleted": false,
+//    "correctMoveCount": 5,
+//    "wrongMoveCount": 3,
+//    "hintCount": 2,
+//    "maxCorrectStreak": 4,
+//    "durationMs": 28100
+// }]
+// ================================================================================================
+export async function findLatestAttemptStatsForSequences(
   supabase: SupabaseClient,
   userId: string,
   sequenceIds: string[],
-): Promise<SequenceAttemptSummary[]> {
+): Promise<SequenceAttemptStats[]> {
   if (sequenceIds.length === 0) return [];
 
   const { data, error } = await supabase
@@ -135,20 +141,20 @@ export async function findLatestSummariesForSequences(
     .order("started_at", { ascending: false });
 
   if (error) {
-    console.error("user-sequence-attempt.repository.findLatestSummariesForSequences error:", error);
+    console.error("user-sequence-attempt.repository.findLatestAttemptStatsForSequences error:", error);
     return [];
   }
 
-  const seen = new Set<string>();
-  const summaries: SequenceAttemptSummary[] = [];
+  const sequenceIdSet = new Set<string>();
+  const sequenceAttemptStats: SequenceAttemptStats[] = [];
 
   for (const row of data ?? []) {
-    if (seen.has(row.sequence_id)) continue;
-    seen.add(row.sequence_id);
-    summaries.push(toSequenceAttemptSummary(row));
+    if (sequenceIdSet.has(row.sequence_id)) continue;
+    sequenceIdSet.add(row.sequence_id);
+    sequenceAttemptStats.push(toSequenceAttemptStats(row));
   }
 
-  return summaries;
+  return sequenceAttemptStats;
 }
 
 export async function findCompletedSequenceIds(
@@ -190,11 +196,7 @@ export async function create(
   };
   if (input.startedAt !== undefined) row.started_at = input.startedAt;
 
-  const { data, error } = await supabase
-    .from("user_sequence_attempts")
-    .insert(row)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("user_sequence_attempts").insert(row).select().single();
 
   if (error) {
     console.error("user-sequence-attempt.repository.create error:", error);
@@ -222,12 +224,7 @@ export async function update(
     return findById(supabase, id);
   }
 
-  const { data, error } = await supabase
-    .from("user_sequence_attempts")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("user_sequence_attempts").update(updates).eq("id", id).select().single();
 
   if (error) {
     console.error("user-sequence-attempt.repository.update error:", error);

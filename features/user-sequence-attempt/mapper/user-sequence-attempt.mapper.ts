@@ -1,7 +1,7 @@
 import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
 import { isRiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
 import type {
-  SequenceAttemptSummary,
+  SequenceAttemptStats,
   UserSequenceAttempt,
 } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 
@@ -46,7 +46,7 @@ export function toUserSequenceAttempt(db: DbUserSequenceAttempt): UserSequenceAt
   };
 }
 
-export function toSequenceAttemptSummary(db: DbUserSequenceAttempt): SequenceAttemptSummary {
+export function toSequenceAttemptStats(db: DbUserSequenceAttempt): SequenceAttemptStats {
   const status = toStatus(db.status);
   return {
     sequenceId: db.sequence_id,
