@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
 
+import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
+import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { CollectionHeader } from "@/features/collection/components/collection-header";
 import { getCollectionBySlug } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
 import { getActiveRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
+import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { mapAttemptStatsBySequenceId as buildMapAttemptStatsBySequenceId } from "@/features/user-sequence-attempt/utilities/map-attempt-stats-by-sequence-id";
@@ -72,6 +75,26 @@ export default async function CollectionDetailPage({ params }: Params) {
   const mapAttemptStatsBySequenceId = buildMapAttemptStatsBySequenceId(stats);
 
   // ================================================================================================
+  // Building volt scores by sequence id when user is logged in
+  // ================================================================================================
+  const riddleAttempts =
+    user && riddleSequenceIds.length > 0
+      ? await attemptService.getAttemptsByUserAndSequenceIds(supabase, user.id, riddleSequenceIds)
+      : [];
+
+  const voltScoresBySequenceId =
+    user && riddleSequenceIds.length > 0
+      ? getVoltScoresBySequenceId(
+          riddleAttempts,
+          riddles.map((riddle) => ({
+            sequenceId: riddle.moveSequence.id,
+            totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
+            rating: getRiddleRatingForScoring(riddle.rating),
+          })),
+        )
+      : {};
+
+  // ================================================================================================
   // The collection may have a riddle that is based on a real GAME.
   // Riddle table has a FK of gameId.
   // If there is a game. gameIds set is created. and used for selecting from DB and creating a map.
@@ -110,6 +133,7 @@ export default async function CollectionDetailPage({ params }: Params) {
                   isComplete={attemptStats.isComplete}
                   accuracyPercent={attemptStats.accuracyPercent}
                   displayFen={riddle.moveSequence.displayFen} // Fen value and PGN value are stored in move sequence table
+                  voltScore={voltScoresBySequenceId[riddle.moveSequence.id] ?? null}
                 />
               );
             })}

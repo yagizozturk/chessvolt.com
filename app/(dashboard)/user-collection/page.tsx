@@ -4,6 +4,10 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export default async function UserCollectionPage() {
   const { user, supabase } = await getAuthenticatedUser();
+
+  // ================================================================================================
+  // Getting user collections with riddle count and themes
+  // ================================================================================================
   const userCollections = await getUserCollectionsWithRiddleCountAndThemes(supabase, user.id);
 
   return (
