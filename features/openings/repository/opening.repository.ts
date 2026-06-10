@@ -85,26 +85,6 @@ export async function findAllWithVariantCount(supabase: SupabaseClient): Promise
   });
 }
 
-export async function findByType(supabase: SupabaseClient, type: string): Promise<Opening[]> {
-  const trimmed = type.trim();
-  if (!trimmed) {
-    return [];
-  }
-
-  const { data, error } = await supabase
-    .from("openings")
-    .select("id, name, slug, description, type, arrows, display_fen, created_at")
-    .ilike("type", trimmed)
-    .order("name", { ascending: true });
-
-  if (error) {
-    console.error("opening.repository.findByType error:", error);
-    return [];
-  }
-
-  return (data ?? []).map(toOpening);
-}
-
 export async function findByTypeWithVariantCount(
   supabase: SupabaseClient,
   type: string,
@@ -130,21 +110,6 @@ export async function findByTypeWithVariantCount(
     const variantCount = db.opening_variants?.[0]?.count ?? 0;
     return { ...toOpening(db), variantCount };
   });
-}
-
-export async function findBySlug(supabase: SupabaseClient, slug: string): Promise<Opening | null> {
-  const { data, error } = await supabase
-    .from("openings")
-    .select("id, name, slug, description, type, arrows, display_fen, created_at")
-    .eq("slug", slug)
-    .maybeSingle();
-
-  if (error) {
-    console.error("opening.repository.findBySlug error:", error);
-    return null;
-  }
-  if (!data) return null;
-  return toOpening(data);
 }
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<Opening | null> {

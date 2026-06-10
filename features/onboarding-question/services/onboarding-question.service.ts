@@ -34,13 +34,6 @@ export async function getOnboardingQuestionById(
   return onboardingQuestionRepo.findById(supabase, id);
 }
 
-export async function getOnboardingQuestionBySlug(
-  supabase: SupabaseClient,
-  slug: string,
-): Promise<OnboardingQuestion | null> {
-  return onboardingQuestionRepo.findBySlug(supabase, slug);
-}
-
 export async function createOnboardingQuestion(
   supabase: SupabaseClient,
   input: onboardingQuestionRepo.CreateOnboardingQuestionInput,

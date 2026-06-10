@@ -7,7 +7,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
   toCollectionTheme,
-  toCollectionThemes,
   toCollectionThemesWithTheme,
   toCollectionThemeWithTheme,
   type DbCollectionTheme,
@@ -69,25 +68,6 @@ export async function findAllWithTheme(supabase: SupabaseClient): Promise<Collec
   return toCollectionThemesWithTheme((data ?? []) as DbCollectionThemeWithTheme[]);
 }
 
-export async function findByCollectionId(
-  supabase: SupabaseClient,
-  collectionId: string,
-): Promise<CollectionTheme[]> {
-  const { data, error } = await supabase
-    .from("collection_themes")
-    .select(SELECT)
-    .eq("collection_id", collectionId)
-    .order("weight", { ascending: false })
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("collection-theme.repository.findByCollectionId error:", error);
-    return [];
-  }
-
-  return toCollectionThemes((data ?? []) as DbCollectionTheme[]);
-}
-
 export async function findByCollectionIdWithTheme(
   supabase: SupabaseClient,
   collectionId: string,
@@ -101,28 +81,6 @@ export async function findByCollectionIdWithTheme(
 
   if (error) {
     console.error("collection-theme.repository.findByCollectionIdWithTheme error:", error);
-    return [];
-  }
-
-  return toCollectionThemesWithTheme((data ?? []) as DbCollectionThemeWithTheme[]);
-}
-
-export async function findByCollectionIdsWithTheme(
-  supabase: SupabaseClient,
-  collectionIds: string[],
-): Promise<CollectionThemeWithTheme[]> {
-  const uniqueIds = [...new Set(collectionIds.map((id) => id.trim()).filter(Boolean))];
-  if (uniqueIds.length === 0) return [];
-
-  const { data, error } = await supabase
-    .from("collection_themes")
-    .select(WITH_THEME_SELECT)
-    .in("collection_id", uniqueIds)
-    .order("weight", { ascending: false })
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("collection-theme.repository.findByCollectionIdsWithTheme error:", error);
     return [];
   }
 

@@ -65,23 +65,6 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<On
   return toOnboardingQuestion(data as DbOnboardingQuestion);
 }
 
-export async function findBySlug(supabase: SupabaseClient, slug: string): Promise<OnboardingQuestion | null> {
-  const { data, error } = await supabase
-    .from("onboarding_questions")
-    .select("*")
-    .eq("slug", slug)
-    .maybeSingle();
-
-  if (error) {
-    console.error("onboarding-question.repository.findBySlug error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-
-  return toOnboardingQuestion(data as DbOnboardingQuestion);
-}
-
 export type CreateOnboardingQuestionInput = {
   title: string;
   slug?: string;

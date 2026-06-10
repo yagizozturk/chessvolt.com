@@ -69,41 +69,6 @@ export async function findAllWithTheme(supabase: SupabaseClient): Promise<Riddle
   return toRiddleThemesWithTheme((data ?? []) as DbRiddleThemeWithTheme[]);
 }
 
-export async function findByRiddleId(supabase: SupabaseClient, riddleId: string): Promise<RiddleTheme[]> {
-  const { data, error } = await supabase
-    .from("riddle_themes")
-    .select(SELECT)
-    .eq("riddle_id", riddleId)
-    .order("weight", { ascending: false })
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("riddle-theme.repository.findByRiddleId error:", error);
-    return [];
-  }
-
-  return toRiddleThemes((data ?? []) as DbRiddleTheme[]);
-}
-
-export async function findByRiddleIdWithTheme(
-  supabase: SupabaseClient,
-  riddleId: string,
-): Promise<RiddleThemeWithTheme[]> {
-  const { data, error } = await supabase
-    .from("riddle_themes")
-    .select(WITH_THEME_SELECT)
-    .eq("riddle_id", riddleId)
-    .order("weight", { ascending: false })
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("riddle-theme.repository.findByRiddleIdWithTheme error:", error);
-    return [];
-  }
-
-  return toRiddleThemesWithTheme((data ?? []) as DbRiddleThemeWithTheme[]);
-}
-
 export async function findByRiddleIdsWithTheme(
   supabase: SupabaseClient,
   riddleIds: string[],

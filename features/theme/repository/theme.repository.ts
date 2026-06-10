@@ -29,45 +29,6 @@ export async function findAll(supabase: SupabaseClient): Promise<Theme[]> {
   return toThemes((data ?? []) as DbTheme[]);
 }
 
-export async function findAllActive(supabase: SupabaseClient): Promise<Theme[]> {
-  const { data, error } = await supabase
-    .from("themes")
-    .select("*")
-    .eq("is_active", true)
-    .order("sort_order", { ascending: true })
-    .order("title", { ascending: true });
-
-  if (error) {
-    console.error("theme.repository.findAllActive error:", error);
-    return [];
-  }
-
-  return toThemes((data ?? []) as DbTheme[]);
-}
-
-export async function findByCategory(
-  supabase: SupabaseClient,
-  category: ThemeCategory,
-  options?: { activeOnly?: boolean },
-): Promise<Theme[]> {
-  let query = supabase.from("themes").select("*").eq("category", category);
-
-  if (options?.activeOnly) {
-    query = query.eq("is_active", true);
-  }
-
-  const { data, error } = await query
-    .order("sort_order", { ascending: true })
-    .order("title", { ascending: true });
-
-  if (error) {
-    console.error("theme.repository.findByCategory error:", error);
-    return [];
-  }
-
-  return toThemes((data ?? []) as DbTheme[]);
-}
-
 export async function findById(supabase: SupabaseClient, id: string): Promise<Theme | null> {
   const { data, error } = await supabase.from("themes").select("*").eq("id", id).maybeSingle();
 

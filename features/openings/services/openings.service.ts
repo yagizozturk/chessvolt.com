@@ -22,13 +22,6 @@ export async function getOpeningsWithVariantCount(
   return openingRepo.findAllWithVariantCount(supabase);
 }
 
-export async function getOpeningsByType(
-  supabase: SupabaseClient,
-  type: string,
-): Promise<Opening[]> {
-  return openingRepo.findByType(supabase, type);
-}
-
 export async function getOpeningsWithVariantCountByType(
   supabase: SupabaseClient,
   type: string,
@@ -48,13 +41,6 @@ export async function getOpeningById(
   id: string,
 ): Promise<Opening | null> {
   return openingRepo.findById(supabase, id);
-}
-
-export async function getOpeningBySlug(
-  supabase: SupabaseClient,
-  slug: string,
-): Promise<Opening | null> {
-  return openingRepo.findBySlug(supabase, slug);
 }
 
 export async function createOpening(
@@ -77,12 +63,6 @@ export async function deleteOpening(
   id: string,
 ): Promise<boolean> {
   return openingRepo.remove(supabase, id);
-}
-
-export async function getAllOpeningVariants(
-  supabase: SupabaseClient,
-): Promise<OpeningVariant[]> {
-  return openingVariantRepo.findAll(supabase);
 }
 
 export async function getOpeningVariantsByOpeningId(

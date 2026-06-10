@@ -7,21 +7,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as riddleThemeService from "@/features/riddle-theme/services/riddle-theme.service";
 import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
-import type { CollectionRiddle } from "@/features/riddle/types/collection-riddle";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
-
-export async function getAllRiddles(supabase: SupabaseClient): Promise<Riddle[]> {
-  return riddleRepo.findAll(supabase);
-}
 
 export async function getAllRiddlesWithThemes(supabase: SupabaseClient): Promise<RiddleWithThemes[]> {
   const riddles = await riddleRepo.findAll(supabase);
   return riddleThemeService.attachThemeSlugsToRiddles(supabase, riddles);
-}
-
-export async function getActiveRiddles(supabase: SupabaseClient): Promise<Riddle[]> {
-  return riddleRepo.findAllActive(supabase);
 }
 
 export async function getRiddleById(supabase: SupabaseClient, id: string): Promise<Riddle | null> {
@@ -36,39 +27,11 @@ export async function getRiddleByIdWithThemes(supabase: SupabaseClient, id: stri
   return riddleThemeService.withThemeSlugs(riddle, slugsByRiddleId.get(id) ?? []);
 }
 
-export async function getRiddlesByGameId(supabase: SupabaseClient, gameId: string): Promise<Riddle[]> {
-  return riddleRepo.findByGameId(supabase, gameId);
-}
-
-// ================================================================================================
-// Getting riddles by collection id
-// ================================================================================================
-export async function getRiddlesByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<Riddle[]> {
-  return riddleRepo.findByCollectionId(supabase, collectionId);
-}
-
 export async function getActiveRiddlesByCollectionId(
   supabase: SupabaseClient,
   collectionId: string,
 ): Promise<Riddle[]> {
   return riddleRepo.findActiveByCollectionId(supabase, collectionId);
-}
-
-// ================================================================================================
-// Getting riddles by collection ids
-// ================================================================================================
-export async function getRiddlesByCollectionIds(
-  supabase: SupabaseClient,
-  collectionIds: string[],
-): Promise<CollectionRiddle[]> {
-  return riddleRepo.findByCollectionIds(supabase, collectionIds);
-}
-
-export async function getActiveRiddlesByCollectionIds(
-  supabase: SupabaseClient,
-  collectionIds: string[],
-): Promise<CollectionRiddle[]> {
-  return riddleRepo.findActiveByCollectionIds(supabase, collectionIds);
 }
 
 export type FindActiveRiddlesByThemesInput = {

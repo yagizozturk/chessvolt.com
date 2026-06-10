@@ -19,21 +19,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 const OPTION_SELECT = "*";
 const OPTION_WITH_QUESTION_SELECT = "*, onboarding_questions (*)";
 
-export async function findAll(supabase: SupabaseClient): Promise<OnboardingOption[]> {
-  const { data, error } = await supabase
-    .from("onboarding_options")
-    .select(OPTION_SELECT)
-    .order("sort_order", { ascending: true })
-    .order("label", { ascending: true });
-
-  if (error) {
-    console.error("onboarding-option.repository.findAll error:", error);
-    return [];
-  }
-
-  return toOnboardingOptions((data ?? []) as DbOnboardingOption[]);
-}
-
 export async function findAllWithQuestion(supabase: SupabaseClient): Promise<OnboardingOptionWithQuestion[]> {
   const { data, error } = await supabase
     .from("onboarding_options")
@@ -47,22 +32,6 @@ export async function findAllWithQuestion(supabase: SupabaseClient): Promise<Onb
   }
 
   return toOnboardingOptionsWithQuestion((data ?? []) as DbOnboardingOptionWithQuestion[]);
-}
-
-export async function findAllActive(supabase: SupabaseClient): Promise<OnboardingOption[]> {
-  const { data, error } = await supabase
-    .from("onboarding_options")
-    .select(OPTION_SELECT)
-    .eq("is_active", true)
-    .order("sort_order", { ascending: true })
-    .order("label", { ascending: true });
-
-  if (error) {
-    console.error("onboarding-option.repository.findAllActive error:", error);
-    return [];
-  }
-
-  return toOnboardingOptions((data ?? []) as DbOnboardingOption[]);
 }
 
 export async function findByQuestionId(
@@ -105,23 +74,6 @@ export async function findByIds(supabase: SupabaseClient, ids: string[]): Promis
   return toOnboardingOptions((data ?? []) as DbOnboardingOption[]);
 }
 
-export async function findById(supabase: SupabaseClient, id: string): Promise<OnboardingOption | null> {
-  const { data, error } = await supabase
-    .from("onboarding_options")
-    .select(OPTION_SELECT)
-    .eq("id", id)
-    .maybeSingle();
-
-  if (error) {
-    console.error("onboarding-option.repository.findById error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-
-  return toOnboardingOption(data as DbOnboardingOption);
-}
-
 export async function findByIdWithQuestion(
   supabase: SupabaseClient,
   id: string,
@@ -140,28 +92,6 @@ export async function findByIdWithQuestion(
   if (!data) return null;
 
   return toOnboardingOptionWithQuestion(data as DbOnboardingOptionWithQuestion);
-}
-
-export async function findByQuestionAndValue(
-  supabase: SupabaseClient,
-  questionId: string,
-  value: string,
-): Promise<OnboardingOption | null> {
-  const { data, error } = await supabase
-    .from("onboarding_options")
-    .select(OPTION_SELECT)
-    .eq("question_id", questionId)
-    .eq("value", value.trim())
-    .maybeSingle();
-
-  if (error) {
-    console.error("onboarding-option.repository.findByQuestionAndValue error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-
-  return toOnboardingOption(data as DbOnboardingOption);
 }
 
 export type CreateOnboardingOptionInput = {
@@ -250,13 +180,3 @@ export async function remove(supabase: SupabaseClient, id: string): Promise<bool
   return true;
 }
 
-export async function removeByQuestionId(supabase: SupabaseClient, questionId: string): Promise<boolean> {
-  const { error } = await supabase.from("onboarding_options").delete().eq("question_id", questionId);
-
-  if (error) {
-    console.error("onboarding-option.repository.removeByQuestionId error:", error);
-    return false;
-  }
-
-  return true;
-}

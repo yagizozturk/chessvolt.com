@@ -6,13 +6,6 @@ import type { CollectionTheme, CollectionThemeWithTheme } from "@/features/colle
 
 export { DEFAULT_TOP_COLLECTION_THEME_COUNT };
 
-export async function getCollectionThemesForCollection(
-  supabase: SupabaseClient,
-  collectionId: string,
-): Promise<CollectionTheme[]> {
-  return collectionThemeRepo.findByCollectionId(supabase, collectionId);
-}
-
 export async function getCollectionThemesForCollectionWithTheme(
   supabase: SupabaseClient,
   collectionId: string,

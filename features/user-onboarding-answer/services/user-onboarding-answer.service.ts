@@ -15,13 +15,6 @@ import type {
   UserOnboardingAnswerWithDetails,
 } from "@/features/user-onboarding-answer/types/user-onboarding-answer";
 
-export async function getUserOnboardingAnswerById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<UserOnboardingAnswer | null> {
-  return userOnboardingAnswerRepo.findById(supabase, id);
-}
-
 export async function getUserOnboardingAnswerByIdWithDetails(
   supabase: SupabaseClient,
   id: string,
@@ -29,48 +22,10 @@ export async function getUserOnboardingAnswerByIdWithDetails(
   return userOnboardingAnswerRepo.findByIdWithDetails(supabase, id);
 }
 
-export async function getAllUserOnboardingAnswers(supabase: SupabaseClient): Promise<UserOnboardingAnswer[]> {
-  return userOnboardingAnswerRepo.findAll(supabase);
-}
-
 export async function getAllUserOnboardingAnswersWithDetails(
   supabase: SupabaseClient,
 ): Promise<UserOnboardingAnswerWithDetails[]> {
   return userOnboardingAnswerRepo.findAllWithDetails(supabase);
-}
-
-export async function getUserOnboardingAnswersForUser(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<UserOnboardingAnswer[]> {
-  return userOnboardingAnswerRepo.findByUserId(supabase, userId);
-}
-
-export async function getUserOnboardingAnswersForUserWithDetails(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<UserOnboardingAnswerWithDetails[]> {
-  return userOnboardingAnswerRepo.findByUserIdWithDetails(supabase, userId);
-}
-
-export async function getUserOnboardingAnswerByUserAndQuestion(
-  supabase: SupabaseClient,
-  userId: string,
-  questionId: string,
-): Promise<UserOnboardingAnswer | null> {
-  return userOnboardingAnswerRepo.findByUserAndQuestionId(supabase, userId, questionId);
-}
-
-export async function getUserOnboardingAnswersByQuestionId(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<Record<string, UserOnboardingAnswer>> {
-  const answers = await userOnboardingAnswerRepo.findByUserId(supabase, userId);
-  const byQuestionId: Record<string, UserOnboardingAnswer> = {};
-  for (const answer of answers) {
-    byQuestionId[answer.questionId] = answer;
-  }
-  return byQuestionId;
 }
 
 export async function saveUserOnboardingAnswer(
@@ -80,10 +35,6 @@ export async function saveUserOnboardingAnswer(
   return userOnboardingAnswerRepo.upsert(supabase, input);
 }
 
-// ============================================================================
-// Replace User Onboarding Answers For Question.
-// See replaceForQuestion — delete-then-insert makes Finish retries idempotent.
-// ============================================================================
 export async function replaceUserOnboardingAnswersForQuestion(
   supabase: SupabaseClient,
   input: ReplaceUserOnboardingAnswersInput,
@@ -101,14 +52,4 @@ export async function updateUserOnboardingAnswer(
 
 export async function deleteUserOnboardingAnswer(supabase: SupabaseClient, id: string): Promise<boolean> {
   return userOnboardingAnswerRepo.remove(supabase, id);
-}
-
-export async function deleteUserOnboardingAnswersForUser(supabase: SupabaseClient, userId: string): Promise<boolean> {
-  return userOnboardingAnswerRepo.removeByUserId(supabase, userId);
-}
-
-export function hasCompletedOnboarding(answers: UserOnboardingAnswer[], activeQuestionCount: number): boolean {
-  if (activeQuestionCount <= 0) return false;
-  const answeredQuestionIds = new Set(answers.map((a) => a.questionId));
-  return answeredQuestionIds.size >= activeQuestionCount;
 }

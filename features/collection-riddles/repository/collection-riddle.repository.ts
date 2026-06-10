@@ -8,19 +8,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { toCollectionRiddle } from "@/features/collection-riddles/mapper/collection-riddle.mapper";
 import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
 
-export async function findById(supabase: SupabaseClient, id: string): Promise<CollectionRiddle | null> {
-  const { data, error } = await supabase.from("collection_riddles").select("*").eq("id", id).maybeSingle();
-
-  if (error) {
-    console.error("collection-riddle.repository.findById error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-
-  return toCollectionRiddle(data);
-}
-
 export async function findByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<CollectionRiddle[]> {
   const { data, error } = await supabase
     .from("collection_riddles")
@@ -37,11 +24,6 @@ export async function findByCollectionId(supabase: SupabaseClient, collectionId:
   return (data ?? []).map(toCollectionRiddle);
 }
 
-// ================================================================================================
-// Getting collection riddles by riddle id.
-// Existing riddle Id is supplied to get other riddles in the MULTIPLE collections
-// There is no one single collection. There can be one riddle in two collections.
-// ================================================================================================
 export async function findByRiddleId(supabase: SupabaseClient, riddleId: string): Promise<CollectionRiddle[]> {
   const { data, error } = await supabase
     .from("collection_riddles")
@@ -130,74 +112,11 @@ export async function createMany(
   return (data ?? []).map(toCollectionRiddle);
 }
 
-export type UpdateCollectionRiddleInput = {
-  sortOrder?: number;
-};
-
-export async function update(
-  supabase: SupabaseClient,
-  id: string,
-  input: UpdateCollectionRiddleInput,
-): Promise<CollectionRiddle | null> {
-  const updates: Record<string, unknown> = {};
-  if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
-
-  if (Object.keys(updates).length === 0) {
-    return findById(supabase, id);
-  }
-
-  const { data, error } = await supabase.from("collection_riddles").update(updates).eq("id", id).select().single();
-
-  if (error) {
-    console.error("collection-riddle.repository.update error:", error);
-    return null;
-  }
-
-  return toCollectionRiddle(data);
-}
-
-export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
-  const { error } = await supabase.from("collection_riddles").delete().eq("id", id);
-
-  if (error) {
-    console.error("collection-riddle.repository.remove error:", error);
-    return false;
-  }
-
-  return true;
-}
-
-export async function removeByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<boolean> {
-  const { error } = await supabase.from("collection_riddles").delete().eq("collection_id", collectionId);
-
-  if (error) {
-    console.error("collection-riddle.repository.removeByCollectionId error:", error);
-    return false;
-  }
-
-  return true;
-}
-
 export async function removeByRiddleId(supabase: SupabaseClient, riddleId: string): Promise<boolean> {
   const { error } = await supabase.from("collection_riddles").delete().eq("riddle_id", riddleId);
 
   if (error) {
     console.error("collection-riddle.repository.removeByRiddleId error:", error);
-    return false;
-  }
-
-  return true;
-}
-
-export async function removeByPair(supabase: SupabaseClient, riddleId: string, collectionId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from("collection_riddles")
-    .delete()
-    .eq("riddle_id", riddleId)
-    .eq("collection_id", collectionId);
-
-  if (error) {
-    console.error("collection-riddle.repository.removeByPair error:", error);
     return false;
   }
 
