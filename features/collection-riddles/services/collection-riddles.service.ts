@@ -28,7 +28,7 @@ export async function getCollectionRiddleByPair(
   riddleId: string,
   collectionId: string,
 ): Promise<CollectionRiddle | null> {
-  return collectionRiddleRepo.findByPair(supabase, riddleId, collectionId);
+  return collectionRiddleRepo.findByRiddleIdAndCollectionId(supabase, riddleId, collectionId);
 }
 
 export async function addRiddleToCollection(

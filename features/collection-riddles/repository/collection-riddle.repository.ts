@@ -40,7 +40,7 @@ export async function findByRiddleId(supabase: SupabaseClient, riddleId: string)
   return (data ?? []).map(toCollectionRiddle);
 }
 
-export async function findByPair(
+export async function findByRiddleIdAndCollectionId(
   supabase: SupabaseClient,
   riddleId: string,
   collectionId: string,
@@ -53,7 +53,7 @@ export async function findByPair(
     .maybeSingle();
 
   if (error) {
-    console.error("collection-riddle.repository.findByPair error:", error);
+    console.error("collection-riddle.repository.findByRiddleIdAndCollectionId error:", error);
     return null;
   }
 

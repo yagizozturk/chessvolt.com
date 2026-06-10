@@ -232,6 +232,9 @@ export default function RiddleController({
     : parentCollectionUrl;
   const successButtonLabel = hasNextRiddle ? "Next riddle" : "Back to collection";
 
+  // ================================================================================================
+  // Handle the continue click and redirect to the next riddle or back to the collection
+  // ================================================================================================
   const handleContinueClick = () => {
     router.push(successDestinationPath);
   };
