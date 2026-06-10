@@ -83,7 +83,7 @@ export function AddToMyCollectionPicker({ riddleId, collections, savedCollection
               {collections.length === 0 ? (
                 <span>
                   You don&apos;t have any collections yet.{" "}
-                  <Link href="/my-practices" className="text-primary underline">
+                  <Link href="/user-collection" className="text-primary underline">
                     Create one
                   </Link>
                 </span>

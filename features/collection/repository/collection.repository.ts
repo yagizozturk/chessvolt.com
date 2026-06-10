@@ -62,9 +62,9 @@ export async function findUserCustomCollectionByUserId(
 }
 
 // ============================================================================
-// Finding onboarding starter collection for user by User Id
+// Finding user custom collection by slug for a user
 // ============================================================================
-export async function findUserOnboardingStarterCollection(
+export async function findUserCustomCollectionBySlug(
   supabase: SupabaseClient,
   userId: string,
   slug: string,
@@ -78,12 +78,23 @@ export async function findUserOnboardingStarterCollection(
     .maybeSingle();
 
   if (error) {
-    console.error("collection.repository.findUserOnboardingStarterCollection error:", error);
+    console.error("collection.repository.findUserCustomCollectionBySlug error:", error);
     return null;
   }
 
   if (!data) return null;
   return toCollection(data);
+}
+
+// ============================================================================
+// Finding onboarding starter collection for user by User Id
+// ============================================================================
+export async function findUserOnboardingStarterCollection(
+  supabase: SupabaseClient,
+  userId: string,
+  slug: string,
+): Promise<Collection | null> {
+  return findUserCustomCollectionBySlug(supabase, userId, slug);
 }
 
 const COLLECTION_WITH_RIDDLE_COUNT_AND_THEMES_SELECT =

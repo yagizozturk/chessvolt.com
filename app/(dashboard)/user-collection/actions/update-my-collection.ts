@@ -2,10 +2,10 @@
 
 import { updateUserCustomCollection } from "@/features/collection/services/collection.service";
 
-import { getMyCollectionsActionContext, revalidateMyCollectionsPage } from "./shared";
+import { getUserCollectionActionContext, revalidateUserCollectionPage } from "./shared";
 
 export async function updateMyCollectionAction(formData: FormData): Promise<void> {
-  const { supabase, user } = await getMyCollectionsActionContext();
+  const { supabase, user } = await getUserCollectionActionContext();
 
   const id = String(formData.get("id") ?? "").trim();
   const title = String(formData.get("title") ?? "").trim();
@@ -20,5 +20,5 @@ export async function updateMyCollectionAction(formData: FormData): Promise<void
     description,
   });
 
-  revalidateMyCollectionsPage();
+  revalidateUserCollectionPage();
 }

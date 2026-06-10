@@ -1,8 +1,3 @@
-/**
- * User Sequence Attempt Repository
- *
- * Responsibility: CRUD access to user_sequence_attempts.
- */
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
@@ -16,6 +11,9 @@ import type {
   UserSequenceAttempt,
 } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 
+// ================================================================================================
+// Getting attempt by id
+// ================================================================================================
 export async function findById(supabase: SupabaseClient, id: string): Promise<UserSequenceAttempt | null> {
   const { data, error } = await supabase.from("user_sequence_attempts").select("*").eq("id", id).maybeSingle();
 
@@ -27,21 +25,6 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<Us
   if (!data) return null;
 
   return toUserSequenceAttempt(data);
-}
-
-export async function findByUserId(supabase: SupabaseClient, userId: string): Promise<UserSequenceAttempt[]> {
-  const { data, error } = await supabase
-    .from("user_sequence_attempts")
-    .select("*")
-    .eq("user_id", userId)
-    .order("started_at", { ascending: false });
-
-  if (error) {
-    console.error("user-sequence-attempt.repository.findByUserId error:", error);
-    return [];
-  }
-
-  return (data ?? []).map(toUserSequenceAttempt);
 }
 
 export async function findByUserAndSequenceId(
@@ -64,6 +47,10 @@ export async function findByUserAndSequenceId(
   return (data ?? []).map(toUserSequenceAttempt);
 }
 
+// ================================================================================================
+// Getting attempts by user and sequence ids
+// Providing which sequence id user want the attempt data. result is in UserSequenceAttempt[]
+// ================================================================================================
 export async function findByUserAndSequenceIds(
   supabase: SupabaseClient,
   userId: string,
@@ -84,30 +71,6 @@ export async function findByUserAndSequenceIds(
   }
 
   return (data ?? []).map(toUserSequenceAttempt);
-}
-
-export async function findLatestByUserAndSequenceId(
-  supabase: SupabaseClient,
-  userId: string,
-  sequenceId: string,
-): Promise<UserSequenceAttempt | null> {
-  const { data, error } = await supabase
-    .from("user_sequence_attempts")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("sequence_id", sequenceId)
-    .order("started_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (error) {
-    console.error("user-sequence-attempt.repository.findLatestByUserAndSequenceId error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-
-  return toUserSequenceAttempt(data);
 }
 
 // ================================================================================================
@@ -157,28 +120,6 @@ export async function findLatestAttemptStatsForSequences(
   return sequenceAttemptStats;
 }
 
-export async function findCompletedSequenceIds(
-  supabase: SupabaseClient,
-  userId: string,
-  sequenceIds: string[],
-): Promise<Set<string>> {
-  if (sequenceIds.length === 0) return new Set();
-
-  const { data, error } = await supabase
-    .from("user_sequence_attempts")
-    .select("sequence_id")
-    .eq("user_id", userId)
-    .eq("status", "completed")
-    .in("sequence_id", sequenceIds);
-
-  if (error) {
-    console.error("user-sequence-attempt.repository.findCompletedSequenceIds error:", error);
-    return new Set();
-  }
-
-  return new Set(data?.map((r) => r.sequence_id as string) ?? []);
-}
-
 export async function create(
   supabase: SupabaseClient,
   input: CreateUserSequenceAttemptInput,
@@ -220,10 +161,6 @@ export async function update(
   if (input.hintCount !== undefined) updates.hint_count = input.hintCount;
   if (input.maxCorrectStreak !== undefined) updates.max_correct_streak = input.maxCorrectStreak;
 
-  if (Object.keys(updates).length === 0) {
-    return findById(supabase, id);
-  }
-
   const { data, error } = await supabase.from("user_sequence_attempts").update(updates).eq("id", id).select().single();
 
   if (error) {
@@ -232,15 +169,4 @@ export async function update(
   }
 
   return toUserSequenceAttempt(data);
-}
-
-export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
-  const { error } = await supabase.from("user_sequence_attempts").delete().eq("id", id);
-
-  if (error) {
-    console.error("user-sequence-attempt.repository.remove error:", error);
-    return false;
-  }
-
-  return true;
 }

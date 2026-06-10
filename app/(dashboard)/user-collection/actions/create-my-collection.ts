@@ -7,12 +7,12 @@ import { createUserCustomCollection } from "@/features/collection/services/colle
 import {
   DEFAULT_COLLECTION_COVER_COLOR,
   DEFAULT_COLLECTION_COVER_IMAGE,
-  getMyCollectionsActionContext,
-  revalidateMyCollectionsPage,
+  getUserCollectionActionContext,
+  revalidateUserCollectionPage,
 } from "./shared";
 
 export async function createMyCollectionAction(formData: FormData): Promise<void> {
-  const { supabase, user } = await getMyCollectionsActionContext();
+  const { supabase, user } = await getUserCollectionActionContext();
 
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
@@ -27,9 +27,9 @@ export async function createMyCollectionAction(formData: FormData): Promise<void
     coverImageColor: DEFAULT_COLLECTION_COVER_COLOR,
   });
 
-  revalidateMyCollectionsPage();
+  revalidateUserCollectionPage();
 
   if (collection) {
-    redirect("/my-practices");
+    redirect("/user-collection");
   }
 }

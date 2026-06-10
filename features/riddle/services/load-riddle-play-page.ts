@@ -1,10 +1,12 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
-import { buildVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
+import { calculateVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
 import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { getCollectionRiddleByPair, getCollectionRiddlesByRiddleId } from "@/features/collection-riddles/services/collection-riddles.service";
 import type { Collection } from "@/features/collection/types/collection";
+import type { CollectionType } from "@/features/collection/types/collection-type";
+import { getParentCollectionUrl } from "@/features/riddle/services/resolve-riddle-play-collection";
 import { getUserCustomCollections } from "@/features/collection/services/collection.service";
 import type { MyCollectionOption } from "@/features/riddle/components/add-to-my-collection-picker";
 import { getRiddleById, getActiveRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
@@ -17,6 +19,7 @@ export type RiddlePlayPageData = {
   nextRiddleId: string | null;
   parentCollectionUrl: string;
   collectionSlug: string | null;
+  collectionType: CollectionType | null;
   voltScore: VoltScoreResult | null;
   userCanSaveToUserCollections: boolean;
   userCollections: MyCollectionOption[];
@@ -28,6 +31,7 @@ type LoadRiddlePlayPageInput = {
   user: User | null;
   riddleId: string;
   collection: Collection | null;
+  parentCollectionUrl?: string;
 };
 
 export async function loadRiddlePlayPage({
@@ -35,6 +39,7 @@ export async function loadRiddlePlayPage({
   user,
   riddleId,
   collection,
+  parentCollectionUrl: parentCollectionUrlOverride,
 }: LoadRiddlePlayPageInput): Promise<RiddlePlayPageData | null> {
   const riddle = await getRiddleById(supabase, riddleId);
 
@@ -59,8 +64,9 @@ export async function loadRiddlePlayPage({
   const currentIndex = riddles.findIndex((item) => item.id === riddle.id);
   const nextRiddle = currentIndex >= 0 && currentIndex < riddles.length - 1 ? riddles[currentIndex + 1] : null;
 
-  const parentCollectionUrl = collection ? `/collection/${collection.slug}` : "/collection";
+  const parentCollectionUrl = parentCollectionUrlOverride ?? (collection ? getParentCollectionUrl(collection) : "/collection");
   const collectionSlug = collection?.slug ?? null;
+  const collectionType = collection?.collectionType ?? null;
 
   const userCollections = user ? await getUserCustomCollections(supabase, user.id) : [];
   const userCollectionIds = new Set(userCollections.map((item) => item.id));
@@ -72,7 +78,7 @@ export async function loadRiddlePlayPage({
 
   const voltScore =
     user && isInUserCustomCollection
-      ? buildVoltScore({
+      ? calculateVoltScore({
           attempts: await attemptService.getAttemptsByUserAndSequence(supabase, user.id, riddle.moveSequence.id),
           totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
           rating: getRiddleRatingForScoring(riddle.rating),
@@ -84,6 +90,7 @@ export async function loadRiddlePlayPage({
     nextRiddleId: nextRiddle?.id ?? null,
     parentCollectionUrl,
     collectionSlug,
+    collectionType,
     voltScore,
     userCanSaveToUserCollections: Boolean(user),
     userCollections: userCollections.map((item) => ({

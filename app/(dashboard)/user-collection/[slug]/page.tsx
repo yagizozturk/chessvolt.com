@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { CollectionHeader } from "@/features/collection/components/collection-header";
-import { getCollectionBySlug } from "@/features/collection/services/collection.service";
+import { getUserCustomCollectionBySlug } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
 import { getActiveRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
@@ -9,21 +9,21 @@ import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { mapAttemptStatsBySequenceId as buildMapAttemptStatsBySequenceId } from "@/features/user-sequence-attempt/utilities/map-attempt-stats-by-sequence-id";
 import { toSequenceAttemptStats } from "@/features/user-sequence-attempt/utilities/to-sequence-attempt-stats";
-import { getPublicUser } from "@/lib/supabase/auth";
+import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 type Params = {
   params: Promise<{ slug: string }>;
 };
 
-export default async function CollectionDetailPage({ params }: Params) {
+export default async function UserCollectionDetailPage({ params }: Params) {
   const { slug } = await params;
-  const { user, supabase } = await getPublicUser();
+  const { user, supabase } = await getAuthenticatedUser();
 
   // ================================================================================================
-  // Getting collection informatin by its slug(params)
+  // Getting collection information by its slug
   // ================================================================================================
-  const collection = await getCollectionBySlug(supabase, slug);
-  if (!collection || !collection.isActive) {
+  const collection = await getUserCustomCollectionBySlug(supabase, user.id, slug);
+  if (!collection) {
     notFound();
   }
 
@@ -41,7 +41,7 @@ export default async function CollectionDetailPage({ params }: Params) {
   // Getting latest attempt stats by user for a single riddle for multiple SequenceIds
   // ================================================================================================
   const stats =
-    user && riddleSequenceIds.length > 0
+    riddleSequenceIds.length > 0
       ? await attemptService.getLatestAttemptStatsForSequences(supabase, user.id, riddleSequenceIds)
       : [];
 
@@ -77,7 +77,7 @@ export default async function CollectionDetailPage({ params }: Params) {
   // If there is a game. gameIds set is created. and used for selecting from DB and creating a map.
   // ================================================================================================
   const gameIds = [...new Set(riddles.map((r) => r.gameId).filter((id): id is string => id != null))];
-  const games = await getGamesByIds(supabase, gameIds);
+  const games = gameIds.length > 0 ? await getGamesByIds(supabase, gameIds) : [];
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
   return (
@@ -96,7 +96,7 @@ export default async function CollectionDetailPage({ params }: Params) {
               if (!game && !riddle.moveSequence.displayFen) return null;
               return { riddle, game };
             })
-            .filter((x): x is NonNullable<typeof x> => x != null) // Skip unrenderable riddles: if there’s no game and no displayFen, return null.
+            .filter((x): x is NonNullable<typeof x> => x != null)
             .map(({ riddle, game }) => {
               const attemptStats = toSequenceAttemptStats(mapAttemptStatsBySequenceId[riddle.moveSequence.id]);
 
@@ -106,10 +106,10 @@ export default async function CollectionDetailPage({ params }: Params) {
                   riddle={riddle}
                   game={game}
                   size={240}
-                  href={buildRiddlePath(riddle.id, { collectionSlug: collection.slug })}
+                  href={buildRiddlePath(riddle.id, { collectionSlug: collection.slug, collectionType: "custom" })}
                   isComplete={attemptStats.isComplete}
                   accuracyPercent={attemptStats.accuracyPercent}
-                  displayFen={riddle.moveSequence.displayFen} // Fen value and PGN value are stored in move sequence table
+                  displayFen={riddle.moveSequence.displayFen}
                 />
               );
             })}

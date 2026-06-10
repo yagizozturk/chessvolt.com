@@ -6,7 +6,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { AccuracyCalculator } from "@/components/calculator/accuracy-calculator/accuracy-calculator";
-import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { RatingTimingCalculator } from "@/components/calculator/rating-timing-calculator/rating-timing-calculator";
 import { StreakCalculator } from "@/components/calculator/streak-calculator/streak-calculator";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
@@ -23,8 +22,10 @@ import {
   type MyCollectionOption,
 } from "@/features/riddle/components/add-to-my-collection-picker";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
+import type { CollectionType } from "@/features/collection/types/collection-type";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import { buildCollectionRiddlePath } from "@/features/riddle/utilities/build-collection-riddle-path";
+import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
+import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { SequenceCompletionStats } from "@/features/user-sequence-attempt/types/sequence-completion-stats";
 import { buildSequenceCompletionStats } from "@/features/user-sequence-attempt/utilities/build-sequence-completion-stats";
@@ -42,6 +43,7 @@ type RiddleControllerProps = {
   nextRiddleId?: string | null;
   parentCollectionUrl?: string;
   collectionSlug?: string | null;
+  collectionType?: CollectionType | null;
   userCanSaveToUserCollections?: boolean;
   userCollections?: MyCollectionOption[];
   savedUserCollectionsIds?: string[];
@@ -53,6 +55,7 @@ export default function RiddleController({
   nextRiddleId = null,
   parentCollectionUrl = "/",
   collectionSlug = null,
+  collectionType = null,
   userCanSaveToUserCollections = false,
   userCollections = [],
   savedUserCollectionsIds = [],
@@ -227,18 +230,20 @@ export default function RiddleController({
     });
   };
 
-  const successDestinationPath = nextRiddleId
-    ? collectionSlug
-      ? buildCollectionRiddlePath(collectionSlug, nextRiddleId)
-      : `/riddle/${nextRiddleId}`
+  const hasNextRiddle = nextRiddleId != null && collectionSlug != null;
+  const successDestinationPath = hasNextRiddle
+    ? buildRiddlePath(nextRiddleId, {
+        collectionSlug,
+        collectionType: collectionType ?? "admin",
+      })
     : parentCollectionUrl;
-  const successButtonLabel = nextRiddleId ? "Next riddle" : "Back to collection";
+  const successButtonLabel = hasNextRiddle ? "Next riddle" : "Back to collection";
 
   const handleContinueClick = () => {
     router.push(successDestinationPath);
   };
 
-  const successDescription = nextRiddleId
+  const successDescription = hasNextRiddle
     ? "You solved this riddle. Continue to the next one when you are ready."
     : parentCollectionUrl === "/"
       ? "You solved this riddle. Continue from the home page when you are ready."
@@ -283,10 +288,7 @@ export default function RiddleController({
               totalMoveCount={moves.length}
             />
             <RatingTimingCalculator rating={timingRating} durationMs={elapsedMs} />
-            <StreakCalculator
-              maxCorrectStreak={liveAttemptStats.maxCorrectStreak}
-              totalMoveCount={moves.length}
-            />
+            <StreakCalculator maxCorrectStreak={liveAttemptStats.maxCorrectStreak} totalMoveCount={moves.length} />
             <VoltCalculator result={voltScore} className="mt-2 w-full" />
           </div>
           <div className="flex items-center" data-tour="progress">

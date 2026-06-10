@@ -17,7 +17,7 @@ type RiddleBoardCardProps = {
   /** true = correct, false = wrong, undefined = not attempted, Undefined ı tipin bir parçası yapmak için ? ni ekleriz */
   isComplete?: boolean;
   accuracyPercent?: number | null;
-  href?: string;
+  href: string;
   displayFen?: string | null;
 };
 
@@ -47,7 +47,7 @@ export function RiddleBoardCard({
 
   return (
     <Link
-      href={href ?? `/riddle/${riddle.id}`}
+      href={href}
       className="bg-card border-b-card-shadow flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6"
     >
       <div>

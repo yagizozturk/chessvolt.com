@@ -1,4 +1,4 @@
-import { buildVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
+import { calculateVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import type { UserSequenceAttempt } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 
@@ -8,7 +8,7 @@ export type SequenceVoltContext = {
   rating: number;
 };
 
-export function buildVoltScoresBySequenceId(
+export function getVoltScoresBySequenceId(
   attempts: UserSequenceAttempt[],
   contexts: SequenceVoltContext[],
 ): Record<string, VoltScoreResult> {
@@ -23,7 +23,7 @@ export function buildVoltScoresBySequenceId(
   return Object.fromEntries(
     contexts.map((context) => [
       context.sequenceId,
-      buildVoltScore({
+      calculateVoltScore({
         attempts: attemptsBySequenceId.get(context.sequenceId) ?? [],
         totalMoveCount: context.totalMoveCount,
         rating: context.rating,

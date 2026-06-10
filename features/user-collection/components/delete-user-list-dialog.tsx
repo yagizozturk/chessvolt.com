@@ -3,7 +3,7 @@
 import { Trash2 } from "lucide-react";
 import { useTransition } from "react";
 
-import { deleteMyCollectionAction } from "@/app/(dashboard)/my-practices/actions";
+import { deleteMyCollectionAction } from "@/app/(dashboard)/user-collection/actions";
 import {
   AlertDialog,
   AlertDialogAction,

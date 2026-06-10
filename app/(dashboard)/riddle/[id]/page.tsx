@@ -1,35 +1,45 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
-import { getCollectionById } from "@/features/collection/services/collection.service";
-import { getCollectionRiddlesByRiddleId } from "@/features/collection-riddles/services/collection-riddles.service";
+import { parseCollectionType } from "@/features/collection/types/collection-type";
 import RiddleController from "@/features/riddle/components/riddle-controller";
 import { loadRiddlePlayPage } from "@/features/riddle/services/load-riddle-play-page";
-import { buildCollectionRiddlePath } from "@/features/riddle/utilities/build-collection-riddle-path";
-import { getPublicUser } from "@/lib/supabase/auth";
+import { resolveRiddlePlayCollection } from "@/features/riddle/services/resolve-riddle-play-collection";
+import { getAuthenticatedUser, getPublicUser } from "@/lib/supabase/auth";
 
-type Params = {
+type PageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ collection?: string; type?: string }>;
 };
 
-export default async function RiddlePage({ params }: Params) {
-  const { user, supabase } = await getPublicUser();
+export default async function RiddlePage({ params, searchParams }: PageProps) {
   const { id } = await params;
+  const { collection: collectionSlug, type } = await searchParams;
 
-  const collectionRiddles = await getCollectionRiddlesByRiddleId(supabase, id);
-  const firstCollectionId = collectionRiddles[0]?.collectionId ?? null;
+  if (!collectionSlug?.trim()) {
+    notFound();
+  }
 
-  if (firstCollectionId) {
-    const collection = await getCollectionById(supabase, firstCollectionId);
-    if (collection?.isActive) {
-      redirect(buildCollectionRiddlePath(collection.slug, id));
-    }
+  const collectionType = parseCollectionType(type) ?? "admin";
+  const { user, supabase } =
+    collectionType === "custom" ? await getAuthenticatedUser() : await getPublicUser();
+
+  const resolved = await resolveRiddlePlayCollection({
+    supabase,
+    user,
+    collectionSlug: collectionSlug.trim(),
+    collectionType,
+  });
+
+  if (!resolved) {
+    notFound();
   }
 
   const pageData = await loadRiddlePlayPage({
     supabase,
     user,
     riddleId: id,
-    collection: null,
+    collection: resolved.collection,
+    parentCollectionUrl: resolved.parentCollectionUrl,
   });
 
   if (!pageData) {
@@ -43,6 +53,7 @@ export default async function RiddlePage({ params }: Params) {
       nextRiddleId={pageData.nextRiddleId}
       parentCollectionUrl={pageData.parentCollectionUrl}
       collectionSlug={pageData.collectionSlug}
+      collectionType={pageData.collectionType}
       userCanSaveToUserCollections={pageData.userCanSaveToUserCollections}
       userCollections={pageData.userCollections}
       savedUserCollectionsIds={pageData.savedUserCollectionsIds}

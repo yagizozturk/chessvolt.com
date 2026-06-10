@@ -2,10 +2,10 @@
 
 import { deleteUserCustomCollection } from "@/features/collection/services/collection.service";
 
-import { getMyCollectionsActionContext, revalidateMyCollectionsPage } from "./shared";
+import { getUserCollectionActionContext, revalidateUserCollectionPage } from "./shared";
 
 export async function deleteMyCollectionAction(formData: FormData): Promise<void> {
-  const { supabase, user } = await getMyCollectionsActionContext();
+  const { supabase, user } = await getUserCollectionActionContext();
   const id = String(formData.get("id") ?? "").trim();
   if (!id) return;
 
@@ -14,5 +14,5 @@ export async function deleteMyCollectionAction(formData: FormData): Promise<void
     userId: user.id,
   });
 
-  revalidateMyCollectionsPage();
+  revalidateUserCollectionPage();
 }

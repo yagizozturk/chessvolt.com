@@ -11,8 +11,8 @@ import { formatCollectionDifficultyLabel } from "@/features/collection/types/col
 import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
 import { formatCollectionRiddleCount } from "@/features/collection/utilities/collection-riddle-count-format.utils";
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
-import { DeleteUserListDialog } from "@/features/user-practices/components/delete-user-list-dialog";
-import { EditUserListDialog } from "@/features/user-practices/components/edit-user-list-dialog";
+import { DeleteUserListDialog } from "@/features/user-collection/components/delete-user-list-dialog";
+import { EditUserListDialog } from "@/features/user-collection/components/edit-user-list-dialog";
 import { cn } from "@/lib/utils";
 
 type UserCollectionCardProps = {
@@ -51,7 +51,7 @@ export function UserCollectionCard({ collection }: UserCollectionCardProps) {
           <EditUserListDialog collection={collection} />
           <DeleteUserListDialog collection={collection} />
           <Link
-            href={`/collection/${collection.slug}`}
+            href={`/user-collection/${collection.slug}`}
             className={cn(buttonVariants({ variant: "voltCompact", size: "xs" }), "ml-auto shrink-0")}
           >
             Play

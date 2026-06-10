@@ -7,7 +7,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as userSequenceAttemptRepo from "@/features/user-sequence-attempt/repository/user-sequence-attempt.repository";
 import type {
-  CreateUserSequenceAttemptInput,
   SequenceAttemptStats,
   UpdateUserSequenceAttemptInput,
   UserSequenceAttempt,
@@ -15,18 +14,6 @@ import type {
 
 export async function getAttemptById(supabase: SupabaseClient, id: string): Promise<UserSequenceAttempt | null> {
   return userSequenceAttemptRepo.findById(supabase, id);
-}
-
-export async function getAttemptsByUserId(supabase: SupabaseClient, userId: string): Promise<UserSequenceAttempt[]> {
-  return userSequenceAttemptRepo.findByUserId(supabase, userId);
-}
-
-export async function getLatestAttemptForSequence(
-  supabase: SupabaseClient,
-  userId: string,
-  sequenceId: string,
-): Promise<UserSequenceAttempt | null> {
-  return userSequenceAttemptRepo.findLatestByUserAndSequenceId(supabase, userId, sequenceId);
 }
 
 export async function getAttemptsByUserAndSequence(
@@ -37,6 +24,10 @@ export async function getAttemptsByUserAndSequence(
   return userSequenceAttemptRepo.findByUserAndSequenceId(supabase, userId, sequenceId);
 }
 
+// ================================================================================================
+// Getting attempts by user and sequence ids
+// Providing which sequence id user want the attempt data. result is in UserSequenceAttempt[]
+// ================================================================================================
 export async function getAttemptsByUserAndSequenceIds(
   supabase: SupabaseClient,
   userId: string,
@@ -56,14 +47,6 @@ export async function getLatestAttemptStatsForSequences(
   return userSequenceAttemptRepo.findLatestAttemptStatsForSequences(supabase, userId, sequenceIds);
 }
 
-export async function getCompletedSequenceIds(
-  supabase: SupabaseClient,
-  userId: string,
-  sequenceIds: string[],
-): Promise<Set<string>> {
-  return userSequenceAttemptRepo.findCompletedSequenceIds(supabase, userId, sequenceIds);
-}
-
 export async function startAttempt(
   supabase: SupabaseClient,
   userId: string,
@@ -74,13 +57,6 @@ export async function startAttempt(
     sequenceId,
     status: "started",
   });
-}
-
-export async function createAttempt(
-  supabase: SupabaseClient,
-  input: CreateUserSequenceAttemptInput,
-): Promise<UserSequenceAttempt | null> {
-  return userSequenceAttemptRepo.create(supabase, input);
 }
 
 export async function updateAttempt(
@@ -111,8 +87,4 @@ export async function completeAttempt(
     hintCount: options?.hintCount,
     maxCorrectStreak: options?.maxCorrectStreak,
   });
-}
-
-export async function deleteAttempt(supabase: SupabaseClient, id: string): Promise<boolean> {
-  return userSequenceAttemptRepo.remove(supabase, id);
 }

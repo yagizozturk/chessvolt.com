@@ -3,7 +3,7 @@
 import { Pencil } from "lucide-react";
 import { useTransition } from "react";
 
-import { updateMyCollectionAction } from "@/app/(dashboard)/my-practices/actions";
+import { updateMyCollectionAction } from "@/app/(dashboard)/user-collection/actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

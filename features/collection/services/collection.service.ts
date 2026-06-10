@@ -59,6 +59,17 @@ export async function getUserCustomCollections(supabase: SupabaseClient, userId:
 }
 
 // ============================================================================
+// Getting user custom collection by slug for a user
+// ============================================================================
+export async function getUserCustomCollectionBySlug(
+  supabase: SupabaseClient,
+  userId: string,
+  slug: string,
+): Promise<Collection | null> {
+  return collectionRepo.findUserCustomCollectionBySlug(supabase, userId, slug);
+}
+
+// ============================================================================
 // Getting user created collections by User Id with Riddle Count and Themes
 // ============================================================================
 export async function getUserCollectionsWithRiddleCountAndThemes(

@@ -3,6 +3,8 @@ import Link from "next/link";
 
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
+import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/ui/blur-fade";
@@ -21,11 +23,13 @@ type OpeningBoardCardProps = {
   description?: string | null;
   variantCount?: number;
   moves?: string | null;
+  voltScore?: VoltScoreResult | null;
 };
 
 export function OpeningBoardCard({
   id,
   name,
+  group,
   size = 200,
   isComplete,
   accuracyPercent,
@@ -34,6 +38,7 @@ export function OpeningBoardCard({
   description,
   variantCount,
   moves,
+  voltScore = null,
 }: OpeningBoardCardProps) {
   const moveCountLabel = formatMoveCountLabel(moves ?? null);
 
@@ -49,30 +54,39 @@ export function OpeningBoardCard({
           <DisplayBoard sourceId={id} initialFen={fen} size={size} coordinates={false} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
+          {group ? (
+            <Badge variant="secondary" className="w-fit">
+              <BookOpen data-icon="inline-start" />
+              {group}
+            </Badge>
+          ) : null}
           <p className="text-xl font-bold">{name}</p>
-          <p className="text-muted-foreground text-base">{description}</p>
+          {description ? <p className="text-muted-foreground text-base">{description}</p> : null}
           {moveCountLabel ? (
             <BoardCardMetaRow icon={Puzzle} label={moveCountLabel} className="text-muted-foreground text-sm" />
           ) : null}
-          <div className="mt-auto flex items-center gap-3">
-            <div className="flex min-w-0 flex-wrap items-center gap-3">
-              {accuracyPercent != null ? (
-                <BoardCardMetaRow
-                  icon={Target}
-                  label={`${accuracyPercent}% accuracy`}
-                  className="text-muted-foreground text-sm"
-                />
-              ) : null}
-              {variantCount !== undefined ? (
-                <Badge variant="secondary" className="rounded-lg p-3">
-                  <BookOpen />
-                  <span>{variantCount}</span>
-                </Badge>
-              ) : null}
+          <div className={voltScore ? "mt-auto flex flex-col gap-2" : "mt-auto flex items-center gap-3"}>
+            {voltScore ? <VoltCalculator result={voltScore} showDetails={false} /> : null}
+            <div className="flex items-center gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-3">
+                {accuracyPercent != null ? (
+                  <BoardCardMetaRow
+                    icon={Target}
+                    label={`${accuracyPercent}% accuracy`}
+                    className="text-muted-foreground text-sm"
+                  />
+                ) : null}
+                {variantCount !== undefined ? (
+                  <Badge variant="secondary" className="rounded-lg p-3">
+                    <BookOpen />
+                    <span>{variantCount}</span>
+                  </Badge>
+                ) : null}
+              </div>
+              <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
+                Play
+              </Button>
             </div>
-            <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
-              Play
-            </Button>
           </div>
         </div>
       </Link>

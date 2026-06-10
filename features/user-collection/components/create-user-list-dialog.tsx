@@ -3,7 +3,7 @@
 import { Plus } from "lucide-react";
 import { useTransition } from "react";
 
-import { createMyCollectionAction } from "@/app/(dashboard)/my-practices/actions";
+import { createMyCollectionAction } from "@/app/(dashboard)/user-collection/actions";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

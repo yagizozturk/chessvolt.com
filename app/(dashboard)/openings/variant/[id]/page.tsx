@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { buildVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
+import { calculateVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
 import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import OpeningVariantController from "@/features/openings/components/opening-variant-controller";
@@ -62,7 +62,7 @@ export default async function OpeningVariantPage({ params }: Params) {
 
   const voltScore =
     user && isInPracticeList
-      ? buildVoltScore({
+      ? calculateVoltScore({
           attempts: await attemptService.getAttemptsByUserAndSequence(
             supabase,
             user.id,

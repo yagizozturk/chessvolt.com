@@ -17,7 +17,7 @@ export function toVoltAttemptRecord(attempt: UserSequenceAttempt): VoltAttemptRe
   };
 }
 
-export type BuildVoltScoreParams = {
+export type CalculateVoltScoreParams = {
   attempts: UserSequenceAttempt[];
   totalMoveCount: number;
   rating: number;
@@ -25,13 +25,13 @@ export type BuildVoltScoreParams = {
   scoredDayCount?: number;
 };
 
-export function buildVoltScore({
+export function calculateVoltScore({
   attempts,
   totalMoveCount,
   rating,
   lookbackMonths,
   scoredDayCount,
-}: BuildVoltScoreParams): VoltScoreResult {
+}: CalculateVoltScoreParams): VoltScoreResult {
   return computeVoltScore({
     attempts: attempts.map(toVoltAttemptRecord),
     totalMoveCount,
