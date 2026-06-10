@@ -182,22 +182,6 @@ export async function findCollectionById(supabase: SupabaseClient, id: string): 
 }
 
 // ============================================================================
-// Finding collection by Slug
-// ============================================================================
-export async function findCollectionBySlug(supabase: SupabaseClient, slug: string): Promise<Collection | null> {
-  const { data, error } = await supabase.from("collections").select("*").eq("slug", slug).maybeSingle();
-
-  if (error) {
-    console.error("collection.repository.findCollectionBySlug error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-
-  return toCollection(data);
-}
-
-// ============================================================================
 // Finding collection by Slug and collection type
 // ============================================================================
 export async function findCollectionBySlugAndType(

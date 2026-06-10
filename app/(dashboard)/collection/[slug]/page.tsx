@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
 import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { CollectionHeader } from "@/features/collection/components/collection-header";
-import { getCollectionBySlug } from "@/features/collection/services/collection.service";
+import { getCollectionBySlugAndType } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
 import { getActiveRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
@@ -25,7 +25,7 @@ export default async function CollectionDetailPage({ params }: Params) {
   // ================================================================================================
   // Getting collection informatin by its slug(params)
   // ================================================================================================
-  const collection = await getCollectionBySlug(supabase, slug);
+  const collection = await getCollectionBySlugAndType(supabase, slug, "admin");
   if (!collection || !collection.isActive) {
     notFound();
   }
@@ -129,7 +129,7 @@ export default async function CollectionDetailPage({ params }: Params) {
                   riddle={riddle}
                   game={game}
                   size={240}
-                  href={buildRiddlePath(riddle.id, { collectionSlug: collection.slug })}
+                  href={buildRiddlePath(riddle.id, { collectionSlug: collection.slug, collectionType: "admin" })}
                   isComplete={attemptStats.isComplete}
                   accuracyPercent={attemptStats.accuracyPercent}
                   displayFen={riddle.moveSequence.displayFen} // Fen value and PGN value are stored in move sequence table

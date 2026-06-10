@@ -217,6 +217,9 @@ export default function RiddleController({
     });
   };
 
+  // ================================================================================================
+  // Handle the continue click and redirect to the next riddle or back to the collection
+  // ================================================================================================
   const hasNextRiddle = nextRiddleUrl != null;
   const successDestinationPath = hasNextRiddle ? nextRiddleUrl : parentCollectionUrl;
   const successButtonLabel = hasNextRiddle ? "Next riddle" : "Back to collection";
@@ -230,9 +233,7 @@ export default function RiddleController({
 
   const successDescription = hasNextRiddle
     ? "You solved this riddle. Continue to the next one when you are ready."
-    : parentCollectionUrl === "/"
-      ? "You solved this riddle. Continue from the home page when you are ready."
-      : "You solved this riddle. Return to the collection when you are ready.";
+    : "You solved this riddle. Return to the collection when you are ready.";
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-6">
@@ -279,7 +280,7 @@ export default function RiddleController({
             <GoalViewer goals={sortedGoals} />
           </div>
           <div className="mt-auto" data-tour="hint-button">
-            {isUserLoggedIn ? (
+            {isUserLoggedIn && userCollections.length > 0 ? (
               <AddToMyCollectionPicker
                 riddleId={riddle.id}
                 collections={userCollections}

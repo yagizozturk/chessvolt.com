@@ -37,13 +37,6 @@ export async function getCollectionById(supabase: SupabaseClient, id: string): P
 }
 
 // ============================================================================
-// Getting collection by Slug
-// ============================================================================
-export async function getCollectionBySlug(supabase: SupabaseClient, slug: string): Promise<Collection | null> {
-  return collectionRepo.findCollectionBySlug(supabase, slug);
-}
-
-// ============================================================================
 // Getting collection by Slug and collection type
 // ============================================================================
 export async function getCollectionBySlugAndType(

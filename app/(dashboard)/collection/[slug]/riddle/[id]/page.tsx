@@ -1,11 +1,18 @@
 import { notFound } from "next/navigation";
 
-import { getCollectionRiddleByRiddleIdAndCollectionId } from "@/features/collection-riddles/services/collection-riddles.service";
-import { getCollectionBySlugAndType } from "@/features/collection/services/collection.service";
+import { calculateVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
+import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
+import {
+  getCollectionRiddleByRiddleIdAndCollectionId,
+  getCollectionRiddlesByRiddleId,
+} from "@/features/collection-riddles/services/collection-riddles.service";
+import { getCollectionBySlugAndType, getUserCollections } from "@/features/collection/services/collection.service";
 import RiddleController from "@/features/riddle/components/riddle-controller";
 import { getActiveRiddlesByCollectionId, getRiddleById } from "@/features/riddle/services/riddle.service";
+import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
 import { getParentCollectionUrl } from "@/features/riddle/utilities/get-parent-collection-url";
+import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type PageProps = {
@@ -33,10 +40,7 @@ export default async function CollectionRiddlePage({ params }: PageProps) {
   }
 
   // =============================================================================
-  // Getting collection other riddles information by current riddle id and collection id
-  // This checks that this riddle is linked to this collection in the collection_riddles table.
-  // If there’s no join row for that riddle.id + collection.id, the page returns 404 so you
-  // can’t play a riddle under a collection slug it doesn’t belong to.
+  // Verifying this riddle belongs to this collection in collection_riddles
   // =============================================================================
   const link = await getCollectionRiddleByRiddleIdAndCollectionId(supabase, riddle.id, collection.id);
   if (!link) {
@@ -53,12 +57,48 @@ export default async function CollectionRiddlePage({ params }: PageProps) {
     ? buildRiddlePath(nextRiddle.id, { collectionSlug: slug, collectionType: "admin" })
     : null;
 
+  // =============================================================================
+  // Getting user collections and collection riddles by riddle id
+  // =============================================================================
+  const [userCollections, collectionRiddles, attempts] = await Promise.all([
+    user ? getUserCollections(supabase, user.id) : Promise.resolve([]),
+    user ? getCollectionRiddlesByRiddleId(supabase, riddle.id) : Promise.resolve([]),
+    user ? attemptService.getAttemptsByUserAndSequence(supabase, user.id, riddle.moveSequence.id) : Promise.resolve([]),
+  ]);
+
+  // =============================================================================
+  // That tells the picker which of the user’s collections already contain this
+  // riddle (including the one they’re playing from).
+  // It’s the list of your custom collection IDs that already contain this riddle
+  // =============================================================================
+  const userCollectionIds = new Set(userCollections.map((item) => item.id));
+  const userCollectionIdsHasCurrentRiddle = collectionRiddles
+    .map((collectionRiddle) => collectionRiddle.collectionId)
+    .filter((collectionId) => userCollectionIds.has(collectionId));
+
+  // =============================================================================
+  // Building volt score for the riddle
+  // =============================================================================
+  const voltScore = user
+    ? calculateVoltScore({
+        attempts,
+        totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
+        rating: getRiddleRatingForScoring(riddle.rating),
+      })
+    : null;
+
   return (
     <RiddleController
       riddle={riddle}
       nextRiddleUrl={nextRiddleUrl}
       parentCollectionUrl={getParentCollectionUrl(collection)}
       isUserLoggedIn={Boolean(user)}
+      userCollections={userCollections.map((item) => ({
+        id: item.id,
+        title: item.title,
+      }))}
+      userCollectionIdsHasCurrentRiddle={userCollectionIdsHasCurrentRiddle}
+      voltScore={voltScore}
     />
   );
 }

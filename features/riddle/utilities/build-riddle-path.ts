@@ -5,10 +5,6 @@ export type RiddlePathContext = {
   collectionType?: CollectionType;
 };
 
-export function buildStandaloneRiddlePath(riddleId: string): string {
-  return `/riddle/${riddleId}`;
-}
-
 export function buildRiddlePath(
   riddleId: string,
   { collectionSlug, collectionType = "admin" }: RiddlePathContext,

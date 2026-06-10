@@ -40,10 +40,7 @@ export default async function UserCollectionRiddlePage({ params }: PageProps) {
   }
 
   // =============================================================================
-  // Getting collection other riddles information by current riddle id and collection id
-  // This checks that this riddle is linked to this collection in the collection_riddles table.
-  // If there’s no join row for that riddle.id + collection.id, the page returns 404 so you
-  // can’t play a riddle under a collection slug it doesn’t belong to.
+  // Verifying this riddle belongs to this collection in collection_riddles
   // =============================================================================
   const link = await getCollectionRiddleByRiddleIdAndCollectionId(supabase, riddle.id, collection.id);
   if (!link) {
@@ -62,7 +59,7 @@ export default async function UserCollectionRiddlePage({ params }: PageProps) {
 
   // =============================================================================
   // Getting user collections and collection riddles by riddle id
-
+  // =============================================================================
   const [userCollections, collectionRiddles, attempts] = await Promise.all([
     getUserCollections(supabase, user.id),
     getCollectionRiddlesByRiddleId(supabase, riddle.id),

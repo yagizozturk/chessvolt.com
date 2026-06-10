@@ -26,7 +26,7 @@ export default async function UserCollectionDetailPage({ params }: Params) {
   // Getting collection information by its slug
   // ================================================================================================
   const collection = await getUserCustomCollectionBySlug(supabase, user.id, slug);
-  if (!collection) {
+  if (!collection || !collection.isActive) {
     notFound();
   }
 

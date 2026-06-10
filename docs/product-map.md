@@ -31,7 +31,7 @@ Content is managed through an **admin** panel. Auth and data are backed by **Sup
 | Onboarding           | `/onboarding`                                               | `onboarding`, `onboarding-question`, `onboarding-option`, `onboarding-option-theme`, `user-onboarding-answer`, `profile` | Gated by middleware; creates starter collection |
 | Browse collections   | `/collection`                                               | `collection`, `content-theme`, `theme`                                                                                   | Filterable list with themes                     |
 | Collection detail    | `/collection/[slug]`                                        | `collection`, `riddle`, `collection-riddles`, `game`, `user-sequence-attempt`                                             | Riddle cards with progress + volt               |
-| Play a riddle        | `/riddle/[id]`                                              | `riddle`, `move-sequence`, `user-sequence-attempt`, `user-sequence-attempt-event`, `collection-riddles`                   | Core play loop                                  |
+| Play a riddle        | `/collection/[slug]/riddle/[id]`, `/user-collection/[slug]/riddle/[id]` | `riddle`, `move-sequence`, `user-sequence-attempt`, `user-sequence-attempt-event`, `collection-riddles`                   | Core play loop                                  |
 | My Practices         | `/my-practices`                                                | `collection`, `user-practice-opening-variant`                                                                            | Custom collections + practice openings tabs     |
 | Openings list        | `/openings`                                                 | `openings`                                                                                                               | Filter by opening type                          |
 | Opening detail       | `/openings/[slug]/[id]`                                     | `openings`                                                                                                               | Variants for one opening                        |
@@ -69,7 +69,8 @@ Key shared pieces:
 
 Entry points to trace first:
 
-- `app/(dashboard)/riddle/[id]/page.tsx` → `features/riddle/components/riddle-controller.tsx`
+- `app/(dashboard)/collection/[slug]/riddle/[id]/page.tsx` → `features/riddle/components/riddle-controller.tsx`
+- `app/(dashboard)/user-collection/[slug]/riddle/[id]/page.tsx` → `features/riddle/components/riddle-controller.tsx`
 - `app/(dashboard)/openings/variant/[id]/page.tsx` → `features/openings/components/opening-variant-controller.tsx`
 - `app/(dashboard)/collection/[slug]/page.tsx` → collection list + attempt summaries
 
