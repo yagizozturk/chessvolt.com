@@ -1,5 +1,6 @@
 "use client";
 
+import { Zap } from "lucide-react";
 import { Label, PolarAngleAxis, PolarGrid, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
 import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
@@ -8,18 +9,39 @@ import { cn } from "@/lib/utils";
 const chartConfig = {
   value: {
     label: "Value",
-    color: "#2f7df6",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
+
+const DEFAULT_SIZE = 320;
 
 type RadialChartProps = {
   currentValue: number;
   totalValue: number;
+  /** Chart width/height in px. Scales ring geometry and center labels proportionally. */
+  size?: number;
+  /** When true, shows the numeric score below the percentage label. */
+  showValue?: boolean;
   className?: string;
 };
 
-export function RadialChart({ currentValue, totalValue, className }: RadialChartProps) {
+export function RadialChart({
+  currentValue,
+  totalValue,
+  size = DEFAULT_SIZE,
+  showValue = false,
+  className,
+}: RadialChartProps) {
   const percentage = Math.round((currentValue / totalValue) * 100);
+  const scale = size / DEFAULT_SIZE;
+  const innerRadius = Math.round(65 * scale);
+  const outerRadius = Math.round(95 * scale);
+  const polarRadius = [Math.round(86 * scale), Math.round(74 * scale)] as const;
+  const percentageFontSize = Math.round(48 * scale);
+  const valueFontSize = Math.round(14 * scale);
+  const iconSize = Math.round(28 * scale);
+  const centerBoxWidth = Math.round(120 * scale);
+  const centerBoxHeight = Math.round(showValue ? 96 * scale : 80 * scale);
 
   const chartData = [
     {
@@ -30,16 +52,27 @@ export function RadialChart({ currentValue, totalValue, className }: RadialChart
   ];
 
   return (
-    <ChartContainer config={chartConfig} className={cn("mx-auto size-[320px]", className)}>
-      <RadialBarChart data={chartData} startAngle={90} endAngle={-270} innerRadius={65} outerRadius={95}>
+    <ChartContainer
+      config={chartConfig}
+      className={cn("mx-auto aspect-square", className)}
+      style={{ width: size, height: size }}
+      initialDimension={{ width: size, height: size }}
+    >
+      <RadialBarChart
+        data={chartData}
+        startAngle={90}
+        endAngle={-270}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+      >
         <PolarAngleAxis type="number" domain={[0, totalValue]} tick={false} />
 
         <PolarGrid
           gridType="circle"
           radialLines={false}
           stroke="none"
-          className="first:fill-[#262626] last:fill-[#050505]"
-          polarRadius={[86, 74]}
+          className="first:fill-[var(--color-muted)] last:fill-[var(--color-card)]"
+          polarRadius={[...polarRadius]}
         />
 
         <RadialBar dataKey="value" cornerRadius={0} background={false} />
@@ -48,16 +81,40 @@ export function RadialChart({ currentValue, totalValue, className }: RadialChart
           <Label
             content={({ viewBox }) => {
               if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                return (
-                  <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                    <tspan x={viewBox.cx} y={(viewBox.cy || 0) - 4} className="fill-white text-5xl font-bold">
-                      {currentValue.toLocaleString()}
-                    </tspan>
+                const cx = viewBox.cx ?? 0;
+                const cy = viewBox.cy ?? 0;
 
-                    <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 30} className="fill-neutral-400 text-base">
-                      {percentage}% Volt
-                    </tspan>
-                  </text>
+                return (
+                  <foreignObject
+                    x={cx - centerBoxWidth / 2}
+                    y={cy - centerBoxHeight / 2}
+                    width={centerBoxWidth}
+                    height={centerBoxHeight}
+                  >
+                    <div className="flex h-full flex-col items-center justify-center text-center">
+                      <div className="flex flex-col items-center gap-1">
+                        <Zap
+                          aria-hidden
+                          className="fill-primary text-primary shrink-0"
+                          style={{ width: iconSize, height: iconSize }}
+                        />
+                        <span
+                          className="text-foreground font-bold tabular-nums"
+                          style={{ fontSize: percentageFontSize, lineHeight: 1 }}
+                        >
+                          {percentage}%
+                        </span>
+                      </div>
+                      {showValue ? (
+                        <span
+                          className="text-muted-foreground tabular-nums"
+                          style={{ fontSize: valueFontSize, marginTop: Math.round(6 * scale) }}
+                        >
+                          {currentValue.toLocaleString()}
+                        </span>
+                      ) : null}
+                    </div>
+                  </foreignObject>
                 );
               }
 

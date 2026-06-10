@@ -265,10 +265,9 @@ export default function RiddleController({
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
         </div>
-        <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
+        <div className="bg-card relative flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
           <div className="flex flex-col items-center justify-center gap-1 text-center">
             <span className="text-lg font-bold">{riddle.title ?? "Untitled riddle"}</span>
-            <VoltCalculator result={voltScore} className="mt-2 w-full" />
           </div>
           <div className="flex items-center" data-tour="progress">
             <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
@@ -278,6 +277,11 @@ export default function RiddleController({
           </div>
           <div data-tour="goals">
             <GoalViewer goals={sortedGoals} />
+          </div>
+          <div className="relative">
+            <div className="absolute right-[-20px] bottom-[-15px] z-10">
+              <VoltCalculator result={voltScore} chartSize={170} />
+            </div>
           </div>
           <div className="mt-auto" data-tour="hint-button">
             {isUserLoggedIn && userCollections.length > 0 ? (
