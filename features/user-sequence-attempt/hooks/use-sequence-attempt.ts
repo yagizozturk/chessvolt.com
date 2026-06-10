@@ -13,8 +13,6 @@ import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types
 
 type AttemptCounters = Omit<UpdateSequenceAttemptPayload, "attemptId" | "status">;
 
-const TERMINAL_STATUSES: RiddleAttemptStatus[] = ["completed", "failed", "abandoned"];
-
 export function useSequenceAttempt(sequenceId: string) {
   const attemptIdRef = useRef<string | null>(null);
   const startPromiseRef = useRef<Promise<string | null> | null>(null);
@@ -67,7 +65,7 @@ export function useSequenceAttempt(sequenceId: string) {
     return startPromiseRef.current;
   }, [sequenceId]);
 
-  const updateAttemptStatus = useCallback(
+  const updateAttemptResults = useCallback(
     async (status: RiddleAttemptStatus, counters?: AttemptCounters) => {
       const attemptId = await ensureAttemptStarted();
       if (!attemptId) return;
@@ -75,13 +73,10 @@ export function useSequenceAttempt(sequenceId: string) {
       setIsLoading(true);
       setError(null);
 
-      const durationMs = TERMINAL_STATUSES.includes(status) ? getTimeFromStartMs() : undefined;
-
       try {
         await updateSequenceAttempt(sequenceId, {
           attemptId,
           status,
-          ...(durationMs != null ? { durationMs } : {}),
           ...counters,
         });
       } catch (err) {
@@ -90,7 +85,7 @@ export function useSequenceAttempt(sequenceId: string) {
         setIsLoading(false);
       }
     },
-    [ensureAttemptStarted, getTimeFromStartMs, sequenceId],
+    [ensureAttemptStarted, sequenceId],
   );
 
   const recordEvent = useCallback(
@@ -114,7 +109,7 @@ export function useSequenceAttempt(sequenceId: string) {
     getAttemptId,
     getTimeFromStartMs,
     ensureAttemptStarted,
-    updateAttemptStatus,
+    updateAttemptResults,
     recordEvent,
     isLoading,
     error,

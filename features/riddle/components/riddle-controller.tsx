@@ -2,12 +2,9 @@
 
 import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
-import { AccuracyCalculator } from "@/components/calculator/accuracy-calculator/accuracy-calculator";
-import { RatingTimingCalculator } from "@/components/calculator/rating-timing-calculator/rating-timing-calculator";
-import { StreakCalculator } from "@/components/calculator/streak-calculator/streak-calculator";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
@@ -16,23 +13,23 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
+import type { CollectionType } from "@/features/collection/types/collection-type";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import {
   AddToMyCollectionPicker,
   type MyCollectionOption,
 } from "@/features/riddle/components/add-to-my-collection-picker";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
-import type { CollectionType } from "@/features/collection/types/collection-type";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
-import type { SequenceCompletionStats } from "@/features/user-sequence-attempt/types/sequence-completion-stats";
-import { buildSequenceCompletionStats } from "@/features/user-sequence-attempt/utilities/build-sequence-completion-stats";
+import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
-  buildAttemptCounters,
-  bumpCorrectStreak,
-} from "@/features/user-sequence-attempt/utilities/sequence-play-attempt-counters";
+  type AttemptPayload,
+  createAttemptPayload,
+  createSequenceCompleteStats,
+} from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
+import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -61,25 +58,32 @@ export default function RiddleController({
   savedUserCollectionsIds = [],
   voltScore = null,
 }: RiddleControllerProps) {
-  const sequenceId = riddle.moveSequence.id;
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
-  const [isCompleted, setIsCompleted] = useState(false);
+  const sequenceId = riddle.moveSequence.id; // Every sequence has its own moves and PGN. Every Riddle has sequenceId
+  const [isCompleted, setIsCompleted] = useState(false); // Whether the riddle is completed
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [completionStats, setCompletionStats] = useState<SequenceCompletionStats | null>(null);
-  const [attemptStatsTick, setAttemptStatsTick] = useState(0);
-  const [elapsedMs, setElapsedMs] = useState(0);
-  const { updateAttemptStatus, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
+  const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null); // Values that are shown in Dialog
+  const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
   const { playLevelUpSound } = useBoardSounds();
+
+  // ================================================================================================
+  // Ref counters for the riddle. Refs are invisible to React’s update cycle.
+  // These attempt numbers are stored in refs
+  // ================================================================================================
+  const correctMoveCountRef = useRef(0);
   const wrongMoveCountRef = useRef(0);
   const totalHintCountRef = useRef(0);
   const currentCorrectStreakRef = useRef(0);
   const maxCorrectStreakRef = useRef(0);
+
+  // ================================================================================================
+  // Use the useMoveSequenceController HOOK to handle the move sequence
+  // ================================================================================================
   const {
     handleMoveCheck,
     handleSuccessMovePlayed,
     handleNextMoveRequest,
-    moves,
     sortedGoals,
     progressValue,
     hintCount,
@@ -90,112 +94,93 @@ export default function RiddleController({
     moves: riddle.moveSequence.moves,
     goals: riddle.moveSequence.goals,
   });
+
   const { Tour } = useRiddleTour({ riddleId: riddle.id });
 
+  // ================================================================================================
+  // Reset the riddle state when the riddle id changes
+  // ================================================================================================
   useEffect(() => {
     setIsCompleted(false);
     setSuccessDialogOpen(false);
     setCompletionStats(null);
+    correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
     currentCorrectStreakRef.current = 0;
     maxCorrectStreakRef.current = 0;
-    setAttemptStatsTick(0);
-    setElapsedMs(0);
   }, [riddle.id]);
 
-  useEffect(() => {
-    if (isCompleted) return;
-
-    const tick = () => setElapsedMs(getTimeFromStartMs() ?? 0);
-
-    tick();
-    const intervalId = window.setInterval(tick, 500);
-
-    return () => window.clearInterval(intervalId);
-  }, [getTimeFromStartMs, isCompleted, attemptStatsTick]);
-
-  const timingRating = useMemo(() => getRiddleRatingForScoring(riddle.rating), [riddle.rating]);
-
-  const liveAttemptStats = useMemo(
-    () => ({
-      wrongMoveCount: wrongMoveCountRef.current,
-      hintCount: totalHintCountRef.current,
-      maxCorrectStreak: maxCorrectStreakRef.current,
-    }),
-    [attemptStatsTick],
-  );
-
+  // ================================================================================================
+  // Set the riddle as completed and persist attempt data to the db
+  // ================================================================================================
   useEffect(() => {
     if (currentCorrectMove != null || isCompleted) return;
 
-    const finalDurationMs = getTimeFromStartMs();
-
     setIsCompleted(true);
-    setElapsedMs(finalDurationMs ?? 0);
-    setCompletionStats(
-      buildSequenceCompletionStats(
-        sortedGoals,
-        wrongMoveCountRef.current,
-        totalHintCountRef.current,
-        maxCorrectStreakRef.current,
-        finalDurationMs,
-      ),
+
+    const attemptPayload = createAttemptPayload(
+      correctMoveCountRef.current,
+      wrongMoveCountRef.current,
+      totalHintCountRef.current,
+      maxCorrectStreakRef.current,
+      getTimeFromStartMs(),
     );
+
+    // Setting the completion stats for UI Dialog show
+    setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setSuccessDialogOpen(true);
     playLevelUpSound();
+    void insertAttemptResults(attemptPayload);
+  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, playLevelUpSound, recordEvent, updateAttemptResults]);
 
-    void (async () => {
-      await recordEvent({ eventType: "complete" });
-      await updateAttemptStatus(
-        "completed",
-        buildAttemptCounters(
-          sortedGoals,
-          wrongMoveCountRef.current,
-          totalHintCountRef.current,
-          maxCorrectStreakRef.current,
-        ),
-      );
-    })();
-  }, [
-    currentCorrectMove,
-    getTimeFromStartMs,
-    isCompleted,
-    playLevelUpSound,
-    recordEvent,
-    sortedGoals,
-    updateAttemptStatus,
-  ]);
+  // ================================================================================================
+  // Insert the completion attempt to the db
+  // ================================================================================================
+  async function insertAttemptResults(attemptPayload: AttemptPayload) {
+    // Record the completion event for attempt_event table for more detailed logs
+    await recordEvent({ eventType: "complete" });
+    await updateAttemptResults("completed", attemptPayload);
+  }
 
+  // ================================================================================================
+  // Handle the board check move
+  // ================================================================================================
   function handleBoardCheckMove(move: MoveAttemptPayload) {
     const { isCorrect } = handleMoveCheck(move);
 
+    // If the move is incorrect and the riddle is not completed, record the move event and update the attempt status
     if (!isCorrect && !isCompleted) {
       wrongMoveCountRef.current += 1;
       currentCorrectStreakRef.current = 0;
-      setAttemptStatsTick((tick) => tick + 1);
 
       void (async () => {
+        const durationMs = getTimeFromStartMs();
+
+        // Record the move event for attempt_event table for more detailed logs
         await recordEvent({
           eventType: "move",
           moveUci: move.uci,
           expectedUci: currentCorrectMove ?? undefined,
           isCorrect: false,
         });
-        await updateAttemptStatus(
+        await updateAttemptResults(
           "failed",
-          buildAttemptCounters(
-            sortedGoals,
+          createAttemptPayload(
+            correctMoveCountRef.current,
             wrongMoveCountRef.current,
             totalHintCountRef.current,
             maxCorrectStreakRef.current,
+            durationMs,
           ),
         );
       })();
     } else if (isCorrect) {
-      bumpCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
-      setAttemptStatsTick((tick) => tick + 1);
+      // If the move is correct, record the move event and update the attempt status
+      correctMoveCountRef.current += 1;
+      updateCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
 
+      // Record the move event for attempt_event table for more detailed logs
       void recordEvent({
         eventType: "move",
         moveUci: move.uci,
@@ -207,21 +192,29 @@ export default function RiddleController({
     return isCorrect;
   }
 
+  // ================================================================================================
+  // Handle the board success move played and communicate with HOOK
+  // ================================================================================================
   function handleBoardSuccessMovePlayed(move: Move) {
     handleSuccessMovePlayed(move);
   }
 
+  // ================================================================================================
+  // Handle the board next move request and communicate with HOOK
+  // ================================================================================================
   function handleBoardNextMoveRequest() {
     const nextMove = handleNextMoveRequest();
     return nextMove;
   }
 
+  // ================================================================================================
+  // Handle the hint click and communicate with HOOK
+  // ================================================================================================
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
     if (nextHintCount == null || !currentCorrectMove) return;
     boardRef.current?.showHint(nextHintCount);
     totalHintCountRef.current += 1;
-    setAttemptStatsTick((tick) => tick + 1);
 
     void recordEvent({
       eventType: "hint",
@@ -282,13 +275,6 @@ export default function RiddleController({
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
           <div className="flex flex-col items-center justify-center gap-1 text-center">
             <span className="text-lg font-bold">{riddle.title ?? "Untitled riddle"}</span>
-            <AccuracyCalculator
-              wrongMoveCount={liveAttemptStats.wrongMoveCount}
-              hintCount={liveAttemptStats.hintCount}
-              totalMoveCount={moves.length}
-            />
-            <RatingTimingCalculator rating={timingRating} durationMs={elapsedMs} />
-            <StreakCalculator maxCorrectStreak={liveAttemptStats.maxCorrectStreak} totalMoveCount={moves.length} />
             <VoltCalculator result={voltScore} className="mt-2 w-full" />
           </div>
           <div className="flex items-center" data-tour="progress">

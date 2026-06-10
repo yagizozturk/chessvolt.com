@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
-import type { SequenceCompletionStats } from "@/features/user-sequence-attempt/types/sequence-completion-stats";
+import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import { formatAttemptDurationMs } from "@/features/user-sequence-attempt/utilities/format-attempt-duration";
 import { cn } from "@/lib/utils";
 import animationData from "@/public/images/animations/animation-trophy.json";
@@ -30,7 +30,7 @@ export type SolveSuccessDialogProps = {
   description: string;
   destinationPath: string;
   buttonLabel: string;
-  stats?: SequenceCompletionStats | null;
+  stats?: SequenceCompleteDialogStats | null;
 };
 
 /**

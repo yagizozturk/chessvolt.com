@@ -18,12 +18,12 @@ import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-var
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { AddToPracticeButton } from "@/features/user-practice-opening-variant/components/add-to-practice-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
-import type { SequenceCompletionStats } from "@/features/user-sequence-attempt/types/sequence-completion-stats";
-import { buildSequenceCompletionStats } from "@/features/user-sequence-attempt/utilities/build-sequence-completion-stats";
+import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
+import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import {
-  buildAttemptCounters,
-  bumpCorrectStreak,
-} from "@/features/user-sequence-attempt/utilities/sequence-play-attempt-counters";
+  createSequenceCompleteStats,
+  createAttemptPayload,
+} from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -51,9 +51,10 @@ export default function OpeningVariantController({
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [completionStats, setCompletionStats] = useState<SequenceCompletionStats | null>(null);
-  const { updateAttemptStatus, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
+  const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null);
+  const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
   const { playLevelUpSound } = useBoardSounds();
+  const correctMoveCountRef = useRef(0);
   const wrongMoveCountRef = useRef(0);
   const totalHintCountRef = useRef(0);
   const currentCorrectStreakRef = useRef(0);
@@ -79,6 +80,7 @@ export default function OpeningVariantController({
     setIsCompleted(false);
     setSuccessDialogOpen(false);
     setCompletionStats(null);
+    correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
     currentCorrectStreakRef.current = 0;
@@ -89,31 +91,24 @@ export default function OpeningVariantController({
     if (currentCorrectMove != null || isCompleted) return;
 
     setIsCompleted(true);
-    setCompletionStats(
-      buildSequenceCompletionStats(
-        sortedGoals,
-        wrongMoveCountRef.current,
-        totalHintCountRef.current,
-        maxCorrectStreakRef.current,
-        getTimeFromStartMs(),
-      ),
+
+    const attemptPayload = createAttemptPayload(
+      correctMoveCountRef.current,
+      wrongMoveCountRef.current,
+      totalHintCountRef.current,
+      maxCorrectStreakRef.current,
+      getTimeFromStartMs(),
     );
+
+    setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setSuccessDialogOpen(true);
     playLevelUpSound();
 
     void (async () => {
       await recordEvent({ eventType: "complete" });
-      await updateAttemptStatus(
-        "completed",
-        buildAttemptCounters(
-          sortedGoals,
-          wrongMoveCountRef.current,
-          totalHintCountRef.current,
-          maxCorrectStreakRef.current,
-        ),
-      );
+      await updateAttemptResults("completed", attemptPayload);
     })();
-  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, playLevelUpSound, recordEvent, sortedGoals, updateAttemptStatus]);
+  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, playLevelUpSound, recordEvent, updateAttemptResults]);
 
   function handleBoardCheckMove(move: MoveAttemptPayload) {
     const { isCorrect } = handleMoveCheck(move);
@@ -123,24 +118,28 @@ export default function OpeningVariantController({
       currentCorrectStreakRef.current = 0;
 
       void (async () => {
+        const durationMs = getTimeFromStartMs();
+
         await recordEvent({
           eventType: "move",
           moveUci: move.uci,
           expectedUci: currentCorrectMove ?? undefined,
           isCorrect: false,
         });
-        await updateAttemptStatus(
+        await updateAttemptResults(
           "failed",
-          buildAttemptCounters(
-            sortedGoals,
+          createAttemptPayload(
+            correctMoveCountRef.current,
             wrongMoveCountRef.current,
             totalHintCountRef.current,
             maxCorrectStreakRef.current,
+            durationMs,
           ),
         );
       })();
     } else if (isCorrect) {
-      bumpCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
+      correctMoveCountRef.current += 1;
+      updateCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
 
       void recordEvent({
         eventType: "move",
