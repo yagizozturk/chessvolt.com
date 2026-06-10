@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpenText, LogOut, Menu, Shield, Swords, User, Zap } from "lucide-react";
+import { BookOpenText, FolderOpen, GitBranch, LogOut, Menu, Shield, Swords, User, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
@@ -11,6 +11,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -28,10 +29,13 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { href: "/collection", label: "Collections", icon: Swords },
-  { href: "/user-opening-variants", label: "User Opening Variants", icon: BookOpenText, requiresAuth: true },
-  { href: "/user-collection", label: "User Collections", icon: BookOpenText, requiresAuth: true },
   { href: "/openings", label: "Opening Crusher", icon: BookOpenText },
   //{ href: "/arrows", label: "Arrows Game", icon: ArrowsUpFromLine },
+];
+
+const profileMenuItems: NavItem[] = [
+  { href: "/user-opening-variants", label: "User Opening Variants", icon: GitBranch },
+  { href: "/user-collection", label: "User Collections", icon: FolderOpen },
 ];
 
 export function DashboardNavbar() {
@@ -67,6 +71,18 @@ export function DashboardNavbar() {
           <div className="px-2 py-2">
             <p className="text-sm font-medium">{profile?.username ?? "User"}</p>
           </div>
+          {profile &&
+            profileMenuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <DropdownMenuItem key={item.href} asChild>
+                  <Link href={item.href} className="flex items-center gap-2">
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                </DropdownMenuItem>
+              );
+            })}
           {profile?.role === "admin" && (
             <DropdownMenuItem asChild>
               <Link href="/admin" className="flex items-center gap-2">
@@ -75,6 +91,7 @@ export function DashboardNavbar() {
               </Link>
             </DropdownMenuItem>
           )}
+          <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" onClick={handleLogout} className="cursor-pointer">
             <LogOut className="mr-2 h-4 w-4" />
             Sign out
