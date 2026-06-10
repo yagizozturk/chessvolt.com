@@ -6,6 +6,7 @@ import type {
   CollectionWithRiddleCount,
   CollectionWithRiddleCountAndThemes,
 } from "@/features/collection/types/collection";
+import type { CollectionType } from "@/features/collection/types/collection-type";
 import type {
   CreateCollectionPayload,
   CreateCustomCollectionForUserPayload,
@@ -43,6 +44,17 @@ export async function getCollectionBySlug(supabase: SupabaseClient, slug: string
 }
 
 // ============================================================================
+// Getting collection by Slug and collection type
+// ============================================================================
+export async function getCollectionBySlugAndType(
+  supabase: SupabaseClient,
+  slug: string,
+  collectionType: CollectionType,
+): Promise<Collection | null> {
+  return collectionRepo.findCollectionBySlugAndType(supabase, slug, collectionType);
+}
+
+// ============================================================================
 // Getting ACTIVE collections with Riddle Count and Themes related
 // ============================================================================
 export async function getActiveCollectionsWithRiddleCountAndThemes(
@@ -52,10 +64,10 @@ export async function getActiveCollectionsWithRiddleCountAndThemes(
 }
 
 // ============================================================================
-// Getting user custom collections by User Id
+// Getting user collections by User Id
 // ============================================================================
-export async function getUserCustomCollections(supabase: SupabaseClient, userId: string): Promise<Collection[]> {
-  return collectionRepo.findUserCustomCollectionByUserId(supabase, userId);
+export async function getUserCollections(supabase: SupabaseClient, userId: string): Promise<Collection[]> {
+  return collectionRepo.findUserCollectionByUserId(supabase, userId);
 }
 
 // ============================================================================

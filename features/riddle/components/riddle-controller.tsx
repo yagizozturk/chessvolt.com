@@ -13,7 +13,6 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
-import type { CollectionType } from "@/features/collection/types/collection-type";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import {
   AddToMyCollectionPicker,
@@ -21,7 +20,6 @@ import {
 } from "@/features/riddle/components/add-to-my-collection-picker";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
@@ -37,25 +35,21 @@ import animationData from "@/public/images/animations/animation-rocjet-launch.js
 
 type RiddleControllerProps = {
   riddle: Riddle;
-  nextRiddleId?: string | null;
+  nextRiddleUrl?: string | null;
   parentCollectionUrl?: string;
-  collectionSlug?: string | null;
-  collectionType?: CollectionType | null;
-  userCanSaveToUserCollections?: boolean;
+  isUserLoggedIn?: boolean;
   userCollections?: MyCollectionOption[];
-  savedUserCollectionsIds?: string[];
+  userCollectionIdsHasCurrentRiddle?: string[];
   voltScore?: VoltScoreResult | null;
 };
 
 export default function RiddleController({
   riddle,
-  nextRiddleId = null,
+  nextRiddleUrl = null,
   parentCollectionUrl = "/",
-  collectionSlug = null,
-  collectionType = null,
-  userCanSaveToUserCollections = false,
+  isUserLoggedIn = false,
   userCollections = [],
-  savedUserCollectionsIds = [],
+  userCollectionIdsHasCurrentRiddle = [],
   voltScore = null,
 }: RiddleControllerProps) {
   const router = useRouter();
@@ -223,13 +217,8 @@ export default function RiddleController({
     });
   };
 
-  const hasNextRiddle = nextRiddleId != null && collectionSlug != null;
-  const successDestinationPath = hasNextRiddle
-    ? buildRiddlePath(nextRiddleId, {
-        collectionSlug,
-        collectionType: collectionType ?? "admin",
-      })
-    : parentCollectionUrl;
+  const hasNextRiddle = nextRiddleUrl != null;
+  const successDestinationPath = hasNextRiddle ? nextRiddleUrl : parentCollectionUrl;
   const successButtonLabel = hasNextRiddle ? "Next riddle" : "Back to collection";
 
   // ================================================================================================
@@ -290,11 +279,11 @@ export default function RiddleController({
             <GoalViewer goals={sortedGoals} />
           </div>
           <div className="mt-auto" data-tour="hint-button">
-            {userCanSaveToUserCollections ? (
+            {isUserLoggedIn ? (
               <AddToMyCollectionPicker
                 riddleId={riddle.id}
                 collections={userCollections}
-                savedCollectionIds={savedUserCollectionsIds}
+                savedCollectionIds={userCollectionIdsHasCurrentRiddle}
               />
             ) : null}
             {!isCompleted ? (

@@ -8,6 +8,7 @@ import type {
   CollectionWithRiddleCountAndThemes,
 } from "@/features/collection/types/collection";
 import { DEFAULT_COLLECTION_DIFFICULTY } from "@/features/collection/types/collection-difficulty";
+import type { CollectionType } from "@/features/collection/types/collection-type";
 import type {
   CreateCollectionPayload,
   CreateCustomCollectionForUserPayload,
@@ -40,9 +41,9 @@ export async function findAllCollections(supabase: SupabaseClient): Promise<Coll
 }
 
 // ============================================================================
-// Finding user custom collection by User Id
+// Finding user collections by User Id
 // ============================================================================
-export async function findUserCustomCollectionByUserId(
+export async function findUserCollectionByUserId(
   supabase: SupabaseClient,
   userId: string,
 ): Promise<Collection[]> {
@@ -54,7 +55,7 @@ export async function findUserCustomCollectionByUserId(
     .order("updated_at", { ascending: false });
 
   if (error) {
-    console.error("collection.repository.findUserCustomCollectionByUserId error:", error);
+    console.error("collection.repository.findUserCollectionByUserId error:", error);
     return [];
   }
 
@@ -188,6 +189,31 @@ export async function findCollectionBySlug(supabase: SupabaseClient, slug: strin
 
   if (error) {
     console.error("collection.repository.findCollectionBySlug error:", error);
+    return null;
+  }
+
+  if (!data) return null;
+
+  return toCollection(data);
+}
+
+// ============================================================================
+// Finding collection by Slug and collection type
+// ============================================================================
+export async function findCollectionBySlugAndType(
+  supabase: SupabaseClient,
+  slug: string,
+  collectionType: CollectionType,
+): Promise<Collection | null> {
+  const { data, error } = await supabase
+    .from("collections")
+    .select("*")
+    .eq("slug", slug)
+    .eq("collection_type", collectionType)
+    .maybeSingle();
+
+  if (error) {
+    console.error("collection.repository.findCollectionBySlugAndType error:", error);
     return null;
   }
 
