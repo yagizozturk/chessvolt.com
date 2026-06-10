@@ -5,13 +5,17 @@ export type RiddlePathContext = {
   collectionType?: CollectionType;
 };
 
+export function buildStandaloneRiddlePath(riddleId: string): string {
+  return `/riddle/${riddleId}`;
+}
+
 export function buildRiddlePath(
   riddleId: string,
   { collectionSlug, collectionType = "admin" }: RiddlePathContext,
 ): string {
-  const params = new URLSearchParams({ collection: collectionSlug });
   if (collectionType === "custom") {
-    params.set("type", "custom");
+    return `/user-collection/${collectionSlug}/riddle/${riddleId}`;
   }
-  return `/riddle/${riddleId}?${params.toString()}`;
+
+  return `/collection/${collectionSlug}/riddle/${riddleId}`;
 }

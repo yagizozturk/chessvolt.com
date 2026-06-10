@@ -22,6 +22,7 @@ export async function addRiddleToMyCollectionAction(
     revalidatePath("/user-collection");
     revalidatePath(`/riddle/${riddleId}`);
     revalidatePath("/collection", "layout");
+    revalidatePath("/user-collection", "layout");
   }
 
   return result;

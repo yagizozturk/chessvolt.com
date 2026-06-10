@@ -23,7 +23,7 @@ export async function getCollectionRiddlesByRiddleId(
   return collectionRiddleRepo.findByRiddleId(supabase, riddleId);
 }
 
-export async function getCollectionRiddleByPair(
+export async function getCollectionRiddleByRiddleIdAndCollectionId(
   supabase: SupabaseClient,
   riddleId: string,
   collectionId: string,

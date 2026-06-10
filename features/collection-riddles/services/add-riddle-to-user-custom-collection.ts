@@ -1,7 +1,7 @@
 import { getCollectionById } from "@/features/collection/services/collection.service";
 import {
   addRiddleToCollection,
-  getCollectionRiddleByPair,
+  getCollectionRiddleByRiddleIdAndCollectionId,
   getCollectionRiddlesForCollection,
 } from "@/features/collection-riddles/services/collection-riddles.service";
 import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
@@ -25,7 +25,7 @@ export async function addRiddleToUserCustomCollection(
     return { ok: false, reason: "not_custom_collection" };
   }
 
-  const existing = await getCollectionRiddleByPair(supabase, input.riddleId, input.collectionId);
+  const existing = await getCollectionRiddleByRiddleIdAndCollectionId(supabase, input.riddleId, input.collectionId);
   if (existing) {
     return { ok: false, reason: "already_added" };
   }
