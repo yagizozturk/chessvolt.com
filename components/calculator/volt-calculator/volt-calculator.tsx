@@ -3,8 +3,8 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type VoltCalculatorProps = {
@@ -59,10 +59,7 @@ export function VoltCalculator({ result, className, showDetails = true }: VoltCa
           {detailsOpen ? (
             <ul className="flex flex-col gap-2 text-left text-sm">
               {result.days.map((day) => (
-                <li
-                  key={day.slotIndex}
-                  className="bg-muted/40 flex flex-col gap-1 rounded-lg px-3 py-2"
-                >
+                <li key={day.slotIndex} className="bg-muted/40 flex flex-col gap-1 rounded-lg px-3 py-2">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-medium">
                       Day {day.slotIndex}
@@ -80,14 +77,12 @@ export function VoltCalculator({ result, className, showDetails = true }: VoltCa
                       {day.attempts.map((attempt) => (
                         <li key={attempt.attemptId}>
                           Try {attempt.attemptIndex} (+{attempt.weightedContribution}): accuracy{" "}
-                          {attempt.accuracyPercent}%, timing {attempt.timingPercent}%, streak{" "}
-                          {attempt.streakPercent}%
+                          {attempt.accuracyPercent}%, timing {attempt.timingPercent}%, streak {attempt.streakPercent}%
                         </li>
                       ))}
                       {day.attempts.length < result.attemptsPerDayCounted ? (
                         <li>
-                          Missing tries — max {day.dayMaxVolt} needs {result.attemptsPerDayCounted}{" "}
-                          attempts
+                          Missing tries — max {day.dayMaxVolt} needs {result.attemptsPerDayCounted} attempts
                         </li>
                       ) : null}
                     </ul>

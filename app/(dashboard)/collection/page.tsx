@@ -7,7 +7,7 @@ export default async function CollectionPage() {
   const collections = await getActiveCollectionsWithRiddleCountAndThemes(supabase);
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 pt-6 pb-16">
+    <div className="container mx-auto max-w-6xl px-4 pt-6 pb-16">
       <CollectionListWithFilters collections={collections} emptyMessage="No collections available yet." />
     </div>
   );

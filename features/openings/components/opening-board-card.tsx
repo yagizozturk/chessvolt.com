@@ -3,9 +3,9 @@ import Link from "next/link";
 
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
+import DisplayBoard from "@/components/boards/display-board/display-board";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
-import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
