@@ -1,6 +1,6 @@
 "use client";
 
-import { Zap } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
@@ -20,22 +20,22 @@ const data = {
     {
       title: "Collections",
       url: "#",
-      icon: "/images/icons/icon-book.png",
+      icon: "/images/icons/icon-book-collection.png",
       items: [
         {
           title: "My Collections",
-          url: "#",
+          url: "/user-collection",
         },
         {
           title: "Library",
-          url: "#",
+          url: "/collection",
         },
       ],
     },
     {
       title: "Openings",
       url: "#",
-      icon: "/images/icons/icon-fundamentals.png",
+      icon: "/images/icons/icon-openings.png",
       items: [
         {
           title: "Routing",
@@ -46,52 +46,44 @@ const data = {
           url: "#",
           isActive: true,
         },
+      ],
+    },
+    {
+      title: "Contact Us",
+      url: "#",
+      icon: "/images/icons/icon-contact.png",
+      items: [
         {
-          title: "Rendering",
+          title: "Routing",
           url: "#",
         },
         {
-          title: "Caching",
+          title: "Data Fetching",
+          url: "#",
+          isActive: true,
+        },
+      ],
+    },
+    {
+      title: "Blog",
+      url: "#",
+      icon: "/images/icons/icon-blog.png",
+      items: [
+        {
+          title: "Routing",
           url: "#",
         },
         {
-          title: "Styling",
+          title: "Data Fetching",
           url: "#",
-        },
-        {
-          title: "Optimizing",
-          url: "#",
-        },
-        {
-          title: "Configuring",
-          url: "#",
-        },
-        {
-          title: "Testing",
-          url: "#",
-        },
-        {
-          title: "Authentication",
-          url: "#",
-        },
-        {
-          title: "Deploying",
-          url: "#",
-        },
-        {
-          title: "Upgrading",
-          url: "#",
-        },
-        {
-          title: "Examples",
-          url: "#",
+          isActive: true,
         },
       ],
     },
     {
       title: "Profile",
       url: "#",
-      icon: "/images/icons/icon-best-move.png",
+      icon: "/images/icons/icon-user-profile.png",
       items: [
         {
           title: "Components",
@@ -101,28 +93,12 @@ const data = {
           title: "File Conventions",
           url: "#",
         },
-        {
-          title: "Functions",
-          url: "#",
-        },
-        {
-          title: "next.config.js Options",
-          url: "#",
-        },
-        {
-          title: "CLI",
-          url: "#",
-        },
-        {
-          title: "Edge Runtime",
-          url: "#",
-        },
       ],
     },
     {
       title: "Settings",
       url: "#",
-      icon: "/images/icons/icon-goal.png",
+      icon: "/images/icons/icon-settings.png",
       items: [
         {
           title: "Accessibility",
@@ -132,18 +108,6 @@ const data = {
           title: "Fast Refresh",
           url: "#",
         },
-        {
-          title: "Next.js Compiler",
-          url: "#",
-        },
-        {
-          title: "Supported Browsers",
-          url: "#",
-        },
-        {
-          title: "Turbopack",
-          url: "#",
-        },
       ],
     },
   ],
@@ -151,15 +115,20 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar {...props} collapsible="icon">
+    <Sidebar {...props} collapsible="icon" className="!border-r-0">
       <SidebarHeader>
-        <SidebarMenu>
+        <SidebarMenu className="items-center pt-2">
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild tooltip="ChessVolt">
               <Link href="/collection">
-                <div className="flex aspect-square size-8 shrink-0 items-center justify-center">
-                  <Zap className="fill-primary text-primary size-4" />
-                </div>
+                <Image
+                  src="/images/icons/icon-volt.png"
+                  alt=""
+                  aria-hidden
+                  width={32}
+                  height={32}
+                  className="size-8 shrink-0"
+                />
                 <span className="font-medium">ChessVolt</span>
               </Link>
             </SidebarMenuButton>
