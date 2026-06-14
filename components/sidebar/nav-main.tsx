@@ -40,7 +40,7 @@ export function NavMain({
                 {/* Gives your larger size-6 icons more room in the 4rem rail. */}
                 <SidebarMenuButton
                   tooltip={item.title}
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-12"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-12 focus-visible:ring-0"
                 >
                   {item.icon ? (
                     <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
