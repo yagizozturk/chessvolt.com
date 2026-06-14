@@ -1,9 +1,10 @@
 "use client";
 
-import { GalleryVerticalEndIcon } from "lucide-react";
+import { Zap } from "lucide-react";
+import Link from "next/link";
 import * as React from "react";
 
-import { NavMain } from "@/components/nav-main";
+import { NavMain } from "@/components/sidebar/nav-main";
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +22,7 @@ const data = {
     {
       title: "Getting Started",
       url: "#",
+      icon: "/images/icons/icon-book.png",
       items: [
         {
           title: "Installation",
@@ -35,6 +37,7 @@ const data = {
     {
       title: "Build Your Application",
       url: "#",
+      icon: "/images/icons/icon-fundamentals.png",
       items: [
         {
           title: "Routing",
@@ -90,6 +93,7 @@ const data = {
     {
       title: "API Reference",
       url: "#",
+      icon: "/images/icons/icon-best-move.png",
       items: [
         {
           title: "Components",
@@ -120,6 +124,7 @@ const data = {
     {
       title: "Architecture",
       url: "#",
+      icon: "/images/icons/icon-goal.png",
       items: [
         {
           title: "Accessibility",
@@ -148,20 +153,17 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar {...props}>
+    <Sidebar {...props} collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <GalleryVerticalEndIcon className="size-4" />
+            <SidebarMenuButton size="lg" asChild tooltip="ChessVolt">
+              <Link href="/collection">
+                <div className="flex aspect-square size-8 shrink-0 items-center justify-center">
+                  <Zap className="fill-primary text-primary size-4" />
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Documentation</span>
-                  <span className="">v1.0.0</span>
-                </div>
-              </a>
+                <span className="font-medium">ChessVolt</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

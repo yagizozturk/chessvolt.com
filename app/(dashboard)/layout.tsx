@@ -1,14 +1,11 @@
-import { DashboardNavbar } from "@/features/home/components/dashboard-navbar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-background flex min-h-svh flex-col">
-      <DashboardNavbar />
-      <main className="flex-1 overflow-auto">{children}</main>
-    </div>
+    <SidebarProvider defaultOpen={false}>
+      <AppSidebar />
+      <SidebarInset className="overflow-auto">{children}</SidebarInset>
+    </SidebarProvider>
   );
 }
