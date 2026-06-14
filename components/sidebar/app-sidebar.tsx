@@ -8,34 +8,32 @@ import { NavMain } from "@/components/sidebar/nav-main";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
 } from "@/components/ui/sidebar";
 
 // This is sample data.
 const data = {
   navMain: [
     {
-      title: "Getting Started",
+      title: "Collections",
       url: "#",
       icon: "/images/icons/icon-book.png",
       items: [
         {
-          title: "Installation",
+          title: "My Collections",
           url: "#",
         },
         {
-          title: "Project Structure",
+          title: "Library",
           url: "#",
         },
       ],
     },
     {
-      title: "Build Your Application",
+      title: "Openings",
       url: "#",
       icon: "/images/icons/icon-fundamentals.png",
       items: [
@@ -91,7 +89,7 @@ const data = {
       ],
     },
     {
-      title: "API Reference",
+      title: "Profile",
       url: "#",
       icon: "/images/icons/icon-best-move.png",
       items: [
@@ -122,7 +120,7 @@ const data = {
       ],
     },
     {
-      title: "Architecture",
+      title: "Settings",
       url: "#",
       icon: "/images/icons/icon-goal.png",
       items: [
@@ -171,7 +169,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarRail />
     </Sidebar>
   );
 }
