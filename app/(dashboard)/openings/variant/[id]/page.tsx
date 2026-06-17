@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { calculateVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
-import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
+import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import OpeningVariantController from "@/features/openings/components/opening-variant-controller";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
@@ -68,7 +68,7 @@ export default async function OpeningVariantPage({ params }: Params) {
             user.id,
             variant.moveSequence.id,
           ),
-          totalMoveCount: getSequenceMoveCount(variant.moveSequence.moves),
+          totalMoveCount: getPlayerMoveCount(variant.moveSequence.moves),
           rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
         })
       : null;

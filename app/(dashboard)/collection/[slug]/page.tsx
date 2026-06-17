@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
-import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
+import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { CollectionHeader } from "@/features/collection/components/collection-header";
 import { getCollectionBySlugAndType } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
@@ -88,7 +88,7 @@ export default async function CollectionDetailPage({ params }: Params) {
           riddleAttempts,
           riddles.map((riddle) => ({
             sequenceId: riddle.moveSequence.id,
-            totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
+            totalMoveCount: getPlayerMoveCount(riddle.moveSequence.moves),
             rating: getRiddleRatingForScoring(riddle.rating),
           })),
         )

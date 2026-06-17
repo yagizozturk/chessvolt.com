@@ -3,7 +3,7 @@ import { VOLT_ACCURACY_CONFIG } from "@/components/calculator/accuracy-calculato
 export type VoltAccuracyInput = {
   wrongMoveCount: number;
   hintCount: number;
-  /** Total moves the user must find in the sequence (denominator for penalty ratios). */
+  /** Half-moves the human must find (player slots only; excludes opponent auto-replies). */
   totalMoveCount: number;
 };
 

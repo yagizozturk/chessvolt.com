@@ -1,6 +1,6 @@
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
-import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
+import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { UserPracticeOpeningVariantList } from "@/features/user-practice-opening-variant/components/user-practice-opening-variant";
 import { getUserPracticeOpeningVariantsForUserWithSequences } from "@/features/user-practice-opening-variant/services/user-practice-opening-variant.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
@@ -38,7 +38,7 @@ export default async function UserOpeningVariantsPage() {
           openingAttempts,
           userPracticeOpeningVariants.map((openingVariant) => ({
             sequenceId: openingVariant.openingVariant.moveSequence.id,
-            totalMoveCount: getSequenceMoveCount(openingVariant.openingVariant.moveSequence.moves),
+            totalMoveCount: getPlayerMoveCount(openingVariant.openingVariant.moveSequence.moves),
             rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
           })),
         )

@@ -5,9 +5,11 @@ import Link from "next/link";
 import * as React from "react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
+import { NavSettings } from "@/components/sidebar/nav-settings";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -95,32 +97,37 @@ const data = {
         },
       ],
     },
-    {
-      title: "Settings",
-      url: "#",
-      icon: "/images/icons/icon-settings.png",
-      items: [
-        {
-          title: "Accessibility",
-          url: "#",
-        },
-        {
-          title: "Fast Refresh",
-          url: "#",
-        },
-      ],
-    },
   ],
+  navSettings: {
+    title: "Settings",
+    url: "#",
+    icon: "/images/icons/icon-settings.png",
+    items: [
+      {
+        title: "Accessibility",
+        url: "#",
+      },
+      {
+        title: "Fast Refresh",
+        url: "#",
+      },
+    ],
+  },
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props} collapsible="icon" className="!border-r-0">
       <SidebarHeader>
-        <SidebarMenu className="items-center pt-2">
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild tooltip="ChessVolt">
-              <Link href="/collection">
+        <SidebarMenu className="items-center">
+          <SidebarMenuItem className="mt-5">
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              tooltip="ChessVolt"
+              className="hover:bg-transparent active:bg-transparent data-open:hover:bg-transparent"
+            >
+              <Link href="/collection" aria-label="ChessVolt" className="rounded-lg bg-blue-500">
                 <Image
                   src="/images/icons/icon-volt.png"
                   alt=""
@@ -129,7 +136,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   height={32}
                   className="size-8 shrink-0"
                 />
-                <span className="font-medium">ChessVolt</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -138,6 +144,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
+      <SidebarFooter>
+        <NavSettings item={data.navSettings} />
+      </SidebarFooter>
     </Sidebar>
   );
 }

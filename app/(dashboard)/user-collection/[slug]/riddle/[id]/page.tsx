@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { calculateVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
-import { getSequenceMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
+import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import {
   getCollectionRiddleByRiddleIdAndCollectionId,
   getCollectionRiddlesByRiddleId,
@@ -81,7 +81,7 @@ export default async function UserCollectionRiddlePage({ params }: PageProps) {
   // =============================================================================
   const voltScore = calculateVoltScore({
     attempts,
-    totalMoveCount: getSequenceMoveCount(riddle.moveSequence.moves),
+    totalMoveCount: getPlayerMoveCount(riddle.moveSequence.moves),
     rating: getRiddleRatingForScoring(riddle.rating),
   });
 
