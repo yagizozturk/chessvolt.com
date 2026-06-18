@@ -23,7 +23,7 @@ export function useProfile() {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("username, role, onboarding_completed, initial_rating")
+        .select("username, role, onboarding_completed, initial_rating, current_rating")
         .eq("id", user.id)
         .maybeSingle();
 
@@ -36,6 +36,7 @@ export function useProfile() {
           role: (data?.role as ProfileRole) ?? "user",
           onboardingCompleted: data?.onboarding_completed ?? false,
           initialRating: data?.initial_rating ?? null,
+          currentRating: data?.current_rating ?? null,
         });
       }
       setIsLoading(false);

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
 import {
   AddToMyCollectionPicker,
   type MyCollectionOption,
@@ -155,6 +156,10 @@ export default function RiddleController({
       ...attemptPayload,
       ...(isUserLoggedIn ? { voltScore } : {}),
     });
+
+    if (isUserLoggedIn) {
+      await incrementCurrentRatingAction();
+    }
 
     setCompletionVoltScore(voltScoreResult);
     setIsVoltScoreShowing(false);

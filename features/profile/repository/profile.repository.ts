@@ -37,12 +37,93 @@ export async function completeProfileOnboarding(
     .from("profiles")
     .update({
       initial_rating: input.initialRating,
+      // First signup: current rating starts equal to the onboarding initial rating.
+      current_rating: input.initialRating,
       onboarding_completed: true,
     })
     .eq("id", userId);
 
   if (error) {
     console.error("profile.repository.completeProfileOnboarding error:", {
+      message: error.message,
+      code: error.code,
+    });
+    return false;
+  }
+
+  return true;
+}
+
+export async function getProfileCurrentRating(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<number | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("current_rating")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("profile.repository.getProfileCurrentRating error:", {
+      message: error.message,
+      code: error.code,
+    });
+    return null;
+  }
+
+  return data?.current_rating ?? null;
+}
+
+export async function incrementProfileCurrentRating(
+  supabase: SupabaseClient,
+  userId: string,
+  increment: number,
+): Promise<number | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("current_rating, initial_rating")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("profile.repository.incrementProfileCurrentRating error:", {
+      message: error.message,
+      code: error.code,
+    });
+    return null;
+  }
+
+  if (!data) return null;
+
+  const baseRating = data.current_rating ?? data.initial_rating ?? 0;
+  const newRating = baseRating + increment;
+
+  const { error: updateError } = await supabase
+    .from("profiles")
+    .update({ current_rating: newRating })
+    .eq("id", userId);
+
+  if (updateError) {
+    console.error("profile.repository.incrementProfileCurrentRating update error:", {
+      message: updateError.message,
+      code: updateError.code,
+    });
+    return null;
+  }
+
+  return newRating;
+}
+
+export async function updateProfileCurrentRating(
+  supabase: SupabaseClient,
+  userId: string,
+  currentRating: number,
+): Promise<boolean> {
+  const { error } = await supabase.from("profiles").update({ current_rating: currentRating }).eq("id", userId);
+
+  if (error) {
+    console.error("profile.repository.updateProfileCurrentRating error:", {
       message: error.message,
       code: error.code,
     });

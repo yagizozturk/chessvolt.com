@@ -6,4 +6,5 @@ export type Profile = {
   role: ProfileRole;
   onboardingCompleted: boolean;
   initialRating: number | null;
+  currentRating: number | null;
 } | null;
