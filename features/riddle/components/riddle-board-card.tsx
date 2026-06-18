@@ -57,7 +57,12 @@ export function RiddleBoardCard({
         {isComplete === false && <BoardStatusIcon status="wrong" />}
         <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} size={size} coordinates={false} />
       </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
+      <div className="relative flex min-w-0 flex-1 flex-col gap-2">
+        {voltScore ? (
+          <div className="absolute right-[-32px] bottom-[-32px] z-10">
+            <VoltCalculator result={voltScore} chartSize={140} className="w-fit" />
+          </div>
+        ) : null}
         <p className="text-xl font-bold">{riddle.title}</p>
         {game ? (
           <>
@@ -87,9 +92,8 @@ export function RiddleBoardCard({
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           <BoardCardMetaRow icon={Puzzle} label={moveCountLabel ?? "No moves"} />
         </div>
-        <div className="mt-auto flex flex-col gap-2">
-          {voltScore ? <VoltCalculator result={voltScore} chartSize={140} /> : null}
-          <Button variant="voltCompact" size="xs" className="ml-auto w-fit shrink-0">
+        <div className="mt-auto flex justify-start">
+          <Button variant="voltCompact" size="xs" className="w-fit shrink-0">
             Play
           </Button>
         </div>
