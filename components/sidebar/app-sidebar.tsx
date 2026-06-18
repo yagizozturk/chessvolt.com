@@ -5,11 +5,9 @@ import Link from "next/link";
 import * as React from "react";
 
 import { NavMain } from "@/components/sidebar/nav-main";
-import { NavSettings } from "@/components/sidebar/nav-settings";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -51,34 +49,13 @@ const data = {
       ],
     },
     {
-      title: "Contact Us",
+      title: "Riddles",
       url: "#",
-      icon: "/images/icons/icon-contact.png",
+      icon: "/images/icons/icon-riddle.png",
       items: [
         {
           title: "Routing",
           url: "#",
-        },
-        {
-          title: "Data Fetching",
-          url: "#",
-          isActive: true,
-        },
-      ],
-    },
-    {
-      title: "Blog",
-      url: "#",
-      icon: "/images/icons/icon-blog.png",
-      items: [
-        {
-          title: "Routing",
-          url: "#",
-        },
-        {
-          title: "Data Fetching",
-          url: "#",
-          isActive: true,
         },
       ],
     },
@@ -97,22 +74,53 @@ const data = {
         },
       ],
     },
+    {
+      title: "Settings",
+      url: "#",
+      icon: "/images/icons/icon-settings.png",
+      items: [
+        {
+          title: "Change Mode",
+          url: "#",
+        },
+        {
+          title: "Contact Us",
+          url: "#",
+        },
+        {
+          title: "Blog",
+          url: "#",
+        },
+        {
+          title: "Logout",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Other",
+      url: "#",
+      icon: "/images/icons/icon-more.png",
+      items: [
+        {
+          title: "Switch Mode",
+          url: "#",
+        },
+        {
+          title: "Blog",
+          url: "#",
+        },
+        {
+          title: "Contact Us",
+          url: "#",
+        },
+        {
+          title: "How Volt Works",
+          url: "#",
+        },
+      ],
+    },
   ],
-  navSettings: {
-    title: "Settings",
-    url: "#",
-    icon: "/images/icons/icon-settings.png",
-    items: [
-      {
-        title: "Accessibility",
-        url: "#",
-      },
-      {
-        title: "Fast Refresh",
-        url: "#",
-      },
-    ],
-  },
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -144,9 +152,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavSettings item={data.navSettings} />
-      </SidebarFooter>
     </Sidebar>
   );
 }

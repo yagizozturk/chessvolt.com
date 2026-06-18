@@ -29,7 +29,7 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarMenu className="gap-3">
+      <SidebarMenu className="gap-3 group-data-[collapsible=icon]:items-center">
         {items.map((item) => (
           <DropdownMenu key={item.title}>
             <SidebarMenuItem>
@@ -40,12 +40,12 @@ export function NavMain({
                 {/* Gives your larger size-6 icons more room in the 4rem rail. */}
                 <SidebarMenuButton
                   tooltip={item.title}
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-12 focus-visible:ring-0"
+                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
                 >
                   {item.icon ? (
                     <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
                   ) : null}
-                  <span>{item.title}</span>
+                  <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                   <MoreHorizontalIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
