@@ -2,6 +2,8 @@ import React, { type ReactNode } from "react";
 
 import type { CarouselDialogSlide } from "@/components/carousel-dialog/carousel-dialog.types";
 
+export const VOLT_EXPLAIN_DIALOG_ID = "collection-intro";
+
 export function getVoltExplainDialogStorageKey(dialogId: string) {
   return `volt-explain-dialog-seen:${dialogId}`;
 }
@@ -27,25 +29,55 @@ export const DEFAULT_VOLT_EXPLAIN_DIALOG_SLIDES: CarouselDialogSlide[] = [
     imageSrc: "/images/volt-explain/slide-1.png",
     imageAlt: "Chess puzzle board",
     title: "Introducing Hermann Ebbinghaus",
-    description:
-      "He was a German psychologist who studied memory and learning. He is best known for his work on the forgetting curve. ChessVolt is using his work to help you learn chess.",
+    description: [
+      <span key="ebbinghaus" className="text-primary font-medium">
+        Hermann Ebbinghaus
+      </span>,
+      " was a German psychologist who studied memory and learning. He is best known for his work on the ",
+      <span key="forgetting-curve" className="text-primary font-medium">
+        forgetting curve
+      </span>,
+      ". ChessVolt is using his work to help you learn chess.",
+    ] satisfies ReactNode,
   },
   {
     imageSrc: "/images/volt-explain/slide-2-3.png",
     imageAlt: "The Forgetting Curve",
     title: "The Forgetting Curve",
     description: [
-      "ChessVolt is designed to help you repeat the material you learn. The more you repeat, the more you remember. We are tracking your progress with a ",
+      "Your ",
       <span key="volt-score" className="text-primary font-medium">
         Volt Score
       </span>,
-      ". The higher the score, the better you remember the material.",
+      " shows how well you remember each piece of content based on your performance over the ",
+      <span key="lookback" className="text-primary font-medium">
+        last 3 months
+      </span>,
+      ". The higher your score, the better you know it.",
     ] satisfies ReactNode,
   },
   {
-    imageSrc: "/images/volt-explain/slide-3.png",
-    imageAlt: "Track your progress",
-    title: "Track your progress",
-    description: "Earn Volt points, build streaks, and revisit collections as you improve.",
+    imageSrc: "/images/volt-explain/slide-3-1.png",
+    imageAlt: "How Volt Score Is Calculated",
+    title: "How Volt Score Is Calculated",
+    description: [
+      "Volt Score is based on accuracy (60%), timing (30%), and streak (10%). Earn up to ",
+      <span key="max-volt" className="text-primary font-medium">
+        220 Volt
+      </span>,
+      " across ",
+      <span key="scored-days" className="text-primary font-medium">
+        any 5 days
+      </span>,
+      " in the ",
+      <span key="lookback" className="text-primary font-medium">
+        last 3 months
+      </span>,
+      ", with a daily maximum of ",
+      <span key="day-max-volt" className="text-primary font-medium">
+        44 Volt
+      </span>,
+      ". Only your first 3 practices each day count: 1st practice 60%, 2nd 25%, and 3rd 15%.",
+    ] satisfies ReactNode,
   },
 ];

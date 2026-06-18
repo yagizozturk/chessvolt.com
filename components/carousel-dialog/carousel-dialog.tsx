@@ -7,6 +7,7 @@ import type { CarouselDialogSlide } from "@/components/carousel-dialog/carousel-
 import { Button } from "@/components/ui/button";
 import { Carousel, type CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ShineBorder } from "@/components/ui/shine-border";
 import { cn } from "@/lib/utils";
 
 export type CarouselDialogProps = {
@@ -70,6 +71,7 @@ export function CarouselDialog({ open, onOpenChange, slides }: CarouselDialogPro
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
+        <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">{activeSlide.title}</DialogTitle>
         </DialogHeader>
