@@ -46,7 +46,7 @@ const buttonVariants = cva(
       // After variant + size in CVA, so this overrides xs/sm `rounded-[min(...)]` for volt styles.
       {
         variant: ["volt", "voltMuted", "voltGreen"],
-        class: "rounded-2xl",
+        class: "rounded-xl",
       },
       {
         variant: ["voltCompact", "voltIcon"],

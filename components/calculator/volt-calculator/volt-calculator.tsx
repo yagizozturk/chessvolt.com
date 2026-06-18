@@ -10,10 +10,8 @@ const DEFAULT_CHART_SIZE = 220;
 type VoltCalculatorProps = {
   result: VoltScoreResult | null;
   className?: string;
-  /** Radial chart size in px when showDetails is true. */
+  /** Radial chart size in px. */
   chartSize?: number;
-  /** When true, shows the numeric volt score inside the radial chart. */
-  showChartValue?: boolean;
   /** When false, only shows the total (e.g. on list cards). */
   showDetails?: boolean;
 };
@@ -75,7 +73,6 @@ export function VoltCalculator({
   result,
   className,
   chartSize = DEFAULT_CHART_SIZE,
-  showChartValue = false,
   showDetails = true,
 }: VoltCalculatorProps) {
   if (!result) {
@@ -88,12 +85,7 @@ export function VoltCalculator({
         <HoverCard openDelay={150} closeDelay={100}>
           <HoverCardTrigger asChild>
             <div className="cursor-default">
-              <RadialChart
-                currentValue={result.volt}
-                totalValue={Math.max(result.maxVolt, 1)}
-                size={chartSize}
-                showValue={showChartValue}
-              />
+              <RadialChart currentValue={result.volt} totalValue={Math.max(result.maxVolt, 1)} size={chartSize} />
             </div>
           </HoverCardTrigger>
           <HoverCardContent side="bottom" align="center" className="max-h-96 w-80 overflow-y-auto p-3">
@@ -102,10 +94,7 @@ export function VoltCalculator({
           </HoverCardContent>
         </HoverCard>
       ) : (
-        <p className="text-sm font-bold tabular-nums">
-          {result.volt}
-          <span className="text-muted-foreground font-medium">/{result.maxVolt} Volt</span>
-        </p>
+        <p className="text-sm font-bold tabular-nums">{result.volt}v</p>
       )}
     </div>
   );

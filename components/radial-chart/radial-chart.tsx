@@ -20,28 +20,18 @@ type RadialChartProps = {
   totalValue: number;
   /** Chart width/height in px. Scales ring geometry and center labels proportionally. */
   size?: number;
-  /** When true, shows the numeric score below the percentage label. */
-  showValue?: boolean;
   className?: string;
 };
 
-export function RadialChart({
-  currentValue,
-  totalValue,
-  size = DEFAULT_SIZE,
-  showValue = false,
-  className,
-}: RadialChartProps) {
-  const percentage = Math.round((currentValue / totalValue) * 100);
+export function RadialChart({ currentValue, totalValue, size = DEFAULT_SIZE, className }: RadialChartProps) {
   const scale = size / DEFAULT_SIZE;
   const innerRadius = Math.round(65 * scale);
   const outerRadius = Math.round(95 * scale);
   const polarRadius = [Math.round(86 * scale), Math.round(74 * scale)] as const;
-  const percentageFontSize = Math.round(48 * scale);
-  const valueFontSize = Math.round(14 * scale);
+  const centerValueFontSize = Math.round(48 * scale);
   const iconSize = Math.round(28 * scale);
   const centerBoxWidth = Math.round(120 * scale);
-  const centerBoxHeight = Math.round(showValue ? 96 * scale : 80 * scale);
+  const centerBoxHeight = Math.round(80 * scale);
 
   const chartData = [
     {
@@ -100,19 +90,11 @@ export function RadialChart({
                         />
                         <span
                           className="text-foreground font-bold tabular-nums"
-                          style={{ fontSize: percentageFontSize, lineHeight: 1 }}
+                          style={{ fontSize: centerValueFontSize, lineHeight: 1 }}
                         >
-                          {percentage}%
+                          {currentValue}
                         </span>
                       </div>
-                      {showValue ? (
-                        <span
-                          className="text-muted-foreground tabular-nums"
-                          style={{ fontSize: valueFontSize, marginTop: Math.round(6 * scale) }}
-                        >
-                          {currentValue.toLocaleString()}
-                        </span>
-                      ) : null}
                     </div>
                   </foreignObject>
                 );

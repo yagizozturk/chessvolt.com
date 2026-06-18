@@ -26,7 +26,7 @@ export function OnboardingOptionCard({
       disabled={!isInteractive}
       onClick={() => onSelect?.(option)}
       className={cn(
-        "border-border bg-card w-full rounded-lg border p-4 text-left transition-colors",
+        "border-border bg-card w-full rounded-lg border p-4 text-center transition-colors",
         isInteractive && "hover:border-primary/50 hover:bg-muted/30 cursor-pointer",
         selected && "border-primary ring-primary/30 ring-2",
         disabled && "opacity-60",

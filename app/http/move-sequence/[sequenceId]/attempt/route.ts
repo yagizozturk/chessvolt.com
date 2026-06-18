@@ -4,6 +4,7 @@ import {
   successResponse,
   withErrorHandler,
 } from "@/api-client/route-handler";
+import { getSequenceVoltScore } from "@/components/calculator/volt-calculator/get-sequence-volt-score";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import {
   isRiddleAttemptStatus,
@@ -24,7 +25,29 @@ type AttemptBody = {
   wrongMoveCount?: number;
   hintCount?: number;
   maxCorrectStreak?: number;
+  voltScore?: {
+    totalMoveCount?: number;
+    rating?: number;
+  };
 };
+
+function parseVoltScore(body: AttemptBody) {
+  const totalMoveCount = body.voltScore?.totalMoveCount;
+  const rating = body.voltScore?.rating;
+
+  if (
+    typeof totalMoveCount !== "number" ||
+    !Number.isFinite(totalMoveCount) ||
+    totalMoveCount <= 0 ||
+    typeof rating !== "number" ||
+    !Number.isFinite(rating) ||
+    rating <= 0
+  ) {
+    return null;
+  }
+
+  return { totalMoveCount, rating };
+}
 
 async function handlePOST(req: Request, { params }: RouteParams) {
   const { sequenceId } = await params;
@@ -78,7 +101,17 @@ async function handlePOST(req: Request, { params }: RouteParams) {
       return errorResponse("Failed to complete sequence attempt", 500);
     }
 
-    return successResponse({ success: true, attemptId: attempt.id });
+    const parsedVoltScore = parseVoltScore(body);
+    const voltScore = parsedVoltScore
+      ? await getSequenceVoltScore({
+          supabase: auth.supabase,
+          userId: auth.user.id,
+          sequenceId,
+          ...parsedVoltScore,
+        })
+      : null;
+
+    return successResponse({ success: true, attemptId: attempt.id, voltScore });
   }
 
   const attempt = await attemptService.updateAttempt(auth.supabase, body.attemptId, {

@@ -5,6 +5,8 @@ import { Clock, Flame, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
 import { Button } from "@/components/ui/button";
@@ -31,6 +33,8 @@ export type SolveSuccessDialogProps = {
   destinationPath: string;
   buttonLabel: string;
   stats?: SequenceCompleteDialogStats | null;
+  voltScore?: VoltScoreResult | null;
+  isVoltScoreShowing?: boolean;
 };
 
 /**
@@ -51,6 +55,8 @@ export function SolveSuccessDialog({
   destinationPath,
   buttonLabel,
   stats,
+  voltScore = null,
+  isVoltScoreShowing = false,
 }: SolveSuccessDialogProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
@@ -59,6 +65,8 @@ export function SolveSuccessDialog({
     setIsPending(true);
     router.push(destinationPath);
   };
+
+  const isVoltScoreVisible = isVoltScoreShowing || voltScore != null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -70,15 +78,20 @@ export function SolveSuccessDialog({
           </div>
           <DialogTitle className="text-center text-2xl font-bold">{title}</DialogTitle>
           <DialogDescription className="mt-4 text-center text-lg text-pretty">{description}</DialogDescription>
-          {stats ? (
+          {stats && !isVoltScoreVisible ? (
             <div className={cn("mt-4 grid grid-cols-3 gap-2")}>
               <NumberTickerStats icon={Target} label="Accuracy" value={stats.accuracyPercent} suffix="%" />
               <NumberTickerStats icon={Flame} label="Max streak" value={stats.maxCorrectStreak} />
-              <ColumnBasedStats
-                icon={Clock}
-                label="Time"
-                value={formatAttemptDurationMs(stats.durationMs) ?? "—"}
-              />
+              <ColumnBasedStats icon={Clock} label="Time" value={formatAttemptDurationMs(stats.durationMs) ?? "—"} />
+            </div>
+          ) : null}
+          {isVoltScoreShowing ? (
+            <div className="flex justify-center py-6">
+              <Spinner className="size-8" />
+            </div>
+          ) : voltScore ? (
+            <div className="flex justify-center">
+              <VoltCalculator result={voltScore} chartSize={250} />
             </div>
           ) : null}
         </DialogHeader>

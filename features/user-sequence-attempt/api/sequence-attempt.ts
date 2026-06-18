@@ -1,5 +1,7 @@
 import { apiClient } from "@/api-client/client";
 
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
+import type { SequenceVoltScoring } from "@/components/calculator/volt-calculator/get-sequence-volt-score";
 import type { SequenceAttemptEventType } from "@/features/user-sequence-attempt-event/types/sequence-attempt-event-type";
 import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
 
@@ -11,6 +13,7 @@ export type StartSequenceAttemptResponse = {
 export type UpdateSequenceAttemptResponse = {
   success: boolean;
   attemptId: string;
+  voltScore?: VoltScoreResult | null;
 };
 
 export type RecordSequenceAttemptEventResponse = {
@@ -26,6 +29,7 @@ export type UpdateSequenceAttemptPayload = {
   wrongMoveCount?: number;
   hintCount?: number;
   maxCorrectStreak?: number;
+  voltScore?: SequenceVoltScoring;
 };
 
 export type RecordSequenceAttemptEventPayload = {

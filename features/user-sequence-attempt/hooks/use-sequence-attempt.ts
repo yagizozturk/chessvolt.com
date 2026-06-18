@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import {
   type RecordSequenceAttemptEventPayload,
   type UpdateSequenceAttemptPayload,
@@ -66,21 +67,24 @@ export function useSequenceAttempt(sequenceId: string) {
   }, [sequenceId]);
 
   const updateAttemptResults = useCallback(
-    async (status: RiddleAttemptStatus, counters?: AttemptCounters) => {
+    async (status: RiddleAttemptStatus, counters?: AttemptCounters): Promise<VoltScoreResult | null> => {
       const attemptId = await ensureAttemptStarted();
-      if (!attemptId) return;
+      if (!attemptId) return null;
 
       setIsLoading(true);
       setError(null);
 
       try {
-        await updateSequenceAttempt(sequenceId, {
+        const { data } = await updateSequenceAttempt(sequenceId, {
           attemptId,
           status,
           ...counters,
         });
+
+        return data.voltScore ?? null;
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to update sequence attempt");
+        return null;
       } finally {
         setIsLoading(false);
       }

@@ -24,7 +24,11 @@ export function OnboardingOptionList({
   const selectedValueSet = new Set(selectedValues);
 
   return (
-    <ul className="grid gap-3 sm:grid-cols-2" role={multiple ? "group" : undefined} aria-label={multiple ? "Select all that apply" : undefined}>
+    <ul
+      className="mx-auto flex w-full max-w-sm flex-col gap-3"
+      role={multiple ? "group" : undefined}
+      aria-label={multiple ? "Select all that apply" : undefined}
+    >
       {options.map((option) => (
         <li key={option.id}>
           <OnboardingOptionCard

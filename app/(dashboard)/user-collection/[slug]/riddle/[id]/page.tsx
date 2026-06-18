@@ -1,7 +1,5 @@
 import { notFound } from "next/navigation";
 
-import { calculateVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
-import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import {
   getCollectionRiddleByRiddleIdAndCollectionId,
   getCollectionRiddlesByRiddleId,
@@ -9,10 +7,8 @@ import {
 import { getUserCollections, getUserCustomCollectionBySlug } from "@/features/collection/services/collection.service";
 import RiddleController from "@/features/riddle/components/riddle-controller";
 import { getActiveRiddlesByCollectionId, getRiddleById } from "@/features/riddle/services/riddle.service";
-import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
 import { getParentCollectionUrl } from "@/features/riddle/utilities/get-parent-collection-url";
-import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 type PageProps = {
@@ -60,10 +56,9 @@ export default async function UserCollectionRiddlePage({ params }: PageProps) {
   // =============================================================================
   // Getting user collections and collection riddles by riddle id
   // =============================================================================
-  const [userCollections, collectionRiddles, attempts] = await Promise.all([
+  const [userCollections, collectionRiddles] = await Promise.all([
     getUserCollections(supabase, user.id),
     getCollectionRiddlesByRiddleId(supabase, riddle.id),
-    attemptService.getAttemptsByUserAndSequence(supabase, user.id, riddle.moveSequence.id),
   ]);
 
   // =============================================================================
@@ -76,15 +71,6 @@ export default async function UserCollectionRiddlePage({ params }: PageProps) {
     .map((collectionRiddle) => collectionRiddle.collectionId)
     .filter((collectionId) => userCollectionIds.has(collectionId));
 
-  // =============================================================================
-  // Building volt score for the riddle
-  // =============================================================================
-  const voltScore = calculateVoltScore({
-    attempts,
-    totalMoveCount: getPlayerMoveCount(riddle.moveSequence.moves),
-    rating: getRiddleRatingForScoring(riddle.rating),
-  });
-
   return (
     <RiddleController
       riddle={riddle}
@@ -96,7 +82,6 @@ export default async function UserCollectionRiddlePage({ params }: PageProps) {
         title: item.title,
       }))}
       userCollectionIdsHasCurrentRiddle={userCollectionIdsHasCurrentRiddle}
-      voltScore={voltScore}
     />
   );
 }

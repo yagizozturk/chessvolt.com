@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
-import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
@@ -20,6 +20,7 @@ import {
 } from "@/features/riddle/components/add-to-my-collection-picker";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
+import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
@@ -40,7 +41,6 @@ type RiddleControllerProps = {
   isUserLoggedIn?: boolean;
   userCollections?: MyCollectionOption[];
   userCollectionIdsHasCurrentRiddle?: string[];
-  voltScore?: VoltScoreResult | null;
 };
 
 export default function RiddleController({
@@ -50,14 +50,15 @@ export default function RiddleController({
   isUserLoggedIn = false,
   userCollections = [],
   userCollectionIdsHasCurrentRiddle = [],
-  voltScore = null,
 }: RiddleControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const sequenceId = riddle.moveSequence.id; // Every sequence has its own moves and PGN. Every Riddle has sequenceId
   const [isCompleted, setIsCompleted] = useState(false); // Whether the riddle is completed
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null); // Values that are shown in Dialog
+  const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null);
+  const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
+  const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
   const { playLevelUpSound } = useBoardSounds();
 
@@ -90,6 +91,10 @@ export default function RiddleController({
   });
 
   const { Tour } = useRiddleTour({ riddleId: riddle.id });
+  const voltScore = {
+    totalMoveCount: getPlayerMoveCount(riddle.moveSequence.moves),
+    rating: getRiddleRatingForScoring(riddle.rating),
+  };
 
   // ================================================================================================
   // Reset the riddle state when the riddle id changes
@@ -98,6 +103,8 @@ export default function RiddleController({
     setIsCompleted(false);
     setSuccessDialogOpen(false);
     setCompletionStats(null);
+    setCompletionVoltScore(null);
+    setIsVoltScoreShowing(false);
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -123,18 +130,34 @@ export default function RiddleController({
 
     // Setting the completion stats for UI Dialog show
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
+    setCompletionVoltScore(null);
+    setIsVoltScoreShowing(isUserLoggedIn);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, playLevelUpSound, recordEvent, updateAttemptResults]);
+  }, [
+    currentCorrectMove,
+    getTimeFromStartMs,
+    isCompleted,
+    isUserLoggedIn,
+    playLevelUpSound,
+    recordEvent,
+    updateAttemptResults,
+  ]);
 
   // ================================================================================================
   // Insert the completion attempt to the db
   // ================================================================================================
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
-    // Record the completion event for attempt_event table for more detailed logs
     await recordEvent({ eventType: "complete" });
-    await updateAttemptResults("completed", attemptPayload);
+
+    const voltScoreResult = await updateAttemptResults("completed", {
+      ...attemptPayload,
+      ...(isUserLoggedIn ? { voltScore } : {}),
+    });
+
+    setCompletionVoltScore(voltScoreResult);
+    setIsVoltScoreShowing(false);
   }
 
   // ================================================================================================
@@ -246,6 +269,8 @@ export default function RiddleController({
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
         stats={completionStats}
+        voltScore={completionVoltScore}
+        isVoltScoreShowing={isVoltScoreShowing}
       />
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
@@ -277,11 +302,6 @@ export default function RiddleController({
           </div>
           <div data-tour="goals">
             <GoalViewer goals={sortedGoals} />
-          </div>
-          <div className="relative">
-            <div className="absolute right-[-20px] bottom-[-15px] z-10">
-              <VoltCalculator result={voltScore} chartSize={170} />
-            </div>
           </div>
           <div className="mt-auto" data-tour="hint-button">
             {isUserLoggedIn && userCollections.length > 0 ? (

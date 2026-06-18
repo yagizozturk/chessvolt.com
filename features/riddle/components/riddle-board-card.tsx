@@ -1,4 +1,4 @@
-import { Calendar, Circle, Flag, Gauge, Puzzle, Target } from "lucide-react";
+import { Calendar, Circle, Flag, Gauge, Puzzle } from "lucide-react";
 import Link from "next/link";
 
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
@@ -18,7 +18,6 @@ type RiddleBoardCardProps = {
   size?: number;
   /** true = correct, false = wrong, undefined = not attempted, Undefined ı tipin bir parçası yapmak için ? ni ekleriz */
   isComplete?: boolean;
-  accuracyPercent?: number | null;
   href: string;
   displayFen?: string | null;
   voltScore?: VoltScoreResult | null;
@@ -42,7 +41,6 @@ export function RiddleBoardCard({
   game,
   size = 200,
   isComplete,
-  accuracyPercent,
   href,
   displayFen,
   voltScore = null,
@@ -89,20 +87,11 @@ export function RiddleBoardCard({
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           <BoardCardMetaRow icon={Puzzle} label={moveCountLabel ?? "No moves"} />
         </div>
-        <div className={voltScore ? "mt-auto flex flex-col gap-2" : "mt-auto flex items-center gap-3"}>
-          {voltScore ? <VoltCalculator result={voltScore} showDetails={false} /> : null}
-          <div className="flex items-center gap-3">
-            {accuracyPercent != null ? (
-              <BoardCardMetaRow
-                icon={Target}
-                label={`${accuracyPercent}% accuracy`}
-                className="text-muted-foreground text-sm"
-              />
-            ) : null}
-            <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
-              Play
-            </Button>
-          </div>
+        <div className="mt-auto flex flex-col gap-2">
+          {voltScore ? <VoltCalculator result={voltScore} chartSize={140} /> : null}
+          <Button variant="voltCompact" size="xs" className="ml-auto w-fit shrink-0">
+            Play
+          </Button>
         </div>
       </div>
     </Link>
