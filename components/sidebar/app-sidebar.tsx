@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useBoardSoundsMenuAction } from "@/components/ui/board-sounds-toggle";
 import { useToggleTheme } from "@/components/ui/theme-toggle";
+import { useVoltExplainMenuAction } from "@/components/volt-explain-dialog/use-volt-explain-dialog";
 import { createClient } from "@/lib/supabase/client";
 
 // Static nav config: link-based submenu items only.
@@ -43,11 +44,11 @@ const data = {
       icon: "/images/icons/icon-openings.png",
       items: [
         {
-          title: "Routing",
+          title: "My Openings",
           url: "#",
         },
         {
-          title: "Data Fetching",
+          title: "",
           url: "#",
           isActive: true,
         },
@@ -95,10 +96,6 @@ const data = {
           title: "Contact Us",
           url: "#",
         },
-        {
-          title: "How Volt Works",
-          url: "#",
-        },
       ],
     },
   ],
@@ -109,6 +106,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // Single-click light ↔ dark toggle; shared with theme-toggle.tsx via useToggleTheme.
   const toggleViewMode = useToggleTheme();
   const { toggle: toggleSounds, label: soundsLabel } = useBoardSoundsMenuAction();
+  // Intentional re-open: does not read localStorage — user chose "How Volt Works".
+  const { openDialog: openVoltExplainDialog } = useVoltExplainMenuAction();
 
   const handleLogout = React.useCallback(async () => {
     const supabase = createClient();
@@ -138,9 +137,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           };
         }
 
+        if (section.title === "Other") {
+          return {
+            ...section,
+            items: [
+              ...(section.items ?? []),
+              // Manual open — always available, even after first-view localStorage is set.
+              { title: "How Volt Works", onClick: openVoltExplainDialog },
+            ],
+          };
+        }
+
         return section;
       }),
-    [handleLogout, toggleViewMode, toggleSounds, soundsLabel],
+    [handleLogout, openVoltExplainDialog, toggleViewMode, toggleSounds, soundsLabel],
   );
 
   return (

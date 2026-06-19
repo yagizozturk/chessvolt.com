@@ -4,20 +4,28 @@ import type { CarouselDialogSlide } from "@/components/carousel-dialog/carousel-
 
 export const VOLT_EXPLAIN_DIALOG_ID = "collection-intro";
 
+// ── First-view persistence (localStorage) ────────────────────────────────────
+// These helpers gate *automatic* display only. They do NOT block intentional opens
+// (e.g. sidebar "How Volt Works"). Once the user dismisses the dialog, we write "1"
+// so auto-start never fires again — but openDialog() can still show it any time.
+
 export function getVoltExplainDialogStorageKey(dialogId: string) {
   return `volt-explain-dialog-seen:${dialogId}`;
 }
 
+/** True when the user has already completed or skipped the intro for this dialogId. */
 export function hasSeenVoltExplainDialog(dialogId: string) {
   if (typeof window === "undefined") return true;
   return localStorage.getItem(getVoltExplainDialogStorageKey(dialogId)) === "1";
 }
 
+/** Called when the dialog closes (Skip, Got it, or overlay dismiss). */
 export function markVoltExplainDialogSeen(dialogId: string) {
   if (typeof window === "undefined") return;
   localStorage.setItem(getVoltExplainDialogStorageKey(dialogId), "1");
 }
 
+/** Dev/admin helper — clears the seen flag so auto-start can run again. */
 export function clearVoltExplainDialogSeen(dialogId: string) {
   if (typeof window === "undefined") return;
   localStorage.removeItem(getVoltExplainDialogStorageKey(dialogId));

@@ -14,9 +14,19 @@ export type CarouselDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   slides: CarouselDialogSlide[];
+  /** When false, hides Skip and places Back (voltMuted) on the left. Default: true. */
+  showSkip?: boolean;
+  /** When "above-description", title sits above the body copy instead of DialogHeader. Default: "header". */
+  titlePlacement?: "header" | "above-description";
 };
 
-export function CarouselDialog({ open, onOpenChange, slides }: CarouselDialogProps) {
+export function CarouselDialog({
+  open,
+  onOpenChange,
+  slides,
+  showSkip = true,
+  titlePlacement = "header",
+}: CarouselDialogProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
@@ -72,9 +82,11 @@ export function CarouselDialog({ open, onOpenChange, slides }: CarouselDialogPro
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
-        <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-bold">{activeSlide.title}</DialogTitle>
-        </DialogHeader>
+        {titlePlacement === "header" ? (
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl font-bold">{activeSlide.title}</DialogTitle>
+          </DialogHeader>
+        ) : null}
 
         <Carousel setApi={setApi} opts={{ loop: false }} className="w-full">
           <CarouselContent className="-ml-2">
@@ -109,15 +121,26 @@ export function CarouselDialog({ open, onOpenChange, slides }: CarouselDialogPro
         </div>
 
         <div className="flex flex-col items-center gap-2 text-center">
+          {titlePlacement === "above-description" ? (
+            <DialogTitle className="text-center text-2xl font-bold">{activeSlide.title}</DialogTitle>
+          ) : null}
           <DialogDescription className="text-center text-lg text-pretty">{activeSlide.description}</DialogDescription>
         </div>
 
         <DialogFooter className="flex-row items-center justify-between gap-2 sm:justify-between">
-          <Button type="button" variant="ghost" onClick={handleSkip}>
-            Skip
-          </Button>
-          <div className="flex gap-2">
-            {!isFirstSlide ? (
+          {showSkip ? (
+            <Button type="button" variant="ghost" onClick={handleSkip}>
+              Skip
+            </Button>
+          ) : !isFirstSlide ? (
+            <Button type="button" variant="voltMuted" onClick={handleBack}>
+              Back
+            </Button>
+          ) : (
+            <span />
+          )}
+          <div className="flex gap-2 sm:ml-auto">
+            {showSkip && !isFirstSlide ? (
               <Button type="button" variant="outline" onClick={handleBack}>
                 Back
               </Button>
