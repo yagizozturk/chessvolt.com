@@ -6,6 +6,7 @@ import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { addOpeningVariantToPracticeAction } from "@/features/user-practice-opening-variant/actions/add-opening-variant-to-practice";
 
 type AddToPracticeButtonProps = {
@@ -75,7 +76,7 @@ export function AddToPracticeButton({ openingVariantId, initialInPracticeList }:
         onClick={handleClick}
         disabled={isPending}
       >
-        <ListPlus data-icon="inline-start" />
+        {isPending ? <Spinner data-icon="inline-start" /> : <ListPlus data-icon="inline-start" />}
         Add to my practice list
       </Button>
     </div>

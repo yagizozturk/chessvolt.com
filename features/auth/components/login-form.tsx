@@ -117,6 +117,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   onClick={handleGoogleLogin}
                   disabled={loading}
                 >
+                  {loading && <Spinner data-icon="inline-start" />}
                   LOGIN WITH GOOGLE
                 </RainbowButton>
                 <FieldDescription className="text-center">

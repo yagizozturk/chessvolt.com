@@ -2,6 +2,8 @@
 
 import { useTransition } from "react";
 
+import { Spinner } from "@/components/ui/spinner";
+
 import { saveUserOnboardingAnswerAction } from "@/features/user-onboarding-answer/actions/save-user-onboarding-answer";
 import { OnboardingOptionList } from "@/features/onboarding-option/components/onboarding-option-list";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
@@ -33,13 +35,20 @@ export function OnboardingAnswerPicker({ question, options, selectedOptionId, on
     : [];
 
   return (
-    <div className={isPending ? "pointer-events-none opacity-60" : undefined}>
-      <OnboardingOptionList
-        options={options}
-        selectedValues={selectedValues}
-        onSelect={handleSelect}
-        disabled={isPending}
-      />
+    <div className="relative">
+      <div className={isPending ? "pointer-events-none opacity-60" : undefined}>
+        <OnboardingOptionList
+          options={options}
+          selectedValues={selectedValues}
+          onSelect={handleSelect}
+          disabled={isPending}
+        />
+      </div>
+      {isPending ? (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Spinner className="size-6" />
+        </div>
+      ) : null}
     </div>
   );
 }

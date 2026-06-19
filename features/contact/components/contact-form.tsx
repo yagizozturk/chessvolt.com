@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Spinner } from "@/components/ui/spinner";
 import { submitContactAction } from "@/features/contact/actions/submit-contact";
 
 export function ContactForm() {
@@ -111,6 +112,7 @@ export function ContactForm() {
               </Field>
               <Field>
                 <Button variant="volt" type="submit" disabled={loading} className="w-full sm:w-auto">
+                  {loading && <Spinner data-icon="inline-start" />}
                   {loading ? "Sending..." : "Send message"}
                 </Button>
               </Field>

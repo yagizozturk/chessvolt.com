@@ -7,6 +7,7 @@ import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Command,
   CommandDialog,
@@ -41,6 +42,7 @@ export function AddToMyCollectionPicker({ riddleId, collections, savedCollection
   const [open, setOpen] = useState(false);
   const [savedIds, setSavedIds] = useState(() => new Set(savedCollectionIds));
   const [isPending, startTransition] = useTransition();
+  const [pendingCollectionId, setPendingCollectionId] = useState<string | null>(null);
 
   useEffect(() => {
     setSavedIds(new Set(savedCollectionIds));
@@ -49,25 +51,30 @@ export function AddToMyCollectionPicker({ riddleId, collections, savedCollection
   const handleSelect = (collectionId: string) => {
     if (savedIds.has(collectionId) || isPending) return;
 
+    setPendingCollectionId(collectionId);
     startTransition(async () => {
-      const result = await addRiddleToMyCollectionAction(riddleId, collectionId);
+      try {
+        const result = await addRiddleToMyCollectionAction(riddleId, collectionId);
 
-      if (result.ok) {
-        setSavedIds((prev) => new Set([...prev, collectionId]));
-        toast.success("Riddle added to collection");
-        setOpen(false);
-        router.refresh();
-        return;
+        if (result.ok) {
+          setSavedIds((prev) => new Set([...prev, collectionId]));
+          toast.success("Riddle added to collection");
+          setOpen(false);
+          router.refresh();
+          return;
+        }
+
+        toast.error(ERROR_MESSAGES[result.reason] ?? "Something went wrong.");
+      } finally {
+        setPendingCollectionId(null);
       }
-
-      toast.error(ERROR_MESSAGES[result.reason] ?? "Something went wrong.");
     });
   };
 
   return (
     <div className="mb-4">
       <Button type="button" variant="voltGreen" className="w-full" onClick={() => setOpen(true)} disabled={isPending}>
-        <FolderPlus data-icon="inline-start" />
+        {isPending ? <Spinner data-icon="inline-start" /> : <FolderPlus data-icon="inline-start" />}
         Add to my collection
       </Button>
       <CommandDialog
@@ -95,15 +102,17 @@ export function AddToMyCollectionPicker({ riddleId, collections, savedCollection
               <CommandGroup heading="My collections">
                 {collections.map((collection) => {
                   const isSaved = savedIds.has(collection.id);
+                  const isSaving = pendingCollectionId === collection.id;
 
                   return (
                     <CommandItem
                       key={collection.id}
                       value={collection.title}
-                      disabled={isSaved}
+                      disabled={isSaved || isPending}
                       onSelect={() => handleSelect(collection.id)}
                     >
                       {collection.title}
+                      {isSaving ? <Spinner className="ml-auto size-4" /> : null}
                       {isSaved ? <span className="text-muted-foreground text-xs">Added</span> : null}
                     </CommandItem>
                   );

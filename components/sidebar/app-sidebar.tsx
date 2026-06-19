@@ -109,6 +109,7 @@ type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
 
 export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
   const router = useRouter();
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
   // Single-click light ↔ dark toggle; shared with theme-toggle.tsx via useToggleTheme.
   const toggleViewMode = useToggleTheme();
   const { toggle: toggleSounds, label: soundsLabel } = useBoardSoundsMenuAction();
@@ -116,11 +117,13 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
   const { openDialog: openVoltExplainDialog } = useVoltExplainMenuAction();
 
   const handleLogout = React.useCallback(async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/");
     router.refresh();
-  }, [router]);
+  }, [isLoggingOut, router]);
 
   // Merge static nav config with runtime actions (Settings: theme + sounds, Profile: logout).
   const navMain = React.useMemo<NavMainItem[]>(
@@ -139,7 +142,7 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
         if (section.title === "Profile") {
           return {
             ...section,
-            items: [...(section.items ?? []), { title: "Logout", onClick: handleLogout }],
+            items: [...(section.items ?? []), { title: "Logout", onClick: handleLogout, isLoading: isLoggingOut }],
           };
         }
 
@@ -169,7 +172,7 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
 
         return section;
       }),
-    [handleLogout, openVoltExplainDialog, openings, toggleViewMode, toggleSounds, soundsLabel],
+    [handleLogout, isLoggingOut, openVoltExplainDialog, openings, toggleViewMode, toggleSounds, soundsLabel],
   );
 
   return (

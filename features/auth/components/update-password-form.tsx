@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 
@@ -73,7 +74,9 @@ export function UpdatePasswordForm({ className, ...props }: React.ComponentProps
     return (
       <Card className={cn(className)} {...props}>
         <CardContent className="pt-6">
-          <p className="text-muted-foreground text-center text-sm">Loading…</p>
+          <div className="flex justify-center py-2">
+            <Spinner className="size-6" />
+          </div>
         </CardContent>
       </Card>
     );
@@ -136,6 +139,7 @@ export function UpdatePasswordForm({ className, ...props }: React.ComponentProps
             </Field>
             <Field>
               <Button variant="volt" type="submit" disabled={loading} className="w-full">
+                {loading && <Spinner data-icon="inline-start" />}
                 {loading ? "Saving…" : "Update password"}
               </Button>
               <FieldDescription className="text-center">

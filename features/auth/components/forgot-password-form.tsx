@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 
@@ -79,6 +80,7 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
               </Field>
               <Field>
                 <Button variant="volt" type="submit" disabled={loading || !email.trim()} className="w-full">
+                  {loading && <Spinner data-icon="inline-start" />}
                   {loading ? "Sending..." : "Send reset link"}
                 </Button>
                 <FieldDescription className="text-center">

@@ -3,6 +3,8 @@
 import { MoreHorizontalIcon } from "lucide-react";
 import Image from "next/image";
 
+import { Spinner } from "@/components/ui/spinner";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +16,8 @@ import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSideb
 // Submenu items are either navigation links or runtime actions.
 // TypeScript union: an item has `url` OR `onClick`, never both — avoids fake "#" links for actions.
 export type NavSubItem =
-  | { title: string; url: string; onClick?: never }
-  | { title: string; onClick: () => void | Promise<void>; url?: never };
+  | { title: string; url: string; onClick?: never; isLoading?: never }
+  | { title: string; onClick: () => void | Promise<void>; url?: never; isLoading?: boolean };
 
 export type NavMainItem = {
   title: string;
@@ -60,7 +62,12 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     subItem.onClick ? (
                       // Actions (logout, theme toggle): plain DropdownMenuItem + onClick.
                       // Do not use asChild + <a> — these items perform work, they don't navigate.
-                      <DropdownMenuItem key={subItem.title} onClick={subItem.onClick}>
+                      <DropdownMenuItem
+                        key={subItem.title}
+                        onClick={subItem.onClick}
+                        disabled={subItem.isLoading}
+                      >
+                        {subItem.isLoading ? <Spinner data-icon="inline-start" /> : null}
                         {subItem.title}
                       </DropdownMenuItem>
                     ) : (

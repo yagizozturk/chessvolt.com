@@ -205,6 +205,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                     onClick={handleGoogleSignup}
                     disabled={loading}
                   >
+                    {loading && <Spinner data-icon="inline-start" />}
                     SIGN UP WITH GOOGLE
                   </RainbowButton>
                   <FieldDescription className="px-6 text-center">

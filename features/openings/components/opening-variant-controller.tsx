@@ -12,6 +12,7 @@ import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
@@ -51,6 +52,7 @@ export default function OpeningVariantController({
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isContinuePending, setIsContinuePending] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
@@ -79,6 +81,7 @@ export default function OpeningVariantController({
 
   useEffect(() => {
     setIsCompleted(false);
+    setIsContinuePending(false);
     setSuccessDialogOpen(false);
     setCompletionStats(null);
     correctMoveCountRef.current = 0;
@@ -179,6 +182,7 @@ export default function OpeningVariantController({
   const successButtonLabel = nextVariantId ? "Next variant" : "Back to opening";
 
   const handleContinueClick = () => {
+    setIsContinuePending(true);
     router.push(successDestinationPath);
   };
 
@@ -238,7 +242,13 @@ export default function OpeningVariantController({
               </div>
             ) : (
               <div className="mt-4">
-                <Button variant="volt" onClick={handleContinueClick} className="w-full">
+                <Button
+                  variant="volt"
+                  onClick={handleContinueClick}
+                  disabled={isContinuePending}
+                  className="w-full"
+                >
+                  {isContinuePending && <Spinner data-icon="inline-start" />}
                   {successButtonLabel}
                 </Button>
               </div>
