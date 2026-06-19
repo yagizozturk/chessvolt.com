@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { Zap } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -133,17 +133,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               size="lg"
               asChild
               tooltip="ChessVolt"
-              className="hover:bg-transparent active:bg-transparent data-open:hover:bg-transparent"
+              className="bg-secondary text-primary hover:bg-primary justify-center rounded-lg [&_svg]:size-6"
             >
-              <Link href="/collection" aria-label="ChessVolt" className="rounded-lg bg-blue-500">
-                <Image
-                  src="/images/icons/icon-volt.png"
-                  alt=""
-                  aria-hidden
-                  width={32}
-                  height={32}
-                  className="size-8 shrink-0"
-                />
+              <Link href="/collection" aria-label="ChessVolt">
+                <Zap aria-hidden className="shrink-0 fill-current" strokeWidth={0} />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

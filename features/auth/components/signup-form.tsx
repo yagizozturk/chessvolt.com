@@ -89,10 +89,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
     <Card className={cn("pt-0", className)} {...props}>
       <div className="flex overflow-hidden rounded-t-xl">
         <div className="flex min-w-0 flex-1 items-end p-4" style={{ backgroundColor: "#FCC502" }}>
-          <div className="text-foreground flex flex-col gap-1 text-lg font-bold">Sign up to ChessVolt</div>
+          <div className="text-foreground flex flex-col gap-1 text-lg font-bold">Sign Up</div>
         </div>
         <div className="overflow-hidden">
-          <img src="/images/form/auth-form-header-updated.png" alt="ChessVolt" width={180} height={90} />
+          <img src="/images/form/signup-form-header.png" alt="ChessVolt" width={190} height={90} />
         </div>
       </div>
       <CardContent>

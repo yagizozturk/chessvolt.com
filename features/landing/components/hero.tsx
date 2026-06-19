@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
-    <div className="container mx-auto bg-[#5734B3] px-4 pt-32 md:px-6">
-      <div className="flex gap-2">
+    <div className="container mx-auto bg-[#5734B3] px-4 pt-32 pb-24 md:px-6">
+      <div className="flex gap-8">
         <div className="flex flex-1 flex-col items-end space-y-6 text-right">
           <h1 className="text-3xl leading-tight font-extrabold tracking-tighter sm:text-6xl lg:text-7xl/none">
             Understand <br />

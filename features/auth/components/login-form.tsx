@@ -61,11 +61,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="pt-0">
         <div className="flex overflow-hidden rounded-t-xl">
-          <div className="flex min-w-0 flex-1 items-end p-4" style={{ backgroundColor: "#5C21D2" }}>
-            <div className="text-foreground flex flex-col gap-1 text-lg font-bold">Login to ChessVolt</div>
+          <div className="flex min-w-0 flex-1 items-end p-4" style={{ backgroundColor: "#FCC502" }}>
+            <div className="text-foreground flex flex-col gap-1 text-lg font-bold">Login</div>
           </div>
           <div className="overflow-hidden">
-            <img src="/images/form/login-form-header.png" alt="ChessVolt" height={70} width={130} />
+            <img src="/images/form/signup-form-header.png" alt="ChessVolt" height={90} width={190} />
           </div>
         </div>
         <CardContent>

@@ -1,3 +1,4 @@
+import { Curve } from "@/features/landing/components/curve";
 import { Features } from "@/features/landing/components/features";
 import { Footer } from "@/features/landing/components/footer";
 import { Hero } from "@/features/landing/components/hero";
@@ -9,6 +10,7 @@ export default function HomePage() {
     <div className="bg-brand">
       <Navbar />
       <Hero />
+      <Curve />
       <Features />
       <Information />
       <Footer />
