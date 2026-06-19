@@ -1,9 +1,13 @@
+"use client";
+
 import { ChessPawn, Trophy } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
 import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
@@ -16,13 +20,24 @@ type CollectionCardProps = {
 };
 
 export function CollectionCard({ collection }: CollectionCardProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const imageSrc = getCollectionCoverImageSrc(collection.coverImageUrl);
 
   return (
     <Link
       href={`/collection/${collection.slug}`}
-      className="bg-card border-b-card-shadow flex h-full flex-col items-stretch gap-2 rounded-lg border-b-[6px]"
+      onClick={() => setIsLoading(true)}
+      aria-busy={isLoading}
+      className={cn(
+        "bg-card border-b-card-shadow relative flex h-full flex-col items-stretch gap-2 rounded-lg border-b-[6px]",
+        isLoading && "pointer-events-none",
+      )}
     >
+      {isLoading ? (
+        <div className="bg-background/60 absolute inset-0 z-10 flex items-center justify-center rounded-lg">
+          <Spinner className="size-8" />
+        </div>
+      ) : null}
       <div style={{ backgroundColor: collection.coverImageColor }} className="flex overflow-hidden rounded-t-lg">
         <div className="flex min-w-0 flex-1 items-end p-4">
           <div className="flex flex-wrap gap-2">

@@ -11,6 +11,7 @@ import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
@@ -60,6 +61,7 @@ export default function RiddleController({
   const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null);
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
+  const [isContinuePending, setIsContinuePending] = useState(false);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
   const { playLevelUpSound } = useBoardSounds();
 
@@ -106,6 +108,7 @@ export default function RiddleController({
     setCompletionStats(null);
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(false);
+    setIsContinuePending(false);
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -256,6 +259,7 @@ export default function RiddleController({
   // Handle the continue click and redirect to the next riddle or back to the collection
   // ================================================================================================
   const handleContinueClick = () => {
+    setIsContinuePending(true);
     router.push(successDestinationPath);
   };
 
@@ -324,7 +328,8 @@ export default function RiddleController({
               </div>
             ) : (
               <div className="mt-4">
-                <Button variant="volt" onClick={handleContinueClick} className="w-full">
+                <Button variant="volt" onClick={handleContinueClick} disabled={isContinuePending} className="w-full">
+                  {isContinuePending && <Spinner data-icon="inline-start" />}
                   {successButtonLabel}
                 </Button>
               </div>

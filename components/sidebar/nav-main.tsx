@@ -11,20 +11,21 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: string;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}) {
+// Submenu items are either navigation links or runtime actions.
+// TypeScript union: an item has `url` OR `onClick`, never both — avoids fake "#" links for actions.
+export type NavSubItem =
+  | { title: string; url: string; onClick?: never }
+  | { title: string; onClick: () => void | Promise<void>; url?: never };
+
+export type NavMainItem = {
+  title: string;
+  url: string;
+  icon?: string;
+  isActive?: boolean;
+  items?: NavSubItem[];
+};
+
+export function NavMain({ items }: { items: NavMainItem[] }) {
   const { isMobile } = useSidebar();
 
   return (
@@ -55,11 +56,20 @@ export function NavMain({
                   align={isMobile ? "end" : "start"}
                   className="min-w-56 rounded-lg"
                 >
-                  {item.items.map((item) => (
-                    <DropdownMenuItem asChild key={item.title}>
-                      <a href={item.url}>{item.title}</a>
-                    </DropdownMenuItem>
-                  ))}
+                  {item.items.map((subItem) =>
+                    subItem.onClick ? (
+                      // Actions (logout, theme toggle): plain DropdownMenuItem + onClick.
+                      // Do not use asChild + <a> — these items perform work, they don't navigate.
+                      <DropdownMenuItem key={subItem.title} onClick={subItem.onClick}>
+                        {subItem.title}
+                      </DropdownMenuItem>
+                    ) : (
+                      // Links: asChild delegates rendering to an <a> for correct semantics and keyboard behavior.
+                      <DropdownMenuItem asChild key={subItem.title}>
+                        <a href={subItem.url}>{subItem.title}</a>
+                      </DropdownMenuItem>
+                    ),
+                  )}
                 </DropdownMenuContent>
               ) : null}
             </SidebarMenuItem>

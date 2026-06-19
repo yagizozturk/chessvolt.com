@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Highlighter } from "@/components/ui/highlighter";
 import { Progress } from "@/components/ui/progress";
+import { Spinner } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { OnboardingOptionList } from "@/features/onboarding-option/components/onboarding-option-list";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
@@ -121,11 +121,8 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
           <span>ChessVolt</span>
         </div>
         <Text variant="subtitle" as="p">
-          Please tell us a bit about yourself so we can &nbsp;
-          <Highlighter action="underline" color="#F0B100">
-            personalize
-          </Highlighter>
-          &nbsp; your practice.
+          Please tell us a bit about yourself so we can{" "}
+          <span className="text-primary">personalize</span> your practice.
         </Text>
       </div>
 
@@ -160,7 +157,6 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
         ) : (
           <span />
         )}
-        {/* TODO: Total loading icon can be used in order to Saving text change */}
         <Button
           type="button"
           variant="volt"
@@ -169,7 +165,10 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
           disabled={isPending || !hasCurrentStepAnswer}
         >
           {isPending ? (
-            "Saving..."
+            <>
+              <Spinner data-icon="inline-start" />
+              Saving...
+            </>
           ) : (
             <>
               {isLastStep ? "Finish" : "Continue"}

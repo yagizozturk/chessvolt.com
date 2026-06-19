@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/c
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RainbowButton } from "@/components/ui/rainbow-button";
+import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 
@@ -61,11 +62,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="pt-0">
         <div className="flex overflow-hidden rounded-t-xl">
-          <div className="flex min-w-0 flex-1 items-end p-4" style={{ backgroundColor: "#FCC502" }}>
+          <div className="flex min-w-0 flex-1 items-end p-4" style={{ backgroundColor: "#5227D4" }}>
             <div className="text-foreground flex flex-col gap-1 text-lg font-bold">Login</div>
           </div>
           <div className="overflow-hidden">
-            <img src="/images/form/signup-form-header.png" alt="ChessVolt" height={90} width={190} />
+            <img src="/images/form/log-in-account-form-header.png" alt="ChessVolt" height={90} width={180} />
           </div>
         </div>
         <CardContent>
@@ -105,7 +106,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               </Field>
               <Field>
                 <Button variant="volt" type="submit" disabled={loading}>
-                  {loading ? "Loading..." : "Login"}
+                  {loading && <Spinner data-icon="inline-start" />}
+                  Login
                 </Button>
 
                 <RainbowButton

@@ -2,9 +2,10 @@
 
 import { Zap } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { NavMain } from "@/components/sidebar/nav-main";
+import { NavMain, type NavMainItem } from "@/components/sidebar/nav-main";
 import {
   Sidebar,
   SidebarContent,
@@ -13,8 +14,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useBoardSoundsMenuAction } from "@/components/ui/board-sounds-toggle";
+import { useToggleTheme } from "@/components/ui/theme-toggle";
+import { createClient } from "@/lib/supabase/client";
 
-// This is sample data.
+// Static nav config: link-based submenu items only.
+// Settings and Profile actions are injected at runtime in AppSidebar because they need React hooks.
 const data = {
   navMain: [
     {
@@ -65,12 +70,8 @@ const data = {
       icon: "/images/icons/icon-user-profile.png",
       items: [
         {
-          title: "Components",
-          url: "#",
-        },
-        {
-          title: "File Conventions",
-          url: "#",
+          title: "My Profile",
+          url: "/profile",
         },
       ],
     },
@@ -78,34 +79,14 @@ const data = {
       title: "Settings",
       url: "#",
       icon: "/images/icons/icon-settings.png",
-      items: [
-        {
-          title: "Change Mode",
-          url: "#",
-        },
-        {
-          title: "Contact Us",
-          url: "#",
-        },
-        {
-          title: "Blog",
-          url: "#",
-        },
-        {
-          title: "Logout",
-          url: "#",
-        },
-      ],
+      // Populated at runtime — see navMain useMemo below.
+      items: [],
     },
     {
       title: "Other",
       url: "#",
       icon: "/images/icons/icon-more.png",
       items: [
-        {
-          title: "Switch Mode",
-          url: "#",
-        },
         {
           title: "Blog",
           url: "#",
@@ -124,6 +105,44 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter();
+  // Single-click light ↔ dark toggle; shared with theme-toggle.tsx via useToggleTheme.
+  const toggleViewMode = useToggleTheme();
+  const { toggle: toggleSounds, label: soundsLabel } = useBoardSoundsMenuAction();
+
+  const handleLogout = React.useCallback(async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }, [router]);
+
+  // Merge static nav config with runtime actions (Settings: theme + sounds, Profile: logout).
+  const navMain = React.useMemo<NavMainItem[]>(
+    () =>
+      data.navMain.map((section) => {
+        if (section.title === "Settings") {
+          return {
+            ...section,
+            items: [
+              { title: "Change Color Mode", onClick: toggleViewMode },
+              { title: soundsLabel, onClick: toggleSounds },
+            ],
+          };
+        }
+
+        if (section.title === "Profile") {
+          return {
+            ...section,
+            items: [...(section.items ?? []), { title: "Logout", onClick: handleLogout }],
+          };
+        }
+
+        return section;
+      }),
+    [handleLogout, toggleViewMode, toggleSounds, soundsLabel],
+  );
+
   return (
     <Sidebar {...props} collapsible="icon" className="!border-r-0">
       <SidebarHeader>
@@ -143,7 +162,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMain} />
       </SidebarContent>
     </Sidebar>
   );

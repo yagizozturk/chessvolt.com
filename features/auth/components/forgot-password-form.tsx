@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
@@ -37,12 +37,19 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
   }
 
   return (
-    <Card className={cn(className)} {...props}>
-      <CardHeader>
-        <CardTitle>Reset password</CardTitle>
-        <CardDescription>Enter your email and we&apos;ll send you a link to reset your password</CardDescription>
-      </CardHeader>
+    <Card className={cn("pt-0", className)} {...props}>
+      <div className="flex overflow-hidden rounded-t-xl">
+        <div className="flex min-w-0 flex-1 items-end p-4" style={{ backgroundColor: "#5227D4" }}>
+          <div className="text-foreground flex flex-col gap-1 text-lg font-bold">Reset password</div>
+        </div>
+        <div className="overflow-hidden">
+          <img src="/images/form/log-in-form-header.png" alt="ChessVolt" width={180} height={90} />
+        </div>
+      </div>
       <CardContent>
+        <p className="text-muted-foreground mb-4 text-sm">
+          Enter your email and we&apos;ll send you a link to reset your password
+        </p>
         {success ? (
           <div className="space-y-4">
             <div className="rounded-md bg-green-500/10 px-4 py-3 text-sm text-green-600 dark:text-green-400">
@@ -71,7 +78,7 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
                 />
               </Field>
               <Field>
-                <Button variant="volt" type="submit" disabled={loading} className="w-full">
+                <Button variant="volt" type="submit" disabled={loading || !email.trim()} className="w-full">
                   {loading ? "Sending..." : "Send reset link"}
                 </Button>
                 <FieldDescription className="text-center">

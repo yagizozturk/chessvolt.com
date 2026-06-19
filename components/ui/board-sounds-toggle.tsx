@@ -5,6 +5,17 @@ import { Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBoardSoundsStore } from "@/lib/shared/store/board-sounds-store";
 
+// Toggle handler + dynamic label for menu actions (e.g. sidebar Settings submenu).
+export function useBoardSoundsMenuAction() {
+  const enabled = useBoardSoundsStore((s) => s.enabled);
+  const toggle = useBoardSoundsStore((s) => s.toggle);
+
+  return {
+    toggle,
+    label: enabled ? "Mute Sounds" : "Unmute Sounds",
+  };
+}
+
 export function BoardSoundsToggle({ className }: { className?: string }) {
   const enabled = useBoardSoundsStore((s) => s.enabled);
   const toggle = useBoardSoundsStore((s) => s.toggle);

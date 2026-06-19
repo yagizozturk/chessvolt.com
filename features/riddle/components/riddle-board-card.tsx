@@ -1,16 +1,22 @@
+"use client";
+
 import { Calendar, Circle, Flag, Gauge, Puzzle } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import type { Game } from "@/features/game/types/game";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { formatRiddleRatingLabel } from "@/features/riddle/types/riddle-rating";
 import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
+import { cn } from "@/lib/utils";
 
 type RiddleBoardCardProps = {
   riddle: Riddle;
@@ -45,20 +51,31 @@ export function RiddleBoardCard({
   displayFen,
   voltScore = null,
 }: RiddleBoardCardProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const moveCountLabel = formatMoveCountLabel(riddle.moveSequence.moves);
 
   return (
     <Link
       href={href}
-      className="bg-card border-b-card-shadow flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6"
+      onClick={() => setIsLoading(true)}
+      aria-busy={isLoading}
+      className={cn(
+        "bg-card border-b-card-shadow relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6",
+        isLoading && "pointer-events-none",
+      )}
     >
+      {isLoading ? (
+        <div className="bg-background/60 absolute inset-0 z-10 flex items-center justify-center rounded-lg">
+          <Spinner className="size-8" />
+        </div>
+      ) : null}
       <div>
         {isComplete === true && <BoardStatusIcon status="solved" />}
         {isComplete === false && <BoardStatusIcon status="wrong" />}
         <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} size={size} coordinates={false} />
       </div>
       <div className="relative flex min-w-0 flex-1 flex-col gap-2">
-        {voltScore ? (
+        {isDisplayableVoltScore(voltScore) ? (
           <div className="absolute right-[-32px] bottom-[-32px] z-10">
             <VoltCalculator result={voltScore} chartSize={140} className="w-fit" />
           </div>
@@ -93,7 +110,7 @@ export function RiddleBoardCard({
           <BoardCardMetaRow icon={Puzzle} label={moveCountLabel ?? "No moves"} />
         </div>
         <div className="mt-auto flex justify-start">
-          <Button variant="voltCompact" size="xs" className="w-fit shrink-0">
+          <Button variant="voltCompact" size="xs" className="pointer-events-none w-fit shrink-0">
             Play
           </Button>
         </div>

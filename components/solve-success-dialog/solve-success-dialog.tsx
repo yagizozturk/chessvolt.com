@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
@@ -66,7 +67,7 @@ export function SolveSuccessDialog({
     router.push(destinationPath);
   };
 
-  const isVoltScoreVisible = isVoltScoreShowing || voltScore != null;
+  const isVoltScoreVisible = isVoltScoreShowing || isDisplayableVoltScore(voltScore);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -89,7 +90,7 @@ export function SolveSuccessDialog({
             <div className="flex justify-center py-6">
               <Spinner className="size-8" />
             </div>
-          ) : voltScore ? (
+          ) : isDisplayableVoltScore(voltScore) ? (
             <div className="flex justify-center">
               <VoltCalculator result={voltScore} chartSize={250} />
             </div>

@@ -75,7 +75,7 @@ export function VoltCalculator({
   chartSize = DEFAULT_CHART_SIZE,
   showDetails = true,
 }: VoltCalculatorProps) {
-  if (!result) {
+  if (!result || result.volt === 0) {
     return null;
   }
 

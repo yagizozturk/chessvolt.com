@@ -1,15 +1,21 @@
+"use client";
+
 import { BookOpen, Puzzle, Target } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
+import { cn } from "@/lib/utils";
 
 type OpeningBoardCardProps = {
   id: string;
@@ -40,14 +46,25 @@ export function OpeningBoardCard({
   moves,
   voltScore = null,
 }: OpeningBoardCardProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const moveCountLabel = formatMoveCountLabel(moves ?? null);
 
   return (
     <BlurFade duration={0.4} direction="down" blur="4px">
       <Link
         href={href}
-        className="bg-card border-b-card-shadow flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6"
+        onClick={() => setIsLoading(true)}
+        aria-busy={isLoading}
+        className={cn(
+          "bg-card border-b-card-shadow relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6",
+          isLoading && "pointer-events-none",
+        )}
       >
+        {isLoading ? (
+          <div className="bg-background/60 absolute inset-0 z-10 flex items-center justify-center rounded-lg">
+            <Spinner className="size-8" />
+          </div>
+        ) : null}
         <div>
           {isComplete === true && <BoardStatusIcon status="solved" positionClassName="top-3 right-3" />}
           {isComplete === false && <BoardStatusIcon status="wrong" positionClassName="top-3 right-3" />}
@@ -65,8 +82,8 @@ export function OpeningBoardCard({
           {moveCountLabel ? (
             <BoardCardMetaRow icon={Puzzle} label={moveCountLabel} className="text-muted-foreground text-sm" />
           ) : null}
-          <div className={voltScore ? "mt-auto flex flex-col gap-2" : "mt-auto flex items-center gap-3"}>
-            {voltScore ? <VoltCalculator result={voltScore} showDetails={false} /> : null}
+          <div className={isDisplayableVoltScore(voltScore) ? "mt-auto flex flex-col gap-2" : "mt-auto flex items-center gap-3"}>
+            {isDisplayableVoltScore(voltScore) ? <VoltCalculator result={voltScore} showDetails={false} /> : null}
             <div className="flex items-center gap-3">
               <div className="flex min-w-0 flex-wrap items-center gap-3">
                 {accuracyPercent != null ? (
@@ -83,7 +100,7 @@ export function OpeningBoardCard({
                   </Badge>
                 ) : null}
               </div>
-              <Button variant="voltCompact" size="xs" className="ml-auto shrink-0">
+              <Button variant="voltCompact" size="xs" className="pointer-events-none ml-auto shrink-0">
                 Play
               </Button>
             </div>
