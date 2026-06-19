@@ -17,7 +17,14 @@ import {
 import { useBoardSoundsMenuAction } from "@/components/ui/board-sounds-toggle";
 import { useToggleTheme } from "@/components/ui/theme-toggle";
 import { useVoltExplainMenuAction } from "@/components/volt-explain-dialog/use-volt-explain-dialog";
+import type { Opening } from "@/features/openings/types/opening";
 import { createClient } from "@/lib/supabase/client";
+import { slugify } from "@/lib/utils/slugify";
+
+function getOpeningHref(opening: Pick<Opening, "id" | "name" | "slug">) {
+  const slug = opening.slug ?? slugify(opening.name);
+  return `/openings/${slug}/${opening.id}`;
+}
 
 // Static nav config: link-based submenu items only.
 // Settings and Profile actions are injected at runtime in AppSidebar because they need React hooks.
@@ -45,12 +52,7 @@ const data = {
       items: [
         {
           title: "My Openings",
-          url: "#",
-        },
-        {
-          title: "",
-          url: "#",
-          isActive: true,
+          url: "/user-opening-variants",
         },
       ],
     },
@@ -101,7 +103,11 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  openings?: Pick<Opening, "id" | "name" | "slug">[];
+};
+
+export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
   const router = useRouter();
   // Single-click light ↔ dark toggle; shared with theme-toggle.tsx via useToggleTheme.
   const toggleViewMode = useToggleTheme();
@@ -148,9 +154,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           };
         }
 
+        if (section.title === "Openings") {
+          return {
+            ...section,
+            items: [
+              ...(section.items ?? []),
+              ...openings.map((opening) => ({
+                title: opening.name,
+                url: getOpeningHref(opening),
+              })),
+            ],
+          };
+        }
+
         return section;
       }),
-    [handleLogout, openVoltExplainDialog, toggleViewMode, toggleSounds, soundsLabel],
+    [handleLogout, openVoltExplainDialog, openings, toggleViewMode, toggleSounds, soundsLabel],
   );
 
   return (
