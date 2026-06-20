@@ -281,6 +281,9 @@ export default function RiddleController({
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
       />
+      {successDialogOpen ? (
+        <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
+      ) : null}
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
         <div
@@ -337,9 +340,6 @@ export default function RiddleController({
           </div>
         </div>
       </div>
-      {isCompleted ? (
-        <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-50 size-full max-h-none max-w-none" />
-      ) : null}
     </div>
   );
 }

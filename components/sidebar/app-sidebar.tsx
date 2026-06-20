@@ -103,10 +103,6 @@ const data = {
           title: "Privacy Policy",
           url: "#",
         },
-        {
-          title: "Who We Are?",
-          url: "#",
-        },
       ],
     },
   ],

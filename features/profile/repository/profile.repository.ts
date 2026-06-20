@@ -2,6 +2,36 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 
 import type { ProfileOnboardingStatus } from "@/features/profile/types/profile-onboarding-status";
+import type { UserProfileData } from "@/features/profile/types/user-profile";
+
+export async function getProfileByUserId(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<Omit<UserProfileData, "email"> | null> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("username, role, onboarding_completed, initial_rating, current_rating")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("profile.repository.getProfileByUserId error:", {
+      message: error.message,
+      code: error.code,
+    });
+    return null;
+  }
+
+  if (!data) return null;
+
+  return {
+    username: data.username ?? null,
+    role: (data.role as UserProfileData["role"]) ?? "user",
+    onboardingCompleted: data.onboarding_completed ?? false,
+    initialRating: data.initial_rating ?? null,
+    currentRating: data.current_rating ?? null,
+  };
+}
 
 // ======================================================================
 // Gets the onboarding status of the user from the PROFILES(own DB) table

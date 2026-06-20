@@ -7,9 +7,20 @@
 
 import * as profileRepo from "@/features/profile/repository/profile.repository";
 import type { ProfileOnboardingStatus } from "@/features/profile/types/profile-onboarding-status";
+import type { UserProfileData } from "@/features/profile/types/user-profile";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 export const RIDDLE_SOLVE_RATING_INCREMENT = 5;
+
+export async function getUserProfile(supabase: SupabaseClient, user: User): Promise<UserProfileData | null> {
+  const profile = await profileRepo.getProfileByUserId(supabase, user.id);
+  if (!profile) return null;
+
+  return {
+    ...profile,
+    email: user.email ?? null,
+  };
+}
 
 export async function getProfileOnboardingStatus(
   supabase: SupabaseClient,

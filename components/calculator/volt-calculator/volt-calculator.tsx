@@ -52,7 +52,7 @@ function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
             <ul className="text-muted-foreground flex flex-col gap-1 text-xs">
               {day.attempts.map((attempt) => (
                 <li key={attempt.attemptId}>
-                  Try {attempt.attemptIndex} (+{attempt.weightedContribution}): accuracy {attempt.accuracyPercent}%,
+                  Review {attempt.attemptIndex} (%{attempt.weightedContribution}): accuracy {attempt.accuracyPercent}%,
                   timing {attempt.timingPercent}%, streak {attempt.streakPercent}%
                 </li>
               ))}

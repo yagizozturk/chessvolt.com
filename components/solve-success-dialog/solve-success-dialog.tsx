@@ -5,8 +5,8 @@ import { Clock, Flame, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
+import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
@@ -87,12 +87,13 @@ export function SolveSuccessDialog({
             </div>
           ) : null}
           {isVoltScoreShowing ? (
-            <div className="flex justify-center py-6">
+            <div className="flex flex-col items-center gap-3 py-6">
+              <p className="text-muted-foreground text-sm">Volt score is calculating</p>
               <Spinner className="size-8" />
             </div>
           ) : isDisplayableVoltScore(voltScore) ? (
             <div className="flex justify-center">
-              <VoltCalculator result={voltScore} chartSize={250} />
+              <VoltCalculator result={voltScore} chartSize={200} />
             </div>
           ) : null}
         </DialogHeader>
