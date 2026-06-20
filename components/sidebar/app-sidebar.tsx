@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { NavMain, type NavMainItem } from "@/components/sidebar/nav-main";
+import { useBoardSoundsMenuAction } from "@/components/ui/board-sounds-toggle";
 import {
   Sidebar,
   SidebarContent,
@@ -14,7 +15,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useBoardSoundsMenuAction } from "@/components/ui/board-sounds-toggle";
 import { useToggleTheme } from "@/components/ui/theme-toggle";
 import { useVoltExplainMenuAction } from "@/components/volt-explain-dialog/use-volt-explain-dialog";
 import type { Opening } from "@/features/openings/types/opening";
@@ -96,6 +96,18 @@ const data = {
         },
         {
           title: "Contact Us",
+          url: "#",
+        },
+        {
+          title: "Terms of Service",
+          url: "#",
+        },
+        {
+          title: "Privacy Policy",
+          url: "#",
+        },
+        {
+          title: "Who We Are?",
           url: "#",
         },
       ],

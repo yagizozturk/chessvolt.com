@@ -3,15 +3,15 @@
 import { MoreHorizontalIcon } from "lucide-react";
 import Image from "next/image";
 
-import { Spinner } from "@/components/ui/spinner";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
+import { Spinner } from "@/components/ui/spinner";
 
 // Submenu items are either navigation links or runtime actions.
 // TypeScript union: an item has `url` OR `onClick`, never both — avoids fake "#" links for actions.
@@ -42,7 +42,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                 {/* !size-10 — overrides shadcn’s default size-8 (32px) on menu buttons in icon mode */}
                 {/* Gives your larger size-6 icons more room in the 4rem rail. */}
                 <SidebarMenuButton
-                  tooltip={item.title}
+                  aria-label={item.title}
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
                 >
                   {item.icon ? (
@@ -56,17 +56,16 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                 <DropdownMenuContent
                   side={isMobile ? "bottom" : "right"}
                   align={isMobile ? "end" : "start"}
-                  className="min-w-56 rounded-lg"
+                  className="bg-card-shadow text-sidebar-foreground min-w-56 rounded-lg ring-0"
                 >
+                  <DropdownMenuLabel className="text-primary text-sm font-semibold tracking-wide uppercase">
+                    {item.title}
+                  </DropdownMenuLabel>
                   {item.items.map((subItem) =>
                     subItem.onClick ? (
                       // Actions (logout, theme toggle): plain DropdownMenuItem + onClick.
                       // Do not use asChild + <a> — these items perform work, they don't navigate.
-                      <DropdownMenuItem
-                        key={subItem.title}
-                        onClick={subItem.onClick}
-                        disabled={subItem.isLoading}
-                      >
+                      <DropdownMenuItem key={subItem.title} onClick={subItem.onClick} disabled={subItem.isLoading}>
                         {subItem.isLoading ? <Spinner data-icon="inline-start" /> : null}
                         {subItem.title}
                       </DropdownMenuItem>
