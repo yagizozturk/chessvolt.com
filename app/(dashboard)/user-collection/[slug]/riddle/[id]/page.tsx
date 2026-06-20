@@ -1,14 +1,5 @@
-import { notFound } from "next/navigation";
-
-import {
-  getCollectionRiddleByRiddleIdAndCollectionId,
-  getCollectionRiddlesByRiddleId,
-} from "@/features/collection-riddles/services/collection-riddles.service";
-import { getUserCollections, getUserCustomCollectionBySlug } from "@/features/collection/services/collection.service";
 import RiddleController from "@/features/riddle/components/riddle-controller";
-import { getActiveRiddlesByCollectionId, getRiddleById } from "@/features/riddle/services/riddle.service";
-import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
-import { getParentCollectionUrl } from "@/features/riddle/utilities/get-parent-collection-url";
+import { loadCollectionRiddlePage } from "@/features/riddle/services/riddle-page.service";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 type PageProps = {
@@ -19,69 +10,13 @@ export default async function UserCollectionRiddlePage({ params }: PageProps) {
   const { slug, id } = await params;
   const { user, supabase } = await getAuthenticatedUser();
 
-  // =============================================================================
-  // Getting collection information by its slug and type
-  // =============================================================================
-  const collection = await getUserCustomCollectionBySlug(supabase, user.id, slug);
-  if (!collection || !collection.isActive) {
-    notFound();
-  }
+  const pageData = await loadCollectionRiddlePage({
+    supabase,
+    user,
+    slug,
+    riddleId: id,
+    collectionType: "custom",
+  });
 
-  // =============================================================================
-  // Getting riddle information by its id
-  // =============================================================================
-  const riddle = await getRiddleById(supabase, id);
-  if (!riddle || !riddle.isActive) {
-    notFound();
-  }
-
-  // =============================================================================
-  // Verifying this riddle belongs to this collection in collection_riddles
-  // =============================================================================
-  const link = await getCollectionRiddleByRiddleIdAndCollectionId(supabase, riddle.id, collection.id);
-  if (!link) {
-    notFound();
-  }
-
-  // =============================================================================
-  // Getting all active riddles for this collection
-  // =============================================================================
-  const riddles = await getActiveRiddlesByCollectionId(supabase, collection.id);
-  const currentIndex = riddles.findIndex((item) => item.id === riddle.id);
-  const nextRiddle = currentIndex >= 0 && currentIndex < riddles.length - 1 ? riddles[currentIndex + 1] : null;
-  const nextRiddleUrl = nextRiddle
-    ? buildRiddlePath(nextRiddle.id, { collectionSlug: slug, collectionType: "custom" })
-    : null;
-
-  // =============================================================================
-  // Getting user collections and collection riddles by riddle id
-  // =============================================================================
-  const [userCollections, collectionRiddles] = await Promise.all([
-    getUserCollections(supabase, user.id),
-    getCollectionRiddlesByRiddleId(supabase, riddle.id),
-  ]);
-
-  // =============================================================================
-  // That tells the picker which of the user’s collections already contain this
-  // riddle (including the one they’re playing from).
-  // It’s the list of your custom collection IDs that already contain this riddle
-  // =============================================================================
-  const userCollectionIds = new Set(userCollections.map((item) => item.id));
-  const userCollectionIdsHasCurrentRiddle = collectionRiddles
-    .map((collectionRiddle) => collectionRiddle.collectionId)
-    .filter((collectionId) => userCollectionIds.has(collectionId));
-
-  return (
-    <RiddleController
-      riddle={riddle}
-      nextRiddleUrl={nextRiddleUrl}
-      parentCollectionUrl={getParentCollectionUrl(collection)}
-      isUserLoggedIn={Boolean(user)}
-      userCollections={userCollections.map((item) => ({
-        id: item.id,
-        title: item.title,
-      }))}
-      userCollectionIdsHasCurrentRiddle={userCollectionIdsHasCurrentRiddle}
-    />
-  );
+  return <RiddleController {...pageData} />;
 }

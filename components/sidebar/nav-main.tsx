@@ -2,6 +2,7 @@
 
 import { MoreHorizontalIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import {
@@ -56,6 +57,10 @@ function getMostSpecificMatchingSubUrl(pathname: string, items: NavSubItem[] | u
   return matches.sort((a, b) => b.url.length - a.url.length)[0]?.url ?? null;
 }
 
+function hasSubmenu(item: NavMainItem) {
+  return (item.items?.length ?? 0) > 0;
+}
+
 export function NavMain({ items }: { items: NavMainItem[] }) {
   const pathname = usePathname();
   const { isMobile } = useSidebar();
@@ -66,6 +71,28 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
         {items.map((item) => {
           const groupActive = isGroupActive(pathname, item);
           const activeSubUrl = getMostSpecificMatchingSubUrl(pathname, item.items);
+          const showSubmenu = hasSubmenu(item);
+
+          if (!showSubmenu && item.url !== "#") {
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={groupActive}
+                  aria-label={item.title}
+                  aria-current={groupActive ? "page" : undefined}
+                  className="data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
+                >
+                  <Link href={item.url}>
+                    {item.icon ? (
+                      <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
+                    ) : null}
+                    <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          }
 
           return (
             <DropdownMenu key={item.title}>
@@ -84,7 +111,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     <MoreHorizontalIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
-                {item.items?.length ? (
+                {showSubmenu ? (
                   <DropdownMenuContent
                     side={isMobile ? "bottom" : "right"}
                     align={isMobile ? "end" : "start"}
@@ -93,7 +120,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     <DropdownMenuLabel className="text-primary text-sm font-semibold tracking-wide uppercase">
                       {item.title}
                     </DropdownMenuLabel>
-                    {item.items.map((subItem) =>
+                    {item.items!.map((subItem) =>
                       subItem.onClick ? (
                         <DropdownMenuItem key={subItem.title} onClick={subItem.onClick} disabled={subItem.isLoading}>
                           {subItem.isLoading ? <Spinner data-icon="inline-start" /> : null}

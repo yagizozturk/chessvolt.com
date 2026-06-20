@@ -59,14 +59,8 @@ const data = {
     },
     {
       title: "Riddles",
-      url: "#",
+      url: "/riddles",
       icon: "/images/icons/icon-riddle.png",
-      items: [
-        {
-          title: "Routing",
-          url: "#",
-        },
-      ],
     },
     {
       title: "Profile",

@@ -27,6 +27,21 @@ export async function findAll(supabase: SupabaseClient): Promise<Riddle[]> {
   return (riddles ?? []).map(toRiddle);
 }
 
+export async function findAllActive(supabase: SupabaseClient): Promise<Riddle[]> {
+  const { data, error } = await supabase
+    .from("riddles")
+    .select(RIDDLE_SELECT)
+    .eq("is_active", true)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("riddle.repository.findAllActive error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toRiddle);
+}
+
 export async function findById(supabase: SupabaseClient, id: string): Promise<Riddle | null> {
   const { data, error } = await supabase
     .from("riddles")

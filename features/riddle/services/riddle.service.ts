@@ -9,6 +9,12 @@ import * as riddleThemeService from "@/features/riddle-theme/services/riddle-the
 import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
+import { RANDOM_RIDDLES_COUNT, RIDDLES_THEME_FILTER_ALL } from "@/features/riddle/constants/riddles-list.constants";
+import {
+  getRiddleRatingBandRange,
+  type RiddleRatingBand,
+} from "@/features/riddle/types/riddle-rating";
+import { shuffle } from "@/lib/utils/shuffle";
 
 export async function getAllRiddlesWithThemes(supabase: SupabaseClient): Promise<RiddleWithThemes[]> {
   const riddles = await riddleRepo.findAll(supabase);
@@ -17,6 +23,10 @@ export async function getAllRiddlesWithThemes(supabase: SupabaseClient): Promise
 
 export async function getRiddleById(supabase: SupabaseClient, id: string): Promise<Riddle | null> {
   return riddleRepo.findById(supabase, id);
+}
+
+export async function getAllActiveRiddles(supabase: SupabaseClient): Promise<Riddle[]> {
+  return riddleRepo.findAllActive(supabase);
 }
 
 export async function getRiddleByIdWithThemes(supabase: SupabaseClient, id: string): Promise<RiddleWithThemes | null> {
@@ -32,6 +42,41 @@ export async function getActiveRiddlesByCollectionId(
   collectionId: string,
 ): Promise<Riddle[]> {
   return riddleRepo.findActiveByCollectionId(supabase, collectionId);
+}
+
+export async function getRandomActiveRiddles(
+  supabase: SupabaseClient,
+  input: { themeSlug?: string; ratingBand?: RiddleRatingBand; count?: number } = {},
+): Promise<Riddle[]> {
+  const count = input.count ?? RANDOM_RIDDLES_COUNT;
+  const themeSlug = input.themeSlug?.trim();
+  const ratingBand = input.ratingBand ?? "all";
+  const ratingRange = getRiddleRatingBandRange(ratingBand);
+
+  let riddles: Riddle[];
+
+  if (themeSlug && themeSlug !== RIDDLES_THEME_FILTER_ALL) {
+    const riddleIds = await riddleThemeService.findRiddleIdsByThemeSlugs(supabase, [themeSlug]);
+    if (riddleIds.length === 0) return [];
+
+    riddles = await riddleRepo.findActiveByIds(supabase, {
+      ids: riddleIds,
+      limit: riddleIds.length,
+      ...(ratingRange
+        ? { minRating: ratingRange.minRating, maxRating: ratingRange.maxRating }
+        : {}),
+    });
+  } else if (ratingRange) {
+    riddles = await riddleRepo.findActiveByRatingRange(supabase, {
+      minRating: ratingRange.minRating,
+      maxRating: ratingRange.maxRating,
+      limit: 500,
+    });
+  } else {
+    riddles = await riddleRepo.findAllActive(supabase);
+  }
+
+  return shuffle(riddles).slice(0, count);
 }
 
 export type FindActiveRiddlesByThemesInput = {
