@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
+import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
@@ -22,6 +24,7 @@ import { AddToPracticeButton } from "@/features/user-practice-opening-variant/co
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
+  type AttemptPayload,
   createAttemptPayload,
   createSequenceCompleteStats,
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
@@ -55,6 +58,8 @@ export default function OpeningVariantController({
   const [isContinuePending, setIsContinuePending] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null);
+  const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
+  const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
   const { playLevelUpSound } = useBoardSounds();
   const correctMoveCountRef = useRef(0);
@@ -78,12 +83,18 @@ export default function OpeningVariantController({
     initialPly: variant.initialPly,
   });
   const { Tour } = useOpeningVariantTour({ variantId: variant.id });
+  const voltScoreScoring = {
+    totalMoveCount: getPlayerMoveCount(variant.moveSequence.moves),
+    rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
+  };
 
   useEffect(() => {
     setIsCompleted(false);
     setIsContinuePending(false);
     setSuccessDialogOpen(false);
     setCompletionStats(null);
+    setCompletionVoltScore(null);
+    setIsVoltScoreShowing(false);
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -105,14 +116,32 @@ export default function OpeningVariantController({
     );
 
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
+    setCompletionVoltScore(null);
+    setIsVoltScoreShowing(isInPracticeList);
     setSuccessDialogOpen(true);
     playLevelUpSound();
+    void insertAttemptResults(attemptPayload);
+  }, [
+    currentCorrectMove,
+    getTimeFromStartMs,
+    isCompleted,
+    isInPracticeList,
+    playLevelUpSound,
+  ]);
 
-    void (async () => {
-      await recordEvent({ eventType: "complete" });
-      await updateAttemptResults("completed", attemptPayload);
-    })();
-  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, playLevelUpSound, recordEvent, updateAttemptResults]);
+  async function insertAttemptResults(attemptPayload: AttemptPayload) {
+    await recordEvent({ eventType: "complete" });
+
+    const voltScoreResult = await updateAttemptResults("completed", {
+      ...attemptPayload,
+      ...(isInPracticeList ? { voltScore: voltScoreScoring } : {}),
+    });
+
+    if (isInPracticeList) {
+      setCompletionVoltScore(voltScoreResult);
+      setIsVoltScoreShowing(false);
+    }
+  }
 
   function handleBoardCheckMove(move: MoveAttemptPayload) {
     const { isCorrect } = handleMoveCheck(move);
@@ -201,6 +230,8 @@ export default function OpeningVariantController({
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
         stats={completionStats}
+        voltScore={completionVoltScore}
+        isVoltScoreShowing={isVoltScoreShowing}
       />
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
