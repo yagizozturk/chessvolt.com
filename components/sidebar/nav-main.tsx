@@ -62,7 +62,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
 
   return (
     <SidebarGroup>
-      <SidebarMenu className="gap-3 group-data-[collapsible=icon]:items-center">
+      <SidebarMenu className="gap-3 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:gap-1">
         {items.map((item) => {
           const groupActive = isGroupActive(pathname, item);
           const activeSubUrl = getMostSpecificMatchingSubUrl(pathname, item.items);
@@ -75,12 +75,20 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     isActive={groupActive}
                     aria-label={item.title}
                     aria-current={groupActive ? "true" : undefined}
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-active:bg-transparent data-active:font-normal data-active:text-sidebar-foreground focus-visible:ring-0 group-data-[collapsible=icon]:h-auto group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:gap-1 group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:py-2 group-data-[collapsible=icon]:!size-auto"
                   >
                     {item.icon ? (
                       <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
                     ) : null}
-                    <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    <span
+                      className={cn(
+                        "truncate font-semibold",
+                        "group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:text-center group-data-[collapsible=icon]:text-xs group-data-[collapsible=icon]:leading-snug",
+                        groupActive ? "text-primary" : "text-foreground",
+                      )}
+                    >
+                      {item.title}
+                    </span>
                     <MoreHorizontalIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
