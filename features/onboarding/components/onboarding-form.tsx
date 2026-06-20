@@ -30,12 +30,11 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
   const currentStep = questionGroups[stepIndex]; // Current step of the question
   const isMultiSelect = isMultiSelectOnboardingQuestion(currentStep.question.slug);
   const selectedOptionIds = selectedOptionIdsByQuestionId[currentStep.question.id] ?? [];
-  const selectedValues = currentStep.options
-    .filter((option) => selectedOptionIds.includes(option.id))
-    .map((option) => option.value);
   const hasCurrentStepAnswer = selectedOptionIds.length > 0;
   const isLastStep = stepIndex === questionGroups.length - 1;
   const progressValue = ((stepIndex + 1) / questionGroups.length) * 100;
+  const maxOptionCount = Math.max(...questionGroups.map((group) => group.options.length));
+  const hasSelectAllRow = questionGroups.some((group) => isMultiSelectOnboardingQuestion(group.question.slug));
 
   // ======================================================================
   // Handles the selection of an option for a questionId and handles multiselect
@@ -54,6 +53,17 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
 
       return { ...prev, [currentStep.question.id]: [option.id] };
     });
+  }
+
+  // ======================================================================
+  // Handles select-all on multi-select steps (e.g. step 2 improvement goals)
+  // ======================================================================
+  function handleSelectAllChange(selectAll: boolean) {
+    setError(null);
+    setSelectedOptionIdsByQuestionId((prev) => ({
+      ...prev,
+      [currentStep.question.id]: selectAll ? currentStep.options.map((option) => option.id) : [],
+    }));
   }
 
   // ======================================================================
@@ -113,27 +123,33 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      {/* Heading of the page Brand */}
-      <div className="space-y-6 text-center">
-        <div className="text-foreground flex items-center justify-center gap-2 text-3xl font-bold tracking-tighter">
-          <Zap className="fill-primary text-primary h-7 w-7" aria-hidden />
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
+      {/* Header: brand (left) + progress (right) */}
+      <div className="mb-2 flex items-center justify-between gap-6">
+        <div className="text-foreground flex shrink-0 items-center gap-2 text-2xl font-bold tracking-tighter sm:text-3xl">
+          <Zap className="fill-primary text-primary h-6 w-6 sm:h-7 sm:w-7" aria-hidden />
           <span>ChessVolt</span>
         </div>
-        <Text variant="subtitle" as="p">
-          Please tell us a bit about yourself so we can{" "}
-          <span className="text-primary">personalize</span> your practice.
-        </Text>
+        <div className="w-32 shrink-0 space-y-2 text-right sm:w-40">
+          <Text variant="muted" as="p">
+            Step {stepIndex + 1} of {questionGroups.length}
+          </Text>
+          <Progress value={progressValue} className="h-3 w-full" />
+        </div>
       </div>
 
       {/* Current step of the question and show options */}
       <OnboardingQuestion
         question={currentStep.question}
+        minOptionCount={maxOptionCount}
+        showSelectAllRow={hasSelectAllRow}
         options={
           <OnboardingOptionList
             options={currentStep.options}
-            selectedValues={selectedValues}
+            selectedIds={selectedOptionIds}
             onSelect={handleSelect}
+            // Only step 2 (improvement_goal) is multi-select — show select-all there.
+            onSelectAllChange={isMultiSelect ? handleSelectAllChange : undefined}
             disabled={isPending}
             multiple={isMultiSelect}
           />
@@ -176,14 +192,6 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
             </>
           )}
         </Button>
-      </div>
-
-      {/* Progress bar */}
-      <div className="space-y-2 text-center">
-        <Text variant="subtitle" as="p">
-          Step {stepIndex + 1} of {questionGroups.length}
-        </Text>
-        <Progress value={progressValue} className="mx-auto h-3 w-full max-w-md" />
       </div>
     </div>
   );

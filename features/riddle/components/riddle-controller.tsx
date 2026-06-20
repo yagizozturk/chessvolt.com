@@ -11,9 +11,9 @@ import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
+import { Spinner } from "@/components/ui/spinner";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
 import {
@@ -268,7 +268,7 @@ export default function RiddleController({
     : "You solved this riddle. Return to the collection when you are ready.";
 
   return (
-    <div className="container mx-auto max-w-6xl px-20 py-6">
+    <div className="container mx-auto max-w-6xl px-20 py-14">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}

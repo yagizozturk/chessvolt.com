@@ -18,6 +18,7 @@ import {
 import { useToggleTheme } from "@/components/ui/theme-toggle";
 import { useVoltExplainMenuAction } from "@/components/volt-explain-dialog/use-volt-explain-dialog";
 import type { Opening } from "@/features/openings/types/opening";
+import { useProfile } from "@/features/profile/hooks/use-profile";
 import { createClient } from "@/lib/supabase/client";
 import { slugify } from "@/lib/utils/slugify";
 
@@ -91,10 +92,6 @@ const data = {
       icon: "/images/icons/icon-more.png",
       items: [
         {
-          title: "Blog",
-          url: "#",
-        },
-        {
           title: "Contact Us",
           url: "#",
         },
@@ -121,6 +118,7 @@ type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
 
 export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
   const router = useRouter();
+  const { profile, isLoading: isProfileLoading } = useProfile();
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
   // Single-click light ↔ dark toggle; shared with theme-toggle.tsx via useToggleTheme.
   const toggleViewMode = useToggleTheme();
@@ -152,9 +150,18 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
         }
 
         if (section.title === "Profile") {
+          const authItems = profile
+            ? [{ title: "Logout", onClick: handleLogout, isLoading: isLoggingOut }]
+            : isProfileLoading
+              ? []
+              : [
+                  { title: "Login", url: "/login" },
+                  { title: "Sign up", url: "/signup" },
+                ];
+
           return {
             ...section,
-            items: [...(section.items ?? []), { title: "Logout", onClick: handleLogout, isLoading: isLoggingOut }],
+            items: [...(profile ? (section.items ?? []) : []), ...authItems],
           };
         }
 
@@ -184,7 +191,17 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
 
         return section;
       }),
-    [handleLogout, isLoggingOut, openVoltExplainDialog, openings, toggleViewMode, toggleSounds, soundsLabel],
+    [
+      handleLogout,
+      isLoggingOut,
+      isProfileLoading,
+      openVoltExplainDialog,
+      openings,
+      profile,
+      toggleViewMode,
+      toggleSounds,
+      soundsLabel,
+    ],
   );
 
   return (

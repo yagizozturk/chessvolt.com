@@ -5,10 +5,10 @@ import { Mouse } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import ArrowBoard, { type ArrowBoardHandle } from "@/components/boards/arrow-board/arrow-board";
-import { ArrowsGoalCard } from "@/features/arrows/components/arrows-goal-card/arrows-goal-card";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { ArrowsGoalCard } from "@/features/arrows/components/arrows-goal-card/arrows-goal-card";
 import { useArrowsController } from "@/features/arrows/hooks/use-arrows-controller";
 import { useArrowsTour } from "@/features/arrows/hooks/use-arrows-tour";
 import {
@@ -117,7 +117,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
   }
 
   return (
-    <div className="container mx-auto max-w-6xl px-20 py-6">
+    <div className="container mx-auto max-w-6xl px-20 py-14">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}

@@ -69,15 +69,9 @@ export function AddToPracticeButton({ openingVariantId, initialInPracticeList }:
 
   return (
     <div className="mb-4">
-      <Button
-        type="button"
-        variant="voltGreen"
-        className="w-full"
-        onClick={handleClick}
-        disabled={isPending}
-      >
+      <Button type="button" variant="voltGreen" className="w-full" onClick={handleClick} disabled={isPending}>
         {isPending ? <Spinner data-icon="inline-start" /> : <ListPlus data-icon="inline-start" />}
-        Add to my practice list
+        Add to my openings
       </Button>
     </div>
   );

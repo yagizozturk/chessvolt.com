@@ -5,27 +5,27 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
-import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
+import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
+import { Spinner } from "@/components/ui/spinner";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { AddToPracticeButton } from "@/features/user-practice-opening-variant/components/add-to-practice-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
-import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import {
-  createSequenceCompleteStats,
   createAttemptPayload,
+  createSequenceCompleteStats,
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
+import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -191,7 +191,7 @@ export default function OpeningVariantController({
     : "You completed this line. Return to the opening when you are ready.";
 
   return (
-    <div className="container mx-auto max-w-6xl px-20 py-6">
+    <div className="container mx-auto max-w-6xl px-20 py-14">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
@@ -235,19 +235,14 @@ export default function OpeningVariantController({
               <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />
             ) : null}
             {!isCompleted ? (
-              <div data-tour="hint-button"> 
+              <div data-tour="hint-button">
                 <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="w-full">
                   Hint
                 </Button>
               </div>
             ) : (
               <div className="mt-4">
-                <Button
-                  variant="volt"
-                  onClick={handleContinueClick}
-                  disabled={isContinuePending}
-                  className="w-full"
-                >
+                <Button variant="volt" onClick={handleContinueClick} disabled={isContinuePending} className="w-full">
                   {isContinuePending && <Spinner data-icon="inline-start" />}
                   {successButtonLabel}
                 </Button>

@@ -121,6 +121,7 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "Animated list", url: "/admin/test/animated-list" },
       { title: "Confetti", url: "/admin/test/confetti" },
       { title: "Joyride", url: "/admin/test/joyride" },
+      { title: "Logo", url: "/admin/test/logo" },
       { title: "PGN navigator", url: "/admin/test/pgn-navigator" },
       { title: "PGN reader", url: "/admin/test/pgn-reader" },
       { title: "Progressive blur", url: "/admin/test/progressive-blur" },
