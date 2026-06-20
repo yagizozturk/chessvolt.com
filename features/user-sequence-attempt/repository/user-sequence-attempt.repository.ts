@@ -74,6 +74,31 @@ export async function findByUserAndSequenceIds(
 }
 
 // ================================================================================================
+// Getting all attempts by user since a timestamp (inclusive).
+// Used by Grand Volt to load every attempt in the lookback window in one query,
+// instead of fetching per-sequence like collection pages do.
+// ================================================================================================
+export async function findByUserIdSince(
+  supabase: SupabaseClient,
+  userId: string,
+  startedAtOrAfter: string,
+): Promise<UserSequenceAttempt[]> {
+  const { data, error } = await supabase
+    .from("user_sequence_attempts")
+    .select("*")
+    .eq("user_id", userId)
+    .gte("started_at", startedAtOrAfter)
+    .order("started_at", { ascending: false });
+
+  if (error) {
+    console.error("user-sequence-attempt.repository.findByUserIdSince error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toUserSequenceAttempt);
+}
+
+// ================================================================================================
 // Getting latest attempt summaries by user and sequence ids. Last date one on particular sequenceId
 // Collection has multiple riddles. Riddles have multiple solving attempts.
 // This function returns the latest attempt summary for each sequenceId in the collection.

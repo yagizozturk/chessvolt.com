@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import type { GrandVoltScoreResult } from "@/components/calculator/volt-calculator/grand-volt.types";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,8 @@ import type { UserProfileData } from "@/features/profile/types/user-profile";
 
 type ProfilePageProps = {
   profile: UserProfileData;
+  /** Aggregated Volt from riddles + opening variants (computed server-side on page load). */
+  grandVoltScore: GrandVoltScoreResult;
 };
 
 function getDisplayName(profile: UserProfileData) {
@@ -33,12 +36,14 @@ function ProfileStat({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function ProfilePage({ profile }: ProfilePageProps) {
+export function ProfilePage({ profile, grandVoltScore }: ProfilePageProps) {
   const displayName = getDisplayName(profile);
   const ratingGain =
     profile.initialRating != null && profile.currentRating != null
       ? profile.currentRating - profile.initialRating
       : null;
+  // Show "—" when the user has no qualifying attempts in the lookback window.
+  const hasGrandVoltActivity = grandVoltScore.sequenceCount > 0;
 
   return (
     <div className="container mx-auto max-w-4xl px-4 pt-6 pb-16">
@@ -92,6 +97,35 @@ export function ProfilePage({ profile }: ProfilePageProps) {
             <ProfileStat
               label="Rating gain"
               value={ratingGain != null ? (ratingGain >= 0 ? `+${ratingGain}` : String(ratingGain)) : "—"}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Grand Volt: sum of per-sequence Volt scores across riddles and opening variants. */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Grand Volt</CardTitle>
+            <CardDescription>
+              Total Volt earned from riddles and opening variants in the last {grandVoltScore.lookbackMonths} months.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-3">
+            {/* volt / maxVolt — max grows with each sequence played (sequenceCount × getVoltMaxScore()). */}
+            <ProfileStat
+              label="Grand Volt"
+              value={
+                hasGrandVoltActivity
+                  ? `${grandVoltScore.volt}/${grandVoltScore.maxVolt}`
+                  : "—"
+              }
+            />
+            <ProfileStat
+              label="From riddles"
+              value={hasGrandVoltActivity ? String(grandVoltScore.riddleVolt) : "—"}
+            />
+            <ProfileStat
+              label="From openings"
+              value={hasGrandVoltActivity ? String(grandVoltScore.openingVariantVolt) : "—"}
             />
           </CardContent>
         </Card>

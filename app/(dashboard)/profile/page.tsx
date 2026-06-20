@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { getGrandVoltScore } from "@/components/calculator/volt-calculator/get-grand-volt-score";
 import { ProfilePage } from "@/features/profile/components/profile-page";
 import { getUserProfile } from "@/features/profile/services/profile.service";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
@@ -11,7 +12,15 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const { user, supabase } = await getAuthenticatedUser();
-  const profile = await getUserProfile(supabase, user);
+
+  // ================================================================================================
+  // Load profile and Grand Volt in parallel.
+  // Grand Volt sums per-sequence Volt from all riddles + opening variants played in the last 3 months.
+  // ================================================================================================
+  const [profile, grandVoltScore] = await Promise.all([
+    getUserProfile(supabase, user),
+    getGrandVoltScore(supabase, user.id),
+  ]);
 
   if (!profile) {
     return (
@@ -21,5 +30,5 @@ export default async function Page() {
     );
   }
 
-  return <ProfilePage profile={profile} />;
+  return <ProfilePage profile={profile} grandVoltScore={grandVoltScore} />;
 }

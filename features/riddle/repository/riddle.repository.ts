@@ -44,6 +44,29 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<Ri
   return toRiddle(data);
 }
 
+// ================================================================================================
+// Bulk lookup riddles by move_sequence_id.
+// Used by Grand Volt to resolve attempt sequence IDs to scoring metadata (moves, rating).
+// ================================================================================================
+export async function findByMoveSequenceIds(
+  supabase: SupabaseClient,
+  moveSequenceIds: string[],
+): Promise<Riddle[]> {
+  if (moveSequenceIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("riddles")
+    .select(RIDDLE_SELECT)
+    .in("move_sequence_id", moveSequenceIds);
+
+  if (error) {
+    console.error("riddle.repository.findByMoveSequenceIds error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toRiddle);
+}
+
 type DbCollectionRiddleJoinRow = {
   sort_order: number;
   created_at: string;

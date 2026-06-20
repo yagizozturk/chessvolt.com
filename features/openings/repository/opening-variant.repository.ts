@@ -63,6 +63,29 @@ export async function findByOpeningId(supabase: SupabaseClient, openingId: strin
   return (data ?? []).map(toOpeningVariant);
 }
 
+// ================================================================================================
+// Bulk lookup opening variants by move_sequence_id.
+// Used by Grand Volt to resolve attempt sequence IDs to scoring metadata (moves, rating).
+// ================================================================================================
+export async function findByMoveSequenceIds(
+  supabase: SupabaseClient,
+  moveSequenceIds: string[],
+): Promise<OpeningVariant[]> {
+  if (moveSequenceIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("opening_variants")
+    .select("*, move_sequences (*)")
+    .in("move_sequence_id", moveSequenceIds);
+
+  if (error) {
+    console.error("opening-variant.repository.findByMoveSequenceIds error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toOpeningVariant);
+}
+
 export type CreateOpeningVariantInput = {
   openingId: string;
   sortKey: number;

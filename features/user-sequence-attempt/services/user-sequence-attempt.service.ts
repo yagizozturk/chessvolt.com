@@ -37,6 +37,18 @@ export async function getAttemptsByUserAndSequenceIds(
 }
 
 // ================================================================================================
+// Getting all attempts by user since a timestamp (inclusive).
+// Pass getVoltLookbackStart().toISOString() for Grand Volt aggregation.
+// ================================================================================================
+export async function getAttemptsByUserSince(
+  supabase: SupabaseClient,
+  userId: string,
+  startedAtOrAfter: string,
+): Promise<UserSequenceAttempt[]> {
+  return userSequenceAttemptRepo.findByUserIdSince(supabase, userId, startedAtOrAfter);
+}
+
+// ================================================================================================
 // Getting latest attempt stats by user for sequence ids
 // ================================================================================================
 export async function getLatestAttemptStatsForSequences(
