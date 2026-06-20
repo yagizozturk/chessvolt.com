@@ -2,6 +2,7 @@
 
 import { MoreHorizontalIcon } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 import {
   DropdownMenu,
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 
 // Submenu items are either navigation links or runtime actions.
 // TypeScript union: an item has `url` OR `onClick`, never both — avoids fake "#" links for actions.
@@ -23,64 +25,98 @@ export type NavMainItem = {
   title: string;
   url: string;
   icon?: string;
-  isActive?: boolean;
   items?: NavSubItem[];
 };
 
+function isNavLink(subItem: NavSubItem): subItem is { title: string; url: string } {
+  return "url" in subItem && subItem.url !== "#";
+}
+
+function isActivePath(pathname: string, href: string) {
+  if (!href || href === "#") return false;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function isGroupActive(pathname: string, item: NavMainItem) {
+  const linkItems = item.items?.filter(isNavLink);
+  if (linkItems?.length) {
+    return linkItems.some((sub) => isActivePath(pathname, sub.url));
+  }
+  return isActivePath(pathname, item.url);
+}
+
+function getMostSpecificMatchingSubUrl(pathname: string, items: NavSubItem[] | undefined) {
+  if (!items?.length) return null;
+
+  const matches = items.filter((sub): sub is { title: string; url: string } =>
+    isNavLink(sub) && isActivePath(pathname, sub.url),
+  );
+  if (!matches.length) return null;
+
+  return matches.sort((a, b) => b.url.length - a.url.length)[0]?.url ?? null;
+}
+
 export function NavMain({ items }: { items: NavMainItem[] }) {
+  const pathname = usePathname();
   const { isMobile } = useSidebar();
 
   return (
     <SidebarGroup>
       <SidebarMenu className="gap-3 group-data-[collapsible=icon]:items-center">
-        {items.map((item) => (
-          <DropdownMenu key={item.title}>
-            <SidebarMenuItem>
-              <DropdownMenuTrigger asChild>
-                {/* data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-10 */}
-                {/* When the sidebar is in collapsed icon mode, each nav button becomes 40×40px (size-10) */}
-                {/* !size-10 — overrides shadcn’s default size-8 (32px) on menu buttons in icon mode */}
-                {/* Gives your larger size-6 icons more room in the 4rem rail. */}
-                <SidebarMenuButton
-                  aria-label={item.title}
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
-                >
-                  {item.icon ? (
-                    <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
-                  ) : null}
-                  <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
-                  <MoreHorizontalIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              {item.items?.length ? (
-                <DropdownMenuContent
-                  side={isMobile ? "bottom" : "right"}
-                  align={isMobile ? "end" : "start"}
-                  className="bg-card-shadow text-sidebar-foreground min-w-56 rounded-lg ring-0"
-                >
-                  <DropdownMenuLabel className="text-primary text-sm font-semibold tracking-wide uppercase">
-                    {item.title}
-                  </DropdownMenuLabel>
-                  {item.items.map((subItem) =>
-                    subItem.onClick ? (
-                      // Actions (logout, theme toggle): plain DropdownMenuItem + onClick.
-                      // Do not use asChild + <a> — these items perform work, they don't navigate.
-                      <DropdownMenuItem key={subItem.title} onClick={subItem.onClick} disabled={subItem.isLoading}>
-                        {subItem.isLoading ? <Spinner data-icon="inline-start" /> : null}
-                        {subItem.title}
-                      </DropdownMenuItem>
-                    ) : (
-                      // Links: asChild delegates rendering to an <a> for correct semantics and keyboard behavior.
-                      <DropdownMenuItem asChild key={subItem.title}>
-                        <a href={subItem.url}>{subItem.title}</a>
-                      </DropdownMenuItem>
-                    ),
-                  )}
-                </DropdownMenuContent>
-              ) : null}
-            </SidebarMenuItem>
-          </DropdownMenu>
-        ))}
+        {items.map((item) => {
+          const groupActive = isGroupActive(pathname, item);
+          const activeSubUrl = getMostSpecificMatchingSubUrl(pathname, item.items);
+
+          return (
+            <DropdownMenu key={item.title}>
+              <SidebarMenuItem>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    isActive={groupActive}
+                    aria-label={item.title}
+                    aria-current={groupActive ? "true" : undefined}
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
+                  >
+                    {item.icon ? (
+                      <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
+                    ) : null}
+                    <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    <MoreHorizontalIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                {item.items?.length ? (
+                  <DropdownMenuContent
+                    side={isMobile ? "bottom" : "right"}
+                    align={isMobile ? "end" : "start"}
+                    className="bg-card-shadow text-sidebar-foreground min-w-56 rounded-lg ring-0"
+                  >
+                    <DropdownMenuLabel className="text-primary text-sm font-semibold tracking-wide uppercase">
+                      {item.title}
+                    </DropdownMenuLabel>
+                    {item.items.map((subItem) =>
+                      subItem.onClick ? (
+                        <DropdownMenuItem key={subItem.title} onClick={subItem.onClick} disabled={subItem.isLoading}>
+                          {subItem.isLoading ? <Spinner data-icon="inline-start" /> : null}
+                          {subItem.title}
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem
+                          asChild
+                          key={subItem.title}
+                          className={cn(activeSubUrl === subItem.url && "bg-accent font-medium text-accent-foreground")}
+                        >
+                          <a href={subItem.url} aria-current={activeSubUrl === subItem.url ? "page" : undefined}>
+                            {subItem.title}
+                          </a>
+                        </DropdownMenuItem>
+                      ),
+                    )}
+                  </DropdownMenuContent>
+                ) : null}
+              </SidebarMenuItem>
+            </DropdownMenu>
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
   );
