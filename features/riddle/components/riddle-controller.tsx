@@ -1,6 +1,5 @@
 "use client";
 
-import Lottie from "lottie-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -12,7 +11,6 @@ import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
-import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
@@ -34,8 +32,6 @@ import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
-import animationData from "@/public/images/animations/animation-rocjet-launch.json";
-
 type RiddleControllerProps = {
   riddle: Riddle;
   nextRiddleUrl?: string | null;
@@ -306,15 +302,7 @@ export default function RiddleController({
           <div className="flex flex-col items-center justify-center gap-1 text-center">
             <span className="text-lg font-bold">{riddle.title ?? "Untitled riddle"}</span>
           </div>
-          <div className="flex items-center" data-tour="progress">
-            <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
-            <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
-              <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
-            </div>
-          </div>
-          <div data-tour="goals">
-            <GoalViewer goals={sortedGoals} />
-          </div>
+          <GoalViewer goals={sortedGoals} progressValue={progressValue} />
           <div className="mt-auto" data-tour="hint-button">
             {isUserLoggedIn && userCollections.length > 0 ? (
               <AddToMyCollectionPicker
