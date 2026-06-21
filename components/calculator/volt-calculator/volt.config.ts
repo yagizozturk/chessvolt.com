@@ -25,10 +25,7 @@ export function getVoltMaxScore(): number {
 }
 
 /** Earliest started_at timestamp that still counts toward Volt (used by per-sequence and Grand Volt). */
-export function getVoltLookbackStart(
-  now = new Date(),
-  lookbackMonths = VOLT_CONFIG.lookbackMonths,
-): Date {
+export function getVoltLookbackStart(now = new Date(), lookbackMonths = VOLT_CONFIG.lookbackMonths): Date {
   const start = new Date(now);
   start.setMonth(start.getMonth() - lookbackMonths);
   return start;

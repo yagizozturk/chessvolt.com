@@ -60,8 +60,7 @@ function computeAttemptScore(
 
   const { accuracy, timing, streak } = VOLT_CONFIG.metricWeights;
 
-  const attemptScore =
-    accuracyPercent * accuracy + timingPercent * timing + streakPercent * streak;
+  const attemptScore = accuracyPercent * accuracy + timingPercent * timing + streakPercent * streak;
 
   return {
     accuracyPercent,
@@ -71,15 +70,17 @@ function computeAttemptScore(
   };
 }
 
-function computeDayVolt(attempts: VoltAttemptRecord[], totalMoveCount: number, rating: number): {
+function computeDayVolt(
+  attempts: VoltAttemptRecord[],
+  totalMoveCount: number,
+  rating: number,
+): {
   dayVolt: number;
   attempts: VoltAttemptBreakdown[];
 } {
   const weights = VOLT_CONFIG.attemptSlotWeights;
   const slots = VOLT_CONFIG.attemptsPerDayCounted;
-  const sorted = [...attempts].sort(
-    (a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime(),
-  );
+  const sorted = [...attempts].sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
   const counted = sorted.slice(0, slots);
 
   const breakdowns: VoltAttemptBreakdown[] = counted.map((attempt, index) => {
@@ -97,20 +98,13 @@ function computeDayVolt(attempts: VoltAttemptRecord[], totalMoveCount: number, r
     };
   });
 
-  const dayVolt = Math.round(
-    Math.min(
-      VOLT_CONFIG.dayMaxVolt,
-      breakdowns.reduce((sum, row) => sum + row.weightedContribution, 0),
-    ),
-  );
+  const rawDayScore = breakdowns.reduce((sum, row) => sum + row.weightedContribution, 0);
+  const dayVolt = Math.round(Math.min(VOLT_CONFIG.dayMaxVolt, (rawDayScore * VOLT_CONFIG.dayMaxVolt) / 100));
 
   return { dayVolt, attempts: breakdowns };
 }
 
-function groupAttemptsByDay(
-  attempts: VoltAttemptRecord[],
-  lookbackStart: Date,
-): Map<string, VoltAttemptRecord[]> {
+function groupAttemptsByDay(attempts: VoltAttemptRecord[], lookbackStart: Date): Map<string, VoltAttemptRecord[]> {
   const byDay = new Map<string, VoltAttemptRecord[]>();
 
   for (const attempt of attempts) {
@@ -168,9 +162,7 @@ export function computeVoltScore({
   });
 
   const paddingCount = Math.max(0, scoredDayCount - playedSlots.length);
-  const paddingSlots = Array.from({ length: paddingCount }, (_, i) =>
-    buildEmptySlot(playedSlots.length + i + 1),
-  );
+  const paddingSlots = Array.from({ length: paddingCount }, (_, i) => buildEmptySlot(playedSlots.length + i + 1));
 
   const days = [...playedSlots, ...paddingSlots];
   const volt = days.reduce((sum, day) => sum + day.dayVolt, 0);

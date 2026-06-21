@@ -60,13 +60,7 @@ function getAttemptTooltipMeta(attemptIndex: number, attemptWeight: number, dayM
 
 type AttemptTooltipMeta = ReturnType<typeof getAttemptTooltipMeta>;
 
-function AttemptTooltip({
-  tooltip,
-  children,
-}: {
-  tooltip: AttemptTooltipMeta;
-  children: React.ReactNode;
-}) {
+function AttemptTooltip({ tooltip, children }: { tooltip: AttemptTooltipMeta; children: React.ReactNode }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
@@ -80,15 +74,7 @@ function AttemptTooltip({
   );
 }
 
-function VoltMetricIcon({
-  icon: Icon,
-  label,
-  className,
-}: {
-  icon: typeof Clock;
-  label: string;
-  className?: string;
-}) {
+function VoltMetricIcon({ icon: Icon, label, className }: { icon: typeof Clock; label: string; className?: string }) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -145,10 +131,7 @@ function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
                         <AttemptTooltip tooltip={attemptTooltip}>
                           <Badge
                             variant="outline"
-                            className={cn(
-                              "size-5 min-w-5 shrink-0 rounded-full px-0 tabular-nums",
-                              attemptColorClass,
-                            )}
+                            className={cn("size-5 min-w-5 shrink-0 rounded-full px-0 tabular-nums", attemptColorClass)}
                             aria-label={attemptTooltip.ariaLabel}
                           >
                             {attempt.attemptIndex}
