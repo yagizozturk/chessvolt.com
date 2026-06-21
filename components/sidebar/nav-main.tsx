@@ -78,6 +78,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
                   asChild
+                  tooltip={item.title}
                   isActive={groupActive}
                   aria-label={item.title}
                   aria-current={groupActive ? "page" : undefined}
@@ -99,6 +100,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
               <SidebarMenuItem>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton
+                    tooltip={item.title}
                     isActive={groupActive}
                     aria-label={item.title}
                     aria-current={groupActive ? "true" : undefined}
