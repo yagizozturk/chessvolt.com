@@ -93,7 +93,7 @@ export function SolveSuccessDialog({
             </div>
           ) : isDisplayableVoltScore(voltScore) ? (
             <div className="flex justify-center">
-              <VoltCalculator result={voltScore} chartSize={200} />
+              <VoltCalculator result={voltScore} />
             </div>
           ) : null}
         </DialogHeader>

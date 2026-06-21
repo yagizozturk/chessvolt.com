@@ -1,17 +1,17 @@
 "use client";
 
+import Lottie from "lottie-react";
 import { ChevronDown, Clock, Flame, Target } from "lucide-react";
 
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
-import { RadialChart } from "@/components/radial-chart/radial-chart";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import voltScoreAnimationData from "@/public/images/animations/lightning.json";
 
-const DEFAULT_CHART_SIZE = 220;
 const REVIEW_ATTEMPT_COLORS = ["text-primary", "text-blue-500", "text-emerald-500"] as const;
 
 function getReviewAttemptColorClass(attemptIndex: number): (typeof REVIEW_ATTEMPT_COLORS)[number] {
@@ -21,8 +21,6 @@ function getReviewAttemptColorClass(attemptIndex: number): (typeof REVIEW_ATTEMP
 type VoltCalculatorProps = {
   result: VoltScoreResult | null;
   className?: string;
-  /** Radial chart size in px. */
-  chartSize?: number;
   /** When false, only shows the total (e.g. on list cards). */
   showDetails?: boolean;
 };
@@ -180,23 +178,29 @@ function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
   );
 }
 
-export function VoltCalculator({
-  result,
-  className,
-  chartSize = DEFAULT_CHART_SIZE,
-  showDetails = true,
-}: VoltCalculatorProps) {
+export function VoltCalculator({ result, className, showDetails = true }: VoltCalculatorProps) {
   if (!result || result.volt === 0) {
     return null;
   }
 
   return (
-    <div className={cn("flex w-full flex-col gap-2", className)}>
+    <div className={cn("flex w-full flex-col items-center gap-2", className)}>
       {showDetails ? (
         <HoverCard openDelay={150} closeDelay={100}>
           <HoverCardTrigger asChild>
-            <div className="cursor-default">
-              <RadialChart currentValue={result.volt} totalValue={Math.max(result.maxVolt, 1)} size={chartSize} />
+            <div className="flex cursor-default items-center">
+              <div className="size-14 shrink-0 overflow-hidden">
+                <Lottie
+                  animationData={voltScoreAnimationData}
+                  loop={true}
+                  autoplay={true}
+                  className="pointer-events-none size-full"
+                />
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-primary text-3xl leading-none font-bold tabular-nums">{result.volt}</span>
+                <span className="text-muted-foreground text-sm tabular-nums">/ {result.maxVolt} max</span>
+              </div>
             </div>
           </HoverCardTrigger>
           <HoverCardContent side="bottom" align="center" className="max-h-96 w-80 overflow-y-auto p-3">

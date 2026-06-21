@@ -77,7 +77,7 @@ export function RiddleBoardCard({
       <div className="relative flex min-w-0 flex-1 flex-col gap-2">
         {isDisplayableVoltScore(voltScore) ? (
           <div className="absolute right-[-32px] bottom-[-32px] z-10">
-            <VoltCalculator result={voltScore} chartSize={140} className="w-fit" />
+            <VoltCalculator result={voltScore} className="w-fit" />
           </div>
         ) : null}
         <p className="text-xl font-bold">{riddle.title}</p>
