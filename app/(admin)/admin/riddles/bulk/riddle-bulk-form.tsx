@@ -16,6 +16,7 @@ type BulkItem = {
   title?: string;
   description?: string;
   rating?: string | number | null;
+  popularity?: string | number | null;
   collectionId?: string;
   sourceId?: string;
   source?: string;
@@ -30,6 +31,7 @@ const BULK_JSON_EXAMPLE = JSON.stringify(
       title: "Mate in 2 from setup FEN",
       description: "Find the winning continuation from the diagram position.",
       rating: 1600,
+      popularity: 85,
       collectionId: "your-collection-uuid",
       source: "lichess",
       sourceId: "external-puzzle-id",

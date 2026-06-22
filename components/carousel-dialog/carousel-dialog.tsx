@@ -16,8 +16,6 @@ export type CarouselDialogProps = {
   slides: CarouselDialogSlide[];
   /** When false, hides Skip and places Back (voltMuted) on the left. Default: true. */
   showSkip?: boolean;
-  /** When "above-description", title sits above the body copy instead of DialogHeader. Default: "header". */
-  titlePlacement?: "header" | "above-description";
 };
 
 export function CarouselDialog({
@@ -25,7 +23,6 @@ export function CarouselDialog({
   onOpenChange,
   slides,
   showSkip = true,
-  titlePlacement = "header",
 }: CarouselDialogProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
@@ -82,11 +79,9 @@ export function CarouselDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
-        {titlePlacement === "header" ? (
-          <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">{activeSlide.title}</DialogTitle>
-          </DialogHeader>
-        ) : null}
+        <DialogHeader>
+          <DialogTitle className="text-center text-2xl font-bold">{activeSlide.title}</DialogTitle>
+        </DialogHeader>
 
         <Carousel setApi={setApi} opts={{ loop: false }} className="w-full">
           <CarouselContent className="-ml-2">
@@ -121,9 +116,6 @@ export function CarouselDialog({
         </div>
 
         <div className="flex flex-col items-center gap-2 text-center">
-          {titlePlacement === "above-description" ? (
-            <DialogTitle className="text-center text-2xl font-bold">{activeSlide.title}</DialogTitle>
-          ) : null}
           <DialogDescription className="text-center text-lg text-pretty">{activeSlide.description}</DialogDescription>
         </div>
 

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { GOALS_JSON_EXAMPLE, VALID_PGN_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { createRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
+import { RiddlePopularityInput } from "@/app/(admin)/admin/riddles/components/riddle-popularity-input";
 import { RiddleRatingInput } from "@/app/(admin)/admin/riddles/components/riddle-rating-input";
 import { extractFenFromPgn } from "@/app/(admin)/admin/utils/extract-fen-from-pgn";
 import DisplayBoard from "@/components/boards/display-board/display-board";
@@ -33,6 +34,7 @@ export function RiddleNewForm({ collections }: Props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [rating, setRating] = useState<number | null>(DEFAULT_RIDDLE_RATING);
+  const [popularity, setPopularity] = useState<number | null>(null);
   const [themes, setThemes] = useState("");
   const [sourceId, setSourceId] = useState("");
   const [source, setSource] = useState("");
@@ -61,6 +63,7 @@ export function RiddleNewForm({ collections }: Props) {
         title: title.trim() || null,
         description: description.trim() || null,
         rating,
+        popularity,
         pgn: pgn.trim() || null,
         moves: derivedMoves || null,
         initialFen: fen ?? null,
@@ -75,7 +78,7 @@ export function RiddleNewForm({ collections }: Props) {
       null,
       2,
     );
-  }, [title, description, rating, pgn, derivedMoves, fen, displayFen, themes, sourceId, source, collectionId, isActive, goals]);
+  }, [title, description, rating, popularity, pgn, derivedMoves, fen, displayFen, themes, sourceId, source, collectionId, isActive, goals]);
 
   useEffect(() => {
     setDisplayFen(fen ?? "");
@@ -160,6 +163,7 @@ export function RiddleNewForm({ collections }: Props) {
               />
             </Field>
             <RiddleRatingInput value={rating} onChange={setRating} />
+            <RiddlePopularityInput value={popularity} onChange={setPopularity} />
             <CollectionRiddleSelect
               collections={collections}
               value={collectionId}

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { GOALS_JSON_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { createRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
+import { RiddlePopularityInput } from "@/app/(admin)/admin/riddles/components/riddle-popularity-input";
 import { RiddleRatingInput } from "@/app/(admin)/admin/riddles/components/riddle-rating-input";
 import VoltBoardNavigator from "@/components/board-navigator/volt-board-navigator";
 import { JsonViewer } from "@/app/(admin)/admin/shared/components/json-viewer";
@@ -48,6 +49,7 @@ export function RiddleFromGameForm({ games, collections }: Props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [rating, setRating] = useState<number | null>(DEFAULT_RIDDLE_RATING);
+  const [popularity, setPopularity] = useState<number | null>(null);
   const [themes, setThemes] = useState("");
   const [collectionId, setCollectionId] = useState(collections[0]?.id ?? "");
 
@@ -140,6 +142,7 @@ export function RiddleFromGameForm({ games, collections }: Props) {
       title: title.trim() || null,
       description: description.trim() || null,
       rating,
+      popularity,
       pgn: pgn || null,
       initialFen: initialFen.trim() || null,
       endFen: endFen.trim() || null,
@@ -157,6 +160,7 @@ export function RiddleFromGameForm({ games, collections }: Props) {
     title,
     description,
     rating,
+    popularity,
     pgn,
     initialFen,
     endFen,
@@ -244,6 +248,7 @@ export function RiddleFromGameForm({ games, collections }: Props) {
               />
             </Field>
             <RiddleRatingInput value={rating} onChange={setRating} />
+            <RiddlePopularityInput value={popularity} onChange={setPopularity} />
             <CollectionRiddleSelect
               collections={collections}
               value={collectionId}

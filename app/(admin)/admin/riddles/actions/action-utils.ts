@@ -6,6 +6,7 @@ import {
   deleteCollectionRiddlesForRiddle,
   getCollectionRiddlesByRiddleId,
 } from "@/features/collection-riddles/services/collection-riddles.service";
+import { parseRiddlePopularity } from "@/features/riddle/utilities/parse-riddle-popularity";
 import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
 import { syncRiddleThemesFromSlugs } from "@/features/riddle-theme/services/riddle-theme.service";
 
@@ -15,6 +16,7 @@ type RawBulkRiddleInput = {
   title?: string;
   description?: string | null;
   rating?: string | number | null;
+  popularity?: string | number | null;
   collectionId?: string | null;
   gameId?: string | null;
   sourceId?: string | null;
@@ -34,6 +36,7 @@ export type BulkRiddleInput = {
   title?: string;
   description?: string | null;
   rating?: string | number | null;
+  popularity?: string | number | null;
   collectionId?: string | null;
   gameId?: string | null;
   sourceId?: string | null;
@@ -54,6 +57,7 @@ export function normalizeBulkRiddleInput(item: RawBulkRiddleInput): BulkRiddleIn
     title: item.title,
     description: item.description,
     rating: item.rating,
+    popularity: item.popularity,
     collectionId: item.collectionId,
     gameId: item.gameId,
     sourceId: item.sourceId,
@@ -124,6 +128,10 @@ export function parseRatingFromForm(formData: FormData): number | null {
   return parseRiddleRating(formData.get("rating"));
 }
 
+export function parsePopularityFromForm(formData: FormData): number | null {
+  return parseRiddlePopularity(formData.get("popularity"));
+}
+
 export function parseCollectionIdFromForm(formData: FormData): string | null {
   const raw = (formData.get("collectionId") as string | null)?.trim() ?? "";
   return raw || null;
@@ -168,6 +176,10 @@ export async function syncCollectionRiddle(
 
 export function parseBulkRating(value: unknown): number | null {
   return parseRiddleRating(value);
+}
+
+export function parseBulkPopularity(value: unknown): number | null {
+  return parseRiddlePopularity(value);
 }
 
 export async function resolvePgnFromFormInput({

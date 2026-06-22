@@ -114,6 +114,7 @@ export async function importLichessRiddlesFromCsv(
         title,
         description: null,
         rating,
+        popularity: row.popularity,
         moves: row.moves,
         initialFen: row.fen,
         displayFen: row.fen,

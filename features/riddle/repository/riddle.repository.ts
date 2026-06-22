@@ -191,6 +191,7 @@ export type CreateRiddleInput = {
   title: string;
   description?: string | null;
   rating?: number | null;
+  popularity?: number | null;
   pgn?: string | null;
   moves?: string | null;
   initialFen?: string | null;
@@ -225,6 +226,7 @@ export async function create(
       title: input.title,
       description: input.description?.trim() || null,
       rating: input.rating ?? null,
+      popularity: input.popularity ?? null,
       move_sequence_id: moveSequence.id,
       is_active: input.isActive ?? true,
     })
@@ -248,6 +250,7 @@ export type UpdateRiddleInput = {
   title?: string;
   description?: string | null;
   rating?: number | null;
+  popularity?: number | null;
   moves?: string | null;
   displayFen?: string | null;
   goals?: MoveGoal[] | null;
@@ -295,6 +298,7 @@ export async function update(
   if (input.title !== undefined) updates.title = input.title;
   if (input.description !== undefined) updates.description = input.description?.trim() || null;
   if (input.rating !== undefined) updates.rating = input.rating;
+  if (input.popularity !== undefined) updates.popularity = input.popularity;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
 
   if (Object.keys(updates).length > 0) {

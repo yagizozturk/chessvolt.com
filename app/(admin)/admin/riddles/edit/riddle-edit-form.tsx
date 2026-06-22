@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { GOALS_JSON_EXAMPLE, VALID_PGN_EXAMPLE } from "@/app/(admin)/admin/constants/riddle-examples";
 import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { updateRiddleAction } from "@/app/(admin)/admin/riddles/actions/actions";
+import { RiddlePopularityInput } from "@/app/(admin)/admin/riddles/components/riddle-popularity-input";
 import { RiddleRatingInput } from "@/app/(admin)/admin/riddles/components/riddle-rating-input";
 import { extractFenFromPgn } from "@/app/(admin)/admin/utils/extract-fen-from-pgn";
 import DisplayBoard from "@/components/boards/display-board/display-board";
@@ -44,6 +45,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
   const [title, setTitle] = useState(riddle.title);
   const [description, setDescription] = useState(riddle.description ?? "");
   const [rating, setRating] = useState<number | null>(riddle.rating);
+  const [popularity, setPopularity] = useState<number | null>(riddle.popularity);
   const [themes, setThemes] = useState(riddle.themeSlugs.join(", "));
   const [sourceId, setSourceId] = useState(riddle.sourceId ?? "");
   const [source, setSource] = useState(riddle.source ?? "");
@@ -83,6 +85,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
       title: title.trim() || null,
       description: description.trim() || null,
       rating,
+      popularity,
       pgn: pgn.trim() || null,
       moves: derivedMoves || null,
       initialFen: fen ?? null,
@@ -99,6 +102,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
     title,
     description,
     rating,
+    popularity,
     pgn,
     derivedMoves,
     fen,
@@ -190,6 +194,7 @@ export function RiddleEditForm({ riddle, game, collections, collectionId: initia
               />
             </Field>
             <RiddleRatingInput value={rating} onChange={setRating} />
+            <RiddlePopularityInput value={popularity} onChange={setPopularity} />
             <CollectionRiddleSelect
               collections={collections}
               value={collectionId}

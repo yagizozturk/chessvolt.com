@@ -23,7 +23,6 @@ export function VoltExplainDialog() {
       onOpenChange={onOpenChange}
       slides={DEFAULT_VOLT_EXPLAIN_DIALOG_SLIDES}
       showSkip={false}
-      titlePlacement="above-description"
     />
   );
 }

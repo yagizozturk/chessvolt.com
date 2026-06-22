@@ -14,6 +14,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 import {
   parseCollectionIdFromForm,
   parseDescriptionFromForm,
+  parsePopularityFromForm,
   parseRatingFromForm,
   parseSourceFromForm,
   parseSourceIdFromForm,
@@ -38,6 +39,7 @@ export async function updateRiddleAction(id: string, formData: FormData) {
   const sourceId = parseSourceIdFromForm(formData);
   const source = parseSourceFromForm(formData);
   const rating = parseRatingFromForm(formData);
+  const popularity = parsePopularityFromForm(formData);
   const movesFromForm = ((formData.get("moves") as string) || "").trim() || null;
   const initialFenInput = ((formData.get("initialFen") as string) || "").trim() || null;
   const displayFenInput = ((formData.get("displayFen") as string) || "").trim() || null;
@@ -92,6 +94,7 @@ export async function updateRiddleAction(id: string, formData: FormData) {
     title,
     description,
     rating,
+    popularity,
     pgn: pgn || null,
     initialFen,
     displayFen,

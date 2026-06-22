@@ -8,6 +8,7 @@ export type Riddle = {
   title: string;
   description: string | null;
   rating: number | null;
+  popularity: number | null;
   isActive: boolean;
   moveSequence: MoveSequence;
   createdAt: string;
