@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Spinner } from "@/components/ui/spinner";
@@ -104,7 +104,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   disabled={loading}
                 />
               </Field>
-              <Field>
+              <div className="flex flex-col gap-3">
                 <Button variant="volt" type="submit" disabled={loading}>
                   {loading && <Spinner data-icon="inline-start" />}
                   Login
@@ -112,7 +112,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
 
                 <RainbowButton
                   variant="default"
-                  className="mt-1 rounded-2xl"
+                  className="rounded-2xl"
                   type="button"
                   onClick={handleGoogleLogin}
                   disabled={loading}
@@ -120,13 +120,17 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   {loading && <Spinner data-icon="inline-start" />}
                   LOGIN WITH GOOGLE
                 </RainbowButton>
-                <FieldDescription className="text-center">
+
+                <p className="text-muted-foreground text-center text-sm">
                   Don&apos;t have an account?{" "}
-                  <Link href="/signup" className="underline underline-offset-4">
+                  <Link href="/signup" className="hover:text-primary underline underline-offset-4">
                     Sign up
                   </Link>
-                </FieldDescription>
-              </Field>
+                </p>
+              </div>
+              <Button variant="voltMuted" className="w-full" asChild>
+                <Link href="/collection">Continue As Guest</Link>
+              </Button>
             </FieldGroup>
           </form>
         </CardContent>

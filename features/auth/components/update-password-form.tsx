@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
@@ -137,17 +137,17 @@ export function UpdatePasswordForm({ className, ...props }: React.ComponentProps
                 disabled={loading}
               />
             </Field>
-            <Field>
+            <div className="flex flex-col gap-3">
               <Button variant="volt" type="submit" disabled={loading} className="w-full">
                 {loading && <Spinner data-icon="inline-start" />}
                 {loading ? "Saving…" : "Update password"}
               </Button>
-              <FieldDescription className="text-center">
-                <Link href="/login" className="underline underline-offset-4">
-                  Cancel
-                </Link>
-              </FieldDescription>
-            </Field>
+            </div>
+            <p className="text-center text-sm text-muted-foreground">
+              <Link href="/login" className="underline underline-offset-4 hover:text-primary">
+                Cancel
+              </Link>
+            </p>
           </FieldGroup>
         </form>
       </CardContent>

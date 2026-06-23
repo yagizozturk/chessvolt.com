@@ -192,30 +192,28 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                 </FieldContent>
               </Field>
               <TermsAndConditionsDialog open={termsOpen} onOpenChange={setTermsOpen} />
-              <FieldGroup>
-                <Field>
-                  <Button variant="volt" type="submit" disabled={loading || !acceptedTerms}>
-                    {loading && <Spinner data-icon="inline-start" />}
-                    Create Account
-                  </Button>
-                  <RainbowButton
-                    variant="default"
-                    className="mt-1 rounded-2xl"
-                    type="button"
-                    onClick={handleGoogleSignup}
-                    disabled={loading}
-                  >
-                    {loading && <Spinner data-icon="inline-start" />}
-                    SIGN UP WITH GOOGLE
-                  </RainbowButton>
-                  <FieldDescription className="px-6 text-center">
-                    Already have an account?{" "}
-                    <Link href="/login" className="underline underline-offset-4">
-                      Sign in
-                    </Link>
-                  </FieldDescription>
-                </Field>
-              </FieldGroup>
+              <div className="flex flex-col gap-3">
+                <Button variant="volt" type="submit" disabled={loading || !acceptedTerms}>
+                  {loading && <Spinner data-icon="inline-start" />}
+                  Create Account
+                </Button>
+                <RainbowButton
+                  variant="default"
+                  className="rounded-2xl"
+                  type="button"
+                  onClick={handleGoogleSignup}
+                  disabled={loading}
+                >
+                  {loading && <Spinner data-icon="inline-start" />}
+                  SIGN UP WITH GOOGLE
+                </RainbowButton>
+              </div>
+              <p className="px-6 text-center text-sm text-muted-foreground">
+                Already have an account?{" "}
+                <Link href="/login" className="underline underline-offset-4 hover:text-primary">
+                  Sign in
+                </Link>
+              </p>
             </FieldGroup>
           </form>
         )}

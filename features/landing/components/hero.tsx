@@ -1,8 +1,4 @@
-import { ChessKnight } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
@@ -21,14 +17,6 @@ export function Hero() {
             <br />
             teach you the idea behind every move.
           </p>
-          <div className="flex w-full flex-wrap justify-end">
-            <Button variant="volt" size="lg" asChild>
-              <Link href="/collection" className="flex items-center gap-2">
-                <ChessKnight className="h-4 w-4" />
-                Start Playing
-              </Link>
-            </Button>
-          </div>
         </div>
         <div className="mt-[-50px] flex-1">
           <Image src="/images/hero/bg-hero-volt-play.png" alt="ChessVolt Dashboard Preview" width={963} height={800} />

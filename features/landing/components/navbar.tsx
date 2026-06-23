@@ -1,6 +1,6 @@
 "use client";
 
-import { ChessKnight, LogIn, type LucideIcon, Menu, Zap } from "lucide-react";
+import { LogIn, type LucideIcon, Menu, Zap } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -22,12 +22,6 @@ const SIGN_IN_ITEM: NavItem = {
   label: "Sign in",
   icon: LogIn,
   iconPosition: "left",
-};
-
-const START_PLAYING_ITEM: NavItem = {
-  href: "/collection",
-  label: "Start Playing",
-  icon: ChessKnight,
 };
 
 function BrandLogo({ onNavigate, variant = "header" }: { onNavigate?: () => void; variant?: "header" | "sheet" }) {
@@ -99,7 +93,6 @@ export function Navbar() {
             </SparklesText>
           )}
           {!isLoading && !profile && <DesktopNavLink item={SIGN_IN_ITEM} />}
-          <DesktopNavLink item={START_PLAYING_ITEM} />
         </nav>
 
         <div className="md:hidden">
@@ -124,7 +117,6 @@ export function Navbar() {
               <nav className="flex flex-col gap-4" aria-label="Mobile menu">
                 {profile && <SparklesText className="text-base font-bold">Hi, {displayName}</SparklesText>}
                 {!isLoading && !profile && <MobileNavLink item={SIGN_IN_ITEM} onNavigate={closeSheet} />}
-                <MobileNavLink item={START_PLAYING_ITEM} onNavigate={closeSheet} />
               </nav>
             </SheetContent>
           </Sheet>
