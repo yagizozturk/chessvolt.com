@@ -5,7 +5,7 @@ import { Clock, Flame, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
+import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
@@ -67,36 +67,38 @@ export function SolveSuccessDialog({
     router.push(destinationPath);
   };
 
-  const isVoltScoreVisible = isVoltScoreShowing || isDisplayableVoltScore(voltScore);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
-        <DialogHeader>
-          <div className="flex flex-col items-center">
-            <Lottie animationData={animationData} loop={true} autoplay={true} className="size-50" />
+        <div className="flex flex-col items-center">
+          <Lottie animationData={animationData} loop={true} autoplay={true} className="size-50" />
+        </div>
+        <DialogHeader className="items-center text-center">
+          <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
+          <DialogDescription className="text-lg text-pretty">{description}</DialogDescription>
+        </DialogHeader>
+        {/* Stats */}
+        {stats ? (
+          <div className={cn("grid grid-cols-3 gap-2")}>
+            <NumberTickerStats icon={Target} label="Accuracy" value={stats.accuracyPercent} suffix="%" />
+            <NumberTickerStats icon={Flame} label="Max streak" value={stats.maxCorrectStreak} />
+            <ColumnBasedStats icon={Clock} label="Time" value={formatAttemptDurationMs(stats.durationMs) ?? "—"} />
           </div>
-          <DialogTitle className="text-center text-2xl font-bold">{title}</DialogTitle>
-          <DialogDescription className="mt-4 text-center text-lg text-pretty">{description}</DialogDescription>
-          {stats && !isVoltScoreVisible ? (
-            <div className={cn("mt-4 grid grid-cols-3 gap-2")}>
-              <NumberTickerStats icon={Target} label="Accuracy" value={stats.accuracyPercent} suffix="%" />
-              <NumberTickerStats icon={Flame} label="Max streak" value={stats.maxCorrectStreak} />
-              <ColumnBasedStats icon={Clock} label="Time" value={formatAttemptDurationMs(stats.durationMs) ?? "—"} />
-            </div>
-          ) : null}
-          {isVoltScoreShowing ? (
-            <div className="flex flex-col items-center gap-3 py-6">
-              <p className="text-muted-foreground text-sm">Volt score is calculating</p>
-              <Spinner className="size-8" />
-            </div>
-          ) : isDisplayableVoltScore(voltScore) ? (
-            <div className="flex justify-center">
+        ) : null}
+        {/* Volt score */}
+        {isVoltScoreShowing ? (
+          <div className="flex flex-col items-center gap-3 py-6">
+            <p className="text-muted-foreground text-sm">Volt score is calculating</p>
+            <Spinner className="size-8" />
+          </div>
+        ) : isValidVoltScore(voltScore) ? (
+          <div className="relative flex min-h-30 justify-center">
+            <div className="absolute top-[-30px] left-24">
               <VoltCalculator result={voltScore} chartSize={200} />
             </div>
-          ) : null}
-        </DialogHeader>
+          </div>
+        ) : null}
         <DialogFooter className="mt-4 items-center justify-center sm:justify-center">
           <Button
             variant="volt"

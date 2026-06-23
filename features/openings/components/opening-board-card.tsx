@@ -8,7 +8,7 @@ import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-r
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
-import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
+import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/ui/blur-fade";
@@ -82,8 +82,8 @@ export function OpeningBoardCard({
           {moveCountLabel ? (
             <BoardCardMetaRow icon={Puzzle} label={moveCountLabel} className="text-muted-foreground text-sm" />
           ) : null}
-          <div className={isDisplayableVoltScore(voltScore) ? "mt-auto flex flex-col gap-2" : "mt-auto flex items-center gap-3"}>
-            {isDisplayableVoltScore(voltScore) ? <VoltCalculator result={voltScore} showDetails={false} /> : null}
+          <div className={isValidVoltScore(voltScore) ? "mt-auto flex flex-col gap-2" : "mt-auto flex items-center gap-3"}>
+            {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} showDetails={false} /> : null}
             <div className="flex items-center gap-3">
               <div className="flex min-w-0 flex-wrap items-center gap-3">
                 {accuracyPercent != null ? (

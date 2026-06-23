@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
-import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
+import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
@@ -246,7 +246,7 @@ export default function OpeningVariantController({
         <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
           <div className="flex flex-col items-center justify-center gap-1 text-center">
             <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>
-            {isDisplayableVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="mt-2 w-full" /> : null}
+            {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="mt-2 w-full" /> : null}
           </div>
           <GoalViewer goals={sortedGoals} progressValue={progressValue} />
           <div className="mt-auto">

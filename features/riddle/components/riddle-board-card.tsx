@@ -8,7 +8,7 @@ import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-r
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
-import { isDisplayableVoltScore } from "@/components/calculator/volt-calculator/is-displayable-volt-score";
+import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -75,7 +75,7 @@ export function RiddleBoardCard({
         <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} size={size} coordinates={false} />
       </div>
       <div className="relative flex min-w-0 flex-1 flex-col gap-2">
-        {isDisplayableVoltScore(voltScore) ? (
+        {isValidVoltScore(voltScore) ? (
           <div className="absolute right-[-32px] bottom-[-32px] z-10">
             <VoltCalculator result={voltScore} chartSize={140} className="w-fit" />
           </div>

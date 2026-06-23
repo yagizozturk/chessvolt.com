@@ -32,6 +32,7 @@ import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+
 type RiddleControllerProps = {
   riddle: Riddle;
   nextRiddleUrl?: string | null;
@@ -260,7 +261,7 @@ export default function RiddleController({
   };
 
   const successDescription = hasNextRiddle
-    ? "You solved this riddle. Continue to the next one when you are ready."
+    ? "Congratulations! You solved this riddle."
     : "You solved this riddle. Return to the collection when you are ready.";
 
   return (
