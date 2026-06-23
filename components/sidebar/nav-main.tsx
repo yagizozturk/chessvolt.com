@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
+import { UserAvatar } from "@/features/profile/components/user-avatar";
 import { cn } from "@/lib/utils";
 
 // Submenu items are either navigation links or runtime actions.
@@ -26,6 +27,10 @@ export type NavMainItem = {
   title: string;
   url: string;
   icon?: string;
+  avatar?: {
+    src: string | null;
+    displayName: string;
+  };
   items?: NavSubItem[];
 };
 
@@ -61,6 +66,18 @@ function hasSubmenu(item: NavMainItem) {
   return (item.items?.length ?? 0) > 0;
 }
 
+function NavItemIcon({ item }: { item: NavMainItem }) {
+  if (item.avatar) {
+    return <UserAvatar avatarUrl={item.avatar.src} displayName={item.avatar.displayName} className="size-8" />;
+  }
+
+  if (item.icon) {
+    return <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />;
+  }
+
+  return null;
+}
+
 export function NavMain({ items }: { items: NavMainItem[] }) {
   const pathname = usePathname();
   const { isMobile } = useSidebar();
@@ -85,9 +102,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                   className="data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
                 >
                   <Link href={item.url}>
-                    {item.icon ? (
-                      <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
-                    ) : null}
+                    <NavItemIcon item={item} />
                     <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -106,9 +121,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     aria-current={groupActive ? "true" : undefined}
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
                   >
-                    {item.icon ? (
-                      <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
-                    ) : null}
+                    <NavItemIcon item={item} />
                     <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                     <MoreHorizontalIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
                   </SidebarMenuButton>

@@ -1,31 +1,15 @@
-import Image from "next/image";
-
 import type { GrandVoltScoreResult } from "@/components/calculator/volt-calculator/grand-volt.types";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { UserAvatar } from "@/features/profile/components/user-avatar";
 import type { UserProfileData } from "@/features/profile/types/user-profile";
+import { getDisplayName } from "@/features/profile/utilities/user-avatar";
 
 type ProfilePageProps = {
   profile: UserProfileData;
   /** Aggregated Volt from riddles + opening variants (computed server-side on page load). */
   grandVoltScore: GrandVoltScoreResult;
 };
-
-function getDisplayName(profile: UserProfileData) {
-  return profile.username ?? profile.email ?? "User";
-}
-
-function getInitials(profile: UserProfileData) {
-  const name = getDisplayName(profile);
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-  }
-
-  return name.slice(0, 2).toUpperCase();
-}
 
 function ProfileStat({ label, value }: { label: string; value: string }) {
   return (
@@ -56,13 +40,13 @@ export function ProfilePage({ profile, grandVoltScore }: ProfilePageProps) {
               Track your account details and rating progress as you solve riddles and learn openings.
             </p>
           </div>
-          <div className="overflow-hidden rounded-lg">
-            <Image
-              src="/images/icons/icon-user-profile.png"
-              alt=""
-              width={120}
-              height={120}
-              className="object-contain p-4"
+          <div className="overflow-hidden rounded-lg p-4">
+            <UserAvatar
+              avatarUrl={profile.avatarUrl}
+              displayName={displayName}
+              size="lg"
+              className="size-24"
+              fallbackClassName="text-2xl"
             />
           </div>
         </div>
@@ -70,9 +54,13 @@ export function ProfilePage({ profile, grandVoltScore }: ProfilePageProps) {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-4">
-              <Avatar size="lg" className="size-14">
-                <AvatarFallback className="text-base font-semibold">{getInitials(profile)}</AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                avatarUrl={profile.avatarUrl}
+                displayName={displayName}
+                size="lg"
+                className="size-14"
+                fallbackClassName="text-base"
+              />
               <div className="space-y-1">
                 <CardTitle className="text-2xl">{displayName}</CardTitle>
                 <CardDescription>{profile.email ?? "No email on file"}</CardDescription>

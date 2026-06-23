@@ -1,6 +1,7 @@
 "use client";
 
 import type { Profile, ProfileRole } from "@/features/profile/types/profile";
+import { getAvatarUrlFromUser } from "@/features/profile/utilities/user-avatar";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -33,6 +34,8 @@ export function useProfile() {
       } else {
         setProfile({
           username: data?.username ?? null,
+          email: user.email ?? null,
+          avatarUrl: getAvatarUrlFromUser(user),
           role: (data?.role as ProfileRole) ?? "user",
           onboardingCompleted: data?.onboarding_completed ?? false,
           initialRating: data?.initial_rating ?? null,

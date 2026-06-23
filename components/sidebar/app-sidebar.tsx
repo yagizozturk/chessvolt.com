@@ -18,6 +18,7 @@ import {
 import { useVoltExplainMenuAction } from "@/components/volt-explain-dialog/use-volt-explain-dialog";
 import type { Opening } from "@/features/openings/types/opening";
 import { useProfile } from "@/features/profile/hooks/use-profile";
+import { getDisplayName } from "@/features/profile/utilities/user-avatar";
 import { createClient } from "@/lib/supabase/client";
 import { slugify } from "@/lib/utils/slugify";
 
@@ -131,6 +132,14 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
 
     return {
       ...profileSection,
+      ...(profile
+        ? {
+            avatar: {
+              src: profile.avatarUrl,
+              displayName: getDisplayName(profile),
+            },
+          }
+        : {}),
       items: [
         ...(settingsItem ? [settingsItem] : []),
         ...(profile && myProfileItem ? [myProfileItem] : []),
