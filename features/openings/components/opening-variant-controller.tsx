@@ -48,6 +48,8 @@ export default function OpeningVariantController({
   voltScore = null,
 }: OpeningVariantControllerProps) {
   const sequenceId = variant.moveSequence.id;
+  const [replayKey, setReplayKey] = useState(0);
+  const sessionId = `${variant.id}:${replayKey}`;
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -56,7 +58,7 @@ export default function OpeningVariantController({
   const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null);
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
-  const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
+  const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
   const correctMoveCountRef = useRef(0);
   const wrongMoveCountRef = useRef(0);
@@ -73,7 +75,7 @@ export default function OpeningVariantController({
     hintRequested,
     currentCorrectMove,
   } = useMoveSequenceController({
-    sourceId: variant.id,
+    sourceId: sessionId,
     moves: variant.moveSequence.moves,
     goals: variant.moveSequence.goals,
     initialPly: variant.initialPly,
@@ -83,6 +85,10 @@ export default function OpeningVariantController({
     totalMoveCount: getPlayerMoveCount(variant.moveSequence.moves),
     rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
   };
+
+  useEffect(() => {
+    setReplayKey(0);
+  }, [variant.id]);
 
   useEffect(() => {
     setIsCompleted(false);
@@ -96,7 +102,7 @@ export default function OpeningVariantController({
     totalHintCountRef.current = 0;
     currentCorrectStreakRef.current = 0;
     maxCorrectStreakRef.current = 0;
-  }, [variant.id]);
+  }, [variant.id, replayKey]);
 
   useEffect(() => {
     if (currentCorrectMove != null || isCompleted) return;
@@ -211,6 +217,11 @@ export default function OpeningVariantController({
     router.push(successDestinationPath);
   };
 
+  const handlePlayAgain = () => {
+    setSuccessDialogOpen(false);
+    setReplayKey((key) => key + 1);
+  };
+
   const successDescription = nextVariantId
     ? "You completed this line. Continue to the next variant when you are ready."
     : "You completed this line. Return to the opening when you are ready.";
@@ -228,13 +239,14 @@ export default function OpeningVariantController({
         stats={completionStats}
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
+        onPlayAgain={handlePlayAgain}
       />
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div key={variant.id} className="relative w-full min-w-0 lg:w-auto lg:shrink-0" data-tour="board">
+        <div key={sessionId} className="relative w-full min-w-0 lg:w-auto lg:shrink-0" data-tour="board">
           <VoltBoard
             ref={boardRef}
-            sourceId={variant.id}
+            sourceId={sessionId}
             initialFen={variant.moveSequence.initialFen}
             size={584}
             drawHintMove={currentCorrectMove}

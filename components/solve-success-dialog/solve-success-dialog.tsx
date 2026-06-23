@@ -1,7 +1,7 @@
 "use client";
 
 import Lottie from "lottie-react";
-import { Clock, Flame, Target } from "lucide-react";
+import { ArrowRight, Clock, Flame, RotateCcw, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,10 +21,12 @@ import {
 } from "@/components/ui/dialog";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import { formatAttemptDurationMs } from "@/features/user-sequence-attempt/utilities/format-attempt-duration";
 import { cn } from "@/lib/utils";
 import animationData from "@/public/images/animations/animation-trophy.json";
+import infoAnimationData from "@/public/images/animations/info.json";
 
 export type SolveSuccessDialogProps = {
   open: boolean;
@@ -36,6 +38,7 @@ export type SolveSuccessDialogProps = {
   stats?: SequenceCompleteDialogStats | null;
   voltScore?: VoltScoreResult | null;
   isVoltScoreShowing?: boolean;
+  onPlayAgain?: () => void;
 };
 
 /**
@@ -58,6 +61,7 @@ export function SolveSuccessDialog({
   stats,
   voltScore = null,
   isVoltScoreShowing = false,
+  onPlayAgain,
 }: SolveSuccessDialogProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
@@ -97,9 +101,32 @@ export function SolveSuccessDialog({
             <div className="absolute top-[-30px] left-24">
               <VoltCalculator result={voltScore} chartSize={200} />
             </div>
+            <div className="absolute top-0 right-28">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="focus-visible:ring-ring inline-flex cursor-default rounded-full focus-visible:ring-2 focus-visible:outline-none"
+                    aria-label="About Volt score"
+                  >
+                    <Lottie animationData={infoAnimationData} loop={true} autoplay={true} className="size-10" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" sideOffset={6} className="max-w-52 text-left">
+                  Your Volt score is a combination of accuracy, timing, and streak. Hover on the graph to see more
+                  details.
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </div>
         ) : null}
-        <DialogFooter className="mt-4 items-center justify-center sm:justify-center">
+        <DialogFooter className="mt-4 flex-col gap-2 sm:flex-row sm:justify-center">
+          {onPlayAgain ? (
+            <Button variant="voltGreen" type="button" onClick={onPlayAgain} className="w-full sm:w-auto">
+              <RotateCcw data-icon="inline-start" />
+              Play again
+            </Button>
+          ) : null}
           <Button
             variant="volt"
             type="button"
@@ -107,8 +134,9 @@ export function SolveSuccessDialog({
             onClick={handleContinue}
             className="w-full sm:w-auto"
           >
-            {isPending && <Spinner data-icon="inline-start" />}
+            {isPending ? <Spinner data-icon="inline-start" /> : null}
             {buttonLabel}
+            {!isPending ? <ArrowRight data-icon="inline-end" /> : null}
           </Button>
         </DialogFooter>
       </DialogContent>

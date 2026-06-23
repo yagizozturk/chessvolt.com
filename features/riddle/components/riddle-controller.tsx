@@ -53,13 +53,15 @@ export default function RiddleController({
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const sequenceId = riddle.moveSequence.id; // Every sequence has its own moves and PGN. Every Riddle has sequenceId
+  const [replayKey, setReplayKey] = useState(0);
+  const sessionId = `${riddle.id}:${replayKey}`;
   const [isCompleted, setIsCompleted] = useState(false); // Whether the riddle is completed
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null);
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [isContinuePending, setIsContinuePending] = useState(false);
-  const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId);
+  const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
 
   // ================================================================================================
@@ -85,7 +87,7 @@ export default function RiddleController({
     hintRequested,
     currentCorrectMove,
   } = useMoveSequenceController({
-    sourceId: riddle.id,
+    sourceId: sessionId,
     moves: riddle.moveSequence.moves,
     goals: riddle.moveSequence.goals,
   });
@@ -96,8 +98,12 @@ export default function RiddleController({
     rating: getRiddleRatingForScoring(riddle.rating),
   };
 
+  useEffect(() => {
+    setReplayKey(0);
+  }, [riddle.id]);
+
   // ================================================================================================
-  // Reset the riddle state when the riddle id changes
+  // Reset the riddle state when the riddle id or replay key changes
   // ================================================================================================
   useEffect(() => {
     setIsCompleted(false);
@@ -111,7 +117,7 @@ export default function RiddleController({
     totalHintCountRef.current = 0;
     currentCorrectStreakRef.current = 0;
     maxCorrectStreakRef.current = 0;
-  }, [riddle.id]);
+  }, [riddle.id, replayKey]);
 
   // ================================================================================================
   // Set the riddle as completed and persist attempt data to the db
@@ -260,6 +266,11 @@ export default function RiddleController({
     router.push(successDestinationPath);
   };
 
+  const handlePlayAgain = () => {
+    setSuccessDialogOpen(false);
+    setReplayKey((key) => key + 1);
+  };
+
   const successDescription = hasNextRiddle
     ? "Congratulations! You solved this riddle."
     : "You solved this riddle. Return to the collection when you are ready.";
@@ -277,6 +288,7 @@ export default function RiddleController({
         stats={completionStats}
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
+        onPlayAgain={handlePlayAgain}
       />
       {successDialogOpen ? (
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
@@ -284,13 +296,13 @@ export default function RiddleController({
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
         <div
-          key={riddle.id}
+          key={sessionId}
           className="relative w-full min-w-0 rounded-2xl border-5 border-white/80 lg:w-auto lg:shrink-0"
           data-tour="board"
         >
           <VoltBoard
             ref={boardRef}
-            sourceId={riddle.id}
+            sourceId={sessionId}
             initialFen={riddle.moveSequence.initialFen}
             size={584}
             drawHintMove={currentCorrectMove}

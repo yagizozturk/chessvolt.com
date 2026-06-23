@@ -14,7 +14,7 @@ import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types
 
 type AttemptCounters = Omit<UpdateSequenceAttemptPayload, "attemptId" | "status">;
 
-export function useSequenceAttempt(sequenceId: string) {
+export function useSequenceAttempt(sequenceId: string, replayKey = 0) {
   const attemptIdRef = useRef<string | null>(null);
   const startPromiseRef = useRef<Promise<string | null> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +25,7 @@ export function useSequenceAttempt(sequenceId: string) {
     attemptIdRef.current = null;
     startedAtRef.current = null;
     startPromiseRef.current = null;
-  }, [sequenceId]);
+  }, [replayKey, sequenceId]);
 
   const getAttemptId = useCallback(() => attemptIdRef.current, []);
 
