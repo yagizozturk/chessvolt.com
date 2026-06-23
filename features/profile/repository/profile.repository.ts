@@ -7,7 +7,7 @@ import type { UserProfileData } from "@/features/profile/types/user-profile";
 export async function getProfileByUserId(
   supabase: SupabaseClient,
   userId: string,
-): Promise<Omit<UserProfileData, "email"> | null> {
+): Promise<Omit<UserProfileData, "email" | "avatarUrl"> | null> {
   const { data, error } = await supabase
     .from("profiles")
     .select("username, role, onboarding_completed, initial_rating, current_rating")
