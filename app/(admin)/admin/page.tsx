@@ -22,8 +22,8 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Admin panel is ready. You can add management screens for
-              users, games, and riddles.
+              Admin panel is ready. Manage users, games, collections, themes,
+              onboarding, and openings from the sidebar.
             </p>
           </CardContent>
         </Card>

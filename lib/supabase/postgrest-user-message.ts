@@ -2,11 +2,7 @@ import type { PostgrestError } from "@supabase/supabase-js";
 
 function looksLikeUniqueViolation(text: string): boolean {
   const t = text.toLowerCase();
-  return (
-    t.includes("duplicate key") ||
-    t.includes("unique constraint") ||
-    t.includes("already exists")
-  );
+  return t.includes("duplicate key") || t.includes("unique constraint") || t.includes("already exists");
 }
 
 /**

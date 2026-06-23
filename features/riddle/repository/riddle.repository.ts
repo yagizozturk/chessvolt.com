@@ -3,13 +3,13 @@
  *
  * Responsibility: CRUD access to the riddles table.
  */
-
-import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
-import { toRiddle, type DbRiddle } from "@/features/riddle/mapper/riddle.mapper";
-import type { Riddle } from "@/features/riddle/types/riddle";
-import { DEFAULT_INITIAL_FEN } from "@/features/move-sequence/mapper/move-sequence.mapper";
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import type { SupabaseClient } from "@supabase/supabase-js";
+
+import { DEFAULT_INITIAL_FEN } from "@/features/move-sequence/mapper/move-sequence.mapper";
+import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import { type DbRiddle, toRiddle } from "@/features/riddle/mapper/riddle.mapper";
+import type { Riddle } from "@/features/riddle/types/riddle";
 
 const RIDDLE_SELECT = "*, move_sequences (*)";
 
@@ -43,11 +43,7 @@ export async function findAllActive(supabase: SupabaseClient): Promise<Riddle[]>
 }
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<Riddle | null> {
-  const { data, error } = await supabase
-    .from("riddles")
-    .select(RIDDLE_SELECT)
-    .eq("id", id)
-    .maybeSingle();
+  const { data, error } = await supabase.from("riddles").select(RIDDLE_SELECT).eq("id", id).maybeSingle();
 
   if (error) {
     console.error("riddle.repository.findById error:", error);
@@ -63,16 +59,10 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<Ri
 // Bulk lookup riddles by move_sequence_id.
 // Used by Grand Volt to resolve attempt sequence IDs to scoring metadata (moves, rating).
 // ================================================================================================
-export async function findByMoveSequenceIds(
-  supabase: SupabaseClient,
-  moveSequenceIds: string[],
-): Promise<Riddle[]> {
+export async function findByMoveSequenceIds(supabase: SupabaseClient, moveSequenceIds: string[]): Promise<Riddle[]> {
   if (moveSequenceIds.length === 0) return [];
 
-  const { data, error } = await supabase
-    .from("riddles")
-    .select(RIDDLE_SELECT)
-    .in("move_sequence_id", moveSequenceIds);
+  const { data, error } = await supabase.from("riddles").select(RIDDLE_SELECT).in("move_sequence_id", moveSequenceIds);
 
   if (error) {
     console.error("riddle.repository.findByMoveSequenceIds error:", error);
@@ -88,10 +78,7 @@ type DbCollectionRiddleJoinRow = {
   riddles: DbRiddle | DbRiddle[] | null;
 };
 
-export async function findActiveByCollectionId(
-  supabase: SupabaseClient,
-  collectionId: string,
-): Promise<Riddle[]> {
+export async function findActiveByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<Riddle[]> {
   const { data, error } = await supabase
     .from("collection_riddles")
     .select("sort_order, created_at, riddles (*, move_sequences (*))")
@@ -123,24 +110,14 @@ export type FindActiveRiddlesByIdsInput = {
   orderBy?: "created_at" | "rating";
 };
 
-export async function findActiveByIds(
-  supabase: SupabaseClient,
-  input: FindActiveRiddlesByIdsInput,
-): Promise<Riddle[]> {
+export async function findActiveByIds(supabase: SupabaseClient, input: FindActiveRiddlesByIdsInput): Promise<Riddle[]> {
   const uniqueIds = [...new Set(input.ids.map((id) => id.trim()).filter(Boolean))];
   if (uniqueIds.length === 0) return [];
 
-  let query = supabase
-    .from("riddles")
-    .select(RIDDLE_SELECT)
-    .eq("is_active", true)
-    .in("id", uniqueIds);
+  let query = supabase.from("riddles").select(RIDDLE_SELECT).eq("is_active", true).in("id", uniqueIds);
 
   if (input.minRating != null && input.maxRating != null) {
-    query = query
-      .not("rating", "is", null)
-      .gte("rating", input.minRating)
-      .lte("rating", input.maxRating);
+    query = query.not("rating", "is", null).gte("rating", input.minRating).lte("rating", input.maxRating);
   }
 
   const orderBy = input.orderBy ?? "created_at";
@@ -200,10 +177,7 @@ export type CreateRiddleInput = {
   isActive?: boolean;
 };
 
-export async function create(
-  supabase: SupabaseClient,
-  input: CreateRiddleInput,
-): Promise<Riddle | null> {
+export async function create(supabase: SupabaseClient, input: CreateRiddleInput): Promise<Riddle | null> {
   const displayFen = input.displayFen ?? null;
   const initialFen = input.initialFen ?? displayFen ?? DEFAULT_INITIAL_FEN;
   const moves = input.moves?.trim() || "e2e4";
@@ -225,7 +199,7 @@ export async function create(
       source: input.source?.trim() || null,
       title: input.title,
       description: input.description?.trim() || null,
-      rating: input.rating ?? null,
+      rating: input.rating !== undefined ? input.rating : null,
       popularity: input.popularity ?? null,
       move_sequence_id: moveSequence.id,
       is_active: input.isActive ?? true,
@@ -257,11 +231,7 @@ export type UpdateRiddleInput = {
   isActive?: boolean;
 };
 
-export async function update(
-  supabase: SupabaseClient,
-  id: string,
-  input: UpdateRiddleInput,
-): Promise<Riddle | null> {
+export async function update(supabase: SupabaseClient, id: string, input: UpdateRiddleInput): Promise<Riddle | null> {
   const existing = await findById(supabase, id);
   if (!existing) return null;
 
@@ -273,14 +243,9 @@ export async function update(
     input.goals !== undefined;
 
   if (hasSequenceUpdate) {
-    const displayFen =
-      input.displayFen !== undefined ? input.displayFen : existing.moveSequence.displayFen;
+    const displayFen = input.displayFen !== undefined ? input.displayFen : existing.moveSequence.displayFen;
     const initialFen =
-      input.initialFen !== undefined
-        ? input.initialFen
-        : input.displayFen !== undefined
-          ? input.displayFen
-          : undefined;
+      input.initialFen !== undefined ? input.initialFen : input.displayFen !== undefined ? input.displayFen : undefined;
     const updated = await moveSequenceService.updateMoveSequence(supabase, existing.moveSequence.id, {
       moves: input.moves ?? undefined,
       pgn: input.pgn,
@@ -343,8 +308,6 @@ export async function findExistingSourceIds(
   }
 
   return new Set(
-    (data ?? [])
-      .map((row) => row.source_id)
-      .filter((id): id is string => typeof id === "string" && id.length > 0),
+    (data ?? []).map((row) => row.source_id).filter((id): id is string => typeof id === "string" && id.length > 0),
   );
 }
