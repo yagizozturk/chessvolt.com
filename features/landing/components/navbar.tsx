@@ -1,6 +1,6 @@
 "use client";
 
-import { LogIn, type LucideIcon, Menu, Zap } from "lucide-react";
+import { ChessKnight, type LucideIcon, Menu, Zap } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -19,8 +19,8 @@ type NavItem = {
 
 const SIGN_IN_ITEM: NavItem = {
   href: "/login",
-  label: "Sign in",
-  icon: LogIn,
+  label: "Start Learning",
+  icon: ChessKnight,
   iconPosition: "left",
 };
 
