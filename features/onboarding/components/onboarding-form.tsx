@@ -187,7 +187,7 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
             </>
           ) : (
             <>
-              {isLastStep ? "Finish" : "Continue"}
+              {isLastStep ? "Finish & Start Learning" : "Continue"}
               <ArrowRight data-icon="inline-end" />
             </>
           )}
