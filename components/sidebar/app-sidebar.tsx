@@ -6,16 +6,15 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { NavMain, type NavMainItem } from "@/components/sidebar/nav-main";
-import { useBoardSoundsMenuAction } from "@/components/ui/board-sounds-toggle";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useToggleTheme } from "@/components/ui/theme-toggle";
 import { useVoltExplainMenuAction } from "@/components/volt-explain-dialog/use-volt-explain-dialog";
 import type { Opening } from "@/features/openings/types/opening";
 import { useProfile } from "@/features/profile/hooks/use-profile";
@@ -28,7 +27,23 @@ function getOpeningHref(opening: Pick<Opening, "id" | "name" | "slug">) {
 }
 
 // Static nav config: link-based submenu items only.
-// Settings and Profile actions are injected at runtime in AppSidebar because they need React hooks.
+// Profile actions are injected at runtime in AppSidebar because they need React hooks.
+const profileSection = {
+  title: "Profile",
+  url: "#",
+  icon: "/images/icons/icon-user-profile.png",
+  items: [
+    {
+      title: "My Profile",
+      url: "/profile",
+    },
+    {
+      title: "Settings",
+      url: "/settings",
+    },
+  ],
+};
+
 const data = {
   navMain: [
     {
@@ -63,24 +78,6 @@ const data = {
       icon: "/images/icons/icon-riddle.png",
     },
     {
-      title: "Profile",
-      url: "#",
-      icon: "/images/icons/icon-user-profile.png",
-      items: [
-        {
-          title: "My Profile",
-          url: "/profile",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: "/images/icons/icon-settings.png",
-      // Populated at runtime — see navMain useMemo below.
-      items: [],
-    },
-    {
       title: "Other",
       url: "#",
       icon: "/images/icons/icon-more.png",
@@ -110,9 +107,6 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
   const router = useRouter();
   const { profile, isLoading: isProfileLoading } = useProfile();
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
-  // Single-click light ↔ dark toggle; shared with theme-toggle.tsx via useToggleTheme.
-  const toggleViewMode = useToggleTheme();
-  const { toggle: toggleSounds, label: soundsLabel } = useBoardSoundsMenuAction();
   // Intentional re-open: does not read localStorage — user chose "How Volt Works".
   const { openDialog: openVoltExplainDialog } = useVoltExplainMenuAction();
 
@@ -125,36 +119,29 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
     router.refresh();
   }, [isLoggingOut, router]);
 
-  // Merge static nav config with runtime actions (Settings: theme + sounds, Profile: logout).
+  const navProfile = React.useMemo<NavMainItem>(() => {
+    const authItems = profile
+      ? [{ title: "Logout", onClick: handleLogout, isLoading: isLoggingOut }]
+      : isProfileLoading
+        ? []
+        : [{ title: "Login", url: "/login" }];
+
+    const settingsItem = profileSection.items?.find((item) => item.url === "/settings");
+    const myProfileItem = profileSection.items?.find((item) => item.url === "/profile");
+
+    return {
+      ...profileSection,
+      items: [
+        ...(settingsItem ? [settingsItem] : []),
+        ...(profile && myProfileItem ? [myProfileItem] : []),
+        ...authItems,
+      ],
+    };
+  }, [handleLogout, isLoggingOut, isProfileLoading, profile]);
+
   const navMain = React.useMemo<NavMainItem[]>(
     () =>
       data.navMain.map((section) => {
-        if (section.title === "Settings") {
-          return {
-            ...section,
-            items: [
-              { title: "Change Color Mode", onClick: toggleViewMode },
-              { title: soundsLabel, onClick: toggleSounds },
-            ],
-          };
-        }
-
-        if (section.title === "Profile") {
-          const authItems = profile
-            ? [{ title: "Logout", onClick: handleLogout, isLoading: isLoggingOut }]
-            : isProfileLoading
-              ? []
-              : [
-                  { title: "Login", url: "/login" },
-                  { title: "Sign up", url: "/signup" },
-                ];
-
-          return {
-            ...section,
-            items: [...(profile ? (section.items ?? []) : []), ...authItems],
-          };
-        }
-
         if (section.title === "Other") {
           return {
             ...section,
@@ -181,17 +168,7 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
 
         return section;
       }),
-    [
-      handleLogout,
-      isLoggingOut,
-      isProfileLoading,
-      openVoltExplainDialog,
-      openings,
-      profile,
-      toggleViewMode,
-      toggleSounds,
-      soundsLabel,
-    ],
+    [openVoltExplainDialog, openings],
   );
 
   return (
@@ -215,6 +192,9 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
       <SidebarContent>
         <NavMain items={navMain} />
       </SidebarContent>
+      <SidebarFooter>
+        <NavMain items={[navProfile]} />
+      </SidebarFooter>
     </Sidebar>
   );
 }
