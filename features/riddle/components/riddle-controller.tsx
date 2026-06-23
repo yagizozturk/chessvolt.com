@@ -1,5 +1,7 @@
 "use client";
 
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -276,7 +278,15 @@ export default function RiddleController({
     : "You solved this riddle. Return to the collection when you are ready.";
 
   return (
-    <div className="container mx-auto max-w-6xl px-20 py-14">
+    <div className="container mx-auto max-w-6xl px-20 py-10">
+      <div className="mb-4 flex items-center">
+        <Button variant="ghost" size="sm" asChild>
+          <Link href={parentCollectionUrl} className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to collection
+          </Link>
+        </Button>
+      </div>
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
