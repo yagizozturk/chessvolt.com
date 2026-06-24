@@ -1,13 +1,15 @@
-import { toMoveSequence } from "@/features/move-sequence/mapper/move-sequence.mapper";
+import {
+  DEFAULT_INITIAL_FEN,
+  toMoveSequence,
+  toMoveSequenceForGoalsBackfill,
+} from "@/features/move-sequence/mapper/move-sequence.mapper";
 import type {
   CreateMoveSequenceInput,
   MoveSequence,
   UpdateMoveSequenceInput,
 } from "@/features/move-sequence/types/move-sequence";
+import type { MoveSequenceForGoalsBackfill } from "@/features/move-sequence/types/move-sequence-for-goals-backfill";
 import type { SupabaseClient } from "@supabase/supabase-js";
-
-const DEFAULT_INITIAL_FEN =
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 export async function create(
   supabase: SupabaseClient,
@@ -58,4 +60,42 @@ export async function update(
   }
 
   return toMoveSequence(data);
+}
+
+export async function findWithNullGoals(
+  supabase: SupabaseClient,
+  { limit }: { limit: number },
+): Promise<MoveSequenceForGoalsBackfill[]> {
+  const { data, error } = await supabase
+    .from("move_sequences")
+    .select("id, initial_fen, moves, pgn")
+    .is("goals", null)
+    .order("created_at", { ascending: true })
+    .limit(limit);
+
+  if (error) {
+    console.error("move-sequence.repository.findWithNullGoals error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toMoveSequenceForGoalsBackfill);
+}
+
+export async function findByIdWithNullGoals(
+  supabase: SupabaseClient,
+  id: string,
+): Promise<MoveSequenceForGoalsBackfill | null> {
+  const { data, error } = await supabase
+    .from("move_sequences")
+    .select("id, initial_fen, moves, pgn")
+    .eq("id", id)
+    .is("goals", null)
+    .maybeSingle();
+
+  if (error) {
+    console.error("move-sequence.repository.findByIdWithNullGoals error:", error);
+    return null;
+  }
+
+  return data ? toMoveSequenceForGoalsBackfill(data) : null;
 }

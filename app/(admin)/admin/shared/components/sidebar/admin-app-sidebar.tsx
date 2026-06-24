@@ -48,6 +48,7 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "From game", url: "/admin/riddles/new/from-game" },
       { title: "Bulk PGN", url: "/admin/riddles/new/bulk" },
       { title: "Lichess CSV", url: "/admin/riddles/new/lichess" },
+      { title: "Backfill goals", url: "/admin/move-sequences/backfill-goals" },
     ],
   },
   {
