@@ -1,31 +1,41 @@
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { ollamaChat } from "@/lib/ollama/client";
 
-const SYSTEM_PROMPT = `You are a chessmaster and chess teacher that coaches 
-a player on a web platform to find the solution of the current position(FEN). 
-Your goal is to create a JSON array that defines a title, description for only 
-active player move in moves(uci, seperated by space) array. This moves array 
-includes all the consecutive moves sequence and the solution of the riddle. 
-You will create JSON from the active player perspective only for the active player moves. 
-You can understand the perspective from the FEN. Active perspective is whose turn to play. 
-These description should be clear and entertaining language that has maximum 16 words. 
-Also it explains why the move is important relating with the final idea. 
-Also you should create a PLY property. If the FEN expects White player to play the first move, 
-then the PLY will start with 1 and goes on with 3,5,7,9.. 
-If the player is Black then PLY should be 2,4,6,8.. 
-It is important that every move has to have an explanation and every move has default isCompleted value false. 
-Here is the example JSON:  
-{ "ply": 1, 
- "move": "e2e4", 
- "title": "...", 
- "description": "...", 
- "isCompleted": false 
- } 
-Now here is my PGN and a FEN value and uci moves for a chess riddle to get solved.  
-PGN:   [Event "?"] [Site "?"] [Date "2018.09.20"] [Round "?"] [White "35-5"] [Black "?"] [Result "*"] [SetUp "1"] [FEN "4R3/1br5/5b1p/2p2rpk/1p2p3/1B2B3/P1P2PPP/3R2K1 w - - 0 1"] [PlyCount "3"]  1. g4+ Kxg4 2. Be6 *   
-FEN: 4R3/1br5/5b1p/2p2rpk/1p2p3/1B2B3/P1P2PPP/3R2K1 w - - 0 1  
-moves: g2g4 h5g4 b3e6   
-I need you to create a JSON for this data. In this sample your JSON will include explanation for only g2g4 and b3e6 if the player is White.`;
+const SYSTEM_PROMPT = `You are a Chess Master and an experienced chess coach. Your goal is to improve your student by presenting a variety of chess puzzles. You have access to both the puzzles and their corresponding FEN positions. For each puzzle, the student's task is to correctly guess every move for the side whose turn it is to move. The student should only predict the moves for the side to move, while the opponent's moves are already determined by the puzzle solution. 
+
+To help the student discover the correct moves more easily, provide a short, clear, with words that everybody can understand and entertaining hint before each move. Each hint must be no longer than 10 words. Since the main job of the student is to guess the correct move you shouldn't provide any direct move notation inside your hint. A hint should subtly convey why the move is necessary and strategically important without revealing the move itself.  To create effective hints, first identify the puzzle's underlying strategy motif and the key idea behind its solution. Then, ensure that each hint reflects this strategic theme while also connecting naturally to the student's next moves, so that all hints together form a coherent progression throughout the solution. Final JSON data has successMessage property. This is for a congratulations message to user when the move is found correctly.
+
+Your goal is to create a JSON array that defines a title, description (which will include hint) for only active player move in moves (uci, seperated by space) array. The active player is the one whose turn it is. You will create JSON from the active player perspective only for the active player moves. You can understand the perspective from the FEN.You will place the hint for each move in the description field of the JSON.  This moves array includes all the consecutive moves sequence and the solution of the riddle. Also you should create a PLY property. Chess coach will assist to user only in odd moves. So PLY property will only include move descriptions for odd numbers.
+
+It is important that every object in JSON array, has to have an ply, move, title, description, isCompleted, successMessage. isCompleted field is default has a value false. 
+
+Here is the example JSON: 
+{ 
+"ply": 1, 
+"move": "e2e4", 
+"title": "...", 
+"description": "...", 
+"isCompleted": false,
+“successMessage”:”....”
+} 
+
+There are two ways of getting needed information from the admin input. Use one of them. Admin input data can only be one of them.
+First way: Admin can input system only a FEN value and moves(uci format) string(seperated with space).Example FEN: 4R3/1br5/5b1p/2p2rpk/1p2p3/1B2B3/P1P2PPP/3R2K1 w - - 0 1 moves: g2g4 h5g4 b3e6 I need you to create a JSON for this data. In this sample your JSON will include explanation for only g2g4 and b3e6Second way: Admin can provide a whole PGN that contains FEN data and SAN based moves. You have to convert SAN moves to uci moves for the final JSON.
+Example:
+[Event "?"] 
+[Site "?"] 
+[Date "2018.09.20"] 
+[Round "?"] 
+[White "35-5"] 
+[Black "?"] 
+[Result "*"] 
+[SetUp "1"] 
+[FEN "4R3/1br5/5b1p/2p2rpk/1p2p3/1B2B3/P1P2PPP/3R2K1 w - - 0 1"] 
+[PlyCount "3"] 1. g4+ Kxg4 2. Be6 * 
+
+I need you to create a JSON for this data. In this sample your JSON will include explanation for only g2g4(g4+ converted to g2g4) and b3e6(Be6 converted to b3e6).
+
+`;
 
 type GenerateGoalsInput = {
   initialFen: string;
@@ -71,8 +81,7 @@ function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): 
   const record = item && typeof item === "object" ? (item as Record<string, unknown>) : {};
 
   return {
-    ply:
-      typeof record.ply === "number" && Number.isFinite(record.ply) ? record.ply : fallback.ply,
+    ply: typeof record.ply === "number" && Number.isFinite(record.ply) ? record.ply : fallback.ply,
     move: typeof record.move === "string" && record.move ? record.move : fallback.move,
     title: typeof record.title === "string" ? record.title : "Move goal",
     description: typeof record.description === "string" ? record.description : "",
@@ -105,11 +114,11 @@ function collectGoalCandidates(parsed: unknown): unknown[] {
   return [parsed];
 }
 
-function parseGoalsContent(
-  content: string,
-  expectedGoals: ReturnType<typeof getExpectedPlayerGoals>,
-): MoveGoal[] {
-  const trimmed = content.trim().replace(/^```json\s*/i, "").replace(/\s*```$/, "");
+function parseGoalsContent(content: string, expectedGoals: ReturnType<typeof getExpectedPlayerGoals>): MoveGoal[] {
+  const trimmed = content
+    .trim()
+    .replace(/^```json\s*/i, "")
+    .replace(/\s*```$/, "");
 
   let parsed: unknown;
   try {

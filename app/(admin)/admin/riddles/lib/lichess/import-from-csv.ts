@@ -6,6 +6,7 @@ import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
 import type { ThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 import type { Theme } from "@/features/theme/types/theme";
 
+import { applyLichessSetupMove } from "./apply-lichess-setup-move";
 import { ensureTheme } from "./ensure-theme";
 import themeMapJson from "./lichess-theme-map.json";
 import { parseLichessCsv } from "./parse-csv";
@@ -71,6 +72,17 @@ export async function importLichessRiddlesFromCsv(
       continue;
     }
 
+    const prepared = applyLichessSetupMove(row.fen, row.moves);
+    if (!prepared.ok) {
+      errors++;
+      rowResults.push({
+        status: "error",
+        puzzleId: row.puzzleId,
+        message: prepared.message,
+      });
+      continue;
+    }
+
     try {
       const educational = resolveEducationalThemes(row.themes, themeMap);
       const openingThemes = resolveOpeningThemes(row.openingTags);
@@ -101,9 +113,9 @@ export async function importLichessRiddlesFromCsv(
         title,
         rating,
         popularity: row.popularity,
-        moves: row.moves,
-        initialFen: row.fen,
-        displayFen: row.fen,
+        moves: prepared.moves,
+        initialFen: prepared.fen,
+        displayFen: prepared.fen,
         pgn: null,
         goals: null,
         gameId: null,

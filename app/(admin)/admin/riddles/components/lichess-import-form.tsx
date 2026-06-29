@@ -42,7 +42,7 @@ export function LichessImportForm() {
           <CardTitle>Lichess CSV import</CardTitle>
           <CardDescription>
             Columns: PuzzleId, FEN, Moves, Rating, Popularity, Themes, OpeningTags. RatingDeviation and NbPlays are
-            ignored.
+            ignored. The first move in Moves is played automatically to reach the puzzle position and is not stored.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
