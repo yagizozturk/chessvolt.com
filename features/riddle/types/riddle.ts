@@ -6,7 +6,6 @@ export type Riddle = {
   sourceId: string | null;
   source: string | null;
   title: string;
-  description: string | null;
   rating: number | null;
   popularity: number | null;
   isActive: boolean;

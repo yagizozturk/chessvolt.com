@@ -32,9 +32,7 @@ export default async function AdminRiddleDetailPage({ params }: Props) {
     getAllCollections(supabase),
   ]);
 
-  const collection = collectionLinks[0]
-    ? collections.find((c) => c.id === collectionLinks[0]!.collectionId)
-    : null;
+  const collection = collectionLinks[0] ? collections.find((c) => c.id === collectionLinks[0]!.collectionId) : null;
 
   const displayFen = riddle.moveSequence.displayFen ?? riddle.moveSequence.initialFen;
 
@@ -81,11 +79,7 @@ export default async function AdminRiddleDetailPage({ params }: Props) {
                 {riddle.isActive ? "Active" : "Inactive"}
               </Badge>
             </p>
-            {riddle.description ? (
-              <p>
-                <span className="text-muted-foreground">Description:</span> {riddle.description}
-              </p>
-            ) : null}
+
             {collection ? (
               <p>
                 <span className="text-muted-foreground">Collection:</span> {collection.title}

@@ -1,11 +1,10 @@
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";
-import { parseRiddlePopularity } from "@/features/riddle/utilities/parse-riddle-popularity";
 import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
+import { parseRiddlePopularity } from "@/features/riddle/utilities/parse-riddle-popularity";
 
 export type ParsedRiddleMetadata = {
   title: string;
-  description: string | null;
   rating: number | null;
   popularity: number | null;
   themes: string[];
@@ -17,9 +16,7 @@ export type ParsedRiddleMetadata = {
   source: string | null;
 };
 
-export type ParseRiddleMetadataResult =
-  | { ok: true; data: ParsedRiddleMetadata }
-  | { ok: false; error: string };
+export type ParseRiddleMetadataResult = { ok: true; data: ParsedRiddleMetadata } | { ok: false; error: string };
 
 function parseThemesFromForm(formData: FormData): string[] {
   const raw = ((formData.get("themes") as string) || "").trim();
@@ -62,7 +59,6 @@ export function parseRiddleMetadataFromForm(formData: FormData): ParseRiddleMeta
     return { ok: false, error: goalsResult.error };
   }
 
-  const descriptionRaw = ((formData.get("description") as string) || "").trim();
   const collectionIdRaw = ((formData.get("collectionId") as string) || "").trim();
   const gameIdRaw = ((formData.get("gameId") as string) || "").trim();
   const sourceIdRaw = ((formData.get("sourceId") as string) || "").trim();
@@ -72,7 +68,6 @@ export function parseRiddleMetadataFromForm(formData: FormData): ParseRiddleMeta
     ok: true,
     data: {
       title,
-      description: descriptionRaw || null,
       rating: parseRiddleRating(formData.get("rating")),
       popularity: parseRiddlePopularity(formData.get("popularity")),
       themes: parseThemesFromForm(formData),

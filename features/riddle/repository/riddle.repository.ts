@@ -166,7 +166,6 @@ export type CreateRiddleInput = {
   sourceId?: string | null;
   source?: string | null;
   title: string;
-  description?: string | null;
   rating?: number | null;
   popularity?: number | null;
   pgn?: string | null;
@@ -198,7 +197,6 @@ export async function create(supabase: SupabaseClient, input: CreateRiddleInput)
       source_id: input.sourceId?.trim() || null,
       source: input.source?.trim() || null,
       title: input.title,
-      description: input.description?.trim() || null,
       rating: input.rating !== undefined ? input.rating : null,
       popularity: input.popularity ?? null,
       move_sequence_id: moveSequence.id,
@@ -222,7 +220,6 @@ export type UpdateRiddleInput = {
   pgn?: string | null;
   initialFen?: string | null;
   title?: string;
-  description?: string | null;
   rating?: number | null;
   popularity?: number | null;
   moves?: string | null;
@@ -261,7 +258,6 @@ export async function update(supabase: SupabaseClient, id: string, input: Update
   if (input.sourceId !== undefined) updates.source_id = input.sourceId?.trim() || null;
   if (input.source !== undefined) updates.source = input.source?.trim() || null;
   if (input.title !== undefined) updates.title = input.title;
-  if (input.description !== undefined) updates.description = input.description?.trim() || null;
   if (input.rating !== undefined) updates.rating = input.rating;
   if (input.popularity !== undefined) updates.popularity = input.popularity;
   if (input.isActive !== undefined) updates.is_active = input.isActive;

@@ -41,7 +41,6 @@ export async function bulkCreateAction(
 
     const result = await persistNewRiddle(supabase, {
       title: `Riddle ${i + 1}`,
-      description: null,
       rating: null,
       source,
       sourceId: buildSourceIdFromPgn(pgn),

@@ -7,8 +7,8 @@ import { useState } from "react";
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
-import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
+import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -98,8 +98,6 @@ export function RiddleBoardCard({
               <BoardCardMetaRow icon={Calendar} label={formatDate(game.playedAt)} />
             </div>
           </>
-        ) : riddle.description ? (
-          <p className="text-muted-foreground line-clamp-2 text-sm">{riddle.description}</p>
         ) : (
           <p className="text-muted-foreground text-sm">Custom position</p>
         )}

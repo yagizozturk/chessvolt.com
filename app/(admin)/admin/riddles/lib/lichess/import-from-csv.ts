@@ -99,7 +99,6 @@ export async function importLichessRiddlesFromCsv(
         sourceId: row.puzzleId,
         source: LICHESS_IMPORT_SOURCE,
         title,
-        description: null,
         rating,
         popularity: row.popularity,
         moves: row.moves,

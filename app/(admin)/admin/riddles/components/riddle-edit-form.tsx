@@ -2,11 +2,11 @@
 
 import { useActionState, useEffect, useState } from "react";
 
+import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { updateRiddleAction } from "@/app/(admin)/admin/riddles/actions/update-riddle-action";
 import { PgnMoveSequenceEditor } from "@/app/(admin)/admin/riddles/components/pgn-move-sequence-editor";
 import { RiddleMetadataFields } from "@/app/(admin)/admin/riddles/components/riddle-metadata-fields";
 import { initialRiddleFormState } from "@/app/(admin)/admin/riddles/lib/riddle-form-state";
-import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Collection } from "@/features/collection/types/collection";
@@ -88,14 +88,11 @@ export function RiddleEditForm({ riddle, collections, collectionId, initialPgn }
             collections={collections}
             defaultCollectionId={collectionId}
             defaultTitle={riddle.title}
-            defaultDescription={riddle.description ?? ""}
             defaultRating={riddle.rating}
             defaultPopularity={riddle.popularity}
             defaultThemes={riddle.themeSlugs.join(", ")}
             defaultIsActive={riddle.isActive}
-            defaultGoals={
-              riddle.moveSequence.goals != null ? JSON.stringify(riddle.moveSequence.goals, null, 2) : ""
-            }
+            defaultGoals={riddle.moveSequence.goals != null ? JSON.stringify(riddle.moveSequence.goals, null, 2) : ""}
             showSourceFields
             defaultSource={riddle.source ?? ""}
             defaultSourceId={riddle.sourceId ?? ""}

@@ -2,11 +2,11 @@
 
 import { useActionState, useEffect, useState } from "react";
 
+import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { createFromPlyAction } from "@/app/(admin)/admin/riddles/actions/create-from-ply-action";
 import { PgnMoveSequenceEditor } from "@/app/(admin)/admin/riddles/components/pgn-move-sequence-editor";
 import { RiddleMetadataFields } from "@/app/(admin)/admin/riddles/components/riddle-metadata-fields";
 import { initialRiddleFormState } from "@/app/(admin)/admin/riddles/lib/riddle-form-state";
-import { useUciRowsFromPgn } from "@/app/(admin)/admin/hooks/use-uci-rows-from-pgn";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Collection } from "@/features/collection/types/collection";
@@ -51,12 +51,7 @@ export function PlyPgnCreateForm({
   }, [pgn, maxPly]);
 
   const canSubmit =
-    Boolean(pgn.trim()) &&
-    maxPly > 0 &&
-    !pgnError &&
-    initialPly >= 0 &&
-    endPly > initialPly &&
-    endPly <= maxPly;
+    Boolean(pgn.trim()) && maxPly > 0 && !pgnError && initialPly >= 0 && endPly > initialPly && endPly <= maxPly;
 
   return (
     <form action={formAction} className="space-y-6">
@@ -98,11 +93,7 @@ export function PlyPgnCreateForm({
           <CardTitle>Metadata</CardTitle>
         </CardHeader>
         <CardContent>
-          <RiddleMetadataFields
-            collections={collections}
-            defaultTitle={defaultTitle}
-            hiddenGameId={hiddenGameId}
-          />
+          <RiddleMetadataFields collections={collections} defaultTitle={defaultTitle} hiddenGameId={hiddenGameId} />
         </CardContent>
       </Card>
 

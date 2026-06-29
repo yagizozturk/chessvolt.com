@@ -11,7 +11,6 @@ type Props = {
   collections: Collection[];
   defaultCollectionId?: string;
   defaultTitle?: string;
-  defaultDescription?: string;
   defaultRating?: number | null;
   defaultPopularity?: number | null;
   defaultThemes?: string;
@@ -27,7 +26,6 @@ export function RiddleMetadataFields({
   collections,
   defaultCollectionId = "",
   defaultTitle = "",
-  defaultDescription = "",
   defaultRating = null,
   defaultPopularity = null,
   defaultThemes = "",
@@ -46,16 +44,6 @@ export function RiddleMetadataFields({
       <Field>
         <FieldLabel>Title</FieldLabel>
         <Input name="title" required defaultValue={defaultTitle} placeholder="Riddle title" />
-      </Field>
-      <Field>
-        <FieldLabel>Description</FieldLabel>
-        <textarea
-          name="description"
-          rows={2}
-          defaultValue={defaultDescription}
-          placeholder="Optional description"
-          className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
-        />
       </Field>
       <Field>
         <FieldLabel>Rating (optional)</FieldLabel>

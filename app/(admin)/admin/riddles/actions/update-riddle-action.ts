@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 
 import { parseRiddleMetadataFromForm } from "@/app/(admin)/admin/riddles/lib/parse-riddle-metadata";
 import { persistRiddleUpdate } from "@/app/(admin)/admin/riddles/lib/persist-riddle";
-import type { RiddleFormState } from "@/app/(admin)/admin/riddles/lib/riddle-form-state";
 import { resolveFromPlySelection } from "@/app/(admin)/admin/riddles/lib/resolve-riddle-sequence";
+import type { RiddleFormState } from "@/app/(admin)/admin/riddles/lib/riddle-form-state";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 function parsePly(formData: FormData, key: string): number {
@@ -14,10 +14,7 @@ function parsePly(formData: FormData, key: string): number {
   return Number.isFinite(value) ? value : -1;
 }
 
-export async function updateRiddleAction(
-  _prevState: RiddleFormState,
-  formData: FormData,
-): Promise<RiddleFormState> {
+export async function updateRiddleAction(_prevState: RiddleFormState, formData: FormData): Promise<RiddleFormState> {
   const { supabase } = await getAdminUser();
 
   const id = ((formData.get("riddleId") as string) || "").trim();
@@ -44,7 +41,6 @@ export async function updateRiddleAction(
     id,
     riddleInput: {
       title: meta.data.title,
-      description: meta.data.description,
       rating: meta.data.rating,
       popularity: meta.data.popularity,
       gameId: meta.data.gameId,

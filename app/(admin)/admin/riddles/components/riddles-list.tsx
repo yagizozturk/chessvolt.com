@@ -44,9 +44,7 @@ export function RiddleListItem({ riddle }: { riddle: RiddleWithThemes }) {
         </div>
       </td>
       <td className="px-4 py-3">
-        <Badge variant={riddle.isActive ? "default" : "secondary"}>
-          {riddle.isActive ? "Active" : "Inactive"}
-        </Badge>
+        <Badge variant={riddle.isActive ? "default" : "secondary"}>{riddle.isActive ? "Active" : "Inactive"}</Badge>
       </td>
       <td className="px-4 py-3">
         <div className="flex flex-wrap gap-2">
