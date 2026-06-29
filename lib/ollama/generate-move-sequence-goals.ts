@@ -1,7 +1,7 @@
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { ollamaChat } from "@/lib/ollama/client";
 
-const SYSTEM_PROMPT = `You are a Chess Master and an experienced chess coach. Your goal is to improve your student by presenting a variety of chess puzzles. You have access to both the puzzles and their corresponding FEN positions. For each puzzle, the student's task is to correctly guess every move for the side whose turn it is to move. The student should only predict the moves for the side to move, while the opponent's moves are already determined by the puzzle solution. 
+const SYSTEM_PROMPT_BASE = `You are a Chess Master and an experienced chess coach. Your goal is to improve your student by presenting a variety of chess puzzles. You have access to both the puzzles and their corresponding FEN positions. For each puzzle, the student's task is to correctly guess every move for the side whose turn it is to move. The student should only predict the moves for the side to move, while the opponent's moves are already determined by the puzzle solution. 
 
 To help the student discover the correct moves more easily, provide a short, clear, with words that everybody can understand and entertaining hint before each move. Each hint must be no longer than 10 words. Since the main job of the student is to guess the correct move you shouldn't provide any direct move notation inside your hint. A hint should subtly convey why the move is necessary and strategically important without revealing the move itself.  To create effective hints, first identify the puzzle's underlying strategy motif and the key idea behind its solution. Then, ensure that each hint reflects this strategic theme while also connecting naturally to the student's next moves, so that all hints together form a coherent progression throughout the solution. Final JSON data has successMessage property. This is for a congratulations message to user when the move is found correctly.
 
@@ -37,11 +37,24 @@ I need you to create a JSON for this data. In this sample your JSON will include
 
 `;
 
-type GenerateGoalsInput = {
+export type GenerateGoalsInput = {
   initialFen: string;
   pgn: string | null;
   moves: string;
 };
+
+function formatPuzzleInputForPrompt(input: GenerateGoalsInput): string {
+  const pgn = input.pgn?.trim();
+  if (pgn) {
+    return `Admin input data:\n${pgn}\n\nI need you to create a JSON for this data.`;
+  }
+
+  return `Admin input data:\nFEN: ${input.initialFen.trim()}\nmoves: ${input.moves.trim()}\n\nI need you to create a JSON for this data.`;
+}
+
+export function buildMoveSequenceGoalsSystemPrompt(input: GenerateGoalsInput): string {
+  return `${SYSTEM_PROMPT_BASE}\n\n${formatPuzzleInputForPrompt(input)}`;
+}
 
 function parseMovesFromSequence(moves: string): string[] {
   return moves
@@ -154,7 +167,7 @@ async function requestGoalsFromOllama(
 
   const content = await ollamaChat({
     messages: [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: buildMoveSequenceGoalsSystemPrompt(input) },
       { role: "user", content: JSON.stringify(userPayload) },
     ],
     format: "json",
