@@ -1,85 +1,89 @@
 "use client";
 
-import { useCallback, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
-import { Spinner } from "@/components/ui/spinner";
-import { getRandomRiddlesAction } from "@/features/riddle/actions/get-random-riddles";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
 import { RiddlesThemeFilter } from "@/features/riddle/components/riddles-theme-filter";
 import {
-  DEFAULT_RIDDLES_LIST_FILTERS,
-  type RiddlesListFilters,
+  ATTEMPTED_RIDDLES_SORT_OPTIONS,
+  DEFAULT_ATTEMPTED_RIDDLES_SORT,
+  RIDDLES_THEME_FILTER_ALL,
+  type AttemptedRiddlesSortBy,
 } from "@/features/riddle/constants/riddles-list.constants";
-import type { RiddleListItem } from "@/features/riddle/services/riddle-list.service";
+import {
+  filterAttemptedRiddleItems,
+  sortAttemptedRiddleItems,
+  type AttemptedRiddleListItem,
+} from "@/features/riddle/services/riddle-list.service";
 import { buildStandaloneRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
-import type { RiddleRatingBand } from "@/features/riddle/types/riddle-rating";
 import type { Theme } from "@/features/theme/types/theme";
-import { cn } from "@/lib/utils";
 
 type RiddlesListWithFilterProps = {
   themes: Theme[];
-  initialItems: RiddleListItem[];
+  initialItems: AttemptedRiddleListItem[];
 };
 
 export function RiddlesListWithFilter({ themes, initialItems }: RiddlesListWithFilterProps) {
-  const [filters, setFilters] = useState<RiddlesListFilters>(DEFAULT_RIDDLES_LIST_FILTERS);
-  const [items, setItems] = useState(initialItems);
-  const [isPending, startTransition] = useTransition();
+  const [themeSlug, setThemeSlug] = useState(RIDDLES_THEME_FILTER_ALL);
+  const [sortBy, setSortBy] = useState<AttemptedRiddlesSortBy>(DEFAULT_ATTEMPTED_RIDDLES_SORT);
 
-  const fetchRiddles = useCallback((nextFilters: RiddlesListFilters) => {
-    startTransition(async () => {
-      const nextItems = await getRandomRiddlesAction(nextFilters);
-      setItems(nextItems);
-    });
-  }, []);
+  const visibleItems = useMemo(
+    () => sortAttemptedRiddleItems(filterAttemptedRiddleItems(initialItems, themeSlug), sortBy),
+    [initialItems, themeSlug, sortBy],
+  );
 
-  const handleThemeChange = (themeSlug: string) => {
-    const nextFilters = { ...filters, themeSlug };
-    setFilters(nextFilters);
-    fetchRiddles(nextFilters);
-  };
-
-  const handleRatingChange = (ratingBand: RiddleRatingBand) => {
-    const nextFilters = { ...filters, ratingBand };
-    setFilters(nextFilters);
-    fetchRiddles(nextFilters);
-  };
+  const emptyMessage =
+    initialItems.length === 0
+      ? "You haven't completed or failed any riddles yet."
+      : "No riddles match the selected theme.";
 
   return (
     <div className="flex flex-col gap-6">
-      <RiddlesThemeFilter
-        themes={themes}
-        themeValue={filters.themeSlug}
-        ratingValue={filters.ratingBand}
-        onThemeChange={handleThemeChange}
-        onRatingChange={handleRatingChange}
-      />
+      <div className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 sm:flex-row sm:flex-wrap sm:items-center">
+        <RiddlesThemeFilter themes={themes} themeValue={themeSlug} onThemeChange={setThemeSlug} />
 
-      <div className="relative">
-        {isPending ? (
-          <div className="bg-background/60 absolute inset-0 z-10 flex items-center justify-center rounded-xl">
-            <Spinner className="size-8" />
-          </div>
-        ) : null}
-
-        {items.length === 0 ? (
-          <EmptyDataMessage message="No riddles match your filters." />
-        ) : (
-          <div className={cn("grid grid-cols-2 gap-6", isPending && "pointer-events-none opacity-60")}>
-            {items.map(({ riddle, game }) => (
-              <RiddleBoardCard
-                key={riddle.id}
-                riddle={riddle}
-                game={game}
-                size={240}
-                href={buildStandaloneRiddlePath(riddle.id)}
-                displayFen={riddle.moveSequence.displayFen}
-              />
-            ))}
-          </div>
-        )}
+        <div className="min-w-0 flex-1 sm:max-w-64">
+          <Select
+            value={sortBy}
+            onValueChange={(value) => setSortBy(value as AttemptedRiddlesSortBy)}
+          >
+            <SelectTrigger id="riddles-sort" className="w-full rounded-xl border-2" aria-label="Sort riddles">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {ATTEMPTED_RIDDLES_SORT_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
+
+      {visibleItems.length === 0 ? (
+        <EmptyDataMessage message={emptyMessage} />
+      ) : (
+        <div className="grid grid-cols-2 gap-6">
+          {visibleItems.map(({ riddle, game, isComplete, accuracyPercent, voltScore }) => (
+            <RiddleBoardCard
+              key={riddle.id}
+              riddle={riddle}
+              game={game}
+              size={240}
+              href={buildStandaloneRiddlePath(riddle.id)}
+              displayFen={riddle.moveSequence.displayFen}
+              isComplete={isComplete}
+              accuracyPercent={accuracyPercent}
+              voltScore={voltScore}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

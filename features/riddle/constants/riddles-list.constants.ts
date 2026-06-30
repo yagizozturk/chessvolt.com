@@ -1,14 +1,12 @@
-import type { RiddleRatingBand } from "@/features/riddle/types/riddle-rating";
-
-export const RANDOM_RIDDLES_COUNT = 4;
 export const RIDDLES_THEME_FILTER_ALL = "all";
+export const RANDOM_RIDDLES_COUNT = 4;
 
-export type RiddlesListFilters = {
-  themeSlug: string;
-  ratingBand: RiddleRatingBand;
-};
+export type AttemptedRiddlesSortBy = "lastPlayed" | "voltScore" | "accuracy";
 
-export const DEFAULT_RIDDLES_LIST_FILTERS: RiddlesListFilters = {
-  themeSlug: RIDDLES_THEME_FILTER_ALL,
-  ratingBand: "all",
-};
+export const DEFAULT_ATTEMPTED_RIDDLES_SORT: AttemptedRiddlesSortBy = "lastPlayed";
+
+export const ATTEMPTED_RIDDLES_SORT_OPTIONS: { value: AttemptedRiddlesSortBy; label: string }[] = [
+  { value: "lastPlayed", label: "Last played" },
+  { value: "voltScore", label: "Volt score" },
+  { value: "accuracy", label: "Accuracy" },
+];

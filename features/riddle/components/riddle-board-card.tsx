@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Circle, Flag, Gauge, Puzzle } from "lucide-react";
+import { Calendar, Circle, Flag, Gauge, Puzzle, Target } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -27,6 +27,7 @@ type RiddleBoardCardProps = {
   href: string;
   displayFen?: string | null;
   voltScore?: VoltScoreResult | null;
+  accuracyPercent?: number | null;
 };
 
 function formatDate(dateStr: string) {
@@ -50,6 +51,7 @@ export function RiddleBoardCard({
   href,
   displayFen,
   voltScore = null,
+  accuracyPercent,
 }: RiddleBoardCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const moveCountLabel = formatMoveCountLabel(riddle.moveSequence.moves);
@@ -107,6 +109,11 @@ export function RiddleBoardCard({
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           <BoardCardMetaRow icon={Puzzle} label={moveCountLabel ?? "No moves"} />
         </div>
+        {accuracyPercent != null ? (
+          <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+            <BoardCardMetaRow icon={Target} label={`${accuracyPercent}% accuracy`} />
+          </div>
+        ) : null}
         <div className="mt-auto flex justify-start">
           <Button variant="voltCompact" size="xs" className="pointer-events-none w-fit shrink-0">
             Play

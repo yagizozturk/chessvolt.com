@@ -59,3 +59,16 @@ export function mapDbToSequenceAttemptStats(db: DbUserSequenceAttempt): Sequence
     durationMs: db.duration_ms,
   };
 }
+
+export function toSequenceAttemptStatsFromAttempt(attempt: UserSequenceAttempt): SequenceAttemptStats {
+  return {
+    sequenceId: attempt.sequenceId,
+    status: attempt.status,
+    isCompleted: attempt.status === "completed",
+    correctMoveCount: attempt.correctMoveCount,
+    wrongMoveCount: attempt.wrongMoveCount,
+    hintCount: attempt.hintCount,
+    maxCorrectStreak: attempt.maxCorrectStreak,
+    durationMs: attempt.durationMs,
+  };
+}

@@ -74,6 +74,29 @@ export async function findByUserAndSequenceIds(
 }
 
 // ================================================================================================
+// Getting finished attempts by user (completed or failed), newest first.
+// Used by riddles history to list sequences the user actually tried to solve.
+// ================================================================================================
+export async function findFinishedAttemptsByUserId(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<UserSequenceAttempt[]> {
+  const { data, error } = await supabase
+    .from("user_sequence_attempts")
+    .select("*")
+    .eq("user_id", userId)
+    .in("status", ["completed", "failed"])
+    .order("started_at", { ascending: false });
+
+  if (error) {
+    console.error("user-sequence-attempt.repository.findFinishedAttemptsByUserId error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toUserSequenceAttempt);
+}
+
+// ================================================================================================
 // Getting all attempts by user since a timestamp (inclusive).
 // Used by Grand Volt to load every attempt in the lookback window in one query,
 // instead of fetching per-sequence like collection pages do.

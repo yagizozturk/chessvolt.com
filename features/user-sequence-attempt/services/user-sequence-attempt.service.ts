@@ -5,6 +5,7 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import { toSequenceAttemptStatsFromAttempt } from "@/features/user-sequence-attempt/mapper/user-sequence-attempt.mapper";
 import * as userSequenceAttemptRepo from "@/features/user-sequence-attempt/repository/user-sequence-attempt.repository";
 import type {
   SequenceAttemptStats,
@@ -46,6 +47,36 @@ export async function getAttemptsByUserSince(
   startedAtOrAfter: string,
 ): Promise<UserSequenceAttempt[]> {
   return userSequenceAttemptRepo.findByUserIdSince(supabase, userId, startedAtOrAfter);
+}
+
+export type LatestFinishedAttempt = {
+  sequenceId: string;
+  startedAt: string;
+  stats: SequenceAttemptStats;
+};
+
+// ================================================================================================
+// Latest completed/failed attempt per sequence for a user (riddles history source).
+// ================================================================================================
+export async function getLatestFinishedAttemptsByUser(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<LatestFinishedAttempt[]> {
+  const attempts = await userSequenceAttemptRepo.findFinishedAttemptsByUserId(supabase, userId);
+  const seenSequenceIds = new Set<string>();
+  const latestBySequence: LatestFinishedAttempt[] = [];
+
+  for (const attempt of attempts) {
+    if (seenSequenceIds.has(attempt.sequenceId)) continue;
+    seenSequenceIds.add(attempt.sequenceId);
+    latestBySequence.push({
+      sequenceId: attempt.sequenceId,
+      startedAt: attempt.startedAt,
+      stats: toSequenceAttemptStatsFromAttempt(attempt),
+    });
+  }
+
+  return latestBySequence;
 }
 
 // ================================================================================================
