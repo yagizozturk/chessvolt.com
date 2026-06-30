@@ -1,11 +1,11 @@
 "use client";
 
 import { Calendar, Circle, Flag, Gauge, Puzzle, Target } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
-import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
@@ -71,9 +71,16 @@ export function RiddleBoardCard({
           <Spinner className="size-8" />
         </div>
       ) : null}
-      <div>
-        {isComplete === true && <BoardStatusIcon status="solved" />}
-        {isComplete === false && <BoardStatusIcon status="wrong" />}
+      <div className="relative">
+        {isComplete === false ? (
+          <Image
+            src="/images/icons/icon-warning.png"
+            alt="Incorrect"
+            width={44}
+            height={44}
+            className="absolute top-3 right-3 z-10"
+          />
+        ) : null}
         <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} size={size} coordinates={false} />
       </div>
       <div className="relative flex min-w-0 flex-1 flex-col gap-2">
