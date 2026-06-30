@@ -81,7 +81,7 @@ export function AdminNavUser({ email }: { email: string }) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/collection">
+                <Link href="/dashboard">
                   <ArrowLeftIcon />
                   Main app
                 </Link>

@@ -14,7 +14,7 @@ import * as profileRepo from "@/features/profile/repository/profile.repository";
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next") || "/collection";
+  const next = requestUrl.searchParams.get("next") || "/dashboard";
 
   if (code) {
     const cookieStore = await cookies();

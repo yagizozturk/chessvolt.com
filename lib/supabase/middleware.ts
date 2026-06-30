@@ -5,7 +5,7 @@ import {
   isOnboardingPath,
   shouldSkipOnboardingCheck,
 } from '@/features/onboarding/utilities/get-onboarding-routes'
-import { ONBOARDING_PATH, POST_ONBOARDING_URL } from '@/features/onboarding/constants/onboarding-routes'
+import { DASHBOARD_HOME_URL, ONBOARDING_PATH } from '@/features/onboarding/constants/onboarding-routes'
 
 function redirectWithSession(request: NextRequest, pathname: string, supabaseResponse: NextResponse) {
   const url = request.nextUrl.clone()
@@ -76,7 +76,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     if (onboardingCompleted && isOnboardingPath(pathname)) {
-      return redirectWithSession(request, POST_ONBOARDING_URL, supabaseResponse)
+      return redirectWithSession(request, DASHBOARD_HOME_URL, supabaseResponse)
     }
   }
 

@@ -13,7 +13,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <AppSidebar openings={openings} />
       <SidebarInset className="overflow-auto">{children}</SidebarInset>
       {/* Single dialog instance for the whole dashboard — opened by auto-start
-          (collection first visit) or by sidebar "How Volt Works" (any time). */}
+          (user-collection first visit after onboarding) or by sidebar "How Volt Works" (any time). */}
       <VoltExplainDialog />
     </SidebarProvider>
   );

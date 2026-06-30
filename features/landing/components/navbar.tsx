@@ -25,7 +25,7 @@ const SIGN_IN_ITEM: NavItem = {
 };
 
 const START_PLAYING_ITEM: NavItem = {
-  href: "/collection",
+  href: "/dashboard",
   label: "Start Playing",
   icon: ChessKnight,
   iconPosition: "left",

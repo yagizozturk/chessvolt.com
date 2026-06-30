@@ -191,7 +191,7 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
               tooltip="ChessVolt"
               className="bg-secondary text-primary hover:bg-primary justify-center rounded-lg [&_svg]:size-6"
             >
-              <Link href="/collection" aria-label="ChessVolt">
+              <Link href="/dashboard" aria-label="ChessVolt">
                 <Zap aria-hidden className="shrink-0 fill-current" strokeWidth={0} />
               </Link>
             </SidebarMenuButton>

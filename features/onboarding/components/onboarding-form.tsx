@@ -108,7 +108,7 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
         return;
       }
 
-      // Redirect to the collection page
+      // Redirect to the user's starter collection list
       router.refresh();
       router.push(POST_ONBOARDING_URL);
     });

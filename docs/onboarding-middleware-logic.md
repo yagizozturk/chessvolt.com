@@ -16,7 +16,8 @@ The root file should stay thin and only delegate.
 The onboarding flow requires request-time redirects before page rendering:
 
 - If user is logged in and `profiles.onboarding_completed = false`, block dashboard routes and redirect to `/onboarding`.
-- If user is logged in and `profiles.onboarding_completed = true`, prevent returning to `/onboarding` and redirect to `/collection`.
+- If user is logged in and `profiles.onboarding_completed = true`, prevent returning to `/onboarding` and redirect to `/dashboard`.
+- If user completes onboarding, redirect to `/user-collection` (starter collection).
 - If user is not logged in and requests `/onboarding`, redirect to `/login`.
 
 This is global route-gating behavior, which is best handled in middleware.

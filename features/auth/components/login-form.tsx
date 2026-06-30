@@ -38,7 +38,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     }
 
     router.refresh();
-    router.push("/collection");
+    router.push("/dashboard");
   }
 
   async function handleGoogleLogin() {
@@ -48,7 +48,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/collection`,
+        redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
       },
     });
 

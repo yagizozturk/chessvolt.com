@@ -61,7 +61,7 @@ export async function getAdminUser() {
     .single();
 
   if (error || profile?.role !== 'admin') {
-    redirect('/collection');
+    redirect('/dashboard');
   }
 
   return { user, supabase };
