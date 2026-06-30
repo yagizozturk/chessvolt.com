@@ -36,6 +36,7 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "All games", url: "/admin/games" },
       { title: "New game", url: "/admin/games/new" },
       { title: "Import PGN", url: "/admin/games/import" },
+      { title: "Chess.com API test", url: "/admin/chess-com/test" },
     ],
   },
   {
