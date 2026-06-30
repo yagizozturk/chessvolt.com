@@ -5,7 +5,6 @@ import { useState } from "react";
 import { TTSController } from "@/features/tts/components/tts-controller/tts-controller";
 
 import { Button } from "../ui/button";
-import { TypingAnimation } from "../ui/typing-animation";
 
 type VoltCoachProps = {
   title: string;
@@ -41,16 +40,7 @@ export function VoltCoach({ title, message, ttsKey }: VoltCoachProps) {
             </Button>
           </div>
         </div>
-        <TypingAnimation
-          as="div"
-          typeSpeed={50}
-          deleteSpeed={150}
-          pauseDelay={2000}
-          blinkCursor={true}
-          className="text-muted-foreground w-full leading-normal"
-        >
-          {message}
-        </TypingAnimation>
+        <div className="text-muted-foreground w-full leading-normal">{message}</div>
       </div>
     </div>
   );
