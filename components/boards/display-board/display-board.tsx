@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
+import { getOrientationFromFen } from "@/lib/chess/getOrientationFromFen";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 
@@ -18,11 +19,6 @@ type DisplayBoardProps = {
   coordinates?: boolean;
   playerOrientation?: "white" | "black";
 };
-
-function getOrientationFromFen(fen?: string): "white" | "black" {
-  const turn = fen?.trim().split(/\s+/)[1];
-  return turn === "b" ? "black" : "white";
-}
 
 export default function DisplayBoard({
   sourceId,

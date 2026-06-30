@@ -13,6 +13,7 @@ import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
+import { DiaTextReveal } from "@/components/ui/dia-text-reveal";
 import { Spinner } from "@/components/ui/spinner";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
@@ -31,6 +32,7 @@ import {
   createSequenceCompleteStats,
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
+import { getOrientationFromFen } from "@/lib/chess/getOrientationFromFen";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -277,6 +279,12 @@ export default function RiddleController({
     ? "Congratulations! You solved this riddle."
     : "You solved this riddle. Return to the collection when you are ready.";
 
+  // ================================================================================================
+  // Get the player orientation from the FEN and set the turn label
+  // ================================================================================================
+  const playerOrientation = getOrientationFromFen(riddle.moveSequence.initialFen);
+  const turnLabel = playerOrientation === "black" ? "Black to Play" : "White to Play";
+
   return (
     <div className="container mx-auto max-w-6xl px-20 py-10">
       <div className="mb-4 flex items-center">
@@ -323,7 +331,11 @@ export default function RiddleController({
         </div>
         <div className="bg-card relative flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
           <div className="flex flex-col items-center justify-center gap-1 text-center">
-            <span className="text-lg font-bold">{riddle.title ?? "Untitled riddle"}</span>
+            <DiaTextReveal
+              className="text-lg font-bold tracking-tight"
+              text={turnLabel}
+              colors={["#A97CF8", "#F38CB8", "#FDCC92"]}
+            />
           </div>
           <GoalViewer goals={sortedGoals} progressValue={progressValue} />
           <div className="mt-auto" data-tour="hint-button">

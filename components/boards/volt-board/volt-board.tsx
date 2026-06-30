@@ -7,6 +7,7 @@ import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
 import { buildUci } from "@/lib/chess/buildUci";
+import { getOrientationFromFen } from "@/lib/chess/getOrientationFromFen";
 import { getPromotionPiece } from "@/lib/chess/getPromotionPiece";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
@@ -28,6 +29,7 @@ type VoltBoardProps = {
   initialFen?: string;
   size?: number;
   viewOnly?: boolean;
+  playerOrientation?: "white" | "black";
   drawHintMove?: string | null;
   onCheckMove: (payload: MoveAttemptPayload) => boolean;
   onSuccessMovePlayed: (move: Move) => void;
@@ -49,6 +51,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     initialFen,
     size = 584,
     viewOnly = false,
+    playerOrientation,
     drawHintMove,
     onCheckMove,
     onSuccessMovePlayed,
@@ -58,7 +61,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
   const boardRef = useRef<HTMLDivElement>(null);
-  const orientationRef = useRef<"white" | "black">("white");
+  const orientationRef = useRef<"white" | "black">(playerOrientation ?? getOrientationFromFen(initialFen));
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
   const clearCustomHighlightsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -196,12 +199,13 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   // Keep same board instance and update position when parent changes initialFen.
   // ============================================================================
   useEffect(() => {
+    orientationRef.current = playerOrientation ?? getOrientationFromFen(initialFen);
     clearCustomHighlightsTimeout();
     clearSquareCustomHighlights();
     clearHintShapes();
     lastMoveRef.current = undefined;
     updateBoard();
-  }, [initialFen, updateBoard, clearSquareCustomHighlights]);
+  }, [sourceId, initialFen, playerOrientation, updateBoard, clearSquareCustomHighlights]);
 
   // ============================================================================
   // Hint (drawable shapes) - exposed via ref
