@@ -24,6 +24,13 @@ const SIGN_IN_ITEM: NavItem = {
   iconPosition: "left",
 };
 
+const START_PLAYING_ITEM: NavItem = {
+  href: "/collection",
+  label: "Start Playing",
+  icon: ChessKnight,
+  iconPosition: "left",
+};
+
 function BrandLogo({ onNavigate, variant = "header" }: { onNavigate?: () => void; variant?: "header" | "sheet" }) {
   const sheet = variant === "sheet";
   return (
@@ -92,7 +99,7 @@ export function Navbar() {
               Hi, {displayName}
             </SparklesText>
           )}
-          {!isLoading && !profile && <DesktopNavLink item={SIGN_IN_ITEM} />}
+          {!isLoading && (profile ? <DesktopNavLink item={START_PLAYING_ITEM} /> : <DesktopNavLink item={SIGN_IN_ITEM} />)}
         </nav>
 
         <div className="md:hidden">
@@ -116,7 +123,12 @@ export function Navbar() {
 
               <nav className="flex flex-col gap-4" aria-label="Mobile menu">
                 {profile && <SparklesText className="text-base font-bold">Hi, {displayName}</SparklesText>}
-                {!isLoading && !profile && <MobileNavLink item={SIGN_IN_ITEM} onNavigate={closeSheet} />}
+                {!isLoading &&
+                  (profile ? (
+                    <MobileNavLink item={START_PLAYING_ITEM} onNavigate={closeSheet} />
+                  ) : (
+                    <MobileNavLink item={SIGN_IN_ITEM} onNavigate={closeSheet} />
+                  ))}
               </nav>
             </SheetContent>
           </Sheet>
