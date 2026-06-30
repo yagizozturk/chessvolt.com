@@ -19,7 +19,6 @@ export type AttemptedRiddleListItem = {
   game: Game | null;
   themeSlugs: string[];
   lastPlayedAt: string;
-  isComplete?: boolean;
   accuracyPercent: number | null;
   voltScore: VoltScoreResult | null;
 };
@@ -70,7 +69,6 @@ export async function getUserAttemptedRiddlesForDisplay(
       game,
       themeSlugs,
       lastPlayedAt: latest.startedAt,
-      isComplete: attemptStats.isComplete,
       accuracyPercent: attemptStats.accuracyPercent,
       voltScore: voltScoresBySequenceId[riddle.moveSequence.id] ?? null,
     });

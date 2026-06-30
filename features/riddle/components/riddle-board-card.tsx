@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Circle, Flag, Gauge, Puzzle, Target } from "lucide-react";
+import { Calendar, Circle, Flag, Gauge, Puzzle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -12,7 +12,9 @@ import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-cal
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Game } from "@/features/game/types/game";
+import { isLowRiddleAccuracy } from "@/features/riddle/constants/riddle-accuracy.constants";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { formatRiddleRatingLabel } from "@/features/riddle/types/riddle-rating";
 import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
@@ -22,8 +24,6 @@ type RiddleBoardCardProps = {
   riddle: Riddle;
   game: Game | null;
   size?: number;
-  /** true = correct, false = wrong, undefined = not attempted, Undefined ı tipin bir parçası yapmak için ? ni ekleriz */
-  isComplete?: boolean;
   href: string;
   displayFen?: string | null;
   voltScore?: VoltScoreResult | null;
@@ -47,7 +47,6 @@ export function RiddleBoardCard({
   riddle,
   game,
   size = 200,
-  isComplete,
   href,
   displayFen,
   voltScore = null,
@@ -72,14 +71,24 @@ export function RiddleBoardCard({
         </div>
       ) : null}
       <div className="relative">
-        {isComplete === false ? (
-          <Image
-            src="/images/icons/icon-warning.png"
-            alt="Incorrect"
-            width={44}
-            height={44}
-            className="absolute top-3 right-3 z-10"
-          />
+        {isLowRiddleAccuracy(accuracyPercent) ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="absolute top-3 right-3 z-10">
+                  <Image
+                    src="/images/icons/icon-warning.png"
+                    alt="Low accuracy"
+                    width={44}
+                    height={44}
+                  />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={6}>
+                <span>{accuracyPercent}% accuracy</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ) : null}
         <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} size={size} coordinates={false} />
       </div>
@@ -116,11 +125,6 @@ export function RiddleBoardCard({
         <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           <BoardCardMetaRow icon={Puzzle} label={moveCountLabel ?? "No moves"} />
         </div>
-        {accuracyPercent != null ? (
-          <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-            <BoardCardMetaRow icon={Target} label={`${accuracyPercent}% accuracy`} />
-          </div>
-        ) : null}
         <div className="mt-auto flex justify-start">
           <Button variant="voltCompact" size="xs" className="pointer-events-none w-fit shrink-0">
             Play

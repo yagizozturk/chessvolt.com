@@ -130,8 +130,8 @@ export default async function CollectionDetailPage({ params }: Params) {
                   game={game}
                   size={240}
                   href={buildRiddlePath(riddle.id, { collectionSlug: collection.slug, collectionType: "admin" })}
-                  isComplete={attemptStats.isComplete}
-                  displayFen={riddle.moveSequence.displayFen} // Fen value and PGN value are stored in move sequence table
+                  displayFen={riddle.moveSequence.displayFen}
+                  accuracyPercent={attemptStats.accuracyPercent}
                   voltScore={voltScoresBySequenceId[riddle.moveSequence.id] ?? null}
                 />
               );

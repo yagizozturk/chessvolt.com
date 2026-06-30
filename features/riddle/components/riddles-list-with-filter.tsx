@@ -69,7 +69,7 @@ export function RiddlesListWithFilter({ themes, initialItems }: RiddlesListWithF
         <EmptyDataMessage message={emptyMessage} />
       ) : (
         <div className="grid grid-cols-2 gap-6">
-          {visibleItems.map(({ riddle, game, isComplete, accuracyPercent, voltScore }) => (
+          {visibleItems.map(({ riddle, game, accuracyPercent, voltScore }) => (
             <RiddleBoardCard
               key={riddle.id}
               riddle={riddle}
@@ -77,7 +77,6 @@ export function RiddlesListWithFilter({ themes, initialItems }: RiddlesListWithF
               size={240}
               href={buildStandaloneRiddlePath(riddle.id)}
               displayFen={riddle.moveSequence.displayFen}
-              isComplete={isComplete}
               accuracyPercent={accuracyPercent}
               voltScore={voltScore}
             />

@@ -130,8 +130,8 @@ export default async function UserCollectionDetailPage({ params }: Params) {
                   game={game}
                   size={240}
                   href={buildRiddlePath(riddle.id, { collectionSlug: collection.slug, collectionType: "custom" })}
-                  isComplete={attemptStats.isComplete}
                   displayFen={riddle.moveSequence.displayFen}
+                  accuracyPercent={attemptStats.accuracyPercent}
                   voltScore={voltScoresBySequenceId[riddle.moveSequence.id] ?? null}
                 />
               );
