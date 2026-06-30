@@ -53,7 +53,9 @@ function formatPuzzleInputForPrompt(input: GenerateGoalsInput): string {
 }
 
 export function buildMoveSequenceGoalsSystemPrompt(input: GenerateGoalsInput): string {
-  return `${SYSTEM_PROMPT_BASE}\n\n${formatPuzzleInputForPrompt(input)}`;
+  const prompt = `${SYSTEM_PROMPT_BASE}\n\n${formatPuzzleInputForPrompt(input)}`;
+  console.log(prompt);
+  return prompt;
 }
 
 function parseMovesFromSequence(moves: string): string[] {
