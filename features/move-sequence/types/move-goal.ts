@@ -4,6 +4,7 @@ export type MoveGoal = {
   card?: string;
   title: string;
   description: string;
+  successMessage: string;
   isCompleted: boolean;
   imageSrc?: string;
   imageAlt?: string;

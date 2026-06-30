@@ -10,6 +10,7 @@ export function isMoveGoal(value: unknown): value is MoveGoal {
     (o.card === undefined || typeof o.card === "string") &&
     typeof o.title === "string" &&
     typeof o.description === "string" &&
+    typeof o.successMessage === "string" &&
     typeof o.isCompleted === "boolean"
   );
 }

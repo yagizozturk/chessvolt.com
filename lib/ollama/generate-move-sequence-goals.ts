@@ -110,41 +110,101 @@ function getExpectedPlayerGoals(initialFen: string, uciMoves: string[]) {
   }));
 }
 
-function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): MoveGoal {
-  const record = item && typeof item === "object" ? (item as Record<string, unknown>) : {};
-
-  return {
-    ply: typeof record.ply === "number" && Number.isFinite(record.ply) ? record.ply : fallback.ply,
-    move: typeof record.move === "string" && record.move ? record.move : fallback.move,
-    title: typeof record.title === "string" ? record.title : "Move goal",
-    description: typeof record.description === "string" ? record.description : "",
-    isCompleted: false,
-    ...(typeof record.card === "string" ? { card: record.card } : {}),
-  };
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
-function collectGoalCandidates(parsed: unknown): unknown[] {
-  if (Array.isArray(parsed)) {
+function parsePly(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const ply = Number(value);
+    if (Number.isFinite(ply)) return ply;
+  }
+  return undefined;
+}
+
+function isGoalLikeObject(value: unknown): value is Record<string, unknown> {
+  if (!isRecord(value)) return false;
+
+  const hasMoveIdentifier = typeof value.move === "string" || parsePly(value.ply) !== undefined;
+  if (!hasMoveIdentifier) return false;
+
+  return (
+    typeof value.title === "string" ||
+    typeof value.description === "string" ||
+    typeof value.hint === "string" ||
+    typeof value.successMessage === "string" ||
+    typeof value.success_message === "string"
+  );
+}
+
+function isGoalCandidateArray(value: unknown): value is Record<string, unknown>[] {
+  return Array.isArray(value) && value.length > 0 && value.every(isGoalLikeObject);
+}
+
+const GOAL_ARRAY_KEYS = ["goals", "items", "data", "results", "response", "output", "json"] as const;
+
+function collectGoalCandidates(parsed: unknown): Record<string, unknown>[] {
+  if (isGoalCandidateArray(parsed)) {
     return parsed;
   }
 
-  if (!parsed || typeof parsed !== "object") {
+  if (Array.isArray(parsed)) {
+    return parsed.filter(isGoalLikeObject);
+  }
+
+  if (!isRecord(parsed)) {
     return [];
   }
 
-  const record = parsed as Record<string, unknown>;
-
-  if (Array.isArray(record.goals)) return record.goals;
-  if (Array.isArray(record.items)) return record.items;
-  if (Array.isArray(record.data)) return record.data;
-
-  for (const value of Object.values(record)) {
-    if (Array.isArray(value) && value.length > 0) {
-      return value;
-    }
+  for (const key of GOAL_ARRAY_KEYS) {
+    const value = parsed[key];
+    if (isGoalCandidateArray(value)) return value;
   }
 
-  return [parsed];
+  for (const value of Object.values(parsed)) {
+    if (isGoalCandidateArray(value)) return value;
+  }
+
+  return isGoalLikeObject(parsed) ? [parsed] : [];
+}
+
+function findCandidateForExpected(
+  candidates: Record<string, unknown>[],
+  expected: { ply: number; move: string },
+): Record<string, unknown> | undefined {
+  return (
+    candidates.find((candidate) => typeof candidate.move === "string" && candidate.move === expected.move) ??
+    candidates.find((candidate) => parsePly(candidate.ply) === expected.ply)
+  );
+}
+
+function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): MoveGoal {
+  const record = isRecord(item) ? item : {};
+
+  const description =
+    typeof record.description === "string"
+      ? record.description
+      : typeof record.hint === "string"
+        ? record.hint
+        : "";
+
+  const successMessage =
+    typeof record.successMessage === "string"
+      ? record.successMessage
+      : typeof record.success_message === "string"
+        ? record.success_message
+        : "";
+
+  return {
+    ply: parsePly(record.ply) ?? fallback.ply,
+    move: typeof record.move === "string" && record.move ? record.move : fallback.move,
+    title: typeof record.title === "string" && record.title ? record.title : "Move goal",
+    description,
+    successMessage,
+    isCompleted: false,
+    ...(typeof record.card === "string" ? { card: record.card } : {}),
+  };
 }
 
 function parseGoalsContent(content: string, expectedGoals: ReturnType<typeof getExpectedPlayerGoals>): MoveGoal[] {
@@ -160,12 +220,16 @@ function parseGoalsContent(content: string, expectedGoals: ReturnType<typeof get
     throw new Error("Ollama response is not valid JSON");
   }
 
+  console.log("Ollama raw JSON response:", JSON.stringify(parsed, null, 2));
+
   const candidates = collectGoalCandidates(parsed);
-  const normalized = expectedGoals.map((expected, index) =>
-    coerceRawGoal(candidates[index] ?? candidates[0], expected),
+  const normalized = expectedGoals.map((expected) =>
+    coerceRawGoal(findCandidateForExpected(candidates, expected), expected),
   );
 
-  return normalized.sort((a, b) => a.ply - b.ply);
+  const goals = normalized.sort((a, b) => a.ply - b.ply);
+  console.log("Ollama goals for DB insert:", JSON.stringify(goals, null, 2));
+  return goals;
 }
 
 async function requestGoalsFromOllama(
