@@ -70,26 +70,26 @@ export function RiddleBoardCard({
           <Spinner className="size-8" />
         </div>
       ) : null}
-      <div className="relative">
-        {isLowRiddleAccuracy(accuracyPercent) ? (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="absolute top-3 right-3 z-10">
-                  <Image
-                    src="/images/icons/icon-warning.png"
-                    alt="Low accuracy"
-                    width={44}
-                    height={44}
-                  />
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="top" sideOffset={6}>
-                <span>{accuracyPercent}% accuracy</span>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ) : null}
+      {isLowRiddleAccuracy(accuracyPercent) ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="absolute top-6 right-6 z-10">
+                <Image
+                  src="/images/icons/icon-warning.png"
+                  alt="Low accuracy"
+                  width={44}
+                  height={44}
+                />
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="left" sideOffset={6}>
+              <span>{accuracyPercent}% accuracy</span>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : null}
+      <div>
         <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} size={size} coordinates={false} />
       </div>
       <div className="relative flex min-w-0 flex-1 flex-col gap-2">
