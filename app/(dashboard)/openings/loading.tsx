@@ -16,7 +16,7 @@ function OpeningBoardCardSkeleton() {
 
 export default function OpeningsLoading() {
   return (
-    <div className="container mx-auto max-w-6xl px-4 pt-10">
+    <div className="container mx-auto max-w-6xl px-4 py-10">
       <div className="flex flex-col gap-8">
         <div className="flex gap-2 rounded-lg bg-[#113DC4]">
           <div className="min-w-0 flex-1 space-y-2 p-4">

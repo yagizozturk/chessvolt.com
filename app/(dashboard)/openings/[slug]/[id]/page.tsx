@@ -39,7 +39,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const boardArrows = (opening.arrows ? flattenOpeningArrowGroups(opening.arrows) : []) as DrawShape[];
 
   return (
-    <div className="container mx-auto max-w-6xl pt-10">
+    <div className="container mx-auto max-w-6xl py-10">
       <div className="flex flex-col gap-8">
         <div className="flex gap-4 rounded-lg bg-[#FDCB15]">
           <div className="min-w-0 flex-1 space-y-2 p-4">

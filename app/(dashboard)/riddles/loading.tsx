@@ -17,7 +17,7 @@ function RiddleBoardCardSkeleton() {
 
 export default function RiddlesLoading() {
   return (
-    <div className="container mx-auto max-w-6xl px-4 pt-10">
+    <div className="container mx-auto max-w-6xl px-4 py-10">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-4 rounded-xl bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)] p-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-2">

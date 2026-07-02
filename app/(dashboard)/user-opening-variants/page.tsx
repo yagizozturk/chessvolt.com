@@ -45,7 +45,7 @@ export default async function UserOpeningVariantsPage() {
       : {};
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 pt-10">
+    <div className="container mx-auto max-w-6xl px-4 py-10">
       <UserPracticeOpeningVariantList
         openingVariants={userPracticeOpeningVariants}
         voltScoresBySequenceId={voltScoresBySequenceId}

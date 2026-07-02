@@ -58,7 +58,7 @@ export default async function Page() {
   // ================================================================================================
   if (!profile) {
     return (
-      <div className="container mx-auto max-w-6xl px-4 pt-10">
+      <div className="container mx-auto max-w-6xl px-4 py-10">
         <p className="text-muted-foreground text-sm">
           We could not load your dashboard. Please try signing out and back in.
         </p>
@@ -70,7 +70,7 @@ export default async function Page() {
   const recentCollections = userCollections.slice(0, 2);
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 pt-10">
+    <div className="container mx-auto max-w-6xl px-4 py-10">
       <div className="flex flex-col gap-8">
         {/* Welcome title and message */}
         <div className="flex flex-col gap-2 rounded-xl bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)] p-6">

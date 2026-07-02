@@ -22,7 +22,7 @@ export default async function Page() {
 
   if (!profile) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 pt-10">
+      <div className="container mx-auto max-w-4xl px-4 py-10">
         <p className="text-muted-foreground text-sm">
           We couldn&apos;t load your profile. Try signing out and back in.
         </p>
@@ -33,7 +33,7 @@ export default async function Page() {
   const displayName = getDisplayName(profile);
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 pt-10">
+    <div className="container mx-auto max-w-4xl px-4 py-10">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2 rounded-xl bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)] p-6">
           <h1 className="text-3xl font-bold">My Profile</h1>
