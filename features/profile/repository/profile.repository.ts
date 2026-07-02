@@ -163,6 +163,24 @@ export async function updateProfileCurrentRating(
   return true;
 }
 
+export async function updateProfileUsername(
+  supabase: SupabaseClient,
+  userId: string,
+  username: string,
+): Promise<boolean> {
+  const { error } = await supabase.from("profiles").update({ username }).eq("id", userId);
+
+  if (error) {
+    console.error("profile.repository.updateProfileUsername error:", {
+      message: error.message,
+      code: error.code,
+    });
+    return false;
+  }
+
+  return true;
+}
+
 // ======================================================================
 // Ensures a profile exists for the user in PROFILES(own DB table) table,
 // not in Supabase. Creates a row if there is none.

@@ -1,8 +1,10 @@
+"use client";
+
 import { Volume2, VolumeX } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
 
 import { TTSController } from "@/features/tts/components/tts-controller/tts-controller";
+import { useBoardSoundsStore } from "@/lib/shared/store/board-sounds-store";
 
 import { Button } from "../ui/button";
 
@@ -13,7 +15,9 @@ type VoltCoachProps = {
 };
 
 export function VoltCoach({ title, message, ttsKey }: VoltCoachProps) {
-  const [muted, setMuted] = useState(false);
+  const enabled = useBoardSoundsStore((s) => s.enabled);
+  const toggle = useBoardSoundsStore((s) => s.toggle);
+  const muted = !enabled;
 
   return (
     <div className="flex gap-4 rounded-xl p-4">
@@ -34,7 +38,7 @@ export function VoltCoach({ title, message, ttsKey }: VoltCoachProps) {
             <Button
               variant="ghost"
               aria-label={muted ? "Unmute coach" : "Mute coach"}
-              onClick={() => setMuted((prev) => !prev)}
+              onClick={toggle}
             >
               {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
             </Button>

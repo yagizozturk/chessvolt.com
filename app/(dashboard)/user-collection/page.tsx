@@ -13,6 +13,10 @@ export default async function UserCollectionPage() {
 
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-6 pb-16">
+      <div className="mb-6 flex flex-col gap-2 rounded-xl bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)] p-6">
+        <h1 className="text-3xl font-bold">Your collections</h1>
+        <p className="text-muted-foreground">Collections you've created to organize your riddles.</p>
+      </div>
       {/* First-visit auto-open only; skipped once localStorage marks the intro as seen. */}
       <VoltExplainDialogAutoStart />
       <UserCollectionList userCollections={userCollections} />

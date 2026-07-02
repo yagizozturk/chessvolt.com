@@ -54,6 +54,14 @@ export async function updateProfileCurrentRating(
   return profileRepo.updateProfileCurrentRating(supabase, userId, currentRating);
 }
 
+export async function updateProfileUsername(
+  supabase: SupabaseClient,
+  userId: string,
+  username: string,
+): Promise<boolean> {
+  return profileRepo.updateProfileUsername(supabase, userId, username);
+}
+
 export async function incrementProfileCurrentRating(
   supabase: SupabaseClient,
   userId: string,
