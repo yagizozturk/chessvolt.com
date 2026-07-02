@@ -13,7 +13,7 @@ export function Curve() {
               <span className="text-primary font-medium">Hermann Ebbinghaus</span> was a German psychologist who studied
               memory and learning. He is best known for his work on the{" "}
               <span className="text-primary font-medium">forgetting curve</span>. ChessVolt is using his work to help
-              you learn chess.
+              you practice chess.
             </p>
           </div>
           <div>

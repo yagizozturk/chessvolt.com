@@ -1,4 +1,6 @@
+import { ChessKnight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
@@ -34,8 +36,13 @@ export function Information({
           <Image src={imageSrc} alt={imageAlt} width={300} height={300} priority={false} />
         </div>
       </div>
-      <div className="bg-primary rounded-2xl rounded-t-none p-8">
-        <h3 className="text-foreground text-2xl font-bold">Let's Meet</h3>
+      <div className="flex justify-end rounded-2xl rounded-t-none bg-mist-200 p-8">
+        <Button variant="volt" asChild>
+          <Link href="/login" className="flex items-center gap-2">
+            <ChessKnight className="h-4 w-4" />
+            Start Learning
+          </Link>
+        </Button>
       </div>
     </div>
   );

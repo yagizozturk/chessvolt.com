@@ -13,9 +13,9 @@ export function Hero() {
             <br /> And Repeat
           </h1>
           <p className="text-foreground text-xl leading-relaxed">
-            Learn openings, solve riddles from real famous games, <br /> and train with interactive chess games that{" "}
+            Learn openings, solve riddles, play real famous games, <br /> and train with interactive chess games that{" "}
             <br />
-            teach you the idea behind every move.
+            aims to teach you the idea behind the moves.
           </p>
         </div>
         <div className="mt-[-50px] flex-1">
