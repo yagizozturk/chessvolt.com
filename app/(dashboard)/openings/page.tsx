@@ -22,8 +22,8 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
     : await getOpeningsWithVariantCount(supabase);
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 pt-6 pb-16">
-      <div className="flex flex-col gap-4">
+    <div className="container mx-auto max-w-6xl px-4 pt-10">
+      <div className="flex flex-col gap-8">
         <div className="flex gap-2 rounded-lg bg-[#113DC4]">
           <div className="min-w-0 flex-1 space-y-2 p-4">
             <p className="text-primary text-sm font-semibold">From e4 openings to d4, indian setups</p>

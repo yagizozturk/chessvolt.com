@@ -104,8 +104,8 @@ export default async function CollectionDetailPage({ params }: Params) {
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
   return (
-    <div className="container mx-auto max-w-6xl pt-10 pb-16">
-      <div className="flex flex-col gap-4">
+    <div className="container mx-auto max-w-6xl pt-10">
+      <div className="flex flex-col gap-8">
         <CollectionHeader collection={collection} />
         {riddles.length === 0 && (
           <div className="bg-muted/40 rounded-xl px-4 py-8 text-center">

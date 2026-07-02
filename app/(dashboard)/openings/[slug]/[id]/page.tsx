@@ -4,10 +4,7 @@ import { notFound } from "next/navigation";
 
 import { ArrowsBoardCard } from "@/features/arrows/components/arrows-board-card/arrows-board-card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
-import {
-  getOpeningById,
-  getOpeningVariantsByOpeningId,
-} from "@/features/openings/services/openings.service";
+import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
 import { flattenOpeningArrowGroups } from "@/features/openings/types/opening";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
@@ -42,8 +39,8 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const boardArrows = (opening.arrows ? flattenOpeningArrowGroups(opening.arrows) : []) as DrawShape[];
 
   return (
-    <div className="container mx-auto max-w-6xl pt-10 pb-16">
-      <div className="flex flex-col gap-4">
+    <div className="container mx-auto max-w-6xl pt-10">
+      <div className="flex flex-col gap-8">
         <div className="flex gap-4 rounded-lg bg-[#FDCB15]">
           <div className="min-w-0 flex-1 space-y-2 p-4">
             <ArrowsBoardCard

@@ -30,6 +30,7 @@ import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+
 type OpeningVariantControllerProps = {
   variant: OpeningVariant;
   nextVariantId: string | null;
@@ -123,13 +124,7 @@ export default function OpeningVariantController({
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [
-    currentCorrectMove,
-    getTimeFromStartMs,
-    isCompleted,
-    isInPracticeList,
-    playLevelUpSound,
-  ]);
+  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, isInPracticeList, playLevelUpSound]);
 
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });

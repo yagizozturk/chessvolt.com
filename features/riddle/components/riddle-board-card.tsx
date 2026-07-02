@@ -75,12 +75,7 @@ export function RiddleBoardCard({
           <Tooltip>
             <TooltipTrigger asChild>
               <span className="absolute top-6 right-6 z-10">
-                <Image
-                  src="/images/icons/icon-warning.png"
-                  alt="Low accuracy"
-                  width={44}
-                  height={44}
-                />
+                <Image src="/images/icons/icon-warning.png" alt="Low accuracy" width={44} height={44} />
               </span>
             </TooltipTrigger>
             <TooltipContent side="left" sideOffset={6}>
