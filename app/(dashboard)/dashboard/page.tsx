@@ -1,9 +1,6 @@
-import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
 
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardQuickLink } from "@/features/dashboard/components/dashboard-quick-link";
 import { getUserCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
 import { getUserProfile } from "@/features/profile/services/profile.service";
 import { getDisplayName } from "@/features/profile/utilities/user-avatar";
@@ -85,20 +82,7 @@ export default async function Page() {
 
         <section className="grid gap-4 sm:grid-cols-2">
           {QUICK_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="group">
-              <Card className="group-hover:border-primary/40 h-full transition-colors">
-                <CardHeader className="flex flex-row items-start justify-between gap-4">
-                  <div className="flex items-start gap-3">
-                    <Image src={link.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />
-                    <div className="space-y-1">
-                      <CardTitle>{link.title}</CardTitle>
-                      <CardDescription>{link.description}</CardDescription>
-                    </div>
-                  </div>
-                  <ChevronRight className="text-muted-foreground mt-1 size-5 shrink-0 transition-transform group-hover:translate-x-0.5" />
-                </CardHeader>
-              </Card>
-            </Link>
+            <DashboardQuickLink key={link.href} {...link} />
           ))}
         </section>
 

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export function Curve() {
   return (
-    <section className="bg-[#633DCC] pt-20 pb-10">
+    <section className="bg-[#502DB6] pt-20 pb-10">
       <div className="container mx-auto max-w-5xl px-4 md:px-6">
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-4 text-center">
@@ -17,7 +17,7 @@ export function Curve() {
             </p>
           </div>
           <div>
-            <Image src="/images/hero/curve-3.png" alt="The Forgetting Curve" width={1536} height={1024} />
+            <Image src="/images/hero/curve-4.png" alt="The Forgetting Curve" width={1536} height={1024} />
           </div>
         </div>
       </div>

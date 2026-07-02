@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProfileLogoutButton } from "@/features/profile/components/profile-logout-button";
 import { ProfileSoundsSwitch } from "@/features/profile/components/profile-sounds-switch";
+import { ProfileThemeSwitch } from "@/features/profile/components/profile-theme-switch";
 import { ProfileUsernameForm } from "@/features/profile/components/profile-username-form";
 import { UserAvatar } from "@/features/profile/components/user-avatar";
 import { getUserProfile } from "@/features/profile/services/profile.service";
@@ -68,7 +69,8 @@ export default async function Page() {
             <CardTitle>Preferences</CardTitle>
             <CardDescription>Customize your ChessVolt experience.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col gap-6">
+            <ProfileThemeSwitch />
             <ProfileSoundsSwitch />
           </CardContent>
         </Card>
