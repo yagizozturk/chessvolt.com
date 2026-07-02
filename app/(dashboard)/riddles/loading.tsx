@@ -30,7 +30,7 @@ export default function RiddlesLoading() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
             <RiddleBoardCardSkeleton key={i} />
           ))}

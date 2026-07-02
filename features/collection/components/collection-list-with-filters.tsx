@@ -59,7 +59,7 @@ export function CollectionListWithFilters({
 
   if (collections.length === 0) {
     return (
-      <div className={className}>
+      <div className={cn("flex flex-col gap-8", className)}>
         {header}
         <EmptyDataMessage message={emptyMessage} />
       </div>

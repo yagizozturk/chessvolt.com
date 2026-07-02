@@ -69,7 +69,7 @@ export function RiddlesListWithFilter({
 
   if (initialItems.length === 0) {
     return (
-      <div className={className}>
+      <div className={cn("flex flex-col gap-8", className)}>
         {header}
         <EmptyDataMessage message={emptyMessage} />
       </div>
@@ -83,7 +83,7 @@ export function RiddlesListWithFilter({
       {visibleItems.length === 0 ? (
         <EmptyDataMessage message={noResultsMessage} />
       ) : (
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {visibleItems.map(({ riddle, game, accuracyPercent, voltScore }) => (
             <RiddleBoardCard
               key={riddle.id}

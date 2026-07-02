@@ -104,7 +104,7 @@ export default async function CollectionDetailPage({ params }: Params) {
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
   return (
-    <div className="container mx-auto max-w-6xl pt-10">
+    <div className="container mx-auto max-w-6xl px-4 pt-10">
       <div className="flex flex-col gap-8">
         <CollectionHeader collection={collection} />
         {riddles.length === 0 && (
@@ -112,7 +112,7 @@ export default async function CollectionDetailPage({ params }: Params) {
             <p className="text-muted-foreground">No riddles found in this collection.</p>
           </div>
         )}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {riddles
             .map((riddle) => {
               const game = riddle.gameId ? gameMap[riddle.gameId] : null;

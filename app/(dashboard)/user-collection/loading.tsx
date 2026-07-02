@@ -4,9 +4,11 @@ export default function UserCollectionLoading() {
   return (
     <div className="container mx-auto max-w-6xl px-4 pt-10">
       <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-2 rounded-xl bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)] p-6">
-          <Skeleton className="h-9 w-48" />
-          <Skeleton className="h-4 w-80" />
+        <div className="flex flex-col gap-4 rounded-xl bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)] p-6">
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-9 w-48" />
+            <Skeleton className="h-4 w-80" />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

@@ -47,7 +47,7 @@ export function UserCollectionCard({ collection }: UserCollectionCardProps) {
       <div className="flex flex-1 flex-col gap-2 p-6">
         <h2 className="text-3xl font-bold">{collection.title}</h2>
         <p className="text-muted-foreground text-base">{collection.description}</p>
-        <div className="mt-auto flex flex-wrap items-center gap-2">
+        <div className="mt-auto flex flex-wrap items-center gap-3">
           <EditUserListDialog collection={collection} />
           <DeleteUserListDialog collection={collection} />
           <Link

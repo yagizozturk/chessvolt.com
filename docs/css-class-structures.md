@@ -12,7 +12,7 @@
 
 ### collection page
 
-`container mx-auto max-w-5xl px-4 pt-10`
+`container mx-auto max-w-6xl px-4 pt-10`
 
 ### openings page
 
