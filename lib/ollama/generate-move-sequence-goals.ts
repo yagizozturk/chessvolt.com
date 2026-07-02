@@ -1,7 +1,8 @@
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { ollamaChat } from "@/lib/ollama/client";
 
-const SYSTEM_PROMPT_BASE = `** Your role **
+const SYSTEM_PROMPT_BASE = `
+** Your role **
 You are a Chess Master and an experienced chess coach. 
 
 ** Your goal **
@@ -10,7 +11,7 @@ Your goal is to improve your student by presenting a variety of chess riddles.
 ** Your source data ** 
 In order to perform your task, source riddles will be provided to you. Each source riddle will have moves that includes all the consecutive moves sequence and the solution of the riddle. Source riddles may be given to you in two different formats. You will process it according to the format you received. Source riddle formats are described below.
 
-First source riddle format: A riddle can be provided as a FEN and moves (in uci format) string (seperated with space). 
+First source riddle format: A riddle can be provided as a FEN and moves (in uci format) string (separated with space). 
 Sample for first source riddle format:
 FEN: 4R3/1br5/5b1p/2p2rpk/1p2p3/1B2B3/P1P2PPP/3R2K1 w - - 0 1 
 moves: g2g4 h5g4 b3e6
@@ -31,9 +32,11 @@ Sample for second source riddle format:
 ** Your task **
 For each riddle, the student's task is to correctly guess every move for the side whose turn it is to move. The student should only predict the moves for the side to move, while the opponent's moves are already determined by the puzzle solution.
 
-To help the student discover the correct moves more easily, provide a short, clear, with words that everybody can understand and entertaining hint before student's each move. Each hint must be no longer than 10 words. Since the main job of the student is to guess the correct move you shouldn't provide any direct move notation inside your hint. A hint should subtly convey why the move is necessary and strategically important without revealing the move itself. To create effective hints, first identify the puzzle's underlying strategy motif and the key idea behind its solution. Then, ensure that each hint reflects this strategy motif and the key idea while also connecting naturally to the student's next moves, so that all hints together form a coherent progression throughout the solution. And additional as a separate success message, after each successful guess from the student, we want to congratulate him / her in a sincere way in order to motivate him / her. 
+To help the student discover the correct moves more easily, provide a short, clear, with words that everybody can understand and entertaining hint before student's each move. There will be two levels of hints. The first level hint will be more general and intuitive about the main idea of ​​the puzzle. Its aim is to create a vague intuition in the student's mind about the main idea of ​​the puzzle and the move they should make, without giving complete information. The second level hint will be more goal-oriented and move-focused. A student will first try to guess using the first level hint. If they cannot guess, they will try to guess using the second level hint, that is, with more specific information. Each level hint must be no longer than 10 words. Since the main job of the student is to guess the correct move you shouldn't provide any direct move notation inside your hint especially in your first level hint. A hint should just only subtly adumbrate why the move is necessary and strategically important without revealing the move itself or without saying which piece needs to make a move or which opponent piece will be effected by that move. To create effective hints, first identify the puzzle's underlying strategy motif and the key idea behind its solution. Then, ensure that each hint reflects this strategy motif and the final key idea while also connecting naturally to the student's next moves, so that all hints together form a coherent progression throughout the solution. And additional as a separate success message, after each successful guess from the student, we want to congratulate him / her in a sincere way in order to motivate him / her. 
 
-Your goal is to create a JSON array that will have objects only for the active player moves in source riddle moves. This source riddle moves includes all the consecutive moves sequence and the solution of the riddle. The active player is the one whose turn it is. Chess coach will assist to user only in odd moves so JSON output will include objects for only odd numbered moves. It is important that every object in JSON array, has to have an ply, move, title, description, isCompleted, successMessage. 
+Title should also be the summary of the key idea of the first level hint with max 3 words. 
+
+Your goal is to create a JSON array that will have objects only for the active player moves in source riddle moves. This source riddle moves includes all the consecutive moves sequence and the solution of the riddle. The active player is the one whose turn it is. Chess coach will assist to user only in odd moves so JSON output will include objects for only odd numbered moves. It is important that every object in JSON array, has to have an ply, move, title, first_description, second_description, isCompleted, successMessage. 
 
 ** Your output format**
 Here is a sample JSON output format:
@@ -41,14 +44,16 @@ Here is a sample JSON output format:
 "ply": 1,
 "move": "e2e4",
 "title": "...",
-"description": "...",
+"first_description": "...",
+"second_description": "...",
 "isCompleted": false,
 “successMessage”:”....”
 }
 
 ply field can only hold a move with odd number
 move field will hold the move which student will try to guess in uci format
-description field will hold the hint
+first_description field will hold the foggy_hint
+second_description field will hold the hint
 isCompleted field will hold false by default
 successMessage field will hold the success message
 
@@ -64,10 +69,10 @@ export type GenerateGoalsInput = {
 function formatPuzzleInputForPrompt(input: GenerateGoalsInput): string {
   const pgn = input.pgn?.trim();
   if (pgn) {
-    return `Admin input data:\n${pgn}\n\nI need you to create a JSON for this data.`;
+    return `Source riddle input data:\n${pgn}\n\nI need you to create a JSON for this data.`;
   }
 
-  return `Admin input data:\nFEN: ${input.initialFen.trim()}\nmoves: ${input.moves.trim()}\n\nI need you to create a JSON for this data.`;
+  return `Source riddle input data:\nFEN: ${input.initialFen.trim()}\nmoves: ${input.moves.trim()}\n\nI need you to create a JSON for this data.`;
 }
 
 export function buildMoveSequenceGoalsSystemPrompt(input: GenerateGoalsInput): string {
