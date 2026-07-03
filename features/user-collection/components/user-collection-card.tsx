@@ -24,7 +24,7 @@ export function UserCollectionCard({ collection }: UserCollectionCardProps) {
 
   return (
     <div className="bg-card border-b-card-shadow flex h-full flex-col items-stretch gap-2 rounded-lg border-b-[6px]">
-      <div style={{ backgroundColor: collection.coverImageColor }} className="flex overflow-hidden rounded-t-lg">
+      <div style={{ background: collection.coverImageColor }} className="flex overflow-hidden rounded-t-lg">
         <div className="flex min-w-0 flex-1 items-end p-4">
           <div className="flex flex-wrap gap-2">
             <Badge variant="default">
