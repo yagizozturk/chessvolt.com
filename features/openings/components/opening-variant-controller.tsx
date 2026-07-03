@@ -15,7 +15,7 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Spinner } from "@/components/ui/spinner";
-import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { useMoveSequenceController, MAX_HINT_COUNT } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { AddToPracticeButton } from "@/features/user-practice-opening-variant/components/add-to-practice-button";
@@ -30,6 +30,7 @@ import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+
 type OpeningVariantControllerProps = {
   variant: OpeningVariant;
   nextVariantId: string | null;
@@ -123,13 +124,7 @@ export default function OpeningVariantController({
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [
-    currentCorrectMove,
-    getTimeFromStartMs,
-    isCompleted,
-    isInPracticeList,
-    playLevelUpSound,
-  ]);
+  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, isInPracticeList, playLevelUpSound]);
 
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
@@ -153,8 +148,6 @@ export default function OpeningVariantController({
       currentCorrectStreakRef.current = 0;
 
       void (async () => {
-        const durationMs = getTimeFromStartMs();
-
         await recordEvent({
           eventType: "move",
           moveUci: move.uci,
@@ -168,7 +161,7 @@ export default function OpeningVariantController({
             wrongMoveCountRef.current,
             totalHintCountRef.current,
             maxCorrectStreakRef.current,
-            durationMs,
+            getTimeFromStartMs(),
           ),
         );
       })();
@@ -204,7 +197,7 @@ export default function OpeningVariantController({
 
     void recordEvent({
       eventType: "hint",
-      hintLevel: nextHintCount as 1 | 2,
+      hintLevel: nextHintCount as 1 | 2 | 3,
       expectedUci: currentCorrectMove,
     });
   };
@@ -260,14 +253,14 @@ export default function OpeningVariantController({
             <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>
             {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="mt-2 w-full" /> : null}
           </div>
-          <GoalViewer goals={sortedGoals} progressValue={progressValue} />
+          <GoalViewer goals={sortedGoals} progressValue={progressValue} hintCount={hintCount} />
           <div className="mt-auto">
             {canAddToPracticeList ? (
               <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />
             ) : null}
             {!isCompleted ? (
               <div data-tour="hint-button">
-                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="w-full">
+                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= MAX_HINT_COUNT} className="w-full">
                   Hint
                 </Button>
               </div>

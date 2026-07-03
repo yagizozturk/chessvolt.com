@@ -3,7 +3,8 @@ export type MoveGoal = {
   move: string;
   card?: string;
   title: string;
-  description: string;
+  initialHint: string;
+  secondaryHint: string;
   successMessage: string;
   isCompleted: boolean;
   imageSrc?: string;

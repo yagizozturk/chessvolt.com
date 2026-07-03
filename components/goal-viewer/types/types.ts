@@ -6,10 +6,12 @@ type GoalsProps = {
 
 export type GoalViewerProps = GoalsProps & {
   progressValue: number;
+  hintCount?: number;
 };
 
 export type ActiveGoalCardProps = {
   goal: MoveGoal;
+  hintCount?: number;
 };
 
 export type NextGoalRowProps = {

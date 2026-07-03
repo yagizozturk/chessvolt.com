@@ -97,7 +97,7 @@ export function RiddleMetadataFields({
           name="goals"
           rows={4}
           defaultValue={defaultGoals}
-          placeholder='[{"ply":1,"move":"e2e4","title":"...","description":"...","isCompleted":false}]'
+          placeholder='[{"ply":1,"move":"e2e4","title":"...","initialHint":"...","secondaryHint":"...","isCompleted":false}]'
           className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 font-mono text-xs shadow-xs outline-none focus-visible:ring-[3px]"
         />
       </Field>

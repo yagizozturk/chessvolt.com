@@ -23,10 +23,10 @@ function toEventType(dbType: string) {
   return dbType;
 }
 
-function toHintLevel(value: number | null): 1 | 2 | null {
+function toHintLevel(value: number | null): 1 | 2 | 3 | null {
   if (value == null) return null;
   if (!isHintLevel(value)) {
-    throw new Error(`Invalid hint_level: ${value} (must be 1 or 2)`);
+    throw new Error(`Invalid hint_level: ${value} (must be 1, 2, or 3)`);
   }
   return value;
 }

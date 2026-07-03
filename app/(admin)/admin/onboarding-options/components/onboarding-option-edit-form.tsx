@@ -10,9 +10,7 @@ import { OnboardingQuestionSelect } from "@/app/(admin)/admin/onboarding-options
 import type { OnboardingOptionWithQuestion } from "@/features/onboarding-option/types/onboarding-option-with-question";
 import {
   MAX_ONBOARDING_INITIAL_RATING,
-  MAX_ONBOARDING_INITIAL_RATING_DEVIATION,
   MIN_ONBOARDING_INITIAL_RATING,
-  MIN_ONBOARDING_INITIAL_RATING_DEVIATION,
 } from "@/features/onboarding-option/types/onboarding-rating";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
 import { Button } from "@/components/ui/button";
@@ -54,28 +52,16 @@ export function OnboardingOptionEditForm({ option, questions }: Props) {
           <FieldLabel>Sort order</FieldLabel>
           <Input name="sortOrder" type="number" defaultValue={String(option.sortOrder)} />
         </Field>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field>
-            <FieldLabel>Initial rating (optional)</FieldLabel>
-            <Input
-              name="initialRating"
-              type="number"
-              min={MIN_ONBOARDING_INITIAL_RATING}
-              max={MAX_ONBOARDING_INITIAL_RATING}
-              defaultValue={option.initialRating ?? ""}
-            />
-          </Field>
-          <Field>
-            <FieldLabel>Initial rating deviation (optional)</FieldLabel>
-            <Input
-              name="initialRatingDeviation"
-              type="number"
-              min={MIN_ONBOARDING_INITIAL_RATING_DEVIATION}
-              max={MAX_ONBOARDING_INITIAL_RATING_DEVIATION}
-              defaultValue={option.initialRatingDeviation ?? ""}
-            />
-          </Field>
-        </div>
+        <Field>
+          <FieldLabel>Initial rating (optional)</FieldLabel>
+          <Input
+            name="initialRating"
+            type="number"
+            min={MIN_ONBOARDING_INITIAL_RATING}
+            max={MAX_ONBOARDING_INITIAL_RATING}
+            defaultValue={option.initialRating ?? ""}
+          />
+        </Field>
         <Field className="flex flex-row items-center gap-2">
           <input type="hidden" name="isActive" value={isActive ? "on" : "off"} />
           <Switch checked={isActive} onCheckedChange={setIsActive} />

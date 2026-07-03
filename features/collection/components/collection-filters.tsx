@@ -18,6 +18,7 @@ type CollectionFiltersProps = {
   onDifficultyFilterChange: (value: CollectionDifficultyOptions) => void;
   onThemeFilterChange: (value: string) => void;
   onClear?: () => void;
+  variant?: "default" | "inline";
 };
 
 export function CollectionFilters({
@@ -29,24 +30,23 @@ export function CollectionFilters({
   onDifficultyFilterChange,
   onThemeFilterChange,
   onClear,
+  variant = "default",
 }: CollectionFiltersProps) {
+  const isInline = variant === "inline";
+
   return (
-    <div className="bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 sm:flex-row sm:flex-wrap sm:items-center">
-      {/* Search input */}
-      <div className="min-w-0 flex-1 sm:min-w-[12rem] sm:basis-full lg:max-w-sm lg:basis-auto">
-        <Input
-          value={searchQuery}
-          onChange={(e) => onSearchQueryChange(e.target.value)}
-          placeholder="Search collections..."
-          aria-label="Search collections"
-        />
-      </div>
-      {/* Difficulty filter */}
-      <div className="min-w-0 flex-1 sm:max-w-56">
+    <div
+      className={
+        isInline
+          ? "flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:items-center lg:justify-end"
+          : "bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 sm:flex-row sm:flex-wrap sm:items-center"
+      }
+    >
+      <div className="min-w-0 sm:max-w-56">
         <Select value={difficultyFilter} onValueChange={onDifficultyFilterChange}>
           <SelectTrigger
             id="collection-difficulty"
-            className="w-full rounded-xl border-2"
+            className="w-full rounded-xl border-2 bg-background"
             aria-label="Filter by difficulty"
           >
             <SelectValue />
@@ -62,10 +62,13 @@ export function CollectionFilters({
           </SelectContent>
         </Select>
       </div>
-      {/* Theme filter */}
-      <div className="min-w-0 flex-1 sm:max-w-64">
+      <div className="min-w-0 sm:max-w-64">
         <Select value={themeFilter} onValueChange={onThemeFilterChange} disabled={themeOptions.length === 0}>
-          <SelectTrigger id="collection-theme" className="w-full rounded-xl border-2" aria-label="Filter by theme">
+          <SelectTrigger
+            id="collection-theme"
+            className="w-full rounded-xl border-2 bg-background"
+            aria-label="Filter by theme"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -80,14 +83,20 @@ export function CollectionFilters({
           </SelectContent>
         </Select>
       </div>
-      {/* Clear filters button */}
       {onClear && (
-        <div className="-mt-1 flex justify-end sm:ml-auto">
-          <Button type="button" variant="volt" size="sm" onClick={onClear}>
-            Clear filters
-          </Button>
-        </div>
+        <Button type="button" variant="volt" size="sm" onClick={onClear}>
+          Clear filters
+        </Button>
       )}
+      <div className={isInline ? "min-w-0 lg:ml-auto lg:max-w-xs lg:flex-1" : "min-w-0 flex-1 sm:min-w-[12rem] sm:basis-full lg:max-w-sm lg:basis-auto"}>
+        <Input
+          value={searchQuery}
+          onChange={(e) => onSearchQueryChange(e.target.value)}
+          placeholder="Search collections..."
+          aria-label="Search collections"
+          className={isInline ? "bg-background" : undefined}
+        />
+      </div>
     </div>
   );
 }

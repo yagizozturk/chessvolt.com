@@ -7,7 +7,7 @@ export type UserSequenceAttemptEvent = {
   moveUci: string | null;
   expectedUci: string | null;
   isCorrect: boolean | null;
-  hintLevel: 1 | 2 | null;
+  hintLevel: 1 | 2 | 3 | null;
   timeFromStartMs: number | null;
   createdAt: string;
 };
@@ -18,6 +18,6 @@ export type CreateUserSequenceAttemptEventInput = {
   moveUci?: string | null;
   expectedUci?: string | null;
   isCorrect?: boolean | null;
-  hintLevel?: 1 | 2 | null;
+  hintLevel?: 1 | 2 | 3 | null;
   timeFromStartMs?: number | null;
 };

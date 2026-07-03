@@ -190,7 +190,12 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                         <span className="text-primary text-sm font-semibold">{goal.card}</span>
                       ) : null}
                     </PopoverTitle>
-                    <PopoverDescription className="text-xs leading-relaxed">{goal.description}</PopoverDescription>
+                    <PopoverDescription className="text-xs leading-relaxed">
+                      <span className="block">{goal.initialHint}</span>
+                      {goal.secondaryHint ? (
+                        <span className="text-muted-foreground mt-1 block">{goal.secondaryHint}</span>
+                      ) : null}
+                    </PopoverDescription>
                   </PopoverHeader>
                 </PopoverContent>
               </Popover>

@@ -104,15 +104,15 @@ export default async function UserCollectionDetailPage({ params }: Params) {
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
   return (
-    <div className="container mx-auto max-w-6xl pt-10 pb-16">
-      <div className="flex flex-col gap-4">
+    <div className="container mx-auto max-w-6xl px-4 py-10">
+      <div className="flex flex-col gap-8">
         <CollectionHeader collection={collection} />
         {riddles.length === 0 && (
           <div className="bg-muted/40 rounded-xl px-4 py-8 text-center">
             <p className="text-muted-foreground">No riddles found in this collection.</p>
           </div>
         )}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {riddles
             .map((riddle) => {
               const game = riddle.gameId ? gameMap[riddle.gameId] : null;

@@ -34,7 +34,7 @@ export function CreateUserListDialog() {
         <DialogTrigger asChild>
           <Button variant="volt" type="button">
             <Plus data-icon="inline-start" />
-            Create Custom List
+            Create Collection
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-sm">
@@ -49,11 +49,7 @@ export function CreateUserListDialog() {
             </Field>
             <Field>
               <FieldLabel htmlFor="collection-description">Description</FieldLabel>
-              <Input
-                id="collection-description"
-                name="description"
-                placeholder="Description (optional)"
-              />
+              <Input id="collection-description" name="description" placeholder="Description (optional)" />
             </Field>
           </FieldGroup>
           <DialogFooter>

@@ -181,7 +181,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       } else {
         errors.push({
           index: i,
-          message: "goals must be null or an array of { ply, move, title, description, isCompleted, card? }",
+          message: "goals must be null or an array of { ply, move, title, initialHint, secondaryHint, isCompleted, card? }",
         });
         continue;
       }

@@ -39,7 +39,7 @@ function parseGoalsFromFormData(formData: FormData): { goals: MoveGoal[] | null;
     if (!isMoveGoalsArray(parsed)) {
       return {
         goals: null,
-        error: "Goals must be valid JSON with ply, move, title, description, and isCompleted for each item.",
+        error: "Goals must be valid JSON with ply, move, title, initialHint, secondaryHint, and isCompleted for each item.",
       };
     }
     return { goals: parsed };

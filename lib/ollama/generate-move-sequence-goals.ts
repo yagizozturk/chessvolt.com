@@ -136,8 +136,11 @@ function isGoalLikeObject(value: unknown): value is Record<string, unknown> {
 
   return (
     typeof value.title === "string" ||
+    typeof value.initialHint === "string" ||
     typeof value.description === "string" ||
-    typeof value.hint === "string" ||
+    typeof value.first_description === "string" ||
+    typeof value.secondaryHint === "string" ||
+    typeof value.second_description === "string" ||
     typeof value.successMessage === "string" ||
     typeof value.success_message === "string"
   );
@@ -187,11 +190,22 @@ function findCandidateForExpected(
 function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): MoveGoal {
   const record = isRecord(item) ? item : {};
 
-  const description =
-    typeof record.description === "string"
-      ? record.description
-      : typeof record.hint === "string"
-        ? record.hint
+  const initialHint =
+    typeof record.initialHint === "string"
+      ? record.initialHint
+      : typeof record.description === "string"
+        ? record.description
+        : typeof record.first_description === "string"
+          ? record.first_description
+          : typeof record.hint === "string"
+            ? record.hint
+            : "";
+
+  const secondaryHint =
+    typeof record.secondaryHint === "string"
+      ? record.secondaryHint
+      : typeof record.second_description === "string"
+        ? record.second_description
         : "";
 
   const successMessage =
@@ -205,7 +219,8 @@ function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): 
     ply: parsePly(record.ply) ?? fallback.ply,
     move: typeof record.move === "string" && record.move ? record.move : fallback.move,
     title: typeof record.title === "string" && record.title ? record.title : "Move goal",
-    description,
+    initialHint,
+    secondaryHint,
     successMessage,
     isCompleted: false,
     ...(typeof record.card === "string" ? { card: record.card } : {}),

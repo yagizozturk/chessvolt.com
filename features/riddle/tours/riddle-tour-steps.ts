@@ -22,7 +22,7 @@ export const RIDDLE_TOUR_STEPS: Step[] = [
     target: tourTargetSelector(TOUR_TARGETS.hintButton),
     title: "Hints",
     content:
-      "Use hints whenever you need help. The first hint shows which piece to move, and the second hint shows where that piece should go. You can use hints on every move.",
+      "Use hints whenever you need help. The first hint upgrades the coach text, the second highlights which piece to move, and the third shows where it should go. You can use hints on every move.",
     placement: "top",
   },
   {

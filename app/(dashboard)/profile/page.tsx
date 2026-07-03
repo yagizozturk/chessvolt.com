@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProfileLogoutButton } from "@/features/profile/components/profile-logout-button";
 import { ProfileSoundsSwitch } from "@/features/profile/components/profile-sounds-switch";
+import { ProfileThemeSwitch } from "@/features/profile/components/profile-theme-switch";
 import { ProfileUsernameForm } from "@/features/profile/components/profile-username-form";
 import { UserAvatar } from "@/features/profile/components/user-avatar";
 import { getUserProfile } from "@/features/profile/services/profile.service";
@@ -21,8 +22,10 @@ export default async function Page() {
 
   if (!profile) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 pt-6 pb-16">
-        <p className="text-muted-foreground text-sm">We couldn&apos;t load your profile. Try signing out and back in.</p>
+      <div className="container mx-auto max-w-4xl px-4 py-10">
+        <p className="text-muted-foreground text-sm">
+          We couldn&apos;t load your profile. Try signing out and back in.
+        </p>
       </div>
     );
   }
@@ -30,13 +33,11 @@ export default async function Page() {
   const displayName = getDisplayName(profile);
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 pt-6 pb-16">
-      <div className="flex flex-col gap-6">
+    <div className="container mx-auto max-w-4xl px-4 py-10">
+      <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-2 rounded-xl bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)] p-6">
           <h1 className="text-3xl font-bold">My Profile</h1>
-          <p className="text-muted-foreground">
-            View your account details as you solve riddles and learn openings.
-          </p>
+          <p className="text-muted-foreground">View your account details as you solve riddles and learn openings.</p>
         </div>
 
         <Card>
@@ -68,7 +69,8 @@ export default async function Page() {
             <CardTitle>Preferences</CardTitle>
             <CardDescription>Customize your ChessVolt experience.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col gap-6">
+            <ProfileThemeSwitch />
             <ProfileSoundsSwitch />
           </CardContent>
         </Card>

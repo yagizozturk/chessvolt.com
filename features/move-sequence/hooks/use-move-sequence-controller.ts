@@ -6,6 +6,8 @@ import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
+export const MAX_HINT_COUNT = 3;
+
 export type UseMoveSequenceControllerParams = {
   /** Resets play state when this id changes (variant id, riddle id, etc.) */
   sourceId: string;
@@ -96,7 +98,7 @@ export function useMoveSequenceController({
   }
 
   const hintRequested = () => {
-    if (hintCount >= 2) return null;
+    if (hintCount >= MAX_HINT_COUNT) return null;
     const nextHintCount = hintCount + 1;
     setHintCount(nextHintCount);
     return nextHintCount;

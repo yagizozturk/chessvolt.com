@@ -23,8 +23,8 @@ export function useSequenceAttempt(sequenceId: string, replayKey = 0) {
 
   useEffect(() => {
     attemptIdRef.current = null;
-    startedAtRef.current = null;
     startPromiseRef.current = null;
+    startedAtRef.current = Date.now();
   }, [replayKey, sequenceId]);
 
   const getAttemptId = useCallback(() => attemptIdRef.current, []);
@@ -46,7 +46,6 @@ export function useSequenceAttempt(sequenceId: string, replayKey = 0) {
         try {
           const { data } = await startSequenceAttempt(sequenceId);
           attemptIdRef.current = data.attemptId;
-          startedAtRef.current = Date.now();
 
           await recordSequenceAttemptEvent(data.attemptId, {
             eventType: "start",

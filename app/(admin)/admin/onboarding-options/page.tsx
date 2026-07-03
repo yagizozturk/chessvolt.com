@@ -7,7 +7,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 
 const ONBOARDING_OPTION_ADMIN_ERRORS: Record<string, string> = {
   missing_fields: "Please fill in all required fields.",
-  invalid_rating: "Initial rating must be 100–3000 and deviation must be 50–500.",
+  invalid_rating: "Initial rating must be 100–3000.",
   create_failed: "Could not create the option. Check that value is unique for this question.",
   delete_failed: "Could not delete the option. Please try again.",
 };

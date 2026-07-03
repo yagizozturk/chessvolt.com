@@ -1,13 +1,12 @@
 "use client";
 
-import { FolderPlus } from "lucide-react";
+import { Star } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import {
   Command,
   CommandDialog,
@@ -17,6 +16,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { Spinner } from "@/components/ui/spinner";
 import { addRiddleToMyCollectionAction } from "@/features/riddle/actions/add-riddle-to-my-collection";
 
 export type MyCollectionOption = {
@@ -72,10 +72,10 @@ export function AddToMyCollectionPicker({ riddleId, collections, savedCollection
   };
 
   return (
-    <div className="mb-4">
+    <>
       <Button type="button" variant="voltGreen" className="w-full" onClick={() => setOpen(true)} disabled={isPending}>
-        {isPending ? <Spinner data-icon="inline-start" /> : <FolderPlus data-icon="inline-start" />}
-        Add to my collection
+        {isPending ? <Spinner data-icon="inline-start" /> : <Star data-icon="inline-start" />}
+        Add to..
       </Button>
       <CommandDialog
         open={open}
@@ -122,6 +122,6 @@ export function AddToMyCollectionPicker({ riddleId, collections, savedCollection
           </CommandList>
         </Command>
       </CommandDialog>
-    </div>
+    </>
   );
 }

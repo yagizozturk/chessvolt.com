@@ -6,7 +6,6 @@ export type OnboardingOption = {
   sortOrder: number;
   isActive: boolean;
   initialRating: number | null;
-  initialRatingDeviation: number | null;
   createdAt: string;
   updatedAt: string;
 };

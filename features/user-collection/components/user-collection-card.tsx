@@ -24,7 +24,7 @@ export function UserCollectionCard({ collection }: UserCollectionCardProps) {
 
   return (
     <div className="bg-card border-b-card-shadow flex h-full flex-col items-stretch gap-2 rounded-lg border-b-[6px]">
-      <div style={{ backgroundColor: collection.coverImageColor }} className="flex overflow-hidden rounded-t-lg">
+      <div style={{ background: collection.coverImageColor }} className="flex overflow-hidden rounded-t-lg">
         <div className="flex min-w-0 flex-1 items-end p-4">
           <div className="flex flex-wrap gap-2">
             <Badge variant="default">
@@ -47,7 +47,7 @@ export function UserCollectionCard({ collection }: UserCollectionCardProps) {
       <div className="flex flex-1 flex-col gap-2 p-6">
         <h2 className="text-3xl font-bold">{collection.title}</h2>
         <p className="text-muted-foreground text-base">{collection.description}</p>
-        <div className="mt-auto flex flex-wrap items-center gap-2">
+        <div className="mt-auto flex flex-wrap items-center gap-3">
           <EditUserListDialog collection={collection} />
           <DeleteUserListDialog collection={collection} />
           <Link

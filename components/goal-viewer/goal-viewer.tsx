@@ -8,7 +8,7 @@ import { GoalStepper } from "./goal-stepper/goal-stepper";
 import { InactiveNextGoalRow } from "./inactive-next-goal-row/inactive-next-goal-row";
 import type { GoalViewerProps } from "./types/types";
 
-export function GoalViewer({ goals, progressValue }: GoalViewerProps) {
+export function GoalViewer({ goals, progressValue, hintCount = 0 }: GoalViewerProps) {
   if (!goals.length) return null;
 
   const activeGoal = goals.find((goal) => !goal.isCompleted) ?? goals.at(-1)!; // goals.at means the last complete one if all of them is complete
@@ -25,7 +25,7 @@ export function GoalViewer({ goals, progressValue }: GoalViewerProps) {
         </div>
       </div>
       <div className="bg-muted/50 border-b-card-shadow mb-3 flex flex-col rounded-xl border-b-[6px]">
-        <ActiveGoalCard goal={activeGoal} />
+        <ActiveGoalCard goal={activeGoal} hintCount={hintCount} />
         {nextGoal ? (
           <InactiveNextGoalRow
             key={`${nextGoal.ply}-${nextGoal.move}-${activeGoalArrayIndex + 1}-next`}
