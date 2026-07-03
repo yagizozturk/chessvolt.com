@@ -32,11 +32,11 @@ Sample for second source riddle format:
 ** Your task **
 For each riddle, the student's task is to correctly guess every move for the side whose turn it is to move. The student should only predict the moves for the side to move, while the opponent's moves are already determined by the puzzle solution.
 
-To help the student discover the correct moves more easily, provide a short, clear, with words that everybody can understand and entertaining hint before student's each move. There will be two levels of hints. The first level hint will be more general and intuitive about the main idea of ​​the puzzle. Its aim is to create a vague intuition in the student's mind about the main idea of ​​the puzzle and the move they should make, without giving complete information. The second level hint will be more goal-oriented and move-focused. A student will first try to guess using the first level hint. If they cannot guess, they will try to guess using the second level hint, that is, with more specific information. Each level hint must be no longer than 10 words. Since the main job of the student is to guess the correct move you shouldn't provide any direct move notation inside your hint especially in your first level hint. A hint should just only subtly adumbrate why the move is necessary and strategically important without revealing the move itself or without saying which piece needs to make a move or which opponent piece will be effected by that move. To create effective hints, first identify the puzzle's underlying strategy motif and the key idea behind its solution. Then, ensure that each hint reflects this strategy motif and the final key idea while also connecting naturally to the student's next moves, so that all hints together form a coherent progression throughout the solution. And additional as a separate success message, after each successful guess from the student, we want to congratulate him / her in a sincere way in order to motivate him / her. 
+To help the student discover the correct moves more easily, provide a short, clear, with words that everybody can understand and entertaining hint before student's each move. There will be two levels of hints. The initial level hint will be more general and intuitive about the main idea of ​​the puzzle. Its aim is to create a vague intuition in the student's mind about the main idea of ​​the puzzle and the move they should make, without giving complete information. The scondary level hint will be more goal-oriented and move-focused. A student will first try to guess using the initial level hint. If they cannot guess, they will try to guess using the scondary level hint, that is, with more specific information. Each level hint must be no longer than 10 words. Since the main job of the student is to guess the correct move you shouldn't provide any direct move notation inside your hint especially in your initial level hint. A hint should just only subtly adumbrate why the move is necessary and strategically important without revealing the move itself or without saying which piece needs to make a move or which opponent piece will be effected by that move. To create effective hints, first identify the puzzle's underlying strategy motif and the key idea behind its solution. Then, ensure that each hint reflects this strategy motif and the final key idea while also connecting naturally to the student's next moves, so that all hints together form a coherent progression throughout the solution. And additional as a separate success message, after each successful guess from the student, we want to congratulate him / her in a sincere way in order to motivate him / her. 
 
-Title should also be the summary of the key idea of the first level hint with max 3 words. 
+Title should also be the summary of the key idea of the initial level hint with max 3 words. 
 
-Your goal is to create a JSON array that will have objects only for the active player moves in source riddle moves. This source riddle moves includes all the consecutive moves sequence and the solution of the riddle. The active player is the one whose turn it is. Chess coach will assist to user only in odd moves so JSON output will include objects for only odd numbered moves. It is important that every object in JSON array, has to have an ply, move, title, first_description, second_description, isCompleted, successMessage. 
+Your goal is to create a JSON array that will have objects only for the active player moves in source riddle moves. This source riddle moves includes all the consecutive moves sequence and the solution of the riddle. The active player is the one whose turn it is. Chess coach will assist to user only in odd moves so JSON output will include objects for only odd numbered moves. It is important that every object in JSON array, has to have an ply, move, title, initialHint, secondaryHint, isCompleted, successMessage. 
 
 ** Your output format**
 Here is a sample JSON output format:
@@ -44,16 +44,16 @@ Here is a sample JSON output format:
 "ply": 1,
 "move": "e2e4",
 "title": "...",
-"first_description": "...",
-"second_description": "...",
+"initialHint": "...",
+"secondaryHint": "...",
 "isCompleted": false,
 “successMessage”:”....”
 }
 
 ply field can only hold a move with odd number
 move field will hold the move which student will try to guess in uci format
-first_description field will hold the foggy_hint
-second_description field will hold the hint
+initialHint field will hold the foggy_hint
+secondaryHint field will hold the hint
 isCompleted field will hold false by default
 successMessage field will hold the success message
 
