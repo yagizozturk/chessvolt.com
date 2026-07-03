@@ -84,7 +84,7 @@ export async function selectOnboardingStarterRiddles(
   if (themeSlugs.length > 0) {
     // ============================================================================
     // Find strict matches in rating range
-    // right themes, tight rating band (±200). Best fit.
+    // right themes, tight rating band. Best fit.
     // ============================================================================
     const strictMatches = await riddleService.findActiveRiddlesByThemesAndRatingRange(supabase, {
       themeSlugs,
@@ -102,7 +102,7 @@ export async function selectOnboardingStarterRiddles(
 
     // ============================================================================
     // Find wide matches in rating range
-    // same themes, wider band (±400). Fallback when strict finds too few riddles (under 5).
+    // same themes, wider band. Fallback when strict finds too few riddles (under 5).
     // ============================================================================
     const wideMatches = await riddleService.findActiveRiddlesByThemesAndRatingRange(supabase, {
       themeSlugs,

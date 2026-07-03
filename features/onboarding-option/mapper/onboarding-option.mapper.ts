@@ -2,7 +2,6 @@ import type { OnboardingOption } from "@/features/onboarding-option/types/onboar
 import type { OnboardingOptionWithQuestion } from "@/features/onboarding-option/types/onboarding-option-with-question";
 import {
   parseOnboardingInitialRating,
-  parseOnboardingInitialRatingDeviation,
 } from "@/features/onboarding-option/types/onboarding-rating";
 import {
   toOnboardingQuestion,
@@ -17,7 +16,6 @@ export type DbOnboardingOption = {
   sort_order: number;
   is_active: boolean;
   initial_rating: number | null;
-  initial_rating_deviation: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -28,18 +26,9 @@ export type DbOnboardingOptionWithQuestion = DbOnboardingOption & {
 
 export function toOnboardingOption(db: DbOnboardingOption): OnboardingOption | null {
   const initialRating = parseOnboardingInitialRating(db.initial_rating);
-  const initialRatingDeviation = parseOnboardingInitialRatingDeviation(db.initial_rating_deviation);
 
   if (db.initial_rating != null && initialRating === null) {
     console.error("onboarding-option.mapper: invalid initial_rating", db.id, db.initial_rating);
-    return null;
-  }
-  if (db.initial_rating_deviation != null && initialRatingDeviation === null) {
-    console.error(
-      "onboarding-option.mapper: invalid initial_rating_deviation",
-      db.id,
-      db.initial_rating_deviation,
-    );
     return null;
   }
 
@@ -51,7 +40,6 @@ export function toOnboardingOption(db: DbOnboardingOption): OnboardingOption | n
     sortOrder: db.sort_order,
     isActive: db.is_active,
     initialRating,
-    initialRatingDeviation,
     createdAt: db.created_at,
     updatedAt: db.updated_at,
   };

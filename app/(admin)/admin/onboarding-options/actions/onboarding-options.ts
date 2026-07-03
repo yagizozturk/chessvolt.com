@@ -14,7 +14,6 @@ import {
 } from "@/features/onboarding-option/services/onboarding-option.service";
 import {
   parseOnboardingInitialRating,
-  parseOnboardingInitialRatingDeviation,
 } from "@/features/onboarding-option/types/onboarding-rating";
 import { getAdminUser } from "@/lib/supabase/auth";
 
@@ -39,13 +38,6 @@ function parseOptionalRating(formData: FormData): number | null | "invalid" {
   return parsed === null ? "invalid" : parsed;
 }
 
-function parseOptionalRatingDeviation(formData: FormData): number | null | "invalid" {
-  const raw = formData.get("initialRatingDeviation");
-  if (raw === null || String(raw).trim() === "") return null;
-  const parsed = parseOnboardingInitialRatingDeviation(raw);
-  return parsed === null ? "invalid" : parsed;
-}
-
 export async function createOnboardingOptionAction(formData: FormData) {
   const { supabase } = await getAdminUser();
 
@@ -55,13 +47,12 @@ export async function createOnboardingOptionAction(formData: FormData) {
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
   const initialRating = parseOptionalRating(formData);
-  const initialRatingDeviation = parseOptionalRatingDeviation(formData);
 
   if (!questionId || !value || !label) {
     redirect("/admin/onboarding-options/create?error=missing_fields");
   }
 
-  if (initialRating === "invalid" || initialRatingDeviation === "invalid") {
+  if (initialRating === "invalid") {
     redirect("/admin/onboarding-options/create?error=invalid_rating");
   }
 
@@ -72,7 +63,6 @@ export async function createOnboardingOptionAction(formData: FormData) {
     sortOrder,
     isActive,
     initialRating,
-    initialRatingDeviation,
   };
 
   const option = await createOnboardingOption(supabase, input);
@@ -106,14 +96,13 @@ export async function updateOnboardingOptionAction(
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
   const initialRating = parseOptionalRating(formData);
-  const initialRatingDeviation = parseOptionalRatingDeviation(formData);
 
   if (!questionId || !value || !label) {
     return { error: "Question, value, and label are required." };
   }
 
-  if (initialRating === "invalid" || initialRatingDeviation === "invalid") {
-    return { error: "Initial rating must be 100–3000 and deviation must be 50–500." };
+  if (initialRating === "invalid") {
+    return { error: "Initial rating must be 100–3000." };
   }
 
   const input: UpdateOnboardingOptionInput = {
@@ -123,7 +112,6 @@ export async function updateOnboardingOptionAction(
     sortOrder,
     isActive,
     initialRating,
-    initialRatingDeviation,
   };
 
   const option = await updateOnboardingOption(supabase, id, input);

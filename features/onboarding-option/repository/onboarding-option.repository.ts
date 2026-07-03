@@ -101,7 +101,6 @@ export type CreateOnboardingOptionInput = {
   sortOrder?: number;
   isActive?: boolean;
   initialRating?: number | null;
-  initialRatingDeviation?: number | null;
 };
 
 export async function create(
@@ -117,7 +116,6 @@ export async function create(
       sort_order: input.sortOrder ?? 0,
       is_active: input.isActive ?? true,
       initial_rating: input.initialRating ?? null,
-      initial_rating_deviation: input.initialRatingDeviation ?? null,
     })
     .select()
     .single();
@@ -137,7 +135,6 @@ export type UpdateOnboardingOptionInput = {
   sortOrder?: number;
   isActive?: boolean;
   initialRating?: number | null;
-  initialRatingDeviation?: number | null;
 };
 
 export async function update(
@@ -152,7 +149,6 @@ export async function update(
   if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
   if (input.initialRating !== undefined) updates.initial_rating = input.initialRating;
-  if (input.initialRatingDeviation !== undefined) updates.initial_rating_deviation = input.initialRatingDeviation;
 
   const { data, error } = await supabase
     .from("onboarding_options")

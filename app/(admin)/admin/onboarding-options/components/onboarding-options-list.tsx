@@ -48,7 +48,6 @@ export function OnboardingOptionsList({ options }: Props) {
               </td>
               <td className="text-muted-foreground px-4 py-3 font-mono text-xs">
                 {option.initialRating != null ? option.initialRating : "—"}
-                {option.initialRatingDeviation != null ? ` ±${option.initialRatingDeviation}` : ""}
               </td>
               <td className="text-muted-foreground px-4 py-3 font-mono">{option.sortOrder}</td>
               <td className="px-4 py-3">
