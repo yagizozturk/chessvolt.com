@@ -1,6 +1,6 @@
 # Streak calculator
 
-Computes a **0–100% streak** score from the **longest consecutive correct moves** (`maxCorrectStreak`) relative to sequence length.
+Computes a **0–100% streak** score from the **longest consecutive correct moves** (`maxCorrectStreak`) relative to **player move count**.
 
 ## Files
 
@@ -15,7 +15,7 @@ Computes a **0–100% streak** score from the **longest consecutive correct move
 | Field | Meaning |
 |-------|---------|
 | `maxCorrectStreak` | Longest run of correct moves in the attempt (stored on `user_sequence_attempt`) |
-| `totalMoveCount` | Half-moves in the sequence |
+| `totalMoveCount` | **Player half-moves** the human must find (`getPlayerMoveCount`; excludes opponent auto-replies) |
 
 ## Streak ratio
 
@@ -23,7 +23,7 @@ Computes a **0–100% streak** score from the **longest consecutive correct move
 streakRatio = min(max(maxCorrectStreak, 0) / totalMoveCount, 1)
 ```
 
-Examples with `totalMoveCount = 10`:
+Examples with `totalMoveCount = 10` (player moves):
 
 | maxCorrectStreak | streakRatio |
 |------------------|-------------|
@@ -46,7 +46,7 @@ Piecewise tiers: at each `streakRatio`, the table defines the streak **%**. Sort
 | 0.8 | 100% |
 | 1.0 | 100% |
 
-`STREAK_CONFIG.basePercent` caps the result at **100**.
+`STREAK_CONFIG.basePercent` caps the result at **100**. Intervals are exposed as `STREAK_CONFIG.streakIntervals`.
 
 ## Formula
 
@@ -81,8 +81,9 @@ Between tiers (e.g. ratio **0.75** between 0.7→85% and 0.8→100%): **92.5%** 
 
 ## Design notes
 
-- Uses **ratio** (`maxCorrectStreak / totalMoveCount`), not raw streak count alone, so a 8-streak means the same on 10-move and 20-move sequences (0.8 vs 0.4).
-- Full **100%** at default config requires ratio **≥ 0.8** (e.g. 8/10 moves).
+- Uses **ratio** (`maxCorrectStreak / totalMoveCount`), not raw streak count alone, so an 8-streak means the same on 10-move and 20-move sequences (0.8 vs 0.4).
+- Denominator is **player moves only**, matching accuracy and Volt scoring (`getPlayerMoveCount`).
+- Full **100%** at default config requires ratio **≥ 0.8** (e.g. 8/10 player moves).
 - Streak resets on each wrong move during play (`currentCorrectStreakRef`); `maxCorrectStreakRef` keeps the peak for the attempt.
 
 ## UI usage
@@ -90,7 +91,7 @@ Between tiers (e.g. ratio **0.75** between 0.7→85% and 0.8→100%): **92.5%** 
 ```tsx
 <StreakCalculator
   maxCorrectStreak={maxCorrectStreak}
-  totalMoveCount={moves.length}
+  totalMoveCount={getPlayerMoveCount(moves)}
 />
 ```
 

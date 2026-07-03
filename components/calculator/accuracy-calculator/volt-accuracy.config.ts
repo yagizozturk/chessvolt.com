@@ -3,7 +3,7 @@ export const VOLT_ACCURACY_CONFIG = {
   /** Starting accuracy before wrong-move and hint penalties. */
   basePercent: 100,
   /** Max points subtracted when every move in the sequence was wrong (ratio × this weight). */
-  wrongMovePenaltyWeight: 40,
+  wrongMovePenaltyWeight: 70,
   /** Max points subtracted when hints were used on every move (ratio × this weight). */
-  hintPenaltyWeight: 20,
+  hintPenaltyWeight: 50,
 } as const;

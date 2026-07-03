@@ -148,8 +148,6 @@ export default function OpeningVariantController({
       currentCorrectStreakRef.current = 0;
 
       void (async () => {
-        const durationMs = getTimeFromStartMs();
-
         await recordEvent({
           eventType: "move",
           moveUci: move.uci,
@@ -163,7 +161,7 @@ export default function OpeningVariantController({
             wrongMoveCountRef.current,
             totalHintCountRef.current,
             maxCorrectStreakRef.current,
-            durationMs,
+            getTimeFromStartMs(),
           ),
         );
       })();

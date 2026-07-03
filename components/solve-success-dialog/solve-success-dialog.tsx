@@ -3,7 +3,7 @@
 import Lottie from "lottie-react";
 import { ArrowRight, Clock, Flame, RotateCcw, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
@@ -39,6 +39,7 @@ export type SolveSuccessDialogProps = {
   voltScore?: VoltScoreResult | null;
   isVoltScoreShowing?: boolean;
   onPlayAgain?: () => void;
+  footerExtra?: ReactNode;
 };
 
 /**
@@ -62,6 +63,7 @@ export function SolveSuccessDialog({
   voltScore = null,
   isVoltScoreShowing = false,
   onPlayAgain,
+  footerExtra,
 }: SolveSuccessDialogProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
@@ -121,6 +123,7 @@ export function SolveSuccessDialog({
           </div>
         ) : null}
         <DialogFooter className="mt-4 flex-col gap-2 sm:flex-row sm:justify-center">
+          {footerExtra ? <div className="w-full sm:w-auto">{footerExtra}</div> : null}
           {onPlayAgain ? (
             <Button variant="voltGreen" type="button" onClick={onPlayAgain} className="w-full sm:w-auto">
               <RotateCcw data-icon="inline-start" />

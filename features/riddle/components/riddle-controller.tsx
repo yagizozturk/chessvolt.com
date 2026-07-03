@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft, Eye, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -187,9 +187,6 @@ export default function RiddleController({
       currentCorrectStreakRef.current = 0;
 
       void (async () => {
-        const durationMs = getTimeFromStartMs();
-
-        // Record the move event for attempt_event table for more detailed logs
         await recordEvent({
           eventType: "move",
           moveUci: move.uci,
@@ -203,7 +200,7 @@ export default function RiddleController({
             wrongMoveCountRef.current,
             totalHintCountRef.current,
             maxCorrectStreakRef.current,
-            durationMs,
+            getTimeFromStartMs(),
           ),
         );
       })();
@@ -287,14 +284,6 @@ export default function RiddleController({
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-10">
-      <div className="mb-4 flex items-center">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href={parentCollectionUrl} className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to collection
-          </Link>
-        </Button>
-      </div>
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
@@ -307,6 +296,15 @@ export default function RiddleController({
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
+        footerExtra={
+          isUserLoggedIn && userCollections.length > 0 ? (
+            <AddToMyCollectionPicker
+              riddleId={riddle.id}
+              collections={userCollections}
+              savedCollectionIds={userCollectionIdsHasCurrentRiddle}
+            />
+          ) : null
+        }
       />
       {successDialogOpen ? (
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
@@ -330,7 +328,12 @@ export default function RiddleController({
           />
         </div>
         <div className="bg-card relative flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
-          <div className="flex flex-col items-center justify-center gap-1 text-center">
+          <div className="relative flex items-center justify-center">
+            <Button variant="ghost" size="icon-sm" asChild className="absolute left-0">
+              <Link href={parentCollectionUrl} aria-label="Back to collection">
+                <ChevronLeft className="size-5" />
+              </Link>
+            </Button>
             <DiaTextReveal
               className="text-lg font-bold tracking-tight"
               text={turnLabel}
@@ -338,28 +341,39 @@ export default function RiddleController({
             />
           </div>
           <GoalViewer goals={sortedGoals} progressValue={progressValue} />
-          <div className="mt-auto" data-tour="hint-button">
-            {isUserLoggedIn && userCollections.length > 0 ? (
-              <AddToMyCollectionPicker
-                riddleId={riddle.id}
-                collections={userCollections}
-                savedCollectionIds={userCollectionIdsHasCurrentRiddle}
-              />
-            ) : null}
-            {!isCompleted ? (
-              <div>
-                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="w-full">
+          <div className="mt-auto">
+            <div className="flex gap-2" data-tour="hint-button">
+              {isUserLoggedIn && userCollections.length > 0 ? (
+                <div className="min-w-0 flex-1">
+                  <AddToMyCollectionPicker
+                    riddleId={riddle.id}
+                    collections={userCollections}
+                    savedCollectionIds={userCollectionIdsHasCurrentRiddle}
+                  />
+                </div>
+              ) : null}
+              {!isCompleted ? (
+                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="min-w-0 flex-1">
+                  <Eye data-icon="inline-start" />
                   Hint
                 </Button>
-              </div>
-            ) : (
-              <div className="mt-4">
-                <Button variant="volt" onClick={handleContinueClick} disabled={isContinuePending} className="w-full">
+              ) : (
+                <Button
+                  variant="volt"
+                  onClick={handleContinueClick}
+                  disabled={isContinuePending}
+                  className="min-w-0 flex-1"
+                >
                   {isContinuePending && <Spinner data-icon="inline-start" />}
                   {successButtonLabel}
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
+            {!isCompleted ? (
+              <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
+                First click highlights which piece to move. Second click shows the exact move.
+              </p>
+            ) : null}
           </div>
         </div>
       </div>
