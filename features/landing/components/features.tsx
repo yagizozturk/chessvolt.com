@@ -44,7 +44,7 @@ export function Features() {
               target rating.
             </p>
           </div>
-          <div className="mt-8 flex gap-10">
+          <div className="mt-8 flex flex-col gap-10 lg:flex-row">
             {sharedFeatures.map((feature) => (
               <FeatureItem
                 key={feature.title}

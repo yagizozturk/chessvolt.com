@@ -4,29 +4,29 @@ Computes a **0–100% accuracy** score for one solve attempt. Used live on the r
 
 ## Files
 
-| File | Role |
-|------|------|
-| `volt-accuracy.config.ts` | Tunable weights |
-| `compute-volt-accuracy.ts` | Pure formula |
-| `accuracy-calculator.tsx` | React UI (`Target` icon, `"X% accuracy"`) |
+| File                       | Role                                      |
+| -------------------------- | ----------------------------------------- |
+| `volt-accuracy.config.ts`  | Tunable weights                           |
+| `compute-volt-accuracy.ts` | Pure formula                              |
+| `accuracy-calculator.tsx`  | React UI (`Target` icon, `"X% accuracy"`) |
 
 ## Inputs
 
-| Field | Meaning |
-|-------|---------|
-| `wrongMoveCount` | Incorrect move attempts in the session |
-| `hintCount` | Hints used |
+| Field            | Meaning                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------ |
+| `wrongMoveCount` | Incorrect move attempts in the session                                                           |
+| `hintCount`      | Hints used                                                                                       |
 | `totalMoveCount` | **Player half-moves** the human must find (`getPlayerMoveCount`; excludes opponent auto-replies) |
 
 `correctMoveCount` is **not** used in this formula; accuracy is derived only from wrong and hint pressure relative to player move count.
 
 ## Config (`VOLT_ACCURACY_CONFIG`)
 
-| Key | Default | Meaning |
-|-----|---------|---------|
-| `basePercent` | `100` | Starting score before penalties |
-| `wrongMovePenaltyWeight` | `40` | Max points lost if every player move were wrong |
-| `hintPenaltyWeight` | `20` | Max points lost if hints were used on every player move |
+| Key                      | Default | Meaning                                                 |
+| ------------------------ | ------- | ------------------------------------------------------- |
+| `basePercent`            | `100`   | Starting score before penalties                         |
+| `wrongMovePenaltyWeight` | `50`    | Max points lost if every player move were wrong         |
+| `hintPenaltyWeight`      | `30`    | Max points lost if hints were used on every player move |
 
 ## Formula
 
@@ -54,12 +54,12 @@ If `totalMoveCount <= 0`, return `basePercent` (100).
 
 ## Examples (`totalMoveCount = 10` player moves)
 
-| wrong | hints | Calculation | Accuracy |
-|-------|-------|-------------|----------|
-| 0 | 0 | 100 − 0 − 0 | **100%** |
-| 5 | 0 | 100 − (0.5×40) − 0 = 80 | **80%** |
-| 0 | 2 | 100 − 0 − (0.2×20) = 96 | **96%** |
-| 5 | 5 | 100 − 20 − 10 | **70%** |
+| wrong | hints | Calculation             | Accuracy |
+| ----- | ----- | ----------------------- | -------- |
+| 0     | 0     | 100 − 0 − 0             | **100%** |
+| 5     | 0     | 100 − (0.5×40) − 0 = 80 | **80%**  |
+| 0     | 2     | 100 − 0 − (0.2×20) = 96 | **96%**  |
+| 5     | 5     | 100 − 20 − 10           | **70%**  |
 
 ## Design notes
 
@@ -71,11 +71,7 @@ If `totalMoveCount <= 0`, return `basePercent` (100).
 ## UI usage
 
 ```tsx
-<AccuracyCalculator
-  wrongMoveCount={wrongMoveCount}
-  hintCount={hintCount}
-  totalMoveCount={getPlayerMoveCount(moves)}
-/>
+<AccuracyCalculator wrongMoveCount={wrongMoveCount} hintCount={hintCount} totalMoveCount={getPlayerMoveCount(moves)} />
 ```
 
 Wired in `features/riddle/components/riddle-controller.tsx` with live refs and `attemptStatsTick` re-renders on wrong moves and hints.
