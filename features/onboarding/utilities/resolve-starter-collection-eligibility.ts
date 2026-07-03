@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getUserOnboardingStarterCollection } from "@/features/collection/services/collection.service";
 import {
+  ONBOARDING_STARTER_COLLECTION_2_SLUG,
   ONBOARDING_STARTER_COLLECTION_SLUG,
   hasStarterCollection,
 } from "@/features/onboarding/constants/onboarding-starter-collection.config";
@@ -9,9 +10,9 @@ import type { CreateOnboardingStarterCollectionData } from "@/features/onboardin
 import type { ResolveStarterCollectionEligibilityResult } from "@/features/onboarding/types/resolve-starter-collection-eligibility-result";
 
 // ============================================================================
-// Checks whether a starter collection should be created for this onboarding run:
+// Checks whether starter collections should be created for this onboarding run:
 //   - declined — user picked no_i_will_choose on Q3
-//   - already_exists — onboarding-starter collection already exists for the user
+//   - already_exists — both starter collections already exist for the user
 // ============================================================================
 export async function resolveStarterCollectionEligibility(
   supabase: SupabaseClient,
@@ -27,13 +28,12 @@ export async function resolveStarterCollectionEligibility(
   // ============================================================================
   // Check if the starter collection already exists
   // ============================================================================
-  const existing = await getUserOnboardingStarterCollection(
-    supabase,
-    data.userId,
-    ONBOARDING_STARTER_COLLECTION_SLUG,
-  );
+  const [existing1, existing2] = await Promise.all([
+    getUserOnboardingStarterCollection(supabase, data.userId, ONBOARDING_STARTER_COLLECTION_SLUG),
+    getUserOnboardingStarterCollection(supabase, data.userId, ONBOARDING_STARTER_COLLECTION_2_SLUG),
+  ]);
 
-  if (existing) {
+  if (existing1 && existing2) {
     return { ok: false, reason: "already_exists" };
   }
 

@@ -28,9 +28,15 @@ const FETCH_BUFFER = 2;
 // by createdAt), and returns up to limit items. Used after each repo query to
 // shrink a buffered fetch down to the final collection size.
 // ============================================================================
-function pickClosestRiddles(riddles: Riddle[], userRating: number, limit: number): Riddle[] {
+function pickClosestRiddles(
+  riddles: Riddle[],
+  userRating: number,
+  limit: number,
+  excludeRiddleIds: Set<string> = new Set(),
+): Riddle[] {
   const uniqueById = new Map<string, Riddle>();
   for (const riddle of riddles) {
+    if (excludeRiddleIds.has(riddle.id)) continue;
     uniqueById.set(riddle.id, riddle);
   }
 
@@ -72,11 +78,15 @@ function hasEnoughMatches(riddles: Riddle[]): boolean {
 // ============================================================================
 export async function selectOnboardingStarterRiddles(
   supabase: SupabaseClient,
-  data: { themeSlugs: string[]; userRating: number },
+  data: { themeSlugs: string[]; userRating: number; excludeRiddleIds?: string[] },
 ): Promise<Riddle[]> {
   const limit = ONBOARDING_STARTER_COLLECTION_RIDDLE_LIMIT;
-  const fetchLimit = limit * FETCH_BUFFER;
+  const excludeRiddleIds = new Set(data.excludeRiddleIds ?? []);
+  const excludeCount = excludeRiddleIds.size;
+  const fetchLimit = (limit + excludeCount) * FETCH_BUFFER;
   const { themeSlugs, userRating } = data;
+
+  const pick = (riddles: Riddle[]) => pickClosestRiddles(riddles, userRating, limit, excludeRiddleIds);
 
   // ============================================================================
   // Find strict matches in rating range
@@ -94,7 +104,7 @@ export async function selectOnboardingStarterRiddles(
     });
 
     if (strictMatches.length > 0) {
-      const picked = pickClosestRiddles(strictMatches, userRating, limit);
+      const picked = pick(strictMatches);
       if (hasEnoughMatches(picked) || strictMatches.length < ONBOARDING_STARTER_COLLECTION_MIN_RIDDLES) {
         return picked;
       }
@@ -102,7 +112,7 @@ export async function selectOnboardingStarterRiddles(
 
     // ============================================================================
     // Find wide matches in rating range
-    // same themes, wider band. Fallback when strict finds too few riddles (under 5).
+    // same themes, wider band. Fallback when strict finds too few riddles (under 10).
     // ============================================================================
     const wideMatches = await riddleService.findActiveRiddlesByThemesAndRatingRange(supabase, {
       themeSlugs,
@@ -112,7 +122,7 @@ export async function selectOnboardingStarterRiddles(
     });
 
     if (wideMatches.length > 0) {
-      const picked = pickClosestRiddles(wideMatches, userRating, limit);
+      const picked = pick(wideMatches);
       if (hasEnoughMatches(picked) || wideMatches.length < ONBOARDING_STARTER_COLLECTION_MIN_RIDDLES) {
         return picked;
       }
@@ -127,7 +137,7 @@ export async function selectOnboardingStarterRiddles(
     });
 
     if (riddlesMatchedByThemes.length > 0) {
-      return pickClosestRiddles(riddlesMatchedByThemes, userRating, limit);
+      return pick(riddlesMatchedByThemes);
     }
   }
 
@@ -141,7 +151,7 @@ export async function selectOnboardingStarterRiddles(
   });
 
   if (riddlesMatchedByRatingRange.length > 0) {
-    return pickClosestRiddles(riddlesMatchedByRatingRange, userRating, limit);
+    return pick(riddlesMatchedByRatingRange);
   }
 
   // ============================================================================
@@ -153,5 +163,5 @@ export async function selectOnboardingStarterRiddles(
     limit: fetchLimit,
   });
 
-  return pickClosestRiddles(wideRatingMatches, userRating, limit);
+  return pick(wideRatingMatches);
 }

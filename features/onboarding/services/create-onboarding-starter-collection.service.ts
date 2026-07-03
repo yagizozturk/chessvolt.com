@@ -35,5 +35,5 @@ export async function createOnboardingStarterCollection(
   // ============================================================================
   // Return the created starter collection
   // ============================================================================
-  return { created: true, collection: built.collection };
+  return { created: true, collections: built.collections };
 }
