@@ -6,6 +6,7 @@ import { CollectionHeader } from "@/features/collection/components/collection-he
 import { getUserCustomCollectionBySlug } from "@/features/collection/services/collection.service";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
+import { getPrimaryThemesByRiddleIds } from "@/features/riddle-theme/services/riddle-theme.service";
 import { getActiveRiddlesByCollectionId } from "@/features/riddle/services/riddle.service";
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
@@ -100,7 +101,13 @@ export default async function UserCollectionDetailPage({ params }: Params) {
   // If there is a game. gameIds set is created. and used for selecting from DB and creating a map.
   // ================================================================================================
   const gameIds = [...new Set(riddles.map((r) => r.gameId).filter((id): id is string => id != null))];
-  const games = gameIds.length > 0 ? await getGamesByIds(supabase, gameIds) : [];
+  const [games, primaryThemesByRiddleId] = await Promise.all([
+    gameIds.length > 0 ? getGamesByIds(supabase, gameIds) : Promise.resolve([]),
+    getPrimaryThemesByRiddleIds(
+      supabase,
+      riddles.map((riddle) => riddle.id),
+    ),
+  ]);
   const gameMap = Object.fromEntries(games.map((g) => [g.id, g]));
 
   return (
@@ -133,6 +140,7 @@ export default async function UserCollectionDetailPage({ params }: Params) {
                   displayFen={riddle.moveSequence.displayFen}
                   accuracyPercent={attemptStats.accuracyPercent}
                   voltScore={voltScoresBySequenceId[riddle.moveSequence.id] ?? null}
+                  primaryTheme={primaryThemesByRiddleId.get(riddle.id) ?? null}
                 />
               );
             })}

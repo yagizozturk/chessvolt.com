@@ -1,5 +1,8 @@
+"use client";
+
 import type { LucideIcon } from "lucide-react";
 
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 type BoardCardMetaRowProps = {
@@ -7,9 +10,29 @@ type BoardCardMetaRowProps = {
   label: string;
   className?: string;
   truncate?: boolean;
+  iconTooltip?: string;
 };
 
-export function BoardCardMetaRow({ icon: Icon, label, className, truncate }: BoardCardMetaRowProps) {
+function MetaRowIcon({ icon: Icon, iconTooltip }: { icon: LucideIcon; iconTooltip?: string }) {
+  const icon = <Icon className="text-primary h-4 w-4 shrink-0" />;
+
+  if (!iconTooltip) {
+    return icon;
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex shrink-0">{icon}</span>
+      </TooltipTrigger>
+      <TooltipContent side="top" sideOffset={4}>
+        {iconTooltip}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+export function BoardCardMetaRow({ icon, label, className, truncate, iconTooltip }: BoardCardMetaRowProps) {
   if (!label.trim()) {
     return null;
   }
@@ -18,7 +41,7 @@ export function BoardCardMetaRow({ icon: Icon, label, className, truncate }: Boa
     <span
       className={cn("flex items-center gap-1.5", truncate && "max-w-full min-w-0 shrink overflow-hidden", className)}
     >
-      <Icon className="text-primary h-4 w-4 shrink-0" />
+      <MetaRowIcon icon={icon} iconTooltip={iconTooltip} />
       <span className={cn(truncate && "min-w-0 truncate")}>{label}</span>
     </span>
   );

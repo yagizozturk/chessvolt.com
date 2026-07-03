@@ -10,7 +10,10 @@ import * as riddleThemeRepo from "@/features/riddle-theme/repository/riddle-them
 import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { clampThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
+import type { Theme } from "@/features/theme/types/theme";
 import * as themeRepo from "@/features/theme/repository/theme.repository";
+
+export type PrimaryRiddleTheme = Pick<Theme, "title" | "slug">;
 
 export async function findRiddleIdsByThemeSlugs(
   supabase: SupabaseClient,
@@ -26,6 +29,27 @@ export async function findRiddleIdsByThemeSlugs(
     supabase,
     themes.map((theme) => theme.id),
   );
+}
+
+export async function getPrimaryThemesByRiddleIds(
+  supabase: SupabaseClient,
+  riddleIds: string[],
+): Promise<Map<string, PrimaryRiddleTheme>> {
+  const uniqueIds = [...new Set(riddleIds.map((id) => id.trim()).filter(Boolean))];
+  const primaryByRiddleId = new Map<string, PrimaryRiddleTheme>();
+  if (uniqueIds.length === 0) return primaryByRiddleId;
+
+  const riddleThemes = await riddleThemeRepo.findByRiddleIdsWithTheme(supabase, uniqueIds);
+
+  for (const row of riddleThemes) {
+    if (primaryByRiddleId.has(row.riddleId)) continue;
+    primaryByRiddleId.set(row.riddleId, {
+      title: row.theme.title,
+      slug: row.theme.slug,
+    });
+  }
+
+  return primaryByRiddleId;
 }
 
 export async function getThemeSlugsByRiddleIds(

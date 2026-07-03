@@ -5,7 +5,8 @@ import type { VoltScoreResult } from "@/components/calculator/volt-calculator/vo
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import type { Game } from "@/features/game/types/game";
-import { attachThemeSlugsToRiddles } from "@/features/riddle-theme/services/riddle-theme.service";
+import * as riddleThemeRepo from "@/features/riddle-theme/repository/riddle-theme.repository";
+import type { PrimaryRiddleTheme } from "@/features/riddle-theme/services/riddle-theme.service";
 import type { AttemptedRiddlesSortBy } from "@/features/riddle/constants/riddles-list.constants";
 import { RIDDLES_THEME_FILTER_ALL } from "@/features/riddle/constants/riddles-list.constants";
 import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
@@ -18,6 +19,7 @@ export type AttemptedRiddleListItem = {
   riddle: Riddle;
   game: Game | null;
   themeSlugs: string[];
+  primaryTheme: PrimaryRiddleTheme | null;
   lastPlayedAt: string;
   accuracyPercent: number | null;
   voltScore: VoltScoreResult | null;
@@ -36,12 +38,31 @@ export async function getUserAttemptedRiddlesForDisplay(
   const riddles = await riddleRepo.findByMoveSequenceIds(supabase, sequenceIds);
   if (riddles.length === 0) return [];
 
-  const riddlesWithThemes = await attachThemeSlugsToRiddles(supabase, riddles);
+  const riddleThemes = await riddleThemeRepo.findByRiddleIdsWithTheme(
+    supabase,
+    riddles.map((riddle) => riddle.id),
+  );
+  const themeSlugsByRiddleId = new Map<string, string[]>();
+  const primaryThemeByRiddleId = new Map<string, PrimaryRiddleTheme>();
+
+  for (const row of riddleThemes) {
+    const slugs = themeSlugsByRiddleId.get(row.riddleId) ?? [];
+    slugs.push(row.theme.slug);
+    themeSlugsByRiddleId.set(row.riddleId, slugs);
+
+    if (!primaryThemeByRiddleId.has(row.riddleId)) {
+      primaryThemeByRiddleId.set(row.riddleId, {
+        title: row.theme.title,
+        slug: row.theme.slug,
+      });
+    }
+  }
+
   const riddleAttempts = await attemptService.getAttemptsByUserAndSequenceIds(supabase, userId, sequenceIds);
 
   const voltScoresBySequenceId = getVoltScoresBySequenceId(
     riddleAttempts,
-    riddlesWithThemes.map((riddle) => ({
+    riddles.map((riddle) => ({
       sequenceId: riddle.moveSequence.id,
       totalMoveCount: getPlayerMoveCount(riddle.moveSequence.moves),
       rating: getRiddleRatingForScoring(riddle.rating),
@@ -54,8 +75,7 @@ export async function getUserAttemptedRiddlesForDisplay(
 
   const items: AttemptedRiddleListItem[] = [];
 
-  for (const riddleWithThemes of riddlesWithThemes) {
-    const { themeSlugs, ...riddle } = riddleWithThemes;
+  for (const riddle of riddles) {
     const game = riddle.gameId ? (gameMap[riddle.gameId] ?? null) : null;
     if (!game && !riddle.moveSequence.displayFen) continue;
 
@@ -67,7 +87,8 @@ export async function getUserAttemptedRiddlesForDisplay(
     items.push({
       riddle,
       game,
-      themeSlugs,
+      themeSlugs: themeSlugsByRiddleId.get(riddle.id) ?? [],
+      primaryTheme: primaryThemeByRiddleId.get(riddle.id) ?? null,
       lastPlayedAt: latest.startedAt,
       accuracyPercent: attemptStats.accuracyPercent,
       voltScore: voltScoresBySequenceId[riddle.moveSequence.id] ?? null,
