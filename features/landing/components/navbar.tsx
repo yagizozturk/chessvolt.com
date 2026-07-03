@@ -43,7 +43,7 @@ function BrandLogo({ onNavigate, variant = "header" }: { onNavigate?: () => void
       )}
       aria-label={sheet ? "ChessVolt - Go to home" : "ChessVolt - Home"}
     >
-      <Zap className={cn("text-primary", sheet ? "h-5 w-5" : "fill-primary h-6 w-6")} />
+      <Zap className="text-primary fill-primary h-6 w-6 shrink-0" />
       <span>ChessVolt</span>
     </Link>
   );
@@ -117,7 +117,7 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="border-white/10 bg-slate-950/95 px-8 text-white backdrop-blur-md">
               <SheetTitle className="sr-only">Menu</SheetTitle>
-              <div className="mb-8 flex items-center">
+              <div className="mb-8 mt-4 flex h-8 items-center pr-10">
                 <BrandLogo variant="sheet" onNavigate={closeSheet} />
               </div>
 

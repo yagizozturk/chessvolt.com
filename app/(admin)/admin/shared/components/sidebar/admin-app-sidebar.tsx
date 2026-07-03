@@ -3,6 +3,7 @@
 import {
   BookOpenIcon,
   ClipboardListIcon,
+  FlaskConicalIcon,
   FolderOpenIcon,
   Gamepad2Icon,
   HelpCircleIcon,
@@ -94,6 +95,12 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "Create opening", url: "/admin/openings/create" },
       { title: "Bulk variants", url: "/admin/openings/variants/bulk" },
     ],
+  },
+  {
+    title: "Test",
+    url: "/admin/test/board",
+    icon: <FlaskConicalIcon />,
+    items: [{ title: "Board", url: "/admin/test/board" }],
   },
 ];
 
