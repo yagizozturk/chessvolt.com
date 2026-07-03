@@ -27,8 +27,9 @@ import "@lichess-org/chessground/assets/chessground.brown.css";
 type VoltBoardProps = {
   sourceId: string;
   initialFen?: string;
-  size?: number;
+
   viewOnly?: boolean;
+  coordinates?: boolean;
   playerOrientation?: "white" | "black";
   drawHintMove?: string | null;
   onCheckMove: (payload: MoveAttemptPayload) => boolean;
@@ -47,8 +48,8 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   {
     sourceId,
     initialFen,
-    size = 584,
     viewOnly = false,
+    coordinates = true,
     playerOrientation,
     drawHintMove,
     onCheckMove,
@@ -74,7 +75,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     sourceId,
     orientationRef,
     viewOnly,
-    coordinates: true,
+    coordinates,
     lastMoveRef,
     onMove: (from, to) => {
       clearCustomHighlightsTimeout();
@@ -234,9 +235,9 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 
   return (
     <>
-      {/* <div className="board-wrapper"> In order to make board responsive */}
-      <div ref={boardRef} className="cardinal purple" style={{ width: size, height: size }} />
-      {/* </div> */}
+      <div className="board-wrapper">
+        <div ref={boardRef} className="cardinal purple" style={{ width: "100%", height: "100%" }} />
+      </div>
     </>
   );
 });

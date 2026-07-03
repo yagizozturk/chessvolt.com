@@ -8,14 +8,12 @@ import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 
 type VoltBoardNavigatorProps = {
   pgn: string;
-  size?: number;
   sourceId?: string;
   onFenChange?: (fen: string) => void;
 };
 
 export default function VoltBoardNavigator({
   pgn,
-  size = 320,
   sourceId = "volt-board-navigator",
   onFenChange,
 }: VoltBoardNavigatorProps) {
@@ -47,7 +45,6 @@ export default function VoltBoardNavigator({
       <VoltBoard
         sourceId={sourceId}
         initialFen={fen}
-        size={size}
         viewOnly
         onCheckMove={() => true}
         onSuccessMovePlayed={() => {}}

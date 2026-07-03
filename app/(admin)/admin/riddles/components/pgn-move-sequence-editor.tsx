@@ -146,7 +146,6 @@ export function PgnMoveSequenceEditor({
           key={`${sourceId}-${boardFen}`}
           sourceId={sourceId}
           initialFen={boardFen}
-          size={380}
           viewOnly
           onCheckMove={() => true}
           onSuccessMovePlayed={() => {}}

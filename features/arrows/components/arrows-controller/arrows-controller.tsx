@@ -117,7 +117,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
   }
 
   return (
-    <div className="container mx-auto max-w-6xl px-20 py-14">
+    <div className="container mx-auto max-w-6xl p-8 lg:px-20 lg:py-14">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}

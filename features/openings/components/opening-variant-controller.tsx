@@ -17,7 +17,7 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Spinner } from "@/components/ui/spinner";
-import { useMoveSequenceController, MAX_HINT_COUNT } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { AddToPracticeButton } from "@/features/user-practice-opening-variant/components/add-to-practice-button";
@@ -225,7 +225,7 @@ export default function OpeningVariantController({
     : "You completed this line. Return to the opening when you are ready.";
 
   return (
-    <div className="container mx-auto max-w-6xl px-20 py-10">
+    <div className="container mx-auto max-w-6xl p-8 lg:px-20 lg:py-10">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
@@ -249,7 +249,6 @@ export default function OpeningVariantController({
             ref={boardRef}
             sourceId={sessionId}
             initialFen={variant.moveSequence.initialFen}
-            size={584}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}
@@ -265,9 +264,7 @@ export default function OpeningVariantController({
                 </Link>
               </Button>
             </div>
-            <div className="flex items-center gap-2 text-xl font-bold">
-              {variant.title ?? "Untitled variant"}
-            </div>
+            <div className="flex items-center gap-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
             <div>
               {canAddToPracticeList ? (
                 <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />

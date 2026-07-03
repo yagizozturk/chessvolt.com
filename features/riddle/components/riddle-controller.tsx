@@ -32,6 +32,7 @@ import {
   createSequenceCompleteStats,
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
@@ -55,6 +56,7 @@ export default function RiddleController({
   userCollectionIdsHasCurrentRiddle = [],
 }: RiddleControllerProps) {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const boardRef = useRef<VoltBoardHandle>(null);
   const sequenceId = riddle.moveSequence.id; // Every sequence has its own moves and PGN. Every Riddle has sequenceId
   const [replayKey, setReplayKey] = useState(0);
@@ -282,7 +284,7 @@ export default function RiddleController({
   const turnLabel = getTurnLabel(riddle.moveSequence.initialFen);
 
   return (
-    <div className="container mx-auto max-w-6xl px-20 py-10">
+    <div className="container mx-auto max-w-6xl p-8 lg:px-20 lg:py-10">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
@@ -309,13 +311,13 @@ export default function RiddleController({
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
       ) : null}
       <Notifier goals={sortedGoals} />
-      <div className="flex flex-col gap-4 lg:flex-row">
+      <div className="flex flex-col gap-10 lg:flex-row lg:gap-4">
         <div key={sessionId} className="relative w-full min-w-0 rounded-2xl lg:w-auto lg:shrink-0" data-tour="board">
           <VoltBoard
             ref={boardRef}
             sourceId={sessionId}
             initialFen={riddle.moveSequence.initialFen}
-            size={584}
+            coordinates={!isMobile}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}
