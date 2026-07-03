@@ -27,6 +27,7 @@ import {
   createSequenceCompleteStats,
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
+import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -215,6 +216,8 @@ export default function OpeningVariantController({
     setReplayKey((key) => key + 1);
   };
 
+  const turnLabel = getTurnLabel(variant.moveSequence.initialFen);
+
   const successDescription = nextVariantId
     ? "You completed this line. Continue to the next variant when you are ready."
     : "You completed this line. Return to the opening when you are ready.";
@@ -253,7 +256,12 @@ export default function OpeningVariantController({
             <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>
             {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="mt-2 w-full" /> : null}
           </div>
-          <GoalViewer goals={sortedGoals} progressValue={progressValue} hintCount={hintCount} />
+          <GoalViewer
+            goals={sortedGoals}
+            progressValue={progressValue}
+            hintCount={hintCount}
+            turnLabel={turnLabel}
+          />
           <div className="mt-auto">
             {canAddToPracticeList ? (
               <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />

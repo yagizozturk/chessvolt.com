@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronLeft, Eye, HelpCircle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -13,9 +14,8 @@ import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
-import { DiaTextReveal } from "@/components/ui/dia-text-reveal";
 import { Spinner } from "@/components/ui/spinner";
-import { useMoveSequenceController, MAX_HINT_COUNT } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
 import {
   AddToMyCollectionPicker,
@@ -32,7 +32,7 @@ import {
   createSequenceCompleteStats,
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
-import { getOrientationFromFen } from "@/lib/chess/getOrientationFromFen";
+import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -279,8 +279,7 @@ export default function RiddleController({
   // ================================================================================================
   // Get the player orientation from the FEN and set the turn label
   // ================================================================================================
-  const playerOrientation = getOrientationFromFen(riddle.moveSequence.initialFen);
-  const turnLabel = playerOrientation === "black" ? "Black to Play" : "White to Play";
+  const turnLabel = getTurnLabel(riddle.moveSequence.initialFen);
 
   return (
     <div className="container mx-auto max-w-6xl px-20 py-10">
@@ -311,11 +310,7 @@ export default function RiddleController({
       ) : null}
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div
-          key={sessionId}
-          className="relative w-full min-w-0 rounded-2xl border-5 border-white/80 lg:w-auto lg:shrink-0"
-          data-tour="board"
-        >
+        <div key={sessionId} className="relative w-full min-w-0 rounded-2xl lg:w-auto lg:shrink-0" data-tour="board">
           <VoltBoard
             ref={boardRef}
             sourceId={sessionId}
@@ -328,32 +323,46 @@ export default function RiddleController({
           />
         </div>
         <div className="bg-card relative flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
-          <div className="relative flex items-center justify-center">
-            <Button variant="ghost" size="icon-sm" asChild className="absolute left-0">
-              <Link href={parentCollectionUrl} aria-label="Back to collection">
-                <ChevronLeft className="size-5" />
-              </Link>
-            </Button>
-            <DiaTextReveal
-              className="text-lg font-bold tracking-tight"
-              text={turnLabel}
-              colors={["#A97CF8", "#F38CB8", "#FDCC92"]}
-            />
+          <div className="flex justify-between">
+            <div>
+              <Button variant="voltIcon" asChild>
+                <Link href={parentCollectionUrl} aria-label="Back to collection">
+                  <ChevronLeft className="size-5" />
+                </Link>
+              </Button>
+            </div>
+            <div className="flex items-center gap-2 text-xl font-bold">
+              <Image
+                src="/images/icons/icon-riddle.png"
+                alt=""
+                aria-hidden
+                width={30}
+                height={30}
+                className="size-7 shrink-0"
+              />
+              Riddles
+            </div>
+            <div>
+              {isUserLoggedIn && userCollections.length > 0 ? (
+                <AddToMyCollectionPicker
+                  riddleId={riddle.id}
+                  collections={userCollections}
+                  savedCollectionIds={userCollectionIdsHasCurrentRiddle}
+                />
+              ) : null}
+            </div>
           </div>
-          <GoalViewer goals={sortedGoals} progressValue={progressValue} hintCount={hintCount} />
+
+          <GoalViewer goals={sortedGoals} progressValue={progressValue} hintCount={hintCount} turnLabel={turnLabel} />
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
-              {isUserLoggedIn && userCollections.length > 0 ? (
-                <div className="min-w-0 flex-1">
-                  <AddToMyCollectionPicker
-                    riddleId={riddle.id}
-                    collections={userCollections}
-                    savedCollectionIds={userCollectionIdsHasCurrentRiddle}
-                  />
-                </div>
-              ) : null}
               {!isCompleted ? (
-                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= MAX_HINT_COUNT} className="min-w-0 flex-1">
+                <Button
+                  variant="volt"
+                  onClick={handleHintClick}
+                  disabled={hintCount >= MAX_HINT_COUNT}
+                  className="min-w-0 flex-1"
+                >
                   <Eye data-icon="inline-start" />
                   Hint
                 </Button>
@@ -371,8 +380,8 @@ export default function RiddleController({
             </div>
             {!isCompleted ? (
               <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
-                First click shows a stronger text hint. Second click highlights which piece to move. Third click
-                shows the exact move.
+                First click shows a stronger text hint. Second click highlights which piece to move. Third click shows
+                the exact move.
               </p>
             ) : null}
           </div>

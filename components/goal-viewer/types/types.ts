@@ -7,15 +7,13 @@ type GoalsProps = {
 export type GoalViewerProps = GoalsProps & {
   progressValue: number;
   hintCount?: number;
+  turnLabel: string;
 };
 
 export type ActiveGoalCardProps = {
   goal: MoveGoal;
   hintCount?: number;
-};
-
-export type NextGoalRowProps = {
-  goal: MoveGoal;
+  turnLabel: string;
 };
 
 export type GoalStepperProps = GoalsProps;

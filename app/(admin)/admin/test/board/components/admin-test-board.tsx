@@ -123,36 +123,22 @@ export function AdminTestBoard() {
           )}
 
           <div className="flex items-center gap-3">
-            <Switch
-              id="riddle-layout"
-              checked={simulateRiddleLayout}
-              onCheckedChange={setSimulateRiddleLayout}
-            />
+            <Switch id="riddle-layout" checked={simulateRiddleLayout} onCheckedChange={setSimulateRiddleLayout} />
             <Label htmlFor="riddle-layout">Simulate riddle layout (board + side panel)</Label>
           </div>
 
           <div className="text-muted-foreground grid gap-1 font-mono text-xs sm:grid-cols-3">
-            <span>Viewport: {viewport.width} × {viewport.height}</span>
+            <span>
+              Viewport: {viewport.width} × {viewport.height}
+            </span>
             <span>Board size: {boardSize}px</span>
             <span>Mode: {sizingMode}</span>
           </div>
         </CardContent>
       </Card>
 
-      <div
-        className={
-          simulateRiddleLayout
-            ? "flex flex-col gap-4 lg:flex-row"
-            : "mx-auto max-w-2xl"
-        }
-      >
-        <div
-          className={
-            simulateRiddleLayout
-              ? "relative w-full min-w-0 rounded-2xl border-5 border-white/80 lg:w-auto lg:shrink-0"
-              : "w-full"
-          }
-        >
+      <div className={simulateRiddleLayout ? "flex flex-col gap-4 lg:flex-row" : "mx-auto max-w-2xl"}>
+        <div className={simulateRiddleLayout ? "relative w-full min-w-0 rounded-2xl lg:w-auto lg:shrink-0" : "w-full"}>
           {boardArea}
         </div>
 
@@ -160,8 +146,8 @@ export function AdminTestBoard() {
           <div className="bg-card flex min-h-[200px] min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
             <p className="text-center text-lg font-bold">White to Play</p>
             <p className="text-muted-foreground text-sm">
-              Side panel placeholder — resize the browser to test how the board behaves next to this
-              column on lg+ breakpoints.
+              Side panel placeholder — resize the browser to test how the board behaves next to this column on lg+
+              breakpoints.
             </p>
             <div className="bg-muted mt-auto h-10 rounded-md" />
           </div>

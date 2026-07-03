@@ -11,17 +11,18 @@ import { Button } from "../ui/button";
 type VoltCoachProps = {
   title: string;
   message: string;
-  ttsKey: number;
+  ttsKey: string | number;
+  ttsText?: string;
 };
 
-export function VoltCoach({ title, message, ttsKey }: VoltCoachProps) {
+export function VoltCoach({ title, message, ttsKey, ttsText }: VoltCoachProps) {
   const enabled = useBoardSoundsStore((s) => s.enabled);
   const toggle = useBoardSoundsStore((s) => s.toggle);
   const muted = !enabled;
 
   return (
-    <div className="flex gap-4 rounded-xl p-4">
-      <TTSController key={ttsKey} text={message} muted={muted} />
+    <div className="relative flex gap-4 rounded-xl p-4">
+      <TTSController key={ttsKey} text={ttsText ?? message} muted={muted} />
       <div className="shrink-0">
         <Image
           src="/images/avatar/volt-coach-avatar.png"
@@ -31,21 +32,23 @@ export function VoltCoach({ title, message, ttsKey }: VoltCoachProps) {
           className="rounded-xl"
         />
       </div>
-      <div className="min-w-0 flex-1">
+      {/* min-w-0 needs to be refactored after max 2 words prompt */}
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex">
-          <div className="flex-1 truncate text-lg font-bold">{title}</div>
-          <div className="flex-shrink-0">
-            <Button
-              variant="ghost"
-              aria-label={muted ? "Unmute coach" : "Mute coach"}
-              onClick={toggle}
-            >
-              {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
-            </Button>
-          </div>
+          <div className="flex-1 truncate text-lg font-semibold">{title}</div>
         </div>
-        <div className="text-muted-foreground w-full leading-normal">{message}</div>
+        <div className="text-muted-foreground w-full pr-10 leading-normal">{message ? message : null}</div>
       </div>
+      <Button
+        type="button"
+        variant="voltIcon"
+        size="icon-sm"
+        className="absolute right-4 bottom-4"
+        aria-label={muted ? "Unmute coach" : "Mute coach"}
+        onClick={toggle}
+      >
+        {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+      </Button>
     </div>
   );
 }

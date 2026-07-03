@@ -1,6 +1,6 @@
 "use client";
 
-import { Star } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -73,9 +73,15 @@ export function AddToMyCollectionPicker({ riddleId, collections, savedCollection
 
   return (
     <>
-      <Button type="button" variant="voltGreen" className="w-full" onClick={() => setOpen(true)} disabled={isPending}>
-        {isPending ? <Spinner data-icon="inline-start" /> : <Star data-icon="inline-start" />}
-        Add to..
+      <Button
+        type="button"
+        variant="voltIcon"
+        onClick={() => setOpen(true)}
+        disabled={isPending}
+        aria-label="Add to collection"
+        title="Add to collection"
+      >
+        {isPending ? <Spinner /> : <Plus className="size-5" />}
       </Button>
       <CommandDialog
         open={open}

@@ -2,7 +2,11 @@ import { VoltCoach } from "@/components/volt-coach/volt-coach";
 
 import type { ActiveGoalCardProps } from "../types/types";
 
-export function ActiveGoalCard({ goal, hintCount = 0 }: ActiveGoalCardProps) {
-  const message = hintCount >= 1 && goal.secondaryHint ? goal.secondaryHint : goal.initialHint;
-  return <VoltCoach title={goal.title} message={message} ttsKey={goal.ply} />;
+import { buildCoachMessage } from "./build-coach-message";
+
+export function ActiveGoalCard({ goal, hintCount = 0, turnLabel }: ActiveGoalCardProps) {
+  const title = hintCount === 0 ? turnLabel : goal.title;
+  const message = buildCoachMessage(goal, hintCount);
+  const ttsText = hintCount >= 3 ? "" : message;
+  return <VoltCoach title={title} message={message} ttsText={ttsText} ttsKey={`${goal.ply}-${hintCount}`} />;
 }
