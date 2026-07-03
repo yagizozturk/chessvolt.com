@@ -287,7 +287,7 @@ export default function RiddleController({
       <SolveSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
-        title="Riddle solved"
+        title="Riddle Solved"
         description={successDescription}
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
@@ -358,7 +358,7 @@ export default function RiddleController({
             <div className="flex gap-2" data-tour="hint-button">
               {!isCompleted ? (
                 <Button
-                  variant="volt"
+                  variant="voltGreen"
                   onClick={handleHintClick}
                   disabled={hintCount >= MAX_HINT_COUNT}
                   className="min-w-0 flex-1"

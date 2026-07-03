@@ -5,5 +5,9 @@ export function buildCoachMessage(goal: MoveGoal, hintCount: number): string {
     return "";
   }
 
-  return hintCount >= 2 ? goal.secondaryHint : goal.initialHint;
+  if (hintCount < 2) {
+    return goal.initialHint;
+  }
+
+  return `... ${goal.secondaryHint}`;
 }
