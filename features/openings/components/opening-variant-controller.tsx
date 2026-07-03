@@ -1,5 +1,7 @@
 "use client";
 
+import { ChevronLeft, Eye } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -223,7 +225,7 @@ export default function OpeningVariantController({
     : "You completed this line. Return to the opening when you are ready.";
 
   return (
-    <div className="container mx-auto max-w-6xl px-20 py-14">
+    <div className="container mx-auto max-w-6xl px-20 py-10">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
@@ -237,9 +239,12 @@ export default function OpeningVariantController({
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
       />
+      {successDialogOpen ? (
+        <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
+      ) : null}
       <Notifier goals={sortedGoals} />
       <div className="flex flex-col gap-4 lg:flex-row">
-        <div key={sessionId} className="relative w-full min-w-0 lg:w-auto lg:shrink-0" data-tour="board">
+        <div key={sessionId} className="relative w-full min-w-0 rounded-2xl lg:w-auto lg:shrink-0" data-tour="board">
           <VoltBoard
             ref={boardRef}
             sourceId={sessionId}
@@ -251,41 +256,59 @@ export default function OpeningVariantController({
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
         </div>
-        <div className="bg-card flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
-          <div className="flex flex-col items-center justify-center gap-1 text-center">
-            <span className="text-lg font-bold">{variant.title ?? "Untitled variant"}</span>
-            {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="mt-2 w-full" /> : null}
+        <div className="bg-card relative flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
+          <div className="flex justify-between">
+            <div>
+              <Button variant="voltIcon" asChild>
+                <Link href={parentOpeningUrl} aria-label="Back to opening">
+                  <ChevronLeft className="size-5" />
+                </Link>
+              </Button>
+            </div>
+            <div className="flex items-center gap-2 text-xl font-bold">
+              {variant.title ?? "Untitled variant"}
+            </div>
+            <div>
+              {canAddToPracticeList ? (
+                <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />
+              ) : null}
+            </div>
           </div>
-          <GoalViewer
-            goals={sortedGoals}
-            progressValue={progressValue}
-            hintCount={hintCount}
-            turnLabel={turnLabel}
-          />
+          {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="w-full" /> : null}
+          <GoalViewer goals={sortedGoals} progressValue={progressValue} hintCount={hintCount} turnLabel={turnLabel} />
           <div className="mt-auto">
-            {canAddToPracticeList ? (
-              <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />
-            ) : null}
-            {!isCompleted ? (
-              <div data-tour="hint-button">
-                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= MAX_HINT_COUNT} className="w-full">
+            <div className="flex gap-2" data-tour="hint-button">
+              {!isCompleted ? (
+                <Button
+                  variant="voltGreen"
+                  onClick={handleHintClick}
+                  disabled={hintCount >= MAX_HINT_COUNT}
+                  className="min-w-0 flex-1"
+                >
+                  <Eye data-icon="inline-start" />
                   Hint
                 </Button>
-              </div>
-            ) : (
-              <div className="mt-4">
-                <Button variant="volt" onClick={handleContinueClick} disabled={isContinuePending} className="w-full">
+              ) : (
+                <Button
+                  variant="volt"
+                  onClick={handleContinueClick}
+                  disabled={isContinuePending}
+                  className="min-w-0 flex-1"
+                >
                   {isContinuePending && <Spinner data-icon="inline-start" />}
                   {successButtonLabel}
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
+            {!isCompleted ? (
+              <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
+                First click shows a stronger text hint. Second click highlights which piece to move. Third click shows
+                the exact move.
+              </p>
+            ) : null}
           </div>
         </div>
       </div>
-      {isCompleted ? (
-        <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-50 size-full max-h-none max-w-none" />
-      ) : null}
     </div>
   );
 }
