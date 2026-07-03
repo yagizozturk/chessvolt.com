@@ -37,7 +37,7 @@ export type RecordSequenceAttemptEventPayload = {
   moveUci?: string | null;
   expectedUci?: string | null;
   isCorrect?: boolean | null;
-  hintLevel?: 1 | 2 | null;
+  hintLevel?: 1 | 2 | 3 | null;
   timeFromStartMs?: number | null;
 };
 

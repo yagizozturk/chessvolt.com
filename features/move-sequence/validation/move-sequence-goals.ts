@@ -9,7 +9,8 @@ export function isMoveGoal(value: unknown): value is MoveGoal {
     typeof o.move === "string" &&
     (o.card === undefined || typeof o.card === "string") &&
     typeof o.title === "string" &&
-    typeof o.description === "string" &&
+    (typeof o.initialHint === "string" || typeof o.description === "string") &&
+    (typeof o.secondaryHint === "string" || typeof o.second_description === "string") &&
     typeof o.successMessage === "string" &&
     typeof o.isCompleted === "boolean"
   );

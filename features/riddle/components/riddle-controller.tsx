@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { DiaTextReveal } from "@/components/ui/dia-text-reveal";
 import { Spinner } from "@/components/ui/spinner";
-import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { useMoveSequenceController, MAX_HINT_COUNT } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
 import {
   AddToMyCollectionPicker,
@@ -247,7 +247,7 @@ export default function RiddleController({
 
     void recordEvent({
       eventType: "hint",
-      hintLevel: nextHintCount as 1 | 2,
+      hintLevel: nextHintCount as 1 | 2 | 3,
       expectedUci: currentCorrectMove,
     });
   };
@@ -340,7 +340,7 @@ export default function RiddleController({
               colors={["#A97CF8", "#F38CB8", "#FDCC92"]}
             />
           </div>
-          <GoalViewer goals={sortedGoals} progressValue={progressValue} />
+          <GoalViewer goals={sortedGoals} progressValue={progressValue} hintCount={hintCount} />
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
               {isUserLoggedIn && userCollections.length > 0 ? (
@@ -353,7 +353,7 @@ export default function RiddleController({
                 </div>
               ) : null}
               {!isCompleted ? (
-                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= 2} className="min-w-0 flex-1">
+                <Button variant="volt" onClick={handleHintClick} disabled={hintCount >= MAX_HINT_COUNT} className="min-w-0 flex-1">
                   <Eye data-icon="inline-start" />
                   Hint
                 </Button>
@@ -371,7 +371,8 @@ export default function RiddleController({
             </div>
             {!isCompleted ? (
               <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
-                First click highlights which piece to move. Second click shows the exact move.
+                First click shows a stronger text hint. Second click highlights which piece to move. Third click
+                shows the exact move.
               </p>
             ) : null}
           </div>

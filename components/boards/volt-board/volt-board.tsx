@@ -37,9 +37,7 @@ type VoltBoardProps = {
 };
 
 // ============================================================================
-// Hint level burada hangi hint i göstereceğini belirliyor
-// 1 olursa sadece yuvarlak içine alır
-// 2 olursa başlangıç ve bitiş karesi arasına çizgi çeker
+// Hint level: 1 = text only (no board shapes), 2 = highlight origin, 3+ = origin-to-dest arrow
 // ============================================================================
 export type VoltBoardHandle = {
   showHint: (hintLevel: number) => void;
@@ -221,6 +219,9 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
         const orig = parsedUci.from as Key;
         const dest = parsedUci.to as Key;
         if (hintLevel <= 1) {
+          return;
+        }
+        if (hintLevel === 2) {
           ground.current.setAutoShapes([{ orig, brush: "red" }]);
         } else {
           ground.current.setAutoShapes([{ orig, dest, brush: "red" }]);

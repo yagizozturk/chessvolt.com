@@ -13,6 +13,6 @@ export function isSequenceAttemptEventType(value: string): value is SequenceAtte
   return (SEQUENCE_ATTEMPT_EVENT_TYPES as string[]).includes(value);
 }
 
-export function isHintLevel(value: number | null | undefined): value is 1 | 2 {
-  return value === 1 || value === 2;
+export function isHintLevel(value: number | null | undefined): value is 1 | 2 | 3 {
+  return value === 1 || value === 2 || value === 3;
 }
