@@ -9,7 +9,7 @@ export const QUICK_LINKS = [
     title: "Library",
     description: "Browse curated riddle collections.",
     href: "/collection",
-    icon: "/images/icons/icon-book-collection.png",
+    icon: "/images/icons/icon-library-tr.png",
   },
   {
     title: "Riddles",

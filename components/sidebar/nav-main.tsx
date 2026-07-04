@@ -54,8 +54,8 @@ function isGroupActive(pathname: string, item: NavMainItem) {
 function getMostSpecificMatchingSubUrl(pathname: string, items: NavSubItem[] | undefined) {
   if (!items?.length) return null;
 
-  const matches = items.filter((sub): sub is { title: string; url: string } =>
-    isNavLink(sub) && isActivePath(pathname, sub.url),
+  const matches = items.filter(
+    (sub): sub is { title: string; url: string } => isNavLink(sub) && isActivePath(pathname, sub.url),
   );
   if (!matches.length) return null;
 
@@ -99,11 +99,11 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                   isActive={groupActive}
                   aria-label={item.title}
                   aria-current={groupActive ? "page" : undefined}
-                  className="data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
+                  className="text-lg group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0 data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] md:text-sm"
                 >
                   <Link href={item.url}>
                     <NavItemIcon item={item} />
-                    <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    <span className="text-lg group-data-[collapsible=icon]:hidden md:text-sm">{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -119,10 +119,10 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     isActive={groupActive}
                     aria-label={item.title}
                     aria-current={groupActive ? "true" : undefined}
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0"
+                    className="text-lg data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0 data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] md:text-sm"
                   >
                     <NavItemIcon item={item} />
-                    <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
+                    <span className="text-lg group-data-[collapsible=icon]:hidden md:text-sm">{item.title}</span>
                     <MoreHorizontalIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
@@ -132,12 +132,17 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     align={isMobile ? "end" : "start"}
                     className="bg-card-shadow text-sidebar-foreground min-w-56 rounded-lg ring-0"
                   >
-                    <DropdownMenuLabel className="text-primary text-sm font-semibold tracking-wide uppercase">
+                    <DropdownMenuLabel className="text-primary text-base font-semibold tracking-wide uppercase md:text-sm">
                       {item.title}
                     </DropdownMenuLabel>
                     {item.items!.map((subItem) =>
                       subItem.onClick ? (
-                        <DropdownMenuItem key={subItem.title} onClick={subItem.onClick} disabled={subItem.isLoading}>
+                        <DropdownMenuItem
+                          key={subItem.title}
+                          onClick={subItem.onClick}
+                          disabled={subItem.isLoading}
+                          className="text-base md:text-sm"
+                        >
                           {subItem.isLoading ? <Spinner data-icon="inline-start" /> : null}
                           {subItem.title}
                         </DropdownMenuItem>
@@ -145,7 +150,10 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                         <DropdownMenuItem
                           asChild
                           key={subItem.title}
-                          className={cn(activeSubUrl === subItem.url && "bg-accent font-medium text-accent-foreground")}
+                          className={cn(
+                            "text-base md:text-sm",
+                            activeSubUrl === subItem.url && "bg-accent text-accent-foreground font-medium",
+                          )}
                         >
                           <a href={subItem.url} aria-current={activeSubUrl === subItem.url ? "page" : undefined}>
                             {subItem.title}

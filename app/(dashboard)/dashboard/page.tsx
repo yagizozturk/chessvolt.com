@@ -48,7 +48,7 @@ export default async function Page() {
   const recentCollections = userCollections.slice(0, 2);
 
   return (
-    <div className="container mx-auto max-w-6xl px-6 py-10">
+    <div className="container mx-auto max-w-6xl px-6 pt-4 pb-10 md:pt-10">
       <div className="flex flex-col gap-8">
         {/* Welcome title and message */}
         <PageHeader
