@@ -11,9 +11,17 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <SidebarProvider open={false}>
       <AppSidebar openings={openings} />
+      {/* 
+        Note:
+        overflow-auto keeps the sidebar fixed while content is scrollable. 
+        Shadcn standart is like that. no position-fixed for the sidebar. TODO: Check Shadcn
+      */}
       <SidebarInset className="overflow-auto">{children}</SidebarInset>
-      {/* Single dialog instance for the whole dashboard — opened by auto-start
-          (user-collection first visit after onboarding) or by sidebar "How Volt Works" (any time). */}
+      {/*
+        Note: Volt Explain Dialog 
+        Single dialog instance for the whole dashboard — opened by auto-start
+        (user-collection first visit after onboarding) or by sidebar "How Volt Works" (any time). 
+      */}
       <VoltExplainDialog />
     </SidebarProvider>
   );

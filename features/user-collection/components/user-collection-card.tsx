@@ -23,8 +23,9 @@ export function UserCollectionCard({ collection }: UserCollectionCardProps) {
   const imageSrc = getCollectionCoverImageSrc(collection.coverImageUrl);
 
   return (
-    <div className="bg-card border-b-card-shadow flex h-full flex-col items-stretch gap-2 rounded-lg border-b-[6px]">
+    <div className="bg-card border-b-card-shadow flex h-full flex-col rounded-lg border-b-[6px]">
       <div style={{ background: collection.coverImageColor }} className="flex overflow-hidden rounded-t-lg">
+        {/* Note: min-w-0, prevents badge text overflow in flex. can be used with trncate also */}
         <div className="flex min-w-0 flex-1 items-end p-4">
           <div className="flex flex-wrap gap-2">
             <Badge variant="default">
@@ -41,15 +42,23 @@ export function UserCollectionCard({ collection }: UserCollectionCardProps) {
           </div>
         </div>
         <div className="overflow-hidden">
-          <Image src={imageSrc} alt={collection.title} className="object-contain" width={268} height={200} />
+          <Image src={imageSrc} alt={collection.title} className="object-contain" width={170} height={100} />
         </div>
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-6">
-        <h2 className="text-3xl font-bold">{collection.title}</h2>
-        <p className="text-muted-foreground text-base">{collection.description}</p>
+      {/* 
+        Note: flex-1, pushes the content to the bottom of the card, takes the full size
+        flex-1 makes The bottom section stretches to fill remaining space, 
+        and mt-auto pushes the action bar to the bottom. All cards in a row get their buttons aligned,
+        regardless of content length. 
+      */}
+      <div className="flex flex-1 flex-col gap-2 p-4">
+        <h3 className="text-xl font-bold md:text-2xl">{collection.title}</h3>
+        <p className="text-muted-foreground text-sm md:text-base">{collection.description}</p>
+        {/* Note: mt-auto, pushes the buttons to the bottom of the card */}
         <div className="mt-auto flex flex-wrap items-center gap-3">
           <EditUserListDialog collection={collection} />
           <DeleteUserListDialog collection={collection} />
+          {/* Note: shrink-0, prevents the button from shrinking */}
           <Link
             href={`/user-collection/${collection.slug}`}
             className={cn(buttonVariants({ variant: "voltCompact", size: "xs" }), "ml-auto shrink-0")}
