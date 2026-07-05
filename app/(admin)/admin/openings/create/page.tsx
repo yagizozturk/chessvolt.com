@@ -1,12 +1,7 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { OpeningForm } from "../main-opening/components/forms/opening-form";
 
@@ -23,9 +18,7 @@ export default function AdminCreateOpeningPage() {
       <Card>
         <CardHeader>
           <CardTitle>New opening</CardTitle>
-          <CardDescription>
-            Create a parent opening; you can add variants afterward.
-          </CardDescription>
+          <CardDescription>Create a parent opening; you can add variants afterward.</CardDescription>
         </CardHeader>
         <CardContent>
           <OpeningForm />

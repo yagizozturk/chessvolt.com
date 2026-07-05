@@ -15,7 +15,6 @@ import "@lichess-org/chessground/assets/chessground.brown.css";
 type DisplayBoardProps = {
   sourceId: string;
   initialFen?: string;
-  size?: number;
   coordinates?: boolean;
   playerOrientation?: "white" | "black";
 };
@@ -23,7 +22,6 @@ type DisplayBoardProps = {
 export default function DisplayBoard({
   sourceId,
   initialFen,
-  size = 200,
   coordinates = false,
   playerOrientation,
 }: DisplayBoardProps) {
@@ -46,5 +44,5 @@ export default function DisplayBoard({
     updateBoard();
   }, [initialFen, playerOrientation, updateBoard]);
 
-  return <div ref={boardRef} className="cardinal purple" style={{ width: size, height: size }} />;
+  return <div ref={boardRef} className="cardinal purple size-full" />;
 }

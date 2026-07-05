@@ -32,9 +32,7 @@ export default async function AdminOnboardingOptionThemesPage({ searchParams }: 
         <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-xl font-bold tracking-tight">Onboarding option themes</h2>
-            <p className="text-muted-foreground text-sm">
-              {items.length} links between onboarding answers and themes
-            </p>
+            <p className="text-muted-foreground text-sm">{items.length} links between onboarding answers and themes</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Link

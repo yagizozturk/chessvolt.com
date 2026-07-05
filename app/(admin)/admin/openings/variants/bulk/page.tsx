@@ -1,7 +1,8 @@
-import { getAllOpenings } from "@/features/openings/services/openings.service";
-import { getAdminUser } from "@/lib/supabase/auth";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
+import { getAllOpenings } from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
 
 import { ImportVariantsForm } from "./import-variants-form";
 
@@ -80,9 +81,7 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
         </div>
       )}
       {openings.length === 0 ? (
-        <p className="text-muted-foreground py-4 text-center">
-          Önce bir opening oluşturmanız gerekiyor.
-        </p>
+        <p className="text-muted-foreground py-4 text-center">Önce bir opening oluşturmanız gerekiyor.</p>
       ) : (
         <ImportVariantsForm />
       )}

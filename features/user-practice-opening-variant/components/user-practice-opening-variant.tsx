@@ -44,7 +44,6 @@ export function UserPracticeOpeningVariantList({
                 id={openingVariant.id}
                 name={openingVariant.title ?? "Untitled variant"}
                 group={openingVariant.group}
-                size={240}
                 href={`/openings/variant/${openingVariant.id}`}
                 fen={openingVariant.moveSequence.displayFen ?? openingVariant.moveSequence.initialFen}
                 description={openingVariant.description}

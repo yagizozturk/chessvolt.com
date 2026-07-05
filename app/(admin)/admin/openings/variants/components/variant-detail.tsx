@@ -1,18 +1,14 @@
 "use client";
 
-import { deleteOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+
+import { deleteOpeningVariantAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
+
 import { VariantEditForm } from "../edit/variant-edit-form";
 
 type Props = {
@@ -26,10 +22,7 @@ export function VariantDetail({ variant }: Props) {
     <div className="container mx-auto max-w-6xl space-y-6 px-4 py-8">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link
-            href={`/admin/openings/main-opening/${variant.openingId}`}
-            className="flex items-center gap-2"
-          >
+          <Link href={`/admin/openings/main-opening/${variant.openingId}`} className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to variants
           </Link>
@@ -51,8 +44,7 @@ export function VariantDetail({ variant }: Props) {
             <Button
               variant="destructive"
               onClick={async () => {
-                if (!confirm("This variant will be deleted. Are you sure?"))
-                  return;
+                if (!confirm("This variant will be deleted. Are you sure?")) return;
                 await deleteOpeningVariantAction(variant.id);
               }}
             >
@@ -63,11 +55,7 @@ export function VariantDetail({ variant }: Props) {
         </CardHeader>
         <CardContent className="space-y-8">
           {isEditing ? (
-            <VariantEditForm
-              key={variant.id}
-              variant={variant}
-              onCancel={() => setIsEditing(false)}
-            />
+            <VariantEditForm key={variant.id} variant={variant} onCancel={() => setIsEditing(false)} />
           ) : (
             <dl className="grid gap-2 text-sm">
               <div>
@@ -87,9 +75,7 @@ export function VariantDetail({ variant }: Props) {
                 <dd>{variant.title ?? "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">
-                  Description
-                </dt>
+                <dt className="text-muted-foreground font-medium">Description</dt>
                 <dd>{variant.description ?? "—"}</dd>
               </div>
               <div>
@@ -97,9 +83,8 @@ export function VariantDetail({ variant }: Props) {
                 <dd>
                   <span className="tabular-nums">{variant.initialPly ?? 0}</span>
                   <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed">
-                    Half-move index in the PGN where this line begins (0 = start
-                    position). Stored UCI moves and the default initial FEN
-                    match this point in the game.
+                    Half-move index in the PGN where this line begins (0 = start position). Stored UCI moves and the
+                    default initial FEN match this point in the game.
                   </p>
                 </dd>
               </div>
@@ -108,20 +93,12 @@ export function VariantDetail({ variant }: Props) {
                 <dd className="font-mono text-xs break-all">{variant.moveSequence.moves}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">
-                  Initial FEN
-                </dt>
-                <dd className="font-mono text-xs break-all">
-                  {variant.moveSequence.initialFen || "—"}
-                </dd>
+                <dt className="text-muted-foreground font-medium">Initial FEN</dt>
+                <dd className="font-mono text-xs break-all">{variant.moveSequence.initialFen || "—"}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">
-                  Display FEN
-                </dt>
-                <dd className="font-mono text-xs break-all">
-                  {variant.moveSequence.displayFen ?? "—"}
-                </dd>
+                <dt className="text-muted-foreground font-medium">Display FEN</dt>
+                <dd className="font-mono text-xs break-all">{variant.moveSequence.displayFen ?? "—"}</dd>
               </div>
               <div>
                 <dt className="text-muted-foreground font-medium">PGN</dt>
@@ -144,9 +121,7 @@ export function VariantDetail({ variant }: Props) {
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">
-                  Created At
-                </dt>
+                <dt className="text-muted-foreground font-medium">Created At</dt>
                 <dd>{variant.createdAt}</dd>
               </div>
             </dl>

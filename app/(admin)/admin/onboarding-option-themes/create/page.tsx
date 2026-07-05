@@ -18,10 +18,7 @@ type Props = {
 
 export default async function AdminCreateOnboardingOptionThemePage({ searchParams }: Props) {
   const { supabase } = await getAdminUser();
-  const [options, themes] = await Promise.all([
-    getAllOnboardingOptionsWithQuestion(supabase),
-    getAllThemes(supabase),
-  ]);
+  const [options, themes] = await Promise.all([getAllOnboardingOptionsWithQuestion(supabase), getAllThemes(supabase)]);
   const { error, optionId } = await searchParams;
   const errorMessage = error ? (ONBOARDING_OPTION_THEME_ADMIN_ERRORS[error] ?? `An error occurred (${error}).`) : null;
 

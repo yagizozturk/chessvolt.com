@@ -64,7 +64,9 @@ export default async function AdminRiddleDetailPage({ params }: Props) {
             <CardTitle>Display position</CardTitle>
           </CardHeader>
           <CardContent>
-            <DisplayBoard sourceId={`riddle-detail-${riddle.id}`} initialFen={displayFen} size={360} />
+            <div className="aspect-square w-full max-w-[360px]">
+              <DisplayBoard sourceId={`riddle-detail-${riddle.id}`} initialFen={displayFen} />
+            </div>
           </CardContent>
         </Card>
 

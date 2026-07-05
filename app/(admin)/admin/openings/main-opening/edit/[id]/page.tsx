@@ -1,15 +1,10 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { getOpeningById } from "@/features/openings/services/openings.service";
-import { getAdminUser } from "@/lib/supabase/auth";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getOpeningById } from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
 
 import { OpeningEditForm } from "../../components/forms/opening-edit-form";
 

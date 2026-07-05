@@ -191,3 +191,21 @@
     @apply font-sans;
   }
 }
+
+@layer components {
+  .page-container {
+    @apply container mx-auto max-w-5xl px-4 py-2 md:py-10;
+  }
+
+  .page-container-children-layout {
+    @apply flex flex-col gap-8;
+  }
+
+  .page-container-controller-layout {
+    @apply flex flex-col gap-4 md:flex-row md:gap-8;
+  }
+
+  .page-container-grid-data-layout {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+  }
+}

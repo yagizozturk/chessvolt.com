@@ -74,7 +74,6 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
                 name={opening.name}
                 description={opening.description}
                 variantCount={opening.variantCount}
-                size={240}
                 href={`/openings/${opening.slug}/${opening.id}`}
                 fen={opening.displayFen}
               />

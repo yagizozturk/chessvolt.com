@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 type RiddleBoardCardProps = {
   riddle: Riddle;
   game: Game | null;
-  size?: number;
+  boardWrapperClassName?: string;
   href: string;
   displayFen?: string | null;
   voltScore?: VoltScoreResult | null;
@@ -47,7 +47,7 @@ function formatDate(dateStr: string) {
 export function RiddleBoardCard({
   riddle,
   game,
-  size = 200,
+  boardWrapperClassName = "aspect-square w-[240px] shrink-0",
   href,
   displayFen,
   voltScore = null,
@@ -87,8 +87,8 @@ export function RiddleBoardCard({
             </TooltipContent>
           </Tooltip>
         ) : null}
-        <div>
-          <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} size={size} coordinates={false} />
+        <div className={boardWrapperClassName}>
+          <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} coordinates={false} />
         </div>
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
           {isValidVoltScore(voltScore) ? (

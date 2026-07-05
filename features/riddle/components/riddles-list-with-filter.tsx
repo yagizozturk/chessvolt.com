@@ -89,7 +89,6 @@ export function RiddlesListWithFilter({
               key={riddle.id}
               riddle={riddle}
               game={game}
-              size={240}
               href={buildStandaloneRiddlePath(riddle.id)}
               displayFen={riddle.moveSequence.displayFen}
               accuracyPercent={accuracyPercent}

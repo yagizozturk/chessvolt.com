@@ -71,7 +71,6 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 id={variant.id}
                 name={variant.title ?? ""}
                 group={variant.group}
-                size={240}
                 href={`/openings/variant/${variant.id}`}
                 fen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}
                 isComplete={attemptStatusToIsComplete(attemptStats?.status)}

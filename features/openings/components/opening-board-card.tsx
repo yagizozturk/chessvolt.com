@@ -17,11 +17,13 @@ import { Spinner } from "@/components/ui/spinner";
 import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
 import { cn } from "@/lib/utils";
 
+const DEFAULT_BOARD_WRAPPER_CLASS_NAME = "relative aspect-square w-[240px] shrink-0";
+
 type OpeningBoardCardProps = {
   id: string;
   name: string;
   group?: string | null;
-  size?: number;
+  boardWrapperClassName?: string;
   isComplete?: boolean;
   accuracyPercent?: number | null;
   href: string;
@@ -36,7 +38,7 @@ export function OpeningBoardCard({
   id,
   name,
   group,
-  size = 200,
+  boardWrapperClassName = DEFAULT_BOARD_WRAPPER_CLASS_NAME,
   isComplete,
   accuracyPercent,
   href,
@@ -65,10 +67,10 @@ export function OpeningBoardCard({
             <Spinner className="size-8" />
           </div>
         ) : null}
-        <div>
+        <div className={boardWrapperClassName}>
           {isComplete === true && <BoardStatusIcon status="solved" positionClassName="top-3 right-3" />}
           {isComplete === false && <BoardStatusIcon status="wrong" positionClassName="top-3 right-3" />}
-          <DisplayBoard sourceId={id} initialFen={fen} size={size} coordinates={false} />
+          <DisplayBoard sourceId={id} initialFen={fen} coordinates={false} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           {group ? (

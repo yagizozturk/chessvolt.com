@@ -1,14 +1,9 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { getAllOpenings } from "@/features/openings/services/openings.service";
-import { getAdminUser } from "@/lib/supabase/auth";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getAllOpenings } from "@/features/openings/services/openings.service";
+import { getAdminUser } from "@/lib/supabase/auth";
 
 import { JsonVariantForm } from "../components/form/json-variant-form";
 
@@ -34,9 +29,9 @@ export default async function AdminOpeningsNewPage({ searchParams }: Props) {
         <CardHeader>
           <CardTitle>New Opening Variant (JSON)</CardTitle>
           <CardDescription>
-            Paste variant JSON (with <code className="text-xs">pgn</code>), pick
-            boards for <code className="text-xs">initial_fen</code> /{" "}
-            <code className="text-xs">display_fen</code>, then submit to save.
+            Paste variant JSON (with <code className="text-xs">pgn</code>), pick boards for{" "}
+            <code className="text-xs">initial_fen</code> / <code className="text-xs">display_fen</code>, then submit to
+            save.
           </CardDescription>
         </CardHeader>
         <CardContent>

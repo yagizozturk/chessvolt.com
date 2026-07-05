@@ -5,15 +5,14 @@ import { notFound } from "next/navigation";
 import { CollectionContentThemesSection } from "@/app/(admin)/admin/collections/components/collection-content-themes-section";
 import { CollectionEditForm } from "@/app/(admin)/admin/collections/components/collection-edit-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCollectionById } from "@/features/collection/services/collection.service";
 import { getCollectionThemesForCollectionWithTheme } from "@/features/collection-theme/services/collection-theme.service";
+import { getCollectionById } from "@/features/collection/services/collection.service";
 import { getAllThemes } from "@/features/theme/services/theme.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 const COLLECTION_THEME_ERRORS: Record<string, string> = {
   missing_fields: "Please select a theme and try again.",
-  create_failed:
-    "Could not add the theme. It may already be linked to this collection, or the theme no longer exists.",
+  create_failed: "Could not add the theme. It may already be linked to this collection, or the theme no longer exists.",
   update_failed: "Could not save the weight. Please try again.",
   delete_failed: "Could not remove the theme link. Please try again.",
 };
@@ -73,11 +72,7 @@ export default async function AdminCollectionEditPage({ params, searchParams }: 
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <CollectionContentThemesSection
-            collectionId={collection.id}
-            linkedThemes={linkedThemes}
-            themes={themes}
-          />
+          <CollectionContentThemesSection collectionId={collection.id} linkedThemes={linkedThemes} themes={themes} />
         </CardContent>
       </Card>
     </div>

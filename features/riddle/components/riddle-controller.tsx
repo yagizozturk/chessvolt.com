@@ -284,7 +284,7 @@ export default function RiddleController({
   const turnLabel = getTurnLabel(riddle.moveSequence.initialFen);
 
   return (
-    <div className="container mx-auto max-w-6xl p-8 lg:px-20 lg:py-10">
+    <div className="page-container">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
@@ -311,8 +311,13 @@ export default function RiddleController({
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
       ) : null}
       <Notifier goals={sortedGoals} />
-      <div className="flex flex-col gap-10 lg:flex-row lg:gap-4">
-        <div key={sessionId} className="relative w-full min-w-0 rounded-2xl lg:w-auto lg:shrink-0" data-tour="board">
+      <div className="page-container-controller-layout">
+        {/* Board wrapper: aspect-square sets the square; .board-wrapper in volt.css fills it */}
+        <div
+          key={sessionId}
+          className="relative aspect-square w-full shrink-0 md:min-w-0 md:flex-[3]"
+          data-tour="board"
+        >
           <VoltBoard
             ref={boardRef}
             sourceId={sessionId}
@@ -324,7 +329,8 @@ export default function RiddleController({
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
         </div>
-        <div className="bg-card relative flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
+        {/* Controller */}
+        <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
           <div className="flex justify-between">
             <div>
               <Button variant="voltIcon" asChild>

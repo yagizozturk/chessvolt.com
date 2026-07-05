@@ -27,9 +27,7 @@ export default async function AdminUserOnboardingAnswersPage({ searchParams }: P
       <section>
         <div className="mb-4">
           <h2 className="text-xl font-bold tracking-tight">User onboarding answers</h2>
-          <p className="text-muted-foreground text-sm">
-            {answers.length} saved answers · one per user per question
-          </p>
+          <p className="text-muted-foreground text-sm">{answers.length} saved answers · one per user per question</p>
         </div>
         <div className="mt-4">
           <UserOnboardingAnswersList answers={answers} />
