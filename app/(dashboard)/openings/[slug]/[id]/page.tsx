@@ -2,6 +2,7 @@ import type { DrawShape } from "@lichess-org/chessground/draw";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+import { PageHeaderWithImage } from "@/components/page-header";
 import { ArrowsBoardCard } from "@/features/arrows/components/arrows-board-card/arrows-board-card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
@@ -39,9 +40,17 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const boardArrows = (opening.arrows ? flattenOpeningArrowGroups(opening.arrows) : []) as DrawShape[];
 
   return (
-    <div className="container mx-auto max-w-6xl py-10">
-      <div className="flex flex-col gap-8">
-        <div className="flex gap-4 rounded-lg bg-[#FDCB15]">
+    <div className="page-container">
+      <div className="page-container-children-layout">
+        <div className="md:hidden">
+          <PageHeaderWithImage
+            title={opening.name}
+            description={opening.description ?? ""}
+            imageSrc="/images/openings/bg-london-opening-5.png"
+            imageAlt={opening.name}
+          />
+        </div>
+        <div className="hidden gap-4 rounded-lg bg-[#FDCB15] md:flex">
           <div className="min-w-0 flex-1 space-y-2 p-4">
             <ArrowsBoardCard
               openingId={opening.id}
@@ -61,7 +70,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="page-container-grid-data-layout">
           {variants.map((variant) => {
             const attemptStats = mapAttemptStatsBySequenceId[variant.moveSequence.id];
 
@@ -71,6 +80,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 id={variant.id}
                 name={variant.title ?? ""}
                 group={variant.group}
+                boardWrapperClassName="aspect-square w-[180px] shrink-0"
                 href={`/openings/variant/${variant.id}`}
                 fen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}
                 isComplete={attemptStatusToIsComplete(attemptStats?.status)}

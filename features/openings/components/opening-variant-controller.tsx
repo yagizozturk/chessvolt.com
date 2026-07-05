@@ -29,6 +29,7 @@ import {
   createSequenceCompleteStats,
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
@@ -55,6 +56,7 @@ export default function OpeningVariantController({
   const [replayKey, setReplayKey] = useState(0);
   const sessionId = `${variant.id}:${replayKey}`;
   const router = useRouter();
+  const isMobile = useIsMobile();
   const boardRef = useRef<VoltBoardHandle>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isContinuePending, setIsContinuePending] = useState(false);
@@ -225,7 +227,7 @@ export default function OpeningVariantController({
     : "You completed this line. Return to the opening when you are ready.";
 
   return (
-    <div className="container mx-auto max-w-6xl p-8 lg:px-20 lg:py-10">
+    <div className="page-container">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
@@ -243,19 +245,24 @@ export default function OpeningVariantController({
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
       ) : null}
       <Notifier goals={sortedGoals} />
-      <div className="flex flex-col gap-4 lg:flex-row">
-        <div key={sessionId} className="relative w-full min-w-0 rounded-2xl lg:w-auto lg:shrink-0" data-tour="board">
+      <div className="page-container-controller-layout">
+        <div
+          key={sessionId}
+          className="relative aspect-square w-full shrink-0 md:min-w-0 md:flex-[3]"
+          data-tour="board"
+        >
           <VoltBoard
             ref={boardRef}
             sourceId={sessionId}
             initialFen={variant.moveSequence.initialFen}
+            coordinates={!isMobile}
             drawHintMove={currentCorrectMove}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
         </div>
-        <div className="bg-card relative flex min-w-0 flex-1 flex-col gap-4 rounded-xl p-4">
+        <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
           <div className="flex justify-between">
             <div>
               <Button variant="voltIcon" asChild>

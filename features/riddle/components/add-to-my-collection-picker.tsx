@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { ListPlus } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -81,7 +81,7 @@ export function AddToMyCollectionPicker({ riddleId, collections, savedCollection
         aria-label="Add to collection"
         title="Add to collection"
       >
-        {isPending ? <Spinner /> : <Plus className="size-5" />}
+        {isPending ? <Spinner /> : <ListPlus className="size-5" />}
       </Button>
       <CommandDialog
         open={open}

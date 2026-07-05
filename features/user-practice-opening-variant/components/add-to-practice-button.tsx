@@ -56,23 +56,16 @@ export function AddToPracticeButton({ openingVariantId, initialInPracticeList }:
     });
   };
 
-  if (inPracticeList) {
-    return (
-      <div className="mb-4">
-        <Button type="button" variant="voltGreen" className="w-full" disabled>
-          <ListPlus data-icon="inline-start" />
-          In my practice list
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <div className="mb-4">
-      <Button type="button" variant="voltGreen" className="w-full" onClick={handleClick} disabled={isPending}>
-        {isPending ? <Spinner data-icon="inline-start" /> : <ListPlus data-icon="inline-start" />}
-        Add to my openings
-      </Button>
-    </div>
+    <Button
+      type="button"
+      variant="voltIcon"
+      onClick={handleClick}
+      disabled={inPracticeList || isPending}
+      aria-label={inPracticeList ? "In my practice list" : "Add to my practice list"}
+      title={inPracticeList ? "In my practice list" : "Add to my practice list"}
+    >
+      {isPending ? <Spinner /> : <ListPlus className="size-5" />}
+    </Button>
   );
 }

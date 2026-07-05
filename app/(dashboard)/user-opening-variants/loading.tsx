@@ -26,7 +26,7 @@ export default function UserOpeningVariantsLoading() {
           <Skeleton className="h-[200px] w-[268px] shrink-0 rounded-lg" />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
             <OpeningBoardCardSkeleton key={i} />
           ))}

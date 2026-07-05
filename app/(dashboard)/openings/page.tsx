@@ -22,8 +22,8 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
     : await getOpeningsWithVariantCount(supabase);
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-10">
-      <div className="flex flex-col gap-8">
+    <div className="page-container">
+      <div className="page-container-children-layout">
         <div className="flex gap-2 rounded-lg bg-[#113DC4]">
           <div className="min-w-0 flex-1 space-y-2 p-4">
             <p className="text-primary text-sm font-semibold">From e4 openings to d4, indian setups</p>
@@ -60,7 +60,7 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
             />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {openings.length === 0 && filterType ? (
             <p className="text-muted-foreground col-span-2 text-center text-sm">
               No openings match this type. Set the opening&apos;s type in admin (e.g. white, black, popular).

@@ -1,6 +1,7 @@
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
+import { PageHeaderWithImage } from "@/components/page-header";
 import { UserPracticeOpeningVariantList } from "@/features/user-practice-opening-variant/components/user-practice-opening-variant";
 import { getUserPracticeOpeningVariantsForUserWithSequences } from "@/features/user-practice-opening-variant/services/user-practice-opening-variant.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
@@ -45,11 +46,19 @@ export default async function UserOpeningVariantsPage() {
       : {};
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-10">
-      <UserPracticeOpeningVariantList
-        openingVariants={userPracticeOpeningVariants}
-        voltScoresBySequenceId={voltScoresBySequenceId}
-      />
+    <div className="page-container">
+      <div className="page-container-children-layout">
+        <PageHeaderWithImage
+          title="Your Opening List"
+          description="Build your repertoire, one variant at a time"
+          imageSrc="/images/openings/bg-openings.png"
+          imageAlt="Opening"
+        />
+        <UserPracticeOpeningVariantList
+          openingVariants={userPracticeOpeningVariants}
+          voltScoresBySequenceId={voltScoresBySequenceId}
+        />
+      </div>
     </div>
   );
 }

@@ -83,12 +83,13 @@ export function RiddlesListWithFilter({
       {visibleItems.length === 0 ? (
         <EmptyDataMessage message={noResultsMessage} />
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="page-container-grid-data-layout">
           {visibleItems.map(({ riddle, game, accuracyPercent, voltScore, primaryTheme }) => (
             <RiddleBoardCard
               key={riddle.id}
               riddle={riddle}
               game={game}
+              boardWrapperClassName="aspect-square w-[180px] shrink-0"
               href={buildStandaloneRiddlePath(riddle.id)}
               displayFen={riddle.moveSequence.displayFen}
               accuracyPercent={accuracyPercent}

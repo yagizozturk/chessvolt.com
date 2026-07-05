@@ -9,7 +9,7 @@ export default async function RiddlesPage() {
   const initialItems = user ? await getUserAttemptedRiddlesForDisplay(supabase, user.id) : [];
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-10">
+    <div className="page-container">
       <RiddlesListWithFilter
         themes={themes}
         initialItems={initialItems}
