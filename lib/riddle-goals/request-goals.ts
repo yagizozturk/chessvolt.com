@@ -5,10 +5,10 @@ import {
   parseMovesFromSequence,
 } from "@/lib/move-sequence-goals/expected-goals";
 import { parseGoalsContent } from "@/lib/move-sequence-goals/parse-goals";
-import { buildMoveSequenceGoalsSystemPrompt } from "@/lib/move-sequence-goals/prompt";
 import type { GenerateGoalsInput } from "@/lib/move-sequence-goals/types";
+import { buildRiddleGoalsSystemPrompt } from "@/lib/riddle-goals/prompt";
 
-export async function requestGoalsFromLlm(
+export async function requestRiddleGoalsFromLlm(
   input: GenerateGoalsInput,
   requestContent: (system: string, user: string) => Promise<string>,
   providerLabel: string,
@@ -23,9 +23,12 @@ export async function requestGoalsFromLlm(
     throw new Error("Move sequence has no player moves to explain");
   }
 
-  const system = buildMoveSequenceGoalsSystemPrompt(input);
+  const system = buildRiddleGoalsSystemPrompt(input);
   const user = JSON.stringify(buildUserPayload(input, uciMoves, expectedGoals));
   const content = await requestContent(system, user);
 
   return parseGoalsContent(content, expectedGoals, providerLabel);
 }
+
+/** @deprecated Use requestRiddleGoalsFromLlm */
+export const requestGoalsFromLlm = requestRiddleGoalsFromLlm;

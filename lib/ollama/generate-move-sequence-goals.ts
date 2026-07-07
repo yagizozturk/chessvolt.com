@@ -1,14 +1,14 @@
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-import { requestGoalsFromLlm } from "@/lib/move-sequence-goals/request-goals";
 import type { GenerateGoalsInput } from "@/lib/move-sequence-goals/types";
 import { ollamaChat } from "@/lib/ollama/client";
+import { requestRiddleGoalsFromLlm } from "@/lib/riddle-goals/request-goals";
 
 export type { GenerateGoalsInput } from "@/lib/move-sequence-goals/types";
-export { buildMoveSequenceGoalsSystemPrompt } from "@/lib/move-sequence-goals/prompt";
+export { buildRiddleGoalsSystemPrompt as buildMoveSequenceGoalsSystemPrompt } from "@/lib/riddle-goals/prompt";
 
 export async function generateMoveSequenceGoals(input: GenerateGoalsInput): Promise<MoveGoal[]> {
   try {
-    return await requestGoalsFromLlm(
+    return await requestRiddleGoalsFromLlm(
       input,
       (system, user) =>
         ollamaChat({

@@ -22,8 +22,12 @@ function getPlayerMoveIndices(uciMoves: string[]): number[] {
   return indices;
 }
 
-export function getExpectedPlayerGoals(initialFen: string, uciMoves: string[]) {
-  const basePly = getInitialSideToMove(initialFen) === "w" ? 1 : 2;
+export function getExpectedPlayerGoals(
+  initialFen: string,
+  uciMoves: string[],
+  plyOffset = 0,
+) {
+  const basePly = (getInitialSideToMove(initialFen) === "w" ? 1 : 2) + plyOffset;
 
   return getPlayerMoveIndices(uciMoves).map((moveIndex, ordinal) => ({
     moveIndex,

@@ -4,10 +4,41 @@
  * Responsibility: CRUD access to the opening_variants table.
  */
 import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
+import {
+  toMoveSequenceForGoalsBackfill,
+  type DbMoveSequenceForGoalsBackfill,
+} from "@/features/move-sequence/mapper/move-sequence.mapper";
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { OpeningVariantForGoalsBackfill } from "@/features/openings/types/opening-variant-for-goals-backfill";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
+
+type DbOpeningVariantForGoalsBackfill = {
+  id: string;
+  initial_ply: number;
+  move_sequences: DbMoveSequenceForGoalsBackfill | DbMoveSequenceForGoalsBackfill[] | null;
+};
+
+function getEmbeddedGoalsBackfillSequence(
+  moveSequences: DbMoveSequenceForGoalsBackfill | DbMoveSequenceForGoalsBackfill[] | null,
+): DbMoveSequenceForGoalsBackfill | null {
+  if (!moveSequences) return null;
+  return Array.isArray(moveSequences) ? (moveSequences[0] ?? null) : moveSequences;
+}
+
+function toOpeningVariantForGoalsBackfill(
+  db: DbOpeningVariantForGoalsBackfill,
+): OpeningVariantForGoalsBackfill | null {
+  const seqRow = getEmbeddedGoalsBackfillSequence(db.move_sequences);
+  if (!seqRow) return null;
+
+  return {
+    variantId: db.id,
+    initialPly: db.initial_ply ?? 0,
+    moveSequence: toMoveSequenceForGoalsBackfill(seqRow),
+  };
+}
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<OpeningVariant | null> {
   const { data, error } = await supabase
@@ -84,6 +115,48 @@ export async function findByMoveSequenceIds(
   }
 
   return (data ?? []).map(toOpeningVariant);
+}
+
+export async function findWithNullGoals(
+  supabase: SupabaseClient,
+  { limit }: { limit: number },
+): Promise<OpeningVariantForGoalsBackfill[]> {
+  const { data, error } = await supabase
+    .from("opening_variants")
+    .select("id, initial_ply, move_sequences!inner(id, initial_fen, moves, pgn)")
+    .is("move_sequences.goals", null)
+    .order("created_at", { ascending: true })
+    .limit(limit);
+
+  if (error) {
+    console.error("opening-variant.repository.findWithNullGoals error:", error);
+    return [];
+  }
+
+  return (data ?? [])
+    .map((row) => toOpeningVariantForGoalsBackfill(row as DbOpeningVariantForGoalsBackfill))
+    .filter((row): row is OpeningVariantForGoalsBackfill => row !== null);
+}
+
+export async function findByIdWithNullGoals(
+  supabase: SupabaseClient,
+  variantId: string,
+): Promise<OpeningVariantForGoalsBackfill | null> {
+  const { data, error } = await supabase
+    .from("opening_variants")
+    .select("id, initial_ply, move_sequences!inner(id, initial_fen, moves, pgn)")
+    .eq("id", variantId)
+    .is("move_sequences.goals", null)
+    .maybeSingle();
+
+  if (error) {
+    console.error("opening-variant.repository.findByIdWithNullGoals error:", error);
+    return null;
+  }
+
+  return data
+    ? toOpeningVariantForGoalsBackfill(data as DbOpeningVariantForGoalsBackfill)
+    : null;
 }
 
 export type CreateOpeningVariantInput = {

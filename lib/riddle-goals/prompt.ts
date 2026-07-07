@@ -68,8 +68,11 @@ function formatPuzzleInputForPrompt(input: GenerateGoalsInput): string {
   return `Source riddle input data:\nFEN: ${input.initialFen.trim()}\nmoves: ${input.moves.trim()}\n\nI need you to create a JSON for this data.`;
 }
 
-export function buildMoveSequenceGoalsSystemPrompt(input: GenerateGoalsInput): string {
+export function buildRiddleGoalsSystemPrompt(input: GenerateGoalsInput): string {
   const prompt = `${SYSTEM_PROMPT_BASE}\n\n${formatPuzzleInputForPrompt(input)}`;
   console.log(prompt);
   return prompt;
 }
+
+/** @deprecated Use buildRiddleGoalsSystemPrompt */
+export const buildMoveSequenceGoalsSystemPrompt = buildRiddleGoalsSystemPrompt;
