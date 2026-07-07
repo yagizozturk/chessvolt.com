@@ -191,7 +191,7 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
               tooltip="ChessVolt"
               className="group-data-[collapsible=icon]:bg-secondary group-data-[collapsible=icon]:text-primary rounded-lg group-data-[collapsible=icon]:justify-center [&_svg]:size-6"
             >
-              <Link href="/dashboard" aria-label="ChessVolt" className="flex items-center gap-2">
+              <Link href={profile ? "/dashboard" : "/"} aria-label="ChessVolt" className="flex items-center gap-2">
                 <span className="bg-secondary flex size-12 shrink-0 items-center justify-center rounded-lg group-data-[collapsible=icon]:size-auto group-data-[collapsible=icon]:bg-transparent">
                   <Zap aria-hidden className="text-primary fill-primary h-6 w-6 shrink-0" />
                 </span>
