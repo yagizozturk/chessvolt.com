@@ -11,7 +11,7 @@ export default async function RiddlesPage() {
 
   return (
     <div className="page-container">
-      <div className="page-container-children-layout">
+      <div className="page-container-list-layout">
         <PageHeader title="Your riddles" description="Riddles you've tried to solve." />
         <RiddlesListWithFilter
           themes={themes}

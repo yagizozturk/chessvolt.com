@@ -25,7 +25,7 @@ export default async function CollectionDetailPage({ params }: Params) {
 
   return (
     <div className="page-container">
-      <div className="page-container-children-layout">
+      <div className="page-container-list-layout">
         {/* Page header */}
         <PageHeaderWithImage
           title={collection.title}
