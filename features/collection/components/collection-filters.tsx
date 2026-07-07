@@ -1,11 +1,16 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
+  buildCollectionFilterHref,
   COLLECTION_DIFFICULTY_OPTIONS,
   type CollectionDifficultyOptions,
+  type CollectionFilterState,
 } from "@/features/collection/utilities/collection-filter.utils";
 import type { Theme } from "@/features/theme/types/theme";
 
@@ -14,11 +19,7 @@ type CollectionFiltersProps = {
   searchQuery: string;
   difficultyFilter: CollectionDifficultyOptions;
   themeFilter: string;
-  onSearchQueryChange: (value: string) => void;
-  onDifficultyFilterChange: (value: CollectionDifficultyOptions) => void;
-  onThemeFilterChange: (value: string) => void;
-  onClear?: () => void;
-  variant?: "default" | "inline";
+  hasActiveFilters: boolean;
 };
 
 export function CollectionFilters({
@@ -26,24 +27,40 @@ export function CollectionFilters({
   searchQuery,
   difficultyFilter,
   themeFilter,
-  onSearchQueryChange,
-  onDifficultyFilterChange,
-  onThemeFilterChange,
-  onClear,
-  variant = "default",
+  hasActiveFilters,
 }: CollectionFiltersProps) {
-  const isInline = variant === "inline";
+  const router = useRouter();
+  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+
+  const currentFilterState: CollectionFilterState = {
+    searchQuery,
+    difficultyFilter,
+    themeFilter,
+  };
+
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (localSearchQuery.trim() === searchQuery.trim()) return;
+
+    const timeoutId = window.setTimeout(() => {
+      router.push(buildCollectionFilterHref(currentFilterState, { searchQuery: localSearchQuery }));
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [localSearchQuery, searchQuery, difficultyFilter, themeFilter, router]);
 
   return (
-    <div
-      className={
-        isInline
-          ? "flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:items-center lg:justify-end"
-          : "bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 sm:flex-row sm:flex-wrap sm:items-center"
-      }
-    >
+    <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:items-center lg:justify-end">
       <div className="min-w-0 sm:max-w-56">
-        <Select value={difficultyFilter} onValueChange={onDifficultyFilterChange}>
+        <Select
+          value={difficultyFilter}
+          onValueChange={(value) =>
+            router.push(buildCollectionFilterHref(currentFilterState, { difficultyFilter: value as CollectionDifficultyOptions }))
+          }
+        >
           <SelectTrigger
             id="collection-difficulty"
             className="w-full rounded-xl border-2 bg-background"
@@ -63,7 +80,11 @@ export function CollectionFilters({
         </Select>
       </div>
       <div className="min-w-0 sm:max-w-64">
-        <Select value={themeFilter} onValueChange={onThemeFilterChange} disabled={themeOptions.length === 0}>
+        <Select
+          value={themeFilter}
+          onValueChange={(value) => router.push(buildCollectionFilterHref(currentFilterState, { themeFilter: value }))}
+          disabled={themeOptions.length === 0}
+        >
           <SelectTrigger
             id="collection-theme"
             className="w-full rounded-xl border-2 bg-background"
@@ -83,18 +104,18 @@ export function CollectionFilters({
           </SelectContent>
         </Select>
       </div>
-      {onClear && (
-        <Button type="button" variant="volt" size="sm" onClick={onClear}>
+      {hasActiveFilters && (
+        <Button type="button" variant="volt" size="sm" onClick={() => router.push("/collection")}>
           Clear filters
         </Button>
       )}
-      <div className={isInline ? "min-w-0 lg:ml-auto lg:max-w-xs lg:flex-1" : "min-w-0 flex-1 sm:min-w-[12rem] sm:basis-full lg:max-w-sm lg:basis-auto"}>
+      <div className="min-w-0 lg:ml-auto lg:max-w-xs lg:flex-1">
         <Input
-          value={searchQuery}
-          onChange={(e) => onSearchQueryChange(e.target.value)}
+          value={localSearchQuery}
+          onChange={(e) => setLocalSearchQuery(e.target.value)}
           placeholder="Search collections..."
           aria-label="Search collections"
-          className={isInline ? "bg-background" : undefined}
+          className="bg-background"
         />
       </div>
     </div>

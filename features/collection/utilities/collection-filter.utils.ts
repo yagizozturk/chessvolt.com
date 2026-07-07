@@ -108,3 +108,43 @@ export function hasActiveCollectionFilters(filters: CollectionFilterState): bool
     (filters.themeFilter !== "all" && filters.themeFilter.trim() !== "")
   );
 }
+
+const COLLECTION_PAGE_PATH = "/collection";
+
+export function parseCollectionFilterStateFromSearchParams(params: {
+  q?: string;
+  difficulty?: string;
+  theme?: string;
+}): CollectionFilterState {
+  const searchQuery = params.q?.trim() ?? "";
+  const difficultyParam = params.difficulty?.trim() ?? "";
+  const difficultyFilter = COLLECTION_DIFFICULTY_OPTIONS.includes(difficultyParam as CollectionDifficultyOptions)
+    ? (difficultyParam as CollectionDifficultyOptions)
+    : "All";
+  const themeFilter = params.theme?.trim() || "all";
+
+  return { searchQuery, difficultyFilter, themeFilter };
+}
+
+export function buildCollectionFilterHref(
+  current: CollectionFilterState,
+  next: Partial<CollectionFilterState>,
+): string {
+  const merged: CollectionFilterState = {
+    searchQuery: next.searchQuery ?? current.searchQuery,
+    difficultyFilter: next.difficultyFilter ?? current.difficultyFilter,
+    themeFilter: next.themeFilter ?? current.themeFilter,
+  };
+
+  const searchParams = new URLSearchParams();
+  const q = merged.searchQuery.trim();
+
+  if (q) searchParams.set("q", q);
+  if (merged.difficultyFilter !== "All") searchParams.set("difficulty", merged.difficultyFilter);
+
+  const theme = merged.themeFilter.trim();
+  if (theme && theme !== "all") searchParams.set("theme", theme);
+
+  const query = searchParams.toString();
+  return query ? `${COLLECTION_PAGE_PATH}?${query}` : COLLECTION_PAGE_PATH;
+}

@@ -1,44 +1,48 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   ATTEMPTED_RIDDLES_SORT_OPTIONS,
   RIDDLES_THEME_FILTER_ALL,
   type AttemptedRiddlesSortBy,
 } from "@/features/riddle/constants/riddles-list.constants";
+import {
+  buildRiddlesFilterHref,
+  type RiddlesFilterState,
+} from "@/features/riddle/utilities/riddle-filter.utils";
 import type { Theme } from "@/features/theme/types/theme";
 
 type RiddlesFiltersProps = {
   themes: Theme[];
-  themeValue: string;
+  themeFilter: string;
   sortBy: AttemptedRiddlesSortBy;
-  onThemeChange: (value: string) => void;
-  onSortChange: (value: AttemptedRiddlesSortBy) => void;
-  variant?: "default" | "inline";
+  hasActiveFilters: boolean;
 };
 
-export function RiddlesFilters({
-  themes,
-  themeValue,
-  sortBy,
-  onThemeChange,
-  onSortChange,
-  variant = "default",
-}: RiddlesFiltersProps) {
-  const isInline = variant === "inline";
-  const triggerClassName = isInline ? "w-full rounded-xl border-2 bg-background" : "w-full rounded-xl border-2";
+export function RiddlesFilters({ themes, themeFilter, sortBy, hasActiveFilters }: RiddlesFiltersProps) {
+  const router = useRouter();
+
+  const currentFilterState: RiddlesFilterState = {
+    themeFilter,
+    sortBy,
+  };
 
   return (
-    <div
-      className={
-        isInline
-          ? "flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:items-center lg:justify-end"
-          : "bg-muted/50 flex w-full flex-col gap-3 rounded-xl p-4 sm:flex-row sm:flex-wrap sm:items-center"
-      }
-    >
+    <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:items-center lg:justify-end">
       <div className="min-w-0 sm:max-w-64">
-        <Select value={themeValue} onValueChange={onThemeChange} disabled={themes.length === 0}>
-          <SelectTrigger id="riddles-theme" className={triggerClassName} aria-label="Filter by theme">
+        <Select
+          value={themeFilter}
+          onValueChange={(value) => router.push(buildRiddlesFilterHref(currentFilterState, { themeFilter: value }))}
+          disabled={themes.length === 0}
+        >
+          <SelectTrigger
+            id="riddles-theme"
+            className="w-full rounded-xl border-2 bg-background"
+            aria-label="Filter by theme"
+          >
             <SelectValue placeholder="All themes" />
           </SelectTrigger>
           <SelectContent>
@@ -53,9 +57,18 @@ export function RiddlesFilters({
           </SelectContent>
         </Select>
       </div>
-      <div className={isInline ? "min-w-0 lg:ml-auto lg:max-w-64" : "min-w-0 flex-1 sm:max-w-64"}>
-        <Select value={sortBy} onValueChange={(value) => onSortChange(value as AttemptedRiddlesSortBy)}>
-          <SelectTrigger id="riddles-sort" className={triggerClassName} aria-label="Sort riddles">
+      <div className="min-w-0 lg:ml-auto lg:max-w-64">
+        <Select
+          value={sortBy}
+          onValueChange={(value) =>
+            router.push(buildRiddlesFilterHref(currentFilterState, { sortBy: value as AttemptedRiddlesSortBy }))
+          }
+        >
+          <SelectTrigger
+            id="riddles-sort"
+            className="w-full rounded-xl border-2 bg-background"
+            aria-label="Sort riddles"
+          >
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
@@ -69,6 +82,11 @@ export function RiddlesFilters({
           </SelectContent>
         </Select>
       </div>
+      {hasActiveFilters && (
+        <Button type="button" variant="volt" size="sm" onClick={() => router.push("/riddles")}>
+          Clear filters
+        </Button>
+      )}
     </div>
   );
 }
