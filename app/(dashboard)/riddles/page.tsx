@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/page-header";
 import { RiddlesListWithFilter } from "@/features/riddle/components/riddles-list-with-filter";
 import { getUserAttemptedRiddlesForDisplay } from "@/features/riddle/services/riddle-list.service";
 import { getAllThemes } from "@/features/theme/services/theme.service";
@@ -10,14 +11,17 @@ export default async function RiddlesPage() {
 
   return (
     <div className="page-container">
-      <RiddlesListWithFilter
-        themes={themes}
-        initialItems={initialItems}
-        showFilters={!!user}
-        emptyMessage={
-          user ? "You haven't completed or failed any riddles yet." : "Sign in to see riddles you've tried."
-        }
-      />
+      <div className="page-container-children-layout">
+        <PageHeader title="Your riddles" description="Riddles you've tried to solve." />
+        <RiddlesListWithFilter
+          themes={themes}
+          initialItems={initialItems}
+          showFilters={!!user}
+          emptyMessage={
+            user ? "You haven't completed or failed any riddles yet." : "Sign in to see riddles you've tried."
+          }
+        />
+      </div>
     </div>
   );
 }

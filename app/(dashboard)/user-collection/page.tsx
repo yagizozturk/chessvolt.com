@@ -15,11 +15,12 @@ export default async function UserCollectionPage() {
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
-        <PageHeader
-          title="Your collections"
-          description="Collections you've created to organize your riddles."
-        />
-        {/* First-visit auto-open only; skipped once localStorage marks the intro as seen. */}
+        <PageHeader title="Your collections" description="Collections you've created to organize your riddles." />
+        {/* 
+          Note:
+          First-visit auto-open Dialog only; user sees this page after onboarding
+          skipped once localStorage marks the intro as seen. 
+        */}
         <VoltExplainDialogAutoStart />
         <UserCollectionList userCollections={userCollections} />
       </div>

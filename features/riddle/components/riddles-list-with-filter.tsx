@@ -23,8 +23,6 @@ type RiddlesListWithFilterProps = {
   themes: Theme[];
   initialItems: AttemptedRiddleListItem[];
   showFilters?: boolean;
-  title?: string;
-  description?: string;
   emptyMessage?: string;
   noResultsMessage?: string;
   className?: string;
@@ -34,8 +32,6 @@ export function RiddlesListWithFilter({
   themes,
   initialItems,
   showFilters = true,
-  title = "Your riddles",
-  description = "Riddles you've tried to solve.",
   emptyMessage = "You haven't completed or failed any riddles yet.",
   noResultsMessage = "No riddles match the selected theme.",
   className,
@@ -48,37 +44,27 @@ export function RiddlesListWithFilter({
     [initialItems, themeSlug, sortBy],
   );
 
-  const header = (
-    <div className="flex flex-col gap-4 rounded-xl bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)] p-6 lg:flex-row lg:items-center lg:justify-between">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">{title}</h1>
-        <p className="text-muted-foreground">{description}</p>
-      </div>
-      {showFilters && initialItems.length > 0 && (
-        <RiddlesFilters
-          variant="inline"
-          themes={themes}
-          themeValue={themeSlug}
-          sortBy={sortBy}
-          onThemeChange={setThemeSlug}
-          onSortChange={setSortBy}
-        />
-      )}
-    </div>
+  const filters = showFilters && initialItems.length > 0 && (
+    <RiddlesFilters
+      themes={themes}
+      themeValue={themeSlug}
+      sortBy={sortBy}
+      onThemeChange={setThemeSlug}
+      onSortChange={setSortBy}
+    />
   );
 
   if (initialItems.length === 0) {
     return (
-      <div className={cn("page-container-children-layout", className)}>
-        {header}
+      <div className={cn("flex flex-col gap-8", className)}>
         <EmptyDataMessage message={emptyMessage} />
       </div>
     );
   }
 
   return (
-    <div className="page-container-children-layout">
-      {header}
+    <div className={cn("flex flex-col gap-8", className)}>
+      {filters}
 
       {visibleItems.length === 0 ? (
         <EmptyDataMessage message={noResultsMessage} />
