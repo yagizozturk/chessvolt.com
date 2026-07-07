@@ -79,7 +79,6 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 key={variant.id}
                 id={variant.id}
                 name={variant.title ?? ""}
-                group={variant.group}
                 boardWrapperClassName="aspect-square w-[180px] shrink-0"
                 href={`/openings/variant/${variant.id}`}
                 fen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}

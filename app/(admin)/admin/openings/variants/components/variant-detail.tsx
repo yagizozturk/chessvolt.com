@@ -67,10 +67,6 @@ export function VariantDetail({ variant }: Props) {
                 <dd className="font-mono text-xs">{variant.sortKey}</dd>
               </div>
               <div>
-                <dt className="text-muted-foreground font-medium">Group</dt>
-                <dd>{variant.group}</dd>
-              </div>
-              <div>
                 <dt className="text-muted-foreground font-medium">Title</dt>
                 <dd>{variant.title ?? "—"}</dd>
               </div>

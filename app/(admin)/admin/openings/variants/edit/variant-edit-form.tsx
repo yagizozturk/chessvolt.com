@@ -56,10 +56,6 @@ export function VariantEditForm({ variant, onCancel }: Props) {
           <Input name="sortKey" type="number" defaultValue={variant.sortKey} className="font-mono" />
         </Field>
         <Field>
-          <FieldLabel>Group</FieldLabel>
-          <Input name="group" defaultValue={variant.group} required />
-        </Field>
-        <Field>
           <FieldLabel>Title</FieldLabel>
           <Input name="title" defaultValue={variant.title ?? ""} />
         </Field>

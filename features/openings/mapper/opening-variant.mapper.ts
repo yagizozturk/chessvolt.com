@@ -6,7 +6,6 @@ export type DbOpeningVariant = {
   id: string;
   opening_id: string;
   sort_key: number;
-  group: string | null;
   title: string | null;
   description: string | null;
   initial_ply: number;
@@ -24,7 +23,6 @@ export function toOpeningVariant(db: DbOpeningVariant): OpeningVariant {
     id: db.id,
     openingId: db.opening_id,
     sortKey: db.sort_key,
-    group: db.group ?? "",
     title: db.title,
     description: db.description ?? null,
     initialPly: db.initial_ply ?? 0,

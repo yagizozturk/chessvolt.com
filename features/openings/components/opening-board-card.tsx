@@ -19,7 +19,6 @@ import { cn } from "@/lib/utils";
 type OpeningBoardCardProps = {
   id: string;
   name: string;
-  group?: string | null;
   boardWrapperClassName?: string;
   isComplete?: boolean;
   accuracyPercent?: number | null;
@@ -34,7 +33,6 @@ type OpeningBoardCardProps = {
 export function OpeningBoardCard({
   id,
   name,
-  group,
   boardWrapperClassName = "aspect-square w-[240px] shrink-0",
   isComplete,
   accuracyPercent,
@@ -75,12 +73,6 @@ export function OpeningBoardCard({
           <div className="absolute right-[-32px] bottom-[-32px] z-10">
             <VoltCalculator result={voltScore} chartSize={140} className="w-fit" />
           </div>
-        ) : null}
-        {group ? (
-          <Badge variant="secondary" className="w-fit">
-            <BookOpen data-icon="inline-start" />
-            {group}
-          </Badge>
         ) : null}
         <p className="text-xl font-bold">{name}</p>
         {description ? (

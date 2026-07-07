@@ -25,7 +25,6 @@ export function UserPracticeOpeningVariantList({
             key={practice.id}
             id={openingVariant.id}
             name={openingVariant.title ?? "Untitled variant"}
-            group={openingVariant.group}
             boardWrapperClassName="aspect-square w-[180px] shrink-0"
             href={`/openings/variant/${openingVariant.id}`}
             fen={openingVariant.moveSequence.displayFen ?? openingVariant.moveSequence.initialFen}

@@ -13,8 +13,6 @@ import {
   getOpeningVariantById,
   updateOpeningVariant,
 } from "@/features/openings/services/openings.service";
-import type { MoveGoal } from "@/features/openings/types/opening-variant";
-import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
 import { parseGoalsFromForm } from "@/lib/admin/parse-goals-from-form";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
@@ -23,13 +21,7 @@ import { getAdminUser } from "@/lib/supabase/auth";
 type BulkVariantInput = {
   opening_id: string;
   sort_key?: number | string;
-  group?: string;
-  title?: string | null;
   pgn: string;
-  initial_ply?: number;
-  display_ply?: number;
-  description?: string | null;
-  goals?: unknown;
 };
 
 /** Empty or missing → 0 (initial ply default). */
@@ -68,7 +60,6 @@ export async function createOpeningVariantAction(formData: FormData) {
   const openingId = formData.get("openingId") as string;
   const pgn = (formData.get("pgn") as string)?.trim();
   const initialPly = parseAdminPly(formData, "initialPly");
-  const group = (formData.get("group") as string)?.trim();
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
   const sortKey = parseInt((formData.get("sortKey") as string)?.trim() ?? "", 10);
@@ -79,7 +70,7 @@ export async function createOpeningVariantAction(formData: FormData) {
   const displayFen = (formData.get("displayFen") as string)?.trim() || null;
   const goals = parseGoalsFromForm(formData, newVariantUrl(formData, "invalid_goals_json"));
 
-  if (!openingId?.trim() || !pgn || !group || Number.isNaN(sortKey)) {
+  if (!openingId?.trim() || !pgn || Number.isNaN(sortKey)) {
     redirect(newVariantUrl(formData, "missing_fields"));
   }
 
@@ -91,7 +82,6 @@ export async function createOpeningVariantAction(formData: FormData) {
   const input: CreateOpeningVariantInput = {
     openingId: openingId.trim(),
     sortKey,
-    group,
     title: title || null,
     description: description || null,
     initialPly,
@@ -131,39 +121,22 @@ export async function bulkCreateVariantsAction(jsonData: string) {
     if (!item?.opening_id?.trim() || !item?.pgn?.trim()) {
       errors.push({
         index: i,
-        message: "opening_id, pgn and group are required",
-      });
-      continue;
-    }
-    const group = item.group?.trim();
-    if (!group) {
-      errors.push({
-        index: i,
-        message: "opening_id, pgn and group are required",
+        message: "opening_id and pgn are required",
       });
       continue;
     }
 
-    const initialPly = Math.max(0, item.initial_ply ?? 0);
-    const displayPly = item.display_ply ?? 0;
+    const initialPly = 0;
 
     const moves = getUciMovesFromPgnAfterPly(item.pgn.trim(), initialPly);
     if (!moves) {
-      errors.push({ index: i, message: "Geçersiz PGN veya initial_ply" });
-      continue;
-    }
-
-    const displayFen = getFenFromPgnAtPly(item.pgn.trim(), displayPly);
-    if (!displayFen) {
-      errors.push({
-        index: i,
-        message: `display_ply (${displayPly}) exceeds PGN length`,
-      });
+      errors.push({ index: i, message: "Geçersiz PGN" });
       continue;
     }
 
     const initialFen =
       getFenFromPgnAtPly(item.pgn.trim(), initialPly) || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    const displayFen = initialFen;
 
     const sortKeyParsed = parseBulkSortKey(item.sort_key);
     if (!sortKeyParsed.ok) {
@@ -171,34 +144,16 @@ export async function bulkCreateVariantsAction(jsonData: string) {
       continue;
     }
 
-    let goals: MoveGoal[] | null | undefined;
-    if ("goals" in item) {
-      const g = item.goals;
-      if (g === null) {
-        goals = null;
-      } else if (isMoveGoalsArray(g)) {
-        goals = g;
-      } else {
-        errors.push({
-          index: i,
-          message: "goals must be null or an array of { ply, move, title, initialHint, secondaryHint, isCompleted, card? }",
-        });
-        continue;
-      }
-    }
-
     const input: CreateOpeningVariantInput = {
       openingId: item.opening_id.trim(),
       sortKey: sortKeyParsed.value,
-      group,
-      title: item.title?.trim() || null,
-      description: item.description?.trim() || null,
+      title: null,
+      description: null,
       initialPly,
       moves,
       pgn: item.pgn.trim(),
       initialFen,
       displayFen,
-      ...(goals !== undefined ? { goals } : {}),
     };
 
     const variant = await createOpeningVariant(supabase, input);
@@ -226,7 +181,6 @@ export async function updateOpeningVariantAction(id: string, formData: FormData)
 
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
-  const group = (formData.get("group") as string)?.trim();
   const sortKeyStr = (formData.get("sortKey") as string)?.trim();
   const pgn = (formData.get("pgn") as string)?.trim();
   const initialPly = parseAdminPly(formData, "initialPly");
@@ -238,7 +192,6 @@ export async function updateOpeningVariantAction(id: string, formData: FormData)
   const input: UpdateOpeningVariantInput = {};
   if (title !== undefined) input.title = title;
   if (description !== undefined) input.description = description;
-  if (group !== undefined && group !== "") input.group = group;
   if (sortKeyStr !== undefined && sortKeyStr !== "") {
     const n = parseInt(sortKeyStr, 10);
     if (Number.isNaN(n)) {
