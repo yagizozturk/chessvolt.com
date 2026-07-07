@@ -84,15 +84,8 @@ export async function completeProfileOnboarding(
   return true;
 }
 
-export async function getProfileCurrentRating(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<number | null> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("current_rating")
-    .eq("id", userId)
-    .maybeSingle();
+export async function getProfileCurrentRating(supabase: SupabaseClient, userId: string): Promise<number | null> {
+  const { data, error } = await supabase.from("profiles").select("current_rating").eq("id", userId).maybeSingle();
 
   if (error) {
     console.error("profile.repository.getProfileCurrentRating error:", {
@@ -129,10 +122,7 @@ export async function incrementProfileCurrentRating(
   const baseRating = data.current_rating ?? data.initial_rating ?? 0;
   const newRating = baseRating + increment;
 
-  const { error: updateError } = await supabase
-    .from("profiles")
-    .update({ current_rating: newRating })
-    .eq("id", userId);
+  const { error: updateError } = await supabase.from("profiles").update({ current_rating: newRating }).eq("id", userId);
 
   if (updateError) {
     console.error("profile.repository.incrementProfileCurrentRating update error:", {

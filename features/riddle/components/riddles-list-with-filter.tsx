@@ -69,7 +69,7 @@ export function RiddlesListWithFilter({
 
   if (initialItems.length === 0) {
     return (
-      <div className={cn("flex flex-col gap-8", className)}>
+      <div className={cn("page-container-children-layout", className)}>
         {header}
         <EmptyDataMessage message={emptyMessage} />
       </div>
@@ -77,7 +77,7 @@ export function RiddlesListWithFilter({
   }
 
   return (
-    <div className={cn("flex flex-col gap-8", className)}>
+    <div className="page-container-children-layout">
       {header}
 
       {visibleItems.length === 0 ? (
