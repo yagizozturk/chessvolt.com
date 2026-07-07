@@ -44,6 +44,12 @@ function formatDate(dateStr: string) {
   }
 }
 
+// ==================================================================================
+// Note: 
+// self-start; overrides the parent's items-stretch for the board only.
+// items-stretch was forcing the board's height to match the taller text column, 
+// breaking aspect-square.
+// ==================================================================================
 export function RiddleBoardCard({
   riddle,
   game,
@@ -87,7 +93,7 @@ export function RiddleBoardCard({
             </TooltipContent>
           </Tooltip>
         ) : null}
-        <div className={boardWrapperClassName}>
+        <div className={cn("self-start", boardWrapperClassName)}>
           <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} coordinates={false} />
         </div>
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
