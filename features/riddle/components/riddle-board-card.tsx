@@ -45,9 +45,9 @@ function formatDate(dateStr: string) {
 }
 
 // ==================================================================================
-// Note: 
+// Note:
 // self-start; overrides the parent's items-stretch for the board only.
-// items-stretch was forcing the board's height to match the taller text column, 
+// items-stretch was forcing the board's height to match the taller text column,
 // breaking aspect-square.
 // ==================================================================================
 export function RiddleBoardCard({
@@ -82,8 +82,8 @@ export function RiddleBoardCard({
         {isLowRiddleAccuracy(accuracyPercent) ? (
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="absolute top-[-7px] right-2 z-10">
-                <BookmarkX className="size-8 text-purple-300" aria-hidden />
+              <span className="absolute top-4 right-4 z-10">
+                <Circle className="size-5 fill-red-400 text-red-400" aria-hidden />
               </span>
             </TooltipTrigger>
             <TooltipContent side="left" sideOffset={6} className="max-w-xs">
@@ -99,7 +99,7 @@ export function RiddleBoardCard({
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
           {isValidVoltScore(voltScore) ? (
             <div className="absolute right-[-32px] bottom-[-32px] z-10">
-              <VoltCalculator result={voltScore} chartSize={140} className="w-fit" />
+              <VoltCalculator result={voltScore} chartSize={110} className="w-fit" />
             </div>
           ) : null}
           <p className="text-xl font-bold">{riddle.title}</p>

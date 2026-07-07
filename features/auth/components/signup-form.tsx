@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { TermsAndConditionsDialog } from "@/features/auth/components/terms-and-conditions-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,6 +11,7 @@ import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from "@
 import { Input } from "@/components/ui/input";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Spinner } from "@/components/ui/spinner";
+import { TermsAndConditionsDialog } from "@/features/auth/components/terms-and-conditions-dialog";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 
@@ -120,7 +120,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                 <Input
                   id="name"
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="Chess Volt"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -139,7 +139,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                   disabled={loading}
                 />
                 <FieldDescription>
-                  We&apos;ll use this to contact you. We will not share your email with anyone else.
+                  We&apos;ll only use your email to contact you. We won't share it with anyone else.
                 </FieldDescription>
               </Field>
               <div className="flex flex-col gap-3">
@@ -183,7 +183,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                     </label>
                     <button
                       type="button"
-                      className="underline underline-offset-4 hover:text-primary"
+                      className="hover:text-primary underline underline-offset-4"
                       onClick={() => setTermsOpen(true)}
                     >
                       Terms and Conditions
@@ -208,9 +208,9 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                   SIGN UP WITH GOOGLE
                 </RainbowButton>
               </div>
-              <p className="px-6 text-center text-sm text-muted-foreground">
+              <p className="text-muted-foreground px-6 text-center text-sm">
                 Already have an account?{" "}
-                <Link href="/login" className="underline underline-offset-4 hover:text-primary">
+                <Link href="/login" className="hover:text-primary underline underline-offset-4">
                   Sign in
                 </Link>
               </p>

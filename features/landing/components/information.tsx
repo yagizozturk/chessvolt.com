@@ -25,7 +25,7 @@ export function Information({
   imageAlt = "Volt Coach",
 }: InformationProps) {
   return (
-    <section className="bg-[#502DB6] pt-12 pb-16">
+    <section className="bg-[#8434ed] pt-12 pb-16">
       <div className="container mx-auto max-w-5xl px-4 py-10 md:px-6">
         <div className="flex flex-col gap-6 rounded-2xl rounded-b-none bg-white p-4 md:flex-row md:p-6">
           <div className="order-2 flex-1 space-y-4 md:order-1 md:space-y-6">
@@ -33,7 +33,9 @@ export function Information({
             <h2 className="text-secondary text-center text-[clamp(1.5rem,4vw+1rem,2.25rem)] font-bold md:text-left">
               {title}
             </h2>
-            <p className="text-secondary/80 text-center text-base leading-relaxed md:text-left md:text-lg">{description}</p>
+            <p className="text-secondary/80 text-center text-base leading-relaxed md:text-left md:text-lg">
+              {description}
+            </p>
           </div>
           <div className="order-1 mx-auto shrink-0 overflow-hidden rounded-2xl md:order-2 md:mx-0">
             <Image

@@ -1,13 +1,22 @@
 "use client";
 
-import { ChessKnight, type LucideIcon, Menu, Zap } from "lucide-react";
+import { ChessKnight, ChevronDown, LogOutIcon, type LucideIcon, Menu, UserIcon, Zap } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { SparklesText } from "@/components/ui/sparkles-text";
 import { useProfile } from "@/features/profile/hooks/use-profile";
+import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -71,6 +80,41 @@ function DesktopNavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () =
   );
 }
 
+function ProfileGreetingMenu({ displayName }: { displayName: string }) {
+  const router = useRouter();
+
+  async function handleLogout() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="focus-visible:ring-ring flex items-center gap-1 rounded-md outline-none focus-visible:ring-2">
+        <ChevronDown className="h-5 w-5" />
+        <SparklesText sparklesCount={3} className="text-base font-bold">
+          Hi, {displayName}
+        </SparklesText>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" sideOffset={8} className="w-48">
+        <DropdownMenuItem asChild>
+          <Link href="/profile">
+            <UserIcon />
+            Profile
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogout}>
+          <LogOutIcon />
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function MobileNavLink({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
   return (
     <Button variant="volt" className="h-12 w-full text-base" asChild>
@@ -84,9 +128,18 @@ function MobileNavLink({ item, onNavigate }: { item: NavItem; onNavigate: () => 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { profile, isLoading } = useProfile();
+  const router = useRouter();
   const closeSheet = () => setIsOpen(false);
 
   const displayName = profile?.username ?? "User";
+
+  async function handleLogout() {
+    closeSheet();
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <header className="absolute top-0 right-0 left-0 z-50 w-full bg-transparent">
@@ -94,12 +147,9 @@ export function Navbar() {
         <BrandLogo />
 
         <nav className="hidden items-center gap-4 md:flex" aria-label="Main navigation">
-          {profile && (
-            <SparklesText sparklesCount={3} className="text-base font-bold">
-              Hi, {displayName}
-            </SparklesText>
-          )}
-          {!isLoading && (profile ? <DesktopNavLink item={START_PLAYING_ITEM} /> : <DesktopNavLink item={SIGN_IN_ITEM} />)}
+          {profile && <ProfileGreetingMenu displayName={displayName} />}
+          {!isLoading &&
+            (profile ? <DesktopNavLink item={START_PLAYING_ITEM} /> : <DesktopNavLink item={SIGN_IN_ITEM} />)}
         </nav>
 
         <div className="md:hidden">
@@ -117,18 +167,33 @@ export function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="border-white/10 bg-slate-950/95 px-8 text-white backdrop-blur-md">
               <SheetTitle className="sr-only">Menu</SheetTitle>
-              <div className="mb-8 mt-4 flex h-8 items-center pr-10">
+              <div className="mt-4 mb-8 flex h-8 items-center pr-10">
                 <BrandLogo variant="sheet" onNavigate={closeSheet} />
               </div>
 
-              <nav className="flex flex-col gap-4" aria-label="Mobile menu">
-                {profile && <SparklesText className="text-base font-bold">Hi, {displayName}</SparklesText>}
+              <nav className="flex flex-col gap-6" aria-label="Mobile menu">
+                {profile && (
+                  <Link href="/profile" onClick={closeSheet} className="w-fit">
+                    <SparklesText className="text-base font-bold">Hi, {displayName}</SparklesText>
+                  </Link>
+                )}
                 {!isLoading &&
                   (profile ? (
                     <MobileNavLink item={START_PLAYING_ITEM} onNavigate={closeSheet} />
                   ) : (
                     <MobileNavLink item={SIGN_IN_ITEM} onNavigate={closeSheet} />
                   ))}
+                {profile && (
+                  <Button
+                    type="button"
+                    variant="voltMuted"
+                    onClick={handleLogout}
+                    className="h-12 w-full gap-2 text-base"
+                  >
+                    <LogOutIcon />
+                    Log out
+                  </Button>
+                )}
               </nav>
             </SheetContent>
           </Sheet>

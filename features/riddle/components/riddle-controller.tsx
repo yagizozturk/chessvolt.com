@@ -2,7 +2,6 @@
 
 import { ChevronLeft, Eye, HelpCircle } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -67,6 +66,7 @@ export default function RiddleController({
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [isContinuePending, setIsContinuePending] = useState(false);
+  const [isBackPending, setIsBackPending] = useState(false);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
 
@@ -269,6 +269,11 @@ export default function RiddleController({
     router.push(successDestinationPath);
   };
 
+  const handleBackClick = () => {
+    setIsBackPending(true);
+    router.push(parentCollectionUrl);
+  };
+
   const handlePlayAgain = () => {
     setSuccessDialogOpen(false);
     setReplayKey((key) => key + 1);
@@ -333,10 +338,13 @@ export default function RiddleController({
         <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
           <div className="flex justify-between">
             <div>
-              <Button variant="voltIcon" asChild>
-                <Link href={parentCollectionUrl} aria-label="Back to collection">
-                  <ChevronLeft className="size-5" />
-                </Link>
+              <Button
+                variant="voltIcon"
+                onClick={handleBackClick}
+                disabled={isBackPending}
+                aria-label="Back to collection"
+              >
+                {isBackPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
               </Button>
             </div>
             <div className="flex items-center gap-2 text-xl font-bold">

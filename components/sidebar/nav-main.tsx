@@ -80,7 +80,7 @@ function NavItemIcon({ item }: { item: NavMainItem }) {
 
 export function NavMain({ items }: { items: NavMainItem[] }) {
   const pathname = usePathname();
-  const { isMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <SidebarGroup>
@@ -101,7 +101,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                   aria-current={groupActive ? "page" : undefined}
                   className="text-lg group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0 data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] md:text-sm"
                 >
-                  <Link href={item.url}>
+                  <Link href={item.url} onClick={() => setOpenMobile(false)}>
                     <NavItemIcon item={item} />
                     <span className="text-lg group-data-[collapsible=icon]:hidden md:text-sm">{item.title}</span>
                   </Link>
