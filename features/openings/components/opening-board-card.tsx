@@ -65,7 +65,7 @@ export function OpeningBoardCard({
           <Spinner className="size-8" />
         </div>
       ) : null}
-      <div className={cn(boardWrapperClassName, hasStatusIcon && "relative")}>
+      <div className={cn("self-start", boardWrapperClassName, hasStatusIcon && "relative")}>
         {isComplete === true && <BoardStatusIcon status="solved" positionClassName="top-3 right-3" />}
         {isComplete === false && <BoardStatusIcon status="wrong" positionClassName="top-3 right-3" />}
         <DisplayBoard sourceId={id} initialFen={fen} coordinates={false} />

@@ -117,7 +117,7 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
   }
 
   return (
-    <div className="container mx-auto max-w-6xl p-8 lg:px-20 lg:py-14">
+    <div className="page-container">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
@@ -127,8 +127,8 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
         destinationPath={destinationPath}
         buttonLabel="Back to opening"
       />
-      <div className="flex flex-col gap-4 lg:flex-row">
-        <div className="relative w-full min-w-0 lg:w-auto lg:shrink-0" data-tour="board">
+      <div className="page-container-controller-layout">
+        <div className="relative w-full min-w-0 md:w-auto md:shrink-0" data-tour="board">
           <ArrowBoard
             ref={boardRef}
             sourceId={openingId}
