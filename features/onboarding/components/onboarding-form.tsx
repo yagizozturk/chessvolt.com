@@ -35,11 +35,15 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
   const progressValue = ((stepIndex + 1) / questionGroups.length) * 100;
   const maxOptionCount = Math.max(...questionGroups.map((group) => group.options.length));
   const hasSelectAllRow = questionGroups.some((group) => isMultiSelectOnboardingQuestion(group.question.slug));
+  // Step 1 first option (lowest sort_order) is unsupported for now — keep it visible but unselectable.
+  const disabledOptionIds =
+    stepIndex === 0 && currentStep.options[0] ? [currentStep.options[0].id] : [];
 
   // ======================================================================
   // Handles the selection of an option for a questionId and handles multiselect
   // ======================================================================
   function handleSelect(option: OnboardingOption) {
+    if (disabledOptionIds.includes(option.id)) return;
     setError(null);
     setSelectedOptionIdsByQuestionId((prev) => {
       const currentIds = prev[currentStep.question.id] ?? [];
@@ -151,6 +155,7 @@ export function OnboardingForm({ questionGroups }: OnboardingFormProps) {
             // Only step 2 (improvement_goal) is multi-select — show select-all there.
             onSelectAllChange={isMultiSelect ? handleSelectAllChange : undefined}
             disabled={isPending}
+            disabledOptionIds={disabledOptionIds}
             multiple={isMultiSelect}
           />
         }

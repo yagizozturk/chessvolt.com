@@ -11,6 +11,8 @@ type OnboardingOptionListProps = {
   /** When provided with `multiple`, renders a "Select all" control above the option list. */
   onSelectAllChange?: (selectAll: boolean) => void;
   disabled?: boolean;
+  /** Option IDs that cannot be selected (shown as disabled). */
+  disabledOptionIds?: string[];
   multiple?: boolean;
 };
 
@@ -20,6 +22,7 @@ export function OnboardingOptionList({
   onSelect,
   onSelectAllChange,
   disabled = false,
+  disabledOptionIds = [],
   multiple = false,
 }: OnboardingOptionListProps) {
   if (options.length === 0) {
@@ -27,8 +30,11 @@ export function OnboardingOptionList({
   }
 
   const selectedIdSet = new Set(selectedIds);
-  // Checked only when every option is selected — avoid indeterminate, which renders like checked.
-  const allSelected = options.every((option) => selectedIdSet.has(option.id));
+  const disabledOptionIdSet = new Set(disabledOptionIds);
+  const selectableOptions = options.filter((option) => !disabledOptionIdSet.has(option.id));
+  // Checked only when every selectable option is selected — avoid indeterminate, which renders like checked.
+  const allSelected =
+    selectableOptions.length > 0 && selectableOptions.every((option) => selectedIdSet.has(option.id));
 
   return (
     <div className="mx-auto flex w-full max-w-sm flex-col gap-3">
@@ -56,7 +62,7 @@ export function OnboardingOptionList({
           <OnboardingOptionCard
             option={option}
             selected={selectedIdSet.has(option.id)}
-            disabled={disabled}
+            disabled={disabled || disabledOptionIdSet.has(option.id)}
             onSelect={onSelect}
             multiple={multiple}
           />
