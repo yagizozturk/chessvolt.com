@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
+import { isValidEmail } from "@/lib/utils/validation";
 
 export function ForgotPasswordForm({ className, ...props }: React.ComponentProps<typeof Card>) {
   const [email, setEmail] = useState("");
@@ -21,6 +22,12 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {

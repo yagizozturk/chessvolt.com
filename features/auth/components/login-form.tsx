@@ -19,6 +19,7 @@ import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
+import { isValidEmail } from "@/lib/utils/validation";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const [email, setEmail] = useState("");
@@ -32,6 +33,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await supabase.auth.signInWithPassword({
