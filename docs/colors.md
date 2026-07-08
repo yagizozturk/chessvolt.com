@@ -1,3 +1,4 @@
+// TODO: Refactor
 Shadcn UI uses a system of CSS variables to maintain a consistent look and feel throughout your application. Here is a breakdown of how and where each of these color variables is typically used:
 
 ---

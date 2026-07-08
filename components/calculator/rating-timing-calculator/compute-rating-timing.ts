@@ -1,3 +1,4 @@
+// TODO: Refactor
 import {
   RATING_TIMING_CONFIG,
   type RatingTimingInterval,

@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/page-header";

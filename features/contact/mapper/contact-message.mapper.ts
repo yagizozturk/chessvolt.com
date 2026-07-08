@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { ContactMessage } from "@/features/contact/types/contact-message";
 
 export type DbContactMessage = {

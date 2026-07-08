@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
 import type { OnboardingOptionThemeWithTheme } from "@/features/onboarding-option-theme/types/onboarding-option-theme";
 

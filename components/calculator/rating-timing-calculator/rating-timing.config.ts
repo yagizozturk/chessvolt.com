@@ -1,3 +1,4 @@
+// TODO: Refactor
 export type RatingTimingInterval = {
   rating: number;
   /** Solve at or under this duration (ms) earns full rating-timing % at this rating tier. */

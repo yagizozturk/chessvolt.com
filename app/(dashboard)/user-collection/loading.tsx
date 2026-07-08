@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { CollectionCardSkeleton, PageHeaderSkeleton } from "@/components/page-loading/page-skeletons";
 import { Skeleton } from "@/components/ui/skeleton";
 

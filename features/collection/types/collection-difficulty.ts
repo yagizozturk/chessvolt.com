@@ -1,3 +1,4 @@
+// TODO: Refactor
 // ============================================================================
 // Difficulty scale for collections: integer from 1 (easiest) to 10 (hardest).
 // Stored in `collections.difficulty`.

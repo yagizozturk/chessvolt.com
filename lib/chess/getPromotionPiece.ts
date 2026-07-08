@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { Chess, Square } from "chess.js";
 
 export function getPromotionPiece(

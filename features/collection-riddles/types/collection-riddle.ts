@@ -1,3 +1,4 @@
+// TODO: Refactor
 export type CollectionRiddle = {
   id: string;
   riddleId: string;

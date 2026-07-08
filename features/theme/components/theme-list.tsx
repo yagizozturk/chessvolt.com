@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
 import type { Theme } from "@/features/theme/types/theme";
 import {

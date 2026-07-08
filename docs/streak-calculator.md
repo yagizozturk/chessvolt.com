@@ -1,3 +1,4 @@
+// TODO: Refactor
 # Streak calculator
 
 Computes a **0–100% streak** score from the **longest consecutive correct moves** (`maxCorrectStreak`) relative to **player move count**.

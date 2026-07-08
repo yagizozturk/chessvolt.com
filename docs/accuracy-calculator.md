@@ -1,3 +1,4 @@
+// TODO: Refactor
 # Accuracy calculator
 
 Computes a **0–100% accuracy** score for one solve attempt. Used live on the riddle page and inside Volt when scoring stored attempts.

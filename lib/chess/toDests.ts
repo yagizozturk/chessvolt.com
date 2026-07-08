@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { Chess, SQUARES } from 'chess.js';
 import { Key } from "@lichess-org/chessground/types";
 

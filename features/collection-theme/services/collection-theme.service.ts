@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { DEFAULT_TOP_COLLECTION_THEME_COUNT } from "@/features/collection-theme/mapper/collection-theme.mapper";

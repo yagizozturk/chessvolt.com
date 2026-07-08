@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { geminiChat } from "@/lib/gemini/client";
 import { requestOpeningVariantGoalsFromLlm } from "@/lib/opening-variant-goals/request-goals";
 import type {

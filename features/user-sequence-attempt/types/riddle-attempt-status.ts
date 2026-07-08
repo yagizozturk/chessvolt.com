@@ -1,3 +1,4 @@
+// TODO: Refactor
 /** Matches Postgres enum `public.riddle_attempt_status`. */
 export type RiddleAttemptStatus = "started" | "completed" | "abandoned" | "failed";
 

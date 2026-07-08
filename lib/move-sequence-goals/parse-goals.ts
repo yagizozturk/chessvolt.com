@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import type { ExpectedPlayerGoal } from "@/lib/move-sequence-goals/expected-goals";
 

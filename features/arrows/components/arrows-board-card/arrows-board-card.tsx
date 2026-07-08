@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { DrawShape } from "@lichess-org/chessground/draw";
 import Link from "next/link";
 

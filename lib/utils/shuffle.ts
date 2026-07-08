@@ -1,3 +1,4 @@
+// TODO: Refactor
 /** Fisher-Yates shuffle - returns new array with random order */
 export function shuffle<T>(array: T[]): T[] {
   const result = [...array];

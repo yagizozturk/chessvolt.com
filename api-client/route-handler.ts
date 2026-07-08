@@ -1,3 +1,4 @@
+// TODO: Refactor
 /**
  * API Route Handler Utilities
  * Common patterns for API routes: auth, validation, error handling

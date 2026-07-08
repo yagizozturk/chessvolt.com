@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
 
 export type DbCollectionRiddle = {

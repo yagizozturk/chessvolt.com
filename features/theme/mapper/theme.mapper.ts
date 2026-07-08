@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { Theme } from "@/features/theme/types/theme";
 import { parseThemeCategory, type ThemeCategory } from "@/features/theme/types/theme-category";
 

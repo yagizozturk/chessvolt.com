@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { CreateOnboardingStarterCollectionData } from "@/features/onboarding/types/create-onboarding-starter-collection-data";

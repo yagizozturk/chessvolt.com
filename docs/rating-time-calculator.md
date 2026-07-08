@@ -1,3 +1,4 @@
+// TODO: Refactor
 # Rating–timing calculator
 
 Computes a **0–100% timing** score for one solve attempt based on **how long** the user took versus a **rating-based** time budget (harder content → more time allowed for full credit).

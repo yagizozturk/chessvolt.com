@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { Flame } from "lucide-react";
 import { useMemo } from "react";
 

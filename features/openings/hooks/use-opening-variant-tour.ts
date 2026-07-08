@@ -1,3 +1,4 @@
+// TODO: Refactor
 "use client";
 
 import { OPENING_VARIANT_TOUR_STEPS } from "@/features/openings/tours/opening-variant-tour-steps";

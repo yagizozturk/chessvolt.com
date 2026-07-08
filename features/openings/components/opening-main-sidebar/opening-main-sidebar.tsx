@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 type OpeningMainSidebarProps = {

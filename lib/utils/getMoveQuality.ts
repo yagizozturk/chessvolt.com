@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { MoveQuality } from "@/lib/utils/getMoveFeedbackClass";
 
 export function getMoveQuality(deltaCp: number | null): MoveQuality {

@@ -1,3 +1,4 @@
+// TODO: Refactor
 # Theme tokens ranked by lightness (`:root`)
 
 These rankings use the **first number** in each `oklch(L C H)` value: **L (lightness)**. In OKLCH, **L runs from 0 (black) to 1 (white)**. Higher L = lighter; lower L = darker.

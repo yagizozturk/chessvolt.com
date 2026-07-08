@@ -1,10 +1,13 @@
+// TODO: Refactor
+
 "use client";
+
+import { useState } from "react";
 
 import { bulkImportPgnVariantsAction } from "@/app/(admin)/admin/openings/variants/actions/variants";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import type { Opening } from "@/features/openings/types/opening";
-import { useState } from "react";
 
 const EXAMPLE_PGNS = `[Event "London System Variants (3 levels): Bölüm 1 - Level 1"]
 [Date "2026.07.08"]

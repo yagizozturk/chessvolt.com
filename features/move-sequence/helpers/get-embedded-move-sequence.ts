@@ -1,3 +1,4 @@
+// TODO: Refactor
 type EmbeddedRow = {
   id: string;
   initial_fen: string;

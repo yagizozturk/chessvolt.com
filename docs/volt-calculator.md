@@ -1,3 +1,4 @@
+// TODO: Refactor
 # Volt calculator
 
 Aggregates a user’s **historical attempts** on one riddle or opening variant into a single **Volt** score (e.g. **110/220 Volt**), with a per-day breakdown for detail views.

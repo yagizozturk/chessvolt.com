@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { Footer } from "@/features/landing/components/footer";
 import { Navbar } from "@/features/landing/components/navbar";
 

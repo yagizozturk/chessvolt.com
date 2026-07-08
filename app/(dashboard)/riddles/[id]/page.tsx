@@ -1,3 +1,4 @@
+// TODO: Refactor
 import RiddleController from "@/features/riddle/components/riddle-controller";
 import { loadStandaloneRiddlePage } from "@/features/riddle/services/riddle-page.service";
 import { getPublicUser } from "@/lib/supabase/auth";

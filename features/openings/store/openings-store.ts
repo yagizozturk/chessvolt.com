@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { create } from "zustand";
 
 type OpeningsStore = {

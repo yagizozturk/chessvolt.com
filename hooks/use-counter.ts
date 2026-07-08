@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { useState } from "react";
 
 export default function useCounter() {

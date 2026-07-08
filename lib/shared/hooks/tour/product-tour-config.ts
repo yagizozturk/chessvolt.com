@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { Locale, PartialDeep, Props, Styles } from "react-joyride";
 
 export const PRODUCT_TOUR_BUTTON_STYLES: PartialDeep<Styles> = {

@@ -1,3 +1,4 @@
+// TODO: Refactor
 "use client";
 
 import { BookOpen, Puzzle, Target } from "lucide-react";

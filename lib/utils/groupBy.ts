@@ -1,3 +1,4 @@
+// TODO: Refactor
 /**
  * Groups array items by a key derived from each item. In docs.
  * @param items - Array to group

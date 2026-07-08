@@ -1,3 +1,4 @@
+// TODO: Refactor
 export type MoveGoal = {
   ply: number;
   move: string;

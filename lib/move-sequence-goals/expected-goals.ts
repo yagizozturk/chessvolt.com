@@ -1,3 +1,4 @@
+// TODO: Refactor
 export function parseMovesFromSequence(moves: string): string[] {
   return moves
     .trim()

@@ -1,3 +1,4 @@
+// TODO: Refactor
 export const ONBOARDING_QUESTION_SLUG = {
   chessFamiliarity: "chess_familiarity",
   improvementGoal: "improvement_goal",

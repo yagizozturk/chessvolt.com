@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { NextRequest } from "next/server";
 
 import { openAi } from "@/lib/open-ai/open-ai";

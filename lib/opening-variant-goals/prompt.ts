@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { GenerateOpeningVariantGoalsInput } from "@/lib/opening-variant-goals/types";
 
 const SYSTEM_PROMPT_BASE = `

@@ -1,3 +1,4 @@
+// TODO: Refactor
 # Chessvolt `content_themes.weight` Mantığı
 
 `content_themes.weight`, bir içeriğin bir theme’e ne kadar güçlü bağlı olduğunu gösterir.

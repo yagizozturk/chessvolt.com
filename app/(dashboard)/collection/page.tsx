@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { PageHeader } from "@/components/page-header";
 import { CollectionCard } from "@/features/collection/components/collection-card";

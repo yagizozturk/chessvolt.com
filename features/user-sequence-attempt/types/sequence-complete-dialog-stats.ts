@@ -1,3 +1,4 @@
+// TODO: Refactor
 export type SequenceCompleteDialogStats = {
   accuracyPercent: number | null;
   maxCorrectStreak: number;

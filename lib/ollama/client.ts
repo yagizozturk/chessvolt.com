@@ -1,3 +1,4 @@
+// TODO: Refactor
 export type OllamaChatMessage = {
   role: "system" | "user" | "assistant";
   content: string;

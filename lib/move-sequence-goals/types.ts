@@ -1,3 +1,4 @@
+// TODO: Refactor
 export type GenerateGoalsInput = {
   initialFen: string;
   pgn: string | null;

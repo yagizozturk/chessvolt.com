@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { getEmbeddedMoveSequence } from "@/features/move-sequence/helpers/get-embedded-move-sequence";
 import { toMoveSequence, type DbMoveSequence } from "@/features/move-sequence/mapper/move-sequence.mapper";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";

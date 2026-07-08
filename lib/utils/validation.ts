@@ -1,3 +1,4 @@
+// TODO: Refactor
 /** Requires local@domain.tld — rejects values like `yunus@emre`. */
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

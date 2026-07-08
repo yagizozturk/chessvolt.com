@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 
 export type ValidateChessFamiliarityAnswerResult =

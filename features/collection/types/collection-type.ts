@@ -1,3 +1,4 @@
+// TODO: Refactor
 // ============================================================================
 // Allowed values for `collections.collection_type`: admin (platform) or custom (user-owned).
 // ============================================================================

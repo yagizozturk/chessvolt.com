@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const DEFAULT_GEMINI_MODEL = "gemini-3.5-flash";

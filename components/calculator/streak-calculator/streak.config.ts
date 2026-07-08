@@ -1,3 +1,4 @@
+// TODO: Refactor
 // ====================================================================================
 // Longest correct run as a share of sequence length
 // (`maxCorrectStreak / totalMoveCount`). Example: 8/10 → 0.8.

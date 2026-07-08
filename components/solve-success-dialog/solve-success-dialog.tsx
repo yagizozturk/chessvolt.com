@@ -1,3 +1,4 @@
+// TODO: Refactor
 "use client";
 
 import Lottie from "lottie-react";

@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { TrophyIcon, X } from "lucide-react";
 
 type BoardStatusIconProps = {

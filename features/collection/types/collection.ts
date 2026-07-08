@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { CollectionThemeWithTheme } from "@/features/collection-theme/types/collection-theme";
 import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
 import type { CollectionType } from "@/features/collection/types/collection-type";

@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { geminiChat } from "@/lib/gemini/client";
 import type { GenerateGoalsInput } from "@/lib/move-sequence-goals/types";

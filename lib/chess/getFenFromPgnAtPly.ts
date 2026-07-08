@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { Chess } from "chess.js";
 
 /**

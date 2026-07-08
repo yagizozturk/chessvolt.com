@@ -1,3 +1,4 @@
+// TODO: Refactor
 /**
  * Converts a string to URL-friendly slug.
  * e.g. "Sicilian Defense" -> "sicilian-defense"

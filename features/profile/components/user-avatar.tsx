@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitialsFromDisplayName } from "@/features/profile/utilities/user-avatar";
 import { cn } from "@/lib/utils";

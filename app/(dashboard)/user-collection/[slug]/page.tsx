@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { CollectionHeader } from "@/features/collection/components/collection-header";
 import { loadCollectionRiddlesForDisplay } from "@/features/collection/services/collection-riddles-display.service";

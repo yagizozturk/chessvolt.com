@@ -1,3 +1,4 @@
+// TODO: Refactor
 /** Calibration-only: adjust weights without changing penalty logic. */
 export const VOLT_ACCURACY_CONFIG = {
   /** Starting accuracy before wrong-move and hint penalties. */

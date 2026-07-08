@@ -1,3 +1,4 @@
+// TODO: Refactor
 import {
   STREAK_CONFIG,
   type StreakInterval,

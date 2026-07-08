@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { VOLT_ACCURACY_CONFIG } from "@/components/calculator/accuracy-calculator/volt-accuracy.config";
 
 export type VoltAccuracyInput = {

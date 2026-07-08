@@ -1,3 +1,4 @@
+// TODO: Refactor
 export const TOUR_TARGETS = {
   board: "board",
   titleBar: "title-bar",

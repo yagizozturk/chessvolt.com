@@ -1,3 +1,4 @@
+// TODO: Refactor
 export type MoveSequenceForGoalsBackfill = {
   id: string;
   initialFen: string;

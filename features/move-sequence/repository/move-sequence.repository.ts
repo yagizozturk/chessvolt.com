@@ -1,3 +1,4 @@
+// TODO: Refactor
 import {
   DEFAULT_INITIAL_FEN,
   toMoveSequence,

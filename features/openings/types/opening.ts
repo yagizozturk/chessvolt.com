@@ -1,3 +1,4 @@
+// TODO: Refactor
 export type OpeningArrow = {
   orig: string;
   dest: string;

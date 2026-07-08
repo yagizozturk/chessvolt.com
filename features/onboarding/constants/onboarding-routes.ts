@@ -1,3 +1,4 @@
+// TODO: Refactor
 export const ONBOARDING_PATH = "/onboarding";
 export const DASHBOARD_HOME_URL = "/dashboard";
 export const POST_ONBOARDING_URL = "/user-collection";

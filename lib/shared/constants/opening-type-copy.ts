@@ -1,3 +1,4 @@
+// TODO: Refactor
 export function formatOpeningType(openingType: string): string {
   const trimmed = openingType.trim();
   if (trimmed.length === 0) return "Other";

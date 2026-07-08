@@ -1,3 +1,4 @@
+// TODO: Refactor
 # Chessvolt `themes.sort_order` Mantığı
 
 `themes.sort_order` alanı hesaplama için değil, sadece sıralama için kullanılır.

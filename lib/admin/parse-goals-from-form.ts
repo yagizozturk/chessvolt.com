@@ -1,3 +1,4 @@
+// TODO: Refactor
 import { redirect } from "next/navigation";
 
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";

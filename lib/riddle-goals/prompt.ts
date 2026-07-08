@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { GenerateGoalsInput } from "@/lib/move-sequence-goals/types";
 
 const SYSTEM_PROMPT_BASE = `

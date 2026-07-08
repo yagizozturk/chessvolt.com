@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { Collection } from "@/features/collection/types/collection";
 
 export type CreateOnboardingStarterCollectionResult =

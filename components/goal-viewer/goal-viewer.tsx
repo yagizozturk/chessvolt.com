@@ -1,3 +1,4 @@
+// TODO: Refactor
 import Lottie from "lottie-react";
 
 import { Progress } from "@/components/ui/progress";

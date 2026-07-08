@@ -1,3 +1,4 @@
+// TODO: Refactor
 /**
  * PGN Parser
  * Extracts headers and validates PGN format.

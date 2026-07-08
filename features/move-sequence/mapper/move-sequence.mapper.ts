@@ -1,3 +1,4 @@
+// TODO: Refactor
 import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
 import type { MoveSequenceForGoalsBackfill } from "@/features/move-sequence/types/move-sequence-for-goals-backfill";
 import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";

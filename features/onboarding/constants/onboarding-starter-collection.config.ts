@@ -1,3 +1,4 @@
+// TODO: Refactor
 /** Fixed slug so onboarding starter collections are idempotent per user. */
 export const ONBOARDING_STARTER_COLLECTION_SLUG = "onboarding-starter";
 export const ONBOARDING_STARTER_COLLECTION_TITLE = "Starter Collection";
