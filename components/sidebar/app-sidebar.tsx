@@ -85,15 +85,15 @@ const data = {
       items: [
         {
           title: "Contact Us",
-          url: "#",
+          url: "/contact",
         },
         {
           title: "Terms of Service",
-          url: "#",
+          url: "/terms",
         },
         {
           title: "Privacy Policy",
-          url: "#",
+          url: "/privacy",
         },
       ],
     },

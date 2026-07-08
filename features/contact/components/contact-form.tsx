@@ -3,11 +3,11 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import { submitContactAction } from "@/features/contact/actions/submit-contact";
 
 export function ContactForm() {
@@ -38,13 +38,7 @@ export function ContactForm() {
 
   return (
     <Card className="border-border/60 shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-secondary text-2xl">Send us a message</CardTitle>
-        <CardDescription>
-          Questions, feedback, or partnership ideas — we read every message and will get back to you.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         {success ? (
           <div className="rounded-md bg-green-500/10 px-4 py-3 text-sm text-green-600 dark:text-green-400">
             Thanks for reaching out! We&apos;ve received your message and will reply as soon as we can.
