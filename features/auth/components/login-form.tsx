@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { RainbowButton } from "@/components/ui/rainbow-button";
+import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
@@ -110,16 +110,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   Login
                 </Button>
 
-                <RainbowButton
-                  variant="default"
-                  className="rounded-2xl"
-                  type="button"
+                <GoogleSignInButton
+                  className="w-full"
                   onClick={handleGoogleLogin}
                   disabled={loading}
-                >
-                  {loading && <Spinner data-icon="inline-start" />}
-                  LOGIN WITH GOOGLE
-                </RainbowButton>
+                />
 
                 <p className="text-muted-foreground text-center text-sm">
                   Don&apos;t have an account?{" "}

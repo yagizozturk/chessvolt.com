@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { RainbowButton } from "@/components/ui/rainbow-button";
+import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 import { Spinner } from "@/components/ui/spinner";
 import { TermsAndConditionsDialog } from "@/features/auth/components/terms-and-conditions-dialog";
 import { createClient } from "@/lib/supabase/client";
@@ -197,16 +197,12 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                   {loading && <Spinner data-icon="inline-start" />}
                   Create Account
                 </Button>
-                <RainbowButton
-                  variant="default"
-                  className="rounded-2xl"
-                  type="button"
+                <GoogleSignInButton
+                  className="w-full"
+                  label="Sign up with Google"
                   onClick={handleGoogleSignup}
                   disabled={loading}
-                >
-                  {loading && <Spinner data-icon="inline-start" />}
-                  SIGN UP WITH GOOGLE
-                </RainbowButton>
+                />
               </div>
               <p className="text-muted-foreground px-6 text-center text-sm">
                 Already have an account?{" "}
