@@ -54,7 +54,7 @@ export function ProfileUsernameForm({ initialUsername, displayName }: ProfileUse
 
   return (
     <form action={formAction} className="space-y-2">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <Input
           id={usernameFieldId}
           name="username"
@@ -65,18 +65,20 @@ export function ProfileUsernameForm({ initialUsername, displayName }: ProfileUse
           className="max-w-xs"
           autoFocus
         />
-        <Button type="submit" variant="volt" disabled={isPending}>
-          {isPending ? <Spinner data-icon="inline-start" /> : null}
-          Save
-        </Button>
-        <Button
-          type="button"
-          variant="voltMuted"
-          disabled={isPending}
-          onClick={() => setIsEditing(false)}
-        >
-          Cancel
-        </Button>
+        <div className="flex gap-2">
+          <Button type="submit" variant="volt" disabled={isPending}>
+            {isPending ? <Spinner data-icon="inline-start" /> : null}
+            Save
+          </Button>
+          <Button
+            type="button"
+            variant="voltMuted"
+            disabled={isPending}
+            onClick={() => setIsEditing(false)}
+          >
+            Cancel
+          </Button>
+        </div>
       </div>
       {state.error ? (
         <p className="text-destructive text-sm" role="alert">

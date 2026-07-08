@@ -104,11 +104,6 @@ export function CollectionFilters({
           </SelectContent>
         </Select>
       </div>
-      {hasActiveFilters && (
-        <Button type="button" variant="volt" size="sm" onClick={() => router.push("/collection")}>
-          Clear filters
-        </Button>
-      )}
       <div className="min-w-0 lg:ml-auto lg:max-w-xs lg:flex-1">
         <Input
           value={localSearchQuery}
@@ -118,6 +113,11 @@ export function CollectionFilters({
           className="bg-background"
         />
       </div>
+      {hasActiveFilters && (
+        <Button type="button" variant="volt" size="sm" onClick={() => router.push("/collection")}>
+          Clear filters
+        </Button>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProfileLogoutButton } from "@/features/profile/components/profile-logout-button";
@@ -33,12 +34,12 @@ export default async function Page() {
   const displayName = getDisplayName(profile);
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-10">
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-2 rounded-xl bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)] p-6">
-          <h1 className="text-3xl font-bold">My Profile</h1>
-          <p className="text-muted-foreground">View your account details as you solve riddles and learn openings.</p>
-        </div>
+    <div className="page-container">
+      <div className="page-container-list-layout">
+        <PageHeader
+          title="My Profile"
+          description="View your account details as you solve riddles and learn openings."
+        />
 
         <Card>
           <CardHeader>
@@ -59,7 +60,7 @@ export default async function Page() {
                   </div>
                 </div>
               </div>
-              <ProfileLogoutButton />
+              <ProfileLogoutButton iconOnly />
             </div>
           </CardHeader>
         </Card>

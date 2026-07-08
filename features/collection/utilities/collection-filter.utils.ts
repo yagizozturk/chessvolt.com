@@ -38,9 +38,9 @@ function matchesDifficultyOption(difficulty: CollectionDifficulty, option: Colle
 }
 
 // ============================================================================
-// Gets the theme filter options
+// Gets the theme options for filter
 // Multiple collections can share the same theme. When you loop every collection’s
-// themes, the same theme.slug can show up many times. The Map keeps each theme once
+// themes, slug can show up many times. The Map keeps each theme once
 // so the dropdown doesn’t list duplicates.
 // ============================================================================
 export function getThemeFilterOptions(collections: CollectionWithRiddleCountAndThemes[]): Theme[] {

@@ -25,7 +25,7 @@ export default async function UserCollectionPage() {
         {userCollections.length === 0 ? (
           <>
             <EmptyDataMessage message="You don't have any collections yet." />
-            <div className="flex justify-end">
+            <div className="flex justify-center sm:justify-end">
               <CreateUserListDialog />
             </div>
           </>
@@ -36,7 +36,7 @@ export default async function UserCollectionPage() {
                 <UserCollectionCard key={collection.id} collection={collection} />
               ))}
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-center sm:justify-end">
               <CreateUserListDialog />
             </div>
           </>

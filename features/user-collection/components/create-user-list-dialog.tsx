@@ -30,14 +30,14 @@ export function CreateUserListDialog() {
 
   return (
     <Dialog>
-      <form action={handleSubmit}>
-        <DialogTrigger asChild>
-          <Button variant="volt" type="button">
-            <Plus data-icon="inline-start" />
-            Create Collection
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-sm">
+      <DialogTrigger asChild>
+        <Button variant="volt" type="button">
+          <Plus data-icon="inline-start" />
+          Create Collection
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-sm">
+        <form action={handleSubmit} className="grid gap-5">
           <DialogHeader>
             <DialogTitle>Create collection</DialogTitle>
             <DialogDescription>Add a new collection to organize your riddles.</DialogDescription>
@@ -52,19 +52,19 @@ export function CreateUserListDialog() {
               <Input id="collection-description" name="description" placeholder="Description (optional)" />
             </Field>
           </FieldGroup>
-          <DialogFooter>
+          <DialogFooter className="flex-row gap-3">
             <DialogClose asChild>
-              <Button variant="voltMuted" type="button">
+              <Button variant="voltMuted" type="button" className="flex-1 sm:flex-none">
                 Cancel
               </Button>
             </DialogClose>
-            <Button variant="volt" type="submit" disabled={isPending}>
+            <Button variant="volt" type="submit" disabled={isPending} className="flex-1 sm:flex-none">
               {isPending && <Spinner data-icon="inline-start" />}
               Create
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }

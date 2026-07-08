@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil } from "lucide-react";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import { updateMyCollectionAction } from "@/app/(dashboard)/user-collection/actions";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ type EditUserListDialogProps = {
 };
 
 export function EditUserListDialog({ collection }: EditUserListDialogProps) {
+  const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const titleFieldId = `collection-title-${collection.id}`;
   const descriptionFieldId = `collection-description-${collection.id}`;
@@ -35,11 +36,12 @@ export function EditUserListDialog({ collection }: EditUserListDialogProps) {
   const handleSubmit = (formData: FormData) => {
     startTransition(async () => {
       await updateMyCollectionAction(formData);
+      setOpen(false);
     });
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button type="button" variant="voltIcon" size="icon-xs" title="Edit">
           <Pencil />

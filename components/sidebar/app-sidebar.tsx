@@ -183,7 +183,7 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
   return (
     <Sidebar {...props} collapsible="icon" className="!border-r-0">
       <SidebarHeader>
-        <SidebarMenu className="items-center">
+        <SidebarMenu>
           <SidebarMenuItem className="mt-5">
             <SidebarMenuButton
               size="lg"
