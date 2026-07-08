@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
+import { isValidPassword, PASSWORD_REQUIREMENT_ERROR } from "@/lib/utils/validation";
 
 export function UpdatePasswordForm({ className, ...props }: React.ComponentProps<typeof Card>) {
   const [password, setPassword] = useState("");
@@ -49,8 +50,8 @@ export function UpdatePasswordForm({ className, ...props }: React.ComponentProps
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long");
+    if (!isValidPassword(password)) {
+      setError(PASSWORD_REQUIREMENT_ERROR);
       return;
     }
 

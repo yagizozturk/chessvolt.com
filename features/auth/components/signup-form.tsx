@@ -21,6 +21,12 @@ import { Spinner } from "@/components/ui/spinner";
 import { TermsAndConditionsDialog } from "@/features/auth/components/terms-and-conditions-dialog";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
+import {
+  isValidEmail,
+  isValidPassword,
+  PASSWORD_REQUIREMENT_ERROR,
+  PASSWORD_REQUIREMENT_TEXT,
+} from "@/lib/utils/validation";
 
 export function SignupForm({ className, ...props }: React.ComponentProps<typeof Card>) {
   const [name, setName] = useState("");
@@ -41,13 +47,18 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
     e.preventDefault();
     setError(null);
 
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long");
+    if (!isValidPassword(password)) {
+      setError(PASSWORD_REQUIREMENT_ERROR);
       return;
     }
 
@@ -162,6 +173,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        minLength={8}
                         disabled={loading}
                       />
                       <InputGroupAddon align="inline-end">
@@ -185,6 +197,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
+                        minLength={8}
                         disabled={loading}
                       />
                       <InputGroupAddon align="inline-end">
@@ -202,7 +215,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                     </InputGroup>
                   </Field>
                 </div>
-                <FieldDescription>Must be at least 8 characters long.</FieldDescription>
+                <FieldDescription>{PASSWORD_REQUIREMENT_TEXT}</FieldDescription>
               </div>
               <Field orientation="horizontal" className="items-start">
                 <Checkbox

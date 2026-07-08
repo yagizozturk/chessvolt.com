@@ -2,10 +2,9 @@
 
 import { submitContactMessage } from "@/features/contact/services/contact-message.service";
 import { getPublicUser } from "@/lib/supabase/auth";
+import { isValidEmail } from "@/lib/utils/validation";
 
 export type SubmitContactResult = { success: true } | { success: false; error: string };
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function submitContactAction(input: {
   name: string;
@@ -26,7 +25,7 @@ export async function submitContactAction(input: {
     return { success: false, error: "Email is required." };
   }
 
-  if (!EMAIL_PATTERN.test(email)) {
+  if (!isValidEmail(email)) {
     return { success: false, error: "Please enter a valid email address." };
   }
 
