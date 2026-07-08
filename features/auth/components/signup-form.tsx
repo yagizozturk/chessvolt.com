@@ -3,12 +3,19 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 import { Spinner } from "@/components/ui/spinner";
 import { TermsAndConditionsDialog } from "@/features/auth/components/terms-and-conditions-dialog";
@@ -20,6 +27,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -146,25 +155,51 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
                 <div className="flex gap-4">
                   <Field className="min-w-0 flex-1">
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      disabled={loading}
-                    />
+                    <InputGroup>
+                      <InputGroupInput
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        disabled={loading}
+                      />
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupButton
+                          size="icon-xs"
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                          onClick={() => setShowPassword((prev) => !prev)}
+                          disabled={loading}
+                        >
+                          {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+                        </InputGroupButton>
+                      </InputGroupAddon>
+                    </InputGroup>
                   </Field>
                   <Field className="min-w-0 flex-1">
                     <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
-                    <Input
-                      id="confirm-password"
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      required
-                      disabled={loading}
-                    />
+                    <InputGroup>
+                      <InputGroupInput
+                        id="confirm-password"
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        disabled={loading}
+                      />
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupButton
+                          size="icon-xs"
+                          aria-label={
+                            showConfirmPassword ? "Hide confirm password" : "Show confirm password"
+                          }
+                          onClick={() => setShowConfirmPassword((prev) => !prev)}
+                          disabled={loading}
+                        >
+                          {showConfirmPassword ? <EyeIcon /> : <EyeOffIcon />}
+                        </InputGroupButton>
+                      </InputGroupAddon>
+                    </InputGroup>
                   </Field>
                 </div>
                 <FieldDescription>Must be at least 8 characters long.</FieldDescription>
