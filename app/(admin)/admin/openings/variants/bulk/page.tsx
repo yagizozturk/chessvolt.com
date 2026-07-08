@@ -12,6 +12,7 @@ type Props = {
     created?: string;
     errors?: string;
     errorDetails?: string;
+    openingId?: string;
   }>;
 };
 
@@ -57,6 +58,8 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
       {params.error && (
         <div className="border-destructive/50 bg-destructive/10 text-destructive mb-4 rounded-md border p-3 text-sm">
           {params.error === "invalid_json" && "Geçersiz JSON formatı."}
+          {params.error === "missing_fields" && "Opening ve PGN alanları zorunludur."}
+          {params.error === "invalid_pgn" && "Geçerli PGN bulunamadı. PGN'leri boş satırlarla ayırın."}
         </div>
       )}
       {params.created && (
@@ -83,7 +86,7 @@ export default async function AdminOpeningsBulkPage({ searchParams }: Props) {
       {openings.length === 0 ? (
         <p className="text-muted-foreground py-4 text-center">Önce bir opening oluşturmanız gerekiyor.</p>
       ) : (
-        <ImportVariantsForm />
+        <ImportVariantsForm openings={openings} defaultOpeningId={params.openingId} />
       )}
     </div>
   );

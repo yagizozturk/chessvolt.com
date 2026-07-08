@@ -94,6 +94,23 @@ export async function findByOpeningId(supabase: SupabaseClient, openingId: strin
   return (data ?? []).map(toOpeningVariant);
 }
 
+export async function getMaxSortKeyByOpeningId(supabase: SupabaseClient, openingId: string): Promise<number> {
+  const { data, error } = await supabase
+    .from("opening_variants")
+    .select("sort_key")
+    .eq("opening_id", openingId)
+    .order("sort_key", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("opening-variant.repository.getMaxSortKeyByOpeningId error:", error);
+    return 0;
+  }
+
+  return typeof data?.sort_key === "number" ? data.sort_key : 0;
+}
+
 // ================================================================================================
 // Bulk lookup opening variants by move_sequence_id.
 // Used by Grand Volt to resolve attempt sequence IDs to scoring metadata (moves, rating).

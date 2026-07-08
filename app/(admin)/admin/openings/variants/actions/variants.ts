@@ -10,19 +10,15 @@ import type {
 import {
   createOpeningVariant,
   deleteOpeningVariant,
+  getMaxSortKeyByOpeningId,
   getOpeningVariantById,
   updateOpeningVariant,
 } from "@/features/openings/services/openings.service";
 import { parseGoalsFromForm } from "@/lib/admin/parse-goals-from-form";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
+import { parsePgn, splitPgnGames } from "@/lib/chess/parsePgn";
 import { getAdminUser } from "@/lib/supabase/auth";
-
-type BulkVariantInput = {
-  opening_id: string;
-  sort_key?: number | string;
-  pgn: string;
-};
 
 /** Empty or missing → 0 (initial ply default). */
 function parseAdminPly(formData: FormData, key: string): number {
@@ -39,19 +35,6 @@ function newVariantUrl(formData: FormData, error: string): string {
   const id = (formData.get("openingId") as string)?.trim();
   if (id) q.set("openingId", id);
   return `/admin/openings/variants/new?${q.toString()}`;
-}
-
-function parseBulkSortKey(v: unknown): { ok: true; value: number } | { ok: false } {
-  if (v === undefined || v === null) return { ok: true, value: 0 };
-  if (typeof v === "number" && Number.isFinite(v)) return { ok: true, value: Math.trunc(v) };
-  if (typeof v === "string") {
-    const t = v.trim();
-    if (t === "") return { ok: true, value: 0 };
-    const n = parseInt(t, 10);
-    if (Number.isNaN(n)) return { ok: false };
-    return { ok: true, value: n };
-  }
-  return { ok: false };
 }
 
 export async function createOpeningVariantAction(formData: FormData) {
@@ -103,55 +86,51 @@ export async function createOpeningVariantAction(formData: FormData) {
 }
 
 export async function bulkCreateVariantsAction(jsonData: string) {
-  const { supabase } = await getAdminUser();
+  const formData = new FormData();
+  formData.set("pgnText", jsonData);
+  return bulkImportPgnVariantsAction(formData);
+}
 
-  let items: BulkVariantInput | BulkVariantInput[];
-  try {
-    const parsed = JSON.parse(jsonData.trim()) as unknown;
-    items = Array.isArray(parsed) ? parsed : [parsed];
-  } catch {
-    redirect("/admin/openings/variants/bulk?error=invalid_json");
+export async function bulkImportPgnVariantsAction(formData: FormData) {
+  const { supabase } = await getAdminUser();
+  const openingId = ((formData.get("openingId") as string) || "").trim();
+  const pgnText = ((formData.get("pgnText") as string) || "").trim();
+
+  if (!openingId || !pgnText) {
+    redirect("/admin/openings/variants/bulk?error=missing_fields");
+  }
+
+  const pgns = splitPgnGames(pgnText);
+  if (pgns.length === 0) {
+    redirect(`/admin/openings/variants/bulk?error=invalid_pgn&openingId=${encodeURIComponent(openingId)}`);
   }
 
   const created: string[] = [];
   const errors: { index: number; message: string }[] = [];
+  const maxSortKey = await getMaxSortKeyByOpeningId(supabase, openingId);
 
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (!item?.opening_id?.trim() || !item?.pgn?.trim()) {
-      errors.push({
-        index: i,
-        message: "opening_id and pgn are required",
-      });
-      continue;
-    }
-
+  for (let i = 0; i < pgns.length; i++) {
+    const pgn = pgns[i]!.trim();
     const initialPly = 0;
-
-    const moves = getUciMovesFromPgnAfterPly(item.pgn.trim(), initialPly);
+    const moves = getUciMovesFromPgnAfterPly(pgn, initialPly);
     if (!moves) {
       errors.push({ index: i, message: "Geçersiz PGN" });
       continue;
     }
 
     const initialFen =
-      getFenFromPgnAtPly(item.pgn.trim(), initialPly) || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+      getFenFromPgnAtPly(pgn, initialPly) || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     const displayFen = initialFen;
-
-    const sortKeyParsed = parseBulkSortKey(item.sort_key);
-    if (!sortKeyParsed.ok) {
-      errors.push({ index: i, message: "Invalid sort_key" });
-      continue;
-    }
+    const parsedGame = parsePgn(pgn);
 
     const input: CreateOpeningVariantInput = {
-      openingId: item.opening_id.trim(),
-      sortKey: sortKeyParsed.value,
-      title: null,
+      openingId,
+      sortKey: maxSortKey + i + 1,
+      title: parsedGame?.description ?? null,
       description: null,
       initialPly,
       moves,
-      pgn: item.pgn.trim(),
+      pgn,
       initialFen,
       displayFen,
     };
@@ -168,6 +147,7 @@ export async function bulkCreateVariantsAction(jsonData: string) {
   }
 
   const params = new URLSearchParams();
+  params.set("openingId", openingId);
   if (created.length > 0) params.set("created", created.length.toString());
   if (errors.length > 0) params.set("errors", errors.length.toString());
   if (errors.length > 0) params.set("errorDetails", JSON.stringify(errors));

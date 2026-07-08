@@ -74,8 +74,8 @@ export function splitPgnGames(pgn: string): string[] {
   const trimmed = pgn.trim();
   if (!trimmed) return [];
 
-  // Split on blank line(s) followed by [Event (lookahead to preserve it)
-  const parts = trimmed.split(/\n\s*\n(?=\[Event)/);
+  // Split on one or more blank lines followed by [Event (lookahead to preserve it)
+  const parts = trimmed.split(/\n(?:\s*\n)+(?=\[Event)/);
 
   return parts
     .map((p) => p.trim())

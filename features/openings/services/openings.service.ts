@@ -72,6 +72,13 @@ export async function getOpeningVariantsByOpeningId(
   return openingVariantRepo.findByOpeningId(supabase, openingId);
 }
 
+export async function getMaxSortKeyByOpeningId(
+  supabase: SupabaseClient,
+  openingId: string,
+): Promise<number> {
+  return openingVariantRepo.getMaxSortKeyByOpeningId(supabase, openingId);
+}
+
 export async function getOpeningVariantById(
   supabase: SupabaseClient,
   id: string,
