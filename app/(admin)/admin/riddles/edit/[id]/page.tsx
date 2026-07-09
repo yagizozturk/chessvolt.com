@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { RiddleEditForm } from "@/app/(admin)/admin/riddles/components/riddle-edit-form";
+import { resolveRiddleEditInitialPgn } from "@/app/(admin)/admin/riddles/lib/resolve-riddle-edit-pgn";
 import { getCollectionRiddlesByRiddleId } from "@/features/collection-riddles/services/collection-riddles.service";
 import { getAllCollections } from "@/features/collection/services/collection.service";
 import { getGameById } from "@/features/game/services/game.service";
@@ -27,7 +28,7 @@ export default async function AdminRiddleEditPage({ params }: Props) {
     riddle.gameId ? getGameById(supabase, riddle.gameId) : null,
   ]);
 
-  const initialPgn = (game?.pgn ?? riddle.moveSequence.pgn ?? "").trim();
+  const initialPgn = resolveRiddleEditInitialPgn(riddle.moveSequence, game?.pgn);
   const collectionId = collectionLinks[0]?.collectionId ?? "";
 
   return (

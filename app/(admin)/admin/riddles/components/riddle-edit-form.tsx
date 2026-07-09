@@ -25,24 +25,35 @@ export function RiddleEditForm({ riddle, collections, collectionId, initialPgn }
   const [pgn, setPgn] = useState(initialPgn);
   const { rows, error: pgnError, fensByPly, uciMoves } = useUciRowsFromPgn(pgn);
   const maxPly = uciMoves.length;
+  const answerMoveCount = riddle.moveSequence.moves.trim().split(/\s+/).filter(Boolean).length;
 
   const [initialPly, setInitialPly] = useState(0);
   const [displayPly, setDisplayPly] = useState(0);
   const [endPly, setEndPly] = useState(1);
 
   useEffect(() => {
-    if (!initialPgn.trim()) return;
+    setPgn(initialPgn);
+  }, [initialPgn]);
+
+  useEffect(() => {
+    if (!initialPgn.trim()) {
+      if (answerMoveCount === 0) return;
+      setInitialPly(0);
+      setDisplayPly(0);
+      setEndPly(Math.min(answerMoveCount, maxPly || answerMoveCount));
+      return;
+    }
+
     const init =
       getPlyFromPgnAtFen(initialPgn, riddle.moveSequence.initialFen) ??
       getPlyFromPgnAtFen(initialPgn, riddle.moveSequence.displayFen ?? riddle.moveSequence.initialFen) ??
       0;
     const display =
       getPlyFromPgnAtFen(initialPgn, riddle.moveSequence.displayFen ?? riddle.moveSequence.initialFen) ?? init;
-    const moveCount = riddle.moveSequence.moves.trim().split(/\s+/).filter(Boolean).length;
     setInitialPly(init);
     setDisplayPly(display);
-    setEndPly(Math.min(init + moveCount, maxPly || init + moveCount));
-  }, [initialPgn, riddle, maxPly]);
+    setEndPly(Math.min(init + answerMoveCount, maxPly || init + answerMoveCount));
+  }, [initialPgn, riddle, maxPly, answerMoveCount]);
 
   const canSubmit = Boolean(pgn.trim()) && maxPly > 0 && !pgnError && endPly > initialPly;
 

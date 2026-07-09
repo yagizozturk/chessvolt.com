@@ -7,14 +7,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as riddleThemeService from "@/features/riddle-theme/services/riddle-theme.service";
+import { RANDOM_RIDDLES_COUNT, RIDDLES_THEME_FILTER_ALL } from "@/features/riddle/constants/riddles-list.constants";
 import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
 import type { Riddle } from "@/features/riddle/types/riddle";
+import { type RiddleRatingBand, getRiddleRatingBandRange } from "@/features/riddle/types/riddle-rating";
 import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
-import { RANDOM_RIDDLES_COUNT, RIDDLES_THEME_FILTER_ALL } from "@/features/riddle/constants/riddles-list.constants";
-import {
-  getRiddleRatingBandRange,
-  type RiddleRatingBand,
-} from "@/features/riddle/types/riddle-rating";
 import { shuffle } from "@/lib/utils/shuffle";
 
 export async function getAllRiddlesWithThemes(supabase: SupabaseClient): Promise<RiddleWithThemes[]> {
@@ -63,9 +60,7 @@ export async function getRandomActiveRiddles(
     riddles = await riddleRepo.findActiveByIds(supabase, {
       ids: riddleIds,
       limit: riddleIds.length,
-      ...(ratingRange
-        ? { minRating: ratingRange.minRating, maxRating: ratingRange.maxRating }
-        : {}),
+      ...(ratingRange ? { minRating: ratingRange.minRating, maxRating: ratingRange.maxRating } : {}),
     });
   } else if (ratingRange) {
     riddles = await riddleRepo.findActiveByRatingRange(supabase, {

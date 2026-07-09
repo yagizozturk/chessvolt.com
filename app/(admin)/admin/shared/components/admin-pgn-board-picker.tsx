@@ -1,6 +1,7 @@
 "use client";
 
 import VoltBoard from "@/components/boards/volt-board/volt-board";
+import { cn } from "@/lib/utils";
 
 import type { UciMoveRow } from "../../hooks/use-uci-rows-from-pgn";
 
@@ -14,6 +15,7 @@ type Props = {
   safePly: number;
   maxPly: number;
   setSelectedPly: (ply: number) => void;
+  boardWrapperClassName?: string;
 };
 
 export function AdminPgnBoardPicker({
@@ -26,6 +28,7 @@ export function AdminPgnBoardPicker({
   safePly,
   maxPly,
   setSelectedPly,
+  boardWrapperClassName = "aspect-square w-full max-w-[360px] shrink-0",
 }: Props) {
   return (
     <section className="flex flex-col gap-4" aria-labelledby={`${sourceId}-heading`}>
@@ -33,15 +36,17 @@ export function AdminPgnBoardPicker({
         {title}
       </h2>
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <VoltBoard
-          key={`${sourceId}-${boardFen}`}
-          sourceId={sourceId}
-          initialFen={boardFen}
-          viewOnly
-          onCheckMove={() => true}
-          onSuccessMovePlayed={() => {}}
-          onNextMoveRequest={() => undefined}
-        />
+        <div className={cn("self-start", boardWrapperClassName)}>
+          <VoltBoard
+            key={`${sourceId}-${boardFen}`}
+            sourceId={sourceId}
+            initialFen={boardFen}
+            viewOnly
+            onCheckMove={() => true}
+            onSuccessMovePlayed={() => {}}
+            onNextMoveRequest={() => undefined}
+          />
+        </div>
         <div className="min-h-[200px] min-w-0 flex-1">
           <p className="text-muted-foreground mb-2 text-sm font-medium">UCI moves</p>
           {error && <p className="text-destructive mb-2 text-sm">{error}</p>}

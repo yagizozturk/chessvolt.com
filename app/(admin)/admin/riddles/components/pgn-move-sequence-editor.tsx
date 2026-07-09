@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import VoltBoard from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 import type { UciMoveRow } from "../../hooks/use-uci-rows-from-pgn";
 
@@ -24,6 +25,7 @@ type Props = {
   onInitialPlyChange: (ply: number) => void;
   onDisplayPlyChange: (ply: number) => void;
   onEndPlyChange: (ply: number) => void;
+  boardWrapperClassName?: string;
 };
 
 function plyButtonClass(isSelected: boolean, role: PlyRole): string {
@@ -49,6 +51,7 @@ export function PgnMoveSequenceEditor({
   onInitialPlyChange,
   onDisplayPlyChange,
   onEndPlyChange,
+  boardWrapperClassName = "aspect-square w-full max-w-[360px] shrink-0",
 }: Props) {
   const [activeRole, setActiveRole] = useState<PlyRole>("display");
   const maxPly = uciMoves.length;
@@ -142,15 +145,17 @@ export function PgnMoveSequenceEditor({
       </p>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <VoltBoard
-          key={`${sourceId}-${boardFen}`}
-          sourceId={sourceId}
-          initialFen={boardFen}
-          viewOnly
-          onCheckMove={() => true}
-          onSuccessMovePlayed={() => {}}
-          onNextMoveRequest={() => undefined}
-        />
+        <div className={cn("self-start", boardWrapperClassName)}>
+          <VoltBoard
+            key={`${sourceId}-${boardFen}`}
+            sourceId={sourceId}
+            initialFen={boardFen}
+            viewOnly
+            onCheckMove={() => true}
+            onSuccessMovePlayed={() => {}}
+            onNextMoveRequest={() => undefined}
+          />
+        </div>
         <div className="min-h-[200px] min-w-0 flex-1">
           <p className="text-muted-foreground mb-2 text-sm font-medium">Moves</p>
           {error && <p className="text-destructive mb-2 text-sm">{error}</p>}

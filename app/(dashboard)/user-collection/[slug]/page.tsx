@@ -1,7 +1,8 @@
 // TODO: Refactor
 import { EmptyState } from "@/components/empty-state/empty-state";
-import { CollectionHeader } from "@/features/collection/components/collection-header";
+import { PageHeaderWithImage } from "@/components/page-header";
 import { loadCollectionRiddlesForDisplay } from "@/features/collection/services/collection-riddles-display.service";
+import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
@@ -21,16 +22,21 @@ export default async function UserCollectionDetailPage({ params }: Params) {
   });
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-10">
-      <div className="flex flex-col gap-8">
-        <CollectionHeader collection={collection} />
+    <div className="page-container">
+      <div className="page-container-children-layout">
+        <PageHeaderWithImage
+          title={collection.title}
+          description={collection.description}
+          imageSrc={getCollectionCoverImageSrc(collection.coverImageUrl)}
+        />
         {riddles.length === 0 && <EmptyState message="No riddles found in this collection." />}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="page-container-grid-data-layout">
           {items.map(({ riddle, game, href, displayFen, accuracyPercent, voltScore, primaryTheme }) => (
             <RiddleBoardCard
               key={riddle.id}
               riddle={riddle}
               game={game}
+              boardWrapperClassName="aspect-square w-[180px] shrink-0"
               href={href}
               displayFen={displayFen}
               accuracyPercent={accuracyPercent}
