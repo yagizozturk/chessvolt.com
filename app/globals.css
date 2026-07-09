@@ -197,7 +197,7 @@
     @apply mx-auto w-full max-w-6xl px-4 py-2 md:py-10;
   }
 
-  .page-container-list-layout {
+  .page-container-children-layout {
     @apply flex flex-col gap-8;
   }
 

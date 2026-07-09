@@ -21,7 +21,7 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
 
   return (
     <div className="page-container">
-      <div className="page-container-list-layout">
+      <div className="page-container-children-layout">
         <PageHeader
           title="Learn Openings To Master The Game"
           description="From e4 openings to d4, indian setups"

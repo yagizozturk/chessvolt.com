@@ -14,7 +14,7 @@ export default async function UserCollectionPage() {
 
   return (
     <div className="page-container">
-      <div className="page-container-list-layout">
+      <div className="page-container-children-layout">
         <PageHeader title="Your collections" description="Collections you've created to organize your riddles." />
         {/*
           Note:

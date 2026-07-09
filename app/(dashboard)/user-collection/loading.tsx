@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function UserCollectionLoading() {
   return (
     <div className="page-container">
-      <div className="page-container-list-layout">
+      <div className="page-container-children-layout">
         <PageHeaderSkeleton titleWidthClassName="w-48" descriptionWidthClassName="w-80 max-w-full" />
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

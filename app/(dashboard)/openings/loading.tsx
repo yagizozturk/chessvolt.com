@@ -8,7 +8,7 @@ import {
 export default function OpeningsLoading() {
   return (
     <div className="page-container">
-      <div className="page-container-list-layout">
+      <div className="page-container-children-layout">
         <PageHeaderSkeleton
           titleWidthClassName="w-72 max-w-full"
           descriptionWidthClassName="w-64 max-w-full"

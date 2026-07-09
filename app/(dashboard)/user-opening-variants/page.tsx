@@ -36,7 +36,7 @@ export default async function UserOpeningVariantsPage() {
 
   return (
     <div className="page-container">
-      <div className="page-container-list-layout">
+      <div className="page-container-children-layout">
         <PageHeaderWithImage
           title="Your Opening List"
           description="Build your repertoire, one variant at a time"

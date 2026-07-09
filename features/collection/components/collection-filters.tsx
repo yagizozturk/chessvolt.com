@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  buildCollectionFilterHref,
   COLLECTION_DIFFICULTY_OPTIONS,
   type CollectionDifficultyOptions,
   type CollectionFilterState,
-} from "@/features/collection/utilities/collection-filter.utils";
+} from "@/features/collection/types/collection-filter";
+import { buildCollectionFilterUrl } from "@/features/collection/utilities/collection-filter.utils";
 import type { Theme } from "@/features/theme/types/theme";
 
 type CollectionFiltersProps = {
@@ -47,7 +47,7 @@ export function CollectionFilters({
     if (localSearchQuery.trim() === searchQuery.trim()) return;
 
     const timeoutId = window.setTimeout(() => {
-      router.push(buildCollectionFilterHref(currentFilterState, { searchQuery: localSearchQuery }));
+      router.push(buildCollectionFilterUrl(currentFilterState, { searchQuery: localSearchQuery }));
     }, 300);
 
     return () => window.clearTimeout(timeoutId);
@@ -59,7 +59,7 @@ export function CollectionFilters({
         <Select
           value={difficultyFilter}
           onValueChange={(value) =>
-            router.push(buildCollectionFilterHref(currentFilterState, { difficultyFilter: value as CollectionDifficultyOptions }))
+            router.push(buildCollectionFilterUrl(currentFilterState, { difficultyFilter: value as CollectionDifficultyOptions }))
           }
         >
           <SelectTrigger
@@ -83,7 +83,7 @@ export function CollectionFilters({
       <div className="min-w-0 sm:max-w-64">
         <Select
           value={themeFilter}
-          onValueChange={(value) => router.push(buildCollectionFilterHref(currentFilterState, { themeFilter: value }))}
+          onValueChange={(value) => router.push(buildCollectionFilterUrl(currentFilterState, { themeFilter: value }))}
           disabled={themeOptions.length === 0}
         >
           <SelectTrigger

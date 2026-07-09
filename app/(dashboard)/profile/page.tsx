@@ -36,7 +36,7 @@ export default async function Page() {
 
   return (
     <div className="page-container">
-      <div className="page-container-list-layout">
+      <div className="page-container-children-layout">
         <PageHeader
           title="My Profile"
           description="View your account details as you solve riddles and learn openings."

@@ -35,7 +35,7 @@ export default async function RiddlesPage({ searchParams }: { searchParams: Sear
 
   return (
     <div className="page-container">
-      <div className="page-container-list-layout">
+      <div className="page-container-children-layout">
         <PageHeader
           title="Your riddles"
           description="Riddles you've tried to solve."

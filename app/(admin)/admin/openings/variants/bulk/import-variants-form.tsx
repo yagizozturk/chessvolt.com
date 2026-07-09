@@ -1,5 +1,3 @@
-// TODO: Refactor
-
 "use client";
 
 import { useState } from "react";

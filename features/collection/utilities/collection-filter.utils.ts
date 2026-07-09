@@ -1,41 +1,13 @@
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
+import {
+  COLLECTION_DIFFICULTY_OPTIONS,
+  type CollectionDifficultyOptions,
+  type CollectionFilterState,
+} from "@/features/collection/types/collection-filter";
 import type { Theme } from "@/features/theme/types/theme";
 
-export const COLLECTION_DIFFICULTY_OPTIONS = [
-  "All",
-  "Beginner",
-  "Intermediate",
-  "Advanced",
-  "Master",
-  "Grandmaster",
-] as const;
-
-export type CollectionDifficultyOptions = (typeof COLLECTION_DIFFICULTY_OPTIONS)[number];
-
-// ============================================================================
-// Collection filter state
-// CollectionFilterState is differnet and not in types folder.
-// It’s temporary client state for one list (searchQuery, difficultyFilter, themeFilter).
-// Nothing is persisted; it only exists while filtering.
-// ============================================================================
-export type CollectionFilterState = {
-  searchQuery: string;
-  difficultyFilter: CollectionDifficultyOptions;
-  themeFilter: string;
-};
-
-// ============================================================================
-// Matches the difficulty option to the difficulty LEVEL
-// ============================================================================
-function matchesDifficultyOption(difficulty: CollectionDifficulty, option: CollectionDifficultyOptions): boolean {
-  if (option === "All") return true;
-  if (option === "Beginner") return difficulty <= 2;
-  if (option === "Intermediate") return difficulty >= 3 && difficulty <= 4;
-  if (option === "Advanced") return difficulty >= 5 && difficulty <= 6;
-  if (option === "Master") return difficulty >= 7 && difficulty <= 8;
-  return difficulty >= 9;
-}
+const COLLECTION_PAGE_PATH = "/collection";
 
 // ============================================================================
 // Gets the theme options for filter
@@ -58,6 +30,36 @@ export function getThemeFilterOptions(collections: CollectionWithRiddleCountAndT
 }
 
 // ============================================================================
+// Parse filter data from URL
+// ============================================================================
+export function parseCollectionFilterStateFromUrl(params: {
+  difficulty?: string;
+  theme?: string;
+  searchBox?: string;
+}): CollectionFilterState {
+  const difficultyParam = params.difficulty?.trim() ?? "";
+  const difficultyFilter = COLLECTION_DIFFICULTY_OPTIONS.includes(difficultyParam as CollectionDifficultyOptions)
+    ? (difficultyParam as CollectionDifficultyOptions)
+    : "All";
+  const themeFilter = params.theme?.trim() || "all";
+  const searchQuery = params.searchBox?.trim() ?? "";
+
+  return { searchQuery, difficultyFilter, themeFilter };
+}
+
+// ============================================================================
+// Matches the difficulty option to the difficulty LEVEL
+// ============================================================================
+function matchesDifficultyOption(difficulty: CollectionDifficulty, option: CollectionDifficultyOptions): boolean {
+  if (option === "All") return true;
+  if (option === "Beginner") return difficulty <= 2;
+  if (option === "Intermediate") return difficulty >= 3 && difficulty <= 4;
+  if (option === "Advanced") return difficulty >= 5 && difficulty <= 6;
+  if (option === "Master") return difficulty >= 7 && difficulty <= 8;
+  return difficulty >= 9;
+}
+
+// ============================================================================
 // Matches the search query to the collection
 // Searching for title, description and even themes
 // ============================================================================
@@ -68,11 +70,14 @@ function matchesSearchQuery(collection: CollectionWithRiddleCountAndThemes, sear
   const searchableText = [
     collection.title,
     collection.description,
+    // ... spread operator: it takes each theme title from the mapped array and inserts them
+    // as separate items into searchableText array. So it looks for theme names also.
     ...collection.themes.map((item) => item.theme.title),
   ]
     .join(" ")
     .toLowerCase();
 
+  // include: contains this text anywhere inside.
   return searchableText.includes(normalizedQuery);
 }
 
@@ -99,7 +104,7 @@ export function filterCollections(
 }
 
 // ============================================================================
-// Checks if there are any active filters
+// Checks if there are any active filters to show clear filters or not
 // ============================================================================
 export function hasActiveCollectionFilters(filters: CollectionFilterState): boolean {
   return (
@@ -109,42 +114,33 @@ export function hasActiveCollectionFilters(filters: CollectionFilterState): bool
   );
 }
 
-const COLLECTION_PAGE_PATH = "/collection";
-
-export function parseCollectionFilterStateFromSearchParams(params: {
-  q?: string;
-  difficulty?: string;
-  theme?: string;
-}): CollectionFilterState {
-  const searchQuery = params.q?.trim() ?? "";
-  const difficultyParam = params.difficulty?.trim() ?? "";
-  const difficultyFilter = COLLECTION_DIFFICULTY_OPTIONS.includes(difficultyParam as CollectionDifficultyOptions)
-    ? (difficultyParam as CollectionDifficultyOptions)
-    : "All";
-  const themeFilter = params.theme?.trim() || "all";
-
-  return { searchQuery, difficultyFilter, themeFilter };
-}
-
-export function buildCollectionFilterHref(
+// ============================================================================
+// Builds the collection filter URL
+// ============================================================================
+export function buildCollectionFilterUrl(
   current: CollectionFilterState,
-  next: Partial<CollectionFilterState>,
+  filter: Partial<CollectionFilterState>,
 ): string {
+  // Merge current filters with the next partial update.
   const merged: CollectionFilterState = {
-    searchQuery: next.searchQuery ?? current.searchQuery,
-    difficultyFilter: next.difficultyFilter ?? current.difficultyFilter,
-    themeFilter: next.themeFilter ?? current.themeFilter,
+    searchQuery: filter.searchQuery ?? current.searchQuery,
+    difficultyFilter: filter.difficultyFilter ?? current.difficultyFilter,
+    themeFilter: filter.themeFilter ?? current.themeFilter,
   };
 
+  // URLSearchParams is a built-in helper to safely build query strings
+  // like "q=fork&difficulty=Beginner" without manual string concatenation.
   const searchParams = new URLSearchParams();
   const q = merged.searchQuery.trim();
 
+  // Keep the URL clean by writing only active (non-default) filters.
   if (q) searchParams.set("q", q);
   if (merged.difficultyFilter !== "All") searchParams.set("difficulty", merged.difficultyFilter);
 
   const theme = merged.themeFilter.trim();
   if (theme && theme !== "all") searchParams.set("theme", theme);
 
+  // If no filters are active, return base path: /collection
   const query = searchParams.toString();
   return query ? `${COLLECTION_PAGE_PATH}?${query}` : COLLECTION_PAGE_PATH;
 }
