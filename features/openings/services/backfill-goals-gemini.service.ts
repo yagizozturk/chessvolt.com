@@ -14,7 +14,6 @@ export type BackfillOpeningGoalsResult = {
   dryRun: boolean;
   previews?: {
     variantId: string;
-    title: string;
     description: string;
     goals: MoveGoal[];
   }[];
@@ -31,11 +30,11 @@ async function backfillOneVariant(
   variant: OpeningVariantForGoalsBackfill,
   dryRun: boolean,
 ): Promise<
-  | { ok: true; title: string; description: string; goals: MoveGoal[] }
+  | { ok: true; description: string; goals: MoveGoal[] }
   | { ok: false; message: string }
 > {
   try {
-    const { title, description, goals } = await generateOpeningVariantGoals({
+    const { description, goals } = await generateOpeningVariantGoals({
       initialFen: variant.moveSequence.initialFen,
       pgn: variant.moveSequence.pgn,
       moves: variant.moveSequence.moves,
@@ -43,11 +42,10 @@ async function backfillOneVariant(
     });
 
     if (dryRun) {
-      return { ok: true, title, description, goals };
+      return { ok: true, description, goals };
     }
 
     const updated = await openingVariantRepo.update(supabase, variant.variantId, {
-      title,
       description,
       goals,
     });
@@ -55,7 +53,7 @@ async function backfillOneVariant(
       return { ok: false, message: "Failed to update opening variant" };
     }
 
-    return { ok: true, title, description, goals };
+    return { ok: true, description, goals };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return { ok: false, message };
@@ -103,7 +101,6 @@ export async function backfillOpeningVariantGoalsGemini(
       if (dryRun && result.previews) {
         result.previews.push({
           variantId: variant.variantId,
-          title: outcome.title,
           description: outcome.description,
           goals: outcome.goals,
         });

@@ -6,7 +6,6 @@ export type GenerateOpeningVariantGoalsInput = GenerateGoalsInput & {
 };
 
 export type OpeningVariantGoalsResult = {
-  title: string;
   description: string;
   goals: import("@/features/move-sequence/types/move-goal").MoveGoal[];
 };

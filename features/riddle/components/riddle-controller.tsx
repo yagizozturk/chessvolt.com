@@ -397,8 +397,8 @@ export default function RiddleController({
             </div>
             {!isCompleted ? (
               <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
-                First click shows a stronger text hint. Second click highlights which piece to move. Third click shows
-                the exact move.
+                First click shows a text hint from Volt. Second click shows a stronger hint and highlights which piece
+                to move. Third click shows the exact move.
               </p>
             ) : null}
           </div>

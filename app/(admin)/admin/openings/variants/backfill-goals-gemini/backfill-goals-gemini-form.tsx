@@ -59,7 +59,7 @@ export function BackfillOpeningGoalsGeminiForm() {
           <CardTitle>Generate opening goals with Gemini</CardTitle>
           <CardDescription>
             Fetches opening variants whose linked move sequence has null goals, calls Google Gemini,
-            and writes goals to move_sequences plus title and description to opening_variants.
+            and writes goals to move_sequences plus description to opening_variants.
             Process a small batch at a time to avoid timeouts.
           </CardDescription>
         </CardHeader>

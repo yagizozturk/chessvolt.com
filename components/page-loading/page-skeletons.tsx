@@ -80,10 +80,7 @@ export function BoardCardSkeleton({ compact = false, metaLineCount = 2 }: BoardC
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <Skeleton className="h-6 w-3/4 sm:h-7" />
         {Array.from({ length: metaLineCount }, (_, index) => (
-          <Skeleton
-            key={index}
-            className={cn("h-4", index === 0 ? "w-full" : index === 1 ? "w-2/3" : "w-1/2")}
-          />
+          <Skeleton key={index} className={cn("h-4", index === 0 ? "w-full" : index === 1 ? "w-2/3" : "w-1/2")} />
         ))}
         <Skeleton className="mt-auto h-8 w-14 sm:h-9 sm:w-16" />
       </div>
@@ -95,13 +92,7 @@ export function BoardCardSkeleton({ compact = false, metaLineCount = 2 }: BoardC
 export function CollectionCardSkeleton() {
   return (
     <div className="bg-card border-b-card-shadow flex flex-col overflow-hidden rounded-lg border-b-[6px]">
-      <div className="flex overflow-hidden rounded-t-lg">
-        <div className="flex min-w-0 flex-1 items-end gap-2 p-3 sm:p-4">
-          <Skeleton className="h-6 w-16 rounded-full" />
-          <Skeleton className="h-6 w-20 rounded-full" />
-        </div>
-        <Skeleton className="h-[100px] w-[120px] shrink-0 sm:h-[200px] sm:w-[268px]" />
-      </div>
+      <Skeleton className="h-[100px] w-full rounded-t-lg sm:h-[200px]" />
       <div className="flex flex-1 flex-col gap-2 p-4 sm:p-6">
         <Skeleton className="h-7 w-3/4 sm:h-9" />
         <Skeleton className="h-4 w-full" />
@@ -112,13 +103,7 @@ export function CollectionCardSkeleton() {
   );
 }
 
-export function PageGridSkeleton({
-  count = 4,
-  children,
-}: {
-  count?: number;
-  children: (index: number) => ReactNode;
-}) {
+export function PageGridSkeleton({ count = 4, children }: { count?: number; children: (index: number) => ReactNode }) {
   return (
     <div className="page-container-grid-data-layout">
       {Array.from({ length: count }, (_, index) => children(index))}

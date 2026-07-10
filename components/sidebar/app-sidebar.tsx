@@ -39,10 +39,6 @@ const profileSection = {
       title: "My Profile",
       url: "/profile",
     },
-    {
-      title: "Settings",
-      url: "/settings",
-    },
   ],
 };
 
@@ -54,12 +50,12 @@ const data = {
       icon: "/images/icons/icon-book-collection.png",
       items: [
         {
-          title: "My Collections",
-          url: "/user-collection",
-        },
-        {
           title: "Library",
           url: "/collection",
+        },
+        {
+          title: "My Collections",
+          url: "/user-collection",
         },
       ],
     },
@@ -68,6 +64,10 @@ const data = {
       url: "#",
       icon: "/images/icons/icon-openings.png",
       items: [
+        {
+          title: "All Openings",
+          url: "/openings",
+        },
         {
           title: "My Openings",
           url: "/user-opening-variants",
@@ -128,7 +128,6 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
         ? []
         : [{ title: "Login", url: "/login" }];
 
-    const settingsItem = profileSection.items?.find((item) => item.url === "/settings");
     const myProfileItem = profileSection.items?.find((item) => item.url === "/profile");
 
     return {
@@ -141,11 +140,7 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
             },
           }
         : {}),
-      items: [
-        ...(settingsItem ? [settingsItem] : []),
-        ...(profile && myProfileItem ? [myProfileItem] : []),
-        ...authItems,
-      ],
+      items: [...(profile && myProfileItem ? [myProfileItem] : []), ...authItems],
     };
   }, [handleLogout, isLoggingOut, isProfileLoading, profile]);
 

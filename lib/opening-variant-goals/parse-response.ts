@@ -35,12 +35,8 @@ export function parseOpeningVariantGoalsContent(
     throw new Error(`${providerLabel} response must be a JSON object`);
   }
 
-  const title = typeof parsed.title === "string" ? parsed.title.trim() : "";
   const description = typeof parsed.description === "string" ? parsed.description.trim() : "";
 
-  if (!title) {
-    throw new Error(`${providerLabel} response missing title`);
-  }
   if (!description) {
     throw new Error(`${providerLabel} response missing description`);
   }
@@ -52,8 +48,8 @@ export function parseOpeningVariantGoalsContent(
 
   console.log(
     `${providerLabel} opening variant for DB insert:`,
-    JSON.stringify({ title, description, goals }, null, 2),
+    JSON.stringify({ description, goals }, null, 2),
   );
 
-  return { title, description, goals };
+  return { description, goals };
 }
