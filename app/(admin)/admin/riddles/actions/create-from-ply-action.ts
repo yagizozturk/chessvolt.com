@@ -7,6 +7,7 @@ import { parseRiddleMetadataFromForm } from "@/app/(admin)/admin/riddles/lib/par
 import { persistNewRiddle } from "@/app/(admin)/admin/riddles/lib/persist-riddle";
 import { resolveFromPlySelection } from "@/app/(admin)/admin/riddles/lib/resolve-riddle-sequence";
 import type { RiddleFormState } from "@/app/(admin)/admin/riddles/lib/riddle-form-state";
+import { buildStubGoalsFromMoves } from "@/lib/move-sequence-goals/build-stub-goals";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 function parsePly(formData: FormData, key: string): number {
@@ -43,7 +44,8 @@ export async function createFromPlyAction(_prevState: RiddleFormState, formData:
     moves: resolved.moves,
     initialFen: resolved.initialFen,
     displayFen: resolved.displayFen,
-    goals: meta.data.goals,
+    goals:
+      meta.data.goals ?? buildStubGoalsFromMoves(resolved.initialFen, resolved.moves),
     isActive: meta.data.isActive,
     themeSlugs: meta.data.themes,
     collectionId: meta.data.collectionId,

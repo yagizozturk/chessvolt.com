@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import { normalizeMoveGoal } from "@/features/move-sequence/validation/move-sequence-goals";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
@@ -27,6 +28,7 @@ function parseMoves(rawMoves: string): string[] {
 
 function initializeGoals(goals: MoveGoal[] | null, initialPly?: number): MoveGoal[] {
   return [...(goals ?? [])]
+    .map((goal) => normalizeMoveGoal(goal) ?? goal)
     .sort((a, b) => a.ply - b.ply)
     .map((goal) => ({
       ...goal,

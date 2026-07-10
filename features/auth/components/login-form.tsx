@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/input-group";
 import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 import { Spinner } from "@/components/ui/spinner";
+import { POST_LOGIN_URL } from "@/features/onboarding/constants/onboarding-routes";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 import { isValidEmail } from "@/lib/utils/validation";
@@ -53,7 +54,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     }
 
     router.refresh();
-    router.push("/dashboard");
+    router.push(POST_LOGIN_URL);
   }
 
   async function handleGoogleLogin() {
@@ -63,7 +64,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${POST_LOGIN_URL}`,
       },
     });
 

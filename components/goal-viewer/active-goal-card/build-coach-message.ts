@@ -5,5 +5,5 @@ export function buildCoachMessage(goal: MoveGoal, hintCount: number): string {
   if (hintCount <= 0) {
     return "";
   }
-  return goal.hint;
+  return goal.hint?.trim() ?? "";
 }

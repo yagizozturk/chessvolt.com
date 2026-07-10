@@ -1,7 +1,7 @@
 // TODO: Refactor
 import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
 import type { MoveSequenceForGoalsBackfill } from "@/features/move-sequence/types/move-sequence-for-goals-backfill";
-import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";
+import { parseMoveGoalsFromDb } from "@/features/move-sequence/validation/move-sequence-goals";
 
 export const DEFAULT_INITIAL_FEN =
   "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -31,7 +31,7 @@ export function toMoveSequence(db: DbMoveSequence): MoveSequence {
     moves: db.moves,
     pgn: db.pgn,
     displayFen: db.display_fen,
-    goals: db.goals != null && isMoveGoalsArray(db.goals) ? db.goals : null,
+    goals: parseMoveGoalsFromDb(db.goals),
     createdAt: db.created_at,
     updatedAt: db.updated_at,
   };

@@ -1,5 +1,6 @@
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { PageHeader } from "@/components/page-header";
+import { VoltExplainDialogAutoStart } from "@/components/volt-explain-dialog/volt-explain-dialog-auto-start";
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import { CollectionFilters } from "@/features/collection/components/collection-filters";
 import { getActiveCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
@@ -64,6 +65,8 @@ export default async function CollectionPage({ searchParams }: { searchParams: S
             ) : undefined
           }
         />
+
+        <VoltExplainDialogAutoStart />
 
         {/* === START Collections list === */}
         {collections.length === 0 ? (

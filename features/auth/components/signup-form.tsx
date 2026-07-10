@@ -19,6 +19,7 @@ import {
 import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 import { Spinner } from "@/components/ui/spinner";
 import { TermsAndConditionsDialog } from "@/features/auth/components/terms-and-conditions-dialog";
+import { POST_LOGIN_URL } from "@/features/onboarding/constants/onboarding-routes";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -74,7 +75,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
       password,
       options: {
         data: { full_name: name },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${POST_LOGIN_URL}`,
       },
     });
 
@@ -95,7 +96,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
     // Supabase may require email confirmation - check auth config
     if (data.session) {
       router.refresh();
-      router.push("/dashboard");
+      router.push(POST_LOGIN_URL);
     } else {
       setSuccess(true);
     }
@@ -107,7 +108,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=${POST_LOGIN_URL}` },
     });
 
     if (error) {

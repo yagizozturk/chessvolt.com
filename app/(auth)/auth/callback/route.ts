@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { type NextRequest } from "next/server";
 
+import { POST_LOGIN_URL } from "@/features/onboarding/constants/onboarding-routes";
 import * as profileRepo from "@/features/profile/repository/profile.repository";
 
 // ======================================================================
@@ -14,7 +15,7 @@ import * as profileRepo from "@/features/profile/repository/profile.repository";
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const next = requestUrl.searchParams.get("next") || "/dashboard";
+  const next = requestUrl.searchParams.get("next") || POST_LOGIN_URL;
 
   if (code) {
     const cookieStore = await cookies();

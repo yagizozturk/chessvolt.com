@@ -26,7 +26,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       {/*
         Note: Volt Explain Dialog 
         Single dialog instance for the whole dashboard — opened by auto-start
-        (user-collection first visit after onboarding) or by sidebar "How Volt Works" (any time). 
+        (collection first visit after onboarding) or by sidebar "How Volt Works" (any time). 
       */}
       <VoltExplainDialog />
     </SidebarProvider>

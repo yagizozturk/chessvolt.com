@@ -7,6 +7,7 @@ import { persistNewRiddle } from "@/app/(admin)/admin/riddles/lib/persist-riddle
 import { resolveFromPgnDefaultPlies } from "@/app/(admin)/admin/riddles/lib/resolve-riddle-sequence";
 import type { BulkCreateFormState } from "@/app/(admin)/admin/riddles/lib/riddle-form-state";
 import { splitPgnGames } from "@/lib/chess/parsePgn";
+import { buildStubGoalsFromMoves } from "@/lib/move-sequence-goals/build-stub-goals";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 export async function bulkCreateAction(
@@ -48,6 +49,7 @@ export async function bulkCreateAction(
       moves: resolved.moves,
       initialFen: resolved.initialFen,
       displayFen: resolved.displayFen,
+      goals: buildStubGoalsFromMoves(resolved.initialFen, resolved.moves),
       isActive: true,
       collectionId: defaultCollectionId,
     });
