@@ -5,7 +5,7 @@ const RIDDLE_ADMIN_ERRORS: Record<string, string> = {
   missing_fen: 'PGN must include a [FEN "..."] tag.',
   invalid_pgn: "Could not parse PGN or derive moves.",
   invalid_ply: "Invalid ply selection. Check initial, display, and end plies.",
-  invalid_goals_json: "Goals must be valid JSON with ply, move, title, initialHint, secondaryHint, and isCompleted for each item.",
+  invalid_goals_json: "Goals must be valid JSON with ply, move, title, hint, and isCompleted for each item.",
   create_failed: "Could not create the riddle. Please try again.",
   update_failed: "Could not save changes. Please try again.",
   delete_failed: "Could not delete the riddle. Please try again.",

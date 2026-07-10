@@ -192,10 +192,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                       ) : null}
                     </PopoverTitle>
                     <PopoverDescription className="text-xs leading-relaxed">
-                      <span className="block">{goal.initialHint}</span>
-                      {goal.secondaryHint ? (
-                        <span className="text-muted-foreground mt-1 block">{goal.secondaryHint}</span>
-                      ) : null}
+                      <span className="block">{goal.hint}</span>
                     </PopoverDescription>
                   </PopoverHeader>
                 </PopoverContent>

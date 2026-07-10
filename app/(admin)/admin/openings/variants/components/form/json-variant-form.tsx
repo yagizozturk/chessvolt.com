@@ -76,7 +76,7 @@ function parseGoalsFromRecord(
     return {
       ok: false,
       error:
-        "goals must include ply (number), move, title, initialHint (string), secondaryHint (string), and isCompleted (boolean). card is optional.",
+        "goals must include ply (number), move, title, hint (string), and isCompleted (boolean). card is optional.",
     };
   }
   return { ok: true, goals: g };
