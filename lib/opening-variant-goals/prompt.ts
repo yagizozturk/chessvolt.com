@@ -32,9 +32,9 @@ Sample for second opening variant format:
 ** Your task **
 For each opening variant, the student's task is to correctly guess every move for the side whose turn it is to move. The student should only predict the moves for the side to move, while the opponent's moves are already determined by the opening variant solution.
 
-To help the student discover the correct moves more easily, provide a short, clear, with words that everybody can understand and entertaining hint before student's each move. There will be two levels of hints. The initial level hint will be more general and intuitive about the main idea of ​​the opening variant. Its aim is to create a vague intuition in the student's mind about the main idea of ​​the opening variant and the move they should make, without giving complete information. The secondary level hint will be more goal-oriented and move-focused. A student will first try to guess using the initial level hint. If they cannot guess, they will try to guess using the secondary level hint, that is, with more specific information. Each level hint must be no longer than 10 words. Since the main job of the student is to guess the correct move you shouldn't provide any direct move notation inside your hint especially in your initial level hint. A hint should just only subtly adumbrate why the move is necessary and strategically important without revealing the move itself or without saying which piece needs to make a move or which opponent piece will be effected by that move. To create effective hints, first identify the opening variant's underlying strategy motif and the key idea behind its solution. Then, ensure that each hint reflects this strategy motif and the final key idea while also connecting naturally to the student's next moves, so that all hints together form a coherent progression throughout the solution. And additional as a separate success message, after each successful guess from the student, we want to congratulate him / her in a sincere way in order to motivate him / her. 
+To help the student discover the correct moves more easily, provide a short, clear, with words that everybody can understand and entertaining hint before student's each move. The hint will be more general and intuitive about the main idea of ​​the opening variant. Its aim is to create a vague intuition in the student's mind about the main idea of ​​the opening variant and the move they should make, without giving complete information. A student will first try to guess using the hint. Hint must be no longer than 10 words. Since the main job of the student is to guess the correct move you shouldn't provide any direct move notation inside your hint especially in your hint. A hint should just only subtly adumbrate why the move is necessary and strategically important without revealing the move itself or without saying which piece needs to make a move or which opponent piece will be effected by that move. To create effective hints, first identify the opening variant's underlying strategy motif and the key idea behind its solution. Then, ensure that each hint reflects this strategy motif and the final key idea while also connecting naturally to the student's next moves, so that all hints together form a coherent progression throughout the solution. And additional as a separate success message, after each successful guess from the student, we want to congratulate him / her in a sincere way in order to motivate him / her. 
 
-Your goal is to create a JSON array that will have objects only for the active player moves in source opening variant moves. This source opening variant moves includes all the consecutive moves sequence and the solution of the opening variant. The active player is the one whose turn it is. Chess coach will assist to user only in odd moves so JSON output will include objects for only odd numbered moves. It is important that every object in JSON array, has to have an ply, move, title, initialHint, secondaryHint, isCompleted, successMessage. 
+Your goal is to create a JSON array that will have objects only for the active player moves in source opening variant moves. This source opening variant moves includes all the consecutive moves sequence and the solution of the opening variant. The active player is the one whose turn it is. Chess coach will assist to user only in odd moves so JSON output will include objects for only odd numbered moves. It is important that every object in JSON array, has to have an ply, move, title, hint, isCompleted, successMessage. 
 
 Yo help the student to learn and understand the main idea of this opening family and variant. You should explain the main idea of ​​the opening family to which the variant belongs and how this variant differs from the most popular variant within that opening family.
 
@@ -49,8 +49,7 @@ Here is a sample JSON output format:
 		"ply": 1,
 		"move": "e2e4",
 		"title": "...",
-		"initialHint": "...",
-		"secondaryHint": "...",
+		"hint": "...",
 		"isCompleted": false,
 		“successMessage”:”....”
 		}
@@ -61,9 +60,8 @@ description field will hold the main idea of this opening and variant in max 25 
 
 ply field can only hold a move with odd number
 move field will hold the move which student will try to guess in uci format
-title field will hold the summary of the key idea of the initial level hint with max 2 words
-initialHint field will hold the foggy_hint
-secondaryHint field will hold the hint
+title field will hold the summary of the key idea of the hint with max 2 words
+hint field will hold the hint
 isCompleted field will hold false by default
 successMessage field will hold the success message
 
