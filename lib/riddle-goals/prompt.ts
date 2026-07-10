@@ -45,6 +45,7 @@ Here is a sample JSON output format:
 "move": "e2e4",
 "title": "...",
 "hint": "...",
+"idea": "...",
 "isCompleted": false,
 "successMessage":"...."
 }
@@ -52,6 +53,7 @@ Here is a sample JSON output format:
 ply field can only hold a move with odd number
 move field will hold the move which student will try to guess in uci format
 hint field will hold the hint
+idea field will hold the idea
 isCompleted field will hold false by default
 successMessage field will hold the success message
 

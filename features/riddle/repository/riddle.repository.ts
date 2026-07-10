@@ -79,28 +79,61 @@ type DbCollectionRiddleJoinRow = {
   riddles: DbRiddle | DbRiddle[] | null;
 };
 
-export async function findActiveByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<Riddle[]> {
-  const { data, error } = await supabase
-    .from("collection_riddles")
-    .select("sort_order, created_at, riddles (*, move_sequences (*))")
-    .eq("collection_id", collectionId)
-    .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: true });
+export type FindActiveByCollectionIdInput = {
+  offset?: number;
+  limit?: number;
+};
 
-  if (error) {
-    console.error("riddle.repository.findActiveByCollectionId error:", error);
-    return [];
-  }
-
-  return (data ?? [])
-    .map((row) => {
-      const joinRow = row as DbCollectionRiddleJoinRow;
+function mapCollectionRiddleJoinRows(rows: DbCollectionRiddleJoinRow[]): Riddle[] {
+  return rows
+    .map((joinRow) => {
       const riddleRow = Array.isArray(joinRow.riddles) ? joinRow.riddles[0] : joinRow.riddles;
       if (!riddleRow) return null;
       if (!riddleRow.is_active) return null;
       return toRiddle(riddleRow);
     })
     .filter((riddle): riddle is Riddle => riddle != null);
+}
+
+export async function countActiveByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from("collection_riddles")
+    .select("riddles!inner(id)", { count: "exact", head: true })
+    .eq("collection_id", collectionId)
+    .eq("riddles.is_active", true);
+
+  if (error) {
+    console.error("riddle.repository.countActiveByCollectionId error:", error);
+    return 0;
+  }
+
+  return count ?? 0;
+}
+
+export async function findActiveByCollectionId(
+  supabase: SupabaseClient,
+  collectionId: string,
+  input: FindActiveByCollectionIdInput = {},
+): Promise<Riddle[]> {
+  let query = supabase
+    .from("collection_riddles")
+    .select("sort_order, created_at, riddles (*, move_sequences (*))")
+    .eq("collection_id", collectionId)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (input.offset != null && input.limit != null) {
+    query = query.range(input.offset, input.offset + input.limit - 1);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("riddle.repository.findActiveByCollectionId error:", error);
+    return [];
+  }
+
+  return mapCollectionRiddleJoinRows((data ?? []) as DbCollectionRiddleJoinRow[]);
 }
 
 export type FindActiveRiddlesByIdsInput = {

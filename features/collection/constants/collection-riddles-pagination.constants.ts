@@ -1,0 +1,1 @@
+export const COLLECTION_RIDDLES_PAGE_SIZE = 20;

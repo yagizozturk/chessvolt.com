@@ -42,6 +42,40 @@ export async function getActiveRiddlesByCollectionId(
   return riddleRepo.findActiveByCollectionId(supabase, collectionId);
 }
 
+export type GetActiveRiddlesByCollectionIdPageInput = {
+  page: number;
+  pageSize: number;
+};
+
+export type ActiveRiddlesByCollectionIdPage = {
+  riddles: Riddle[];
+  totalCount: number;
+};
+
+export async function getActiveRiddlesByCollectionIdPage(
+  supabase: SupabaseClient,
+  collectionId: string,
+  input: GetActiveRiddlesByCollectionIdPageInput,
+): Promise<ActiveRiddlesByCollectionIdPage> {
+  const offset = (input.page - 1) * input.pageSize;
+  const [riddles, totalCount] = await Promise.all([
+    riddleRepo.findActiveByCollectionId(supabase, collectionId, {
+      offset,
+      limit: input.pageSize,
+    }),
+    riddleRepo.countActiveByCollectionId(supabase, collectionId),
+  ]);
+
+  return { riddles, totalCount };
+}
+
+export async function countActiveRiddlesByCollectionId(
+  supabase: SupabaseClient,
+  collectionId: string,
+): Promise<number> {
+  return riddleRepo.countActiveByCollectionId(supabase, collectionId);
+}
+
 export async function getRandomActiveRiddles(
   supabase: SupabaseClient,
   input: { themeSlug?: string; ratingBand?: RiddleRatingBand; count?: number } = {},
