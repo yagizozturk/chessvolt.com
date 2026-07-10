@@ -4,8 +4,7 @@ export type MoveGoal = {
   move: string;
   card?: string;
   title: string;
-  initialHint: string;
-  secondaryHint: string;
+  hint: string;
   successMessage: string;
   isCompleted: boolean;
   imageSrc?: string;

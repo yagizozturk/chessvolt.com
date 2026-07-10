@@ -38,7 +38,7 @@ type VoltBoardProps = {
 };
 
 // ============================================================================
-// Hint level: 1 = text only (no board shapes), 2 = highlight origin, 3+ = origin-to-dest arrow
+// Hint level: 1 = highlight origin, 2+ = origin-to-dest arrow
 // ============================================================================
 export type VoltBoardHandle = {
   showHint: (hintLevel: number) => void;
@@ -220,9 +220,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
         const orig = parsedUci.from as Key;
         const dest = parsedUci.to as Key;
         if (hintLevel <= 1) {
-          return;
-        }
-        if (hintLevel === 2) {
           ground.current.setAutoShapes([{ orig, brush: "red" }]);
         } else {
           ground.current.setAutoShapes([{ orig, dest, brush: "red" }]);

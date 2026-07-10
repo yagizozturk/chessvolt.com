@@ -36,7 +36,7 @@ To help the student discover the correct moves more easily, provide a short, cle
 
 Title should also be the summary of the key idea of the initial level hint with max 2 words. 
 
-Your goal is to create a JSON array that will have objects only for the active player moves in source riddle moves. This source riddle moves includes all the consecutive moves sequence and the solution of the riddle. The active player is the one whose turn it is. Chess coach will assist to user only in odd moves so JSON output will include objects for only odd numbered moves. It is important that every object in JSON array, has to have an ply, move, title, initialHint, secondaryHint, isCompleted, successMessage. 
+Your goal is to create a JSON array that will have objects only for the active player moves in source riddle moves. This source riddle moves includes all the consecutive moves sequence and the solution of the riddle. The active player is the one whose turn it is. Chess coach will assist to user only in odd moves so JSON output will include objects for only odd numbered moves. It is important that every object in JSON array, has to have an ply, move, title, hint, isCompleted, successMessage. 
 
 ** Your output format**
 Here is a sample JSON output format:
@@ -44,16 +44,14 @@ Here is a sample JSON output format:
 "ply": 1,
 "move": "e2e4",
 "title": "...",
-"initialHint": "...",
-"secondaryHint": "...",
+"hint": "...",
 "isCompleted": false,
 "successMessage":"...."
 }
 
 ply field can only hold a move with odd number
 move field will hold the move which student will try to guess in uci format
-initialHint field will hold the foggy_hint
-secondaryHint field will hold the hint
+hint field will hold the hint
 isCompleted field will hold false by default
 successMessage field will hold the success message
 

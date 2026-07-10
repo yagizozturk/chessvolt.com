@@ -7,7 +7,7 @@ import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
-export const MAX_HINT_COUNT = 3;
+export const MAX_HINT_COUNT = 2;
 
 export type UseMoveSequenceControllerParams = {
   /** Resets play state when this id changes (variant id, riddle id, etc.) */

@@ -203,7 +203,7 @@ export default function OpeningVariantController({
 
     void recordEvent({
       eventType: "hint",
-      hintLevel: nextHintCount as 1 | 2 | 3,
+      hintLevel: nextHintCount as 1 | 2,
       expectedUci: currentCorrectMove,
     });
   };
@@ -307,8 +307,8 @@ export default function OpeningVariantController({
             </div>
             {!isCompleted ? (
               <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
-                First click shows a text hint from Volt. Second click shows a stronger hint and highlights which piece
-                to move. Third click shows the exact move.
+                First click shows the hint text and highlights the piece to move. Second click shows the destination
+                square.
               </p>
             ) : null}
           </div>
