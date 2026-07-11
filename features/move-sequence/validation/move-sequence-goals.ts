@@ -1,3 +1,4 @@
+import type { IdeaVisual } from "@/features/move-sequence/types/idea-visual";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -39,6 +40,21 @@ function readSuccessMessage(record: Record<string, unknown>): string {
   return "";
 }
 
+function isIdeaVisual(value: unknown): value is IdeaVisual {
+  if (!isRecord(value)) return false;
+
+  return (
+    typeof value.orig === "string" &&
+    (value.dest === undefined || typeof value.dest === "string") &&
+    (value.brush === undefined || typeof value.brush === "string")
+  );
+}
+
+export function readIdeaVisuals(value: unknown): IdeaVisual[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(isIdeaVisual);
+}
+
 export function normalizeMoveGoal(value: unknown): MoveGoal | null {
   if (!isRecord(value) || !isStubMoveGoal(value)) return null;
 
@@ -52,8 +68,10 @@ export function normalizeMoveGoal(value: unknown): MoveGoal | null {
     isCompleted,
     title: typeof value.title === "string" ? value.title : "",
     hint: readHint(value),
+    idea: typeof value.idea === "string" ? value.idea : "",
+    ideaVisuals: readIdeaVisuals(value.ideaVisuals),
+    ideaSuccessMessage: typeof value.ideaSuccessMessage === "string" ? value.ideaSuccessMessage : "",
     successMessage: readSuccessMessage(value),
-    ...(typeof value.card === "string" ? { card: value.card } : {}),
     ...(typeof value.imageSrc === "string" ? { imageSrc: value.imageSrc } : {}),
     ...(typeof value.imageAlt === "string" ? { imageAlt: value.imageAlt } : {}),
   };
@@ -66,12 +84,15 @@ export function isMoveGoal(value: unknown): value is MoveGoal {
     typeof value.ply === "number" &&
     Number.isFinite(value.ply) &&
     typeof value.move === "string" &&
-    (value.card === undefined || typeof value.card === "string") &&
     typeof value.title === "string" &&
     (typeof value.hint === "string" ||
       typeof value.initialHint === "string" ||
       typeof value.description === "string" ||
       typeof value.first_description === "string") &&
+    typeof value.idea === "string" &&
+    Array.isArray(value.ideaVisuals) &&
+    value.ideaVisuals.every(isIdeaVisual) &&
+    typeof value.ideaSuccessMessage === "string" &&
     typeof value.successMessage === "string" &&
     typeof value.isCompleted === "boolean"
   );

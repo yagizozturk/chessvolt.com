@@ -208,4 +208,8 @@
   .page-container-grid-data-layout {
     @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
   }
+
+  .card-border-bottom-shadow {
+    @apply bg-muted/50 border-b-card-shadow flex flex-col rounded-xl border-b-[6px];
+  }
 }

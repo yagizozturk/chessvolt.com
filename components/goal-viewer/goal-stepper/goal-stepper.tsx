@@ -167,7 +167,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                     onMouseLeave={scheduleClose}
                   >
                     <Lottie
-                      animationData={goal.card ? coinAnimationData : completeAnimationData}
+                      animationData={goal.ideaSuccessMessage.trim() ? coinAnimationData : completeAnimationData}
                       loop={false}
                       autoplay={true}
                       className="pointer-events-none absolute inset-0 size-full scale-[1.90]"
@@ -187,8 +187,8 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                   <PopoverHeader className="gap-1.5">
                     <PopoverTitle className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                       <span>{goal.title}</span>
-                      {goal.card ? (
-                        <span className="text-primary text-sm font-semibold">{goal.card}</span>
+                      {goal.ideaSuccessMessage.trim() ? (
+                        <span className="text-primary text-sm font-semibold">{goal.ideaSuccessMessage}</span>
                       ) : null}
                     </PopoverTitle>
                     <PopoverDescription className="text-xs leading-relaxed">

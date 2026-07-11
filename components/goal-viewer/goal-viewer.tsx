@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
 import { ActiveGoalCard } from "./active-goal-card/active-goal-card";
+import { ActiveIdeaCard } from "./active-idea-card/active-idea-card";
 import { GoalStepper } from "./goal-stepper/goal-stepper";
 import type { GoalViewerProps } from "./types/types";
 
@@ -16,9 +17,15 @@ export function GoalViewer({ goals, progressValue, hintCount = 0, turnLabel }: G
 
   return (
     <div data-tour="goals">
-      <div className="bg-muted/50 border-b-card-shadow mb-3 flex flex-col rounded-xl border-b-[6px]">
-        <ActiveGoalCard goal={activeGoal} hintCount={hintCount} turnLabel={turnLabel} />
-      </div>
+      {hintCount <= 0 && activeGoal.idea.trim() ? (
+        <div className="card-border-bottom-shadow mb-3">
+          <ActiveIdeaCard idea={activeGoal.idea} ttsKey={activeGoal.ply} />
+        </div>
+      ) : (
+        <div className="card-border-bottom-shadow mb-3">
+          <ActiveGoalCard goal={activeGoal} hintCount={hintCount} turnLabel={turnLabel} />
+        </div>
+      )}
       <div className="mb-3 flex items-center" data-tour="progress">
         <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
         <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">

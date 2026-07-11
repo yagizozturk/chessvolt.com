@@ -16,4 +16,9 @@ export type ActiveGoalCardProps = {
   turnLabel: string;
 };
 
+export type ActiveIdeaCardProps = {
+  idea: string;
+  ttsKey: string | number;
+};
+
 export type GoalStepperProps = GoalsProps;

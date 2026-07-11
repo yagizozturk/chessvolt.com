@@ -76,7 +76,7 @@ function parseGoalsFromRecord(
     return {
       ok: false,
       error:
-        "goals must include ply (number), move, title, hint (string), and isCompleted (boolean). card is optional.",
+        "goals must include ply (number), move, title, hint (string), ideaSuccessMessage (string), and isCompleted (boolean).",
     };
   }
   return { ok: true, goals: g };
@@ -348,7 +348,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
           <p className="text-muted-foreground text-xs">
             Select an opening, provide valid JSON and <span className="font-mono">pgn</span>; if{" "}
             <span className="font-mono">goals</span> is present, it must follow the schema (
-            <span className="font-mono">card</span> is optional).
+            <span className="font-mono">ideaSuccessMessage</span> is optional).
           </p>
         )}
       </form>

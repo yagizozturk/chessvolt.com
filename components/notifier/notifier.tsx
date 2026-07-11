@@ -25,7 +25,7 @@ export function Notifier({ goals }: NotifierProps) {
     goals.forEach((goal) => {
       const previousCompletionState = previousCompletionByGoalRef.current.get(goal.ply) ?? goal.isCompleted;
 
-      if (goal.card && goal.isCompleted && !previousCompletionState) {
+      if (goal.ideaSuccessMessage.trim() && goal.isCompleted && !previousCompletionState) {
         playAchievementSound();
 
         toast("", {
@@ -36,7 +36,7 @@ export function Notifier({ goals }: NotifierProps) {
                 <Lottie animationData={coinAnimationData} loop={false} autoplay={true} className="size-full" />
               </div>
               <div>
-                <p className="text-lg font-bold">{goal.card}</p>
+                <p className="text-lg font-bold">{goal.ideaSuccessMessage}</p>
               </div>
             </div>
           ),

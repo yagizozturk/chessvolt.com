@@ -1,5 +1,6 @@
 // TODO: Refactor
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import { readIdeaVisuals } from "@/features/move-sequence/validation/move-sequence-goals";
 import type { ExpectedPlayerGoal } from "@/lib/move-sequence-goals/expected-goals";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -87,9 +88,11 @@ function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): 
     move: typeof record.move === "string" && record.move ? record.move : fallback.move,
     title: typeof record.title === "string" && record.title ? record.title : "Move goal",
     hint,
+    idea: typeof record.idea === "string" ? record.idea : "",
+    ideaVisuals: readIdeaVisuals(record.ideaVisuals),
+    ideaSuccessMessage: typeof record.ideaSuccessMessage === "string" ? record.ideaSuccessMessage : "",
     successMessage,
     isCompleted: false,
-    ...(typeof record.card === "string" ? { card: record.card } : {}),
   };
 }
 
