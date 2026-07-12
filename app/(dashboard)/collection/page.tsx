@@ -4,6 +4,7 @@ import { VoltExplainDialogAutoStart } from "@/components/volt-explain-dialog/vol
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import { CollectionFilters } from "@/features/collection/components/collection-filters";
 import { getActiveCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
+import type { CollectionPageSearchParams } from "@/features/collection/types/collection-search-params";
 import {
   filterCollections,
   getThemeFilterOptions,
@@ -12,9 +13,7 @@ import {
 } from "@/features/collection/utilities/collection-filter.utils";
 import { getPublicUser } from "@/lib/supabase/auth";
 
-type SearchParams = Promise<{ q?: string; difficulty?: string; theme?: string }>;
-
-export default async function CollectionPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function CollectionPage({ searchParams }: { searchParams: CollectionPageSearchParams }) {
   const { supabase } = await getPublicUser();
   const params = await searchParams;
 
@@ -49,7 +48,7 @@ export default async function CollectionPage({ searchParams }: { searchParams: S
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
-        {/* === START Page header === */}
+        {/* Page header */}
         <PageHeader
           title="Collections"
           description="Explore curated riddle collections."
@@ -66,9 +65,10 @@ export default async function CollectionPage({ searchParams }: { searchParams: S
           }
         />
 
+        {/* Volt Explain shows only once, stored in local storage */}
         <VoltExplainDialogAutoStart />
 
-        {/* === START Collections list === */}
+        {/* Collections list */}
         {collections.length === 0 ? (
           <EmptyDataMessage message="No collections available yet." />
         ) : filteredCollections.length === 0 ? (

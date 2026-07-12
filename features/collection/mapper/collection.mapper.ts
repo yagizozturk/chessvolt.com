@@ -1,10 +1,8 @@
 // TODO: Refactor
 import type { Collection, CollectionWithRiddleCount } from "@/features/collection/types/collection";
-import {
-  type CollectionDifficulty,
-  DEFAULT_COLLECTION_DIFFICULTY,
-  parseCollectionDifficulty,
-} from "@/features/collection/types/collection-difficulty";
+import { DEFAULT_COLLECTION_DIFFICULTY } from "@/features/collection/constants/collection-difficulty.constants";
+import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
+import { parseCollectionDifficulty } from "@/features/collection/utilities/collection-difficulty.utils";
 import { type CollectionType, parseCollectionType } from "@/features/collection/types/collection-type";
 
 // ============================================================================

@@ -8,8 +8,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
-import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
 import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
+import { formatCollectionDifficultyLabel } from "@/features/collection/utilities/collection-difficulty.utils";
 import { formatCollectionRiddleCount } from "@/features/collection/utilities/collection-riddle-count-format.utils";
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
 import { DeleteUserListDialog } from "@/features/user-collection/components/delete-user-list-dialog";
@@ -53,7 +53,7 @@ export function UserCollectionCard({ collection }: UserCollectionCardProps) {
         regardless of content length. 
       */}
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="text-xl font-bold md:text-2xl">{collection.title}</h3>
+        <h2 className="sub-section-header-title">{collection.title}</h2>
         <p className="text-muted-foreground text-sm md:text-base">{collection.description}</p>
         {/* Note: mt-auto, pushes the buttons to the bottom of the card */}
         <div className="mt-auto flex flex-wrap items-center gap-3">

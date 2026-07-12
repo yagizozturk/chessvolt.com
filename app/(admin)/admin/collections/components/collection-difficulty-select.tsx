@@ -1,10 +1,10 @@
 import { Field, FieldLabel } from "@/components/ui/field";
+import { COLLECTION_DIFFICULTY_LEVELS } from "@/features/collection/constants/collection-difficulty.constants";
+import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
 import {
-  COLLECTION_DIFFICULTY_LEVELS,
   formatCollectionDifficultyLabel,
   isCollectionDifficulty,
-  type CollectionDifficulty,
-} from "@/features/collection/types/collection-difficulty";
+} from "@/features/collection/utilities/collection-difficulty.utils";
 import { cn } from "@/lib/utils/cn";
 
 type Props = {

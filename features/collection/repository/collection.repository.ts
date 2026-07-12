@@ -8,7 +8,7 @@ import type {
   CollectionWithRiddleCount,
   CollectionWithRiddleCountAndThemes,
 } from "@/features/collection/types/collection";
-import { DEFAULT_COLLECTION_DIFFICULTY } from "@/features/collection/types/collection-difficulty";
+import { DEFAULT_COLLECTION_DIFFICULTY } from "@/features/collection/constants/collection-difficulty.constants";
 import type { CollectionType } from "@/features/collection/types/collection-type";
 import type {
   CreateCollectionPayload,

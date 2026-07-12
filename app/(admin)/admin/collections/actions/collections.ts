@@ -9,11 +9,9 @@ import {
   deleteCollection,
   updateCollection,
 } from "@/features/collection/services/collection.service";
-import {
-  DEFAULT_COLLECTION_DIFFICULTY,
-  parseCollectionDifficulty,
-  type CollectionDifficulty,
-} from "@/features/collection/types/collection-difficulty";
+import { DEFAULT_COLLECTION_DIFFICULTY } from "@/features/collection/constants/collection-difficulty.constants";
+import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
+import { parseCollectionDifficulty } from "@/features/collection/utilities/collection-difficulty.utils";
 import {
   parseCollectionType,
   type CollectionType,

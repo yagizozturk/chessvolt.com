@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeaderWithImage } from "@/components/page-header";
 import { CollectionRiddlesPagination } from "@/features/collection/components/collection-riddles-pagination";
@@ -30,12 +29,17 @@ export default async function CollectionDetailPage({ params, searchParams }: Pro
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
+        {/* Page Header with Collection Image */}
         <PageHeaderWithImage
           title={collection.title}
           description={collection.description}
           imageSrc={getCollectionCoverImageSrc(collection.coverImageUrl)}
         />
+
+        {/* Check If there are collections, if not, empty state */}
         {pagination?.totalCount === 0 && <EmptyState message="No riddles found in this collection." />}
+
+        {/* If there are collections, display them in a grid */}
         <div className="page-container-grid-data-layout">
           {items.map(({ riddle, game, href, displayFen, accuracyPercent, voltScore, primaryTheme }) => (
             <RiddleBoardCard
@@ -51,6 +55,8 @@ export default async function CollectionDetailPage({ params, searchParams }: Pro
             />
           ))}
         </div>
+
+        {/* If there are collections and pages, display the pagination navigator */}
         {pagination ? (
           <CollectionRiddlesPagination
             basePath={`/collection/${slug}`}

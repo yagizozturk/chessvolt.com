@@ -212,4 +212,14 @@
   .card-border-bottom-shadow {
     @apply bg-muted/50 border-b-card-shadow flex flex-col rounded-xl border-b-[6px];
   }
+
+  /* Section header title is used with h1 */
+  .section-header-title {
+    @apply text-xl font-bold md:text-3xl;
+  }
+
+  /* Sub section header title used with h2 */
+  .sub-section-header-title {
+    @apply text-xl font-bold md:text-2xl;
+  }
 }

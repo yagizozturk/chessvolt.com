@@ -18,7 +18,7 @@ export function PageHeader({ title, description, className = defaultClassName, a
       className={`flex flex-col gap-4 rounded-xl p-6 lg:flex-row lg:items-center lg:justify-between ${className}`}
     >
       <div className="flex flex-col gap-2">
-        <h1 className="text-xl font-bold md:text-2xl">{title}</h1>
+        <h1 className="section-header-title">{title}</h1>
         <p className="text-muted-foreground text-sm md:text-base">{description}</p>
       </div>
       {actions ? <div className="w-full lg:w-auto">{actions}</div> : null}
@@ -41,7 +41,7 @@ export function PageHeaderWithImage({
   return (
     <div className={`flex items-center gap-4 rounded-xl ${className}`}>
       <div className="flex min-w-0 flex-1 flex-col gap-2 p-6">
-        <h1 className="text-xl font-bold md:text-2xl">{title}</h1>
+        <h1 className="section-header-title">{title}</h1>
         <p className="text-muted-foreground hidden text-sm md:block md:text-base">{description}</p>
       </div>
       <div className="shrink-0 overflow-hidden rounded-r-xl">

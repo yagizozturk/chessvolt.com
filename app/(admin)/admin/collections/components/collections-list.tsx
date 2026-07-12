@@ -7,7 +7,7 @@ import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-mes
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { CollectionWithRiddleCount } from "@/features/collection/types/collection";
-import { formatCollectionDifficultyLabel } from "@/features/collection/types/collection-difficulty";
+import { formatCollectionDifficultyLabel } from "@/features/collection/utilities/collection-difficulty.utils";
 import { formatCollectionRiddleCount } from "@/features/collection/utilities/collection-riddle-count-format.utils";
 import { formatCollectionTypeLabel } from "@/features/collection/types/collection-type";
 

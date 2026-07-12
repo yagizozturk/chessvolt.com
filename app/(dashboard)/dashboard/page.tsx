@@ -69,7 +69,7 @@ export default async function Page() {
           <section className="flex flex-col gap-8">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold md:text-2xl">Your collections</h2>
+                <h2 className="sub-section-header-title">Your collections</h2>
                 <p className="text-muted-foreground text-sm md:text-base">Jump back into a recent practice list.</p>
               </div>
             </div>

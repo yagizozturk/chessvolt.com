@@ -13,10 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import {
-  DEFAULT_COLLECTION_DIFFICULTY,
-  type CollectionDifficulty,
-} from "@/features/collection/types/collection-difficulty";
+import { DEFAULT_COLLECTION_DIFFICULTY } from "@/features/collection/constants/collection-difficulty.constants";
+import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
 import type { CollectionType } from "@/features/collection/types/collection-type";
 
 export function CollectionForm() {

@@ -1,5 +1,11 @@
+// TODO: Refactor
 import { COLLECTION_RIDDLES_PAGE_SIZE } from "@/features/collection/constants/collection-riddles-pagination.constants";
 
+// ======================================================================
+// Parsing page params from the URL
+// If there is no value for pageParam, 1 will be used
+// 10 means, parsing will be on 10 based math. String is parsed with Number.parseInt
+// ======================================================================
 export function parseCollectionRiddlesPage(pageParam?: string): number {
   const parsed = Number.parseInt(pageParam ?? "1", 10);
   if (!Number.isFinite(parsed) || parsed < 1) return 1;
