@@ -20,14 +20,14 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { addRiddleToMyCollectionAction } from "@/features/riddle/actions/add-riddle-to-my-collection";
 
-export type MyCollectionOption = {
+export type UserCollectionProps = {
   id: string;
   title: string;
 };
 
-type AddToMyCollectionPickerProps = {
+type AddToUserCollectionPickerProps = {
   riddleId: string;
-  collections: MyCollectionOption[];
+  collections: UserCollectionProps[];
   savedCollectionIds: string[];
 };
 
@@ -38,7 +38,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   failed: "Could not add the riddle. Please try again.",
 };
 
-export function AddToMyCollectionPicker({ riddleId, collections, savedCollectionIds }: AddToMyCollectionPickerProps) {
+export function AddToUserCollectionPicker({ riddleId, collections, savedCollectionIds }: AddToUserCollectionPickerProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [savedIds, setSavedIds] = useState(() => new Set(savedCollectionIds));

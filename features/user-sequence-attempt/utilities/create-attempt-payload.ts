@@ -1,4 +1,4 @@
-import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
+import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import { computeSequenceAttemptAccuracy } from "@/features/user-sequence-attempt/utilities/compute-sequence-attempt-accuracy";
 
 export function createAttemptPayload(
@@ -19,7 +19,7 @@ export function createAttemptPayload(
 
 export type AttemptPayload = ReturnType<typeof createAttemptPayload>;
 
-export function createSequenceCompleteStats(payload: AttemptPayload): SequenceCompleteDialogStats {
+export function createSequenceCompleteStats(payload: AttemptPayload): MoveSequenceCompleteDialogStats {
   return {
     accuracyPercent: computeSequenceAttemptAccuracy(payload),
     maxCorrectStreak: payload.maxCorrectStreak,

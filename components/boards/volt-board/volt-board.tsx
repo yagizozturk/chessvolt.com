@@ -1,3 +1,4 @@
+// TODO: Refactor
 "use client";
 
 import type { Key } from "@lichess-org/chessground/types";
@@ -125,6 +126,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   // ============================================================================
   // Clear custom highlights timeout
   // Component state/ref/useEffect bağımlılığı varsa → component içinde kalsın.
+  // useCallback makes RAM uses the old pointed function unless [] dependency valus change for every render.
   // ============================================================================
   function clearCustomHighlightsTimeout() {
     if (clearCustomHighlightsTimeoutRef.current) {

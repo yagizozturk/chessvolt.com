@@ -23,7 +23,7 @@ import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-var
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { AddToPracticeButton } from "@/features/user-practice-opening-variant/components/add-to-practice-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
-import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
+import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
   type AttemptPayload,
   createAttemptPayload,
@@ -62,7 +62,7 @@ export default function OpeningVariantController({
   const [isCompleted, setIsCompleted] = useState(false);
   const [isContinuePending, setIsContinuePending] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null);
+  const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null);
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
@@ -80,7 +80,7 @@ export default function OpeningVariantController({
     progressValue,
     hintCount,
     hintRequested,
-    currentCorrectMove,
+    expectedCurrentCorrectMoveUci,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: variant.moveSequence.moves,
@@ -112,7 +112,7 @@ export default function OpeningVariantController({
   }, [variant.id, replayKey]);
 
   useEffect(() => {
-    if (currentCorrectMove != null || isCompleted) return;
+    if (expectedCurrentCorrectMoveUci != null || isCompleted) return;
 
     setIsCompleted(true);
 
@@ -130,7 +130,7 @@ export default function OpeningVariantController({
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [currentCorrectMove, getTimeFromStartMs, isCompleted, isInPracticeList, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isInPracticeList, playLevelUpSound]);
 
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
@@ -157,7 +157,7 @@ export default function OpeningVariantController({
         await recordEvent({
           eventType: "move",
           moveUci: move.uci,
-          expectedUci: currentCorrectMove ?? undefined,
+          expectedUci: expectedCurrentCorrectMoveUci ?? undefined,
           isCorrect: false,
         });
         await updateAttemptResults(
@@ -178,7 +178,7 @@ export default function OpeningVariantController({
       void recordEvent({
         eventType: "move",
         moveUci: move.uci,
-        expectedUci: currentCorrectMove ?? undefined,
+        expectedUci: expectedCurrentCorrectMoveUci ?? undefined,
         isCorrect: true,
       });
     }
@@ -197,14 +197,14 @@ export default function OpeningVariantController({
 
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
-    if (nextHintCount == null || !currentCorrectMove) return;
+    if (nextHintCount == null || !expectedCurrentCorrectMoveUci) return;
     boardRef.current?.showHint(nextHintCount);
     totalHintCountRef.current += 1;
 
     void recordEvent({
       eventType: "hint",
       hintLevel: nextHintCount as 1 | 2,
-      expectedUci: currentCorrectMove,
+      expectedUci: expectedCurrentCorrectMoveUci,
     });
   };
 
@@ -257,7 +257,7 @@ export default function OpeningVariantController({
             sourceId={sessionId}
             initialFen={variant.moveSequence.initialFen}
             coordinates={!isMobile}
-            drawHintMove={currentCorrectMove}
+            drawHintMove={expectedCurrentCorrectMoveUci}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}
             onNextMoveRequest={handleBoardNextMoveRequest}

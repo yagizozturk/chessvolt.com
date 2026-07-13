@@ -107,7 +107,7 @@ export function useMoveSequenceController({
     return nextHintCount;
   };
 
-  const currentCorrectMove = moves[nextExpectedMoveIndex] ?? null;
+  const expectedCurrentCorrectMoveUci = moves[nextExpectedMoveIndex] ?? null;
 
   return {
     moves,
@@ -121,6 +121,6 @@ export function useMoveSequenceController({
     incrementNextExpectedMoveIndex,
     resetNextExpectedMoveIndex,
     hintRequested,
-    currentCorrectMove,
+    expectedCurrentCorrectMoveUci,
   };
 }

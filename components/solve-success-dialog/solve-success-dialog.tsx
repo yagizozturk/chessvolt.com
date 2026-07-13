@@ -23,7 +23,7 @@ import {
 import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
+import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import { formatAttemptDurationMs } from "@/features/user-sequence-attempt/utilities/format-attempt-duration";
 import { cn } from "@/lib/utils";
 import animationData from "@/public/images/animations/animation-trophy.json";
@@ -36,7 +36,7 @@ export type SolveSuccessDialogProps = {
   description: string;
   destinationPath: string;
   buttonLabel: string;
-  stats?: SequenceCompleteDialogStats | null;
+  stats?: MoveSequenceCompleteDialogStats | null;
   voltScore?: VoltScoreResult | null;
   isVoltScoreShowing?: boolean;
   onPlayAgain?: () => void;

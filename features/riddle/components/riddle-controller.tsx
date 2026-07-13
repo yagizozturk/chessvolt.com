@@ -1,10 +1,9 @@
-// TODO: Refactor
 "use client";
 
-import { ChevronLeft, Eye, HelpCircle } from "lucide-react";
+import { ArrowRightLeft, ChevronLeft, Eye } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
@@ -18,14 +17,14 @@ import { Spinner } from "@/components/ui/spinner";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
 import {
-  AddToMyCollectionPicker,
-  type MyCollectionOption,
-} from "@/features/riddle/components/add-to-my-collection-picker";
+  AddToUserCollectionPicker,
+  type UserCollectionProps,
+} from "@/features/riddle/components/add-to-user-collection-picker";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
-import type { SequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
+import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
   type AttemptPayload,
   createAttemptPayload,
@@ -35,16 +34,15 @@ import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
-import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
 type RiddleControllerProps = {
   riddle: Riddle;
   nextRiddleUrl?: string | null;
   parentCollectionUrl?: string;
-  isUserLoggedIn?: boolean;
-  userCollections?: MyCollectionOption[];
-  userCollectionIdsHasCurrentRiddle?: string[];
+  isUserLoggedIn?: boolean; // Checks for the persist events, add to collection button visibility
+  userCollections?: UserCollectionProps[]; // Getting user collections to show in a window and add riddles.
+  userCollectionIdsHasCurrentRiddle?: string[]; // Already saved riddles in collections. Not to do it twice.
 };
 
 export default function RiddleController({
@@ -56,18 +54,24 @@ export default function RiddleController({
   userCollectionIdsHasCurrentRiddle = [],
 }: RiddleControllerProps) {
   const router = useRouter();
-  const isMobile = useIsMobile();
   const boardRef = useRef<VoltBoardHandle>(null);
+  const isMobile = useIsMobile();
   const sequenceId = riddle.moveSequence.id; // Every sequence has its own moves and PGN. Every Riddle has sequenceId
-  const [replayKey, setReplayKey] = useState(0);
+  const [replayKey, setReplayKey] = useState(0); // Replay key is to be unique. It is to change sessionId so to reset vars in play again option
   const sessionId = `${riddle.id}:${replayKey}`;
+  const turnLabel = getTurnLabel(riddle.moveSequence.initialFen); // Gets the player turn label, w or b
+  const hasNextRiddle = nextRiddleUrl != null;
+  const successDestinationPath = hasNextRiddle ? nextRiddleUrl : parentCollectionUrl;
+  const successButtonLabel = hasNextRiddle ? "Next riddle" : "Back to collection";
+  const successDescription = hasNextRiddle
+    ? "Congratulations! You solved this riddle."
+    : "You solved this riddle. Return to the collection when you are ready.";
   const [isCompleted, setIsCompleted] = useState(false); // Whether the riddle is completed
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [completionStats, setCompletionStats] = useState<SequenceCompleteDialogStats | null>(null);
+  const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null); // TS allows null state, default is null. CompletionStats is not set on default.
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
-  const [isContinuePending, setIsContinuePending] = useState(false);
-  const [isBackPending, setIsBackPending] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
 
@@ -92,7 +96,7 @@ export default function RiddleController({
     progressValue,
     hintCount,
     hintRequested,
-    currentCorrectMove,
+    expectedCurrentCorrectMoveUci,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: riddle.moveSequence.moves,
@@ -118,7 +122,6 @@ export default function RiddleController({
     setCompletionStats(null);
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(false);
-    setIsContinuePending(false);
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -130,7 +133,7 @@ export default function RiddleController({
   // Set the riddle as completed and persist attempt data to the db
   // ================================================================================================
   useEffect(() => {
-    if (currentCorrectMove != null || isCompleted) return;
+    if (expectedCurrentCorrectMoveUci != null || isCompleted) return;
 
     setIsCompleted(true);
 
@@ -148,9 +151,40 @@ export default function RiddleController({
     setIsVoltScoreShowing(isUserLoggedIn);
     setSuccessDialogOpen(true);
     playLevelUpSound();
-    void insertAttemptResults(attemptPayload);
+
+    let isMounted = true;
+
+    // This method persist the data and coded inside useEffect in order to block infinite loops if coded outside.
+    // Declared inside the useEffect to safely isolate async operations, prevent memory leaks
+    // if the component unmounts, and avoid dependency-induced infinite rendering loops.
+    async function saveAttemptResults() {
+      await recordEvent({ eventType: "complete" });
+
+      const voltScoreResult = await updateAttemptResults("completed", {
+        ...attemptPayload,
+        ...(isUserLoggedIn ? { voltScore } : {}),
+      });
+
+      if (isUserLoggedIn) {
+        await incrementCurrentRatingAction();
+      }
+
+      // If the user is still on this page and didn't click any button while waiting, update states.
+      if (isMounted) {
+        setCompletionVoltScore(voltScoreResult);
+        setIsVoltScoreShowing(false);
+      }
+    }
+
+    // Calling the function safe
+    void saveAttemptResults();
+
+    // Cleanup returns to useEffect directly.
+    return () => {
+      isMounted = false;
+    };
   }, [
-    currentCorrectMove,
+    expectedCurrentCorrectMoveUci,
     getTimeFromStartMs,
     isCompleted,
     isUserLoggedIn,
@@ -160,138 +194,101 @@ export default function RiddleController({
   ]);
 
   // ================================================================================================
-  // Insert the completion attempt to the db
-  // ================================================================================================
-  async function insertAttemptResults(attemptPayload: AttemptPayload) {
-    await recordEvent({ eventType: "complete" });
-
-    const voltScoreResult = await updateAttemptResults("completed", {
-      ...attemptPayload,
-      ...(isUserLoggedIn ? { voltScore } : {}),
-    });
-
-    if (isUserLoggedIn) {
-      await incrementCurrentRatingAction();
-    }
-
-    setCompletionVoltScore(voltScoreResult);
-    setIsVoltScoreShowing(false);
-  }
-
-  // ================================================================================================
   // Handle the board check move
   // ================================================================================================
-  function handleBoardCheckMove(move: MoveAttemptPayload) {
+  const handleBoardCheckMove = (move: MoveAttemptPayload) => {
     const { isCorrect } = handleMoveCheck(move);
 
-    // If the move is incorrect and the riddle is not completed, record the move event and update the attempt status
-    if (!isCorrect && !isCompleted) {
-      wrongMoveCountRef.current += 1;
-      currentCorrectStreakRef.current = 0;
-
-      void (async () => {
-        await recordEvent({
-          eventType: "move",
-          moveUci: move.uci,
-          expectedUci: currentCorrectMove ?? undefined,
-          isCorrect: false,
-        });
-        await updateAttemptResults(
-          "failed",
-          createAttemptPayload(
-            correctMoveCountRef.current,
-            wrongMoveCountRef.current,
-            totalHintCountRef.current,
-            maxCorrectStreakRef.current,
-            getTimeFromStartMs(),
-          ),
-        );
-      })();
-    } else if (isCorrect) {
-      // If the move is correct, record the move event and update the attempt status
+    // With a right move (Early Return)
+    if (isCorrect) {
       correctMoveCountRef.current += 1;
       updateCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
 
-      // Record the move event for attempt_event table for more detailed logs
       void recordEvent({
         eventType: "move",
         moveUci: move.uci,
-        expectedUci: currentCorrectMove ?? undefined,
+        expectedUci: expectedCurrentCorrectMoveUci ?? undefined,
         isCorrect: true,
       });
+
+      return true;
     }
 
-    return isCorrect;
-  }
+    // With wrong move and riddle continues
+    if (!isCompleted) {
+      wrongMoveCountRef.current += 1;
+      currentCorrectStreakRef.current = 0;
 
-  // ================================================================================================
-  // Handle the board success move played and communicate with HOOK
-  // ================================================================================================
-  function handleBoardSuccessMovePlayed(move: Move) {
-    handleSuccessMovePlayed(move);
-  }
+      void recordEvent({
+        eventType: "move",
+        moveUci: move.uci,
+        expectedUci: expectedCurrentCorrectMoveUci ?? undefined,
+        isCorrect: false,
+      });
 
-  // ================================================================================================
-  // Handle the board next move request and communicate with HOOK
-  // ================================================================================================
-  function handleBoardNextMoveRequest() {
-    const nextMove = handleNextMoveRequest();
-    return nextMove;
-  }
+      void updateAttemptResults(
+        "failed",
+        createAttemptPayload(
+          correctMoveCountRef.current,
+          wrongMoveCountRef.current,
+          totalHintCountRef.current,
+          maxCorrectStreakRef.current,
+          getTimeFromStartMs(),
+        ),
+      );
+    }
+
+    return false;
+  };
 
   // ================================================================================================
   // Handle the hint click and communicate with HOOK
   // ================================================================================================
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
-    if (nextHintCount == null || !currentCorrectMove) return;
+    if (nextHintCount == null || !expectedCurrentCorrectMoveUci) return;
     boardRef.current?.showHint(nextHintCount);
     totalHintCountRef.current += 1;
 
     void recordEvent({
       eventType: "hint",
       hintLevel: nextHintCount as 1 | 2,
-      expectedUci: currentCorrectMove,
+      expectedUci: expectedCurrentCorrectMoveUci,
+    });
+  };
+
+  // ================================================================================================
+  // Handle the continue click and redirect to the next riddle or back to the collection
+  // Use router hook already have transition state
+  // Using transition to manage loading state.
+  // ================================================================================================
+  const handleContinueClick = () => {
+    startTransition(() => {
+      router.push(successDestinationPath);
     });
   };
 
   // ================================================================================================
   // Handle the continue click and redirect to the next riddle or back to the collection
   // ================================================================================================
-  const hasNextRiddle = nextRiddleUrl != null;
-  const successDestinationPath = hasNextRiddle ? nextRiddleUrl : parentCollectionUrl;
-  const successButtonLabel = hasNextRiddle ? "Next riddle" : "Back to collection";
-
-  // ================================================================================================
-  // Handle the continue click and redirect to the next riddle or back to the collection
-  // ================================================================================================
-  const handleContinueClick = () => {
-    setIsContinuePending(true);
-    router.push(successDestinationPath);
-  };
-
   const handleBackClick = () => {
-    setIsBackPending(true);
-    router.push(parentCollectionUrl);
+    startTransition(() => {
+      router.push(parentCollectionUrl);
+    });
   };
 
+  // ================================================================================================
+  // Play again button in dialog, sets the replay key for a new session
+  // ================================================================================================
   const handlePlayAgain = () => {
     setSuccessDialogOpen(false);
     setReplayKey((key) => key + 1);
   };
 
-  const successDescription = hasNextRiddle
-    ? "Congratulations! You solved this riddle."
-    : "You solved this riddle. Return to the collection when you are ready.";
-
-  // ================================================================================================
-  // Get the player orientation from the FEN and set the turn label
-  // ================================================================================================
-  const turnLabel = getTurnLabel(riddle.moveSequence.initialFen);
-
   return (
     <div className="page-container">
       {Tour}
+      {/* Success Dialog */}
       <SolveSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
@@ -305,7 +302,7 @@ export default function RiddleController({
         onPlayAgain={handlePlayAgain}
         footerExtra={
           isUserLoggedIn && userCollections.length > 0 ? (
-            <AddToMyCollectionPicker
+            <AddToUserCollectionPicker
               riddleId={riddle.id}
               collections={userCollections}
               savedCollectionIds={userCollectionIdsHasCurrentRiddle}
@@ -313,12 +310,18 @@ export default function RiddleController({
           ) : null
         }
       />
+
+      {/* Confetti */}
       {successDialogOpen ? (
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
       ) : null}
+
+      {/* Notifier */}
       <Notifier goals={sortedGoals} />
+
       <div className="page-container-controller-layout">
         {/* Board wrapper: aspect-square sets the square; .board-wrapper in volt.css fills it */}
+        {/* TODO: Refactor HTML structure */}
         <div
           key={sessionId}
           className="relative aspect-square w-full shrink-0 md:min-w-0 md:flex-[3]"
@@ -329,23 +332,20 @@ export default function RiddleController({
             sourceId={sessionId}
             initialFen={riddle.moveSequence.initialFen}
             coordinates={!isMobile}
-            drawHintMove={currentCorrectMove}
+            drawHintMove={expectedCurrentCorrectMoveUci}
             onCheckMove={handleBoardCheckMove}
-            onSuccessMovePlayed={handleBoardSuccessMovePlayed}
-            onNextMoveRequest={handleBoardNextMoveRequest}
+            onSuccessMovePlayed={handleSuccessMovePlayed} // directly communicating with hook
+            onNextMoveRequest={handleNextMoveRequest} // directly communicating with hook
           />
         </div>
+
         {/* Controller */}
         <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
+          {/* Controller header */}
           <div className="flex justify-between">
             <div>
-              <Button
-                variant="voltIcon"
-                onClick={handleBackClick}
-                disabled={isBackPending}
-                aria-label="Back to collection"
-              >
-                {isBackPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
+              <Button variant="voltIcon" onClick={handleBackClick} disabled={isPending} aria-label="Back to collection">
+                {isPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
               </Button>
             </div>
             <div className="flex items-center gap-2 text-xl font-bold">
@@ -361,7 +361,7 @@ export default function RiddleController({
             </div>
             <div>
               {isUserLoggedIn && userCollections.length > 0 ? (
-                <AddToMyCollectionPicker
+                <AddToUserCollectionPicker
                   riddleId={riddle.id}
                   collections={userCollections}
                   savedCollectionIds={userCollectionIdsHasCurrentRiddle}
@@ -370,37 +370,43 @@ export default function RiddleController({
             </div>
           </div>
 
+          {/* Goal Viewer */}
           <GoalViewer goals={sortedGoals} progressValue={progressValue} hintCount={hintCount} turnLabel={turnLabel} />
+
+          {/* Footer Buttons */}
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
               {!isCompleted ? (
-                <Button
-                  variant="voltGreen"
-                  onClick={handleHintClick}
-                  disabled={hintCount >= MAX_HINT_COUNT}
-                  className="min-w-0 flex-1"
-                >
-                  <Eye data-icon="inline-start" />
-                  Hint
-                </Button>
+                <>
+                  <Button variant="volt" className="w-full min-w-0 flex-1">
+                    <ArrowRightLeft data-icon="inline-start" />
+                    Change Mode
+                  </Button>
+
+                  <Button
+                    variant="voltGreen"
+                    onClick={handleHintClick}
+                    disabled={hintCount >= MAX_HINT_COUNT}
+                    className="w-full min-w-0 flex-1"
+                  >
+                    <Eye data-icon="inline-start" />
+                    Hint
+                  </Button>
+                </>
               ) : (
-                <Button
-                  variant="volt"
-                  onClick={handleContinueClick}
-                  disabled={isContinuePending}
-                  className="min-w-0 flex-1"
-                >
-                  {isContinuePending && <Spinner data-icon="inline-start" />}
+                <Button variant="volt" onClick={handleContinueClick} disabled={isPending} className="min-w-0 flex-1">
+                  {isPending && <Spinner data-icon="inline-start" />}
                   {successButtonLabel}
                 </Button>
               )}
             </div>
-            {!isCompleted ? (
+
+            {!isCompleted && (
               <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
                 First click shows the hint text and highlights the piece to move. Second click shows the destination
                 square.
               </p>
-            ) : null}
+            )}
           </div>
         </div>
       </div>
