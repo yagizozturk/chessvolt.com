@@ -35,7 +35,11 @@ export async function getProfileOnboardingStatus(
 export async function completeProfileOnboarding(
   supabase: SupabaseClient,
   userId: string,
-  input: { initialRating: number },
+  input: {
+    initialRating: number;
+    chesscomUsername?: string | null;
+    lichessUsername?: string | null;
+  },
 ): Promise<boolean> {
   return profileRepo.completeProfileOnboarding(supabase, userId, input);
 }

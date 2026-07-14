@@ -11,7 +11,7 @@ export async function getProfileByUserId(
 ): Promise<Omit<UserProfileData, "email" | "avatarUrl"> | null> {
   const { data, error } = await supabase
     .from("profiles")
-    .select("username, role, onboarding_completed, initial_rating, current_rating")
+    .select("username, role, onboarding_completed, initial_rating, current_rating, chesscom_username, lichess_username")
     .eq("id", userId)
     .maybeSingle();
 
@@ -31,6 +31,8 @@ export async function getProfileByUserId(
     onboardingCompleted: data.onboarding_completed ?? false,
     initialRating: data.initial_rating ?? null,
     currentRating: data.current_rating ?? null,
+    chesscomUsername: data.chesscom_username ?? null,
+    lichessUsername: data.lichess_username ?? null,
   };
 }
 
@@ -62,7 +64,11 @@ export async function getProfileOnboardingStatus(
 export async function completeProfileOnboarding(
   supabase: SupabaseClient,
   userId: string,
-  input: { initialRating: number },
+  input: {
+    initialRating: number;
+    chesscomUsername?: string | null;
+    lichessUsername?: string | null;
+  },
 ): Promise<boolean> {
   const { error } = await supabase
     .from("profiles")
@@ -71,6 +77,8 @@ export async function completeProfileOnboarding(
       // First signup: current rating starts equal to the onboarding initial rating.
       current_rating: input.initialRating,
       onboarding_completed: true,
+      chesscom_username: input.chesscomUsername?.trim() || null,
+      lichess_username: input.lichessUsername?.trim() || null,
     })
     .eq("id", userId);
 

@@ -29,7 +29,7 @@ Content is managed through an **admin** panel. Auth and data are backed by **Sup
 | Contact              | `/contact`                                                  | `features/contact`                                                                                                       | Contact form → Supabase                         |
 | Sign up / log in     | `/signup`, `/login`, `/forgot-password`, `/update-password` | `features/auth`                                                                                                          | Supabase auth                                   |
 | Auth callback        | `/auth/callback`                                            | `lib/supabase`                                                                                                           | OAuth / email confirmation                      |
-| Onboarding           | `/onboarding`                                               | `onboarding`, `onboarding-question`, `onboarding-option`, `onboarding-option-theme`, `user-onboarding-answer`, `profile` | Gated by middleware; creates starter collection |
+| Onboarding           | `/onboarding`                                               | `onboarding`, `onboarding-question`, `onboarding-option`, `user-onboarding-answer`, `profile` | Gated by middleware |
 | Browse collections   | `/collection`                                               | `collection`, `content-theme`, `theme`                                                                                   | Filterable list with themes                     |
 | Collection detail    | `/collection/[slug]`                                        | `collection`, `riddle`, `collection-riddles`, `game`, `user-sequence-attempt`                                             | Riddle cards with progress + volt               |
 | Play a riddle        | `/collection/[slug]/riddle/[id]`, `/user-collection/[slug]/riddle/[id]` | `riddle`, `move-sequence`, `user-sequence-attempt`, `user-sequence-attempt-event`, `collection-riddles`                   | Core play loop                                  |
@@ -111,7 +111,6 @@ types/ → repository/ → mapper/ → services/ → components/ | hooks/ | acti
 | `move-sequence`                 | Move sequences, goals, play controller hook        |
 | `onboarding`                    | Onboarding flow orchestration                      |
 | `onboarding-option`             | Onboarding answer options                          |
-| `onboarding-option-theme`       | Theme links for onboarding options                 |
 | `onboarding-question`           | Onboarding questions                               |
 | `openings`                      | Openings, variants, practice UI                    |
 | `profile`                       | User profile + onboarding status                   |

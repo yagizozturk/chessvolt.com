@@ -218,7 +218,6 @@ Kısa özet:
 
 ```txt
 content_themes.weight = içerik ile theme arasındaki bağın gücü
-onboarding_option_themes.weight = kullanıcının cevabı ile theme arasındaki bağın gücü
 difficulty = içeriğin zorluğu
 sort_order = UI/admin sıralaması
 ```

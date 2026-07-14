@@ -88,17 +88,6 @@ export async function findUserCustomCollectionBySlug(
   return toCollection(data);
 }
 
-// ============================================================================
-// Finding onboarding starter collection for user by User Id
-// ============================================================================
-export async function findUserOnboardingStarterCollection(
-  supabase: SupabaseClient,
-  userId: string,
-  slug: string,
-): Promise<Collection | null> {
-  return findUserCustomCollectionBySlug(supabase, userId, slug);
-}
-
 const COLLECTION_WITH_RIDDLE_COUNT_AND_THEMES_SELECT =
   "*, collection_riddles(count), collection_themes(id, collection_id, theme_id, weight, created_at, themes(*))";
 

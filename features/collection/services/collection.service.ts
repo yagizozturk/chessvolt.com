@@ -86,19 +86,6 @@ export async function getUserCollectionsWithRiddleCountAndThemes(
 }
 
 // ============================================================================
-// Getting onboarding starter collection for user.
-// It checks whether the user already has a custom collection with the onboarding
-// starter slug (ONBOARDING_STARTER_COLLECTION_SLUG) before creating a new one.
-// ============================================================================
-export async function getUserOnboardingStarterCollection(
-  supabase: SupabaseClient,
-  userId: string,
-  slug: string,
-): Promise<Collection | null> {
-  return collectionRepo.findUserOnboardingStarterCollection(supabase, userId, slug);
-}
-
-// ============================================================================
 // Creating a collection
 // ============================================================================
 export async function createCollection(

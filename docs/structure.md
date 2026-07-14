@@ -627,27 +627,24 @@
 #### components
 
 - onboarding-form.tsx
+- onboarding-platform-username-step.tsx
 
 #### constants
 
 - onboarding-questions.ts
 - onboarding-routes.ts
-- onboarding-starter-collection.config.ts
 
 #### services
 
 - complete-onboarding.service.ts
-- create-onboarding-starter-collection.service.ts
 
 #### types
 
 - complete-onboarding-result.ts
-- create-onboarding-starter-collection-data.ts
-- create-onboarding-starter-collection-result.ts
 - onboarding-completion-data.ts
+- onboarding-platform-usernames.ts
 - onboarding-question-answers.ts
 - onboarding-step-data.ts
-- resolve-starter-collection-eligibility-result.ts
 - validate-chess-familiarity-answer-result.ts
 - validate-onboarding-answers-structure-result.ts
 - validate-onboarding-answers-with-options-result.ts
@@ -655,12 +652,8 @@
 
 #### utilities
 
-- build-onboarding-starter-collection.ts
 - get-onboarding-routes.ts
 - resolve-onboarding-completion-data.ts
-- resolve-onboarding-theme-slugs.ts
-- resolve-starter-collection-eligibility.ts
-- select-onboarding-starter-riddles.ts
 - validate-chess-familiarity-answer.ts
 - validate-onboarding-answers.ts
 - validate-onboarding-submission.ts
@@ -689,29 +682,6 @@
 - onboarding-option-with-question.ts
 - onboarding-option.ts
 - onboarding-rating.ts
-
-### onboarding-option-theme
-
-#### components
-
-- onboarding-option-select.tsx
-- onboarding-option-theme-list.tsx
-
-#### mapper
-
-- onboarding-option-theme.mapper.ts
-
-#### repository
-
-- onboarding-option-theme.repository.ts
-
-#### services
-
-- onboarding-option-theme.service.ts
-
-#### types
-
-- onboarding-option-theme.ts
 
 ### onboarding-question
 

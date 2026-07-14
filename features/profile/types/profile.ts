@@ -10,4 +10,6 @@ export type Profile = {
   onboardingCompleted: boolean;
   initialRating: number | null;
   currentRating: number | null;
+  chesscomUsername: string | null;
+  lichessUsername: string | null;
 } | null;

@@ -82,8 +82,6 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "New question", url: "/admin/onboarding-questions/create" },
       { title: "All options", url: "/admin/onboarding-options" },
       { title: "New option", url: "/admin/onboarding-options/create" },
-      { title: "Option themes", url: "/admin/onboarding-option-themes" },
-      { title: "New option theme", url: "/admin/onboarding-option-themes/create" },
       { title: "User answers", url: "/admin/user-onboarding-answers" },
     ],
   },

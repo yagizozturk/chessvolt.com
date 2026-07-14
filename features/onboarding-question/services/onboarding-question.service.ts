@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as onboardingQuestionRepo from "@/features/onboarding-question/repository/onboarding-question.repository";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
+import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboarding-questions";
 
 // ======================================================================
 // General Note:
@@ -22,7 +23,8 @@ export async function getAllOnboardingQuestions(supabase: SupabaseClient): Promi
 // Gets the active onboarding questions
 // ======================================================================
 export async function getActiveOnboardingQuestions(supabase: SupabaseClient): Promise<OnboardingQuestion[]> {
-  return onboardingQuestionRepo.findAllActive(supabase);
+  const questions = await onboardingQuestionRepo.findAllActive(supabase);
+  return questions.filter((question) => question.slug === ONBOARDING_QUESTION_SLUG.chessFamiliarity);
 }
 
 // ======================================================================

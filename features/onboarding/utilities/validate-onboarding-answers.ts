@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getOnboardingOptionsByIds } from "@/features/onboarding-option/services/onboarding-option.service";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
-import { isMultiSelectOnboardingQuestion } from "@/features/onboarding/constants/onboarding-questions";
+import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboarding-questions";
 import type { OnboardingQuestionAnswers } from "@/features/onboarding/types/onboarding-question-answers";
 import type { ValidateOnboardingAnswersStructureResult } from "@/features/onboarding/types/validate-onboarding-answers-structure-result";
 import type { ValidateOnboardingAnswersWithOptionsResult } from "@/features/onboarding/types/validate-onboarding-answers-with-options-result";
@@ -15,18 +15,26 @@ import type { ValidateOnboardingAnswersWithOptionsResult } from "@/features/onbo
 // ============================================================================
 // A. validateOnboardingAnswersStructure
 //
-// Ensures every active question is answered once and single-select rules hold.
+// Ensures every required active question is answered once and single-select rules hold.
+// When skipChessFamiliarity is true (platform username provided), chess_familiarity
+// is excluded from the required set.
 // Option existence, activity, and ownership are checked in
 // validateOnboardingAnswersWithOptions.
 // ============================================================================
 export function validateOnboardingAnswersStructure(
   answers: OnboardingQuestionAnswers[],
   activeQuestions: OnboardingQuestion[],
+  options?: { skipChessFamiliarity?: boolean },
 ): ValidateOnboardingAnswersStructureResult {
-  if (answers.length !== activeQuestions.length) {
+  const requiredQuestions = options?.skipChessFamiliarity
+    ? activeQuestions.filter((question) => question.slug !== ONBOARDING_QUESTION_SLUG.chessFamiliarity)
+    : activeQuestions;
+
+  if (answers.length !== requiredQuestions.length) {
     return { ok: false, error: "Please answer all onboarding questions." };
   }
 
+  const requiredQuestionById = new Map(requiredQuestions.map((question) => [question.id, question]));
   const activeQuestionById = new Map(activeQuestions.map((question) => [question.id, question]));
   const answeredQuestionIds = new Set<string>();
   const normalizedAnswers: OnboardingQuestionAnswers[] = [];
@@ -39,13 +47,13 @@ export function validateOnboardingAnswersStructure(
       return { ok: false, error: "Please answer all onboarding questions." };
     }
 
-    const question = activeQuestionById.get(questionId);
+    const question = requiredQuestionById.get(questionId);
     if (!question || answeredQuestionIds.has(questionId)) {
       return { ok: false, error: "Please answer all onboarding questions." };
     }
     answeredQuestionIds.add(questionId);
 
-    if (!isMultiSelectOnboardingQuestion(question.slug) && optionIds.length !== 1) {
+    if (optionIds.length !== 1) {
       return { ok: false, error: "Please select only one answer for this question." };
     }
 
