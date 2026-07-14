@@ -45,21 +45,6 @@ const profileSection = {
 const data = {
   navMain: [
     {
-      title: "Collections",
-      url: "#",
-      icon: "/images/icons/icon-book-collection.png",
-      items: [
-        {
-          title: "Library",
-          url: "/collection",
-        },
-        {
-          title: "My Collections",
-          url: "/user-collection",
-        },
-      ],
-    },
-    {
       title: "Openings",
       url: "#",
       icon: "/images/icons/icon-openings.png",
@@ -79,6 +64,22 @@ const data = {
       url: "/riddles",
       icon: "/images/icons/icon-riddle.png",
     },
+    {
+      title: "Collections",
+      url: "#",
+      icon: "/images/icons/icon-book-collection.png",
+      items: [
+        {
+          title: "Library",
+          url: "/collection",
+        },
+        {
+          title: "My Collections",
+          url: "/user-collection",
+        },
+      ],
+    },
+
     {
       title: "Other",
       url: "#",

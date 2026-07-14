@@ -1,15 +1,9 @@
 export const QUICK_LINKS = [
   {
-    title: "My Collections",
-    description: "Continue your custom practice lists.",
-    href: "/user-collection",
-    icon: "/images/icons/icon-book-collection.png",
-  },
-  {
-    title: "Library",
-    description: "Browse curated riddle collections.",
-    href: "/collection",
-    icon: "/images/icons/icon-library-tr.png",
+    title: "Openings",
+    description: "Train opening ideas and variants.",
+    href: "/openings",
+    icon: "/images/icons/icon-openings.png",
   },
   {
     title: "Riddles",
@@ -18,9 +12,15 @@ export const QUICK_LINKS = [
     icon: "/images/icons/icon-riddle.png",
   },
   {
-    title: "Openings",
-    description: "Train opening ideas and variants.",
-    href: "/openings",
-    icon: "/images/icons/icon-openings.png",
+    title: "Library",
+    description: "Browse curated riddle collections.",
+    href: "/collection",
+    icon: "/images/icons/icon-library-tr.png",
+  },
+  {
+    title: "My Collections",
+    description: "Continue your custom practice lists.",
+    href: "/user-collection",
+    icon: "/images/icons/icon-book-collection.png",
   },
 ] as const;
