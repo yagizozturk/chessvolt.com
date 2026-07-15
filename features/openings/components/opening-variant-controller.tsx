@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import VoltBoard, { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
@@ -17,7 +17,9 @@ import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
+import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
+import { Switch } from "@/components/ui/switch";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
@@ -65,6 +67,7 @@ export default function OpeningVariantController({
   const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null);
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
+  const [boardMode, setBoardMode] = useState<VoltBoardMode>("learn");
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
   const correctMoveCountRef = useRef(0);
@@ -252,6 +255,7 @@ export default function OpeningVariantController({
           <VoltBoard
             ref={boardRef}
             sourceId={sessionId}
+            mode={boardMode}
             initialFen={variant.moveSequence.initialFen}
             coordinates={!isMobile}
             drawHintMove={expectedCurrentCorrectMoveUci}
@@ -277,7 +281,22 @@ export default function OpeningVariantController({
             </div>
           </div>
           {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="w-full" /> : null}
-          <GoalViewer goals={sortedGoals} progressValue={progressValue} turnLabel={turnLabel} />
+          <GoalViewer
+            goals={sortedGoals}
+            progressValue={progressValue}
+            mode={boardMode}
+            turnLabel={turnLabel}
+          />
+          <div className="flex items-center justify-center gap-3">
+            <Label htmlFor="opening-board-mode">Practice</Label>
+            <Switch
+              id="opening-board-mode"
+              checked={boardMode === "learn"}
+              onCheckedChange={(checked) => setBoardMode(checked ? "learn" : "practice")}
+              aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
+            />
+            <Label htmlFor="opening-board-mode">Learn</Label>
+          </div>
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
               {!isCompleted ? (

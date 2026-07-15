@@ -24,12 +24,16 @@ export function isMoveVisual(value: unknown): value is MoveVisual {
   );
 }
 
+export function isMoveVisualValue(value: unknown): value is MoveVisual | MoveVisual[] {
+  return isMoveVisual(value) || (Array.isArray(value) && value.every(isMoveVisual));
+}
+
 export function normalizeMoveGoal(value: unknown): MoveGoal | null {
   if (
     !isRecord(value) ||
     typeof value.move !== "string" ||
     typeof value.title !== "string" ||
-    (typeof value.visuals !== "string" && !isMoveVisual(value.visuals)) ||
+    (typeof value.visuals !== "string" && !isMoveVisualValue(value.visuals)) ||
     typeof value.strategy !== "string" ||
     typeof value.checkpointMessage !== "string"
   ) {
@@ -58,7 +62,7 @@ export function isMoveGoal(value: unknown): value is MoveGoal {
     Number.isFinite(value.ply) &&
     typeof value.move === "string" &&
     typeof value.title === "string" &&
-    (typeof value.visuals === "string" || isMoveVisual(value.visuals)) &&
+    (typeof value.visuals === "string" || isMoveVisualValue(value.visuals)) &&
     typeof value.strategy === "string" &&
     typeof value.checkpointMessage === "string" &&
     typeof value.isCompleted === "boolean"

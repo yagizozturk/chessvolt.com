@@ -1,6 +1,6 @@
 // TODO: Refactor
 import type { MoveGoal, MoveGoals } from "@/features/move-sequence/types/move-goal";
-import { isMoveVisual } from "@/features/move-sequence/validation/move-sequence-goals";
+import { isMoveVisualValue } from "@/features/move-sequence/validation/move-sequence-goals";
 import type { ExpectedPlayerGoal } from "@/lib/move-sequence-goals/expected-goals";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -56,7 +56,7 @@ function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): 
     ply: parsePly(record.ply) ?? fallback.ply,
     move: typeof record.move === "string" && record.move ? record.move : fallback.move,
     title: typeof record.title === "string" && record.title ? record.title : "Move goal",
-    visuals: typeof record.visuals === "string" || isMoveVisual(record.visuals) ? record.visuals : "",
+    visuals: typeof record.visuals === "string" || isMoveVisualValue(record.visuals) ? record.visuals : "",
     strategy: typeof record.strategy === "string" ? record.strategy : "",
     checkpointMessage: typeof record.checkpointMessage === "string" ? record.checkpointMessage : "",
     isCompleted: false,
