@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -33,7 +32,6 @@ export type SolveSuccessDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title?: string;
-  description: string;
   destinationPath: string;
   buttonLabel: string;
   lessonsLearned?: string;
@@ -50,7 +48,6 @@ export type SolveSuccessDialogProps = {
  * @param open - Whether the dialog is open.
  * @param onOpenChange - A function that is called when the dialog is opened or closed.
  * @param title - The title of the dialog.
- * @param description - The description of the dialog.
  * @param destinationPath - The path to redirect to when the user clicks the button.
  * @param buttonLabel - The label of the primary button.
  */
@@ -58,7 +55,6 @@ export function SolveSuccessDialog({
   open,
   onOpenChange,
   title = "Completed",
-  description,
   destinationPath,
   buttonLabel,
   lessonsLearned,
@@ -85,7 +81,6 @@ export function SolveSuccessDialog({
         </div>
         <DialogHeader className="items-center text-center">
           <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
-          <DialogDescription className="text-lg text-pretty">{description}</DialogDescription>
         </DialogHeader>
         {lessonsLearned?.trim() ? (
           <div className="bg-muted rounded-lg p-4 text-center">

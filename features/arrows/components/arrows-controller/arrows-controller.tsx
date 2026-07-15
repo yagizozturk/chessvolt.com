@@ -124,7 +124,6 @@ export function ArrowsController({ openingId, arrowGroups, destinationPath, size
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
         title="Congratulations!"
-        description="You drew every arrow correctly. Return to the opening when you are ready."
         destinationPath={destinationPath}
         buttonLabel="Back to opening"
       />

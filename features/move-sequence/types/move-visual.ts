@@ -1,4 +1,4 @@
-export type IdeaVisual = {
+export type MoveVisual = {
   orig: string;
   dest?: string;
   brush?: string;

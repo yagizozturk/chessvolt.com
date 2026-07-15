@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { useAchievementSound } from "@/lib/shared/hooks/sound/use-achievement-sound";
-import coinAnimationData from "@/public/images/animations/animation-coin.json";
+import checkpointAnimationData from "@/public/images/animations/animation-target-blue.json";
 
 type NotifierProps = {
   goals: MoveGoal[];
@@ -31,7 +31,7 @@ export function Notifier({ goals }: NotifierProps) {
           description: (
             <div className="flex items-center">
               <div className="size-16 shrink-0 overflow-hidden">
-                <Lottie animationData={coinAnimationData} loop={false} autoplay={true} className="size-full" />
+                <Lottie animationData={checkpointAnimationData} loop={false} autoplay={true} className="size-full" />
               </div>
               <div>
                 <p className="text-lg font-bold">{goal.checkpointMessage}</p>

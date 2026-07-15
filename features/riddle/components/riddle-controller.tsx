@@ -1,11 +1,11 @@
 "use client";
 
-import { ArrowRightLeft, ChevronLeft, Eye } from "lucide-react";
+import { ChevronLeft, Eye } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
-import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import VoltBoard, { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
@@ -13,7 +13,9 @@ import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
+import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
+import { Switch } from "@/components/ui/switch";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
 import {
@@ -63,14 +65,12 @@ export default function RiddleController({
   const hasNextRiddle = nextRiddleUrl != null;
   const successDestinationPath = hasNextRiddle ? nextRiddleUrl : parentCollectionUrl;
   const successButtonLabel = hasNextRiddle ? "Next riddle" : "Back to collection";
-  const successDescription = hasNextRiddle
-    ? "Congratulations! You solved this riddle."
-    : "You solved this riddle. Return to the collection when you are ready.";
   const [isCompleted, setIsCompleted] = useState(false); // Whether the riddle is completed
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null); // TS allows null state, default is null. CompletionStats is not set on default.
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
+  const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
   const [isPending, startTransition] = useTransition();
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
@@ -97,9 +97,7 @@ export default function RiddleController({
     hintCount,
     hintRequested,
     expectedCurrentCorrectMoveUci,
-    strategy,
     lessonsLearned,
-    isAllGoalsCompleted,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: riddle.moveSequence.moves,
@@ -296,7 +294,6 @@ export default function RiddleController({
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
         title="Riddle Solved"
-        description={successDescription}
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
         lessonsLearned={lessonsLearned}
@@ -334,6 +331,7 @@ export default function RiddleController({
           <VoltBoard
             ref={boardRef}
             sourceId={sessionId}
+            mode={boardMode}
             initialFen={riddle.moveSequence.initialFen}
             coordinates={!isMobile}
             drawHintMove={expectedCurrentCorrectMoveUci}
@@ -375,36 +373,33 @@ export default function RiddleController({
           </div>
 
           {/* Goal Viewer */}
-          <GoalViewer
-            goals={sortedGoals}
-            progressValue={progressValue}
-            hintCount={hintCount}
-            turnLabel={turnLabel}
-            strategy={strategy}
-            lessonsLearned={lessonsLearned}
-            isAllGoalsCompleted={isAllGoalsCompleted}
-          />
+          <GoalViewer goals={sortedGoals} progressValue={progressValue} mode={boardMode} turnLabel={turnLabel} />
+
+          {/* Mode Change */}
+          <div className="flex items-center justify-center gap-3">
+            <Label htmlFor="riddle-board-mode">Practice</Label>
+            <Switch
+              id="riddle-board-mode"
+              checked={boardMode === "learn"}
+              onCheckedChange={(checked) => setBoardMode(checked ? "learn" : "practice")}
+              aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
+            />
+            <Label htmlFor="riddle-board-mode">Learn</Label>
+          </div>
 
           {/* Footer Buttons */}
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
               {!isCompleted ? (
-                <>
-                  <Button variant="volt" className="w-full min-w-0 flex-1">
-                    <ArrowRightLeft data-icon="inline-start" />
-                    Change Mode
-                  </Button>
-
-                  <Button
-                    variant="voltGreen"
-                    onClick={handleHintClick}
-                    disabled={hintCount >= MAX_HINT_COUNT}
-                    className="w-full min-w-0 flex-1"
-                  >
-                    <Eye data-icon="inline-start" />
-                    Hint
-                  </Button>
-                </>
+                <Button
+                  variant="voltGreen"
+                  onClick={handleHintClick}
+                  disabled={hintCount >= MAX_HINT_COUNT}
+                  className="w-full min-w-0 flex-1"
+                >
+                  <Eye data-icon="inline-start" />
+                  Need a Help?
+                </Button>
               ) : (
                 <Button variant="volt" onClick={handleContinueClick} disabled={isPending} className="min-w-0 flex-1">
                   {isPending && <Spinner data-icon="inline-start" />}

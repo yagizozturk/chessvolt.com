@@ -1,5 +1,5 @@
-import type { IdeaVisual } from "@/features/move-sequence/types/idea-visual";
 import type { MoveGoal, MoveGoals } from "@/features/move-sequence/types/move-goal";
+import type { MoveVisual } from "@/features/move-sequence/types/move-visual";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -14,7 +14,7 @@ function parsePly(value: unknown): number | null {
   return null;
 }
 
-function isIdeaVisual(value: unknown): value is IdeaVisual {
+export function isMoveVisual(value: unknown): value is MoveVisual {
   if (!isRecord(value)) return false;
 
   return (
@@ -24,18 +24,12 @@ function isIdeaVisual(value: unknown): value is IdeaVisual {
   );
 }
 
-export function readIdeaVisuals(value: unknown): IdeaVisual[] {
-  if (!Array.isArray(value)) return [];
-  return value.filter(isIdeaVisual);
-}
-
 export function normalizeMoveGoal(value: unknown): MoveGoal | null {
   if (
     !isRecord(value) ||
     typeof value.move !== "string" ||
     typeof value.title !== "string" ||
-    !Array.isArray(value.visuals) ||
-    !value.visuals.every(isIdeaVisual) ||
+    (typeof value.visuals !== "string" && !isMoveVisual(value.visuals)) ||
     typeof value.strategy !== "string" ||
     typeof value.checkpointMessage !== "string"
   ) {
@@ -64,8 +58,7 @@ export function isMoveGoal(value: unknown): value is MoveGoal {
     Number.isFinite(value.ply) &&
     typeof value.move === "string" &&
     typeof value.title === "string" &&
-    Array.isArray(value.visuals) &&
-    value.visuals.every(isIdeaVisual) &&
+    (typeof value.visuals === "string" || isMoveVisual(value.visuals)) &&
     typeof value.strategy === "string" &&
     typeof value.checkpointMessage === "string" &&
     typeof value.isCompleted === "boolean"

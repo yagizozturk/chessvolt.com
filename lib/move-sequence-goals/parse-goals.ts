@@ -1,6 +1,6 @@
 // TODO: Refactor
 import type { MoveGoal, MoveGoals } from "@/features/move-sequence/types/move-goal";
-import { readIdeaVisuals } from "@/features/move-sequence/validation/move-sequence-goals";
+import { isMoveVisual } from "@/features/move-sequence/validation/move-sequence-goals";
 import type { ExpectedPlayerGoal } from "@/lib/move-sequence-goals/expected-goals";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -23,9 +23,7 @@ function isGoalLikeObject(value: unknown): value is Record<string, unknown> {
   if (!hasMoveIdentifier) return false;
 
   return (
-    typeof value.title === "string" ||
-    typeof value.strategy === "string" ||
-    typeof value.checkpointMessage === "string"
+    typeof value.title === "string" || typeof value.strategy === "string" || typeof value.checkpointMessage === "string"
   );
 }
 
@@ -58,7 +56,7 @@ function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): 
     ply: parsePly(record.ply) ?? fallback.ply,
     move: typeof record.move === "string" && record.move ? record.move : fallback.move,
     title: typeof record.title === "string" && record.title ? record.title : "Move goal",
-    visuals: readIdeaVisuals(record.visuals),
+    visuals: typeof record.visuals === "string" || isMoveVisual(record.visuals) ? record.visuals : "",
     strategy: typeof record.strategy === "string" ? record.strategy : "",
     checkpointMessage: typeof record.checkpointMessage === "string" ? record.checkpointMessage : "",
     isCompleted: false,
@@ -84,11 +82,7 @@ export function parseGoalsContent(
 
   console.log(`${providerLabel} raw JSON response:`, JSON.stringify(parsed, null, 2));
 
-  if (
-    !isRecord(parsed) ||
-    typeof parsed.strategy !== "string" ||
-    typeof parsed.lessonsLearned !== "string"
-  ) {
+  if (!isRecord(parsed) || typeof parsed.strategy !== "string" || typeof parsed.lessonsLearned !== "string") {
     throw new Error(`${providerLabel} response missing strategy or lessonsLearned`);
   }
 

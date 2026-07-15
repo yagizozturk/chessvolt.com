@@ -81,9 +81,7 @@ export default function OpeningVariantController({
     hintCount,
     hintRequested,
     expectedCurrentCorrectMoveUci,
-    strategy,
     lessonsLearned,
-    isAllGoalsCompleted,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: variant.moveSequence.moves,
@@ -226,10 +224,6 @@ export default function OpeningVariantController({
 
   const turnLabel = getTurnLabel(variant.moveSequence.initialFen);
 
-  const successDescription = nextVariantId
-    ? "You completed this line. Continue to the next variant when you are ready."
-    : "You completed this line. Return to the opening when you are ready.";
-
   return (
     <div className="page-container">
       {Tour}
@@ -237,7 +231,6 @@ export default function OpeningVariantController({
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
         title="Congratulations!"
-        description={successDescription}
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
         lessonsLearned={lessonsLearned}
@@ -284,15 +277,7 @@ export default function OpeningVariantController({
             </div>
           </div>
           {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="w-full" /> : null}
-          <GoalViewer
-            goals={sortedGoals}
-            progressValue={progressValue}
-            hintCount={hintCount}
-            turnLabel={turnLabel}
-            strategy={strategy}
-            lessonsLearned={lessonsLearned}
-            isAllGoalsCompleted={isAllGoalsCompleted}
-          />
+          <GoalViewer goals={sortedGoals} progressValue={progressValue} turnLabel={turnLabel} />
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
               {!isCompleted ? (

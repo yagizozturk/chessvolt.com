@@ -1,8 +1,5 @@
 import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
-import {
-  getExpectedPlayerGoals,
-  parseMovesFromSequence,
-} from "@/lib/move-sequence-goals/expected-goals";
+import { getExpectedPlayerGoals, parseMovesFromSequence } from "@/lib/move-sequence-goals/expected-goals";
 
 export function buildStubGoalsFromMoves(initialFen: string, moves: string): MoveGoals {
   const uciMoves = parseMovesFromSequence(moves);
@@ -13,7 +10,7 @@ export function buildStubGoalsFromMoves(initialFen: string, moves: string): Move
       ply,
       move,
       title: "",
-      visuals: [],
+      visuals: "",
       strategy: "",
       checkpointMessage: "",
       isCompleted: false,

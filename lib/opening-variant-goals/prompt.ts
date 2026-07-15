@@ -51,7 +51,7 @@ Here is a sample JSON output format:
       "ply": 1,
       "move": "e2e4",
       "title": "...",
-      "visuals": [],
+      "visuals": {"orig": "e2", "dest": "e3", "brush": "green"},
       "strategy": "...",
       "checkpointMessage": "...",
       "isCompleted": false
@@ -64,7 +64,7 @@ description field will hold the main idea of this opening and variant in max 25 
 ply field can only hold a move with odd number
 move field will hold the move which student will try to guess in uci format
 title field will hold the summary of the key idea of the hint with max 2 words
-visuals contains board arrows/highlights as objects with orig, optional dest, and optional brush; use [] when unnecessary
+visuals holds one board arrow/highlight object with orig, optional dest, and optional brush; use "" when unnecessary
 strategy explains why the move matters without revealing it
 isCompleted field will hold false by default
 checkpointMessage motivates the student after the move

@@ -1,11 +1,11 @@
 // TODO: Refactor
-import type { IdeaVisual } from "./idea-visual";
+import type { MoveVisual } from "./move-visual";
 
 export type MoveGoal = {
   ply: number;
   move: string;
   title: string;
-  visuals: IdeaVisual[];
+  visuals: string | MoveVisual;
   strategy: string;
   checkpointMessage: string;
   isCompleted: boolean;

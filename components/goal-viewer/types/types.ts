@@ -1,3 +1,4 @@
+import type { VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 
 type GoalsProps = {
@@ -6,23 +7,14 @@ type GoalsProps = {
 
 export type GoalViewerProps = GoalsProps & {
   progressValue: number;
-  hintCount?: number;
+  mode?: VoltBoardMode;
   turnLabel: string;
-  strategy: string;
-  lessonsLearned: string;
-  isAllGoalsCompleted: boolean;
 };
 
 export type ActiveGoalCardProps = {
   goal: MoveGoal;
-  hintCount?: number;
+  mode?: VoltBoardMode;
   turnLabel: string;
-};
-
-export type ActiveIdeaCardProps = {
-  idea: string;
-  ttsKey: string | number;
-  title?: string;
 };
 
 export type GoalStepperProps = GoalsProps;

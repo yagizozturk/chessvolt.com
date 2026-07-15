@@ -15,8 +15,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import coinAnimationData from "@/public/images/animations/animation-coin.json";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
+import checkpointAnimationData from "@/public/images/animations/animation-target-blue.json";
 
 import type { GoalStepperProps } from "../types/types";
 
@@ -75,9 +75,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
     const maxScrollLeft = scrollWidth - clientWidth;
 
     setCanScrollStart(scrollLeft > SCROLL_EDGE_THRESHOLD_PX);
-    setCanScrollEnd(
-      maxScrollLeft > SCROLL_EDGE_THRESHOLD_PX && scrollLeft < maxScrollLeft - SCROLL_EDGE_THRESHOLD_PX,
-    );
+    setCanScrollEnd(maxScrollLeft > SCROLL_EDGE_THRESHOLD_PX && scrollLeft < maxScrollLeft - SCROLL_EDGE_THRESHOLD_PX);
   }, []);
 
   const scrollByPage = useCallback((direction: "left" | "right") => {
@@ -123,14 +121,14 @@ export function GoalStepper({ goals }: GoalStepperProps) {
         <div
           aria-hidden
           className={cn(
-            "pointer-events-none absolute top-0 left-0 z-10 h-8 w-8 bg-gradient-to-r from-card to-transparent transition-opacity duration-200",
+            "from-card pointer-events-none absolute top-0 left-0 z-10 h-8 w-8 bg-gradient-to-r to-transparent transition-opacity duration-200",
             canScrollStart ? "opacity-100" : "opacity-0",
           )}
         />
         <div
           aria-hidden
           className={cn(
-            "pointer-events-none absolute top-0 right-0 z-10 h-8 w-8 bg-gradient-to-l from-card to-transparent transition-opacity duration-200",
+            "from-card pointer-events-none absolute top-0 right-0 z-10 h-8 w-8 bg-gradient-to-l to-transparent transition-opacity duration-200",
             canScrollEnd ? "opacity-100" : "opacity-0",
           )}
         />
@@ -139,7 +137,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
           ref={scrollRef}
           role="list"
           aria-label="Goal progress"
-          className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           onScroll={updateScrollEdges}
         >
           {goals.map((goal, index) =>
@@ -167,7 +165,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                     onMouseLeave={scheduleClose}
                   >
                     <Lottie
-                      animationData={goal.checkpointMessage.trim() ? coinAnimationData : completeAnimationData}
+                      animationData={goal.checkpointMessage.trim() ? checkpointAnimationData : completeAnimationData}
                       loop={false}
                       autoplay={true}
                       className="pointer-events-none absolute inset-0 size-full scale-[1.90]"
@@ -205,9 +203,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                 className={cn(
                   GOAL_ITEM_CLASS,
                   "grid place-items-center rounded-full text-xs font-bold",
-                  activeGoalIndex === index
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground",
+                  activeGoalIndex === index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
                 )}
                 aria-label={`Goal ${index + 1}`}
                 aria-current={activeGoalIndex === index ? "step" : undefined}
