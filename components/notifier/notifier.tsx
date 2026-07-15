@@ -14,8 +14,6 @@ type NotifierProps = {
 };
 
 export function Notifier({ goals }: NotifierProps) {
-  if (!goals.length) return null;
-
   const previousCompletionByGoalRef = useRef<Map<number, boolean>>(new Map());
   const { playAchievementSound } = useAchievementSound();
 
@@ -25,7 +23,7 @@ export function Notifier({ goals }: NotifierProps) {
     goals.forEach((goal) => {
       const previousCompletionState = previousCompletionByGoalRef.current.get(goal.ply) ?? goal.isCompleted;
 
-      if (goal.ideaSuccessMessage.trim() && goal.isCompleted && !previousCompletionState) {
+      if (goal.checkpointMessage.trim() && goal.isCompleted && !previousCompletionState) {
         playAchievementSound();
 
         toast("", {
@@ -36,7 +34,7 @@ export function Notifier({ goals }: NotifierProps) {
                 <Lottie animationData={coinAnimationData} loop={false} autoplay={true} className="size-full" />
               </div>
               <div>
-                <p className="text-lg font-bold">{goal.ideaSuccessMessage}</p>
+                <p className="text-lg font-bold">{goal.checkpointMessage}</p>
               </div>
             </div>
           ),
@@ -48,7 +46,9 @@ export function Notifier({ goals }: NotifierProps) {
     });
 
     previousCompletionByGoalRef.current = nextCompletionByGoal;
-  }, [goals]);
+  }, [goals, playAchievementSound]);
+
+  if (!goals.length) return null;
 
   return null;
 }

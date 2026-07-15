@@ -1,5 +1,5 @@
 // TODO: Refactor
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { buildUserPayload } from "@/lib/move-sequence-goals/build-user-payload";
 import {
   getExpectedPlayerGoals,
@@ -13,7 +13,7 @@ export async function requestRiddleGoalsFromLlm(
   input: GenerateGoalsInput,
   requestContent: (system: string, user: string) => Promise<string>,
   providerLabel: string,
-): Promise<MoveGoal[]> {
+): Promise<MoveGoals> {
   const uciMoves = parseMovesFromSequence(input.moves);
   if (uciMoves.length === 0) {
     throw new Error("Move sequence has no moves");

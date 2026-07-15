@@ -8,7 +8,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { DEFAULT_INITIAL_FEN } from "@/features/move-sequence/mapper/move-sequence.mapper";
 import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { type DbRiddle, toRiddle } from "@/features/riddle/mapper/riddle.mapper";
 import type { Riddle } from "@/features/riddle/types/riddle";
 
@@ -206,7 +206,7 @@ export type CreateRiddleInput = {
   moves?: string | null;
   initialFen?: string | null;
   displayFen?: string | null;
-  goals?: MoveGoal[] | null;
+  goals?: MoveGoals | null;
   isActive?: boolean;
 };
 
@@ -258,7 +258,7 @@ export type UpdateRiddleInput = {
   popularity?: number | null;
   moves?: string | null;
   displayFen?: string | null;
-  goals?: MoveGoal[] | null;
+  goals?: MoveGoals | null;
   isActive?: boolean;
 };
 

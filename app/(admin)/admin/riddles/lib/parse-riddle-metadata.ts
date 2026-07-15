@@ -1,5 +1,5 @@
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
+import { isMoveGoals } from "@/features/move-sequence/validation/move-sequence-goals";
 import { parseRiddleRating } from "@/features/riddle/types/riddle-rating";
 import { parseRiddlePopularity } from "@/features/riddle/utilities/parse-riddle-popularity";
 
@@ -10,7 +10,7 @@ export type ParsedRiddleMetadata = {
   themes: string[];
   collectionId: string | null;
   isActive: boolean;
-  goals: MoveGoal[] | null;
+  goals: MoveGoals | null;
   gameId: string | null;
   sourceId: string | null;
   source: string | null;
@@ -27,7 +27,7 @@ function parseThemesFromForm(formData: FormData): string[] {
     .filter(Boolean);
 }
 
-function parseGoalsFromFormData(formData: FormData): { goals: MoveGoal[] | null; error?: string } {
+function parseGoalsFromFormData(formData: FormData): { goals: MoveGoals | null; error?: string } {
   const raw = formData.get("goals");
   if (raw === null) return { goals: null };
   const str = typeof raw === "string" ? raw.trim() : "";
@@ -36,10 +36,11 @@ function parseGoalsFromFormData(formData: FormData): { goals: MoveGoal[] | null;
   try {
     const parsed = JSON.parse(str) as unknown;
     if (parsed === null) return { goals: null };
-    if (!isMoveGoalsArray(parsed)) {
+    if (!isMoveGoals(parsed)) {
       return {
         goals: null,
-        error: "Goals must be valid JSON with ply, move, title, hint, and isCompleted for each item.",
+        error:
+          "Goals must include strategy, lessonsLearned, and valid plys with move details.",
       };
     }
     return { goals: parsed };

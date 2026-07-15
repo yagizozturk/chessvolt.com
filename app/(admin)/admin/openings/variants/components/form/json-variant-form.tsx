@@ -9,8 +9,8 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { AdminPgnBoardPicker } from "@/app/(admin)/admin/shared/components/admin-pgn-board-picker";
 import type { Opening } from "@/features/openings/types/opening";
-import type { MoveGoal } from "@/features/openings/types/opening-variant";
-import { isMoveGoalsArray } from "@/features/openings/validation/opening-variant-goals";
+import type { MoveGoals } from "@/features/openings/types/opening-variant";
+import { isMoveGoals } from "@/features/openings/validation/opening-variant-goals";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 
 function useParsedOpeningJson(jsonInput: string) {
@@ -64,19 +64,16 @@ function sortKeyFromRecord(record: Record<string, unknown> | null): number {
 /** `goals` yalnızca ana JSON’dan okunur. */
 function parseGoalsFromRecord(
   record: Record<string, unknown> | null,
-): { ok: true; goals: MoveGoal[] | null } | { ok: false; error: string } {
+): { ok: true; goals: MoveGoals | null } | { ok: false; error: string } {
   if (!record) return { ok: true, goals: null };
   if (!("goals" in record)) return { ok: true, goals: null };
   const g = record.goals;
   if (g === undefined || g === null) return { ok: true, goals: null };
-  if (!Array.isArray(g)) {
-    return { ok: false, error: "goals must be an array." };
-  }
-  if (!isMoveGoalsArray(g)) {
+  if (!isMoveGoals(g)) {
     return {
       ok: false,
       error:
-        "goals must include ply (number), move, title, hint (string), ideaSuccessMessage (string), and isCompleted (boolean).",
+        "goals must include strategy, lessonsLearned, and valid plys.",
     };
   }
   return { ok: true, goals: g };
@@ -347,8 +344,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         {!canSubmit && (
           <p className="text-muted-foreground text-xs">
             Select an opening, provide valid JSON and <span className="font-mono">pgn</span>; if{" "}
-            <span className="font-mono">goals</span> is present, it must follow the schema (
-            <span className="font-mono">ideaSuccessMessage</span> is optional).
+            <span className="font-mono">goals</span> is present, it must contain strategy, lessonsLearned, and plys.
           </p>
         )}
       </form>

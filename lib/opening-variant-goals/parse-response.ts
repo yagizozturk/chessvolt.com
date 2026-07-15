@@ -1,5 +1,5 @@
 // TODO: Refactor
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import type { ExpectedPlayerGoal } from "@/lib/move-sequence-goals/expected-goals";
 import { parseGoalsContent } from "@/lib/move-sequence-goals/parse-goals";
 import type { OpeningVariantGoalsResult } from "@/lib/opening-variant-goals/types";
@@ -42,9 +42,9 @@ export function parseOpeningVariantGoalsContent(
   }
 
   const goalsPayload =
-    parsed.goals !== undefined ? JSON.stringify({ goals: parsed.goals }) : trimmed;
+    parsed.goals !== undefined ? JSON.stringify(parsed.goals) : trimmed;
 
-  const goals: MoveGoal[] = parseGoalsContent(goalsPayload, expectedGoals, providerLabel);
+  const goals: MoveGoals = parseGoalsContent(goalsPayload, expectedGoals, providerLabel);
 
   console.log(
     `${providerLabel} opening variant for DB insert:`,

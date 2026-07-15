@@ -5,12 +5,14 @@ export type MoveGoal = {
   ply: number;
   move: string;
   title: string;
-  hint: string;
-  idea: string;
-  ideaVisuals: IdeaVisual[];
-  ideaSuccessMessage: string;
-  successMessage: string;
+  visuals: IdeaVisual[];
+  strategy: string;
+  checkpointMessage: string;
   isCompleted: boolean;
-  imageSrc?: string;
-  imageAlt?: string;
+};
+
+export type MoveGoals = {
+  strategy: string;
+  lessonsLearned: string;
+  plys: MoveGoal[];
 };

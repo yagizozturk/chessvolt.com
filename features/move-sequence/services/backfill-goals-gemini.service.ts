@@ -1,6 +1,6 @@
 // TODO: Refactor
 import * as moveSequenceRepo from "@/features/move-sequence/repository/move-sequence.repository";
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import type { MoveSequenceForGoalsBackfill } from "@/features/move-sequence/types/move-sequence-for-goals-backfill";
 import { generateMoveSequenceGoals } from "@/lib/gemini/generate-move-sequence-goals";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -12,7 +12,7 @@ export type BackfillGoalsResult = {
   failed: number;
   errors: { id: string; message: string }[];
   dryRun: boolean;
-  previews?: { id: string; goals: MoveGoal[] }[];
+  previews?: { id: string; goals: MoveGoals }[];
 };
 
 export type BackfillGoalsOptions = {
@@ -25,7 +25,7 @@ async function backfillOneSequence(
   supabase: SupabaseClient,
   sequence: MoveSequenceForGoalsBackfill,
   dryRun: boolean,
-): Promise<{ ok: true; goals: MoveGoal[] } | { ok: false; message: string }> {
+): Promise<{ ok: true; goals: MoveGoals } | { ok: false; message: string }> {
   try {
     const goals = await generateMoveSequenceGoals({
       initialFen: sequence.initialFen,

@@ -1,5 +1,5 @@
 // TODO: Refactor
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoal, MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { readIdeaVisuals } from "@/features/move-sequence/validation/move-sequence-goals";
 import type { ExpectedPlayerGoal } from "@/lib/move-sequence-goals/expected-goals";
 
@@ -24,9 +24,8 @@ function isGoalLikeObject(value: unknown): value is Record<string, unknown> {
 
   return (
     typeof value.title === "string" ||
-    typeof value.hint === "string" ||
-    typeof value.successMessage === "string" ||
-    typeof value.success_message === "string"
+    typeof value.strategy === "string" ||
+    typeof value.checkpointMessage === "string"
   );
 }
 
@@ -34,31 +33,12 @@ function isGoalCandidateArray(value: unknown): value is Record<string, unknown>[
   return Array.isArray(value) && value.length > 0 && value.every(isGoalLikeObject);
 }
 
-const GOAL_ARRAY_KEYS = ["goals", "items", "data", "results", "response", "output", "json"] as const;
-
 function collectGoalCandidates(parsed: unknown): Record<string, unknown>[] {
-  if (isGoalCandidateArray(parsed)) {
-    return parsed;
-  }
-
-  if (Array.isArray(parsed)) {
-    return parsed.filter(isGoalLikeObject);
-  }
-
   if (!isRecord(parsed)) {
     return [];
   }
 
-  for (const key of GOAL_ARRAY_KEYS) {
-    const value = parsed[key];
-    if (isGoalCandidateArray(value)) return value;
-  }
-
-  for (const value of Object.values(parsed)) {
-    if (isGoalCandidateArray(value)) return value;
-  }
-
-  return isGoalLikeObject(parsed) ? [parsed] : [];
+  return isGoalCandidateArray(parsed.plys) ? parsed.plys : [];
 }
 
 function findCandidateForExpected(
@@ -74,24 +54,13 @@ function findCandidateForExpected(
 function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): MoveGoal {
   const record = isRecord(item) ? item : {};
 
-  const hint = typeof record.hint === "string" ? record.hint : "";
-
-  const successMessage =
-    typeof record.successMessage === "string"
-      ? record.successMessage
-      : typeof record.success_message === "string"
-        ? record.success_message
-        : "";
-
   return {
     ply: parsePly(record.ply) ?? fallback.ply,
     move: typeof record.move === "string" && record.move ? record.move : fallback.move,
     title: typeof record.title === "string" && record.title ? record.title : "Move goal",
-    hint,
-    idea: typeof record.idea === "string" ? record.idea : "",
-    ideaVisuals: readIdeaVisuals(record.ideaVisuals),
-    ideaSuccessMessage: typeof record.ideaSuccessMessage === "string" ? record.ideaSuccessMessage : "",
-    successMessage,
+    visuals: readIdeaVisuals(record.visuals),
+    strategy: typeof record.strategy === "string" ? record.strategy : "",
+    checkpointMessage: typeof record.checkpointMessage === "string" ? record.checkpointMessage : "",
     isCompleted: false,
   };
 }
@@ -100,7 +69,7 @@ export function parseGoalsContent(
   content: string,
   expectedGoals: ExpectedPlayerGoal[],
   providerLabel: string,
-): MoveGoal[] {
+): MoveGoals {
   const trimmed = content
     .trim()
     .replace(/^```json\s*/i, "")
@@ -115,12 +84,24 @@ export function parseGoalsContent(
 
   console.log(`${providerLabel} raw JSON response:`, JSON.stringify(parsed, null, 2));
 
+  if (
+    !isRecord(parsed) ||
+    typeof parsed.strategy !== "string" ||
+    typeof parsed.lessonsLearned !== "string"
+  ) {
+    throw new Error(`${providerLabel} response missing strategy or lessonsLearned`);
+  }
+
   const candidates = collectGoalCandidates(parsed);
   const normalized = expectedGoals.map((expected) =>
     coerceRawGoal(findCandidateForExpected(candidates, expected), expected),
   );
 
-  const goals = normalized.sort((a, b) => a.ply - b.ply);
+  const goals = {
+    strategy: parsed.strategy,
+    lessonsLearned: parsed.lessonsLearned,
+    plys: normalized.sort((a, b) => a.ply - b.ply),
+  };
   console.log(`${providerLabel} goals for DB insert:`, JSON.stringify(goals, null, 2));
   return goals;
 }

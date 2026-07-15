@@ -8,6 +8,9 @@ export type GoalViewerProps = GoalsProps & {
   progressValue: number;
   hintCount?: number;
   turnLabel: string;
+  strategy: string;
+  lessonsLearned: string;
+  isAllGoalsCompleted: boolean;
 };
 
 export type ActiveGoalCardProps = {
@@ -19,6 +22,7 @@ export type ActiveGoalCardProps = {
 export type ActiveIdeaCardProps = {
   idea: string;
   ttsKey: string | number;
+  title?: string;
 };
 
 export type GoalStepperProps = GoalsProps;

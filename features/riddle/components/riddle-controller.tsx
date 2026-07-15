@@ -97,6 +97,9 @@ export default function RiddleController({
     hintCount,
     hintRequested,
     expectedCurrentCorrectMoveUci,
+    strategy,
+    lessonsLearned,
+    isAllGoalsCompleted,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: riddle.moveSequence.moves,
@@ -296,6 +299,7 @@ export default function RiddleController({
         description={successDescription}
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
+        lessonsLearned={lessonsLearned}
         stats={completionStats}
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
@@ -371,7 +375,15 @@ export default function RiddleController({
           </div>
 
           {/* Goal Viewer */}
-          <GoalViewer goals={sortedGoals} progressValue={progressValue} hintCount={hintCount} turnLabel={turnLabel} />
+          <GoalViewer
+            goals={sortedGoals}
+            progressValue={progressValue}
+            hintCount={hintCount}
+            turnLabel={turnLabel}
+            strategy={strategy}
+            lessonsLearned={lessonsLearned}
+            isAllGoalsCompleted={isAllGoalsCompleted}
+          />
 
           {/* Footer Buttons */}
           <div className="mt-auto">

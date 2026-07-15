@@ -36,6 +36,7 @@ export type SolveSuccessDialogProps = {
   description: string;
   destinationPath: string;
   buttonLabel: string;
+  lessonsLearned?: string;
   stats?: MoveSequenceCompleteDialogStats | null;
   voltScore?: VoltScoreResult | null;
   isVoltScoreShowing?: boolean;
@@ -60,6 +61,7 @@ export function SolveSuccessDialog({
   description,
   destinationPath,
   buttonLabel,
+  lessonsLearned,
   stats,
   voltScore = null,
   isVoltScoreShowing = false,
@@ -85,6 +87,12 @@ export function SolveSuccessDialog({
           <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
           <DialogDescription className="text-lg text-pretty">{description}</DialogDescription>
         </DialogHeader>
+        {lessonsLearned?.trim() ? (
+          <div className="bg-muted rounded-lg p-4 text-center">
+            <p className="font-semibold">Lessons Learned</p>
+            <p className="text-muted-foreground mt-1 text-sm text-pretty">{lessonsLearned}</p>
+          </div>
+        ) : null}
         {/* Stats */}
         {stats ? (
           <div className={cn("grid grid-cols-3 gap-2")}>

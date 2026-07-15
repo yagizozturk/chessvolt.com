@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoal, MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { normalizeMoveGoal } from "@/features/move-sequence/validation/move-sequence-goals";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -14,7 +14,7 @@ export type UseMoveSequenceControllerParams = {
   /** Resets play state when this id changes (variant id, riddle id, etc.) */
   sourceId: string;
   moves: string;
-  goals: MoveGoal[] | null;
+  goals: MoveGoals | null;
   /** When set, goals at or before this ply start as completed (opening variants). */
   initialPly?: number;
 };
@@ -26,8 +26,8 @@ function parseMoves(rawMoves: string): string[] {
     .filter((m) => m.length > 0);
 }
 
-function initializeGoals(goals: MoveGoal[] | null, initialPly?: number): MoveGoal[] {
-  return [...(goals ?? [])]
+function initializeGoals(goals: MoveGoals | null, initialPly?: number): MoveGoal[] {
+  return [...(goals?.plys ?? [])]
     .map((goal) => normalizeMoveGoal(goal) ?? goal)
     .sort((a, b) => a.ply - b.ply)
     .map((goal) => ({
@@ -61,6 +61,9 @@ export function useMoveSequenceController({
     const completedGoalsCount = sortedGoals.filter((goal) => goal.isCompleted).length;
     return Math.round((completedGoalsCount / sortedGoals.length) * 100);
   }, [sortedGoals]);
+
+  const isAllGoalsCompleted =
+    sortedGoals.length > 0 && sortedGoals.every((goal) => goal.isCompleted);
 
   useEffect(() => {
     setHintCount(0);
@@ -113,6 +116,9 @@ export function useMoveSequenceController({
     moves,
     sortedGoals,
     nextGoal,
+    strategy: goals?.strategy ?? "",
+    lessonsLearned: goals?.lessonsLearned ?? "",
+    isAllGoalsCompleted,
     hintCount,
     progressValue,
     handleMoveCheck,

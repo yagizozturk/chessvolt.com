@@ -1,10 +1,10 @@
 // TODO: Refactor
 import { redirect } from "next/navigation";
 
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-import { isMoveGoalsArray } from "@/features/move-sequence/validation/move-sequence-goals";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
+import { isMoveGoals } from "@/features/move-sequence/validation/move-sequence-goals";
 
-export function parseGoalsFromForm(formData: FormData, errorRedirect: string): MoveGoal[] | null {
+export function parseGoalsFromForm(formData: FormData, errorRedirect: string): MoveGoals | null {
   const raw = formData.get("goals");
   if (raw === null) return null;
   const str = typeof raw === "string" ? raw.trim() : "";
@@ -12,7 +12,7 @@ export function parseGoalsFromForm(formData: FormData, errorRedirect: string): M
   try {
     const parsed = JSON.parse(str) as unknown;
     if (parsed === null) return null;
-    if (!isMoveGoalsArray(parsed)) redirect(errorRedirect);
+    if (!isMoveGoals(parsed)) redirect(errorRedirect);
     return parsed;
   } catch {
     redirect(errorRedirect);

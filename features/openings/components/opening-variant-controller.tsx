@@ -81,6 +81,9 @@ export default function OpeningVariantController({
     hintCount,
     hintRequested,
     expectedCurrentCorrectMoveUci,
+    strategy,
+    lessonsLearned,
+    isAllGoalsCompleted,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: variant.moveSequence.moves,
@@ -237,6 +240,7 @@ export default function OpeningVariantController({
         description={successDescription}
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
+        lessonsLearned={lessonsLearned}
         stats={completionStats}
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
@@ -280,7 +284,15 @@ export default function OpeningVariantController({
             </div>
           </div>
           {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="w-full" /> : null}
-          <GoalViewer goals={sortedGoals} progressValue={progressValue} hintCount={hintCount} turnLabel={turnLabel} />
+          <GoalViewer
+            goals={sortedGoals}
+            progressValue={progressValue}
+            hintCount={hintCount}
+            turnLabel={turnLabel}
+            strategy={strategy}
+            lessonsLearned={lessonsLearned}
+            isAllGoalsCompleted={isAllGoalsCompleted}
+          />
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
               {!isCompleted ? (

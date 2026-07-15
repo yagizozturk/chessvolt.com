@@ -10,7 +10,7 @@ import {
   type DbMoveSequenceForGoalsBackfill,
 } from "@/features/move-sequence/mapper/move-sequence.mapper";
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import type { OpeningVariantForGoalsBackfill } from "@/features/openings/types/opening-variant-for-goals-backfill";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -187,7 +187,7 @@ export type CreateOpeningVariantInput = {
   pgn: string;
   initialFen?: string | null;
   displayFen?: string | null;
-  goals?: MoveGoal[] | null;
+  goals?: MoveGoals | null;
 };
 
 export async function create(
@@ -233,7 +233,7 @@ export type UpdateOpeningVariantInput = {
   pgn?: string;
   initialFen?: string | null;
   displayFen?: string | null;
-  goals?: MoveGoal[] | null;
+  goals?: MoveGoals | null;
 };
 
 export async function update(

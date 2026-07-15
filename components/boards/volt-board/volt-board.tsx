@@ -25,8 +25,11 @@ import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
 
+export type VoltBoardMode = "practice" | "learn";
+
 type VoltBoardProps = {
   sourceId: string;
+  mode?: VoltBoardMode;
   initialFen?: string;
 
   viewOnly?: boolean;

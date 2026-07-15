@@ -1,11 +1,11 @@
 // TODO: Refactor
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 
 export type MoveSequence = {
   id: string;
   initialFen: string;
   moves: string;
-  goals: MoveGoal[] | null;
+  goals: MoveGoals | null;
   pgn: string | null;
   displayFen: string | null;
   createdAt: string;
@@ -17,7 +17,7 @@ export type CreateMoveSequenceInput = {
   moves: string;
   pgn?: string | null;
   displayFen?: string | null;
-  goals?: MoveGoal[] | null;
+  goals?: MoveGoals | null;
 };
 
 export type UpdateMoveSequenceInput = {
@@ -25,5 +25,5 @@ export type UpdateMoveSequenceInput = {
   moves?: string;
   pgn?: string | null;
   displayFen?: string | null;
-  goals?: MoveGoal[] | null;
+  goals?: MoveGoals | null;
 };

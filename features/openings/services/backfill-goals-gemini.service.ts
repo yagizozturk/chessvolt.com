@@ -1,6 +1,6 @@
 // TODO: Refactor
 import * as openingVariantRepo from "@/features/openings/repository/opening-variant.repository";
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import type { OpeningVariantForGoalsBackfill } from "@/features/openings/types/opening-variant-for-goals-backfill";
 import { generateOpeningVariantGoals } from "@/lib/gemini/generate-opening-variant-goals";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -15,7 +15,7 @@ export type BackfillOpeningGoalsResult = {
   previews?: {
     variantId: string;
     description: string;
-    goals: MoveGoal[];
+    goals: MoveGoals;
   }[];
 };
 
@@ -30,7 +30,7 @@ async function backfillOneVariant(
   variant: OpeningVariantForGoalsBackfill,
   dryRun: boolean,
 ): Promise<
-  | { ok: true; description: string; goals: MoveGoal[] }
+  | { ok: true; description: string; goals: MoveGoals }
   | { ok: false; message: string }
 > {
   try {

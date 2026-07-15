@@ -1,5 +1,5 @@
 // TODO: Refactor
-import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import type { GenerateGoalsInput } from "@/lib/move-sequence-goals/types";
 import { ollamaChat } from "@/lib/ollama/client";
 import { requestRiddleGoalsFromLlm } from "@/lib/riddle-goals/request-goals";
@@ -7,7 +7,7 @@ import { requestRiddleGoalsFromLlm } from "@/lib/riddle-goals/request-goals";
 export type { GenerateGoalsInput } from "@/lib/move-sequence-goals/types";
 export { buildRiddleGoalsSystemPrompt as buildMoveSequenceGoalsSystemPrompt } from "@/lib/riddle-goals/prompt";
 
-export async function generateMoveSequenceGoals(input: GenerateGoalsInput): Promise<MoveGoal[]> {
+export async function generateMoveSequenceGoals(input: GenerateGoalsInput): Promise<MoveGoals> {
   try {
     return await requestRiddleGoalsFromLlm(
       input,

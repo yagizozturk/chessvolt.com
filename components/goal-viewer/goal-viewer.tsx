@@ -9,17 +9,31 @@ import { ActiveIdeaCard } from "./active-idea-card/active-idea-card";
 import { GoalStepper } from "./goal-stepper/goal-stepper";
 import type { GoalViewerProps } from "./types/types";
 
-export function GoalViewer({ goals, progressValue, hintCount = 0, turnLabel }: GoalViewerProps) {
+export function GoalViewer({
+  goals,
+  progressValue,
+  hintCount = 0,
+  turnLabel,
+  strategy,
+  lessonsLearned,
+  isAllGoalsCompleted,
+}: GoalViewerProps) {
   if (!goals.length) return null;
 
   const activeGoal = goals.find((goal) => !goal.isCompleted) ?? goals.at(-1)!; // goals.at means the last complete one if all of them is complete
   if (!activeGoal) return null;
+  const hasCompletedGoal = goals.some((goal) => goal.isCompleted);
+  const currentStrategy = hasCompletedGoal ? activeGoal.strategy : strategy || activeGoal.strategy;
 
   return (
     <div data-tour="goals">
-      {hintCount <= 0 && activeGoal.idea.trim() ? (
+      {isAllGoalsCompleted && lessonsLearned.trim() ? (
         <div className="card-border-bottom-shadow mb-3">
-          <ActiveIdeaCard idea={activeGoal.idea} ttsKey={activeGoal.ply} />
+          <ActiveIdeaCard idea={lessonsLearned} title="Lessons Learned" ttsKey="lessons-learned" />
+        </div>
+      ) : hintCount <= 0 && currentStrategy.trim() ? (
+        <div className="card-border-bottom-shadow mb-3">
+          <ActiveIdeaCard idea={currentStrategy} ttsKey={activeGoal.ply} />
         </div>
       ) : (
         <div className="card-border-bottom-shadow mb-3">
