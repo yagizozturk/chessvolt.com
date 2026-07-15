@@ -49,8 +49,8 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             <Image
               src="/images/openings/bg-london-opening-5.png"
               alt={opening.name}
-              width={400}
-              height={300}
+              width={265}
+              height={150}
               className="object-contain"
             />
           </div>
