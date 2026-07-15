@@ -1,12 +1,14 @@
 // TODO: Refactor
 "use client";
 
+import type { DrawShape } from "@lichess-org/chessground/draw";
 import type { Key } from "@lichess-org/chessground/types";
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
 
 import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
+import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
 import { buildUci } from "@/lib/chess/buildUci";
 import { getOrientationFromFen } from "@/lib/chess/getOrientationFromFen";
 import { getPromotionPiece } from "@/lib/chess/getPromotionPiece";
@@ -36,6 +38,7 @@ type VoltBoardProps = {
   coordinates?: boolean;
   playerOrientation?: "white" | "black";
   drawHintMove?: string | null;
+  activeGoalVisuals?: MoveGoal["visuals"];
   onCheckMove: (payload: MoveAttemptPayload) => boolean;
   onSuccessMovePlayed: (move: Move) => void;
   onNextMoveRequest: () => string | undefined;
@@ -56,6 +59,8 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     coordinates = true,
     playerOrientation,
     drawHintMove,
+    activeGoalVisuals,
+    mode = "practice",
     onCheckMove,
     onSuccessMovePlayed,
     onNextMoveRequest,
@@ -67,6 +72,16 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   const orientationRef = useRef<"white" | "black">(playerOrientation ?? getOrientationFromFen(initialFen));
   const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
   const clearCustomHighlightsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const learnModeShapes = useMemo<DrawShape[]>(() => {
+    if (mode !== "learn" || typeof activeGoalVisuals === "string" || !activeGoalVisuals) return [];
+
+    const visuals = Array.isArray(activeGoalVisuals) ? activeGoalVisuals : [activeGoalVisuals];
+    return visuals.map((visual) => ({
+      orig: visual.orig as Key,
+      ...(visual.dest ? { dest: visual.dest as Key } : {}),
+      ...(visual.brush ? { brush: visual.brush } : {}),
+    }));
+  }, [activeGoalVisuals, mode]);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
   const { game, makeMove } = useChessOne(initialFen);
@@ -121,6 +136,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   function boardWrongMoveHandler(to: string) {
     clearSquareCustomHighlights();
     clearHintShapes();
+    ground.current?.setAutoShapes(learnModeShapes);
     setSquareCustomHighlight(to, "custom-wrong-move");
     playWrongMoveSound();
     scheduleClearCustomHighlights(WRONG_MOVE_REVERT_DELAY_MS);
@@ -206,10 +222,14 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     orientationRef.current = playerOrientation ?? getOrientationFromFen(initialFen);
     clearCustomHighlightsTimeout();
     clearSquareCustomHighlights();
-    clearHintShapes();
+    ground.current?.setAutoShapes([]);
     lastMoveRef.current = undefined;
     updateBoard();
-  }, [sourceId, initialFen, playerOrientation, updateBoard, clearSquareCustomHighlights]);
+  }, [sourceId, initialFen, playerOrientation, updateBoard, clearSquareCustomHighlights, ground]);
+
+  useEffect(() => {
+    ground.current?.setAutoShapes(learnModeShapes);
+  }, [ground, learnModeShapes, sourceId]);
 
   // ============================================================================
   // Hint (drawable shapes) - exposed via ref
@@ -224,15 +244,12 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 
         const orig = parsedUci.from as Key;
         const dest = parsedUci.to as Key;
-        if (hintLevel <= 1) {
-          ground.current.setAutoShapes([{ orig, brush: "red" }]);
-        } else {
-          ground.current.setAutoShapes([{ orig, dest, brush: "red" }]);
-        }
+        const hintShape: DrawShape = hintLevel <= 1 ? { orig, brush: "red" } : { orig, dest, brush: "red" };
+        ground.current.setAutoShapes([...learnModeShapes, hintShape]);
         playHintSound();
       },
     }),
-    [drawHintMove, ground, playHintSound],
+    [drawHintMove, ground, learnModeShapes, playHintSound],
   );
 
   return (

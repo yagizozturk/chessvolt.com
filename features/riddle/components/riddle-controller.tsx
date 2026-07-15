@@ -93,6 +93,7 @@ export default function RiddleController({
     handleSuccessMovePlayed,
     handleNextMoveRequest,
     sortedGoals,
+    nextGoal,
     progressValue,
     hintCount,
     hintRequested,
@@ -335,6 +336,7 @@ export default function RiddleController({
             initialFen={riddle.moveSequence.initialFen}
             coordinates={!isMobile}
             drawHintMove={expectedCurrentCorrectMoveUci}
+            activeGoalVisuals={nextGoal?.visuals}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleSuccessMovePlayed} // directly communicating with hook
             onNextMoveRequest={handleNextMoveRequest} // directly communicating with hook

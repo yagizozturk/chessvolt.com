@@ -80,6 +80,7 @@ export default function OpeningVariantController({
     handleSuccessMovePlayed,
     handleNextMoveRequest,
     sortedGoals,
+    nextGoal,
     progressValue,
     hintCount,
     hintRequested,
@@ -259,6 +260,7 @@ export default function OpeningVariantController({
             initialFen={variant.moveSequence.initialFen}
             coordinates={!isMobile}
             drawHintMove={expectedCurrentCorrectMoveUci}
+            activeGoalVisuals={nextGoal?.visuals}
             onCheckMove={handleBoardCheckMove}
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}
             onNextMoveRequest={handleBoardNextMoveRequest}
@@ -281,12 +283,7 @@ export default function OpeningVariantController({
             </div>
           </div>
           {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="w-full" /> : null}
-          <GoalViewer
-            goals={sortedGoals}
-            progressValue={progressValue}
-            mode={boardMode}
-            turnLabel={turnLabel}
-          />
+          <GoalViewer goals={sortedGoals} progressValue={progressValue} mode={boardMode} turnLabel={turnLabel} />
           <div className="flex items-center justify-center gap-3">
             <Label htmlFor="opening-board-mode">Practice</Label>
             <Switch
@@ -307,7 +304,7 @@ export default function OpeningVariantController({
                   className="min-w-0 flex-1"
                 >
                   <Eye data-icon="inline-start" />
-                  Hint
+                  Need Help?
                 </Button>
               ) : (
                 <Button
@@ -323,8 +320,7 @@ export default function OpeningVariantController({
             </div>
             {!isCompleted ? (
               <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
-                First click shows the hint text and highlights the piece to move. Second click shows the destination
-                square.
+                First click highlights the piece. Second click shows the move.
               </p>
             ) : null}
           </div>
