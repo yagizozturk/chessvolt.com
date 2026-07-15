@@ -196,10 +196,6 @@
 
 ### boards
 
-#### arrow-board
-
-- arrow-board.tsx
-
 #### display-board
 
 - display-board.tsx

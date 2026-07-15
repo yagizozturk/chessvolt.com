@@ -106,8 +106,6 @@
 │ ├── board-status-icon
 │ │ └── board-status-icon.tsx
 │ ├── boards
-│ │ ├── arrow-board
-│ │ │ └── arrow-board.tsx
 │ │ ├── display-board
 │ │ │ └── display-board.tsx
 │ │ └── volt-board

@@ -1,12 +1,9 @@
-import type { DrawShape } from "@lichess-org/chessground/draw";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { PageHeaderWithImage } from "@/components/page-header";
-import { ArrowsBoardCard } from "@/features/arrows/components/arrows-board-card/arrows-board-card";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
-import { flattenOpeningArrowGroups } from "@/features/openings/types/opening";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { computeSequenceAttemptAccuracy } from "@/features/user-sequence-attempt/utilities/compute-sequence-attempt-accuracy";
@@ -18,7 +15,7 @@ type Params = {
 };
 
 export default async function OpeningBySlugAndIdPage({ params }: Params) {
-  const { slug, id } = await params;
+  const { id } = await params;
   const { user, supabase } = await getPublicUser();
 
   const opening = await getOpeningById(supabase, id);
@@ -32,13 +29,6 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const stats = user ? await attemptService.getLatestAttemptStatsForSequences(supabase, user.id, sequenceIds) : [];
   const mapAttemptStatsBySequenceId = buildMapAttemptStatsBySequenceId(stats);
 
-  const total = variants.length;
-  const correct = variants.filter(
-    (variant) => attemptStatusToIsComplete(mapAttemptStatsBySequenceId[variant.moveSequence.id]?.status) === true,
-  ).length;
-  const solveRate = total > 0 ? Math.round((correct / total) * 100) : 0;
-  const boardArrows = (opening.arrows ? flattenOpeningArrowGroups(opening.arrows) : []) as DrawShape[];
-
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
@@ -51,14 +41,9 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
           />
         </div>
         <div className="hidden gap-4 rounded-lg bg-[#FDCB15] md:flex">
-          <div className="min-w-0 flex-1 space-y-2 p-4">
-            <ArrowsBoardCard
-              openingId={opening.id}
-              name={opening.name}
-              description={opening.description ?? ""}
-              arrows={boardArrows}
-              size={160}
-            />
+          <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 p-6">
+            <h1 className="text-2xl font-bold text-neutral-800">{opening.name}</h1>
+            <p className="text-base text-neutral-600">{opening.description}</p>
           </div>
           <div className="overflow-hidden rounded-lg">
             <Image

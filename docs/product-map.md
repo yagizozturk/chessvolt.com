@@ -37,7 +37,6 @@ Content is managed through an **admin** panel. Auth and data are backed by **Sup
 | Openings list        | `/openings`                                                 | `openings`                                                                                                               | Filter by opening type                          |
 | Opening detail       | `/openings/[slug]/[id]`                                     | `openings`                                                                                                               | Variants for one opening                        |
 | Play opening variant | `/openings/variant/[id]`                                    | `openings`, `move-sequence`, `user-sequence-attempt`, `user-practice-opening-variant`                                    | Same play loop as riddles                       |
-| Arrows drill         | `/openings/arrows/[id]`                                     | `arrows`, `openings`                                                                                                     | Arrow-based opening training                    |
 
 ---
 
