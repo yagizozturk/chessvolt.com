@@ -8,8 +8,8 @@ import { useState } from "react";
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
-import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
+import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -76,17 +76,13 @@ export function OpeningBoardCard({
           </div>
         ) : null}
         <p className="text-xl font-bold">{name}</p>
-        {description ? (
-          <p className="text-muted-foreground hidden text-base md:block">{description}</p>
-        ) : null}
+        {description ? <p className="text-muted-foreground hidden text-base md:block">{description}</p> : null}
         {moveCountLabel ? (
           <BoardCardMetaRow icon={Puzzle} label={moveCountLabel} className="text-muted-foreground text-sm" />
         ) : null}
         {accuracyPercent != null || variantCount !== undefined ? (
           <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-            {accuracyPercent != null ? (
-              <BoardCardMetaRow icon={Target} label={`${accuracyPercent}% accuracy`} />
-            ) : null}
+            {accuracyPercent != null ? <BoardCardMetaRow icon={Target} label={`${accuracyPercent}% accuracy`} /> : null}
             {variantCount !== undefined ? (
               <Badge variant="secondary" className="rounded-lg p-3">
                 <BookOpen />
