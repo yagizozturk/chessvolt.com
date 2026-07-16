@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 
+import { GoalsFromAnnotatedPgnForm } from "../edit/goals-from-annotated-pgn-form";
 import { VariantEditForm } from "../edit/variant-edit-form";
 
 type Props = {
@@ -55,7 +56,10 @@ export function VariantDetail({ variant }: Props) {
         </CardHeader>
         <CardContent className="space-y-8">
           {isEditing ? (
-            <VariantEditForm key={variant.id} variant={variant} onCancel={() => setIsEditing(false)} />
+            <div className="flex flex-col gap-8">
+              <VariantEditForm key={variant.id} variant={variant} onCancel={() => setIsEditing(false)} />
+              <GoalsFromAnnotatedPgnForm variant={variant} />
+            </div>
           ) : (
             <dl className="grid gap-2 text-sm">
               <div>

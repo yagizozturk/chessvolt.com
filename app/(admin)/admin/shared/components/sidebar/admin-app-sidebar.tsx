@@ -93,6 +93,7 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "All openings", url: "/admin/openings" },
       { title: "Create opening", url: "/admin/openings/create" },
       { title: "Bulk variants", url: "/admin/openings/variants/bulk" },
+      { title: "PGN goals preview", url: "/admin/openings/variants/pgn-goals-preview" },
       { title: "Backfill goals (Gemini)", url: "/admin/openings/variants/backfill-goals-gemini" },
     ],
   },

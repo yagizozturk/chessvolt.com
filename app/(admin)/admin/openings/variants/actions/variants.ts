@@ -17,6 +17,7 @@ import {
 import { parseGoalsFromForm } from "@/lib/admin/parse-goals-from-form";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
+import { buildMoveGoalsFromPgnComments, normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
 import { parsePgn, splitPgnGames } from "@/lib/chess/parsePgn";
 import { getAdminUser } from "@/lib/supabase/auth";
 
@@ -200,6 +201,46 @@ export async function updateOpeningVariantAction(id: string, formData: FormData)
   const variant = await updateOpeningVariant(supabase, id, input);
   if (!variant) {
     redirect(`/admin/openings/variants/${id}?error=could_not_be_updated`);
+  }
+
+  revalidatePath("/admin/openings");
+  revalidatePath(`/admin/openings/variants/${id}`);
+  revalidatePath(`/admin/openings/main-opening/${variant.openingId}`);
+  redirect(`/admin/openings/variants/${id}`);
+}
+
+export async function updateOpeningVariantGoalsFromPgnAction(id: string, formData: FormData) {
+  const { supabase } = await getAdminUser();
+  const rawPgn = (formData.get("annotatedPgn") as string | null)?.trim();
+
+  if (!rawPgn) {
+    redirect(`/admin/openings/variants/${id}?error=missing_annotated_pgn`);
+  }
+
+  const variant = await getOpeningVariantById(supabase, id);
+  if (!variant) {
+    redirect(`/admin/openings/variants/${id}?error=variant_not_found`);
+  }
+
+  const normalizedPgn = normalizeLichessPgnComments(rawPgn);
+  const parsedMoves = getUciMovesFromPgnAfterPly(normalizedPgn, variant.initialPly);
+  if (!parsedMoves) {
+    redirect(`/admin/openings/variants/${id}?error=invalid_annotated_pgn`);
+  }
+  if (parsedMoves !== variant.moveSequence.moves) {
+    redirect(`/admin/openings/variants/${id}?error=annotated_pgn_moves_mismatch`);
+  }
+
+  const goals = buildMoveGoalsFromPgnComments(
+    normalizedPgn,
+    variant.moveSequence.initialFen,
+    variant.moveSequence.moves,
+    variant.initialPly,
+  );
+  const updated = await updateOpeningVariant(supabase, id, { goals });
+
+  if (!updated) {
+    redirect(`/admin/openings/variants/${id}?error=could_not_update_goals`);
   }
 
   revalidatePath("/admin/openings");
