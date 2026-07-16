@@ -323,10 +323,11 @@ export default function RiddleController({
 
       <div className="page-container-controller-layout">
         {/* Board wrapper: aspect-square sets the square; .board-wrapper in volt.css fills it */}
+        {/* self-start is critical! It makes board container not shrink when neighbour elements gets bigger in size. self-start = “this child only, align to cross-axis start” */}
         {/* TODO: Refactor HTML structure */}
         <div
           key={sessionId}
-          className="relative aspect-square w-full shrink-0 md:min-w-0 md:flex-[3]"
+          className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]"
           data-tour="board"
         >
           <VoltBoard
@@ -409,13 +410,6 @@ export default function RiddleController({
                 </Button>
               )}
             </div>
-
-            {!isCompleted && (
-              <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
-                First click shows the hint text and highlights the piece to move. Second click shows the destination
-                square.
-              </p>
-            )}
           </div>
         </div>
       </div>

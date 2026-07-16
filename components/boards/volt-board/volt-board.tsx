@@ -255,7 +255,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   return (
     <>
       <div className="board-wrapper">
-        <div ref={boardRef} className="cardinal purple" style={{ width: "100%", height: "100%" }} />
+        <div ref={boardRef} className="cardinal green" style={{ width: "100%", height: "100%" }} />
       </div>
     </>
   );

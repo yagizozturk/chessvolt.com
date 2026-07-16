@@ -1,7 +1,7 @@
 // TODO: Refactor
 "use client";
 
-import { ChevronLeft, Eye } from "lucide-react";
+import { ChevronLeft, Eye, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -9,8 +9,6 @@ import { useEffect, useRef, useState } from "react";
 import VoltBoard, { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
-import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
-import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
@@ -18,6 +16,7 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Label } from "@/components/ui/label";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
@@ -53,7 +52,6 @@ export default function OpeningVariantController({
   parentOpeningUrl,
   canAddToPracticeList = false,
   isInPracticeList = false,
-  voltScore = null,
 }: OpeningVariantControllerProps) {
   const sequenceId = variant.moveSequence.id;
   const [replayKey, setReplayKey] = useState(0);
@@ -68,6 +66,7 @@ export default function OpeningVariantController({
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("learn");
+  const [showMainStrategy, setShowMainStrategy] = useState(false);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
   const correctMoveCountRef = useRef(0);
@@ -86,6 +85,7 @@ export default function OpeningVariantController({
     hintRequested,
     expectedCurrentCorrectMoveUci,
     lessonsLearned,
+    strategy,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: variant.moveSequence.moves,
@@ -109,6 +109,7 @@ export default function OpeningVariantController({
     setCompletionStats(null);
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(false);
+    setShowMainStrategy(false);
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -250,7 +251,7 @@ export default function OpeningVariantController({
       <div className="page-container-controller-layout">
         <div
           key={sessionId}
-          className="relative aspect-square w-full shrink-0 md:min-w-0 md:flex-[3]"
+          className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]"
           data-tour="board"
         >
           <VoltBoard
@@ -277,22 +278,42 @@ export default function OpeningVariantController({
             </div>
             <div className="flex items-center gap-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
             <div>
+              <RainbowButton
+                size="icon"
+                className="rounded-xl"
+                type="button"
+                aria-label={showMainStrategy ? "Hide main idea" : "Show main idea"}
+                aria-pressed={showMainStrategy}
+                onClick={() => setShowMainStrategy((current) => !current)}
+              >
+                <Lightbulb className="size-5" />
+              </RainbowButton>
+              <Button variant="voltIcon" asChild></Button>
+
+              {/* Add to practice list
               {canAddToPracticeList ? (
                 <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />
-              ) : null}
+              ) : null}*/}
             </div>
           </div>
-          {isValidVoltScore(voltScore) ? <VoltCalculator result={voltScore} className="w-full" /> : null}
-          <GoalViewer goals={sortedGoals} progressValue={progressValue} mode={boardMode} turnLabel={turnLabel} />
-          <div className="flex items-center justify-center gap-3">
-            <Label htmlFor="opening-board-mode">Practice</Label>
+          <GoalViewer
+            goals={sortedGoals}
+            progressValue={progressValue}
+            mode={boardMode}
+            turnLabel={turnLabel}
+            mainStrategy={strategy}
+            showMainStrategy={showMainStrategy}
+          />
+          <div className="flex items-center justify-center gap-3 p-12">
+            <Label htmlFor="opening-board-mode">Practice Mode</Label>
             <Switch
               id="opening-board-mode"
+              size="lg"
               checked={boardMode === "learn"}
               onCheckedChange={(checked) => setBoardMode(checked ? "learn" : "practice")}
               aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
             />
-            <Label htmlFor="opening-board-mode">Learn</Label>
+            <Label htmlFor="opening-board-mode">Learn Mode</Label>
           </div>
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
@@ -318,11 +339,6 @@ export default function OpeningVariantController({
                 </Button>
               )}
             </div>
-            {!isCompleted ? (
-              <p className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-center text-xs">
-                First click highlights the piece. Second click shows the move.
-              </p>
-            ) : null}
           </div>
         </div>
       </div>

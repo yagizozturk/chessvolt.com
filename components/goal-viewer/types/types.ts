@@ -9,6 +9,8 @@ export type GoalViewerProps = GoalsProps & {
   progressValue: number;
   mode?: VoltBoardMode;
   turnLabel: string;
+  mainStrategy?: string;
+  showMainStrategy?: boolean;
 };
 
 export type ActiveGoalCardProps = {
@@ -18,3 +20,10 @@ export type ActiveGoalCardProps = {
 };
 
 export type GoalStepperProps = GoalsProps;
+
+export type ActiveMainStrategyProps = {
+  title: string;
+  message: string;
+  imageSrc: string;
+  imageAlt: string;
+};
