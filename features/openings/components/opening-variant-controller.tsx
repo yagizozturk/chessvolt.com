@@ -81,7 +81,7 @@ export default function OpeningVariantController({
     hintRequested,
     expectedCurrentCorrectMoveUci,
     lessonsLearned,
-    strategy,
+    mainIdea,
     isFirstPly,
   } = useMoveSequenceController({
     sourceId: sessionId,
@@ -286,7 +286,7 @@ export default function OpeningVariantController({
             progressValue={progressValue}
             mode={boardMode}
             turnLabel={turnLabel}
-            mainStrategy={strategy}
+            mainStrategy={mainIdea}
             isFirstPly={isFirstPly}
           />
           <div className="mt-auto">

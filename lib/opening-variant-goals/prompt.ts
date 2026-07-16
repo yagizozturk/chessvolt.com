@@ -45,7 +45,7 @@ Here is a sample JSON output format:
 {
 	“description”: ”...”,
 	"goals": {
-    "strategy": "...",
+    "mainIdea": "...",
     "lessonsLearned": "...",
     "plys": [{
       "ply": 1,

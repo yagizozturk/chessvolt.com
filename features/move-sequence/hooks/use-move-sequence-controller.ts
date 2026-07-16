@@ -121,7 +121,7 @@ export function useMoveSequenceController({
     moves,
     sortedGoals,
     nextGoal,
-    strategy: goals?.strategy ?? "",
+    mainIdea: goals?.mainIdea ?? "",
     lessonsLearned: goals?.lessonsLearned ?? "",
     isAllGoalsCompleted,
     isFirstPly,

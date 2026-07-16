@@ -4,7 +4,7 @@ import { getExpectedPlayerGoals, parseMovesFromSequence } from "@/lib/move-seque
 export function buildStubGoalsFromMoves(initialFen: string, moves: string): MoveGoals {
   const uciMoves = parseMovesFromSequence(moves);
   return {
-    strategy: "",
+    mainIdea: "",
     lessonsLearned: "",
     plys: getExpectedPlayerGoals(initialFen, uciMoves).map(({ ply, move }) => ({
       ply,

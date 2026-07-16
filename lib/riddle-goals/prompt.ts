@@ -41,7 +41,7 @@ Create one JSON object. Its plys array contains only active-player moves (odd-nu
 ** Your output format**
 Here is a sample JSON output format:
 {
-  "strategy": "...",
+  "mainIdea": "...",
   "lessonsLearned": "...",
   "plys": [{
     "ply": 1,

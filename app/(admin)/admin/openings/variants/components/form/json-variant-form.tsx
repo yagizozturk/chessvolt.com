@@ -73,7 +73,7 @@ function parseGoalsFromRecord(
     return {
       ok: false,
       error:
-        "goals must include strategy, lessonsLearned, and valid plys.",
+        "goals must include mainIdea, lessonsLearned, and valid plys.",
     };
   }
   return { ok: true, goals: g };
@@ -344,7 +344,7 @@ export function JsonVariantForm({ openings, defaultOpeningId }: Props) {
         {!canSubmit && (
           <p className="text-muted-foreground text-xs">
             Select an opening, provide valid JSON and <span className="font-mono">pgn</span>; if{" "}
-            <span className="font-mono">goals</span> is present, it must contain strategy, lessonsLearned, and plys.
+            <span className="font-mono">goals</span> is present, it must contain mainIdea, lessonsLearned, and plys.
           </p>
         )}
       </form>

@@ -40,7 +40,7 @@ function parseGoalsFromFormData(formData: FormData): { goals: MoveGoals | null; 
       return {
         goals: null,
         error:
-          "Goals must include strategy, lessonsLearned, and valid plys with move details.",
+          "Goals must include mainIdea, lessonsLearned, and valid plys with move details.",
       };
     }
     return { goals: parsed };

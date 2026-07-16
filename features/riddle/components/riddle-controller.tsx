@@ -99,7 +99,7 @@ export default function RiddleController({
     hintRequested,
     expectedCurrentCorrectMoveUci,
     lessonsLearned,
-    strategy,
+    mainIdea,
     isFirstPly,
   } = useMoveSequenceController({
     sourceId: sessionId,
@@ -383,7 +383,7 @@ export default function RiddleController({
             progressValue={progressValue}
             mode={boardMode}
             turnLabel={turnLabel}
-            mainStrategy={strategy}
+            mainStrategy={mainIdea}
             isFirstPly={isFirstPly}
           />
 
