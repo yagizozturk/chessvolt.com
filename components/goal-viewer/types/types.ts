@@ -10,20 +10,15 @@ export type GoalViewerProps = GoalsProps & {
   mode?: VoltBoardMode;
   turnLabel: string;
   mainStrategy?: string;
-  showMainStrategy?: boolean;
+  isFirstPly?: boolean;
 };
 
 export type ActiveGoalCardProps = {
   goal: MoveGoal;
   mode?: VoltBoardMode;
   turnLabel: string;
+  mainStrategy?: string;
+  isFirstPly?: boolean;
 };
 
 export type GoalStepperProps = GoalsProps;
-
-export type ActiveMainStrategyProps = {
-  title: string;
-  message: string;
-  imageSrc: string;
-  imageAlt: string;
-};

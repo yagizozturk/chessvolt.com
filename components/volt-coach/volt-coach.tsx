@@ -8,18 +8,23 @@ import { TTSController } from "@/features/tts/components/tts-controller/tts-cont
 import { useBoardSoundsStore } from "@/lib/shared/store/board-sounds-store";
 
 import { Button } from "../ui/button";
+import { Highlighter } from "../ui/highlighter";
 
 type VoltCoachProps = {
   title: string;
   message: string;
   ttsKey: string | number;
   ttsText?: string;
+  mainStrategy?: string;
+  isFirstPly?: boolean;
 };
 
-export function VoltCoach({ title, message, ttsKey, ttsText }: VoltCoachProps) {
+export function VoltCoach({ title, message, ttsKey, ttsText, mainStrategy, isFirstPly = false }: VoltCoachProps) {
   const enabled = useBoardSoundsStore((s) => s.enabled);
   const toggle = useBoardSoundsStore((s) => s.toggle);
   const muted = !enabled;
+  const trimmedMainStrategy = mainStrategy?.trim() ?? "";
+  const showMainStrategy = isFirstPly && trimmedMainStrategy.length > 0;
 
   return (
     <div className="relative flex gap-4 rounded-xl p-4">
@@ -27,8 +32,17 @@ export function VoltCoach({ title, message, ttsKey, ttsText }: VoltCoachProps) {
       {/* min-w-0 needs to be refactored after max 2 words prompt */}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex">
-          <div className="flex-1 truncate text-lg font-semibold">{title}</div>
+          <div className="flex-1 truncate text-lg font-semibold">
+            {showMainStrategy ? (
+              <Highlighter action="highlight" color="#FF9800">
+                The Main Idea
+              </Highlighter>
+            ) : (
+              title
+            )}
+          </div>
         </div>
+        {showMainStrategy ? <p>{trimmedMainStrategy}</p> : null}
         <div className="text-muted-foreground w-full leading-normal">{message ? message : null}</div>
       </div>
       <div className="shrink-0">

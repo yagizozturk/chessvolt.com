@@ -1,7 +1,7 @@
 // TODO: Refactor
 "use client";
 
-import { ChevronLeft, Eye, Lightbulb } from "lucide-react";
+import { ArrowLeft, Bot, ChevronLeft, Eye } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -15,10 +15,7 @@ import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
-import { Label } from "@/components/ui/label";
-import { RainbowButton } from "@/components/ui/rainbow-button";
 import { Spinner } from "@/components/ui/spinner";
-import { Switch } from "@/components/ui/switch";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
@@ -65,8 +62,7 @@ export default function OpeningVariantController({
   const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null);
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
-  const [boardMode, setBoardMode] = useState<VoltBoardMode>("learn");
-  const [showMainStrategy, setShowMainStrategy] = useState(false);
+  const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
   const correctMoveCountRef = useRef(0);
@@ -86,6 +82,7 @@ export default function OpeningVariantController({
     expectedCurrentCorrectMoveUci,
     lessonsLearned,
     strategy,
+    isFirstPly,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: variant.moveSequence.moves,
@@ -109,7 +106,7 @@ export default function OpeningVariantController({
     setCompletionStats(null);
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(false);
-    setShowMainStrategy(false);
+    setBoardMode("practice");
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -278,18 +275,6 @@ export default function OpeningVariantController({
             </div>
             <div className="flex items-center gap-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
             <div>
-              <RainbowButton
-                size="icon"
-                className="rounded-xl"
-                type="button"
-                aria-label={showMainStrategy ? "Hide main idea" : "Show main idea"}
-                aria-pressed={showMainStrategy}
-                onClick={() => setShowMainStrategy((current) => !current)}
-              >
-                <Lightbulb className="size-5" />
-              </RainbowButton>
-              <Button variant="voltIcon" asChild></Button>
-
               {/* Add to practice list
               {canAddToPracticeList ? (
                 <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />
@@ -302,30 +287,37 @@ export default function OpeningVariantController({
             mode={boardMode}
             turnLabel={turnLabel}
             mainStrategy={strategy}
-            showMainStrategy={showMainStrategy}
+            isFirstPly={isFirstPly}
           />
-          <div className="flex items-center justify-center gap-3 p-12">
-            <Label htmlFor="opening-board-mode">Practice Mode</Label>
-            <Switch
-              id="opening-board-mode"
-              size="lg"
-              checked={boardMode === "learn"}
-              onCheckedChange={(checked) => setBoardMode(checked ? "learn" : "practice")}
-              aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
-            />
-            <Label htmlFor="opening-board-mode">Learn Mode</Label>
-          </div>
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
+              <Button
+                variant="voltGreen"
+                onClick={() => setBoardMode(boardMode === "learn" ? "practice" : "learn")}
+                aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
+                className="min-w-0 flex-1"
+              >
+                {boardMode === "learn" ? (
+                  <>
+                    <ArrowLeft data-icon="inline-start" />
+                    Back to practice
+                  </>
+                ) : (
+                  <>
+                    <Bot data-icon="inline-start" />
+                    Coach me
+                  </>
+                )}
+              </Button>
               {!isCompleted ? (
                 <Button
-                  variant="voltGreen"
+                  variant="volt"
                   onClick={handleHintClick}
                   disabled={hintCount >= MAX_HINT_COUNT}
                   className="min-w-0 flex-1"
                 >
                   <Eye data-icon="inline-start" />
-                  Need Help?
+                  Show the move
                 </Button>
               ) : (
                 <Button

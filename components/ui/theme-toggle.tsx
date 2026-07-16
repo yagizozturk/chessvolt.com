@@ -13,6 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+// Dark mode is forced site-wide for now. Flip this when light mode is re-enabled.
+const THEME_SWITCHING_ENABLED = false;
+
 // Flips between light and dark on each call. Used by the sidebar Settings menu as a single
 // "Change Color Mode" action — no submenu, no system option.
 // Uses resolvedTheme (not theme) so the toggle works correctly even when the stored
@@ -21,6 +24,7 @@ export function useToggleTheme() {
   const { resolvedTheme, setTheme } = useTheme();
 
   return React.useCallback(() => {
+    if (!THEME_SWITCHING_ENABLED) return;
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   }, [resolvedTheme, setTheme]);
 }
@@ -30,6 +34,10 @@ export function useToggleTheme() {
 // because nesting a dropdown inside the Settings submenu would be poor UX.
 export function ThemeToggle({ className }: { className?: string }) {
   const { setTheme } = useTheme();
+
+  if (!THEME_SWITCHING_ENABLED) {
+    return null;
+  }
 
   return (
     <DropdownMenu>

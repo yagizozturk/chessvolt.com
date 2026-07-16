@@ -99,6 +99,8 @@ export default function RiddleController({
     hintRequested,
     expectedCurrentCorrectMoveUci,
     lessonsLearned,
+    strategy,
+    isFirstPly,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: riddle.moveSequence.moves,
@@ -376,11 +378,17 @@ export default function RiddleController({
           </div>
 
           {/* Goal Viewer */}
-          <GoalViewer goals={sortedGoals} progressValue={progressValue} mode={boardMode} turnLabel={turnLabel} />
+          <GoalViewer
+            goals={sortedGoals}
+            progressValue={progressValue}
+            mode={boardMode}
+            turnLabel={turnLabel}
+            mainStrategy={strategy}
+            isFirstPly={isFirstPly}
+          />
 
           {/* Mode Change */}
           <div className="flex items-center justify-center gap-3">
-            <Label htmlFor="riddle-board-mode">Practice</Label>
             <Switch
               id="riddle-board-mode"
               checked={boardMode === "learn"}

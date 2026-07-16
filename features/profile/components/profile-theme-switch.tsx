@@ -7,6 +7,9 @@ import * as React from "react";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Switch } from "@/components/ui/switch";
 
+// Dark mode is forced site-wide for now. Flip this when light mode is re-enabled.
+const THEME_SWITCHING_ENABLED = false;
+
 export function ProfileThemeSwitch() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
@@ -14,6 +17,10 @@ export function ProfileThemeSwitch() {
   React.useEffect(() => {
     setMounted(true);
   }, []);
+
+  if (!THEME_SWITCHING_ENABLED) {
+    return null;
+  }
 
   const isDark = resolvedTheme === "dark";
 

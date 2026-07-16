@@ -34,9 +34,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn(ibmPlexSans.variable, geistMono.variable, "font-sans")}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn(ibmPlexSans.variable, geistMono.variable, "dark font-sans")}
+    >
       <body suppressHydrationWarning className="bg-background min-h-svh antialiased">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        {/* Dark mode is forced site-wide for now; re-enable light/system when ready. */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          forcedTheme="dark"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />
         </ThemeProvider>
