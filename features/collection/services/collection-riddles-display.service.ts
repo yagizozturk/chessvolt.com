@@ -79,6 +79,8 @@ export async function loadCollectionRiddlesForDisplay(
   input: LoadCollectionRiddlesForDisplayInput,
 ): Promise<CollectionRiddlesDisplayData> {
   const { supabase, user, slug, collectionType, page } = input;
+  // Volt is only for user-owned (custom) collections — not catalog /collection pages.
+  const includeVoltScore = collectionType === "custom";
 
   // ================================================================================================
   // Getting collection informatin by its slug(params)
@@ -122,7 +124,7 @@ export async function loadCollectionRiddlesForDisplay(
   // ================================================================================================
   // Getting latest attempt stats by user for a single riddle for multiple SequenceIds
   // ================================================================================================
-  // Building volt scores by sequence id when user is logged in
+  // Building volt scores by sequence id only for user collections when logged in
   // ================================================================================================
   // The collection may have a riddle that is based on a real GAME.
   // Riddle table has a FK of gameId.
@@ -170,7 +172,7 @@ export async function loadCollectionRiddlesForDisplay(
   );
 
   const voltScoresBySequenceId =
-    user && riddleSequenceIds.length > 0
+    includeVoltScore && user && riddleSequenceIds.length > 0
       ? getVoltScoresBySequenceId(
           riddleAttempts,
           paginatedRiddles.map((riddle) => ({
@@ -197,7 +199,7 @@ export async function loadCollectionRiddlesForDisplay(
         href: buildRiddlePath(riddle.id, { collectionSlug: collection.slug, collectionType }),
         displayFen: riddle.moveSequence.displayFen,
         accuracyPercent: attemptStats.accuracyPercent,
-        voltScore: voltScoresBySequenceId[riddle.moveSequence.id] ?? null,
+        voltScore: includeVoltScore ? (voltScoresBySequenceId[riddle.moveSequence.id] ?? null) : null,
         primaryTheme: primaryThemesByRiddleId.get(riddle.id) ?? null,
       };
     });

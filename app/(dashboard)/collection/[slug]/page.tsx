@@ -41,7 +41,7 @@ export default async function CollectionDetailPage({ params, searchParams }: Pro
 
         {/* If there are collections, display them in a grid */}
         <div className="page-container-grid-data-layout">
-          {items.map(({ riddle, game, href, displayFen, accuracyPercent, voltScore, primaryTheme }) => (
+          {items.map(({ riddle, game, href, displayFen, accuracyPercent, primaryTheme }) => (
             <RiddleBoardCard
               key={riddle.id}
               riddle={riddle}
@@ -50,7 +50,6 @@ export default async function CollectionDetailPage({ params, searchParams }: Pro
               href={href}
               displayFen={displayFen}
               accuracyPercent={accuracyPercent}
-              voltScore={voltScore}
               primaryTheme={primaryTheme}
             />
           ))}

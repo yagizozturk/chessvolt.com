@@ -40,6 +40,7 @@ export default async function UserCollectionDetailPage({ params }: Params) {
               href={href}
               displayFen={displayFen}
               accuracyPercent={accuracyPercent}
+              showVoltScore
               voltScore={voltScore}
               primaryTheme={primaryTheme}
             />

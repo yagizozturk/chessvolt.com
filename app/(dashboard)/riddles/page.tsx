@@ -57,7 +57,7 @@ export default async function RiddlesPage({ searchParams }: { searchParams: Sear
           <EmptyDataMessage message="No riddles match the selected theme." />
         ) : (
           <div className="page-container-grid-data-layout">
-            {visibleItems.map(({ riddle, game, accuracyPercent, voltScore, primaryTheme }) => (
+            {visibleItems.map(({ riddle, game, accuracyPercent, primaryTheme }) => (
               <RiddleBoardCard
                 key={riddle.id}
                 riddle={riddle}
@@ -66,7 +66,6 @@ export default async function RiddlesPage({ searchParams }: { searchParams: Sear
                 href={buildStandaloneRiddlePath(riddle.id)}
                 displayFen={riddle.moveSequence.displayFen}
                 accuracyPercent={accuracyPercent}
-                voltScore={voltScore}
                 primaryTheme={primaryTheme}
               />
             ))}
