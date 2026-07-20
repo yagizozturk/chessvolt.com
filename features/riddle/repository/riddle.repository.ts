@@ -12,12 +12,10 @@ import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { type DbRiddle, toRiddle } from "@/features/riddle/mapper/riddle.mapper";
 import type { Riddle } from "@/features/riddle/types/riddle";
 
-const RIDDLE_SELECT = "*, move_sequences (*)";
-
 export async function findAll(supabase: SupabaseClient): Promise<Riddle[]> {
   const { data: riddles, error } = await supabase
     .from("riddles")
-    .select(RIDDLE_SELECT)
+    .select("*, move_sequences (*)")
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -31,7 +29,7 @@ export async function findAll(supabase: SupabaseClient): Promise<Riddle[]> {
 export async function findAllActive(supabase: SupabaseClient): Promise<Riddle[]> {
   const { data, error } = await supabase
     .from("riddles")
-    .select(RIDDLE_SELECT)
+    .select("*, move_sequences (*)")
     .eq("is_active", true)
     .order("created_at", { ascending: true });
 
@@ -44,7 +42,7 @@ export async function findAllActive(supabase: SupabaseClient): Promise<Riddle[]>
 }
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<Riddle | null> {
-  const { data, error } = await supabase.from("riddles").select(RIDDLE_SELECT).eq("id", id).maybeSingle();
+  const { data, error } = await supabase.from("riddles").select("*, move_sequences (*)").eq("id", id).maybeSingle();
 
   if (error) {
     console.error("riddle.repository.findById error:", error);
@@ -63,7 +61,10 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<Ri
 export async function findByMoveSequenceIds(supabase: SupabaseClient, moveSequenceIds: string[]): Promise<Riddle[]> {
   if (moveSequenceIds.length === 0) return [];
 
-  const { data, error } = await supabase.from("riddles").select(RIDDLE_SELECT).in("move_sequence_id", moveSequenceIds);
+  const { data, error } = await supabase
+    .from("riddles")
+    .select("*, move_sequences (*)")
+    .in("move_sequence_id", moveSequenceIds);
 
   if (error) {
     console.error("riddle.repository.findByMoveSequenceIds error:", error);
@@ -148,7 +149,7 @@ export async function findActiveByIds(supabase: SupabaseClient, input: FindActiv
   const uniqueIds = [...new Set(input.ids.map((id) => id.trim()).filter(Boolean))];
   if (uniqueIds.length === 0) return [];
 
-  let query = supabase.from("riddles").select(RIDDLE_SELECT).eq("is_active", true).in("id", uniqueIds);
+  let query = supabase.from("riddles").select("*, move_sequences (*)").eq("is_active", true).in("id", uniqueIds);
 
   if (input.minRating != null && input.maxRating != null) {
     query = query.not("rating", "is", null).gte("rating", input.minRating).lte("rating", input.maxRating);
@@ -179,7 +180,7 @@ export async function findActiveByRatingRange(
 ): Promise<Riddle[]> {
   const { data, error } = await supabase
     .from("riddles")
-    .select(RIDDLE_SELECT)
+    .select("*, move_sequences (*)")
     .eq("is_active", true)
     .not("rating", "is", null)
     .gte("rating", input.minRating)
@@ -236,7 +237,7 @@ export async function create(supabase: SupabaseClient, input: CreateRiddleInput)
       move_sequence_id: moveSequence.id,
       is_active: input.isActive ?? true,
     })
-    .select(RIDDLE_SELECT)
+    .select("*, move_sequences (*)")
     .single();
 
   if (error) {
