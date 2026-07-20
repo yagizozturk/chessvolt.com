@@ -45,6 +45,11 @@ const profileSection = {
 const data = {
   navMain: [
     {
+      title: "Volts",
+      url: "/volts",
+      icon: "/images/icons/icon-volt.png",
+    },
+    {
       title: "Openings",
       url: "#",
       icon: "/images/icons/icon-openings.png",
@@ -52,10 +57,6 @@ const data = {
         {
           title: "All Openings",
           url: "/openings",
-        },
-        {
-          title: "My Openings",
-          url: "/user-opening-variants",
         },
       ],
     },
@@ -65,19 +66,9 @@ const data = {
       icon: "/images/icons/icon-riddle.png",
     },
     {
-      title: "Collections",
-      url: "#",
+      title: "Studies",
+      url: "/collection",
       icon: "/images/icons/icon-book-collection.png",
-      items: [
-        {
-          title: "Library",
-          url: "/collection",
-        },
-        {
-          title: "My Collections",
-          url: "/user-collection",
-        },
-      ],
     },
 
     {

@@ -1,7 +1,7 @@
 // TODO: Refactor
 "use client";
 
-import { ListPlus } from "lucide-react";
+import { Star } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
@@ -38,7 +38,11 @@ const ERROR_MESSAGES: Record<string, string> = {
   failed: "Could not add the riddle. Please try again.",
 };
 
-export function AddToUserCollectionPicker({ riddleId, collections, savedCollectionIds }: AddToUserCollectionPickerProps) {
+export function AddToUserCollectionPicker({
+  riddleId,
+  collections,
+  savedCollectionIds,
+}: AddToUserCollectionPickerProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [savedIds, setSavedIds] = useState(() => new Set(savedCollectionIds));
@@ -82,7 +86,7 @@ export function AddToUserCollectionPicker({ riddleId, collections, savedCollecti
         aria-label="Add to collection"
         title="Add to collection"
       >
-        {isPending ? <Spinner /> : <ListPlus className="size-5" />}
+        {isPending ? <Spinner /> : <Star className="size-5" />}
       </Button>
       <CommandDialog
         open={open}
