@@ -12,6 +12,7 @@ export function buildStubGoalsFromMoves(initialFen: string, moves: string): Move
       title: "",
       visuals: "",
       strategy: "",
+      takeaway: "",
       checkpointMessage: "",
       isCompleted: false,
     })),

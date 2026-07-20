@@ -7,6 +7,7 @@ export type MoveGoal = {
   title: string;
   visuals: string | MoveVisual | MoveVisual[];
   strategy: string;
+  takeaway: string;
   checkpointMessage: string;
   isCompleted: boolean;
 };

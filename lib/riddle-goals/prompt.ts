@@ -49,6 +49,7 @@ Here is a sample JSON output format:
     "title": "...",
     "visuals": {"orig": "e2", "dest": "e3", "brush": "green"},
     "strategy": "...",
+    "takeaway": "...",
     "checkpointMessage": "...",
     "isCompleted": false
   }]
@@ -58,6 +59,7 @@ ply field can only hold a move with odd number
 move field will hold the move which student will try to guess in uci format
 visuals holds one board arrow/highlight object with orig, optional dest, and optional brush; use "" when unnecessary
 strategy explains why the move matters without revealing it
+takeaway is the key lesson the student should remember from this move
 isCompleted field will hold false by default
 checkpointMessage motivates the student after the move
 

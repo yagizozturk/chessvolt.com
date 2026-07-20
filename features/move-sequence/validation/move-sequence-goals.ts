@@ -50,6 +50,7 @@ export function normalizeMoveGoal(value: unknown): MoveGoal | null {
     title: value.title,
     visuals: value.visuals,
     strategy: value.strategy,
+    takeaway: typeof value.takeaway === "string" ? value.takeaway : "",
     checkpointMessage: value.checkpointMessage,
   };
 }
@@ -64,6 +65,7 @@ export function isMoveGoal(value: unknown): value is MoveGoal {
     typeof value.title === "string" &&
     (typeof value.visuals === "string" || isMoveVisualValue(value.visuals)) &&
     typeof value.strategy === "string" &&
+    typeof value.takeaway === "string" &&
     typeof value.checkpointMessage === "string" &&
     typeof value.isCompleted === "boolean"
   );

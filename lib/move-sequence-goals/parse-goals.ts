@@ -23,7 +23,10 @@ function isGoalLikeObject(value: unknown): value is Record<string, unknown> {
   if (!hasMoveIdentifier) return false;
 
   return (
-    typeof value.title === "string" || typeof value.strategy === "string" || typeof value.checkpointMessage === "string"
+    typeof value.title === "string" ||
+    typeof value.strategy === "string" ||
+    typeof value.takeaway === "string" ||
+    typeof value.checkpointMessage === "string"
   );
 }
 
@@ -58,6 +61,7 @@ function coerceRawGoal(item: unknown, fallback: { ply: number; move: string }): 
     title: typeof record.title === "string" && record.title ? record.title : "Move goal",
     visuals: typeof record.visuals === "string" || isMoveVisualValue(record.visuals) ? record.visuals : "",
     strategy: typeof record.strategy === "string" ? record.strategy : "",
+    takeaway: typeof record.takeaway === "string" ? record.takeaway : "",
     checkpointMessage: typeof record.checkpointMessage === "string" ? record.checkpointMessage : "",
     isCompleted: false,
   };
