@@ -1,7 +1,7 @@
 // TODO: Refactor
 "use client";
 
-import { BookmarkX, Calendar, Circle, Flag, Gauge, Puzzle, Tags } from "lucide-react";
+import { BookmarkX, Calendar, Circle, Flag, Gauge, Puzzle, Tags, Target } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -12,10 +12,9 @@ import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-cal
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Game } from "@/features/game/types/game";
 import type { PrimaryRiddleTheme } from "@/features/riddle-theme/services/riddle-theme.service";
-import { isLowRiddleAccuracy } from "@/features/riddle/constants/riddle-accuracy.constants";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { formatRiddleRatingLabel } from "@/features/riddle/types/riddle-rating";
 import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
@@ -27,6 +26,8 @@ type RiddleBoardCardProps = {
   boardWrapperClassName?: string;
   href: string;
   displayFen?: string | null;
+  /** When true, renders VoltCalculator if `voltScore` is valid. Skip computing voltScore when false. */
+  showVoltScore?: boolean;
   voltScore?: VoltScoreResult | null;
   accuracyPercent?: number | null;
   primaryTheme?: PrimaryRiddleTheme | null;
@@ -57,6 +58,7 @@ export function RiddleBoardCard({
   boardWrapperClassName = "aspect-square w-[240px] shrink-0",
   href,
   displayFen,
+  showVoltScore = false,
   voltScore = null,
   accuracyPercent,
   primaryTheme = null,
@@ -80,25 +82,11 @@ export function RiddleBoardCard({
             <Spinner className="size-8" />
           </div>
         ) : null}
-        {isLowRiddleAccuracy(accuracyPercent) ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="absolute top-4 right-4 z-10">
-                <Circle className="size-5 fill-red-400 text-red-400" aria-hidden />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent side="left" sideOffset={6} className="max-w-xs">
-              <span>
-                You can improve your accuracy score by practicing. Your current accuracy score is {accuracyPercent}%
-              </span>
-            </TooltipContent>
-          </Tooltip>
-        ) : null}
         <div className={cn("self-start", boardWrapperClassName)}>
           <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} coordinates={false} />
         </div>
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
-          {isValidVoltScore(voltScore) ? (
+          {showVoltScore && isValidVoltScore(voltScore) ? (
             <div className="absolute right-[-32px] bottom-[-32px] z-10">
               <VoltCalculator result={voltScore} chartSize={110} className="w-fit" />
             </div>
@@ -130,6 +118,16 @@ export function RiddleBoardCard({
           <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
             <BoardCardMetaRow icon={Puzzle} label={moveCountLabel ?? "No moves"} iconTooltip="Moves" />
           </div>
+          {accuracyPercent != null ? (
+            <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+              <BoardCardMetaRow
+                icon={Target}
+                label={`${accuracyPercent}% accuracy`}
+                iconTooltip="Accuracy"
+                iconClassName={accuracyPercent < 50 ? "text-red-500" : undefined}
+              />
+            </div>
+          ) : null}
           {primaryTheme ? (
             <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
               <BoardCardMetaRow icon={Tags} label={primaryTheme.title} iconTooltip="Theme" />

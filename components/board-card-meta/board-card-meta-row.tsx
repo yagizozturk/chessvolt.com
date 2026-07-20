@@ -12,10 +12,19 @@ type BoardCardMetaRowProps = {
   className?: string;
   truncate?: boolean;
   iconTooltip?: string;
+  iconClassName?: string;
 };
 
-function MetaRowIcon({ icon: Icon, iconTooltip }: { icon: LucideIcon; iconTooltip?: string }) {
-  const icon = <Icon className="text-primary h-4 w-4 shrink-0" />;
+function MetaRowIcon({
+  icon: Icon,
+  iconTooltip,
+  iconClassName,
+}: {
+  icon: LucideIcon;
+  iconTooltip?: string;
+  iconClassName?: string;
+}) {
+  const icon = <Icon className={cn("text-primary h-4 w-4 shrink-0", iconClassName)} />;
 
   if (!iconTooltip) {
     return icon;
@@ -33,7 +42,14 @@ function MetaRowIcon({ icon: Icon, iconTooltip }: { icon: LucideIcon; iconToolti
   );
 }
 
-export function BoardCardMetaRow({ icon, label, className, truncate, iconTooltip }: BoardCardMetaRowProps) {
+export function BoardCardMetaRow({
+  icon,
+  label,
+  className,
+  truncate,
+  iconTooltip,
+  iconClassName,
+}: BoardCardMetaRowProps) {
   if (!label.trim()) {
     return null;
   }
@@ -42,7 +58,7 @@ export function BoardCardMetaRow({ icon, label, className, truncate, iconTooltip
     <span
       className={cn("flex items-center gap-1.5", truncate && "max-w-full min-w-0 shrink overflow-hidden", className)}
     >
-      <MetaRowIcon icon={icon} iconTooltip={iconTooltip} />
+      <MetaRowIcon icon={icon} iconTooltip={iconTooltip} iconClassName={iconClassName} />
       <span className={cn(truncate && "min-w-0 truncate")}>{label}</span>
     </span>
   );
