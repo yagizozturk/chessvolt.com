@@ -1,13 +1,12 @@
 // TODO: Refactor
 import { notFound } from "next/navigation";
 
-import { getCollectionRiddleByRiddleIdAndCollectionId } from "@/features/collection-riddles/services/collection-riddles.service";
-import { getCollectionBySlug } from "@/features/collection/services/collection.service";
 import {
   getActiveRiddlesByCollectionId,
-  getAllActiveRiddles,
-  getRiddleById,
-} from "@/features/riddle/services/riddle.service";
+  getCollectionRiddleByRiddleIdAndCollectionId,
+} from "@/features/collection-riddles/services/collection-riddles.service";
+import { getCollectionBySlug } from "@/features/collection/services/collection.service";
+import { getAllActiveRiddles, getRiddleById } from "@/features/riddle/services/riddle.service";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import type { LoadCollectionRiddlePageInput, LoadStandaloneRiddlePageInput } from "@/features/riddle/types/riddle-page";
 import { buildRiddlePath, buildStandaloneRiddlePath } from "@/features/riddle/utilities/build-riddle-path";

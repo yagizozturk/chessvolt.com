@@ -31,6 +31,10 @@ export type SequenceAttemptStats = {
   durationMs: number | null;
 };
 
+export type SequenceAttemptData = {
+  accuracyPercent: number | null;
+};
+
 export type CreateUserSequenceAttemptInput = {
   userId: string;
   sequenceId: string;

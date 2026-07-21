@@ -3,7 +3,10 @@ import type { Game } from "@/features/game/types/game";
 import type { PrimaryRiddleTheme } from "@/features/riddle-theme/services/riddle-theme.service";
 import type { Riddle } from "@/features/riddle/types/riddle";
 
-export type CollectionRiddleDisplayItem = {
+// ============================================================
+// This type has the riddle card data in collection listing page
+// ============================================================
+export type CollectionRiddleCardItemData = {
   riddle: Riddle;
   game: Game | null;
   href: string;
@@ -12,9 +15,13 @@ export type CollectionRiddleDisplayItem = {
   primaryTheme: PrimaryRiddleTheme | null;
 };
 
-export type CollectionRiddlesDisplayData = {
+// ============================================================
+// This type is the final type that page renders including card
+// item data and pagiantion
+// ============================================================
+export type CollectionRiddlesPageData = {
   collection: Collection;
-  items: CollectionRiddleDisplayItem[];
+  collectionRiddles: CollectionRiddleCardItemData[];
   pagination?: {
     page: number;
     pageSize: number;

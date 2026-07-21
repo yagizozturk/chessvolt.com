@@ -1,7 +1,7 @@
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeaderWithImage } from "@/components/page-header";
 import { CollectionRiddlesPagination } from "@/features/collection/components/collection-riddles-pagination";
-import { getCollectionRiddles } from "@/features/collection/services/collection-riddles.service";
+import { getCollectionRiddles } from "@/features/collection/services/collection-riddles-page.service";
 import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
 import { getPaginationParams } from "@/features/collection/utilities/collection-riddles-pagination.utils";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
@@ -21,7 +21,7 @@ export default async function CollectionDetailPage({ params, searchParams }: Pro
   // ==================================================================
   // Getting all collection riddles from service
   // ==================================================================
-  const { collection, items, pagination } = await getCollectionRiddles({
+  const { collection, collectionRiddles, pagination } = await getCollectionRiddles({
     supabase,
     user,
     slug,
@@ -43,7 +43,7 @@ export default async function CollectionDetailPage({ params, searchParams }: Pro
 
         {/* If there are collections, display them in a grid */}
         <div className="page-container-grid-data-layout">
-          {items.map(({ riddle, game, href, displayFen, accuracyPercent, primaryTheme }) => (
+          {collectionRiddles.map(({ riddle, game, href, displayFen, accuracyPercent, primaryTheme }) => (
             <RiddleBoardCard
               key={riddle.id}
               riddle={riddle}

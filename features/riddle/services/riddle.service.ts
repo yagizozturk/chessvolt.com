@@ -27,20 +27,6 @@ export async function getRiddleByIdWithThemes(supabase: SupabaseClient, id: stri
   return riddleThemeService.withThemeSlugs(riddle, slugsByRiddleId.get(id) ?? []);
 }
 
-export async function getActiveRiddlesByCollectionId(
-  supabase: SupabaseClient,
-  collectionId: string,
-): Promise<Riddle[]> {
-  return riddleRepo.findActiveByCollectionId(supabase, collectionId);
-}
-
-export async function getActiveRiddlesCountByCollectionId(
-  supabase: SupabaseClient,
-  collectionId: string,
-): Promise<number> {
-  return riddleRepo.countActiveByCollectionId(supabase, collectionId);
-}
-
 export async function createRiddle(
   supabase: SupabaseClient,
   input: riddleRepo.CreateRiddleInput,

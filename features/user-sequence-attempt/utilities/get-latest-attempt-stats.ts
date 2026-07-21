@@ -7,7 +7,7 @@ import type {
 // ================================================================================================
 // Latest attempt per sequenceId from an already-fetched attempt list (newest first, same as repository).
 // ================================================================================================
-export function getLatestAttemptStatsFromAttempts(attempts: UserSequenceAttempt[]): SequenceAttemptStats[] {
+export function getLatestAttemptStats(attempts: UserSequenceAttempt[]): SequenceAttemptStats[] {
   const seenSequenceIds = new Set<string>();
   const stats: SequenceAttemptStats[] = [];
 

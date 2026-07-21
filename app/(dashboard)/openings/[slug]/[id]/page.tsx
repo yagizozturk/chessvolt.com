@@ -7,7 +7,7 @@ import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openin
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { computeSequenceAttemptAccuracy } from "@/features/user-sequence-attempt/utilities/compute-sequence-attempt-accuracy";
-import { mapAttemptStatsBySequenceId as buildMapAttemptStatsBySequenceId } from "@/features/user-sequence-attempt/utilities/map-attempt-stats-by-sequence-id";
+import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-attempt/utilities/create-attempt-stats-by-sequence-id-map";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
@@ -27,7 +27,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
 
   const sequenceIds = [...new Set(variants.map((v) => v.moveSequence.id))];
   const stats = user ? await attemptService.getLatestAttemptStatsForSequences(supabase, user.id, sequenceIds) : [];
-  const mapAttemptStatsBySequenceId = buildMapAttemptStatsBySequenceId(stats);
+  const mapAttemptStatsBySequenceId = createAttemptStatsBySequenceIdMap(stats);
 
   return (
     <div className="page-container">

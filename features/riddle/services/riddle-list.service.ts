@@ -10,7 +10,7 @@ import { RIDDLES_THEME_FILTER_ALL } from "@/features/riddle/constants/riddles-li
 import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
-import { toSequenceAttemptStats } from "@/features/user-sequence-attempt/utilities/to-sequence-attempt-stats";
+import { getSequenceAttemptStats } from "@/features/user-sequence-attempt/utilities/get-sequence-attempt-stats";
 
 export type AttemptedRiddleListItem = {
   riddle: Riddle;
@@ -67,7 +67,7 @@ export async function getUserAttemptedRiddlesForDisplay(
     const latest = latestBySequenceId[riddle.moveSequence.id];
     if (!latest) continue;
 
-    const attemptStats = toSequenceAttemptStats(latest.stats);
+    const attemptStats = getSequenceAttemptStats(latest.stats);
 
     items.push({
       riddle,

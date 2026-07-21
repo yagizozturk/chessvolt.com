@@ -9,6 +9,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as collectionRiddleRepo from "@/features/collection-riddles/repository/collection-riddle.repository";
 import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
+import type { Riddle } from "@/features/riddle/types/riddle";
 
 export async function getCollectionRiddlesByRiddleId(
   supabase: SupabaseClient,
@@ -23,6 +24,21 @@ export async function getCollectionRiddleByRiddleIdAndCollectionId(
   collectionId: string,
 ): Promise<CollectionRiddle | null> {
   return collectionRiddleRepo.findByRiddleIdAndCollectionId(supabase, riddleId, collectionId);
+}
+
+export async function getActiveRiddlesByCollectionId(
+  supabase: SupabaseClient,
+  collectionId: string,
+  input: collectionRiddleRepo.FindActiveByCollectionIdInput = {},
+): Promise<Riddle[]> {
+  return collectionRiddleRepo.findActiveByCollectionId(supabase, collectionId, input);
+}
+
+export async function getActiveRiddlesCountByCollectionId(
+  supabase: SupabaseClient,
+  collectionId: string,
+): Promise<number> {
+  return collectionRiddleRepo.countActiveByCollectionId(supabase, collectionId);
 }
 
 export async function addRiddleToCollection(
