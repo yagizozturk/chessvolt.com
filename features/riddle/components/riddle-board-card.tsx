@@ -65,6 +65,7 @@ export function RiddleBoardCard({
 }: RiddleBoardCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const moveCountLabel = formatMoveCountLabel(riddle.moveSequence.moves);
+  const isShowingVoltScore = showVoltScore && isValidVoltScore(voltScore);
 
   return (
     <TooltipProvider>
@@ -86,7 +87,7 @@ export function RiddleBoardCard({
           <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} coordinates={false} />
         </div>
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
-          {showVoltScore && isValidVoltScore(voltScore) ? (
+          {isShowingVoltScore ? (
             <div className="absolute right-[-32px] bottom-[-32px] z-10">
               <VoltCalculator result={voltScore} chartSize={110} className="w-fit" />
             </div>
@@ -133,7 +134,7 @@ export function RiddleBoardCard({
               <BoardCardMetaRow icon={Tags} label={primaryTheme.title} iconTooltip="Theme" />
             </div>
           ) : null}
-          <div className="mt-auto flex justify-start">
+          <div className={cn("mt-auto flex", isShowingVoltScore ? "justify-start" : "justify-end")}>
             <Button variant="voltCompact" size="xs" className="pointer-events-none w-fit shrink-0">
               Play
             </Button>
