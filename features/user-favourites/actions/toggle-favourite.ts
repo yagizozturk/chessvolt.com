@@ -34,7 +34,6 @@ export async function toggleFavouriteAction(
       revalidatePath("/collection", "layout");
     }
     revalidatePath("/volts");
-    revalidatePath("/user-opening-variants");
   }
 
   return result;
