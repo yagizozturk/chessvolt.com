@@ -1,6 +1,5 @@
 // TODO: Refactor
 export const RIDDLES_THEME_FILTER_ALL = "all";
-export const RANDOM_RIDDLES_COUNT = 4;
 
 export type AttemptedRiddlesSortBy = "lastPlayed" | "accuracy";
 

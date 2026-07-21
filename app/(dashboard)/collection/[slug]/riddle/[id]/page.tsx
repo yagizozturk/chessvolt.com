@@ -6,6 +6,9 @@ type PageProps = {
   params: Promise<{ slug: string; id: string }>;
 };
 
+// ==================================================================
+// Getting collection riddle details for a single riddle
+// ==================================================================
 export default async function CollectionRiddlePage({ params }: PageProps) {
   const { slug, id } = await params;
   const { user, supabase } = await getPublicUser();

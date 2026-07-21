@@ -10,13 +10,6 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import * as collectionRiddleRepo from "@/features/collection-riddles/repository/collection-riddle.repository";
 import type { CollectionRiddle } from "@/features/collection-riddles/types/collection-riddle";
 
-export async function getCollectionRiddlesForCollection(
-  supabase: SupabaseClient,
-  collectionId: string,
-): Promise<CollectionRiddle[]> {
-  return collectionRiddleRepo.findByCollectionId(supabase, collectionId);
-}
-
 export async function getCollectionRiddlesByRiddleId(
   supabase: SupabaseClient,
   riddleId: string,
@@ -37,15 +30,4 @@ export async function addRiddleToCollection(
   input: collectionRiddleRepo.CreateCollectionRiddleInput,
 ): Promise<CollectionRiddle | null> {
   return collectionRiddleRepo.create(supabase, input);
-}
-
-export async function addRiddlesToCollection(
-  supabase: SupabaseClient,
-  inputs: collectionRiddleRepo.CreateCollectionRiddleInput[],
-): Promise<CollectionRiddle[]> {
-  return collectionRiddleRepo.createMany(supabase, inputs);
-}
-
-export async function deleteCollectionRiddlesForRiddle(supabase: SupabaseClient, riddleId: string): Promise<boolean> {
-  return collectionRiddleRepo.removeByRiddleId(supabase, riddleId);
 }

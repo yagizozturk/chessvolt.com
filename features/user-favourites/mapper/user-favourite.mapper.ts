@@ -35,10 +35,6 @@ export function toUserFavourite(db: DbUserFavourite): UserFavourite {
   };
 }
 
-export function toUserFavourites(rows: DbUserFavourite[]): UserFavourite[] {
-  return rows.map(toUserFavourite);
-}
-
 export function toUserFavouriteWithDetails(
   db: DbUserFavouriteWithDetails,
 ): UserFavouriteWithDetails | null {

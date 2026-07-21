@@ -8,7 +8,6 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 import * as profileRepo from "@/features/profile/repository/profile.repository";
-import type { ProfileOnboardingStatus } from "@/features/profile/types/profile-onboarding-status";
 import type { UserProfileData } from "@/features/profile/types/user-profile";
 import { getAvatarUrlFromUser } from "@/features/profile/utilities/user-avatar";
 
@@ -25,13 +24,6 @@ export async function getUserProfile(supabase: SupabaseClient, user: User): Prom
   };
 }
 
-export async function getProfileOnboardingStatus(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<ProfileOnboardingStatus | null> {
-  return profileRepo.getProfileOnboardingStatus(supabase, userId);
-}
-
 export async function completeProfileOnboarding(
   supabase: SupabaseClient,
   userId: string,
@@ -44,18 +36,6 @@ export async function completeProfileOnboarding(
   return profileRepo.completeProfileOnboarding(supabase, userId, input);
 }
 
-export async function getProfileCurrentRating(supabase: SupabaseClient, userId: string): Promise<number | null> {
-  return profileRepo.getProfileCurrentRating(supabase, userId);
-}
-
-export async function updateProfileCurrentRating(
-  supabase: SupabaseClient,
-  userId: string,
-  currentRating: number,
-): Promise<boolean> {
-  return profileRepo.updateProfileCurrentRating(supabase, userId, currentRating);
-}
-
 export async function updateProfileUsername(
   supabase: SupabaseClient,
   userId: string,
@@ -66,8 +46,4 @@ export async function updateProfileUsername(
 
 export async function incrementProfileCurrentRating(supabase: SupabaseClient, userId: string): Promise<number | null> {
   return profileRepo.incrementProfileCurrentRating(supabase, userId, RIDDLE_SOLVE_RATING_INCREMENT);
-}
-
-export async function ensureProfileExists(supabase: SupabaseClient, user: User): Promise<void> {
-  return profileRepo.ensureProfileExists(supabase, user);
 }

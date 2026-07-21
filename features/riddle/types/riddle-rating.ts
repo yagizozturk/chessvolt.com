@@ -89,14 +89,3 @@ export function formatRiddleRatingBandLabel(band: RiddleRatingBand): string {
   if (band === "master") return "Master (2200–2599)";
   return "Grandmaster (2600+)";
 }
-
-export function getRiddleRatingBandRange(
-  band: RiddleRatingBand,
-): { minRating: number; maxRating: number } | null {
-  if (band === "all") return null;
-  if (band === "beginner") return { minRating: MIN_RIDDLE_RATING, maxRating: 1399 };
-  if (band === "intermediate") return { minRating: 1400, maxRating: 1799 };
-  if (band === "advanced") return { minRating: 1800, maxRating: 2199 };
-  if (band === "master") return { minRating: 2200, maxRating: 2599 };
-  return { minRating: 2600, maxRating: MAX_RIDDLE_RATING };
-}

@@ -9,7 +9,6 @@ import {
   type DbUserFavourite,
   type DbUserFavouriteWithDetails,
   toUserFavourite,
-  toUserFavourites,
   toUserFavouritesWithDetails,
 } from "@/features/user-favourites/mapper/user-favourite.mapper";
 import type {
@@ -17,34 +16,6 @@ import type {
   UserFavourite,
   UserFavouriteWithDetails,
 } from "@/features/user-favourites/types/user-favourite";
-
-export async function findById(supabase: SupabaseClient, id: string): Promise<UserFavourite | null> {
-  const { data, error } = await supabase.from("user_favourites").select("*").eq("id", id).maybeSingle();
-
-  if (error) {
-    console.error("user-favourites.repository.findById error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-
-  return toUserFavourite(data as DbUserFavourite);
-}
-
-export async function findByUserId(supabase: SupabaseClient, userId: string): Promise<UserFavourite[]> {
-  const { data, error } = await supabase
-    .from("user_favourites")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("user-favourites.repository.findByUserId error:", error);
-    return [];
-  }
-
-  return toUserFavourites((data ?? []) as DbUserFavourite[]);
-}
 
 export async function findByUserIdWithDetails(
   supabase: SupabaseClient,

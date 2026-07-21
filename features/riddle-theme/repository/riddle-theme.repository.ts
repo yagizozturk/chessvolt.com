@@ -92,29 +92,6 @@ export async function findByRiddleIdsWithTheme(
   return toRiddleThemesWithTheme((data ?? []) as DbRiddleThemeWithTheme[]);
 }
 
-export async function findRiddleIdsByThemeIds(supabase: SupabaseClient, themeIds: string[]): Promise<string[]> {
-  const uniqueThemeIds = [...new Set(themeIds.map((id) => id.trim()).filter(Boolean))];
-  if (uniqueThemeIds.length === 0) return [];
-
-  const { data, error } = await supabase
-    .from("riddle_themes")
-    .select("riddle_id")
-    .in("theme_id", uniqueThemeIds);
-
-  if (error) {
-    console.error("riddle-theme.repository.findRiddleIdsByThemeIds error:", error);
-    return [];
-  }
-
-  return [
-    ...new Set(
-      (data ?? [])
-        .map((row) => row.riddle_id)
-        .filter((id): id is string => typeof id === "string" && id.length > 0),
-    ),
-  ];
-}
-
 export type CreateRiddleThemeInput = {
   riddleId: string;
   themeId: string;

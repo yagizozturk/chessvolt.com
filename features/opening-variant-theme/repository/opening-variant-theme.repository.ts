@@ -59,25 +59,6 @@ export async function findAllWithTheme(supabase: SupabaseClient): Promise<Openin
   return toOpeningVariantThemesWithTheme((data ?? []) as DbOpeningVariantThemeWithTheme[]);
 }
 
-export async function findByOpeningVariantIdWithTheme(
-  supabase: SupabaseClient,
-  openingVariantId: string,
-): Promise<OpeningVariantThemeWithTheme[]> {
-  const { data, error } = await supabase
-    .from("opening_variant_themes")
-    .select(WITH_THEME_SELECT)
-    .eq("opening_variant_id", openingVariantId)
-    .order("weight", { ascending: false })
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("opening-variant-theme.repository.findByOpeningVariantIdWithTheme error:", error);
-    return [];
-  }
-
-  return toOpeningVariantThemesWithTheme((data ?? []) as DbOpeningVariantThemeWithTheme[]);
-}
-
 export type CreateOpeningVariantThemeInput = {
   openingVariantId: string;
   themeId: string;

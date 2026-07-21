@@ -16,22 +16,6 @@ import * as themeRepo from "@/features/theme/repository/theme.repository";
 
 export type PrimaryRiddleTheme = Pick<Theme, "title" | "slug">;
 
-export async function findRiddleIdsByThemeSlugs(
-  supabase: SupabaseClient,
-  themeSlugs: string[],
-): Promise<string[]> {
-  const uniqueSlugs = [...new Set(themeSlugs.map((slug) => slug.trim()).filter(Boolean))];
-  if (uniqueSlugs.length === 0) return [];
-
-  const themes = await themeRepo.findBySlugs(supabase, uniqueSlugs);
-  if (themes.length === 0) return [];
-
-  return riddleThemeRepo.findRiddleIdsByThemeIds(
-    supabase,
-    themes.map((theme) => theme.id),
-  );
-}
-
 export async function getPrimaryThemesByRiddleIds(
   supabase: SupabaseClient,
   riddleIds: string[],
@@ -74,20 +58,6 @@ export async function getThemeSlugsByRiddleIds(
 
 export function withThemeSlugs(riddle: Riddle, themeSlugs: string[]): RiddleWithThemes {
   return { ...riddle, themeSlugs };
-}
-
-export async function attachThemeSlugsToRiddles(
-  supabase: SupabaseClient,
-  riddles: Riddle[],
-): Promise<RiddleWithThemes[]> {
-  if (riddles.length === 0) return [];
-
-  const slugsByRiddleId = await getThemeSlugsByRiddleIds(
-    supabase,
-    riddles.map((riddle) => riddle.id),
-  );
-
-  return riddles.map((riddle) => withThemeSlugs(riddle, slugsByRiddleId.get(riddle.id) ?? []));
 }
 
 export async function syncRiddleThemesFromSlugs(

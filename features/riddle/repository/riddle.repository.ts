@@ -12,20 +12,6 @@ import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { type DbRiddle, toRiddle } from "@/features/riddle/mapper/riddle.mapper";
 import type { Riddle } from "@/features/riddle/types/riddle";
 
-export async function findAll(supabase: SupabaseClient): Promise<Riddle[]> {
-  const { data: riddles, error } = await supabase
-    .from("riddles")
-    .select("*, move_sequences (*)")
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("riddle.repository.findAll error:", error);
-    return [];
-  }
-
-  return (riddles ?? []).map(toRiddle);
-}
-
 export async function findAllActive(supabase: SupabaseClient): Promise<Riddle[]> {
   const { data, error } = await supabase
     .from("riddles")
@@ -135,65 +121,6 @@ export async function findActiveByCollectionId(
   }
 
   return mapCollectionRiddleJoinRows((data ?? []) as DbCollectionRiddleJoinRow[]);
-}
-
-export type FindActiveRiddlesByIdsInput = {
-  ids: string[];
-  limit?: number;
-  minRating?: number;
-  maxRating?: number;
-  orderBy?: "created_at" | "rating";
-};
-
-export async function findActiveByIds(supabase: SupabaseClient, input: FindActiveRiddlesByIdsInput): Promise<Riddle[]> {
-  const uniqueIds = [...new Set(input.ids.map((id) => id.trim()).filter(Boolean))];
-  if (uniqueIds.length === 0) return [];
-
-  let query = supabase.from("riddles").select("*, move_sequences (*)").eq("is_active", true).in("id", uniqueIds);
-
-  if (input.minRating != null && input.maxRating != null) {
-    query = query.not("rating", "is", null).gte("rating", input.minRating).lte("rating", input.maxRating);
-  }
-
-  const orderBy = input.orderBy ?? "created_at";
-  query = query.order(orderBy, { ascending: true }).limit(input.limit ?? 100);
-
-  const { data, error } = await query;
-
-  if (error) {
-    console.error("riddle.repository.findActiveByIds error:", error);
-    return [];
-  }
-
-  return (data ?? []).map(toRiddle);
-}
-
-export type FindActiveRiddlesByRatingRangeInput = {
-  minRating: number;
-  maxRating: number;
-  limit?: number;
-};
-
-export async function findActiveByRatingRange(
-  supabase: SupabaseClient,
-  input: FindActiveRiddlesByRatingRangeInput,
-): Promise<Riddle[]> {
-  const { data, error } = await supabase
-    .from("riddles")
-    .select("*, move_sequences (*)")
-    .eq("is_active", true)
-    .not("rating", "is", null)
-    .gte("rating", input.minRating)
-    .lte("rating", input.maxRating)
-    .order("rating", { ascending: true })
-    .limit(input.limit ?? 100);
-
-  if (error) {
-    console.error("riddle.repository.findActiveByRatingRange error:", error);
-    return [];
-  }
-
-  return (data ?? []).map(toRiddle);
 }
 
 export type CreateRiddleInput = {
