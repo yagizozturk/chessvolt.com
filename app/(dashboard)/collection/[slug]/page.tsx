@@ -1,9 +1,9 @@
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeaderWithImage } from "@/components/page-header";
 import { CollectionRiddlesPagination } from "@/features/collection/components/collection-riddles-pagination";
-import { loadCollectionRiddlesForDisplay } from "@/features/collection/services/collection-riddles-display.service";
+import { getCollectionRiddles } from "@/features/collection/services/collection-riddles.service";
 import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
-import { parseCollectionRiddlesPage } from "@/features/collection/utilities/collection-riddles-pagination.utils";
+import { getPaginationParams } from "@/features/collection/utilities/collection-riddles-pagination.utils";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
 import { getPublicUser } from "@/lib/supabase/auth";
 
@@ -13,16 +13,19 @@ type Props = {
 };
 
 export default async function CollectionDetailPage({ params, searchParams }: Props) {
+  const { user, supabase } = await getPublicUser();
   const { slug } = await params;
   const { page: pageParam } = await searchParams;
-  const page = parseCollectionRiddlesPage(pageParam);
-  const { user, supabase } = await getPublicUser();
+  const page = getPaginationParams(pageParam);
 
-  const { collection, items, pagination } = await loadCollectionRiddlesForDisplay({
+  // ==================================================================
+  // Getting all collection riddles from service
+  // ==================================================================
+  const { collection, items, pagination } = await getCollectionRiddles({
     supabase,
     user,
     slug,
-    page,
+    pagination: page,
   });
 
   return (
@@ -36,7 +39,7 @@ export default async function CollectionDetailPage({ params, searchParams }: Pro
         />
 
         {/* Check If there are collections, if not, empty state */}
-        {pagination?.totalCount === 0 && <EmptyState message="No riddles found in this collection." />}
+        {pagination?.totalRiddleCount === 0 && <EmptyState message="No riddles found in this collection." />}
 
         {/* If there are collections, display them in a grid */}
         <div className="page-container-grid-data-layout">

@@ -13,12 +13,15 @@ export default async function CollectionRiddlePage({ params }: PageProps) {
   const { slug, id } = await params;
   const { user, supabase } = await getPublicUser();
 
-  const pageData = await loadCollectionRiddlePage({
+  // ==================================================================
+  // Service request
+  // ==================================================================
+  const riddleData = await loadCollectionRiddlePage({
     supabase,
     user,
     slug,
     riddleId: id,
   });
 
-  return <RiddleController {...pageData} />;
+  return <RiddleController {...riddleData} />;
 }

@@ -82,6 +82,9 @@ function mapCollectionRiddleJoinRows(rows: DbCollectionRiddleJoinRow[]): Riddle[
     .filter((riddle): riddle is Riddle => riddle != null);
 }
 
+// ================================================================================================
+// Getting total count of active riddles in a collection
+// ================================================================================================
 export async function countActiveByCollectionId(supabase: SupabaseClient, collectionId: string): Promise<number> {
   const { count, error } = await supabase
     .from("collection_riddles")

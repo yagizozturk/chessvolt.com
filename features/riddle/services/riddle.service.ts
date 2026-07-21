@@ -34,7 +34,7 @@ export async function getActiveRiddlesByCollectionId(
   return riddleRepo.findActiveByCollectionId(supabase, collectionId);
 }
 
-export async function countActiveRiddlesByCollectionId(
+export async function getActiveRiddlesCountByCollectionId(
   supabase: SupabaseClient,
   collectionId: string,
 ): Promise<number> {
