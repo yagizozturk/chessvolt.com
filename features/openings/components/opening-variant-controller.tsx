@@ -19,7 +19,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { AddToPracticeButton } from "@/features/user-practice-opening-variant/components/add-to-practice-button";
+import { FavouriteButton } from "@/features/user-favourites/components/favourite-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
@@ -38,8 +38,8 @@ type OpeningVariantControllerProps = {
   variant: OpeningVariant;
   nextVariantId: string | null;
   parentOpeningUrl: string;
-  canAddToPracticeList?: boolean;
-  isInPracticeList?: boolean;
+  canFavourite?: boolean;
+  isFavourited?: boolean;
   voltScore?: VoltScoreResult | null;
 };
 
@@ -47,8 +47,8 @@ export default function OpeningVariantController({
   variant,
   nextVariantId,
   parentOpeningUrl,
-  canAddToPracticeList = false,
-  isInPracticeList = false,
+  canFavourite = false,
+  isFavourited = false,
 }: OpeningVariantControllerProps) {
   const sequenceId = variant.moveSequence.id;
   const [replayKey, setReplayKey] = useState(0);
@@ -129,21 +129,21 @@ export default function OpeningVariantController({
 
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
-    setIsVoltScoreShowing(isInPracticeList);
+    setIsVoltScoreShowing(isFavourited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isInPracticeList, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isFavourited, playLevelUpSound]);
 
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
 
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
-      ...(isInPracticeList ? { voltScore: voltScoreScoring } : {}),
+      ...(isFavourited ? { voltScore: voltScoreScoring } : {}),
     });
 
-    if (isInPracticeList) {
+    if (isFavourited) {
       setCompletionVoltScore(voltScoreResult);
       setIsVoltScoreShowing(false);
     }
@@ -275,10 +275,9 @@ export default function OpeningVariantController({
             </div>
             <div className="flex items-center gap-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
             <div>
-              {/* Add to practice list
-              {canAddToPracticeList ? (
-                <AddToPracticeButton openingVariantId={variant.id} initialInPracticeList={isInPracticeList} />
-              ) : null}*/}
+              {canFavourite ? (
+                <FavouriteButton openingVariantId={variant.id} initialIsFavourited={isFavourited} />
+              ) : null}
             </div>
           </div>
           <GoalViewer

@@ -10,7 +10,7 @@ import {
   getOpeningVariantById,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
-import { getUserPracticeOpeningVariantByUserAndOpeningVariant } from "@/features/user-practice-opening-variant/services/user-practice-opening-variant.service";
+import { getUserFavouriteByUserAndOpeningVariant } from "@/features/user-favourites/services/user-favourite.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
@@ -55,13 +55,13 @@ export default async function OpeningVariantPage({ params }: Params) {
   const opening = await getOpeningById(supabase, variant.openingId);
   const parentOpeningUrl = opening?.slug && opening?.id ? `/openings/${opening.slug}/${opening.id}` : "/openings";
 
-  const practiceRow = user
-    ? await getUserPracticeOpeningVariantByUserAndOpeningVariant(supabase, user.id, variant.id)
+  const favouriteRow = user
+    ? await getUserFavouriteByUserAndOpeningVariant(supabase, user.id, variant.id)
     : null;
-  const isInPracticeList = Boolean(practiceRow?.isActive);
+  const isFavourited = Boolean(favouriteRow);
 
   const voltScore =
-    user && isInPracticeList
+    user && isFavourited
       ? calculateVoltScore({
           attempts: await attemptService.getAttemptsByUserAndSequence(
             supabase,
@@ -79,8 +79,8 @@ export default async function OpeningVariantPage({ params }: Params) {
         variant={variant}
         nextVariantId={nextVariant?.id ?? null}
         parentOpeningUrl={parentOpeningUrl}
-        canAddToPracticeList={Boolean(user)}
-        isInPracticeList={isInPracticeList}
+        canFavourite={Boolean(user)}
+        isFavourited={isFavourited}
         voltScore={voltScore}
       />
     </>

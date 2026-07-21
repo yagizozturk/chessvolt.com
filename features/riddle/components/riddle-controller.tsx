@@ -21,6 +21,7 @@ import { incrementCurrentRatingAction } from "@/features/profile/actions/increme
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
+import { FavouriteButton } from "@/features/user-favourites/components/favourite-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
@@ -38,7 +39,8 @@ type RiddleControllerProps = {
   riddle: Riddle;
   nextRiddleUrl?: string | null;
   parentCollectionUrl?: string;
-  isUserLoggedIn?: boolean; // Checks for the persist events, add to collection button visibility
+  isUserLoggedIn?: boolean; // Checks for the persist events, favourite button visibility
+  isFavourited?: boolean;
 };
 
 export default function RiddleController({
@@ -46,6 +48,7 @@ export default function RiddleController({
   nextRiddleUrl = null,
   parentCollectionUrl = "/",
   isUserLoggedIn = false,
+  isFavourited = false,
 }: RiddleControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
@@ -349,7 +352,11 @@ export default function RiddleController({
               />
               Riddles
             </div>
-            <div />
+            <div>
+              {isUserLoggedIn ? (
+                <FavouriteButton riddleId={riddle.id} initialIsFavourited={isFavourited} />
+              ) : null}
+            </div>
           </div>
 
           {/* Goal Viewer */}

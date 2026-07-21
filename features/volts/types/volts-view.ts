@@ -1,4 +1,4 @@
-export const VOLTS_VIEW_VALUES = ["openings"] as const;
+export const VOLTS_VIEW_VALUES = ["openings", "riddles"] as const;
 
 export type VoltsView = (typeof VOLTS_VIEW_VALUES)[number];
 
@@ -6,6 +6,7 @@ export const DEFAULT_VOLTS_VIEW: VoltsView = "openings";
 
 export const VOLTS_VIEW_OPTIONS = [
   { label: "Opening variants", value: "openings" as const, href: "/volts?view=openings" },
+  { label: "Riddles", value: "riddles" as const, href: "/volts?view=riddles" },
 ] as const;
 
 export function parseVoltsView(value: string | undefined): VoltsView {

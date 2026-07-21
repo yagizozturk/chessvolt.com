@@ -17,12 +17,14 @@ import {
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { buildRiddlePath, buildStandaloneRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
 import { getParentCollectionUrl } from "@/features/riddle/utilities/get-parent-collection-url";
+import { getUserFavouriteByUserAndRiddle } from "@/features/user-favourites/services/user-favourite.service";
 
 export type RiddlePageData = {
   riddle: Riddle;
   nextRiddleUrl: string | null;
   parentCollectionUrl: string;
   isUserLoggedIn: boolean;
+  isFavourited: boolean;
 };
 
 type LoadCollectionRiddlePageInput = {
@@ -78,11 +80,16 @@ export async function loadCollectionRiddlePage(
   const riddles = await getActiveRiddlesByCollectionId(supabase, collection.id);
   const nextRiddleUrl = getNextRiddleUrl(riddles, riddle.id, (id) => buildRiddlePath(id, { collectionSlug: slug }));
 
+  const favouriteRow = user
+    ? await getUserFavouriteByUserAndRiddle(supabase, user.id, riddle.id)
+    : null;
+
   return {
     riddle,
     nextRiddleUrl,
     parentCollectionUrl: getParentCollectionUrl(collection),
     isUserLoggedIn: Boolean(user),
+    isFavourited: Boolean(favouriteRow),
   };
 }
 
@@ -98,10 +105,16 @@ export async function loadStandaloneRiddlePage(
 
   const riddles = await getAllActiveRiddles(supabase);
   const nextRiddleUrl = getNextRiddleUrl(riddles, riddle.id, buildStandaloneRiddlePath);
+
+  const favouriteRow = user
+    ? await getUserFavouriteByUserAndRiddle(supabase, user.id, riddle.id)
+    : null;
+
   return {
     riddle,
     nextRiddleUrl,
     parentCollectionUrl: "/riddles",
     isUserLoggedIn: Boolean(user),
+    isFavourited: Boolean(favouriteRow),
   };
 }
