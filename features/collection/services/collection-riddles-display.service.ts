@@ -5,12 +5,9 @@ import { notFound } from "next/navigation";
 import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
-import { getCollectionBySlugAndType,
-  getUserCustomCollectionBySlug,
-} from "@/features/collection/services/collection.service";
+import { getCollectionBySlug } from "@/features/collection/services/collection.service";
 import { COLLECTION_RIDDLES_PAGE_SIZE } from "@/features/collection/constants/collection-riddles-pagination.constants";
 import type { Collection } from "@/features/collection/types/collection";
-import type { CollectionType } from "@/features/collection/types/collection-type";
 import {
   clampCollectionRiddlesPage,
   getCollectionRiddlesTotalPages,
@@ -57,35 +54,25 @@ type LoadCollectionRiddlesForDisplayInput = {
   supabase: SupabaseClient;
   user: User | null;
   slug: string;
-  collectionType: CollectionType;
   page?: number;
 };
 
 async function resolveCollection(
   supabase: SupabaseClient,
-  user: User | null,
   slug: string,
-  collectionType: CollectionType,
 ): Promise<Collection | null> {
-  if (collectionType === "custom") {
-    if (!user) return null;
-    return getUserCustomCollectionBySlug(supabase, user.id, slug);
-  }
-
-  return getCollectionBySlugAndType(supabase, slug, collectionType);
+  return getCollectionBySlug(supabase, slug);
 }
 
 export async function loadCollectionRiddlesForDisplay(
   input: LoadCollectionRiddlesForDisplayInput,
 ): Promise<CollectionRiddlesDisplayData> {
-  const { supabase, user, slug, collectionType, page } = input;
-  // Volt is only for user-owned (custom) collections — not catalog /collection pages.
-  const includeVoltScore = collectionType === "custom";
+  const { supabase, user, slug, page } = input;
 
   // ================================================================================================
   // Getting collection informatin by its slug(params)
   // ================================================================================================
-  const collection = await resolveCollection(supabase, user, slug, collectionType);
+  const collection = await resolveCollection(supabase, slug);
   if (!collection || !collection.isActive) {
     notFound();
   }
@@ -172,7 +159,7 @@ export async function loadCollectionRiddlesForDisplay(
   );
 
   const voltScoresBySequenceId =
-    includeVoltScore && user && riddleSequenceIds.length > 0
+    user && riddleSequenceIds.length > 0
       ? getVoltScoresBySequenceId(
           riddleAttempts,
           paginatedRiddles.map((riddle) => ({
@@ -196,10 +183,10 @@ export async function loadCollectionRiddlesForDisplay(
       return {
         riddle,
         game,
-        href: buildRiddlePath(riddle.id, { collectionSlug: collection.slug, collectionType }),
+        href: buildRiddlePath(riddle.id, { collectionSlug: collection.slug }),
         displayFen: riddle.moveSequence.displayFen,
         accuracyPercent: attemptStats.accuracyPercent,
-        voltScore: includeVoltScore ? (voltScoresBySequenceId[riddle.moveSequence.id] ?? null) : null,
+        voltScore: voltScoresBySequenceId[riddle.moveSequence.id] ?? null,
         primaryTheme: primaryThemesByRiddleId.get(riddle.id) ?? null,
       };
     });

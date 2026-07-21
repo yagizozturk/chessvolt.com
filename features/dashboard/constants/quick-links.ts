@@ -17,10 +17,4 @@ export const QUICK_LINKS = [
     href: "/collection",
     icon: "/images/icons/icon-library-tr.png",
   },
-  {
-    title: "My Collections",
-    description: "Continue your custom practice lists.",
-    href: "/user-collection",
-    icon: "/images/icons/icon-book-collection.png",
-  },
 ] as const;

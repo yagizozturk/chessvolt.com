@@ -2,12 +2,10 @@
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/page-header";
-import { getUserCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
 import { DashboardQuickLink } from "@/features/dashboard/components/dashboard-quick-link";
 import { QUICK_LINKS } from "@/features/dashboard/constants/quick-links";
 import { getUserProfile } from "@/features/profile/services/profile.service";
 import { getDisplayName } from "@/features/profile/utilities/user-avatar";
-import { UserCollectionCard } from "@/features/user-collection/components/user-collection-card";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 // ================================================================================================
@@ -24,10 +22,7 @@ export default async function Page() {
   // ================================================================================================
   // Getting user profile and user collections
   // ================================================================================================
-  const [profile, userCollections] = await Promise.all([
-    getUserProfile(supabase, user),
-    getUserCollectionsWithRiddleCountAndThemes(supabase, user.id),
-  ]);
+  const profile = await getUserProfile(supabase, user);
 
   // ================================================================================================
   // If user profile is not found, return an error message
@@ -43,10 +38,9 @@ export default async function Page() {
   }
 
   // ================================================================================================
-  // Getting display name and recent collections
+  // Getting display name
   // ================================================================================================
   const displayName = getDisplayName(profile);
-  const recentCollections = userCollections.slice(0, 2);
 
   return (
     <div className="container mx-auto max-w-6xl px-6 pt-4 pb-10 md:pt-10">
@@ -64,22 +58,6 @@ export default async function Page() {
           ))}
         </section>
 
-        {/* Recent collections */}
-        {recentCollections.length > 0 ? (
-          <section className="flex flex-col gap-8">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <h2 className="sub-section-header-title">Your collections</h2>
-                <p className="text-muted-foreground text-sm md:text-base">Jump back into a recent practice list.</p>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {recentCollections.map((collection) => (
-                <UserCollectionCard key={collection.id} collection={collection} />
-              ))}
-            </div>
-          </section>
-        ) : null}
       </div>
     </div>
   );

@@ -7,13 +7,9 @@ import type {
   CollectionWithRiddleCount,
   CollectionWithRiddleCountAndThemes,
 } from "@/features/collection/types/collection";
-import type { CollectionType } from "@/features/collection/types/collection-type";
 import type {
   CreateCollectionPayload,
-  CreateCustomCollectionForUserPayload,
-  DeleteCustomCollectionForUserPayload,
   UpdateCollectionPayload,
-  UpdateCustomCollectionForUserPayload,
 } from "@/features/collection/types/collection-payload";
 
 // ============================================================================
@@ -38,14 +34,10 @@ export async function getCollectionById(supabase: SupabaseClient, id: string): P
 }
 
 // ============================================================================
-// Getting collection by Slug and collection type
+// Getting collection by Slug
 // ============================================================================
-export async function getCollectionBySlugAndType(
-  supabase: SupabaseClient,
-  slug: string,
-  collectionType: CollectionType,
-): Promise<Collection | null> {
-  return collectionRepo.findCollectionBySlugAndType(supabase, slug, collectionType);
+export async function getCollectionBySlug(supabase: SupabaseClient, slug: string): Promise<Collection | null> {
+  return collectionRepo.findCollectionBySlug(supabase, slug);
 }
 
 // ============================================================================
@@ -55,34 +47,6 @@ export async function getActiveCollectionsWithRiddleCountAndThemes(
   supabase: SupabaseClient,
 ): Promise<CollectionWithRiddleCountAndThemes[]> {
   return collectionRepo.findAllActiveCollectionsWithRiddleCountAndThemes(supabase);
-}
-
-// ============================================================================
-// Getting user collections by User Id
-// ============================================================================
-export async function getUserCollections(supabase: SupabaseClient, userId: string): Promise<Collection[]> {
-  return collectionRepo.findUserCollectionByUserId(supabase, userId);
-}
-
-// ============================================================================
-// Getting user custom collection by slug for a user
-// ============================================================================
-export async function getUserCustomCollectionBySlug(
-  supabase: SupabaseClient,
-  userId: string,
-  slug: string,
-): Promise<Collection | null> {
-  return collectionRepo.findUserCustomCollectionBySlug(supabase, userId, slug);
-}
-
-// ============================================================================
-// Getting user created collections by User Id with Riddle Count and Themes
-// ============================================================================
-export async function getUserCollectionsWithRiddleCountAndThemes(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<CollectionWithRiddleCountAndThemes[]> {
-  return collectionRepo.findUserCustomCollectionsByUserIdWithRiddleCountAndThemes(supabase, userId);
 }
 
 // ============================================================================
@@ -113,32 +77,3 @@ export async function deleteCollection(supabase: SupabaseClient, id: string): Pr
   return collectionRepo.removeCollection(supabase, id);
 }
 
-// ============================================================================
-// Creating a user custom collection
-// ============================================================================
-export async function createUserCustomCollection(
-  supabase: SupabaseClient,
-  payload: CreateCustomCollectionForUserPayload,
-): Promise<Collection | null> {
-  return collectionRepo.createUserCustomCollection(supabase, payload);
-}
-
-// ============================================================================
-// Updating a user custom collection
-// ============================================================================
-export async function updateUserCustomCollection(
-  supabase: SupabaseClient,
-  payload: UpdateCustomCollectionForUserPayload,
-): Promise<Collection | null> {
-  return collectionRepo.updateUserCustomCollection(supabase, payload);
-}
-
-// ============================================================================
-// Deleting a user custom collection
-// ============================================================================
-export async function deleteUserCustomCollection(
-  supabase: SupabaseClient,
-  payload: DeleteCustomCollectionForUserPayload,
-): Promise<boolean> {
-  return collectionRepo.removeUserCustomCollection(supabase, payload);
-}

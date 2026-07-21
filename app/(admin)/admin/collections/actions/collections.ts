@@ -12,10 +12,6 @@ import {
 import { DEFAULT_COLLECTION_DIFFICULTY } from "@/features/collection/constants/collection-difficulty.constants";
 import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
 import { parseCollectionDifficulty } from "@/features/collection/utilities/collection-difficulty.utils";
-import {
-  parseCollectionType,
-  type CollectionType,
-} from "@/features/collection/types/collection-type";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 function parseSortOrder(raw: FormDataEntryValue | null): number {
@@ -31,10 +27,6 @@ function parseDifficultyFromForm(formData: FormData): CollectionDifficulty {
   return parseCollectionDifficulty(formData.get("difficulty")) ?? DEFAULT_COLLECTION_DIFFICULTY;
 }
 
-function parseCollectionTypeFromForm(formData: FormData): CollectionType {
-  return parseCollectionType(formData.get("collectionType")) ?? "admin";
-}
-
 export async function createCollectionAction(formData: FormData) {
   const { supabase, user } = await getAdminUser();
 
@@ -44,7 +36,6 @@ export async function createCollectionAction(formData: FormData) {
   const coverImageUrl = (formData.get("coverImageUrl") as string)?.trim();
   const coverImageColor = (formData.get("coverImageColor") as string)?.trim();
   const difficulty = parseDifficultyFromForm(formData);
-  const collectionType = parseCollectionTypeFromForm(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
 
@@ -59,7 +50,6 @@ export async function createCollectionAction(formData: FormData) {
     coverImageUrl,
     coverImageColor,
     difficulty,
-    collectionType,
     sortOrder,
     isActive,
     createdBy: user.id,
@@ -96,7 +86,6 @@ export async function updateCollectionAction(
   const coverImageUrl = (formData.get("coverImageUrl") as string)?.trim();
   const coverImageColor = (formData.get("coverImageColor") as string)?.trim();
   const difficulty = parseDifficultyFromForm(formData);
-  const collectionType = parseCollectionTypeFromForm(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
 
@@ -111,7 +100,6 @@ export async function updateCollectionAction(
     coverImageUrl,
     coverImageColor,
     difficulty,
-    collectionType,
     sortOrder,
     isActive,
   };

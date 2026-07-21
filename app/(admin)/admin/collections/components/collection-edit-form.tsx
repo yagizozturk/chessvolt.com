@@ -8,14 +8,12 @@ import {
 } from "@/app/(admin)/admin/collections/actions/collections";
 import { DEFAULT_COLLECTION_COVER_COLOR } from "@/app/(admin)/admin/collections/constants/cover-images";
 import { CollectionDifficultySelect } from "@/app/(admin)/admin/collections/components/collection-difficulty-select";
-import { CollectionTypeSelect } from "@/app/(admin)/admin/collections/components/collection-type-select";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import type { Collection } from "@/features/collection/types/collection";
 import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
-import type { CollectionType } from "@/features/collection/types/collection-type";
 
 type Props = {
   collection: Collection;
@@ -27,7 +25,6 @@ export function CollectionEditForm({ collection }: Props) {
   const [state, formAction, isPending] = useActionState(updateCollectionAction, initialState);
   const [isActive, setIsActive] = useState(collection.isActive);
   const [difficulty, setDifficulty] = useState<CollectionDifficulty>(collection.difficulty);
-  const [collectionType, setCollectionType] = useState<CollectionType>(collection.collectionType);
 
   return (
     <form action={formAction} className="space-y-4">
@@ -56,7 +53,6 @@ export function CollectionEditForm({ collection }: Props) {
           />
         </Field>
         <CollectionDifficultySelect value={difficulty} onChange={setDifficulty} />
-        <CollectionTypeSelect value={collectionType} onChange={setCollectionType} />
         <Field>
           <FieldLabel>Cover image</FieldLabel>
           <Input

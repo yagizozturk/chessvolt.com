@@ -9,13 +9,9 @@ import type {
   CollectionWithRiddleCountAndThemes,
 } from "@/features/collection/types/collection";
 import { DEFAULT_COLLECTION_DIFFICULTY } from "@/features/collection/constants/collection-difficulty.constants";
-import type { CollectionType } from "@/features/collection/types/collection-type";
 import type {
   CreateCollectionPayload,
-  CreateCustomCollectionForUserPayload,
-  DeleteCustomCollectionForUserPayload,
   UpdateCollectionPayload,
-  UpdateCustomCollectionForUserPayload,
 } from "@/features/collection/types/collection-payload";
 import { slugify } from "@/lib/utils/slugify";
 
@@ -39,53 +35,6 @@ export async function findAllCollections(supabase: SupabaseClient): Promise<Coll
   }
 
   return (data ?? []).map(toCollection);
-}
-
-// ============================================================================
-// Finding user collections by User Id
-// ============================================================================
-export async function findUserCollectionByUserId(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<Collection[]> {
-  const { data, error } = await supabase
-    .from("collections")
-    .select("*")
-    .eq("created_by", userId)
-    .eq("collection_type", "custom")
-    .order("updated_at", { ascending: false });
-
-  if (error) {
-    console.error("collection.repository.findUserCollectionByUserId error:", error);
-    return [];
-  }
-
-  return (data ?? []).map(toCollection);
-}
-
-// ============================================================================
-// Finding user custom collection by slug for a user
-// ============================================================================
-export async function findUserCustomCollectionBySlug(
-  supabase: SupabaseClient,
-  userId: string,
-  slug: string,
-): Promise<Collection | null> {
-  const { data, error } = await supabase
-    .from("collections")
-    .select("*")
-    .eq("created_by", userId)
-    .eq("collection_type", "custom")
-    .eq("slug", slug)
-    .maybeSingle();
-
-  if (error) {
-    console.error("collection.repository.findUserCustomCollectionBySlug error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-  return toCollection(data);
 }
 
 const COLLECTION_WITH_RIDDLE_COUNT_AND_THEMES_SELECT =
@@ -121,34 +70,11 @@ export async function findAllActiveCollectionsWithRiddleCountAndThemes(
     .from("collections")
     .select(COLLECTION_WITH_RIDDLE_COUNT_AND_THEMES_SELECT)
     .eq("is_active", true)
-    .eq("collection_type", "admin")
     .order("sort_order", { ascending: true })
     .order("title", { ascending: true });
 
   if (error) {
     console.error("collection.repository.findAllActiveCollectionsWithRiddleCountAndThemes error:", error);
-    return [];
-  }
-
-  return (data ?? []).map((row) => toCollectionWithRiddleCountAndThemes(row));
-}
-
-// ============================================================================
-// Finding user custom collections by User Id with Riddle Count and Themes
-// ============================================================================
-export async function findUserCustomCollectionsByUserIdWithRiddleCountAndThemes(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<CollectionWithRiddleCountAndThemes[]> {
-  const { data, error } = await supabase
-    .from("collections")
-    .select(COLLECTION_WITH_RIDDLE_COUNT_AND_THEMES_SELECT)
-    .eq("created_by", userId)
-    .eq("collection_type", "custom")
-    .order("updated_at", { ascending: false });
-
-  if (error) {
-    console.error("collection.repository.findUserCustomCollectionsByUserIdWithRiddleCountAndThemes error:", error);
     return [];
   }
 
@@ -172,22 +98,17 @@ export async function findCollectionById(supabase: SupabaseClient, id: string): 
 }
 
 // ============================================================================
-// Finding collection by Slug and collection type
+// Finding collection by Slug
 // ============================================================================
-export async function findCollectionBySlugAndType(
-  supabase: SupabaseClient,
-  slug: string,
-  collectionType: CollectionType,
-): Promise<Collection | null> {
+export async function findCollectionBySlug(supabase: SupabaseClient, slug: string): Promise<Collection | null> {
   const { data, error } = await supabase
     .from("collections")
     .select("*")
     .eq("slug", slug)
-    .eq("collection_type", collectionType)
     .maybeSingle();
 
   if (error) {
-    console.error("collection.repository.findCollectionBySlugAndType error:", error);
+    console.error("collection.repository.findCollectionBySlug error:", error);
     return null;
   }
 
@@ -212,7 +133,6 @@ export async function createCollection(
       cover_image_url: payload.coverImageUrl,
       cover_image_color: payload.coverImageColor,
       difficulty: payload.difficulty ?? DEFAULT_COLLECTION_DIFFICULTY,
-      collection_type: payload.collectionType ?? "admin",
       sort_order: payload.sortOrder ?? 0,
       is_active: payload.isActive ?? true,
       created_by: payload.createdBy ?? null,
@@ -243,7 +163,6 @@ export async function updateCollection(
   if (payload.coverImageUrl !== undefined) updates.cover_image_url = payload.coverImageUrl;
   if (payload.coverImageColor !== undefined) updates.cover_image_color = payload.coverImageColor;
   if (payload.difficulty !== undefined) updates.difficulty = payload.difficulty;
-  if (payload.collectionType !== undefined) updates.collection_type = payload.collectionType;
   if (payload.sortOrder !== undefined) updates.sort_order = payload.sortOrder;
   if (payload.isActive !== undefined) updates.is_active = payload.isActive;
 
@@ -271,88 +190,4 @@ export async function removeCollection(supabase: SupabaseClient, id: string): Pr
   return true;
 }
 
-// ============================================================================
-// Creating a user custom collection
-// ============================================================================
-export async function createUserCustomCollection(
-  supabase: SupabaseClient,
-  payload: CreateCustomCollectionForUserPayload,
-): Promise<Collection | null> {
-  const description = payload.description?.trim() ?? "";
 
-  const { data, error } = await supabase
-    .from("collections")
-    .insert({
-      title: payload.title.trim(),
-      slug: payload.slug?.trim() || slugFromTitle(payload.title),
-      description,
-      cover_image_url: payload.coverImageUrl,
-      cover_image_color: payload.coverImageColor,
-      difficulty: null,
-      collection_type: "custom",
-      is_active: true,
-      created_by: payload.createdBy,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("collection.repository.createUserCustomCollection error:", error);
-    return null;
-  }
-
-  return toCollection(data);
-}
-
-// ============================================================================
-// Updating a user custom collection
-// ============================================================================
-export async function updateUserCustomCollection(
-  supabase: SupabaseClient,
-  payload: UpdateCustomCollectionForUserPayload,
-): Promise<Collection | null> {
-  const description = payload.description?.trim() ?? "";
-
-  const { data, error } = await supabase
-    .from("collections")
-    .update({
-      title: payload.title.trim(),
-      slug: slugFromTitle(payload.title),
-      description,
-    })
-    .eq("id", payload.id)
-    .eq("created_by", payload.userId)
-    .eq("collection_type", "custom")
-    .select()
-    .maybeSingle();
-
-  if (error) {
-    console.error("collection.repository.updateUserCustomCollection error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-  return toCollection(data);
-}
-
-// ============================================================================
-// Deleting a user custom collection
-// ============================================================================
-export async function removeUserCustomCollection(
-  supabase: SupabaseClient,
-  payload: DeleteCustomCollectionForUserPayload,
-): Promise<boolean> {
-  const { error, count } = await supabase
-    .from("collections")
-    .delete({ count: "exact" })
-    .eq("id", payload.id)
-    .eq("created_by", payload.userId)
-    .eq("collection_type", "custom");
-
-  if (error) {
-    console.error("collection.repository.removeUserCustomCollection error:", error);
-    return false;
-  }
-
-  return Boolean((count ?? 0) > 0);
-}

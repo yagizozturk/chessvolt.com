@@ -1,7 +1,6 @@
 // TODO: Refactor
 import type { CollectionThemeWithTheme } from "@/features/collection-theme/types/collection-theme";
 import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
-import type { CollectionType } from "@/features/collection/types/collection-type";
 
 export type Collection = {
   id: string;
@@ -11,7 +10,6 @@ export type Collection = {
   coverImageUrl: string;
   coverImageColor: string;
   difficulty: CollectionDifficulty;
-  collectionType: CollectionType;
   sortOrder: number;
   isActive: boolean;
   createdBy: string | null;

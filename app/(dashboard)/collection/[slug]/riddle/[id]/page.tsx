@@ -15,7 +15,6 @@ export default async function CollectionRiddlePage({ params }: PageProps) {
     user,
     slug,
     riddleId: id,
-    collectionType: "admin",
   });
 
   return <RiddleController {...pageData} />;

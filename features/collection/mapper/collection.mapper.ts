@@ -3,7 +3,6 @@ import type { Collection, CollectionWithRiddleCount } from "@/features/collectio
 import { DEFAULT_COLLECTION_DIFFICULTY } from "@/features/collection/constants/collection-difficulty.constants";
 import type { CollectionDifficulty } from "@/features/collection/types/collection-difficulty";
 import { parseCollectionDifficulty } from "@/features/collection/utilities/collection-difficulty.utils";
-import { type CollectionType, parseCollectionType } from "@/features/collection/types/collection-type";
 
 // ============================================================================
 // Row shape returned by Supabase `collections` queries (`select("*")`). Uses snake_case column names.
@@ -16,7 +15,6 @@ export type DbCollection = {
   cover_image_url: string;
   cover_image_color: string;
   difficulty: CollectionDifficulty;
-  collection_type: CollectionType;
   sort_order: number;
   is_active: boolean;
   created_by: string | null;
@@ -46,7 +44,6 @@ export function toCollection(db: DbCollection): Collection {
     coverImageUrl: db.cover_image_url,
     coverImageColor: db.cover_image_color,
     difficulty: parseCollectionDifficulty(db.difficulty) ?? DEFAULT_COLLECTION_DIFFICULTY,
-    collectionType: parseCollectionType(db.collection_type) ?? "admin",
     sortOrder: db.sort_order,
     isActive: db.is_active,
     createdBy: db.created_by,

@@ -22,7 +22,6 @@ export default async function CollectionDetailPage({ params, searchParams }: Pro
     supabase,
     user,
     slug,
-    collectionType: "admin",
     page,
   });
 

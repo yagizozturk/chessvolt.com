@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import type { CollectionWithRiddleCount } from "@/features/collection/types/collection";
 import { formatCollectionDifficultyLabel } from "@/features/collection/utilities/collection-difficulty.utils";
 import { formatCollectionRiddleCount } from "@/features/collection/utilities/collection-riddle-count-format.utils";
-import { formatCollectionTypeLabel } from "@/features/collection/types/collection-type";
 
 type Props = {
   collections: CollectionWithRiddleCount[];
@@ -44,9 +43,6 @@ export function CollectionsList({ collections }: Props) {
           <p className="text-muted-foreground text-xs">
             {formatCollectionDifficultyLabel(collection.difficulty)} · {formatCollectionRiddleCount(collection.riddleCount)} ·
             /{collection.slug}
-          </p>
-          <p className="text-muted-foreground text-xs">
-            Type: {formatCollectionTypeLabel(collection.collectionType)}
           </p>
           <div className="mt-auto flex flex-wrap gap-2">
             <Link href={`/admin/collections/edit/${collection.id}`}>

@@ -18,10 +18,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
-import {
-  AddToUserCollectionPicker,
-  type UserCollectionProps,
-} from "@/features/riddle/components/add-to-user-collection-picker";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
@@ -43,8 +39,6 @@ type RiddleControllerProps = {
   nextRiddleUrl?: string | null;
   parentCollectionUrl?: string;
   isUserLoggedIn?: boolean; // Checks for the persist events, add to collection button visibility
-  userCollections?: UserCollectionProps[]; // Getting user collections to show in a window and add riddles.
-  userCollectionIdsHasCurrentRiddle?: string[]; // Already saved riddles in collections. Not to do it twice.
 };
 
 export default function RiddleController({
@@ -52,8 +46,6 @@ export default function RiddleController({
   nextRiddleUrl = null,
   parentCollectionUrl = "/",
   isUserLoggedIn = false,
-  userCollections = [],
-  userCollectionIdsHasCurrentRiddle = [],
 }: RiddleControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
@@ -304,15 +296,6 @@ export default function RiddleController({
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
-        footerExtra={
-          isUserLoggedIn && userCollections.length > 0 ? (
-            <AddToUserCollectionPicker
-              riddleId={riddle.id}
-              collections={userCollections}
-              savedCollectionIds={userCollectionIdsHasCurrentRiddle}
-            />
-          ) : null
-        }
       />
 
       {/* Confetti */}
@@ -366,15 +349,7 @@ export default function RiddleController({
               />
               Riddles
             </div>
-            <div>
-              {isUserLoggedIn && userCollections.length > 0 ? (
-                <AddToUserCollectionPicker
-                  riddleId={riddle.id}
-                  collections={userCollections}
-                  savedCollectionIds={userCollectionIdsHasCurrentRiddle}
-                />
-              ) : null}
-            </div>
+            <div />
           </div>
 
           {/* Goal Viewer */}
