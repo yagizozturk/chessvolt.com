@@ -45,9 +45,9 @@ const profileSection = {
 const data = {
   navMain: [
     {
-      title: "Volts",
-      url: "/volts",
-      icon: "/images/icons/icon-volt.png",
+      title: "Favorites",
+      url: "/favorites",
+      icon: "/images/icons/icon-favorite.png",
     },
     {
       title: "Openings",

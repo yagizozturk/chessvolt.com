@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, Eye } from "lucide-react";
+import { Bot, ChevronLeft, Eye, Swords } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -13,9 +13,8 @@ import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
-import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
-import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
@@ -121,6 +120,7 @@ export default function RiddleController({
     setCompletionStats(null);
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(false);
+    setBoardMode("practice");
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -147,7 +147,7 @@ export default function RiddleController({
     // Setting the completion stats for UI Dialog show
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
-    setIsVoltScoreShowing(isUserLoggedIn);
+    setIsVoltScoreShowing(isFavourited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
 
@@ -161,7 +161,7 @@ export default function RiddleController({
 
       const voltScoreResult = await updateAttemptResults("completed", {
         ...attemptPayload,
-        ...(isUserLoggedIn ? { voltScore } : {}),
+        ...(isFavourited ? { voltScore } : {}),
       });
 
       if (isUserLoggedIn) {
@@ -169,7 +169,7 @@ export default function RiddleController({
       }
 
       // If the user is still on this page and didn't click any button while waiting, update states.
-      if (isMounted) {
+      if (isMounted && isFavourited) {
         setCompletionVoltScore(voltScoreResult);
         setIsVoltScoreShowing(false);
       }
@@ -186,6 +186,7 @@ export default function RiddleController({
     expectedCurrentCorrectMoveUci,
     getTimeFromStartMs,
     isCompleted,
+    isFavourited,
     isUserLoggedIn,
     playLevelUpSound,
     recordEvent,
@@ -359,6 +360,23 @@ export default function RiddleController({
             </div>
           </div>
 
+          <Tabs
+            value={boardMode}
+            onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
+            aria-label="Board mode"
+          >
+            <TabsList variant="green" className="w-full rounded-lg">
+              <TabsTrigger value="practice">
+                <Swords />
+                Practice
+              </TabsTrigger>
+              <TabsTrigger value="learn">
+                <Bot />
+                Coach Me
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
           {/* Goal Viewer */}
           <GoalViewer
             goals={sortedGoals}
@@ -368,17 +386,6 @@ export default function RiddleController({
             mainStrategy={mainIdea}
             isFirstPly={isFirstPly}
           />
-
-          {/* Mode Change */}
-          <div className="flex items-center justify-center gap-3">
-            <Switch
-              id="riddle-board-mode"
-              checked={boardMode === "learn"}
-              onCheckedChange={(checked) => setBoardMode(checked ? "learn" : "practice")}
-              aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
-            />
-            <Label htmlFor="riddle-board-mode">Learn</Label>
-          </div>
 
           {/* Footer Buttons */}
           <div className="mt-auto">
@@ -391,7 +398,7 @@ export default function RiddleController({
                   className="w-full min-w-0 flex-1"
                 >
                   <Eye data-icon="inline-start" />
-                  Need a Help?
+                  Show the move
                 </Button>
               ) : (
                 <Button variant="volt" onClick={handleContinueClick} disabled={isPending} className="min-w-0 flex-1">

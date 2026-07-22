@@ -33,7 +33,7 @@ export async function toggleFavouriteAction(
       revalidatePath(`/riddles/${target.riddleId}`);
       revalidatePath("/collection", "layout");
     }
-    revalidatePath("/volts");
+    revalidatePath("/favorites");
   }
 
   return result;

@@ -3,13 +3,13 @@
 import { useRouter } from "next/navigation";
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { VOLTS_VIEW_OPTIONS, type VoltsView } from "@/features/volts/types/volts-view";
+import { FAVORITES_VIEW_OPTIONS, type FavoritesView } from "@/features/favorites/types/favorites-view";
 
-type VoltsViewFilterProps = {
-  view: VoltsView;
+type FavoritesViewFilterProps = {
+  view: FavoritesView;
 };
 
-export function VoltsViewFilter({ view }: VoltsViewFilterProps) {
+export function FavoritesViewFilter({ view }: FavoritesViewFilterProps) {
   const router = useRouter();
 
   return (
@@ -17,20 +17,20 @@ export function VoltsViewFilter({ view }: VoltsViewFilterProps) {
       <Select
         value={view}
         onValueChange={(value) => {
-          const option = VOLTS_VIEW_OPTIONS.find((item) => item.value === value);
+          const option = FAVORITES_VIEW_OPTIONS.find((item) => item.value === value);
           if (option) router.push(option.href);
         }}
       >
         <SelectTrigger
-          id="volts-view"
+          id="favorites-view"
           className="w-full rounded-xl border-2 bg-background"
-          aria-label="Filter volts by source"
+          aria-label="Filter favorites by source"
         >
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {VOLTS_VIEW_OPTIONS.map(({ label, value }) => (
+            {FAVORITES_VIEW_OPTIONS.map(({ label, value }) => (
               <SelectItem key={value} value={value}>
                 {label}
               </SelectItem>
