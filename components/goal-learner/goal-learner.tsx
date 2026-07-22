@@ -24,7 +24,7 @@ export function GoalLearner({ goals, turnLabel, mainStrategy, isFirstPly = false
 
         if (isActive) {
           return (
-            <div key={goal.ply} role="listitem" aria-current="step">
+            <div key={goal.ply} role="listitem" aria-current="step" className="card-border-bottom-shadow">
               <ActiveGoalCard
                 goal={goal}
                 mode="learn"
@@ -36,10 +36,10 @@ export function GoalLearner({ goals, turnLabel, mainStrategy, isFirstPly = false
           );
         }
 
-        const bodyText = goal.isCompleted && goal.takeaway.trim() ? goal.takeaway.trim() : goal.strategy.trim();
+        const takeaway = goal.takeaway.trim();
 
         return (
-          <div key={goal.ply} role="listitem" className="flex items-start gap-3">
+          <div key={goal.ply} role="listitem" className="card-border-bottom-shadow flex-row items-start gap-3 p-3">
             {goal.isCompleted ? (
               <div
                 className={cn(INDEX_ITEM_CLASS, "bg-muted relative overflow-hidden rounded-full")}
@@ -66,7 +66,7 @@ export function GoalLearner({ goals, turnLabel, mainStrategy, isFirstPly = false
 
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-semibold">{goal.title}</div>
-              {bodyText ? <p className="text-muted-foreground text-xs leading-relaxed">{bodyText}</p> : null}
+              {takeaway ? <p className="text-muted-foreground text-xs leading-relaxed">{takeaway}</p> : null}
             </div>
           </div>
         );
