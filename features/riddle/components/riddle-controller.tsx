@@ -334,80 +334,80 @@ export default function RiddleController({
         </div>
 
         {/* Controller */}
-        <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
-          {/* Controller header */}
-          <div className="flex justify-between">
-            <div>
-              <Button variant="voltIcon" onClick={handleBackClick} disabled={isPending} aria-label="Back to collection">
-                {isPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
-              </Button>
-            </div>
-            <div className="flex items-center gap-2 text-xl font-bold">
-              <Image
-                src="/images/icons/icon-riddle.png"
-                alt=""
-                aria-hidden
-                width={30}
-                height={30}
-                className="size-7 shrink-0"
-              />
-              Riddles
-            </div>
-            <div>
-              {isUserLoggedIn ? (
-                <FavouriteButton riddleId={riddle.id} initialIsFavourited={isFavourited} />
-              ) : null}
-            </div>
-          </div>
-
-          {boardMode === "learn" ? (
-            <GoalLearner
-              goals={sortedGoals}
-              turnLabel={turnLabel}
-              mainStrategy={mainIdea}
-              isFirstPly={isFirstPly}
-            />
-          ) : (
-            <GoalViewer
-              goals={sortedGoals}
-              progressValue={progressValue}
-              mode={boardMode}
-              turnLabel={turnLabel}
-              mainStrategy={mainIdea}
-              isFirstPly={isFirstPly}
-            />
-          )}
-
-          {/* Mode Change */}
-          <div className="flex items-center justify-center gap-3">
-            <Switch
-              id="riddle-board-mode"
-              checked={boardMode === "learn"}
-              onCheckedChange={(checked) => setBoardMode(checked ? "learn" : "practice")}
-              aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
-            />
-            <Label htmlFor="riddle-board-mode">Learn</Label>
-          </div>
-
-          {/* Footer Buttons */}
-          <div className="mt-auto">
-            <div className="flex gap-2" data-tour="hint-button">
-              {!isCompleted ? (
+        <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2] md:self-stretch md:overflow-hidden md:p-0">
+          <div className="flex min-h-0 flex-1 flex-col gap-4 md:absolute md:inset-0 md:p-4">
+            {/* Controller header */}
+            <div className="flex shrink-0 justify-between">
+              <div>
                 <Button
-                  variant="voltGreen"
-                  onClick={handleHintClick}
-                  disabled={hintCount >= MAX_HINT_COUNT}
-                  className="w-full min-w-0 flex-1"
+                  variant="voltIcon"
+                  onClick={handleBackClick}
+                  disabled={isPending}
+                  aria-label="Back to collection"
                 >
-                  <Eye data-icon="inline-start" />
-                  Need a Help?
+                  {isPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
                 </Button>
-              ) : (
-                <Button variant="volt" onClick={handleContinueClick} disabled={isPending} className="min-w-0 flex-1">
-                  {isPending && <Spinner data-icon="inline-start" />}
-                  {successButtonLabel}
-                </Button>
-              )}
+              </div>
+              <div className="flex items-center gap-2 text-xl font-bold">
+                <Image
+                  src="/images/icons/icon-riddle.png"
+                  alt=""
+                  aria-hidden
+                  width={30}
+                  height={30}
+                  className="size-7 shrink-0"
+                />
+                Riddles
+              </div>
+              <div>
+                {isUserLoggedIn ? <FavouriteButton riddleId={riddle.id} initialIsFavourited={isFavourited} /> : null}
+              </div>
+            </div>
+
+            {boardMode === "learn" ? (
+              <GoalLearner goals={sortedGoals} turnLabel={turnLabel} mainStrategy={mainIdea} isFirstPly={isFirstPly} />
+            ) : (
+              <GoalViewer
+                goals={sortedGoals}
+                progressValue={progressValue}
+                mode={boardMode}
+                turnLabel={turnLabel}
+                mainStrategy={mainIdea}
+                isFirstPly={isFirstPly}
+              />
+            )}
+
+            {/* Mode Change */}
+            <div className="flex shrink-0 items-center justify-center gap-3">
+              <Switch
+                id="riddle-board-mode"
+                checked={boardMode === "learn"}
+                onCheckedChange={(checked) => setBoardMode(checked ? "learn" : "practice")}
+                aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
+              />
+              <Label htmlFor="riddle-board-mode">Learn</Label>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="mt-auto shrink-0">
+              <div className="flex gap-2" data-tour="hint-button">
+                {!isCompleted ? (
+                  <Button
+                    variant="voltGreen"
+                    onClick={handleHintClick}
+                    disabled={hintCount >= MAX_HINT_COUNT}
+                    className="w-full min-w-0 flex-1"
+                  >
+                    <Eye data-icon="inline-start" />
+                    Need a Help?
+                  </Button>
+                ) : (
+                  <Button variant="volt" onClick={handleContinueClick} disabled={isPending} className="min-w-0 flex-1">
+                    {isPending && <Spinner data-icon="inline-start" />}
+                    {successButtonLabel}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>

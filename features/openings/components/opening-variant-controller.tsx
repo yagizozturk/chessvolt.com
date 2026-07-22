@@ -265,81 +265,78 @@ export default function OpeningVariantController({
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
         </div>
-        <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
-          <div className="flex justify-between">
-            <div>
-              <Button variant="voltIcon" asChild>
-                <Link href={parentOpeningUrl} aria-label="Back to opening">
-                  <ChevronLeft className="size-5" />
-                </Link>
-              </Button>
+        <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2] md:self-stretch md:overflow-hidden md:p-0">
+          <div className="flex min-h-0 flex-1 flex-col gap-4 md:absolute md:inset-0 md:p-4">
+            <div className="flex shrink-0 justify-between">
+              <div>
+                <Button variant="voltIcon" asChild>
+                  <Link href={parentOpeningUrl} aria-label="Back to opening">
+                    <ChevronLeft className="size-5" />
+                  </Link>
+                </Button>
+              </div>
+              <div className="flex items-center gap-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
+              <div>
+                {canFavourite ? (
+                  <FavouriteButton openingVariantId={variant.id} initialIsFavourited={isFavourited} />
+                ) : null}
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
-            <div>
-              {canFavourite ? (
-                <FavouriteButton openingVariantId={variant.id} initialIsFavourited={isFavourited} />
-              ) : null}
-            </div>
-          </div>
-          {boardMode === "learn" ? (
-            <GoalLearner
-              goals={sortedGoals}
-              turnLabel={turnLabel}
-              mainStrategy={mainIdea}
-              isFirstPly={isFirstPly}
-            />
-          ) : (
-            <GoalViewer
-              goals={sortedGoals}
-              progressValue={progressValue}
-              mode={boardMode}
-              turnLabel={turnLabel}
-              mainStrategy={mainIdea}
-              isFirstPly={isFirstPly}
-            />
-          )}
+            {boardMode === "learn" ? (
+              <GoalLearner goals={sortedGoals} turnLabel={turnLabel} mainStrategy={mainIdea} isFirstPly={isFirstPly} />
+            ) : (
+              <GoalViewer
+                goals={sortedGoals}
+                progressValue={progressValue}
+                mode={boardMode}
+                turnLabel={turnLabel}
+                mainStrategy={mainIdea}
+                isFirstPly={isFirstPly}
+              />
+            )}
 
-          <div className="mt-auto">
-            <div className="flex gap-2" data-tour="hint-button">
-              <Button
-                variant="voltGreen"
-                onClick={() => setBoardMode(boardMode === "learn" ? "practice" : "learn")}
-                aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
-                className="min-w-0 flex-1"
-              >
-                {boardMode === "learn" ? (
-                  <>
-                    <ArrowLeft data-icon="inline-start" />
-                    Back to practice
-                  </>
+            <div className="mt-auto shrink-0">
+              <div className="flex gap-2" data-tour="hint-button">
+                <Button
+                  variant="voltGreen"
+                  onClick={() => setBoardMode(boardMode === "learn" ? "practice" : "learn")}
+                  aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
+                  className="min-w-0 flex-1"
+                >
+                  {boardMode === "learn" ? (
+                    <>
+                      <ArrowLeft data-icon="inline-start" />
+                      Back to practice
+                    </>
+                  ) : (
+                    <>
+                      <Bot data-icon="inline-start" />
+                      Coach me
+                    </>
+                  )}
+                </Button>
+                {!isCompleted ? (
+                  <Button
+                    variant="volt"
+                    onClick={handleHintClick}
+                    disabled={hintCount >= MAX_HINT_COUNT}
+                    className="min-w-0 flex-1"
+                  >
+                    <Eye data-icon="inline-start" />
+                    Show the move
+                  </Button>
                 ) : (
-                  <>
-                    <Bot data-icon="inline-start" />
-                    Coach me
-                  </>
+                  <Button
+                    variant="volt"
+                    onClick={handleContinueClick}
+                    disabled={isContinuePending}
+                    className="min-w-0 flex-1"
+                  >
+                    {isContinuePending && <Spinner data-icon="inline-start" />}
+                    {successButtonLabel}
+                  </Button>
                 )}
-              </Button>
-              {!isCompleted ? (
-                <Button
-                  variant="volt"
-                  onClick={handleHintClick}
-                  disabled={hintCount >= MAX_HINT_COUNT}
-                  className="min-w-0 flex-1"
-                >
-                  <Eye data-icon="inline-start" />
-                  Show the move
-                </Button>
-              ) : (
-                <Button
-                  variant="volt"
-                  onClick={handleContinueClick}
-                  disabled={isContinuePending}
-                  className="min-w-0 flex-1"
-                >
-                  {isContinuePending && <Spinner data-icon="inline-start" />}
-                  {successButtonLabel}
-                </Button>
-              )}
+              </div>
             </div>
           </div>
         </div>

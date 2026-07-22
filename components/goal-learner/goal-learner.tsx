@@ -3,6 +3,7 @@
 import Lottie from "lottie-react";
 
 import { ActiveGoalCard } from "@/components/goal-viewer/active-goal-card/active-goal-card";
+import { ShineBorder } from "@/components/ui/shine-border";
 import { cn } from "@/lib/utils";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
 import checkpointAnimationData from "@/public/images/animations/animation-trophy.json";
@@ -15,12 +16,22 @@ export function GoalLearner({ goals, turnLabel, mainStrategy, isFirstPly = false
   if (!goals.length) return null;
 
   const activeGoalIndex = goals.findIndex((goal) => !goal.isCompleted);
-  const focusIndex = activeGoalIndex >= 0 ? activeGoalIndex : Math.max(0, goals.length - 1);
+  const hasVisibleGoal = goals.some((goal) => !goal.isCompleted || goal.takeaway.trim().length > 0);
+
+  if (!hasVisibleGoal) return null;
 
   return (
-    <div data-tour="goal-learner" role="list" aria-label="Goal progress" className="flex flex-col gap-3">
+    <div
+      data-tour="goal-learner"
+      role="list"
+      aria-label="Goal progress"
+      className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto"
+    >
       {goals.map((goal, index) => {
-        const isActive = index === focusIndex;
+        const takeaway = goal.takeaway.trim();
+        const isActive = activeGoalIndex >= 0 && index === activeGoalIndex;
+
+        if (goal.isCompleted && !takeaway) return null;
 
         if (isActive) {
           return (
@@ -41,10 +52,18 @@ export function GoalLearner({ goals, turnLabel, mainStrategy, isFirstPly = false
           );
         }
 
-        const takeaway = goal.takeaway.trim();
-
         return (
-          <div key={goal.ply} role="listitem" className="card-border-bottom-shadow flex-row items-start gap-3 p-3">
+          <div
+            key={goal.ply}
+            role="listitem"
+            className={cn(
+              "card-border-bottom-shadow relative flex-row items-start gap-3 p-3",
+              !goal.isCompleted && "opacity-30",
+            )}
+          >
+            {goal.isCompleted && takeaway ? (
+              <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
+            ) : null}
             {goal.isCompleted ? (
               <div
                 className={cn(INDEX_ITEM_CLASS, "bg-muted relative overflow-hidden rounded-full")}
