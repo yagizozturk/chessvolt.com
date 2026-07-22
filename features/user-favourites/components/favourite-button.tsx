@@ -61,7 +61,7 @@ export function FavouriteButton({ initialIsFavourited, ...target }: FavouriteBut
       {isPending ? (
         <Spinner />
       ) : (
-        <Star className={cn("size-5", isFavourited && "fill-current")} />
+        <Star className={cn("size-5", isFavourited && "fill-primary text-primary")} />
       )}
     </Button>
   );

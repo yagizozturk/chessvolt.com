@@ -2,7 +2,7 @@
 "use client";
 
 import Lottie from "lottie-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -152,8 +152,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                     role="listitem"
                     className={cn(
                       GOAL_ITEM_CLASS,
-                      hasTakeaway ? "size-12" : "size-8",
-                      "bg-muted relative cursor-default overflow-hidden rounded-full border-0 p-0",
+                      "bg-muted relative size-8 cursor-default overflow-hidden rounded-full border-0 p-0",
                     )}
                     aria-label={`Goal ${index + 1} completed — ${goal.title}`}
                     onMouseEnter={() => {
@@ -164,7 +163,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                   >
                     {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
                     <Lottie
-                      animationData={goal.checkpointMessage.trim() ? checkpointAnimationData : completeAnimationData}
+                      animationData={hasTakeaway ? checkpointAnimationData : completeAnimationData}
                       loop={false}
                       autoplay={true}
                       className="pointer-events-none absolute inset-0 size-full scale-[1.90]"
@@ -182,12 +181,16 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                   onMouseLeave={scheduleClose}
                 >
                   <PopoverHeader className="gap-1.5">
-                    <PopoverTitle className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-                      <span>{goal.title}</span>
-                      {goal.checkpointMessage.trim() ? (
-                        <span className="text-primary text-sm font-semibold">{goal.checkpointMessage}</span>
-                      ) : null}
+                    {hasTakeaway ? (
+                      <p className="text-primary flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
+                        <BookOpen className="size-3.5 shrink-0" aria-hidden />
+                        Why Important?
+                      </p>
+                    ) : null}
+                    <PopoverTitle className={hasTakeaway ? "underline underline-offset-2" : undefined}>
+                      {goal.title}
                     </PopoverTitle>
+                    {hasTakeaway ? <p className="text-sm font-medium">{goal.takeaway}</p> : null}
                   </PopoverHeader>
                 </PopoverContent>
               </Popover>
@@ -198,8 +201,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                 role="listitem"
                 className={cn(
                   GOAL_ITEM_CLASS,
-                  hasTakeaway ? "size-12" : "size-8",
-                  "relative grid place-items-center rounded-full text-xs font-bold",
+                  "relative grid size-8 place-items-center rounded-full text-xs font-bold",
                   activeGoalIndex === index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
                 )}
                 aria-label={`Goal ${index + 1}`}

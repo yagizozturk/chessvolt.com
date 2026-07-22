@@ -1,7 +1,7 @@
 // TODO: Refactor
 "use client";
 
-import { ArrowLeft, Bot, ChevronLeft, Eye } from "lucide-react";
+import { Bot, ChevronLeft, Eye, Swords } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -16,6 +16,7 @@ import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-succ
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Spinner } from "@/components/ui/spinner";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
@@ -280,6 +281,22 @@ export default function OpeningVariantController({
               ) : null}
             </div>
           </div>
+          <Tabs
+            value={boardMode}
+            onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
+            aria-label="Board mode"
+          >
+            <TabsList variant="green" className="w-full rounded-lg">
+              <TabsTrigger value="practice">
+                <Swords />
+                Practice
+              </TabsTrigger>
+              <TabsTrigger value="learn">
+                <Bot />
+                Coach Me
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
           <GoalViewer
             goals={sortedGoals}
             progressValue={progressValue}
@@ -288,48 +305,28 @@ export default function OpeningVariantController({
             mainStrategy={mainIdea}
             isFirstPly={isFirstPly}
           />
-          <div className="mt-auto">
-            <div className="flex gap-2" data-tour="hint-button">
+          <div className="mt-auto flex gap-2" data-tour="hint-button">
+            {!isCompleted ? (
               <Button
                 variant="voltGreen"
-                onClick={() => setBoardMode(boardMode === "learn" ? "practice" : "learn")}
-                aria-label={`Switch to ${boardMode === "practice" ? "learn" : "practice"} mode`}
+                onClick={handleHintClick}
+                disabled={hintCount >= MAX_HINT_COUNT}
                 className="min-w-0 flex-1"
               >
-                {boardMode === "learn" ? (
-                  <>
-                    <ArrowLeft data-icon="inline-start" />
-                    Back to practice
-                  </>
-                ) : (
-                  <>
-                    <Bot data-icon="inline-start" />
-                    Coach me
-                  </>
-                )}
+                <Eye data-icon="inline-start" />
+                Show the move
               </Button>
-              {!isCompleted ? (
-                <Button
-                  variant="volt"
-                  onClick={handleHintClick}
-                  disabled={hintCount >= MAX_HINT_COUNT}
-                  className="min-w-0 flex-1"
-                >
-                  <Eye data-icon="inline-start" />
-                  Show the move
-                </Button>
-              ) : (
-                <Button
-                  variant="volt"
-                  onClick={handleContinueClick}
-                  disabled={isContinuePending}
-                  className="min-w-0 flex-1"
-                >
-                  {isContinuePending && <Spinner data-icon="inline-start" />}
-                  {successButtonLabel}
-                </Button>
-              )}
-            </div>
+            ) : (
+              <Button
+                variant="volt"
+                onClick={handleContinueClick}
+                disabled={isContinuePending}
+                className="min-w-0 flex-1"
+              >
+                {isContinuePending && <Spinner data-icon="inline-start" />}
+                {successButtonLabel}
+              </Button>
+            )}
           </div>
         </div>
       </div>
