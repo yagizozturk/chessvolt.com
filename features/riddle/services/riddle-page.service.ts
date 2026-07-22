@@ -9,14 +9,18 @@ import { getCollectionBySlug } from "@/features/collection/services/collection.s
 import { getAllActiveRiddles, getRiddleById } from "@/features/riddle/services/riddle.service";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import type { LoadCollectionRiddlePageInput, LoadStandaloneRiddlePageInput } from "@/features/riddle/types/riddle-page";
-import { buildRiddlePath, buildStandaloneRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
+import {
+  buildRiddlePath,
+  buildStandaloneRiddlePath,
+  getStandaloneRiddleBackUrl,
+} from "@/features/riddle/utilities/build-riddle-path";
 import { getParentCollectionUrl } from "@/features/riddle/utilities/get-parent-collection-url";
 import { getUserFavouriteByUserAndRiddle } from "@/features/user-favourites/services/user-favourite.service";
 
 export type RiddlePageData = {
   riddle: Riddle;
   nextRiddleUrl: string | null;
-  parentCollectionUrl: string;
+  backUrl: string;
   isUserLoggedIn: boolean;
   isFavourited: boolean;
 };
@@ -67,14 +71,14 @@ export async function loadCollectionRiddlePage(input: LoadCollectionRiddlePageIn
   return {
     riddle,
     nextRiddleUrl,
-    parentCollectionUrl: getParentCollectionUrl(collection),
+    backUrl: getParentCollectionUrl(collection),
     isUserLoggedIn: Boolean(user),
     isFavourited: Boolean(favouriteRow),
   };
 }
 
 export async function loadStandaloneRiddlePage(input: LoadStandaloneRiddlePageInput): Promise<RiddlePageData> {
-  const { supabase, user, riddleId } = input;
+  const { supabase, user, riddleId, from } = input;
 
   const riddle = await getRiddleById(supabase, riddleId);
   if (!riddle || !riddle.isActive) {
@@ -82,14 +86,16 @@ export async function loadStandaloneRiddlePage(input: LoadStandaloneRiddlePageIn
   }
 
   const riddles = await getAllActiveRiddles(supabase);
-  const nextRiddleUrl = getNextRiddleUrl(riddles, riddle.id, buildStandaloneRiddlePath);
+  const nextRiddleUrl = getNextRiddleUrl(riddles, riddle.id, (id) =>
+    buildStandaloneRiddlePath(id, from ? { from } : undefined),
+  );
 
   const favouriteRow = user ? await getUserFavouriteByUserAndRiddle(supabase, user.id, riddle.id) : null;
 
   return {
     riddle,
     nextRiddleUrl,
-    parentCollectionUrl: "/riddles",
+    backUrl: getStandaloneRiddleBackUrl(from),
     isUserLoggedIn: Boolean(user),
     isFavourited: Boolean(favouriteRow),
   };

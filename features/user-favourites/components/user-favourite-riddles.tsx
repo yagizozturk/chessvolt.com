@@ -56,7 +56,7 @@ export async function UserFavouriteRiddles({
             riddle={riddle}
             game={null}
             boardWrapperClassName="aspect-square w-[180px] shrink-0"
-            href={buildStandaloneRiddlePath(riddle.id)}
+            href={buildStandaloneRiddlePath(riddle.id, { from: "favorites" })}
             displayFen={riddle.moveSequence.displayFen}
             showVoltScore
             voltScore={voltScoresBySequenceId[riddle.moveSequence.id] ?? null}

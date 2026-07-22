@@ -26,8 +26,8 @@ export type SolveSuccessDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title?: string;
-  destinationPath: string;
-  buttonLabel: string;
+  destinationPath?: string | null;
+  buttonLabel?: string | null;
   lessonsLearned?: string;
   stats?: MoveSequenceCompleteDialogStats | null;
   voltScore?: VoltScoreResult | null;
@@ -40,8 +40,8 @@ export function SolveSuccessDialog({
   open,
   onOpenChange,
   title = "Completed",
-  destinationPath,
-  buttonLabel,
+  destinationPath = null,
+  buttonLabel = null,
   lessonsLearned,
   stats,
   voltScore = null,
@@ -51,8 +51,10 @@ export function SolveSuccessDialog({
 }: SolveSuccessDialogProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  const hasContinueButton = destinationPath != null && buttonLabel != null;
 
   const handleContinue = async () => {
+    if (!destinationPath) return;
     setIsPending(true);
     router.push(destinationPath);
   };
@@ -119,17 +121,19 @@ export function SolveSuccessDialog({
               Play again
             </Button>
           ) : null}
-          <Button
-            variant="volt"
-            type="button"
-            disabled={isPending}
-            onClick={handleContinue}
-            className="w-full sm:w-auto"
-          >
-            {isPending ? <Spinner data-icon="inline-start" /> : null}
-            {buttonLabel}
-            {!isPending ? <ArrowRight data-icon="inline-end" /> : null}
-          </Button>
+          {hasContinueButton ? (
+            <Button
+              variant="volt"
+              type="button"
+              disabled={isPending}
+              onClick={handleContinue}
+              className="w-full sm:w-auto"
+            >
+              {isPending ? <Spinner data-icon="inline-start" /> : null}
+              {buttonLabel}
+              {!isPending ? <ArrowRight data-icon="inline-end" /> : null}
+            </Button>
+          ) : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>

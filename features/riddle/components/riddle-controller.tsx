@@ -37,7 +37,7 @@ import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload
 type RiddleControllerProps = {
   riddle: Riddle;
   nextRiddleUrl?: string | null;
-  parentCollectionUrl?: string;
+  backUrl?: string;
   isUserLoggedIn?: boolean; // Checks for the persist events, favourite button visibility
   isFavourited?: boolean;
 };
@@ -45,7 +45,7 @@ type RiddleControllerProps = {
 export default function RiddleController({
   riddle,
   nextRiddleUrl = null,
-  parentCollectionUrl = "/",
+  backUrl = "/",
   isUserLoggedIn = false,
   isFavourited = false,
 }: RiddleControllerProps) {
@@ -57,8 +57,8 @@ export default function RiddleController({
   const sessionId = `${riddle.id}:${replayKey}`;
   const turnLabel = getTurnLabel(riddle.moveSequence.initialFen); // Gets the player turn label, w or b
   const hasNextRiddle = nextRiddleUrl != null;
-  const successDestinationPath = hasNextRiddle ? nextRiddleUrl : parentCollectionUrl;
-  const successButtonLabel = hasNextRiddle ? "Next riddle" : "Back to collection";
+  const successDestinationPath = hasNextRiddle ? nextRiddleUrl : null;
+  const successButtonLabel = hasNextRiddle ? "Next riddle" : null;
   const [isCompleted, setIsCompleted] = useState(false); // Whether the riddle is completed
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null); // TS allows null state, default is null. CompletionStats is not set on default.
@@ -258,11 +258,12 @@ export default function RiddleController({
   };
 
   // ================================================================================================
-  // Handle the continue click and redirect to the next riddle or back to the collection
+  // Handle the continue click and redirect to the next riddle
   // Use router hook already have transition state
   // Using transition to manage loading state.
   // ================================================================================================
   const handleContinueClick = () => {
+    if (!successDestinationPath) return;
     startTransition(() => {
       router.push(successDestinationPath);
     });
@@ -273,7 +274,7 @@ export default function RiddleController({
   // ================================================================================================
   const handleBackClick = () => {
     startTransition(() => {
-      router.push(parentCollectionUrl);
+      router.push(backUrl);
     });
   };
 
@@ -338,7 +339,7 @@ export default function RiddleController({
           {/* Controller header */}
           <div className="flex justify-between">
             <div>
-              <Button variant="voltIcon" onClick={handleBackClick} disabled={isPending} aria-label="Back to collection">
+              <Button variant="voltIcon" onClick={handleBackClick} disabled={isPending} aria-label="Back">
                 {isPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
               </Button>
             </div>
@@ -354,9 +355,7 @@ export default function RiddleController({
               Riddles
             </div>
             <div>
-              {isUserLoggedIn ? (
-                <FavouriteButton riddleId={riddle.id} initialIsFavourited={isFavourited} />
-              ) : null}
+              {isUserLoggedIn ? <FavouriteButton riddleId={riddle.id} initialIsFavourited={isFavourited} /> : null}
             </div>
           </div>
 
@@ -400,12 +399,12 @@ export default function RiddleController({
                   <Eye data-icon="inline-start" />
                   Show the move
                 </Button>
-              ) : (
+              ) : hasNextRiddle ? (
                 <Button variant="volt" onClick={handleContinueClick} disabled={isPending} className="min-w-0 flex-1">
                   {isPending && <Spinner data-icon="inline-start" />}
                   {successButtonLabel}
                 </Button>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
