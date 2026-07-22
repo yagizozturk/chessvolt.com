@@ -10,6 +10,7 @@ import VoltBoard, { type VoltBoardHandle, type VoltBoardMode } from "@/component
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
+import { GoalLearner } from "@/components/goal-learner/goal-learner";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
@@ -280,14 +281,24 @@ export default function OpeningVariantController({
               ) : null}
             </div>
           </div>
-          <GoalViewer
-            goals={sortedGoals}
-            progressValue={progressValue}
-            mode={boardMode}
-            turnLabel={turnLabel}
-            mainStrategy={mainIdea}
-            isFirstPly={isFirstPly}
-          />
+          {boardMode === "learn" ? (
+            <GoalLearner
+              goals={sortedGoals}
+              turnLabel={turnLabel}
+              mainStrategy={mainIdea}
+              isFirstPly={isFirstPly}
+            />
+          ) : (
+            <GoalViewer
+              goals={sortedGoals}
+              progressValue={progressValue}
+              mode={boardMode}
+              turnLabel={turnLabel}
+              mainStrategy={mainIdea}
+              isFirstPly={isFirstPly}
+            />
+          )}
+
           <div className="mt-auto">
             <div className="flex gap-2" data-tour="hint-button">
               <Button

@@ -8,6 +8,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import VoltBoard, { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
+import { GoalLearner } from "@/components/goal-learner/goal-learner";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
@@ -359,15 +360,23 @@ export default function RiddleController({
             </div>
           </div>
 
-          {/* Goal Viewer */}
-          <GoalViewer
-            goals={sortedGoals}
-            progressValue={progressValue}
-            mode={boardMode}
-            turnLabel={turnLabel}
-            mainStrategy={mainIdea}
-            isFirstPly={isFirstPly}
-          />
+          {boardMode === "learn" ? (
+            <GoalLearner
+              goals={sortedGoals}
+              turnLabel={turnLabel}
+              mainStrategy={mainIdea}
+              isFirstPly={isFirstPly}
+            />
+          ) : (
+            <GoalViewer
+              goals={sortedGoals}
+              progressValue={progressValue}
+              mode={boardMode}
+              turnLabel={turnLabel}
+              mainStrategy={mainIdea}
+              isFirstPly={isFirstPly}
+            />
+          )}
 
           {/* Mode Change */}
           <div className="flex items-center justify-center gap-3">
