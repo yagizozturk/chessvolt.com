@@ -5,7 +5,7 @@ import { Volume2, VolumeX } from "lucide-react";
 import Image from "next/image";
 
 import { TTSController } from "@/features/tts/components/tts-controller/tts-controller";
-import { useBoardSoundsStore } from "@/lib/shared/store/board-sounds-store";
+import { useVoltCoachSoundStore } from "@/lib/shared/store/volt-coach-sound-store";
 
 import { Button } from "../ui/button";
 import { Highlighter } from "../ui/highlighter";
@@ -20,8 +20,8 @@ type VoltCoachProps = {
 };
 
 export function VoltCoach({ title, message, ttsKey, ttsText, mainStrategy, isFirstPly = false }: VoltCoachProps) {
-  const enabled = useBoardSoundsStore((s) => s.enabled);
-  const toggle = useBoardSoundsStore((s) => s.toggle);
+  const enabled = useVoltCoachSoundStore((s) => s.enabled);
+  const toggle = useVoltCoachSoundStore((s) => s.toggle);
   const muted = !enabled;
   const trimmedMainStrategy = mainStrategy?.trim() ?? "";
   const showMainStrategy = isFirstPly && trimmedMainStrategy.length > 0;

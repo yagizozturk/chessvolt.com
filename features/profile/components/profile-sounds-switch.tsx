@@ -14,7 +14,7 @@ export function ProfileSoundsSwitch() {
       <div className="space-y-1">
         <FieldLabel className="mb-0">Sound effects</FieldLabel>
         <FieldDescription>
-          Play move sounds, feedback, and Volt Coach voice on the site.
+          Play move sounds and feedback on the site.
         </FieldDescription>
       </div>
       <Switch
