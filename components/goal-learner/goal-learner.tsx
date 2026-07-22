@@ -5,7 +5,7 @@ import Lottie from "lottie-react";
 import { ActiveGoalCard } from "@/components/goal-viewer/active-goal-card/active-goal-card";
 import { cn } from "@/lib/utils";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
-import checkpointAnimationData from "@/public/images/animations/animation-target-blue.json";
+import checkpointAnimationData from "@/public/images/animations/animation-trophy.json";
 
 import type { GoalLearnerProps } from "./types";
 
@@ -24,7 +24,12 @@ export function GoalLearner({ goals, turnLabel, mainStrategy, isFirstPly = false
 
         if (isActive) {
           return (
-            <div key={goal.ply} role="listitem" aria-current="step" className="card-border-bottom-shadow">
+            <div
+              key={goal.ply}
+              role="listitem"
+              aria-current="step"
+              className="card-border-bottom-shadow border-primary border-t-1 border-r-1 border-l-1"
+            >
               <ActiveGoalCard
                 goal={goal}
                 mode="learn"
