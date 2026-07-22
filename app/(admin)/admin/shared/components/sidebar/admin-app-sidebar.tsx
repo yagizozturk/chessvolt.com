@@ -3,11 +3,11 @@
 import {
   BookOpenIcon,
   ClipboardListIcon,
-
   FolderOpenIcon,
   Gamepad2Icon,
   HelpCircleIcon,
   LayoutDashboardIcon,
+  SparklesIcon,
   TagsIcon,
   UsersIcon,
 } from "lucide-react";
@@ -95,6 +95,11 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "Bulk variants", url: "/admin/openings/variants/bulk" },
       { title: "Backfill goals (Gemini)", url: "/admin/openings/variants/backfill-goals-gemini" },
     ],
+  },
+  {
+    title: "Animations",
+    url: "/admin/animations",
+    icon: <SparklesIcon />,
   },
 ];
 

@@ -6,17 +6,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverDescription,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
+import { ShineBorder } from "@/components/ui/shine-border";
 import { cn } from "@/lib/utils";
+import checkpointAnimationData from "@/public/images/animations/animation-book.json";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
-import checkpointAnimationData from "@/public/images/animations/animation-target-blue.json";
 
 import type { GoalStepperProps } from "../types/types";
 
@@ -24,7 +18,8 @@ const HOVER_CLOSE_MS = 120;
 const SCROLL_EDGE_THRESHOLD_PX = 4;
 const SCROLL_PAGE_RATIO = 0.85;
 
-const GOAL_ITEM_CLASS = "size-8 shrink-0 snap-center";
+const GOAL_ITEM_CLASS = "shrink-0 snap-center";
+const TAKEAWAY_SHINE_COLORS = ["#A07CFE", "#FE8FB5", "#FFBE7B"];
 
 export function GoalStepper({ goals }: GoalStepperProps) {
   const activeGoalIndex = goals.findIndex((goal) => !goal.isCompleted);
@@ -121,14 +116,14 @@ export function GoalStepper({ goals }: GoalStepperProps) {
         <div
           aria-hidden
           className={cn(
-            "from-card pointer-events-none absolute top-0 left-0 z-10 h-8 w-8 bg-gradient-to-r to-transparent transition-opacity duration-200",
+            "from-card pointer-events-none absolute top-0 left-0 z-10 h-12 w-8 bg-gradient-to-r to-transparent transition-opacity duration-200",
             canScrollStart ? "opacity-100" : "opacity-0",
           )}
         />
         <div
           aria-hidden
           className={cn(
-            "from-card pointer-events-none absolute top-0 right-0 z-10 h-8 w-8 bg-gradient-to-l to-transparent transition-opacity duration-200",
+            "from-card pointer-events-none absolute top-0 right-0 z-10 h-12 w-8 bg-gradient-to-l to-transparent transition-opacity duration-200",
             canScrollEnd ? "opacity-100" : "opacity-0",
           )}
         />
@@ -140,8 +135,10 @@ export function GoalStepper({ goals }: GoalStepperProps) {
           className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           onScroll={updateScrollEdges}
         >
-          {goals.map((goal, index) =>
-            goal.isCompleted ? (
+          {goals.map((goal, index) => {
+            const hasTakeaway = Boolean(goal.takeaway.trim());
+
+            return goal.isCompleted ? (
               <Popover
                 key={index}
                 modal={false}
@@ -155,6 +152,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                     role="listitem"
                     className={cn(
                       GOAL_ITEM_CLASS,
+                      hasTakeaway ? "size-12" : "size-8",
                       "bg-muted relative cursor-default overflow-hidden rounded-full border-0 p-0",
                     )}
                     aria-label={`Goal ${index + 1} completed — ${goal.title}`}
@@ -164,6 +162,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                     }}
                     onMouseLeave={scheduleClose}
                   >
+                    {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
                     <Lottie
                       animationData={goal.checkpointMessage.trim() ? checkpointAnimationData : completeAnimationData}
                       loop={false}
@@ -189,9 +188,6 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                         <span className="text-primary text-sm font-semibold">{goal.checkpointMessage}</span>
                       ) : null}
                     </PopoverTitle>
-                    <PopoverDescription className="text-xs leading-relaxed">
-                      <span className="block">{goal.strategy}</span>
-                    </PopoverDescription>
                   </PopoverHeader>
                 </PopoverContent>
               </Popover>
@@ -202,16 +198,18 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                 role="listitem"
                 className={cn(
                   GOAL_ITEM_CLASS,
-                  "grid place-items-center rounded-full text-xs font-bold",
+                  hasTakeaway ? "size-12" : "size-8",
+                  "relative grid place-items-center rounded-full text-xs font-bold",
                   activeGoalIndex === index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
                 )}
                 aria-label={`Goal ${index + 1}`}
                 aria-current={activeGoalIndex === index ? "step" : undefined}
               >
+                {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
                 {index + 1}
               </div>
-            ),
-          )}
+            );
+          })}
         </div>
       </div>
 
