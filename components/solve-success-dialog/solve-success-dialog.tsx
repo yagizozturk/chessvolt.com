@@ -19,8 +19,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import { formatAttemptDurationMs } from "@/features/user-sequence-attempt/utilities/format-attempt-duration";
 import { cn } from "@/lib/utils";
+import infoAnimationData from "@/public/images/animations/animation-info-question.json";
 import animationData from "@/public/images/animations/animation-trophy.json";
-import infoAnimationData from "@/public/images/animations/info.json";
 
 export type SolveSuccessDialogProps = {
   open: boolean;
@@ -39,7 +39,7 @@ export type SolveSuccessDialogProps = {
 export function SolveSuccessDialog({
   open,
   onOpenChange,
-  title = "Completed",
+  title = "Congratulations!",
   destinationPath = null,
   buttonLabel = null,
   lessonsLearned,
@@ -52,6 +52,9 @@ export function SolveSuccessDialog({
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const hasContinueButton = destinationPath != null && buttonLabel != null;
+  const trimmedLessons = lessonsLearned?.trim() ?? "";
+  const hasLessons = trimmedLessons.length > 0;
+  const hasVoltScore = isVoltScoreShowing || isValidVoltScore(voltScore);
 
   const handleContinue = async () => {
     if (!destinationPath) return;
@@ -63,56 +66,84 @@ export function SolveSuccessDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
+
+        {/* Trophy Animation */}
         <div className="flex flex-col items-center">
-          <Lottie animationData={animationData} loop={true} autoplay={true} className="size-50" />
+          <Lottie animationData={animationData} loop autoplay className="size-50" />
         </div>
-        <DialogHeader className="items-center text-center">
+
+        {/* Dialog Header */}
+        <DialogHeader className="mt-[-30px] items-center text-center">
           <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
         </DialogHeader>
-        {lessonsLearned?.trim() ? (
-          <div className="bg-muted rounded-lg p-4 text-center">
-            <p className="font-semibold">Lessons Learned</p>
-            <p className="text-muted-foreground mt-1 text-sm text-pretty">{lessonsLearned}</p>
+
+        {/* Lessons Learned + Volt score */}
+        {hasLessons || hasVoltScore ? (
+          <div className="mt-4 flex gap-4">
+            {/* Lessons Learned */}
+            {hasLessons ? (
+              <div
+                className={cn(
+                  "card-border-bottom-shadow justify-center p-4 text-center",
+                  hasVoltScore ? "flex-2/3" : "flex-1",
+                )}
+              >
+                <p className="font-semibold">Lessons Learned</p>
+                <p className="text-muted-foreground mt-1 text-sm text-pretty">{trimmedLessons}</p>
+              </div>
+            ) : null}
+
+            {/* Volt score */}
+            {isVoltScoreShowing ? (
+              <div
+                className={cn(
+                  "card-border-bottom-shadow flex flex-col items-center justify-center gap-3 py-6",
+                  hasLessons ? "flex-1/3" : "flex-1",
+                )}
+              >
+                <p className="text-muted-foreground text-center text-sm">Volt score is calculating</p>
+                <Spinner className="size-8" />
+              </div>
+            ) : isValidVoltScore(voltScore) ? (
+              <div
+                className={cn(
+                  "card-border-bottom-shadow relative flex min-h-30 items-center justify-center",
+                  hasLessons ? "flex-1/3" : "flex-1",
+                )}
+              >
+                <VoltCalculator result={voltScore} chartSize={150} />
+                <div className="absolute top-2 right-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        className="focus-visible:ring-ring inline-flex cursor-default rounded-full focus-visible:ring-2 focus-visible:outline-none"
+                        aria-label="About Volt score"
+                      >
+                        <Lottie animationData={infoAnimationData} loop autoplay className="size-9" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" sideOffset={6} className="max-w-52 text-left">
+                      Your Volt score is a combination of accuracy, timing, and streak. Hover on the graph to see more
+                      details.
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </div>
+            ) : null}
           </div>
         ) : null}
+
         {/* Stats */}
         {stats ? (
-          <div className={cn("grid grid-cols-3 gap-2")}>
+          <div className="grid grid-cols-3 gap-2">
             <NumberTickerStats icon={Target} label="Accuracy" value={stats.accuracyPercent} suffix="%" />
             <NumberTickerStats icon={Flame} label="Max streak" value={stats.maxCorrectStreak} />
             <ColumnBasedStats icon={Clock} label="Time" value={formatAttemptDurationMs(stats.durationMs) ?? "—"} />
           </div>
         ) : null}
-        {/* Volt score */}
-        {isVoltScoreShowing ? (
-          <div className="flex flex-col items-center gap-3 py-6">
-            <p className="text-muted-foreground text-sm">Volt score is calculating</p>
-            <Spinner className="size-8" />
-          </div>
-        ) : isValidVoltScore(voltScore) ? (
-          <div className="relative flex min-h-30 justify-center">
-            <div className="absolute top-[-30px] left-24">
-              <VoltCalculator result={voltScore} chartSize={200} />
-            </div>
-            <div className="absolute top-0 right-28">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className="focus-visible:ring-ring inline-flex cursor-default rounded-full focus-visible:ring-2 focus-visible:outline-none"
-                    aria-label="About Volt score"
-                  >
-                    <Lottie animationData={infoAnimationData} loop={true} autoplay={true} className="size-10" />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top" sideOffset={6} className="max-w-52 text-left">
-                  Your Volt score is a combination of accuracy, timing, and streak. Hover on the graph to see more
-                  details.
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </div>
-        ) : null}
+
+        {/* Dialog Footer */}
         <DialogFooter className="mt-4 flex-col gap-2 sm:flex-row sm:justify-center">
           {footerExtra ? <div className="w-full sm:w-auto">{footerExtra}</div> : null}
           {onPlayAgain ? (

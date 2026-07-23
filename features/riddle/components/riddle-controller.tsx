@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, ChevronLeft, Eye, Swords } from "lucide-react";
+import { Bot, ChevronLeft, Eye, RotateCcw, Swords } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -151,13 +151,7 @@ export default function RiddleController({
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [
-    expectedCurrentCorrectMoveUci,
-    getTimeFromStartMs,
-    isCompleted,
-    isFavourited,
-    playLevelUpSound,
-  ]);
+  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isFavourited, playLevelUpSound]);
 
   // ================================================================================================
   // Insert the completion attempt to the db
@@ -278,7 +272,6 @@ export default function RiddleController({
       <SolveSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
-        title="Riddle Solved"
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
         lessonsLearned={lessonsLearned}
@@ -384,12 +377,25 @@ export default function RiddleController({
                   <Eye data-icon="inline-start" />
                   Show the move
                 </Button>
-              ) : hasNextRiddle ? (
-                <Button variant="volt" onClick={handleContinueClick} disabled={isPending} className="min-w-0 flex-1">
-                  {isPending && <Spinner data-icon="inline-start" />}
-                  {successButtonLabel}
-                </Button>
-              ) : null}
+              ) : (
+                <>
+                  <Button variant="voltGreen" onClick={handlePlayAgain} className="min-w-0 flex-1">
+                    <RotateCcw data-icon="inline-start" />
+                    Play again
+                  </Button>
+                  {hasNextRiddle ? (
+                    <Button
+                      variant="volt"
+                      onClick={handleContinueClick}
+                      disabled={isPending}
+                      className="min-w-0 flex-1"
+                    >
+                      {isPending && <Spinner data-icon="inline-start" />}
+                      {successButtonLabel}
+                    </Button>
+                  ) : null}
+                </>
+              )}
             </div>
           </div>
         </div>

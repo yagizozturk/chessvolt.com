@@ -190,8 +190,14 @@ export function VoltCalculator({
     return null;
   }
 
+  // Portaled HoverCard content still bubbles React click events to ancestors (e.g. a parent Link).
+  const stopLinkActivation = (event: React.MouseEvent | React.PointerEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   return (
-    <div className={cn("flex w-full flex-col gap-2", className)}>
+    <div className={cn("flex w-full flex-col gap-2", className)} onClick={stopLinkActivation} onPointerDown={stopLinkActivation}>
       {showDetails ? (
         <HoverCard openDelay={150} closeDelay={100}>
           <HoverCardTrigger asChild>
@@ -199,7 +205,13 @@ export function VoltCalculator({
               <RadialChart currentValue={result.volt} totalValue={Math.max(result.maxVolt, 1)} size={chartSize} />
             </div>
           </HoverCardTrigger>
-          <HoverCardContent side="bottom" align="center" className="max-h-96 w-80 overflow-y-auto p-3">
+          <HoverCardContent
+            side="bottom"
+            align="center"
+            className="max-h-96 w-80 overflow-y-auto p-3"
+            onClick={stopLinkActivation}
+            onPointerDown={stopLinkActivation}
+          >
             <p className="mb-2 font-medium">Day breakdown</p>
             <VoltDayBreakdown result={result} />
           </HoverCardContent>
