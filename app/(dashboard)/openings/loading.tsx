@@ -12,7 +12,7 @@ export default function OpeningsLoading() {
         <PageHeaderSkeleton
           titleWidthClassName="w-72 max-w-full"
           descriptionWidthClassName="w-64 max-w-full"
-          actions={<FilterControlsSkeleton widths={["sm:max-w-56"]} />}
+          actions={<FilterControlsSkeleton widths={["sm:w-56"]} />}
         />
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

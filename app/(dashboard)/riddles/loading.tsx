@@ -13,7 +13,7 @@ export default function RiddlesLoading() {
         <PageHeaderSkeleton
           titleWidthClassName="w-40"
           descriptionWidthClassName="w-64 max-w-full"
-          actions={<FilterControlsSkeleton widths={["sm:max-w-64", "lg:max-w-64"]} />}
+          actions={<FilterControlsSkeleton widths={["sm:w-64", "sm:w-64"]} />}
         />
 
         <PageGridSkeleton>{(index) => <BoardCardSkeleton key={index} compact metaLineCount={3} />}</PageGridSkeleton>

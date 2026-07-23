@@ -51,11 +51,11 @@ export function PageHeaderWithImageSkeleton({
 }
 
 /** Filter / select row used in `PageHeader` actions. */
-export function FilterControlsSkeleton({ widths = ["sm:max-w-56", "sm:max-w-64"] }: { widths?: string[] }) {
+export function FilterControlsSkeleton({ widths = ["sm:w-36", "sm:w-32"] }: { widths?: string[] }) {
   return (
-    <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:items-center lg:justify-end">
+    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
       {widths.map((widthClassName, index) => (
-        <Skeleton key={index} className={cn("h-10 w-full rounded-xl", widthClassName)} />
+        <Skeleton key={index} className={cn("h-8 w-full rounded-xl", widthClassName)} />
       ))}
     </div>
   );

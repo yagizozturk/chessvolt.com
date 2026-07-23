@@ -13,7 +13,7 @@ export default function CollectionLoading() {
         <PageHeaderSkeleton
           titleWidthClassName="w-40"
           descriptionWidthClassName="w-64 max-w-full"
-          actions={<FilterControlsSkeleton widths={["sm:max-w-56", "sm:max-w-64", "lg:max-w-xs lg:flex-1"]} />}
+          actions={<FilterControlsSkeleton />}
         />
 
         <PageGridSkeleton>{(index) => <CollectionCardSkeleton key={index} />}</PageGridSkeleton>

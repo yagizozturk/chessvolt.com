@@ -54,7 +54,7 @@ export function CollectionFilters({
   }, [localSearchQuery, searchQuery, difficultyFilter, themeFilter, router]);
 
   return (
-    <div className="flex w-full flex-col gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:items-center lg:justify-end">
+    <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
       <div className="min-w-0 sm:max-w-56">
         <Select
           value={difficultyFilter}
@@ -80,7 +80,7 @@ export function CollectionFilters({
           </SelectContent>
         </Select>
       </div>
-      <div className="min-w-0 sm:max-w-64">
+      <div className="min-w-0 sm:max-w-56">
         <Select
           value={themeFilter}
           onValueChange={(value) => router.push(buildCollectionFilterUrl(currentFilterState, { themeFilter: value }))}
@@ -105,7 +105,7 @@ export function CollectionFilters({
           </SelectContent>
         </Select>
       </div>
-      <div className="min-w-0 lg:ml-auto lg:max-w-xs lg:flex-1">
+      <div className="min-w-0 sm:ml-auto sm:max-w-xs sm:flex-1">
         <Input
           value={localSearchQuery}
           onChange={(e) => setLocalSearchQuery(e.target.value)}
