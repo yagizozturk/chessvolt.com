@@ -150,48 +150,33 @@ export default function RiddleController({
     setIsVoltScoreShowing(isFavourited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
-
-    let isMounted = true;
-
-    // This method persist the data and coded inside useEffect in order to block infinite loops if coded outside.
-    // Declared inside the useEffect to safely isolate async operations, prevent memory leaks
-    // if the component unmounts, and avoid dependency-induced infinite rendering loops.
-    async function saveAttemptResults() {
-      await recordEvent({ eventType: "complete" });
-
-      const voltScoreResult = await updateAttemptResults("completed", {
-        ...attemptPayload,
-        ...(isFavourited ? { voltScore } : {}),
-      });
-
-      if (isUserLoggedIn) {
-        await incrementCurrentRatingAction();
-      }
-
-      // If the user is still on this page and didn't click any button while waiting, update states.
-      if (isMounted && isFavourited) {
-        setCompletionVoltScore(voltScoreResult);
-        setIsVoltScoreShowing(false);
-      }
-    }
-
-    // Calling the function safe
-    void saveAttemptResults();
-
-    // Cleanup returns to useEffect directly.
-    return () => {
-      isMounted = false;
-    };
+    void insertAttemptResults(attemptPayload);
   }, [
     expectedCurrentCorrectMoveUci,
     getTimeFromStartMs,
     isCompleted,
     isFavourited,
-    isUserLoggedIn,
     playLevelUpSound,
-    recordEvent,
-    updateAttemptResults,
   ]);
+
+  // ================================================================================================
+  // Insert the completion attempt to the db
+  // ================================================================================================
+  async function insertAttemptResults(attemptPayload: AttemptPayload) {
+    await recordEvent({ eventType: "complete" });
+
+    const voltScoreResult = await updateAttemptResults("completed", {
+      ...attemptPayload,
+      ...(isFavourited ? { voltScore } : {}),
+    });
+
+    if (isUserLoggedIn) {
+      await incrementCurrentRatingAction();
+    }
+
+    setCompletionVoltScore(voltScoreResult);
+    setIsVoltScoreShowing(false);
+  }
 
   // ================================================================================================
   // Handle the board check move
