@@ -112,7 +112,7 @@ export function SolveSuccessDialog({
                 )}
               >
                 <VoltCalculator result={voltScore} chartSize={150} />
-                <div className="absolute top-2 right-2">
+                <div className="absolute top-2 right-2 hidden sm:block">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
