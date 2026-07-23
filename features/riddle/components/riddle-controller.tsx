@@ -20,7 +20,7 @@ import { incrementCurrentRatingAction } from "@/features/profile/actions/increme
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
-import { FavouriteButton } from "@/features/user-favourites/components/favourite-button";
+import { FavouriteButton } from "@/features/user-favorites/components/favorite-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
@@ -39,7 +39,7 @@ type RiddleControllerProps = {
   nextRiddleUrl?: string | null;
   backUrl?: string;
   isUserLoggedIn?: boolean; // Checks for the persist events, favourite button visibility
-  isFavourited?: boolean;
+  isFavorited?: boolean;
 };
 
 export default function RiddleController({
@@ -47,7 +47,7 @@ export default function RiddleController({
   nextRiddleUrl = null,
   backUrl = "/",
   isUserLoggedIn = false,
-  isFavourited = false,
+  isFavorited = false,
 }: RiddleControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
@@ -147,11 +147,11 @@ export default function RiddleController({
     // Setting the completion stats for UI Dialog show
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
-    setIsVoltScoreShowing(isFavourited);
+    setIsVoltScoreShowing(isFavorited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isFavourited, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isFavorited, playLevelUpSound]);
 
   // ================================================================================================
   // Insert the completion attempt to the db
@@ -161,7 +161,7 @@ export default function RiddleController({
 
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
-      ...(isFavourited ? { voltScore } : {}),
+      ...(isFavorited ? { voltScore } : {}),
     });
 
     if (isUserLoggedIn) {
@@ -333,7 +333,7 @@ export default function RiddleController({
               Riddles
             </div>
             <div>
-              {isUserLoggedIn ? <FavouriteButton riddleId={riddle.id} initialIsFavourited={isFavourited} /> : null}
+              {isUserLoggedIn ? <FavouriteButton riddleId={riddle.id} initialIsFavourited={isFavorited} /> : null}
             </div>
           </div>
 

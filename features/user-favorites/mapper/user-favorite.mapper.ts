@@ -4,11 +4,11 @@ import {
 } from "@/features/openings/mapper/opening-variant.mapper";
 import { type DbRiddle, toRiddle } from "@/features/riddle/mapper/riddle.mapper";
 import type {
-  UserFavourite,
-  UserFavouriteWithDetails,
-} from "@/features/user-favourites/types/user-favourite";
+  UserFavorite,
+  UserFavoriteWithDetails,
+} from "@/features/user-favorites/types/user-favorite";
 
-export type DbUserFavourite = {
+export type DbUserFavorite = {
   id: string;
   user_id: string;
   opening_variant_id: string | null;
@@ -18,12 +18,12 @@ export type DbUserFavourite = {
   created_at: string;
 };
 
-export type DbUserFavouriteWithDetails = DbUserFavourite & {
+export type DbUserFavoriteWithDetails = DbUserFavorite & {
   opening_variants: DbOpeningVariant | null;
   riddles: DbRiddle | null;
 };
 
-export function toUserFavourite(db: DbUserFavourite): UserFavourite {
+export function toUserFavorite(db: DbUserFavorite): UserFavorite {
   return {
     id: db.id,
     userId: db.user_id,
@@ -35,10 +35,10 @@ export function toUserFavourite(db: DbUserFavourite): UserFavourite {
   };
 }
 
-export function toUserFavouriteWithDetails(
-  db: DbUserFavouriteWithDetails,
-): UserFavouriteWithDetails | null {
-  const row = toUserFavourite(db);
+export function toUserFavoriteWithDetails(
+  db: DbUserFavoriteWithDetails,
+): UserFavoriteWithDetails | null {
+  const row = toUserFavorite(db);
   const openingVariant = db.opening_variants ? toOpeningVariant(db.opening_variants) : null;
   const riddle = db.riddles ? toRiddle(db.riddles) : null;
 
@@ -51,12 +51,12 @@ export function toUserFavouriteWithDetails(
   };
 }
 
-export function toUserFavouritesWithDetails(
-  rows: DbUserFavouriteWithDetails[],
-): UserFavouriteWithDetails[] {
-  const items: UserFavouriteWithDetails[] = [];
+export function toUserFavoritesWithDetails(
+  rows: DbUserFavoriteWithDetails[],
+): UserFavoriteWithDetails[] {
+  const items: UserFavoriteWithDetails[] = [];
   for (const row of rows) {
-    const item = toUserFavouriteWithDetails(row);
+    const item = toUserFavoriteWithDetails(row);
     if (item) items.push(item);
   }
   return items;

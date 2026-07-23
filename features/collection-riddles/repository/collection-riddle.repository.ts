@@ -27,28 +27,6 @@ export async function findByRiddleId(supabase: SupabaseClient, riddleId: string)
   return (data ?? []).map(toCollectionRiddle);
 }
 
-export async function findByRiddleIdAndCollectionId(
-  supabase: SupabaseClient,
-  riddleId: string,
-  collectionId: string,
-): Promise<CollectionRiddle | null> {
-  const { data, error } = await supabase
-    .from("collection_riddles")
-    .select("*")
-    .eq("riddle_id", riddleId)
-    .eq("collection_id", collectionId)
-    .maybeSingle();
-
-  if (error) {
-    console.error("collection-riddle.repository.findByRiddleIdAndCollectionId error:", error);
-    return null;
-  }
-
-  if (!data) return null;
-
-  return toCollectionRiddle(data);
-}
-
 type DbCollectionRiddleJoinRow = {
   sort_order: number;
   created_at: string;

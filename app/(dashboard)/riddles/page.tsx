@@ -8,7 +8,7 @@ import {
   getUserAttemptedRiddlesForDisplay,
   sortAttemptedRiddleItems,
 } from "@/features/riddle/services/riddle-list.service";
-import { buildStandaloneRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
+import { buildStandaloneRiddleUrl } from "@/features/riddle/utilities/build-riddle-url";
 import {
   hasActiveRiddlesFilters,
   parseRiddlesFilterStateFromSearchParams,
@@ -63,7 +63,7 @@ export default async function RiddlesPage({ searchParams }: { searchParams: Sear
                 riddle={riddle}
                 game={game}
                 boardWrapperClassName="aspect-square w-[180px] shrink-0"
-                href={buildStandaloneRiddlePath(riddle.id)}
+                href={buildStandaloneRiddleUrl(riddle.id)}
                 displayFen={riddle.moveSequence.displayFen}
                 accuracyPercent={accuracyPercent}
                 primaryTheme={primaryTheme}

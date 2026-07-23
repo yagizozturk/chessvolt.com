@@ -7,11 +7,11 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { toggleFavouriteAction } from "@/features/user-favourites/actions/toggle-favourite";
-import type { ToggleFavouriteTarget } from "@/features/user-favourites/types/user-favourite";
+import { toggleFavouriteAction } from "@/features/user-favorites/actions/toggle-favorite";
+import type { ToggleFavoriteTarget } from "@/features/user-favorites/types/user-favorite";
 import { cn } from "@/lib/utils";
 
-type FavouriteButtonProps = ToggleFavouriteTarget & {
+type FavouriteButtonProps = ToggleFavoriteTarget & {
   initialIsFavourited: boolean;
 };
 

@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
 import { FavoritesViewFilter } from "@/features/favorites/components/favorites-view-filter";
 import { parseFavoritesView } from "@/features/favorites/types/favorites-view";
-import { UserFavouriteOpeningVariants } from "@/features/user-favourites/components/user-favourite-opening-variants";
-import { UserFavouriteRiddles } from "@/features/user-favourites/components/user-favourite-riddles";
+import { UserFavoriteOpeningVariants } from "@/features/user-favorites/components/user-favorite-opening-variants";
+import { UserFavoriteRiddles } from "@/features/user-favorites/components/user-favorite-riddles";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
@@ -29,9 +29,9 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
         />
 
         {view === "riddles" ? (
-          <UserFavouriteRiddles userId={user.id} supabase={supabase} />
+          <UserFavoriteRiddles userId={user.id} supabase={supabase} />
         ) : (
-          <UserFavouriteOpeningVariants userId={user.id} supabase={supabase} />
+          <UserFavoriteOpeningVariants userId={user.id} supabase={supabase} />
         )}
       </div>
     </div>

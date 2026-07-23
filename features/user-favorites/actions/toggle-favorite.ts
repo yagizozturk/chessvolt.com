@@ -2,18 +2,18 @@
 
 import { revalidatePath } from "next/cache";
 
-import { toggleFavourite } from "@/features/user-favourites/services/toggle-favourite";
-import type { ToggleFavouriteResult } from "@/features/user-favourites/services/toggle-favourite";
-import type { ToggleFavouriteTarget } from "@/features/user-favourites/types/user-favourite";
+import { toggleFavourite } from "@/features/user-favorites/services/toggle-favorite";
+import type { ToggleFavoriteResult } from "@/features/user-favorites/services/toggle-favorite";
+import type { ToggleFavoriteTarget } from "@/features/user-favorites/types/user-favorite";
 import { getPublicUser } from "@/lib/supabase/auth";
 
-export type ToggleFavouriteActionResult =
-  | ToggleFavouriteResult
+export type ToggleFavoriteActionResult =
+  | ToggleFavoriteResult
   | { ok: false; reason: "unauthorized" };
 
 export async function toggleFavouriteAction(
-  target: ToggleFavouriteTarget,
-): Promise<ToggleFavouriteActionResult> {
+  target: ToggleFavoriteTarget,
+): Promise<ToggleFavoriteActionResult> {
   const { user, supabase } = await getPublicUser();
 
   if (!user) {

@@ -1,5 +1,5 @@
 import RiddleController from "@/features/riddle/components/riddle-controller";
-import { loadCollectionRiddlePage } from "@/features/riddle/services/riddle-page.service";
+import { loadCollectionRiddlePage } from "@/features/riddle/loaders/riddle-page.loader";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type PageProps = {
@@ -8,13 +8,14 @@ type PageProps = {
 
 // ==================================================================
 // Getting collection riddle details for a single riddle
+// Creating collage data for RiddleController
 // ==================================================================
 export default async function CollectionRiddlePage({ params }: PageProps) {
   const { slug, id } = await params;
   const { user, supabase } = await getPublicUser();
 
   // ==================================================================
-  // Service request
+  // Loader request for a single Riddle and passing data.
   // ==================================================================
   const riddleData = await loadCollectionRiddlePage({
     supabase,
@@ -23,5 +24,13 @@ export default async function CollectionRiddlePage({ params }: PageProps) {
     riddleId: id,
   });
 
-  return <RiddleController {...riddleData} />;
+  return (
+    <RiddleController
+      riddle={riddleData.riddle}
+      nextRiddleUrl={riddleData.nextRiddleUrl}
+      backUrl={riddleData.backUrl}
+      isUserLoggedIn={riddleData.isUserLoggedIn}
+      isFavorited={riddleData.isFavorited}
+    />
+  );
 }

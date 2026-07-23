@@ -1,7 +1,7 @@
 // TODO: Refactor
 import RiddleController from "@/features/riddle/components/riddle-controller";
-import { loadStandaloneRiddlePage } from "@/features/riddle/services/riddle-page.service";
-import { parseStandaloneRiddleSource } from "@/features/riddle/utilities/build-riddle-path";
+import { loadStandaloneRiddlePage } from "@/features/riddle/loaders/standalone-riddle-page.loader";
+import { parseStandaloneRiddleSource } from "@/features/riddle/utilities/build-riddle-url";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type PageProps = {

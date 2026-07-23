@@ -19,7 +19,7 @@ import {
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPrimaryThemesByRiddleIds } from "@/features/riddle-theme/services/riddle-theme.service";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import { buildRiddlePath } from "@/features/riddle/utilities/build-riddle-path";
+import { buildCollectionRiddleUrl } from "@/features/riddle/utilities/build-riddle-url";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-attempt/utilities/create-attempt-stats-by-sequence-id-map";
 import { getLatestAttemptStats } from "@/features/user-sequence-attempt/utilities/get-latest-attempt-stats";
@@ -28,7 +28,7 @@ import { getSequenceAttemptStats } from "@/features/user-sequence-attempt/utilit
 // ================================================================================================
 // Getting collection riddles to display them in details page
 // ================================================================================================
-export async function getCollectionRiddles({
+export async function loadCollectionRiddles({
   supabase,
   user,
   slug,
@@ -133,7 +133,7 @@ export async function getCollectionRiddles({
       return {
         riddle,
         game,
-        href: buildRiddlePath(riddle.id, { collectionSlug: collection.slug }),
+        href: buildCollectionRiddleUrl(riddle.id, { collectionSlug: collection.slug }),
         displayFen: riddle.moveSequence.displayFen,
         accuracyPercent: attemptStats.accuracyPercent,
         primaryTheme: primaryThemesByRiddleId.get(riddle.id) ?? null,

@@ -1,7 +1,7 @@
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeaderWithImage } from "@/components/page-header";
 import { CollectionRiddlesPagination } from "@/features/collection/components/collection-riddles-pagination";
-import { getCollectionRiddles } from "@/features/collection/services/collection-riddles-page.service";
+import { loadCollectionRiddles } from "@/features/collection/loaders/collection-riddles-page.loader";
 import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
 import { getPaginationParams } from "@/features/collection/utilities/collection-riddles-pagination.utils";
 import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
@@ -19,9 +19,9 @@ export default async function CollectionDetailPage({ params, searchParams }: Pro
   const page = getPaginationParams(pageParam);
 
   // ==================================================================
-  // Getting all collection riddles from service
+  // Getting all collection riddles from loader
   // ==================================================================
-  const { collection, collectionRiddles, pagination } = await getCollectionRiddles({
+  const { collection, collectionRiddles, pagination } = await loadCollectionRiddles({
     supabase,
     user,
     slug,

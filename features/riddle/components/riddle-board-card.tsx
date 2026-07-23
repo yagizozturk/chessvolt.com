@@ -86,7 +86,10 @@ export function RiddleBoardCard({
         <div className={cn("self-start", boardWrapperClassName)}>
           <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} coordinates={false} />
         </div>
+
+        {/* Riddle Board Card Content */}
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
+          {/* Volt Score */}
           {isShowingVoltScore ? (
             <div className="absolute right-[-32px] bottom-[-32px] z-10">
               <VoltCalculator result={voltScore} chartSize={110} className="w-fit" />

@@ -18,14 +18,6 @@ export async function getCollectionRiddlesByRiddleId(
   return collectionRiddleRepo.findByRiddleId(supabase, riddleId);
 }
 
-export async function getCollectionRiddleByRiddleIdAndCollectionId(
-  supabase: SupabaseClient,
-  riddleId: string,
-  collectionId: string,
-): Promise<CollectionRiddle | null> {
-  return collectionRiddleRepo.findByRiddleIdAndCollectionId(supabase, riddleId, collectionId);
-}
-
 export async function getActiveRiddlesByCollectionId(
   supabase: SupabaseClient,
   collectionId: string,

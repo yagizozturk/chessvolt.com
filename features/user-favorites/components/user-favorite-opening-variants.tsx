@@ -5,20 +5,20 @@ import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculat
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
-import { getUserFavouritesForUserWithDetails } from "@/features/user-favourites/services/user-favourite.service";
-import type { UserFavouriteWithDetails } from "@/features/user-favourites/types/user-favourite";
+import { getUserFavoritesForUserWithDetails } from "@/features/user-favorites/services/user-favorite.service";
+import type { UserFavoriteWithDetails } from "@/features/user-favorites/types/user-favorite";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 
-export async function UserFavouriteOpeningVariants({
+export async function UserFavoriteOpeningVariants({
   userId,
   supabase,
 }: {
   userId: string;
   supabase: SupabaseClient;
 }) {
-  const favourites = await getUserFavouritesForUserWithDetails(supabase, userId);
+  const favourites = await getUserFavoritesForUserWithDetails(supabase, userId);
   const openingFavourites = favourites.filter(
-    (favourite): favourite is UserFavouriteWithDetails & { openingVariant: NonNullable<UserFavouriteWithDetails["openingVariant"]> } =>
+    (favourite): favourite is UserFavoriteWithDetails & { openingVariant: NonNullable<UserFavoriteWithDetails["openingVariant"]> } =>
       favourite.openingVariant != null,
   );
 

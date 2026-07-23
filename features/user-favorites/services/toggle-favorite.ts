@@ -1,17 +1,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import * as userFavouriteRepo from "@/features/user-favourites/repository/user-favourite.repository";
-import type { ToggleFavouriteTarget, UserFavourite } from "@/features/user-favourites/types/user-favourite";
+import * as userFavouriteRepo from "@/features/user-favorites/repository/user-favorite.repository";
+import type { ToggleFavoriteTarget, UserFavorite } from "@/features/user-favorites/types/user-favorite";
 
-export type ToggleFavouriteResult =
-  | { ok: true; favourited: boolean; row: UserFavourite | null }
+export type ToggleFavoriteResult =
+  | { ok: true; favourited: boolean; row: UserFavorite | null }
   | { ok: false; reason: "invalid_target" | "failed" };
 
 type ParsedTarget =
   | { kind: "opening_variant"; openingVariantId: string }
   | { kind: "riddle"; riddleId: string };
 
-function parseTarget(target: ToggleFavouriteTarget): ParsedTarget | null {
+function parseTarget(target: ToggleFavoriteTarget): ParsedTarget | null {
   if ("openingVariantId" in target) {
     const openingVariantId = target.openingVariantId?.trim();
     if (!openingVariantId) return null;
@@ -25,8 +25,8 @@ function parseTarget(target: ToggleFavouriteTarget): ParsedTarget | null {
 
 export async function toggleFavourite(
   supabase: SupabaseClient,
-  input: { userId: string } & ToggleFavouriteTarget,
-): Promise<ToggleFavouriteResult> {
+  input: { userId: string } & ToggleFavoriteTarget,
+): Promise<ToggleFavoriteResult> {
   const target = parseTarget(input);
   if (!target) {
     return { ok: false, reason: "invalid_target" };
@@ -35,7 +35,7 @@ export async function toggleFavourite(
   const existing =
     target.kind === "opening_variant"
       ? await userFavouriteRepo.findByUserAndOpeningVariantId(supabase, input.userId, target.openingVariantId)
-      : await userFavouriteRepo.findByUserAndRiddleId(supabase, input.userId, target.riddleId);
+      : await userFavouriteRepo.findByRiddleId(supabase, input.userId, target.riddleId);
 
   if (existing) {
     const deleted = await userFavouriteRepo.deleteById(supabase, existing.id);

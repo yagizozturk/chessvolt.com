@@ -10,7 +10,7 @@ import {
   getOpeningVariantById,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
-import { getUserFavouriteByUserAndOpeningVariant } from "@/features/user-favourites/services/user-favourite.service";
+import { getUserFavoriteByUserAndOpeningVariant } from "@/features/user-favorites/services/user-favorite.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
@@ -56,7 +56,7 @@ export default async function OpeningVariantPage({ params }: Params) {
   const parentOpeningUrl = opening?.slug && opening?.id ? `/openings/${opening.slug}/${opening.id}` : "/openings";
 
   const favouriteRow = user
-    ? await getUserFavouriteByUserAndOpeningVariant(supabase, user.id, variant.id)
+    ? await getUserFavoriteByUserAndOpeningVariant(supabase, user.id, variant.id)
     : null;
   const isFavourited = Boolean(favouriteRow);
 
