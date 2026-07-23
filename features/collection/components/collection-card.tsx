@@ -65,7 +65,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
         {/* This overflow-hidden is there because the image should not override rounded corners of parent div */}
         {/* Object contain keeps the original image ratio, width is the reference */}
         <Link href={href} onClick={() => setIsLoading(true)} className="overflow-hidden">
-          <Image src={imageSrc} alt={collection.title} className="object-contain" width={180} height={152} />
+          <Image src={imageSrc} alt={collection.title} className="object-contain" width={300} height={169} />
         </Link>
       </div>
       {/* Collection title, description and play button */}

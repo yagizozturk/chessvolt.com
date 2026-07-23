@@ -91,7 +91,7 @@ export function OpeningBoardCard({
             ) : null}
           </div>
         ) : null}
-        <div className="mt-auto flex justify-start">
+        <div className="mt-auto flex justify-end">
           <Button variant="voltCompact" size="xs" className="pointer-events-none w-fit shrink-0">
             Play
           </Button>
