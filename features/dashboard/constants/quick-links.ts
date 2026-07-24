@@ -1,5 +1,11 @@
 export const QUICK_LINKS = [
   {
+    title: "Favorites",
+    description: "Your favourite openings and riddles to check your Volt score.",
+    href: "/favorites",
+    icon: "/images/icons/icon-favorite.png",
+  },
+  {
     title: "Library",
     description: "Browse curated riddle collections.",
     href: "/collection",
