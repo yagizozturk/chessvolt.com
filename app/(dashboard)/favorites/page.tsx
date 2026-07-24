@@ -9,7 +9,7 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
   title: "Favorites | ChessVolt",
-  description: "Your favourite openings and riddles.",
+  description: "Your favourite openings and riddles to check your Volt score.",
 };
 
 type SearchParams = Promise<{ view?: string }>;
