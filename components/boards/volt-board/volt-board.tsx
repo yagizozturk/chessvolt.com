@@ -16,6 +16,7 @@ import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import {
+  BOARD_ANIMATION_DELAY_MS,
   CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS,
   DEFAULT_PROMOTION_PIECE,
   WRONG_MOVE_REVERT_DELAY_MS,
@@ -202,6 +203,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 
     if (opponentMove) {
       lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
+      updateBoard();
     }
   }
 
@@ -227,8 +229,15 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     updateBoard();
   }, [sourceId, initialFen, playerOrientation, updateBoard, clearSquareCustomHighlights, ground]);
 
+  // ============================================================================
+  // Wait for opponent piece slide before painting the next goal's visuals.
+  // Chessground makes it 200 miliseconds to play move. With a buffer, 220 ms timeout is ok to draw shapes.
+  // ============================================================================
   useEffect(() => {
-    ground.current?.setAutoShapes(learnModeShapes);
+    const moveBufferTimeout = setTimeout(() => {
+      ground.current?.setAutoShapes(learnModeShapes);
+    }, BOARD_ANIMATION_DELAY_MS);
+    return () => clearTimeout(moveBufferTimeout);
   }, [ground, learnModeShapes, sourceId]);
 
   // ============================================================================

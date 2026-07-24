@@ -3,7 +3,7 @@
 
 import Lottie from "lottie-react";
 import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
@@ -137,63 +137,79 @@ export function GoalStepper({ goals }: GoalStepperProps) {
         >
           {goals.map((goal, index) => {
             const hasTakeaway = Boolean(goal.takeaway.trim());
+            const hasTitle = Boolean(goal.title.trim());
+            const hasPopoverContent = hasTitle || hasTakeaway;
+
+            const completedButton = (
+              <button
+                ref={(node) => setItemRef(index, node)}
+                type="button"
+                role="listitem"
+                className={cn(
+                  GOAL_ITEM_CLASS,
+                  "bg-muted relative size-8 cursor-default overflow-hidden rounded-full border-0 p-0",
+                )}
+                aria-label={
+                  hasTitle ? `Goal ${index + 1} completed — ${goal.title}` : `Goal ${index + 1} completed`
+                }
+                onMouseEnter={
+                  hasPopoverContent
+                    ? () => {
+                        cancelScheduledClose();
+                        setOpenIndex(index);
+                      }
+                    : undefined
+                }
+                onMouseLeave={hasPopoverContent ? scheduleClose : undefined}
+              >
+                {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
+                <Lottie
+                  animationData={hasTakeaway ? checkpointAnimationData : completeAnimationData}
+                  loop={false}
+                  autoplay={true}
+                  className="pointer-events-none absolute inset-0 size-full scale-[1.90]"
+                />
+              </button>
+            );
 
             return goal.isCompleted ? (
-              <Popover
-                key={index}
-                modal={false}
-                open={openIndex === index}
-                onOpenChange={(open) => handlePopoverOpenChange(open, index)}
-              >
-                <PopoverTrigger asChild>
-                  <button
-                    ref={(node) => setItemRef(index, node)}
-                    type="button"
-                    role="listitem"
-                    className={cn(
-                      GOAL_ITEM_CLASS,
-                      "bg-muted relative size-8 cursor-default overflow-hidden rounded-full border-0 p-0",
-                    )}
-                    aria-label={`Goal ${index + 1} completed — ${goal.title}`}
-                    onMouseEnter={() => {
-                      cancelScheduledClose();
-                      setOpenIndex(index);
-                    }}
+              hasPopoverContent ? (
+                <Popover
+                  key={index}
+                  modal={false}
+                  open={openIndex === index}
+                  onOpenChange={(open) => handlePopoverOpenChange(open, index)}
+                >
+                  <PopoverTrigger asChild>{completedButton}</PopoverTrigger>
+                  <PopoverContent
+                    side="bottom"
+                    align="center"
+                    sideOffset={12}
+                    collisionPadding={{ top: 16, bottom: 12, left: 12, right: 12 }}
+                    className="bg-muted w-72 gap-2 p-3 ring-0"
+                    onOpenAutoFocus={(e) => e.preventDefault()}
+                    onMouseEnter={cancelScheduledClose}
                     onMouseLeave={scheduleClose}
                   >
-                    {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
-                    <Lottie
-                      animationData={hasTakeaway ? checkpointAnimationData : completeAnimationData}
-                      loop={false}
-                      autoplay={true}
-                      className="pointer-events-none absolute inset-0 size-full scale-[1.90]"
-                    />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent
-                  side="bottom"
-                  align="center"
-                  sideOffset={12}
-                  collisionPadding={{ top: 16, bottom: 12, left: 12, right: 12 }}
-                  className="bg-muted w-72 gap-2 p-3 ring-0"
-                  onOpenAutoFocus={(e) => e.preventDefault()}
-                  onMouseEnter={cancelScheduledClose}
-                  onMouseLeave={scheduleClose}
-                >
-                  <PopoverHeader className="gap-1.5">
-                    {hasTakeaway ? (
-                      <p className="text-primary flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
-                        <BookOpen className="size-3.5 shrink-0" aria-hidden />
-                        Why Important?
-                      </p>
-                    ) : null}
-                    <PopoverTitle className={hasTakeaway ? "underline underline-offset-2" : undefined}>
-                      {goal.title}
-                    </PopoverTitle>
-                    {hasTakeaway ? <p className="text-sm font-medium">{goal.takeaway}</p> : null}
-                  </PopoverHeader>
-                </PopoverContent>
-              </Popover>
+                    <PopoverHeader className="gap-1.5">
+                      {hasTakeaway ? (
+                        <p className="text-primary flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
+                          <BookOpen className="size-3.5 shrink-0" aria-hidden />
+                          Why Important?
+                        </p>
+                      ) : null}
+                      {hasTitle ? (
+                        <PopoverTitle className={hasTakeaway ? "underline underline-offset-2" : undefined}>
+                          {goal.title}
+                        </PopoverTitle>
+                      ) : null}
+                      {hasTakeaway ? <p className="text-sm font-medium">{goal.takeaway}</p> : null}
+                    </PopoverHeader>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <Fragment key={index}>{completedButton}</Fragment>
+              )
             ) : (
               <div
                 key={index}
