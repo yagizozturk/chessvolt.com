@@ -1,6 +1,6 @@
 "use client";
 
-import { ChessKnight, ChevronDown, LogOutIcon, type LucideIcon, Menu, UserIcon, Zap } from "lucide-react";
+import { ChessKnight, LogOutIcon, type LucideIcon, Menu, UserIcon, Zap } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,14 +10,20 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { SparklesText } from "@/components/ui/sparkles-text";
+import { Spinner } from "@/components/ui/spinner";
+import { UserAvatar } from "@/features/profile/components/user-avatar";
 import { useProfile } from "@/features/profile/hooks/use-profile";
+import type { Profile } from "@/features/profile/types/profile";
+import { getDisplayName } from "@/features/profile/utilities/user-avatar";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+
+type NonNullProfile = Exclude<Profile, null>;
 
 type NavItem = {
   href: string;
@@ -58,30 +64,45 @@ function BrandLogo({ onNavigate, variant = "header" }: { onNavigate?: () => void
   );
 }
 
-function NavLinkContent({ item }: { item: NavItem }) {
+function NavLinkContent({ item, isNavigating }: { item: NavItem; isNavigating?: boolean }) {
   const Icon = item.icon;
   const pos = item.iconPosition ?? "left";
   return (
     <>
-      {Icon && pos === "left" && <Icon className="h-4 w-4" />}
+      {isNavigating ? (
+        <Spinner data-icon="inline-start" />
+      ) : (
+        Icon && pos === "left" && <Icon className="h-4 w-4" />
+      )}
       {item.label}
-      {Icon && pos === "right" && <Icon className="h-4 w-4" />}
+      {!isNavigating && Icon && pos === "right" && <Icon className="h-4 w-4" />}
     </>
   );
 }
 
 function DesktopNavLink({ item, onNavigate }: { item: NavItem; onNavigate?: () => void }) {
+  const [isNavigating, setIsNavigating] = useState(false);
+
   return (
     <Button variant="volt" asChild>
-      <Link href={item.href} className="flex items-center gap-2" onClick={onNavigate}>
-        <NavLinkContent item={item} />
+      <Link
+        href={item.href}
+        aria-busy={isNavigating}
+        className={cn("flex items-center gap-2", isNavigating && "pointer-events-none")}
+        onClick={() => {
+          setIsNavigating(true);
+          onNavigate?.();
+        }}
+      >
+        <NavLinkContent item={item} isNavigating={isNavigating} />
       </Link>
     </Button>
   );
 }
 
-function ProfileGreetingMenu({ displayName }: { displayName: string }) {
+function ProfileMenu({ profile }: { profile: NonNullProfile }) {
   const router = useRouter();
+  const displayName = getDisplayName(profile);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -92,17 +113,30 @@ function ProfileGreetingMenu({ displayName }: { displayName: string }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="focus-visible:ring-ring flex items-center gap-1 rounded-md outline-none focus-visible:ring-2">
-        <ChevronDown className="h-5 w-5" />
-        <SparklesText sparklesCount={3} className="text-base font-bold">
-          Hi, {displayName}
-        </SparklesText>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className="focus-visible:ring-ring rounded-full outline-none focus-visible:ring-2"
+          aria-label="Open profile menu"
+        >
+          <UserAvatar avatarUrl={profile.avatarUrl} displayName={displayName} className="size-9" />
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={8} className="w-48">
+      <DropdownMenuContent align="end" sideOffset={8} className="w-56">
+        <DropdownMenuLabel className="p-0 font-normal">
+          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+            <UserAvatar avatarUrl={profile.avatarUrl} displayName={displayName} className="size-8" />
+            <div className="grid flex-1 leading-tight">
+              <span className="truncate font-medium">{displayName}</span>
+              {profile.email ? <span className="text-muted-foreground truncate text-xs">{profile.email}</span> : null}
+            </div>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/profile">
             <UserIcon />
-            Profile
+            My Profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -116,10 +150,20 @@ function ProfileGreetingMenu({ displayName }: { displayName: string }) {
 }
 
 function MobileNavLink({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
+  const [isNavigating, setIsNavigating] = useState(false);
+
   return (
     <Button variant="volt" className="h-12 w-full text-base" asChild>
-      <Link href={item.href} className="flex items-center justify-center gap-2" onClick={onNavigate}>
-        <NavLinkContent item={item} />
+      <Link
+        href={item.href}
+        aria-busy={isNavigating}
+        className={cn("flex items-center justify-center gap-2", isNavigating && "pointer-events-none")}
+        onClick={() => {
+          setIsNavigating(true);
+          onNavigate();
+        }}
+      >
+        <NavLinkContent item={item} isNavigating={isNavigating} />
       </Link>
     </Button>
   );
@@ -130,8 +174,6 @@ export function Navbar() {
   const { profile, isLoading } = useProfile();
   const router = useRouter();
   const closeSheet = () => setIsOpen(false);
-
-  const displayName = profile?.username ?? "User";
 
   async function handleLogout() {
     closeSheet();
@@ -147,13 +189,13 @@ export function Navbar() {
         <BrandLogo />
 
         <nav className="hidden items-center gap-4 md:flex" aria-label="Main navigation">
-          {profile && <ProfileGreetingMenu displayName={displayName} />}
           {!isLoading &&
             (profile ? <DesktopNavLink item={START_PLAYING_ITEM} /> : <DesktopNavLink item={SIGN_IN_ITEM} />)}
+          {profile && <ProfileMenu profile={profile} />}
         </nav>
 
-        <div className="md:hidden">
-          {/* Mobile menu */}
+        <div className="flex items-center gap-3 md:hidden">
+          {profile && <ProfileMenu profile={profile} />}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button
@@ -172,11 +214,6 @@ export function Navbar() {
               </div>
 
               <nav className="flex flex-col gap-6" aria-label="Mobile menu">
-                {profile && (
-                  <Link href="/profile" onClick={closeSheet} className="w-fit">
-                    <SparklesText className="text-base font-bold">Hi, {displayName}</SparklesText>
-                  </Link>
-                )}
                 {!isLoading &&
                   (profile ? (
                     <MobileNavLink item={START_PLAYING_ITEM} onNavigate={closeSheet} />
@@ -184,15 +221,23 @@ export function Navbar() {
                     <MobileNavLink item={SIGN_IN_ITEM} onNavigate={closeSheet} />
                   ))}
                 {profile && (
-                  <Button
-                    type="button"
-                    variant="voltMuted"
-                    onClick={handleLogout}
-                    className="h-12 w-full gap-2 text-base"
-                  >
-                    <LogOutIcon />
-                    Log out
-                  </Button>
+                  <>
+                    <Button variant="voltMuted" className="h-12 w-full gap-2 text-base" asChild>
+                      <Link href="/profile" onClick={closeSheet}>
+                        <UserIcon />
+                        My Profile
+                      </Link>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="voltMuted"
+                      onClick={handleLogout}
+                      className="h-12 w-full gap-2 text-base"
+                    >
+                      <LogOutIcon />
+                      Log out
+                    </Button>
+                  </>
                 )}
               </nav>
             </SheetContent>

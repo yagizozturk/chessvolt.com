@@ -1,6 +1,22 @@
+"use client";
+
+import { ChessKnight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { useProfile } from "@/features/profile/hooks/use-profile";
+import { cn } from "@/lib/utils";
 
 export function Hero() {
+  const { profile, isLoading } = useProfile();
+  const [isNavigating, setIsNavigating] = useState(false);
+  const cta = profile
+    ? { href: "/dashboard", label: "Start Playing" }
+    : { href: "/login", label: "Start Learning" };
+
   return (
     <div className="container mx-auto bg-[#5734B3] px-4 pt-32 pb-24 md:px-6">
       <div className="flex flex-col gap-8 md:flex-row">
@@ -17,6 +33,21 @@ export function Hero() {
             <br />
             aims to teach you the idea behind the moves.
           </p>
+          {!isLoading && (
+            <div className="flex w-full justify-center md:justify-end">
+              <Button variant="volt" asChild>
+                <Link
+                  href={cta.href}
+                  aria-busy={isNavigating}
+                  onClick={() => setIsNavigating(true)}
+                  className={cn("flex items-center gap-2", isNavigating && "pointer-events-none")}
+                >
+                  {isNavigating ? <Spinner data-icon="inline-start" /> : <ChessKnight className="h-4 w-4" />}
+                  {cta.label}
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
         <div className="order-1 flex-1 md:order-2 md:mt-[-50px]">
           <Image

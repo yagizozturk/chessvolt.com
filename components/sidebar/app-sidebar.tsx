@@ -50,6 +50,11 @@ const data = {
       icon: "/images/icons/icon-favorite.png",
     },
     {
+      title: "Studies",
+      url: "/collection",
+      icon: "/images/icons/icon-book-collection.png",
+    },
+    {
       title: "Openings",
       url: "#",
       icon: "/images/icons/icon-openings.png",
@@ -65,12 +70,6 @@ const data = {
       url: "/riddles",
       icon: "/images/icons/icon-riddle.png",
     },
-    {
-      title: "Studies",
-      url: "/collection",
-      icon: "/images/icons/icon-book-collection.png",
-    },
-
     {
       title: "Other",
       url: "#",

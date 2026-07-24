@@ -46,6 +46,7 @@ export function OpeningBoardCard({
 }: OpeningBoardCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const moveCountLabel = formatMoveCountLabel(moves ?? null);
+  const isShowingVoltScore = isValidVoltScore(voltScore);
 
   const hasStatusIcon = isComplete === true || isComplete === false;
 
@@ -70,7 +71,7 @@ export function OpeningBoardCard({
         <DisplayBoard sourceId={id} initialFen={fen} coordinates={false} />
       </div>
       <div className="relative flex min-w-0 flex-1 flex-col gap-2">
-        {isValidVoltScore(voltScore) ? (
+        {isShowingVoltScore ? (
           <div className="absolute right-[-32px] bottom-[-32px] z-10">
             <VoltCalculator result={voltScore} chartSize={140} className="w-fit" />
           </div>
@@ -91,7 +92,7 @@ export function OpeningBoardCard({
             ) : null}
           </div>
         ) : null}
-        <div className="mt-auto flex justify-end">
+        <div className={cn("mt-auto flex", isShowingVoltScore ? "justify-start" : "justify-end")}>
           <Button variant="voltCompact" size="xs" className="pointer-events-none w-fit shrink-0">
             Play
           </Button>
