@@ -35,14 +35,14 @@ export function getThemeFilterOptions(collections: CollectionWithRiddleCountAndT
 export function parseCollectionFilterStateFromUrl(params: {
   difficulty?: string;
   theme?: string;
-  searchBox?: string;
+  q?: string;
 }): CollectionFilterState {
   const difficultyParam = params.difficulty?.trim() ?? "";
   const difficultyFilter = COLLECTION_DIFFICULTY_OPTIONS.includes(difficultyParam as CollectionDifficultyOptions)
     ? (difficultyParam as CollectionDifficultyOptions)
     : "All";
   const themeFilter = params.theme?.trim() || "all";
-  const searchQuery = params.searchBox?.trim() ?? "";
+  const searchQuery = params.q?.trim() ?? "";
 
   return { searchQuery, difficultyFilter, themeFilter };
 }
