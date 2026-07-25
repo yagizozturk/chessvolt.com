@@ -5,6 +5,7 @@ import { Calendar, Circle, Flag, Gauge, Puzzle, Tags, Target } from "lucide-reac
 import Link from "next/link";
 
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
+import { BoardStatusIcon } from "@/components/board-status-icon/board-status-icon";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
@@ -29,6 +30,8 @@ type RiddleBoardCardProps = {
   voltScore?: VoltScoreResult | null;
   accuracyPercent?: number | null;
   primaryTheme?: PrimaryRiddleTheme | null;
+  /** true = solved, false = wrong, undefined = not attempted */
+  isComplete?: boolean;
 };
 
 function formatDate(dateStr: string) {
@@ -60,16 +63,17 @@ export function RiddleBoardCard({
   voltScore = null,
   accuracyPercent,
   primaryTheme = null,
+  isComplete,
 }: RiddleBoardCardProps) {
   const moveCountLabel = formatMoveCountLabel(riddle.moveSequence.moves);
   const isShowingVoltScore = showVoltScore && isValidVoltScore(voltScore);
 
   return (
     <TooltipProvider>
-      <Link
-        href={href}
-        className="bg-card border-b-card-shadow relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6"
-      >
+      <div className="bg-card border-b-card-shadow relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6">
+        {isComplete === true && <BoardStatusIcon status="solved" />}
+        {isComplete === false && <BoardStatusIcon status="wrong" />}
+
         <div className={cn("self-start", boardWrapperClassName)}>
           <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} coordinates={false} />
         </div>
@@ -82,7 +86,9 @@ export function RiddleBoardCard({
               <VoltCalculator result={voltScore} chartSize={110} className="w-fit" />
             </div>
           ) : null}
-          <p className="text-xl font-bold">{riddle.title}</p>
+          <Link href={href} className="text-xl font-bold hover:underline">
+            {riddle.title}
+          </Link>
           {game ? (
             <>
               <div className="flex flex-col rounded-lg">
@@ -125,12 +131,12 @@ export function RiddleBoardCard({
             </div>
           ) : null}
           <div className={cn("mt-auto flex", isShowingVoltScore ? "justify-start" : "justify-end")}>
-            <Button variant="voltCompact" size="xs" className="pointer-events-none w-fit shrink-0">
-              Play
+            <Button variant="voltCompact" size="xs" className="w-fit shrink-0" asChild>
+              <Link href={href}>Play</Link>
             </Button>
           </div>
         </div>
-      </Link>
+      </div>
     </TooltipProvider>
   );
 }

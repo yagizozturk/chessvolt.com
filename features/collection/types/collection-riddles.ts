@@ -13,6 +13,7 @@ export type CollectionRiddleCardItemData = {
   displayFen: string | null;
   accuracyPercent: number | null;
   primaryTheme: PrimaryRiddleTheme | null;
+  isComplete: boolean | undefined;
 };
 
 // ============================================================

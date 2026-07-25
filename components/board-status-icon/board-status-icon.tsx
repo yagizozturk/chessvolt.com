@@ -1,22 +1,26 @@
 // TODO: Refactor
-import { TrophyIcon, X } from "lucide-react";
+"use client";
+
+import Lottie from "lottie-react";
+
+import solvedAnimationData from "@/public/images/animations/animation-complete.json";
+import wrongAnimationData from "@/public/images/animations/animation-warning-yellow.json";
 
 type BoardStatusIconProps = {
   status: "solved" | "wrong";
-  positionClassName?: string;
 };
 
-export function BoardStatusIcon({ status, positionClassName = "top-3 right-3" }: BoardStatusIconProps) {
+export function BoardStatusIcon({ status }: BoardStatusIconProps) {
   if (status === "solved") {
     return (
-      <div className={`absolute ${positionClassName} z-10 rounded-full bg-green-500 p-2 dark:bg-green-600`}>
-        <TrophyIcon className="h-7 w-7 text-white" />
+      <div className={`absolute top-[-10px] right-[-10px] z-10`}>
+        <Lottie animationData={solvedAnimationData} loop={false} autoplay className="h-20 w-20" />
       </div>
     );
   }
   return (
-    <div className={`absolute ${positionClassName} z-10 rounded-full bg-red-500 p-2 dark:bg-red-600`}>
-      <X className="h-7 w-7 text-white" />
+    <div className={`absolute top-3 right-3 z-10`}>
+      <Lottie animationData={wrongAnimationData} loop autoplay className="h-12 w-12" />
     </div>
   );
 }

@@ -21,6 +21,7 @@ import { getPrimaryThemesByRiddleIds } from "@/features/riddle-theme/services/ri
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { buildCollectionRiddleUrl } from "@/features/riddle/utilities/build-riddle-url";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
+import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-attempt/utilities/create-attempt-stats-by-sequence-id-map";
 import { getLatestAttemptStats } from "@/features/user-sequence-attempt/utilities/get-latest-attempt-stats";
 import { getSequenceAttemptStats } from "@/features/user-sequence-attempt/utilities/get-sequence-attempt-stats";
@@ -128,7 +129,8 @@ export async function loadCollectionRiddles({
     })
     .filter((x): x is NonNullable<typeof x> => x != null) // Skip unrenderable riddles: if there’s no game and no displayFen, return null.
     .map(({ riddle, game }) => {
-      const attemptStats = getSequenceAttemptStats(attemptStatsBySequenceIdMap[riddle.moveSequence.id]);
+      const rawAttemptStats = attemptStatsBySequenceIdMap[riddle.moveSequence.id];
+      const attemptStats = getSequenceAttemptStats(rawAttemptStats);
 
       return {
         riddle,
@@ -137,6 +139,7 @@ export async function loadCollectionRiddles({
         displayFen: riddle.moveSequence.displayFen,
         accuracyPercent: attemptStats.accuracyPercent,
         primaryTheme: primaryThemesByRiddleId.get(riddle.id) ?? null,
+        isComplete: attemptStatusToIsComplete(rawAttemptStats?.status),
       };
     });
 

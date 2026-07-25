@@ -9,6 +9,9 @@ import { buildStandaloneRiddleUrl } from "@/features/riddle/utilities/build-ridd
 import { getUserFavoritesForUserWithDetails } from "@/features/user-favorites/services/user-favorite.service";
 import type { UserFavoriteWithDetails } from "@/features/user-favorites/types/user-favorite";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
+import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
+import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-attempt/utilities/create-attempt-stats-by-sequence-id-map";
+import { getLatestAttemptStats } from "@/features/user-sequence-attempt/utilities/get-latest-attempt-stats";
 
 export async function UserFavoriteRiddles({
   userId,
@@ -42,6 +45,8 @@ export async function UserFavoriteRiddles({
         )
       : {};
 
+  const attemptStatsBySequenceIdMap = createAttemptStatsBySequenceIdMap(getLatestAttemptStats(riddleAttempts));
+
   if (riddleFavourites.length === 0) {
     return <EmptyDataMessage message="You haven't favourited any riddles yet." />;
   }
@@ -60,6 +65,7 @@ export async function UserFavoriteRiddles({
             displayFen={riddle.moveSequence.displayFen}
             showVoltScore
             voltScore={voltScoresBySequenceId[riddle.moveSequence.id] ?? null}
+            isComplete={attemptStatusToIsComplete(attemptStatsBySequenceIdMap[riddle.moveSequence.id]?.status)}
           />
         );
       })}
