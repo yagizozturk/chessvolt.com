@@ -4,37 +4,13 @@ import Link from "next/link";
 import { buildThemePlayUrl } from "@/features/riddle/utilities/build-riddle-url";
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
 import type { Theme } from "@/features/theme/types/theme";
-import {
-  formatThemeCategoryLabel,
-  THEME_CATEGORIES,
-  type ThemeCategory,
-} from "@/features/theme/types/theme-category";
+import { THEME_CATEGORIES, formatThemeCategoryLabel } from "@/features/theme/types/theme-category";
+import { groupThemesByCategory } from "@/features/theme/utilities/group-themes-by-category";
 
 type ThemeListProps = {
   themes: Theme[];
   groupByCategory?: boolean;
 };
-
-function groupThemesByCategory(themes: Theme[]): Map<ThemeCategory, Theme[]> {
-  const grouped = new Map<ThemeCategory, Theme[]>();
-  for (const category of THEME_CATEGORIES) {
-    grouped.set(category, []);
-  }
-  for (const theme of themes) {
-    grouped.get(theme.category)?.push(theme);
-  }
-  return grouped;
-}
-
-function ThemeListItem({ theme }: { theme: Theme }) {
-  return (
-    <li>
-      <Link href={buildThemePlayUrl(theme.slug)} className="inline-flex transition-opacity hover:opacity-80">
-        <ThemeBadge theme={theme} />
-      </Link>
-    </li>
-  );
-}
 
 export function ThemeList({ themes, groupByCategory = true }: ThemeListProps) {
   if (themes.length === 0) {
@@ -73,5 +49,18 @@ export function ThemeList({ themes, groupByCategory = true }: ThemeListProps) {
         );
       })}
     </div>
+  );
+}
+
+// ================================================================================
+// Theme list item component. This link redirect to /riddle/[id]
+// ================================================================================
+function ThemeListItem({ theme }: { theme: Theme }) {
+  return (
+    <li>
+      <Link href={buildThemePlayUrl(theme.slug)} className="inline-flex transition-opacity hover:opacity-80">
+        <ThemeBadge theme={theme} />
+      </Link>
+    </li>
   );
 }

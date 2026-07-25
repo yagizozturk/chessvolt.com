@@ -43,10 +43,13 @@ export function buildStandaloneRiddleUrl(
 }
 
 // ==================================================================
-// Building theme play URLs. Resolves a random riddle on click, then redirects.
+// Building theme play URLs. Renders a random riddle for the theme.
+// Optional nonce forces a fresh pick when navigating to the same path (e.g. Next).
 // ==================================================================
-export function buildThemePlayUrl(themeSlug: string): string {
-  return `/riddles/theme/${themeSlug}`;
+export function buildThemePlayUrl(themeSlug: string, options?: { nonce?: string }): string {
+  const path = `/riddles/theme/${themeSlug}`;
+  if (!options?.nonce) return path;
+  return `${path}?n=${options.nonce}`;
 }
 
 // ==================================================================

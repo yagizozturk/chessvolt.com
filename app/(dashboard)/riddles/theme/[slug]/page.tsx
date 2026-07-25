@@ -1,32 +1,51 @@
 import { redirect } from "next/navigation";
 
 import * as profileRepo from "@/features/profile/repository/profile.repository";
+import RiddleController from "@/features/riddle/components/riddle-controller";
 import { DEFAULT_RIDDLE_RATING } from "@/features/riddle/constants/riddle-rating.constants";
-import { getFirstRandomRiddleUrlForTheme } from "@/features/riddle/services/random-riddle-by-theme.service";
+import { getFirstRandomRiddleForTheme } from "@/features/riddle/services/random-riddle-by-theme.service";
+import { buildThemePlayUrl } from "@/features/riddle/utilities/build-riddle-url";
+import { getFavoriteByRiddleId } from "@/features/user-favorites/services/user-favorite.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ n?: string }>;
 };
 
 // ==================================================================
-// Theme play resolver. Picks a rating-matched unsolved riddle for the
-// clicked theme only, then redirects to the standalone riddle page.
+// Theme play page. Picks a rating-matched unsolved riddle for the
+// clicked theme and renders it. Next navigates here again with a nonce.
 // ==================================================================
-export default async function RedirectThemeRiddlePage({ params }: PageProps) {
+export default async function ThemeRiddlePage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  await searchParams;
   const { user, supabase } = await getPublicUser();
 
   const targetRating = user
     ? ((await profileRepo.getProfileCurrentRating(supabase, user.id)) ?? DEFAULT_RIDDLE_RATING)
     : DEFAULT_RIDDLE_RATING;
 
-  // Getting first random riddle url for the theme
-  const riddleUrl = await getFirstRandomRiddleUrlForTheme(supabase, {
+  const riddle = await getFirstRandomRiddleForTheme(supabase, {
     themeSlug: slug,
     userId: user?.id,
     targetRating,
   });
 
-  redirect(riddleUrl ?? "/riddles");
+  if (!riddle) {
+    redirect("/riddles");
+  }
+
+  const isFavorited = user ? await getFavoriteByRiddleId(supabase, user.id, riddle.id) : null;
+
+  return (
+    <RiddleController
+      key={riddle.id}
+      riddle={riddle}
+      nextRiddleUrl={buildThemePlayUrl(slug, { nonce: crypto.randomUUID() })}
+      backUrl="/riddles"
+      isUserLoggedIn={Boolean(user)}
+      isFavorited={Boolean(isFavorited)}
+    />
+  );
 }

@@ -14,7 +14,7 @@ import { getFavoriteByRiddleId } from "@/features/user-favorites/services/user-f
 // This is a orchestration component. Helps to create standalone riddle pages
 // Standalone means, riddles that user routes from /riddles page.
 // They are not in a collection.
-// Theme play Next reuses /riddles/theme/[slug] to pick another random riddle.
+// Theme play Next reuses /riddles/theme/[slug] (with a nonce) to pick another random riddle.
 // ==================================================================
 export async function loadStandaloneRiddlePage(props: StandaloneRiddleLoaderPageProps): Promise<RiddlePageData> {
   const { supabase, user, riddleId, from, themeSlug } = props;
@@ -25,7 +25,7 @@ export async function loadStandaloneRiddlePage(props: StandaloneRiddleLoaderPage
   }
 
   const nextRiddleUrl = themeSlug
-    ? buildThemePlayUrl(themeSlug)
+    ? buildThemePlayUrl(themeSlug, { nonce: crypto.randomUUID() })
     : getNextRiddleUrl(await getAllActiveRiddles(supabase), riddle.id, (id) =>
         buildStandaloneRiddleUrl(id, from ? { from } : undefined),
       );
