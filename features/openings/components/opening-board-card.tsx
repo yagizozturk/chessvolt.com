@@ -48,12 +48,8 @@ export function OpeningBoardCard({
   const moveCountLabel = formatMoveCountLabel(moves ?? null);
   const isShowingVoltScore = isValidVoltScore(voltScore);
 
-  const hasStatusIcon = isComplete === true || isComplete === false;
-
   return (
-    <Link
-      href={href}
-      onClick={() => setIsLoading(true)}
+    <div
       aria-busy={isLoading}
       className={cn(
         "bg-card border-b-card-shadow relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6",
@@ -65,9 +61,10 @@ export function OpeningBoardCard({
           <Spinner className="size-8" />
         </div>
       ) : null}
-      <div className={cn("self-start", boardWrapperClassName, hasStatusIcon && "relative")}>
-        {isComplete === true && <BoardStatusIcon status="solved" positionClassName="top-3 right-3" />}
-        {isComplete === false && <BoardStatusIcon status="wrong" positionClassName="top-3 right-3" />}
+      {isComplete === true && <BoardStatusIcon status="solved" />}
+      {isComplete === false && <BoardStatusIcon status="wrong" />}
+
+      <div className={cn("self-start", boardWrapperClassName)}>
         <DisplayBoard sourceId={id} initialFen={fen} coordinates={false} />
       </div>
       <div className="relative flex min-w-0 flex-1 flex-col gap-2">
@@ -76,7 +73,9 @@ export function OpeningBoardCard({
             <VoltCalculator result={voltScore} chartSize={140} className="w-fit" />
           </div>
         ) : null}
-        <p className="text-xl font-bold">{name}</p>
+        <Link href={href} onClick={() => setIsLoading(true)} className="text-xl font-bold hover:underline">
+          {name}
+        </Link>
         {description ? <p className="text-muted-foreground hidden text-base md:block">{description}</p> : null}
         {moveCountLabel ? (
           <BoardCardMetaRow icon={Puzzle} label={moveCountLabel} className="text-muted-foreground text-sm" />
@@ -93,11 +92,13 @@ export function OpeningBoardCard({
           </div>
         ) : null}
         <div className={cn("mt-auto flex", isShowingVoltScore ? "justify-start" : "justify-end")}>
-          <Button variant="voltCompact" size="xs" className="pointer-events-none w-fit shrink-0">
-            Play
+          <Button variant="voltCompact" size="xs" className="w-fit shrink-0" asChild>
+            <Link href={href} onClick={() => setIsLoading(true)}>
+              Play
+            </Link>
           </Button>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
