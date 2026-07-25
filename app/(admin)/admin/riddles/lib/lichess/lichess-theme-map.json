@@ -172,7 +172,7 @@
     "xRayAttack": {
       "slug": "x_ray_attack",
       "name": "X-Ray Attack",
-      "category": "tactics"
+      "category": "advanced_tactics"
     },
     "attraction": {
       "slug": "attraction",
@@ -248,6 +248,11 @@
       "slug": "sacrifice",
       "name": "Sacrifice",
       "category": "attack"
+    },
+    "best_move": {
+      "slug": "best_move",
+      "name": "Best Move",
+      "category": "advanced_tactics"
     },
     "mate": {
       "slug": "checkmate",
@@ -376,13 +381,7 @@
     }
   },
   "weightRules": {
-    "defaultByOrder": [
-      10,
-      8,
-      7,
-      6,
-      5
-    ],
+    "defaultByOrder": [10, 8, 7, 6, 5],
     "ignoreTagsBeforeWeighting": true,
     "phaseWeightCap": 6,
     "genericMateWeightCap": 7,

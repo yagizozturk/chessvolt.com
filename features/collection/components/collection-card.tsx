@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { takeTopCollectionThemes } from "@/features/collection-theme/mapper/collection-theme.mapper";
 import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/types/collection";
 import { getCollectionCoverImageSrc } from "@/features/collection/utilities/collection-cover-image.utils";
 import { formatCollectionDifficultyLabel } from "@/features/collection/utilities/collection-difficulty.utils";
@@ -57,7 +58,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
               <ChessPawn data-icon="inline-start" />
               {formatCollectionRiddleCount(collection.riddleCount)}
             </Badge>
-            {collection.themes.map((item) => (
+            {takeTopCollectionThemes(collection.themes).map((item) => (
               <ThemeBadge key={item.id} theme={item.theme} />
             ))}
           </div>

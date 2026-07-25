@@ -8,7 +8,7 @@ import type { CollectionWithRiddleCountAndThemes } from "@/features/collection/t
 import { parseThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 import { toTheme, type DbTheme } from "@/features/theme/mapper/theme.mapper";
 
-export const DEFAULT_TOP_COLLECTION_THEME_COUNT = 2;
+export const DEFAULT_TOP_COLLECTION_THEME_COUNT = 3;
 
 export type DbCollectionTheme = {
   id: string;
@@ -70,24 +70,26 @@ export type DbCollectionWithRiddleCountAndThemes = DbCollectionWithRiddleCount &
   collection_themes: DbCollectionThemeWithTheme[] | null;
 };
 
-export function takeTopCollectionThemesWithTheme(
-  rows: DbCollectionThemeWithTheme[] | null | undefined,
-  limit = DEFAULT_TOP_COLLECTION_THEME_COUNT,
-): CollectionThemeWithTheme[] {
-  const items = toCollectionThemesWithTheme(rows ?? []);
-  items.sort((a, b) => {
+function sortCollectionThemesByWeight(items: CollectionThemeWithTheme[]): CollectionThemeWithTheme[] {
+  return [...items].sort((a, b) => {
     if (b.weight !== a.weight) return b.weight - a.weight;
     return a.createdAt.localeCompare(b.createdAt);
   });
-  return items.slice(0, limit);
+}
+
+/** Top themes for card/display badges. Filtering uses the full `themes` list. */
+export function takeTopCollectionThemes(
+  themes: CollectionThemeWithTheme[],
+  limit = DEFAULT_TOP_COLLECTION_THEME_COUNT,
+): CollectionThemeWithTheme[] {
+  return themes.slice(0, limit);
 }
 
 export function toCollectionWithRiddleCountAndThemes(
   db: DbCollectionWithRiddleCountAndThemes,
-  topThemeLimit = DEFAULT_TOP_COLLECTION_THEME_COUNT,
 ): CollectionWithRiddleCountAndThemes {
   return {
     ...toCollectionWithRiddleCount(db),
-    themes: takeTopCollectionThemesWithTheme(db.collection_themes, topThemeLimit),
+    themes: sortCollectionThemesByWeight(toCollectionThemesWithTheme(db.collection_themes ?? [])),
   };
 }
