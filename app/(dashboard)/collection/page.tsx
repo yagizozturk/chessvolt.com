@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/page-header";
 import { VoltExplainDialogAutoStart } from "@/components/volt-explain-dialog/volt-explain-dialog-auto-start";
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import { CollectionFilters } from "@/features/collection/components/collection-filters";
+import { CollectionPagination } from "@/features/collection/components/collection-pagination";
 import { getActiveCollectionsWithRiddleCountAndThemes } from "@/features/collection/services/collection.service";
 import type { CollectionPageSearchParams } from "@/features/collection/types/collection-search-params";
 import {
@@ -11,6 +12,12 @@ import {
   hasActiveCollectionFilters,
   parseCollectionFilterStateFromUrl,
 } from "@/features/collection/utilities/collection-filter.utils";
+import {
+  clampCollectionPage,
+  getCollectionTotalPages,
+  paginateCollections,
+  parseCollectionPage,
+} from "@/features/collection/utilities/collection-pagination.utils";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 export default async function CollectionPage({ searchParams }: { searchParams: CollectionPageSearchParams }) {
@@ -38,6 +45,9 @@ export default async function CollectionPage({ searchParams }: { searchParams: C
   // Filter collections based on filter state
   // ========================================================================
   const filteredCollections = filterCollections(collections, filterState);
+  const totalPages = getCollectionTotalPages(filteredCollections.length);
+  const currentPage = clampCollectionPage(parseCollectionPage(params.page), totalPages);
+  const paginatedCollections = paginateCollections(filteredCollections, currentPage);
 
   // ========================================================================
   // Check if there are active filters. This is for to show or hide
@@ -74,11 +84,14 @@ export default async function CollectionPage({ searchParams }: { searchParams: C
         ) : filteredCollections.length === 0 ? (
           <EmptyDataMessage message="No collections match your filters." />
         ) : (
-          <div className="page-container-grid-data-layout">
-            {filteredCollections.map((collection) => (
-              <CollectionCard key={collection.id} collection={collection} />
-            ))}
-          </div>
+          <>
+            <div className="page-container-grid-data-layout">
+              {paginatedCollections.map((collection) => (
+                <CollectionCard key={collection.id} collection={collection} />
+              ))}
+            </div>
+            <CollectionPagination filters={filterState} page={currentPage} totalPages={totalPages} />
+          </>
         )}
       </div>
     </div>
