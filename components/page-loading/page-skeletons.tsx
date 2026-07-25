@@ -110,3 +110,67 @@ export function PageGridSkeleton({ count = 4, children }: { count?: number; chil
     </div>
   );
 }
+
+const THEME_BADGE_WIDTHS = ["w-16", "w-20", "w-24", "w-14", "w-28", "w-12"] as const;
+
+/** Mirrors `ThemeList` category sections with badge-shaped chips. */
+export function ThemeListSkeleton({
+  categoryCount = 4,
+  badgesPerCategory = 6,
+}: {
+  categoryCount?: number;
+  badgesPerCategory?: number;
+}) {
+  return (
+    <div className="space-y-6">
+      {Array.from({ length: categoryCount }, (_, categoryIndex) => (
+        <section key={categoryIndex}>
+          <Skeleton className="mb-2 h-4 w-24" />
+          <ul className="flex flex-wrap gap-2">
+            {Array.from({ length: badgesPerCategory }, (_, badgeIndex) => (
+              <li key={badgeIndex}>
+                <Skeleton
+                  className={cn("h-6 rounded-full", THEME_BADGE_WIDTHS[(categoryIndex + badgeIndex) % THEME_BADGE_WIDTHS.length])}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+/** Mirrors `RiddleController` board + side panel layout. */
+export function RiddleControllerSkeleton() {
+  return (
+    <div className="page-container">
+      <div className="page-container-controller-layout">
+        <Skeleton className="aspect-square w-full shrink-0 self-start rounded-xl md:min-w-0 md:flex-[3]" />
+
+        <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
+          <div className="flex justify-between">
+            <Skeleton className="size-9 rounded-lg" />
+            <Skeleton className="h-7 w-24" />
+            <Skeleton className="size-9 rounded-lg" />
+          </div>
+
+          <Skeleton className="h-10 w-full rounded-lg" />
+
+          <div className="flex flex-col gap-3">
+            <Skeleton className="h-28 w-full rounded-xl" />
+            <div className="flex items-center gap-0">
+              <Skeleton className="h-4 flex-1 rounded-r-none" />
+              <Skeleton className="size-10 shrink-0 rounded-2xl" />
+            </div>
+            <Skeleton className="h-8 w-full rounded-lg" />
+          </div>
+
+          <div className="mt-auto">
+            <Skeleton className="h-10 w-full rounded-lg" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

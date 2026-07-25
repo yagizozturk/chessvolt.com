@@ -29,8 +29,8 @@ export function ThemeBrowseSection({ themes }: ThemeBrowseSectionProps) {
   return (
     <>
       <PageHeader
-        title="Your riddles"
-        description="Riddles you've tried to solve."
+        title="Riddle Themes"
+        description="Browse through the available riddle themes."
         actions={
           themes.length > 0 ? (
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:justify-end">

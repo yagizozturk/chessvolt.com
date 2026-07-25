@@ -1,9 +1,7 @@
-// TODO: Refactor
 import {
-  BoardCardSkeleton,
   FilterControlsSkeleton,
-  PageGridSkeleton,
   PageHeaderSkeleton,
+  ThemeListSkeleton,
 } from "@/components/page-loading/page-skeletons";
 
 export default function RiddlesLoading() {
@@ -12,11 +10,11 @@ export default function RiddlesLoading() {
       <div className="page-container-children-layout">
         <PageHeaderSkeleton
           titleWidthClassName="w-40"
-          descriptionWidthClassName="w-64 max-w-full"
-          actions={<FilterControlsSkeleton widths={["sm:w-36", "sm:w-32"]} />}
+          descriptionWidthClassName="w-72 max-w-full"
+          actions={<FilterControlsSkeleton widths={["sm:max-w-xs sm:flex-1"]} />}
         />
 
-        <PageGridSkeleton>{(index) => <BoardCardSkeleton key={index} compact metaLineCount={3} />}</PageGridSkeleton>
+        <ThemeListSkeleton />
       </div>
     </div>
   );
