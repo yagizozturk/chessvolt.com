@@ -1,17 +1,18 @@
-// TODO: Refactor
-/**
- * Theme Service
- *
- * Responsibility: Theme business logic and orchestration.
- * - Uses repository (does not touch Supabase directly)
- */
 
 import * as themeRepo from "@/features/theme/repository/theme.repository";
 import type { Theme } from "@/features/theme/types/theme";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+
+// ================================================================================
+// Getting all project themes from the repo
+// ================================================================================
 export async function getAllThemes(supabase: SupabaseClient): Promise<Theme[]> {
   return themeRepo.findAll(supabase);
+}
+
+export async function getAllActiveThemes(supabase: SupabaseClient): Promise<Theme[]> {
+  return themeRepo.findAllActive(supabase);
 }
 
 export async function getThemeById(supabase: SupabaseClient, id: string): Promise<Theme | null> {

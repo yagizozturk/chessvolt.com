@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { redirect } from "next/navigation";
 
 import * as profileRepo from "@/features/profile/repository/profile.repository";
@@ -22,6 +21,7 @@ export default async function RedirectThemeRiddlePage({ params }: PageProps) {
     ? ((await profileRepo.getProfileCurrentRating(supabase, user.id)) ?? DEFAULT_RIDDLE_RATING)
     : DEFAULT_RIDDLE_RATING;
 
+  // Getting first random riddle url for the theme
   const riddleUrl = await getFirstRandomRiddleUrlForTheme(supabase, {
     themeSlug: slug,
     userId: user?.id,

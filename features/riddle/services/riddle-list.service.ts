@@ -21,67 +21,6 @@ export type AttemptedRiddleListItem = {
   accuracyPercent: number | null;
 };
 
-export async function getUserAttemptedRiddlesForDisplay(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<AttemptedRiddleListItem[]> {
-  const latestAttempts = await attemptService.getLatestFinishedAttemptsByUser(supabase, userId);
-  if (latestAttempts.length === 0) return [];
-
-  const sequenceIds = latestAttempts.map((attempt) => attempt.sequenceId);
-  const latestBySequenceId = Object.fromEntries(latestAttempts.map((attempt) => [attempt.sequenceId, attempt]));
-
-  const riddles = await riddleRepo.findByMoveSequenceIds(supabase, sequenceIds);
-  if (riddles.length === 0) return [];
-
-  const riddleThemes = await riddleThemeRepo.findByRiddleIdsWithTheme(
-    supabase,
-    riddles.map((riddle) => riddle.id),
-  );
-  const themeSlugsByRiddleId = new Map<string, string[]>();
-  const primaryThemeByRiddleId = new Map<string, PrimaryRiddleTheme>();
-
-  for (const row of riddleThemes) {
-    const slugs = themeSlugsByRiddleId.get(row.riddleId) ?? [];
-    slugs.push(row.theme.slug);
-    themeSlugsByRiddleId.set(row.riddleId, slugs);
-
-    if (!primaryThemeByRiddleId.has(row.riddleId)) {
-      primaryThemeByRiddleId.set(row.riddleId, {
-        title: row.theme.title,
-        slug: row.theme.slug,
-      });
-    }
-  }
-
-  const gameIds = [...new Set(riddles.map((riddle) => riddle.gameId).filter((id): id is string => id != null))];
-  const games = await getGamesByIds(supabase, gameIds);
-  const gameMap = Object.fromEntries(games.map((game) => [game.id, game]));
-
-  const items: AttemptedRiddleListItem[] = [];
-
-  for (const riddle of riddles) {
-    const game = riddle.gameId ? (gameMap[riddle.gameId] ?? null) : null;
-    if (!game && !riddle.moveSequence.displayFen) continue;
-
-    const latest = latestBySequenceId[riddle.moveSequence.id];
-    if (!latest) continue;
-
-    const attemptStats = getSequenceAttemptStats(latest.stats);
-
-    items.push({
-      riddle,
-      game,
-      themeSlugs: themeSlugsByRiddleId.get(riddle.id) ?? [],
-      primaryTheme: primaryThemeByRiddleId.get(riddle.id) ?? null,
-      lastPlayedAt: latest.startedAt,
-      accuracyPercent: attemptStats.accuracyPercent,
-    });
-  }
-
-  return items;
-}
-
 export function filterAttemptedRiddleItems(
   items: AttemptedRiddleListItem[],
   themeSlug: string,
