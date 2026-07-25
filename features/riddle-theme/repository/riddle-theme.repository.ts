@@ -15,6 +15,8 @@ import {
   type DbRiddleThemeWithTheme,
 } from "@/features/riddle-theme/mapper/riddle-theme.mapper";
 import type { RiddleTheme, RiddleThemeWithTheme } from "@/features/riddle-theme/types/riddle-theme";
+import { toRiddle, type DbRiddle } from "@/features/riddle/mapper/riddle.mapper";
+import type { Riddle } from "@/features/riddle/types/riddle";
 import {
   DEFAULT_THEME_LINK_WEIGHT,
   type ThemeLinkWeight,
@@ -68,6 +70,78 @@ export async function findAllWithTheme(supabase: SupabaseClient): Promise<Riddle
   }
 
   return toRiddleThemesWithTheme((data ?? []) as DbRiddleThemeWithTheme[]);
+}
+
+export async function findActiveRiddlesByThemeId(
+  supabase: SupabaseClient,
+  themeId: string,
+): Promise<Riddle[]> {
+  const { data, error } = await supabase
+    .from("riddle_themes")
+    .select("riddles (*, move_sequences (*))")
+    .eq("theme_id", themeId);
+
+  if (error) {
+    console.error("riddle-theme.repository.findActiveRiddlesByThemeId error:", error);
+    return [];
+  }
+
+  return mapActiveRiddleJoinRows(data ?? []);
+}
+
+const THEME_ID_IN_CHUNK_SIZE = 40;
+
+export async function findActiveRiddlesByThemeIds(
+  supabase: SupabaseClient,
+  themeIds: string[],
+): Promise<Map<string, Riddle[]>> {
+  const uniqueIds = [...new Set(themeIds.map((id) => id.trim()).filter(Boolean))];
+  const byThemeId = new Map<string, Riddle[]>();
+  if (uniqueIds.length === 0) return byThemeId;
+
+  for (const themeId of uniqueIds) {
+    byThemeId.set(themeId, []);
+  }
+
+  for (let i = 0; i < uniqueIds.length; i += THEME_ID_IN_CHUNK_SIZE) {
+    const chunk = uniqueIds.slice(i, i + THEME_ID_IN_CHUNK_SIZE);
+    const { data, error } = await supabase
+      .from("riddle_themes")
+      .select("theme_id, riddles (*, move_sequences (*))")
+      .in("theme_id", chunk);
+
+    if (error) {
+      console.error("riddle-theme.repository.findActiveRiddlesByThemeIds error:", error);
+      continue;
+    }
+
+    for (const row of data ?? []) {
+      const themeId = (row as { theme_id?: string }).theme_id;
+      if (!themeId) continue;
+      const riddle = mapActiveRiddleJoinRow(row as { riddles?: DbRiddle | DbRiddle[] | null });
+      if (!riddle) continue;
+      const list = byThemeId.get(themeId) ?? [];
+      list.push(riddle);
+      byThemeId.set(themeId, list);
+    }
+  }
+
+  return byThemeId;
+}
+
+function mapActiveRiddleJoinRow(row: { riddles?: DbRiddle | DbRiddle[] | null }): Riddle | null {
+  const riddleRow = Array.isArray(row.riddles) ? row.riddles[0] : row.riddles;
+  if (!riddleRow || !riddleRow.is_active) return null;
+  try {
+    return toRiddle(riddleRow);
+  } catch (err) {
+    console.error("riddle-theme.repository mapActiveRiddleJoinRow error:", err);
+    return null;
+  }
+}
+
+function mapActiveRiddleJoinRows(rows: Array<{ riddles?: DbRiddle | DbRiddle[] | null }>): Riddle[] {
+  return rows.map(mapActiveRiddleJoinRow).filter((riddle): riddle is Riddle => riddle != null);
 }
 
 export async function findByRiddleIdsWithTheme(

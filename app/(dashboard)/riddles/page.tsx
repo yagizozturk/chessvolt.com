@@ -13,6 +13,7 @@ import {
   hasActiveRiddlesFilters,
   parseRiddlesFilterStateFromSearchParams,
 } from "@/features/riddle/utilities/riddle-filter.utils";
+import { ThemeList } from "@/features/theme/components/theme-list";
 import { getAllThemes } from "@/features/theme/services/theme.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
@@ -22,9 +23,12 @@ export default async function RiddlesPage({ searchParams }: { searchParams: Sear
   const { user, supabase } = await getPublicUser();
   const params = await searchParams;
   const themes = (await getAllThemes(supabase)).filter((theme) => theme.isActive);
-  const items = user ? await getUserAttemptedRiddlesForDisplay(supabase, user.id) : [];
+  
+  const items = user ? await getUserAttemptedRiddlesForDisplay(supabase, user.id) : []; // No need for this.
   const filterState = parseRiddlesFilterStateFromSearchParams(params);
-  const visibleItems = sortAttemptedRiddleItems(
+  
+  
+  const visibleItems = sortAttemptedRiddleItems(  // no need for this.
     filterAttemptedRiddleItems(items, filterState.themeFilter),
     filterState.sortBy,
   );
@@ -50,6 +54,8 @@ export default async function RiddlesPage({ searchParams }: { searchParams: Sear
             ) : undefined
           }
         />
+
+        <ThemeList themes={themes} />
 
         {items.length === 0 ? (
           <EmptyDataMessage message={emptyMessage} />

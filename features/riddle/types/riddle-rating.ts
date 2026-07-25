@@ -1,7 +1,9 @@
 // TODO: Refactor
-export const MIN_RIDDLE_RATING = 100;
-export const MAX_RIDDLE_RATING = 3000;
-export const DEFAULT_RIDDLE_RATING = 1600;
+import {
+  DEFAULT_RIDDLE_RATING,
+  MAX_RIDDLE_RATING,
+  MIN_RIDDLE_RATING,
+} from "@/features/riddle/constants/riddle-rating.constants";
 
 export type RiddleRatingBand =
   | "all"

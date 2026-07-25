@@ -14,6 +14,7 @@ export type StandaloneRiddleLoaderPageProps = {
   user: User | null;
   riddleId: string;
   from?: "favorites" | "riddles";
+  themeSlug?: string;
 };
 
 export type RiddlePageData = {

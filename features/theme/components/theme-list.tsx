@@ -1,4 +1,7 @@
 // TODO: Refactor
+import Link from "next/link";
+
+import { buildThemePlayUrl } from "@/features/riddle/utilities/build-riddle-url";
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
 import type { Theme } from "@/features/theme/types/theme";
 import {
@@ -23,6 +26,16 @@ function groupThemesByCategory(themes: Theme[]): Map<ThemeCategory, Theme[]> {
   return grouped;
 }
 
+function ThemeListItem({ theme }: { theme: Theme }) {
+  return (
+    <li>
+      <Link href={buildThemePlayUrl(theme.slug)} className="inline-flex transition-opacity hover:opacity-80">
+        <ThemeBadge theme={theme} />
+      </Link>
+    </li>
+  );
+}
+
 export function ThemeList({ themes, groupByCategory = true }: ThemeListProps) {
   if (themes.length === 0) {
     return <p className="text-muted-foreground text-sm">No themes to show.</p>;
@@ -32,9 +45,7 @@ export function ThemeList({ themes, groupByCategory = true }: ThemeListProps) {
     return (
       <ul className="flex flex-wrap gap-2">
         {themes.map((theme) => (
-          <li key={theme.id}>
-            <ThemeBadge theme={theme} />
-          </li>
+          <ThemeListItem key={theme.id} theme={theme} />
         ))}
       </ul>
     );
@@ -55,9 +66,7 @@ export function ThemeList({ themes, groupByCategory = true }: ThemeListProps) {
             </h3>
             <ul className="flex flex-wrap gap-2">
               {items.map((theme) => (
-                <li key={theme.id}>
-                  <ThemeBadge theme={theme} />
-                </li>
+                <ThemeListItem key={theme.id} theme={theme} />
               ))}
             </ul>
           </section>
