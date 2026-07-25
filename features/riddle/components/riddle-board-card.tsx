@@ -1,9 +1,8 @@
 // TODO: Refactor
 "use client";
 
-import { BookmarkX, Calendar, Circle, Flag, Gauge, Puzzle, Tags, Target } from "lucide-react";
+import { Calendar, Circle, Flag, Gauge, Puzzle, Tags, Target } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
 import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import DisplayBoard from "@/components/boards/display-board/display-board";
@@ -11,7 +10,6 @@ import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-val
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Game } from "@/features/game/types/game";
 import type { PrimaryRiddleTheme } from "@/features/riddle-theme/services/riddle-theme.service";
@@ -63,7 +61,6 @@ export function RiddleBoardCard({
   accuracyPercent,
   primaryTheme = null,
 }: RiddleBoardCardProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const moveCountLabel = formatMoveCountLabel(riddle.moveSequence.moves);
   const isShowingVoltScore = showVoltScore && isValidVoltScore(voltScore);
 
@@ -71,18 +68,8 @@ export function RiddleBoardCard({
     <TooltipProvider>
       <Link
         href={href}
-        onClick={() => setIsLoading(true)}
-        aria-busy={isLoading}
-        className={cn(
-          "bg-card border-b-card-shadow relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6",
-          isLoading && "pointer-events-none",
-        )}
+        className="bg-card border-b-card-shadow relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6"
       >
-        {isLoading ? (
-          <div className="bg-background/60 absolute inset-0 z-10 flex items-center justify-center rounded-lg">
-            <Spinner className="size-8" />
-          </div>
-        ) : null}
         <div className={cn("self-start", boardWrapperClassName)}>
           <DisplayBoard sourceId={riddle.id} initialFen={displayFen ?? undefined} coordinates={false} />
         </div>
