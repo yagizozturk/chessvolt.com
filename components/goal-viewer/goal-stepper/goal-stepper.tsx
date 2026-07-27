@@ -6,7 +6,7 @@ import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverHeader, PopoverTrigger } from "@/components/ui/popover";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { cn } from "@/lib/utils";
 import checkpointAnimationData from "@/public/images/animations/animation-book.json";
@@ -137,8 +137,6 @@ export function GoalStepper({ goals }: GoalStepperProps) {
         >
           {goals.map((goal, index) => {
             const hasTakeaway = Boolean(goal.takeaway.trim());
-            const hasTitle = Boolean(goal.title.trim());
-            const hasPopoverContent = hasTitle || hasTakeaway;
 
             const completedButton = (
               <button
@@ -149,18 +147,16 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                   GOAL_ITEM_CLASS,
                   "bg-muted relative size-8 cursor-default overflow-hidden rounded-full border-0 p-0",
                 )}
-                aria-label={
-                  hasTitle ? `Goal ${index + 1} completed — ${goal.title}` : `Goal ${index + 1} completed`
-                }
+                aria-label={`Goal ${index + 1} completed`}
                 onMouseEnter={
-                  hasPopoverContent
+                  hasTakeaway
                     ? () => {
                         cancelScheduledClose();
                         setOpenIndex(index);
                       }
                     : undefined
                 }
-                onMouseLeave={hasPopoverContent ? scheduleClose : undefined}
+                onMouseLeave={hasTakeaway ? scheduleClose : undefined}
               >
                 {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
                 <Lottie
@@ -173,7 +169,7 @@ export function GoalStepper({ goals }: GoalStepperProps) {
             );
 
             return goal.isCompleted ? (
-              hasPopoverContent ? (
+              hasTakeaway ? (
                 <Popover
                   key={index}
                   modal={false}
@@ -192,18 +188,11 @@ export function GoalStepper({ goals }: GoalStepperProps) {
                     onMouseLeave={scheduleClose}
                   >
                     <PopoverHeader className="gap-1.5">
-                      {hasTakeaway ? (
-                        <p className="text-primary flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
-                          <BookOpen className="size-3.5 shrink-0" aria-hidden />
-                          Why Important?
-                        </p>
-                      ) : null}
-                      {hasTitle ? (
-                        <PopoverTitle className={hasTakeaway ? "underline underline-offset-2" : undefined}>
-                          {goal.title}
-                        </PopoverTitle>
-                      ) : null}
-                      {hasTakeaway ? <p className="text-sm font-medium">{goal.takeaway}</p> : null}
+                      <p className="text-primary flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
+                        <BookOpen className="size-3.5 shrink-0" aria-hidden />
+                        Why Important?
+                      </p>
+                      <p className="text-sm font-medium">{goal.takeaway}</p>
                     </PopoverHeader>
                   </PopoverContent>
                 </Popover>

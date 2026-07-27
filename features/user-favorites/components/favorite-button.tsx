@@ -6,6 +6,7 @@ import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
 import { toggleFavouriteAction } from "@/features/user-favorites/actions/toggle-favorite";
 import type { ToggleFavoriteTarget } from "@/features/user-favorites/types/user-favorite";
@@ -52,12 +53,14 @@ export function FavouriteButton({ initialIsFavourited, ...target }: FavouriteBut
     <Button
       type="button"
       variant="voltIcon"
+      className="relative"
       onClick={handleClick}
       disabled={isPending}
       aria-label={isFavourited ? "Remove from favourites" : "Add to favourites"}
       title={isFavourited ? "Remove from favourites" : "Add to favourites"}
       aria-pressed={isFavourited}
     >
+      <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
       {isPending ? (
         <Spinner />
       ) : (
