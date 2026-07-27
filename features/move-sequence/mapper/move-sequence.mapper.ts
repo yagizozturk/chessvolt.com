@@ -1,6 +1,5 @@
 // TODO: Refactor
 import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
-import type { MoveSequenceForGoalsBackfill } from "@/features/move-sequence/types/move-sequence-for-goals-backfill";
 import { parseMoveGoalsFromDb } from "@/features/move-sequence/validation/move-sequence-goals";
 
 export const DEFAULT_INITIAL_FEN =
@@ -17,13 +16,6 @@ export type DbMoveSequence = {
   updated_at: string;
 };
 
-export type DbMoveSequenceForGoalsBackfill = {
-  id: string;
-  initial_fen: string;
-  moves: string;
-  pgn: string | null;
-};
-
 export function toMoveSequence(db: DbMoveSequence): MoveSequence {
   return {
     id: db.id,
@@ -34,16 +26,5 @@ export function toMoveSequence(db: DbMoveSequence): MoveSequence {
     goals: parseMoveGoalsFromDb(db.goals),
     createdAt: db.created_at,
     updatedAt: db.updated_at,
-  };
-}
-
-export function toMoveSequenceForGoalsBackfill(
-  db: DbMoveSequenceForGoalsBackfill,
-): MoveSequenceForGoalsBackfill {
-  return {
-    id: db.id,
-    initialFen: db.initial_fen || DEFAULT_INITIAL_FEN,
-    moves: db.moves,
-    pgn: db.pgn,
   };
 }

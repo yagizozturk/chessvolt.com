@@ -49,8 +49,6 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "From game", url: "/admin/riddles/new/from-game" },
       { title: "Bulk PGN", url: "/admin/riddles/new/bulk" },
       { title: "Lichess CSV", url: "/admin/riddles/new/lichess" },
-      { title: "Backfill goals (Ollama)", url: "/admin/move-sequences/backfill-goals" },
-      { title: "Backfill goals (Gemini)", url: "/admin/move-sequences/backfill-goals-gemini" },
     ],
   },
   {
@@ -94,7 +92,6 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "Create opening", url: "/admin/openings/create" },
       { title: "Bulk variants", url: "/admin/openings/variants/bulk" },
       { title: "PGN goals preview", url: "/admin/openings/variants/pgn-goals-preview" },
-      { title: "Backfill goals (Gemini)", url: "/admin/openings/variants/backfill-goals-gemini" },
     ],
   },
   {

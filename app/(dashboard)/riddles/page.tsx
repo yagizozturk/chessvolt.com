@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { ThemeBrowseSection } from "@/features/theme/components/theme-browse-section";
+import { RiddleThemes } from "@/features/theme/components/riddle-themes";
 import { getAllActiveThemes } from "@/features/theme/services/theme.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
@@ -11,8 +11,10 @@ export default async function RiddlesPage() {
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
+        {/* Suspense is used for client side searchParams filter. All themes are loaded on client and with a search, we filter around it  
+            But in openings, we filter the search params with a server side query. */}
         <Suspense>
-          <ThemeBrowseSection themes={themes} />
+          <RiddleThemes themes={themes} />
         </Suspense>
       </div>
     </div>

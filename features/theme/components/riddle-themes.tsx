@@ -11,11 +11,11 @@ import { ThemeList } from "@/features/theme/components/theme-list";
 import type { Theme } from "@/features/theme/types/theme";
 import { buildThemeFilterUrl, filterThemes } from "@/features/theme/utilities/theme-filter.utils";
 
-type ThemeBrowseSectionProps = {
+type RiddleThemesProps = {
   themes: Theme[];
 };
 
-export function ThemeBrowseSection({ themes }: ThemeBrowseSectionProps) {
+export function RiddleThemes({ themes }: RiddleThemesProps) {
   const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get("q") ?? "");
 

@@ -14,7 +14,7 @@ import {
   getOpeningVariantById,
   updateOpeningVariant,
 } from "@/features/openings/services/openings.service";
-import { parseGoalsFromForm } from "@/lib/admin/parse-goals-from-form";
+import { parseGoalsFromForm } from "@/app/(admin)/admin/lib/parse-goals-from-form";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { buildMoveGoalsFromPgnComments, normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
