@@ -8,6 +8,8 @@ export const TOUR_TARGETS = {
   instructions: "instructions",
   mouseRequired: "mouse-required",
   actionButton: "action-button",
+  favoritesOpeningList: "favorites-opening-list",
+  favoritesRiddleList: "favorites-riddle-list",
 } as const;
 
 export type TourTarget = (typeof TOUR_TARGETS)[keyof typeof TOUR_TARGETS];

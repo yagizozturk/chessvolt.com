@@ -69,8 +69,8 @@ export function OpeningBoardCard({
       </div>
       <div className="relative flex min-w-0 flex-1 flex-col gap-2">
         {isShowingVoltScore ? (
-          <div className="absolute right-[-32px] bottom-[-32px] z-10">
-            <VoltCalculator result={voltScore} chartSize={140} className="w-fit" />
+          <div className="absolute right-[-40px] bottom-[-40px] z-10">
+            <VoltCalculator result={voltScore} chartSize={130} className="w-fit" />
           </div>
         ) : null}
         <Link href={href} onClick={() => setIsLoading(true)} className="text-xl font-bold hover:underline">

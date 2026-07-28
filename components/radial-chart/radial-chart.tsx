@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 const chartConfig = {
   value: {
     label: "Value",
-    color: "var(--primary)",
+    color: "var(--color-4)",
   },
 } satisfies ChartConfig;
 

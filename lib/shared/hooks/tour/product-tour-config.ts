@@ -48,3 +48,8 @@ export const DEFAULT_PRODUCT_TOUR_JOYRIDE = {
 export function getProductTourStorageKey(tourId: string) {
   return `product-tour-seen:${tourId}`;
 }
+
+export function hasSeenProductTour(tourId: string) {
+  if (typeof window === "undefined") return true;
+  return localStorage.getItem(getProductTourStorageKey(tourId)) === "1";
+}
