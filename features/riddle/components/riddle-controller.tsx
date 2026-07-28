@@ -38,7 +38,7 @@ type RiddleControllerProps = {
   riddle: Riddle;
   nextRiddleUrl?: string | null;
   backUrl?: string;
-  isUserLoggedIn?: boolean; // Checks for the persist events, favourite button visibility
+  isUserLoggedIn?: boolean; // Checks for the persist events
   isFavorited?: boolean;
 };
 
@@ -285,13 +285,11 @@ export default function RiddleController({
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
         footerExtra={
-          isUserLoggedIn ? (
-            <FavouriteButton
-              riddleId={riddle.id}
-              isFavourited={isFavourited}
-              onFavouritedChange={setIsFavourited}
-            />
-          ) : null
+          <FavouriteButton
+            riddleId={riddle.id}
+            isFavourited={isFavourited}
+            onFavouritedChange={setIsFavourited}
+          />
         }
       />
 
@@ -347,13 +345,11 @@ export default function RiddleController({
               Riddles
             </div>
             <div>
-              {isUserLoggedIn ? (
-                <FavouriteButton
-                  riddleId={riddle.id}
-                  isFavourited={isFavourited}
-                  onFavouritedChange={setIsFavourited}
-                />
-              ) : null}
+              <FavouriteButton
+                riddleId={riddle.id}
+                isFavourited={isFavourited}
+                onFavouritedChange={setIsFavourited}
+              />
             </div>
           </div>
 

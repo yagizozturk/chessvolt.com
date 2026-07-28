@@ -1,6 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
 
@@ -17,12 +18,12 @@ type FavouriteButtonProps = ToggleFavoriteTarget & {
 };
 
 const ERROR_MESSAGES: Record<string, string> = {
-  unauthorized: "Sign in to save favorites.",
   invalid_target: "This item could not be favorited.",
   failed: "Could not update favorite. Please try again.",
 };
 
 export function FavouriteButton({ isFavourited, onFavouritedChange, ...target }: FavouriteButtonProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const handleClick = () => {
@@ -34,6 +35,11 @@ export function FavouriteButton({ isFavourited, onFavouritedChange, ...target }:
       if (result.ok) {
         onFavouritedChange(result.favourited);
         toast.success(result.favourited ? "Added to favourites" : "Removed from favourites");
+        return;
+      }
+
+      if (result.reason === "unauthorized") {
+        router.push("/login");
         return;
       }
 

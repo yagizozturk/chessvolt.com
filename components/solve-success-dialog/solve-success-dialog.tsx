@@ -145,7 +145,6 @@ export function SolveSuccessDialog({
 
         {/* Dialog Footer */}
         <DialogFooter className="mt-4 flex-col gap-2 sm:flex-row sm:justify-center">
-          {footerExtra ? <div className="w-full sm:w-auto">{footerExtra}</div> : null}
           {onPlayAgain ? (
             <Button variant="voltGreen" type="button" onClick={onPlayAgain} className="w-full sm:w-auto">
               <RotateCcw data-icon="inline-start" />
@@ -165,6 +164,7 @@ export function SolveSuccessDialog({
               {!isPending ? <ArrowRight data-icon="inline-end" /> : null}
             </Button>
           ) : null}
+          {footerExtra ? <div className="w-full sm:w-auto">{footerExtra}</div> : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>
