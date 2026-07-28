@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import { PageHeader } from "@/components/page-header";
 import { ThreeColCard } from "@/components/three-col-card/three-col-card";
-import { VoltExplainDialogAutoStart } from "@/components/volt-explain-dialog/volt-explain-dialog-auto-start";
 import { QUICK_LINKS } from "@/features/dashboard/constants/quick-links";
 import { getUserProfile } from "@/features/profile/services/profile.service";
 import { getDisplayName } from "@/features/profile/utilities/user-avatar";
@@ -52,9 +51,6 @@ export default async function Page() {
           title={`Hi, ${displayName}`}
           description="Pick up where you left off with your collections, riddles, and openings."
         />
-
-        {/* Volt Explain shows only once, stored in local storage */}
-        <VoltExplainDialogAutoStart />
 
         {/* Quick links and three column component with links */}
         <div className="page-container-grid-data-layout">

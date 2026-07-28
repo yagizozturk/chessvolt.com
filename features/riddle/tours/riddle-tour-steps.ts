@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { Step } from "react-joyride";
 
 import { TOUR_TARGETS, tourTargetSelector } from "@/lib/shared/tour/data-tour";

@@ -10,7 +10,7 @@ import { useVoltExplainDialog } from "@/components/volt-explain-dialog/use-volt-
 // Renders the carousel and owns close handling (marks localStorage on dismiss).
 // Mounted once in the dashboard layout so it is available from any page and from
 // the sidebar. autoStart: false here — only VoltExplainDialogAutoStart on the
-// dashboard page triggers the first-visit auto-open.
+// favorites page (when user has favorites) triggers the first-visit auto-open.
 export function VoltExplainDialog() {
   const { open, onOpenChange } = useVoltExplainDialog({
     dialogId: VOLT_EXPLAIN_DIALOG_ID,
