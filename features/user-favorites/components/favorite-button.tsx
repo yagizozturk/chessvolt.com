@@ -1,8 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -13,24 +12,18 @@ import type { ToggleFavoriteTarget } from "@/features/user-favorites/types/user-
 import { cn } from "@/lib/utils";
 
 type FavouriteButtonProps = ToggleFavoriteTarget & {
-  initialIsFavourited: boolean;
+  isFavourited: boolean;
+  onFavouritedChange: (favourited: boolean) => void;
 };
 
 const ERROR_MESSAGES: Record<string, string> = {
-  unauthorized: "Sign in to save favourites.",
-  invalid_target: "This item could not be favourited.",
-  failed: "Could not update favourite. Please try again.",
+  unauthorized: "Sign in to save favorites.",
+  invalid_target: "This item could not be favorited.",
+  failed: "Could not update favorite. Please try again.",
 };
 
-export function FavouriteButton({ initialIsFavourited, ...target }: FavouriteButtonProps) {
-  const router = useRouter();
-  const [isFavourited, setIsFavourited] = useState(initialIsFavourited);
+export function FavouriteButton({ isFavourited, onFavouritedChange, ...target }: FavouriteButtonProps) {
   const [isPending, startTransition] = useTransition();
-  const targetKey = "openingVariantId" in target ? target.openingVariantId : target.riddleId;
-
-  useEffect(() => {
-    setIsFavourited(initialIsFavourited);
-  }, [initialIsFavourited, targetKey]);
 
   const handleClick = () => {
     if (isPending) return;
@@ -39,9 +32,8 @@ export function FavouriteButton({ initialIsFavourited, ...target }: FavouriteBut
       const result = await toggleFavouriteAction(target);
 
       if (result.ok) {
-        setIsFavourited(result.favourited);
+        onFavouritedChange(result.favourited);
         toast.success(result.favourited ? "Added to favourites" : "Removed from favourites");
-        router.refresh();
         return;
       }
 
@@ -61,11 +53,7 @@ export function FavouriteButton({ initialIsFavourited, ...target }: FavouriteBut
       aria-pressed={isFavourited}
     >
       <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
-      {isPending ? (
-        <Spinner />
-      ) : (
-        <Star className={cn("size-5", isFavourited && "fill-primary text-primary")} />
-      )}
+      {isPending ? <Spinner /> : <Star className={cn("size-5", isFavourited && "fill-primary text-primary")} />}
     </Button>
   );
 }

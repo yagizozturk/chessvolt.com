@@ -64,6 +64,7 @@ export default function OpeningVariantController({
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
+  const [favourited, setFavourited] = useState(isFavourited);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
   const correctMoveCountRef = useRef(0);
@@ -101,6 +102,10 @@ export default function OpeningVariantController({
   }, [variant.id]);
 
   useEffect(() => {
+    setFavourited(isFavourited);
+  }, [variant.id, isFavourited]);
+
+  useEffect(() => {
     setIsCompleted(false);
     setIsContinuePending(false);
     setSuccessDialogOpen(false);
@@ -130,21 +135,21 @@ export default function OpeningVariantController({
 
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
-    setIsVoltScoreShowing(isFavourited);
+    setIsVoltScoreShowing(favourited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isFavourited, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, favourited, playLevelUpSound]);
 
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
 
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
-      ...(isFavourited ? { voltScore: voltScoreScoring } : {}),
+      ...(favourited ? { voltScore: voltScoreScoring } : {}),
     });
 
-    if (isFavourited) {
+    if (favourited) {
       setCompletionVoltScore(voltScoreResult);
       setIsVoltScoreShowing(false);
     }
@@ -241,6 +246,15 @@ export default function OpeningVariantController({
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
+        footerExtra={
+          canFavourite ? (
+            <FavouriteButton
+              openingVariantId={variant.id}
+              isFavourited={favourited}
+              onFavouritedChange={setFavourited}
+            />
+          ) : null
+        }
       />
       {successDialogOpen ? (
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
@@ -277,7 +291,11 @@ export default function OpeningVariantController({
             <div className="flex items-center gap-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
             <div>
               {canFavourite ? (
-                <FavouriteButton openingVariantId={variant.id} initialIsFavourited={isFavourited} />
+                <FavouriteButton
+                  openingVariantId={variant.id}
+                  isFavourited={favourited}
+                  onFavouritedChange={setFavourited}
+                />
               ) : null}
             </div>
           </div>

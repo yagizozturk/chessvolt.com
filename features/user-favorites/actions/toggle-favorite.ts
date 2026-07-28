@@ -29,10 +29,6 @@ export async function toggleFavouriteAction(
     if ("openingVariantId" in target && target.openingVariantId) {
       revalidatePath(`/openings/variant/${target.openingVariantId}`);
     }
-    if ("riddleId" in target && target.riddleId) {
-      revalidatePath(`/riddles/${target.riddleId}`);
-      revalidatePath("/collection", "layout");
-    }
     revalidatePath("/favorites");
   }
 

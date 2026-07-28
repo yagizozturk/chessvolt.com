@@ -65,6 +65,7 @@ export default function RiddleController({
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
+  const [isFavourited, setIsFavourited] = useState(isFavorited);
   const [isPending, startTransition] = useTransition();
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
@@ -111,6 +112,10 @@ export default function RiddleController({
     setReplayKey(0);
   }, [riddle.id]);
 
+  useEffect(() => {
+    setIsFavourited(isFavorited);
+  }, [riddle.id, isFavorited]);
+
   // ================================================================================================
   // Reset the riddle state when the riddle id or replay key changes
   // ================================================================================================
@@ -147,11 +152,11 @@ export default function RiddleController({
     // Setting the completion stats for UI Dialog show
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
-    setIsVoltScoreShowing(isFavorited);
+    setIsVoltScoreShowing(isFavourited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isFavorited, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isFavourited, playLevelUpSound]);
 
   // ================================================================================================
   // Insert the completion attempt to the db
@@ -161,7 +166,7 @@ export default function RiddleController({
 
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
-      ...(isFavorited ? { voltScore } : {}),
+      ...(isFavourited ? { voltScore } : {}),
     });
 
     if (isUserLoggedIn) {
@@ -279,6 +284,15 @@ export default function RiddleController({
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
+        footerExtra={
+          isUserLoggedIn ? (
+            <FavouriteButton
+              riddleId={riddle.id}
+              isFavourited={isFavourited}
+              onFavouritedChange={setIsFavourited}
+            />
+          ) : null
+        }
       />
 
       {/* Confetti */}
@@ -333,7 +347,13 @@ export default function RiddleController({
               Riddles
             </div>
             <div>
-              {isUserLoggedIn ? <FavouriteButton riddleId={riddle.id} initialIsFavourited={isFavorited} /> : null}
+              {isUserLoggedIn ? (
+                <FavouriteButton
+                  riddleId={riddle.id}
+                  isFavourited={isFavourited}
+                  onFavouritedChange={setIsFavourited}
+                />
+              ) : null}
             </div>
           </div>
 

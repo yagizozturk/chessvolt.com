@@ -1,11 +1,9 @@
 import { redirect } from "next/navigation";
 
 import * as profileRepo from "@/features/profile/repository/profile.repository";
-import RiddleController from "@/features/riddle/components/riddle-controller";
 import { DEFAULT_RIDDLE_RATING } from "@/features/riddle/constants/riddle-rating.constants";
 import { getFirstRandomRiddleForTheme } from "@/features/riddle/services/random-riddle-by-theme.service";
-import { buildThemePlayUrl } from "@/features/riddle/utilities/build-riddle-url";
-import { getFavoriteByRiddleId } from "@/features/user-favorites/services/user-favorite.service";
+import { buildStandaloneRiddleUrl } from "@/features/riddle/utilities/build-riddle-url";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type PageProps = {
@@ -14,8 +12,10 @@ type PageProps = {
 };
 
 // ==================================================================
-// Theme play page. Picks a rating-matched unsolved riddle for the
-// clicked theme and renders it. Next navigates here again with a nonce.
+// Theme play entry. Picks a rating-matched unsolved riddle, then
+// redirects to the stable /riddles/[id]?theme=… URL so refreshes
+// (e.g. after favouriting) cannot re-roll the board.
+// Next riddle navigates here again with a nonce to pick another.
 // ==================================================================
 export default async function ThemeRiddlePage({ params, searchParams }: PageProps) {
   const { slug } = await params;
@@ -36,16 +36,5 @@ export default async function ThemeRiddlePage({ params, searchParams }: PageProp
     redirect("/riddles");
   }
 
-  const isFavorited = user ? await getFavoriteByRiddleId(supabase, user.id, riddle.id) : null;
-
-  return (
-    <RiddleController
-      key={riddle.id}
-      riddle={riddle}
-      nextRiddleUrl={buildThemePlayUrl(slug, { nonce: crypto.randomUUID() })}
-      backUrl="/riddles"
-      isUserLoggedIn={Boolean(user)}
-      isFavorited={Boolean(isFavorited)}
-    />
-  );
+  redirect(buildStandaloneRiddleUrl(riddle.id, { theme: slug }));
 }
