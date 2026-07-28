@@ -5,7 +5,7 @@ export type MoveGoal = {
   ply: number;
   move: string;
   title: string;
-  visuals: string | MoveVisual | MoveVisual[];
+  visuals: MoveVisual[];
   strategy: string;
   takeaway: string;
   checkpointMessage: string;

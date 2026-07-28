@@ -3,20 +3,19 @@
 
 import type { DrawShape } from "@lichess-org/chessground/draw";
 import type { Key } from "@lichess-org/chessground/types";
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { type Ref, forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
 
 import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
 import "@/assets/volt.css";
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-import { buildUci } from "@/lib/chess/buildUci";
+import { buildMoveUci } from "@/lib/chess/buildUci";
 import { getOrientationFromFen } from "@/lib/chess/getOrientationFromFen";
 import { getPromotionPiece } from "@/lib/chess/getPromotionPiece";
 import { useChessOne } from "@/lib/chess/hooks/use-chess";
 import { parseUci } from "@/lib/chess/parseUci";
 import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import {
-  BOARD_ANIMATION_DELAY_MS,
   CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS,
   DEFAULT_PROMOTION_PIECE,
   WRONG_MOVE_REVERT_DELAY_MS,
@@ -30,11 +29,19 @@ import "@lichess-org/chessground/assets/chessground.brown.css";
 
 export type VoltBoardMode = "practice" | "learn";
 
+// ============================================================================
+// Bu parent a açılan refs değeri VoltBoard da ilk bu geçiliyor. Parent dan
+// Hint tetiklenmesi yapılabilsin die. forwardRef içinde kullanılıyorki burada
+// kontrol olsun.
+// ============================================================================
+export type VoltBoardHandle = {
+  showHint: (hintLevel: number) => void;
+};
+
 type VoltBoardProps = {
   sourceId: string;
   mode?: VoltBoardMode;
   initialFen?: string;
-
   viewOnly?: boolean;
   coordinates?: boolean;
   playerOrientation?: "white" | "black";
@@ -46,13 +53,14 @@ type VoltBoardProps = {
 };
 
 // ============================================================================
-// Hint level: 1 = highlight origin, 2+ = origin-to-dest arrow
+// With a forwardRef, parent can get a remote control on this board.
+// ref is the remoter control, parent uses it to call showHint()
+// VoltBoardHandle dışarıdan tetikelenebiliyor. Çünkü içerde hint ile ok çizmeye ihtiyaç var
+// Ok çizen de dışarıdaki parent da olan (riddlecontroller) hint button.
+// Function args (runtime): (props, ref) — props first, like a normal component,
+// then ref added. Different from forwardRef
 // ============================================================================
-export type VoltBoardHandle = {
-  showHint: (hintLevel: number) => void;
-};
-
-const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard(
+function VoltBoard(
   {
     sourceId,
     initialFen,
@@ -65,19 +73,19 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     onCheckMove,
     onSuccessMovePlayed,
     onNextMoveRequest,
-  },
-  ref,
+  }: VoltBoardProps,
+  ref: Ref<VoltBoardHandle>,
 ) {
   // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
   const boardRef = useRef<HTMLDivElement>(null);
   const orientationRef = useRef<"white" | "black">(playerOrientation ?? getOrientationFromFen(initialFen));
-  const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
-  const clearCustomHighlightsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const learnModeShapes = useMemo<DrawShape[]>(() => {
-    if (mode !== "learn" || typeof activeGoalVisuals === "string" || !activeGoalVisuals) return [];
+  const lastMoveRef = useRef<[Key, Key] | undefined>(undefined); // Last move remembers the last moves two square from -> to, so chessground can highlight them
+  const clearCustomHighlightsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null); // useRef doesnt re render after a variable value change
+  const activeGoalShapes = useMemo<DrawShape[]>(() => {
+    // useMemo is used for heavy calculations not to do make again in every render.
+    if (mode !== "learn" || !activeGoalVisuals?.length) return [];
 
-    const visuals = Array.isArray(activeGoalVisuals) ? activeGoalVisuals : [activeGoalVisuals];
-    return visuals.map((visual) => ({
+    return activeGoalVisuals.map((visual) => ({
       orig: visual.orig as Key,
       ...(visual.dest ? { dest: visual.dest as Key } : {}),
       ...(visual.brush ? { brush: visual.brush } : {}),
@@ -85,10 +93,13 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   }, [activeGoalVisuals, mode]);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
+  // chess.js hamle yapabilsin die makeMove methodu kullnaır ve oyunu tutar.
   const { game, makeMove } = useChessOne(initialFen);
   const { playCorrectSound, playWrongMoveSound, playHintSound } = useBoardSounds();
 
-  // 3. Complex Hooks (Kendi içinde ref veya state kullanan ağır hooklar)
+  // ============================================================================
+  // chessGround is initialized and board events
+  // ============================================================================
   const { ground, updateBoard, setSquareCustomHighlight, clearSquareCustomHighlights } = useChessground({
     boardRef,
     game,
@@ -98,15 +109,15 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     coordinates,
     lastMoveRef,
     onMove: (from, to) => {
-      clearCustomHighlightsTimeout();
+      clearCustomHighlightsTimeout(); // Hamle yapıldıktan sonra customHighlight silinir.
       const fenBefore = game.current.fen();
-      const playedBy = game.current.turn() === "w" ? "white" : "black";
-      const uci = buildMoveUci(from, to);
+      const turn = game.current.turn() === "w" ? "white" : "black";
+      const uci = buildMoveUci(game.current, from, to);
       // Move is getting checked in hook if it is right or wrong
       const isCorrect = onCheckMove?.({
         uci,
         fenBefore,
-        playedBy,
+        turn,
       });
 
       // Incorrect move played
@@ -117,16 +128,12 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
         // Correct move played
         boardCorrectMoveHandler(from, to, uci);
       }
-
-      //updateBoard();
     },
   });
 
-  function buildMoveUci(from: string, to: string) {
-    const promotion = getPromotionPiece(game.current, from, to, DEFAULT_PROMOTION_PIECE);
-    return buildUci(from, to, promotion);
-  }
-
+  // ============================================================================
+  // Clearing drawn shapes on board
+  // ============================================================================
   function clearHintShapes() {
     ground.current?.setAutoShapes([]);
   }
@@ -137,10 +144,10 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   function boardWrongMoveHandler(to: string) {
     clearSquareCustomHighlights();
     clearHintShapes();
-    ground.current?.setAutoShapes(learnModeShapes);
+    ground.current?.setAutoShapes(activeGoalShapes);
     setSquareCustomHighlight(to, "custom-wrong-move");
     playWrongMoveSound();
-    scheduleClearCustomHighlights(WRONG_MOVE_REVERT_DELAY_MS);
+    scheduleClearCustomHighlights(WRONG_MOVE_REVERT_DELAY_MS); // On wrong move, after a delay clear.
   }
 
   // ============================================================================
@@ -179,7 +186,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
     if (!move) {
       return;
     }
-    onSuccessMovePlayed({ ...move, uci });
+    onSuccessMovePlayed({ ...move, uci }); // Parent is notified about the correct move.
     playCorrectSound();
     setSquareCustomHighlight(to, "custom-correct-move");
     scheduleClearCustomHighlights(CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS);
@@ -203,7 +210,6 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
 
     if (opponentMove) {
       lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
-      updateBoard();
     }
   }
 
@@ -219,6 +225,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   // ============================================================================
   // External FEN sync (e.g. PGN navigator)
   // Keep same board instance and update position when parent changes initialFen.
+  // for example orientation change
   // ============================================================================
   useEffect(() => {
     orientationRef.current = playerOrientation ?? getOrientationFromFen(initialFen);
@@ -230,15 +237,11 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
   }, [sourceId, initialFen, playerOrientation, updateBoard, clearSquareCustomHighlights, ground]);
 
   // ============================================================================
-  // Wait for opponent piece slide before painting the next goal's visuals.
-  // Chessground makes it 200 miliseconds to play move. With a buffer, 220 ms timeout is ok to draw shapes.
+  // Settings arrows for active goal
   // ============================================================================
   useEffect(() => {
-    const moveBufferTimeout = setTimeout(() => {
-      ground.current?.setAutoShapes(learnModeShapes);
-    }, BOARD_ANIMATION_DELAY_MS);
-    return () => clearTimeout(moveBufferTimeout);
-  }, [ground, learnModeShapes, sourceId]);
+    ground.current?.setAutoShapes(activeGoalShapes);
+  }, [ground, activeGoalShapes, sourceId]);
 
   // ============================================================================
   // Hint (drawable shapes) - exposed via ref
@@ -254,11 +257,11 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
         const orig = parsedUci.from as Key;
         const dest = parsedUci.to as Key;
         const hintShape: DrawShape = hintLevel <= 1 ? { orig, brush: "red" } : { orig, dest, brush: "red" };
-        ground.current.setAutoShapes([...learnModeShapes, hintShape]);
+        ground.current.setAutoShapes([...activeGoalShapes, hintShape]);
         playHintSound();
       },
     }),
-    [drawHintMove, ground, learnModeShapes, playHintSound],
+    [drawHintMove, ground, activeGoalShapes, playHintSound],
   );
 
   return (
@@ -268,6 +271,7 @@ const VoltBoard = forwardRef<VoltBoardHandle, VoltBoardProps>(function VoltBoard
       </div>
     </>
   );
-});
+}
 
-export default VoltBoard;
+// React’s API order is fixed: forwardRef<RefType, PropsType>.
+export default forwardRef<VoltBoardHandle, VoltBoardProps>(VoltBoard);

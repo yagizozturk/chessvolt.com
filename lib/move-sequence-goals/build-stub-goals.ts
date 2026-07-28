@@ -10,7 +10,7 @@ export function buildStubGoalsFromMoves(initialFen: string, moves: string): Move
       ply,
       move,
       title: "",
-      visuals: "",
+      visuals: [],
       strategy: "",
       takeaway: "",
       checkpointMessage: "",

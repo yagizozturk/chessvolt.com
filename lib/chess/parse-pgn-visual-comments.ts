@@ -183,7 +183,7 @@ export function buildMoveGoalsFromPgnComments(
         ply,
         move,
         title: "",
-        visuals: comment && comment.visuals.length > 0 ? comment.visuals : "",
+        visuals: comment?.visuals ?? [],
         strategy: comment?.strategy ?? "",
         takeaway: "",
         checkpointMessage: "",

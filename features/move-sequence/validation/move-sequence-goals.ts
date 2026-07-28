@@ -24,8 +24,16 @@ export function isMoveVisual(value: unknown): value is MoveVisual {
   );
 }
 
-export function isMoveVisualValue(value: unknown): value is MoveVisual | MoveVisual[] {
-  return isMoveVisual(value) || (Array.isArray(value) && value.every(isMoveVisual));
+export function isMoveVisualValue(value: unknown): value is MoveVisual[] {
+  return Array.isArray(value) && value.every(isMoveVisual);
+}
+
+/** Coerce legacy "" / single visual into MoveVisual[]. */
+export function normalizeMoveVisuals(value: unknown): MoveVisual[] | null {
+  if (value === "" || value === null || value === undefined) return [];
+  if (isMoveVisual(value)) return [value];
+  if (isMoveVisualValue(value)) return value;
+  return null;
 }
 
 export function normalizeMoveGoal(value: unknown): MoveGoal | null {
@@ -33,22 +41,22 @@ export function normalizeMoveGoal(value: unknown): MoveGoal | null {
     !isRecord(value) ||
     typeof value.move !== "string" ||
     typeof value.title !== "string" ||
-    (typeof value.visuals !== "string" && !isMoveVisualValue(value.visuals)) ||
     typeof value.strategy !== "string" ||
     typeof value.checkpointMessage !== "string"
   ) {
     return null;
   }
 
+  const visuals = normalizeMoveVisuals(value.visuals);
   const ply = parsePly(value.ply);
-  if (ply === null || typeof value.isCompleted !== "boolean") return null;
+  if (visuals === null || ply === null || typeof value.isCompleted !== "boolean") return null;
 
   return {
     ply,
     move: value.move,
     isCompleted: value.isCompleted,
     title: value.title,
-    visuals: value.visuals,
+    visuals,
     strategy: value.strategy,
     takeaway: typeof value.takeaway === "string" ? value.takeaway : "",
     checkpointMessage: value.checkpointMessage,
@@ -63,7 +71,7 @@ export function isMoveGoal(value: unknown): value is MoveGoal {
     Number.isFinite(value.ply) &&
     typeof value.move === "string" &&
     typeof value.title === "string" &&
-    (typeof value.visuals === "string" || isMoveVisualValue(value.visuals)) &&
+    isMoveVisualValue(value.visuals) &&
     typeof value.strategy === "string" &&
     typeof value.takeaway === "string" &&
     typeof value.checkpointMessage === "string" &&

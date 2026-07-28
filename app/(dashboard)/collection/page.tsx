@@ -1,6 +1,5 @@
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { PageHeader } from "@/components/page-header";
-import { VoltExplainDialogAutoStart } from "@/components/volt-explain-dialog/volt-explain-dialog-auto-start";
 import { CollectionCard } from "@/features/collection/components/collection-card";
 import { CollectionFilters } from "@/features/collection/components/collection-filters";
 import { CollectionPagination } from "@/features/collection/components/collection-pagination";
@@ -74,9 +73,6 @@ export default async function CollectionPage({ searchParams }: { searchParams: C
             ) : undefined
           }
         />
-
-        {/* Volt Explain shows only once, stored in local storage */}
-        <VoltExplainDialogAutoStart />
 
         {/* Collections list */}
         {collections.length === 0 ? (
