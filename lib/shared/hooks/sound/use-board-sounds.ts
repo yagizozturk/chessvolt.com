@@ -5,12 +5,8 @@ import { useSound } from "@/lib/shared/hooks/sound/use-sound";
 import { useBoardSoundsStore } from "@/lib/shared/store/board-sounds-store";
 
 const BOARD_SOUND_ASSETS = {
-  move: {
-    src: "/audio/board-piece-move-sound.wav",
-    volume: 0.5,
-  },
   correctMove: {
-    src: "/audio/volt-correct-move.mp3",
+    src: "/audio/correct-shine.wav",
     volume: 1,
   },
   wrongMove: {
@@ -30,7 +26,6 @@ const BOARD_SOUND_ASSETS = {
 export function useBoardSounds() {
   const enabled = useBoardSoundsStore((s) => s.enabled);
 
-  const { play: playMoveSoundRaw } = useSound(BOARD_SOUND_ASSETS.move.src, BOARD_SOUND_ASSETS.move.volume);
   const { play: playCorrectSoundRaw } = useSound(
     BOARD_SOUND_ASSETS.correctMove.src,
     BOARD_SOUND_ASSETS.correctMove.volume,
@@ -50,7 +45,6 @@ export function useBoardSounds() {
   );
 
   return {
-    playMoveSound: gate(playMoveSoundRaw),
     playCorrectSound: gate(playCorrectSoundRaw),
     playWrongMoveSound: gate(playWrongMoveSoundRaw),
     playHintSound: gate(playHintSoundRaw),
