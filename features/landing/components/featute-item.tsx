@@ -11,7 +11,7 @@ export type FeatureItemProps = {
 
 export function FeatureItem({ title, description, icon: Icon, imageSrc, imageAlt }: FeatureItemProps) {
   return (
-    <div className="flex flex-1 flex-col gap-8 rounded-2xl bg-[#633dcc] p-6">
+    <div className="flex flex-1 flex-col gap-8 rounded-2xl bg-[#5734B3] p-6">
       <div className="flex items-start justify-between gap-3">
         <h2 className="min-w-0 flex-1 text-2xl font-bold">{title}</h2>
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10">
