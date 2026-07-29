@@ -16,7 +16,7 @@ import { Confetti } from "@/components/ui/confetti";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
-import { incrementCurrentRatingAction } from "@/features/profile/actions/increment-current-rating";
+import { updateProfileRatingAction } from "@/features/profile/actions/update-profile-rating";
 import { useRiddleTour } from "@/features/riddle/hooks/use-riddle-tour";
 import type { Riddle } from "@/features/riddle/types/riddle";
 import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
@@ -164,14 +164,18 @@ export default function RiddleController({
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
 
+    // Rate before persisting complete so this attempt does not self-block eligibility.
+    if (isUserLoggedIn && attemptPayload.wrongMoveCount === 0) {
+      await updateProfileRatingAction({
+        sequenceId: riddle.moveSequence.id,
+        outcome: "success",
+      });
+    }
+
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
       ...(isFavourited ? { voltScore } : {}),
     });
-
-    if (isUserLoggedIn) {
-      await incrementCurrentRatingAction();
-    }
 
     setCompletionVoltScore(voltScoreResult);
     setIsVoltScoreShowing(false);
@@ -210,16 +214,26 @@ export default function RiddleController({
         isCorrect: false,
       });
 
-      void updateAttemptResults(
-        "failed",
-        createAttemptPayload(
-          correctMoveCountRef.current,
-          wrongMoveCountRef.current,
-          totalHintCountRef.current,
-          maxCorrectStreakRef.current,
-          getTimeFromStartMs(),
-        ),
-      );
+      void (async () => {
+        // Rate before persisting fail so the first wrong does not self-block eligibility.
+        if (isUserLoggedIn && wrongMoveCountRef.current === 1) {
+          await updateProfileRatingAction({
+            sequenceId: riddle.moveSequence.id,
+            outcome: "failure",
+          });
+        }
+
+        await updateAttemptResults(
+          "failed",
+          createAttemptPayload(
+            correctMoveCountRef.current,
+            wrongMoveCountRef.current,
+            totalHintCountRef.current,
+            maxCorrectStreakRef.current,
+            getTimeFromStartMs(),
+          ),
+        );
+      })();
     }
 
     return false;

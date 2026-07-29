@@ -107,10 +107,10 @@ export async function getProfileCurrentRating(supabase: SupabaseClient, userId: 
   return data?.current_rating ?? null;
 }
 
-export async function incrementProfileCurrentRating(
+export async function adjustProfileCurrentRating(
   supabase: SupabaseClient,
   userId: string,
-  increment: number,
+  delta: number,
 ): Promise<number | null> {
   const { data, error } = await supabase
     .from("profiles")
@@ -119,7 +119,7 @@ export async function incrementProfileCurrentRating(
     .maybeSingle();
 
   if (error) {
-    console.error("profile.repository.incrementProfileCurrentRating error:", {
+    console.error("profile.repository.adjustProfileCurrentRating error:", {
       message: error.message,
       code: error.code,
     });
@@ -129,12 +129,12 @@ export async function incrementProfileCurrentRating(
   if (!data) return null;
 
   const baseRating = data.current_rating ?? data.initial_rating ?? 0;
-  const newRating = baseRating + increment;
+  const newRating = Math.max(0, baseRating + delta);
 
   const { error: updateError } = await supabase.from("profiles").update({ current_rating: newRating }).eq("id", userId);
 
   if (updateError) {
-    console.error("profile.repository.incrementProfileCurrentRating update error:", {
+    console.error("profile.repository.adjustProfileCurrentRating update error:", {
       message: updateError.message,
       code: updateError.code,
     });
