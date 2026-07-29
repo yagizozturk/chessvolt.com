@@ -21,7 +21,7 @@ export function Information({
   step = "Volt Coaching",
   title = "Volt coaches you with the ideas behind the moves",
   description = "Train with Volt, a smart chess companion that explains moves, guides your decisions, and helps you improve one idea at a time. From openings to critical positions, it turns every lesson into a clear step toward better chess.",
-  imageSrc = "/images/avatar/volt-coach-avatar.png",
+  imageSrc = "/images/avatar/volt-coach.png",
   imageAlt = "Volt Coach",
 }: InformationProps) {
   return (
@@ -37,14 +37,14 @@ export function Information({
               {description}
             </p>
           </div>
-          <div className="order-1 mx-auto shrink-0 overflow-hidden rounded-2xl md:order-2 md:mx-0">
+          <div className="order-1 mx-auto shrink-0 overflow-hidden md:order-2 md:mx-0">
             <Image
               src={imageSrc}
               alt={imageAlt}
-              width={300}
-              height={300}
+              width={256}
+              height={256}
               priority={false}
-              className="mx-auto h-auto w-full max-w-[220px] md:max-w-none"
+              className="mx-auto h-auto w-full max-w-[256px] rounded-2xl bg-mist-200 md:max-w-none"
             />
           </div>
         </div>
