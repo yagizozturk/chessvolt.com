@@ -34,7 +34,7 @@ export function FavouriteButton({ isFavourited, onFavouritedChange, ...target }:
 
       if (result.ok) {
         onFavouritedChange(result.favourited);
-        toast.success(result.favourited ? "Added to favourites" : "Removed from favourites");
+        toast.success(result.favourited ? "Added to favorites" : "Removed from favorites");
         return;
       }
 
@@ -54,8 +54,8 @@ export function FavouriteButton({ isFavourited, onFavouritedChange, ...target }:
       className="relative"
       onClick={handleClick}
       disabled={isPending}
-      aria-label={isFavourited ? "Remove from favourites" : "Add to favourites"}
-      title={isFavourited ? "Remove from favourites" : "Add to favourites"}
+      aria-label={isFavourited ? "Remove from favorites" : "Add to favorites"}
+      title={isFavourited ? "Remove from favorites" : "Add to favorites"}
       aria-pressed={isFavourited}
     >
       <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />

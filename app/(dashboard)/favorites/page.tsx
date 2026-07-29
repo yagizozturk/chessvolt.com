@@ -36,16 +36,14 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
       <div className="page-container-children-layout">
         <PageHeader
           title="Favorites"
-          description="Your favourite openings and riddles to check your Volt score."
+          description="Your favorite openings and riddles to check your Volt score."
           actions={<FavoritesViewFilter view={view} />}
         />
 
         <FavoritesTour view={view} />
 
         {/* Volt Explain: second visit (after favorites tour); only when user has favorites */}
-        {(favoritesCount ?? 0) > 0 ? (
-          <VoltExplainDialogAutoStart requireTourSeenId={FAVORITES_TOUR_ID} />
-        ) : null}
+        {(favoritesCount ?? 0) > 0 ? <VoltExplainDialogAutoStart requireTourSeenId={FAVORITES_TOUR_ID} /> : null}
 
         <div className="flex flex-col gap-8">
           {(view === "all" || view === "openings") && (

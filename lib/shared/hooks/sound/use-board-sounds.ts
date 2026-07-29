@@ -6,7 +6,7 @@ import { useBoardSoundsStore } from "@/lib/shared/store/board-sounds-store";
 
 const BOARD_SOUND_ASSETS = {
   move: {
-    src: "/audio/piece-move-sound.wav",
+    src: "/audio/board-piece-move-sound.wav",
     volume: 0.5,
   },
   correctMove: {
@@ -14,7 +14,7 @@ const BOARD_SOUND_ASSETS = {
     volume: 1,
   },
   wrongMove: {
-    src: "/audio/incorrect-move.wav",
+    src: "/audio/board-incorrect-move-sound.wav",
     volume: 0.5,
   },
   hint: {
@@ -22,7 +22,7 @@ const BOARD_SOUND_ASSETS = {
     volume: 1,
   },
   levelUp: {
-    src: "/audio/level-up.mp3",
+    src: "/audio/sound-level-up.mp3",
     volume: 1,
   },
 } as const;
@@ -42,9 +42,12 @@ export function useBoardSounds() {
   const { play: playHintSoundRaw } = useSound(BOARD_SOUND_ASSETS.hint.src, BOARD_SOUND_ASSETS.hint.volume);
   const { play: playLevelUpSoundRaw } = useSound(BOARD_SOUND_ASSETS.levelUp.src, BOARD_SOUND_ASSETS.levelUp.volume);
 
-  const gate = useCallback((play: () => void) => () => {
-    if (enabled) play();
-  }, [enabled]);
+  const gate = useCallback(
+    (play: () => void) => () => {
+      if (enabled) play();
+    },
+    [enabled],
+  );
 
   return {
     playMoveSound: gate(playMoveSoundRaw),
