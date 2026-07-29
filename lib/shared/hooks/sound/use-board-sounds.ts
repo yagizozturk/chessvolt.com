@@ -10,11 +10,11 @@ const BOARD_SOUND_ASSETS = {
     volume: 0.5,
   },
   correctMove: {
-    src: "/audio/correct-move.mp3",
+    src: "/audio/volt-correct-move.mp3",
     volume: 1,
   },
   wrongMove: {
-    src: "/audio/board-incorrect-move-sound.wav",
+    src: "/audio/volt-incorrect-move.wav",
     volume: 0.5,
   },
   hint: {
