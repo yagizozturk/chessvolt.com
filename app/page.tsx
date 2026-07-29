@@ -12,8 +12,8 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <Curve />
-      <Features />
       <Information />
+      <Features />
       <Footer />
     </div>
   );

@@ -31,14 +31,14 @@ const sharedFeatures = [
 
 export function Features() {
   return (
-    <section className="py-20">
+    <section className="bg-mist-100 py-20">
       <div className="container mx-auto max-w-5xl px-4 md:px-6">
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-4 text-center">
-            <h2 className="text-foreground text-3xl font-extrabold tracking-tight sm:text-4xl">
+            <h2 className="text-secondary text-3xl font-extrabold tracking-tight sm:text-4xl">
               Understand Why And Repeat
             </h2>
-            <p className="text-foreground/80 mx-auto max-w-2xl text-lg leading-relaxed">
+            <p className="text-secondary/80 mx-auto max-w-2xl text-lg leading-relaxed">
               <span className="text-primary font-medium">Solve riddles</span> to learn opening plans, earn up to{" "}
               <span className="text-primary font-medium">220 Volt</span> in five days, and practice your way to your
               target rating.

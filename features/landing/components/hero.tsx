@@ -13,9 +13,7 @@ import { cn } from "@/lib/utils";
 export function Hero() {
   const { profile, isLoading } = useProfile();
   const [isNavigating, setIsNavigating] = useState(false);
-  const cta = profile
-    ? { href: "/dashboard", label: "Start Playing" }
-    : { href: "/login", label: "Start Learning" };
+  const cta = profile ? { href: "/dashboard", label: "Start Playing" } : { href: "/login", label: "Start Learning" };
 
   return (
     <div className="container mx-auto bg-[#5734B3] px-4 pt-32 pb-24 md:px-6">
