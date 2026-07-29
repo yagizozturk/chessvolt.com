@@ -6,11 +6,11 @@ import { useBoardSoundsStore } from "@/lib/shared/store/board-sounds-store";
 
 const BOARD_SOUND_ASSETS = {
   correctMove: {
-    src: "/audio/correct-shine.wav",
+    src: "/audio/board-true-move.mp3",
     volume: 1,
   },
   wrongMove: {
-    src: "/audio/volt-incorrect-move.wav",
+    src: "/audio/board-false-move.mp3",
     volume: 0.5,
   },
   hint: {
