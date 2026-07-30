@@ -44,7 +44,7 @@ export function Information({
               width={256}
               height={256}
               priority={false}
-              className="mx-auto h-auto w-full max-w-[256px] rounded-2xl bg-mist-200 md:max-w-none"
+              className="mx-auto h-auto w-full max-w-[256px] min-w-[256px] rounded-2xl bg-mist-200 md:max-w-none"
             />
           </div>
         </div>
