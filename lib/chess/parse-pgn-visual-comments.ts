@@ -1,6 +1,10 @@
 import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import type { MoveVisual } from "@/features/move-sequence/types/move-visual";
-import { getExpectedPlayerGoals, parseMovesFromSequence } from "@/lib/move-sequence-goals/expected-goals";
+import {
+  type ExpectedPlayerSide,
+  getExpectedPlayerGoals,
+  parseMovesFromSequence,
+} from "@/lib/move-sequence-goals/expected-goals";
 
 const RESULT_TOKENS = new Set(["1-0", "0-1", "1/2-1/2", "*"]);
 
@@ -164,6 +168,27 @@ export function parsePgnCommentsByPly(pgn: string): PlyCommentsByPly {
   return commentsByPly;
 }
 
+function commentWeight(comment: PlyComment): number {
+  return (comment.strategy ? 1 : 0) + comment.visuals.length;
+}
+
+/**
+ * Prefer the side that actually has Lichess comments / visuals. Goal plies stay
+ * odd either way; Black annotations map onto Black moves with odd goal plies.
+ */
+export function detectAnnotatedPlayerSide(commentsByPly: PlyCommentsByPly): ExpectedPlayerSide {
+  let whiteWeight = 0;
+  let blackWeight = 0;
+
+  for (const [ply, comment] of commentsByPly) {
+    const weight = commentWeight(comment);
+    if (ply % 2 === 1) whiteWeight += weight;
+    else blackWeight += weight;
+  }
+
+  return blackWeight > whiteWeight ? "b" : "w";
+}
+
 export function buildMoveGoalsFromPgnComments(
   pgn: string,
   initialFen: string,
@@ -172,23 +197,27 @@ export function buildMoveGoalsFromPgnComments(
 ): MoveGoals {
   const commentsByPly = parsePgnCommentsByPly(pgn);
   const uciMoves = parseMovesFromSequence(moves);
+  const playerSide = detectAnnotatedPlayerSide(commentsByPly);
 
   return {
     mainIdea: "",
     lessonsLearned: "",
-    plys: getExpectedPlayerGoals(initialFen, uciMoves, initialPly).map(({ ply, move }) => {
-      const comment = commentsByPly.get(ply);
+    plys: getExpectedPlayerGoals(initialFen, uciMoves, initialPly, playerSide).map(
+      ({ ply, move, moveIndex }) => {
+        // Comments are keyed by absolute PGN ply (1-based from game start).
+        const comment = commentsByPly.get(initialPly + moveIndex + 1);
 
-      return {
-        ply,
-        move,
-        title: "",
-        visuals: comment?.visuals ?? [],
-        strategy: comment?.strategy ?? "",
-        takeaway: "",
-        checkpointMessage: "",
-        isCompleted: false,
-      };
-    }),
+        return {
+          ply,
+          move,
+          title: "",
+          visuals: comment?.visuals ?? [],
+          strategy: comment?.strategy ?? "",
+          takeaway: "",
+          checkpointMessage: "",
+          isCompleted: false,
+        };
+      },
+    ),
   };
 }

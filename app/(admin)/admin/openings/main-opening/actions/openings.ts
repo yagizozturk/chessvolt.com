@@ -4,49 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import type { CreateOpeningInput, UpdateOpeningInput } from "@/features/openings/repository/opening.repository";
-import type { OpeningArrow, OpeningArrowGroup } from "@/features/openings/types/opening";
 import { createOpening, deleteOpening, updateOpening } from "@/features/openings/services/openings.service";
 import { getAdminUser } from "@/lib/supabase/auth";
-
-function isOpeningArrow(value: unknown): value is OpeningArrow {
-  if (!value || typeof value !== "object") return false;
-  const arrow = value as { orig?: unknown; dest?: unknown };
-  return typeof arrow.orig === "string" && typeof arrow.dest === "string";
-}
-
-function isOpeningArrowGroup(value: unknown): value is OpeningArrowGroup {
-  if (!value || typeof value !== "object") return false;
-  const group = value as {
-    id?: unknown;
-    title?: unknown;
-    description?: unknown;
-    color?: unknown;
-    arrows?: unknown;
-  };
-  return (
-    typeof group.id === "string" &&
-    typeof group.title === "string" &&
-    typeof group.description === "string" &&
-    typeof group.color === "string" &&
-    Array.isArray(group.arrows) &&
-    group.arrows.every(isOpeningArrow)
-  );
-}
-
-function parseArrowsInput(rawValue: FormDataEntryValue | null): OpeningArrowGroup[] | null | undefined {
-  if (rawValue === null) return undefined;
-  const raw = String(rawValue).trim();
-  if (!raw) return null;
-
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return null;
-    if (!parsed.every(isOpeningArrowGroup)) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
 
 export async function createOpeningAction(formData: FormData) {
   const { supabase } = await getAdminUser();
@@ -56,7 +15,6 @@ export async function createOpeningAction(formData: FormData) {
   const description = (formData.get("description") as string) || null;
   const openingType = ((formData.get("openingType") as string) || "").trim() || null;
   const displayFen = (formData.get("displayFen") as string) || null;
-  const arrows = parseArrowsInput(formData.get("arrows"));
 
   if (!name) {
     redirect("/admin/openings?error=missing_fields");
@@ -67,7 +25,6 @@ export async function createOpeningAction(formData: FormData) {
     slug: slug || null,
     description: description || null,
     type: openingType,
-    arrows,
     displayFen: displayFen || null,
   };
 
@@ -100,7 +57,6 @@ export async function updateOpeningAction(
   const description = (formData.get("description") as string) || null;
   const openingType = ((formData.get("openingType") as string) || "").trim() || null;
   const displayFen = (formData.get("displayFen") as string) || null;
-  const arrows = parseArrowsInput(formData.get("arrows"));
 
   if (!name) {
     return { error: "Name is required." };
@@ -111,7 +67,6 @@ export async function updateOpeningAction(
     slug: slug || null,
     description,
     type: openingType,
-    arrows,
     displayFen: displayFen || null,
   };
 

@@ -5,7 +5,7 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { Opening, OpeningArrowGroup } from "@/features/openings/types/opening";
+import type { Opening } from "@/features/openings/types/opening";
 import { postgrestUserMessage } from "@/lib/supabase/postgrest-user-message";
 import { slugify } from "@/lib/utils/slugify";
 
@@ -19,7 +19,6 @@ type DbOpening = {
   slug: string | null;
   description: string | null;
   type: string | null;
-  arrows: OpeningArrowGroup[] | null;
   display_fen: string | null;
   created_at: string;
 };
@@ -31,7 +30,6 @@ function toOpening(db: DbOpening): Opening {
     slug: db.slug,
     description: db.description,
     type: db.type ?? null,
-    arrows: db.arrows ?? null,
     displayFen: db.display_fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
     createdAt: db.created_at,
   };
@@ -46,16 +44,16 @@ function dbRowMatchesUpdates(row: DbOpening, updates: Record<string, unknown>): 
   if ("slug" in updates && (row.slug ?? null) !== (updates.slug ?? null)) return false;
   if ("description" in updates && (row.description ?? null) !== (updates.description ?? null)) return false;
   if ("type" in updates && (row.type ?? null) !== (updates.type ?? null)) return false;
-  if ("arrows" in updates && JSON.stringify(row.arrows ?? null) !== JSON.stringify(updates.arrows ?? null))
-    return false;
   if ("display_fen" in updates && (row.display_fen ?? null) !== (updates.display_fen ?? null)) return false;
   return true;
 }
 
+const OPENING_COLUMNS = "id, name, slug, description, type, display_fen, created_at" as const;
+
 export async function findAll(supabase: SupabaseClient): Promise<Opening[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, type, arrows, display_fen, created_at")
+    .select(OPENING_COLUMNS)
     .order("name", { ascending: true });
 
   if (error) {
@@ -71,7 +69,7 @@ export type OpeningWithVariantCount = Opening & { variantCount: number };
 export async function findAllWithVariantCount(supabase: SupabaseClient): Promise<OpeningWithVariantCount[]> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, type, arrows, display_fen, created_at, opening_variants(count)")
+    .select(`${OPENING_COLUMNS}, opening_variants(count)`)
     .order("name", { ascending: true });
 
   if (error) {
@@ -97,7 +95,7 @@ export async function findByTypeWithVariantCount(
 
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, type, arrows, display_fen, created_at, opening_variants(count)")
+    .select(`${OPENING_COLUMNS}, opening_variants(count)`)
     .ilike("type", trimmed)
     .order("name", { ascending: true });
 
@@ -116,7 +114,7 @@ export async function findByTypeWithVariantCount(
 export async function findById(supabase: SupabaseClient, id: string): Promise<Opening | null> {
   const { data, error } = await supabase
     .from("openings")
-    .select("id, name, slug, description, type, arrows, display_fen, created_at")
+    .select(OPENING_COLUMNS)
     .eq("id", id)
     .maybeSingle();
 
@@ -133,7 +131,6 @@ export type CreateOpeningInput = {
   slug?: string | null;
   description?: string | null;
   type?: string | null;
-  arrows?: OpeningArrowGroup[] | null;
   displayFen?: string | null;
 };
 
@@ -145,7 +142,6 @@ export async function create(supabase: SupabaseClient, input: CreateOpeningInput
       slug: input.slug ?? slugFromName(input.name),
       description: input.description ?? null,
       type: input.type ?? null,
-      arrows: input.arrows ?? null,
       display_fen: input.displayFen ?? null,
     })
     .select()
@@ -164,7 +160,6 @@ export type UpdateOpeningInput = {
   slug?: string | null;
   description?: string | null;
   type?: string | null;
-  arrows?: OpeningArrowGroup[] | null;
   displayFen?: string | null;
 };
 
@@ -183,20 +178,17 @@ export async function update(
   if (input.slug !== undefined) updates.slug = input.slug;
   if (input.description !== undefined) updates.description = input.description;
   if (input.type !== undefined) updates.type = input.type;
-  if (input.arrows !== undefined) updates.arrows = input.arrows;
   if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
 
   if (Object.keys(updates).length === 0) {
     return { opening: null, error: "No changes to save." };
   }
 
-  const selectColumns = "id, name, slug, description, type, arrows, display_fen, created_at" as const;
-
   const { data, error } = await supabase
     .from("openings")
     .update(updates)
     .eq("id", id)
-    .select(selectColumns)
+    .select(OPENING_COLUMNS)
     .maybeSingle();
 
   if (error) {
@@ -210,7 +202,7 @@ export async function update(
 
   const { data: row, error: readError } = await supabase
     .from("openings")
-    .select(selectColumns)
+    .select(OPENING_COLUMNS)
     .eq("id", id)
     .maybeSingle();
 

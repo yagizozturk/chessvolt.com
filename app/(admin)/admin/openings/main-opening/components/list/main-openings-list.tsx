@@ -27,10 +27,7 @@ export function MainOpenings({ openings }: Props) {
           >
             {o.name}
           </Link>
-          <p className="text-muted-foreground text-xs">
-            {o.type ? `${o.type} · ` : null}
-            {o.arrows?.reduce((sum, group) => sum + group.arrows.length, 0) ?? 0} arrow(s)
-          </p>
+          {o.type ? <p className="text-muted-foreground text-xs">{o.type}</p> : null}
           <div className="mt-auto flex flex-wrap gap-2">
             <Link href={`/admin/openings/main-opening/edit/${o.id}`}>
               <Button variant="outline" size="sm">

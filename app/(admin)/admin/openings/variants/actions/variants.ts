@@ -18,6 +18,10 @@ import { parseGoalsFromForm } from "@/app/(admin)/admin/lib/parse-goals-from-for
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { buildMoveGoalsFromPgnComments, normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
+import {
+  mergeGoalsWithOverlay,
+  parseGoalsOverlayJson,
+} from "@/lib/move-sequence-goals/merge-goals-overlay";
 import { parsePgn, splitPgnGames } from "@/lib/chess/parsePgn";
 import { getAdminUser } from "@/lib/supabase/auth";
 
@@ -231,11 +235,20 @@ export async function updateOpeningVariantGoalsFromPgnAction(id: string, formDat
     redirect(`/admin/openings/variants/${id}?error=annotated_pgn_moves_mismatch`);
   }
 
-  const goals = buildMoveGoalsFromPgnComments(
-    normalizedPgn,
-    variant.moveSequence.initialFen,
-    variant.moveSequence.moves,
-    variant.initialPly,
+  const goalsJson = (formData.get("goalsJson") as string | null) ?? "";
+  const { overlay, error: overlayError } = parseGoalsOverlayJson(goalsJson);
+  if (overlayError) {
+    redirect(`/admin/openings/variants/${id}?error=invalid_goals_json`);
+  }
+
+  const goals = mergeGoalsWithOverlay(
+    buildMoveGoalsFromPgnComments(
+      normalizedPgn,
+      variant.moveSequence.initialFen,
+      variant.moveSequence.moves,
+      variant.initialPly,
+    ),
+    overlay,
   );
   const updated = await updateOpeningVariant(supabase, id, { goals });
 
