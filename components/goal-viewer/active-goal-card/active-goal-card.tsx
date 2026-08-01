@@ -12,7 +12,12 @@ export function ActiveGoalCard({
 }: ActiveGoalCardProps) {
   const isLearnMode = mode === "learn";
   const title = isLearnMode && goal.title.trim() ? goal.title : `${turnLabel}`;
-  const message = isLearnMode ? goal.strategy.trim() : "";
+  const checkpoint = goal.checkpointMessage.trim();
+  const message = isLearnMode
+    ? goal.isCompleted && checkpoint
+      ? checkpoint
+      : goal.strategy.trim()
+    : "";
 
   return (
     <VoltCoach
