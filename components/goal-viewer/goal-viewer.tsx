@@ -32,7 +32,7 @@ export function GoalViewer({
           isFirstPly={isFirstPly}
         />
       </div>
-      <div className="mb-3 flex items-center" data-tour="progress">
+      <div className="mb-3 flex items-center">
         <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />
         <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
           <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />

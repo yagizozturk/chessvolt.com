@@ -262,11 +262,7 @@ export default function OpeningVariantController({
       ) : null}
       <Notifier goals={sortedGoals} />
       <div className="page-container-controller-layout">
-        <div
-          key={sessionId}
-          className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]"
-          data-tour="board"
-        >
+        <div key={sessionId} className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]">
           <VoltBoard
             ref={boardRef}
             sourceId={sessionId}
@@ -290,7 +286,7 @@ export default function OpeningVariantController({
               </Button>
             </div>
             <div className="flex items-center gap-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
-            <div>
+            <div data-tour="favorite-button">
               {canFavourite ? (
                 <FavouriteButton
                   openingVariantId={variant.id}
@@ -304,8 +300,9 @@ export default function OpeningVariantController({
             value={boardMode}
             onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
             aria-label="Board mode"
+            data-tour="board-mode"
           >
-            <TabsList variant="green" className="w-full rounded-lg">
+            <TabsList variant="primary" className="w-full rounded-lg">
               <TabsTrigger value="practice">
                 <Swords />
                 Practice
