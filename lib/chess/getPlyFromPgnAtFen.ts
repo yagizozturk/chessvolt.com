@@ -1,5 +1,6 @@
 // TODO: Refactor
 import { Chess } from "chess.js";
+import { normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
 
 /**
  * Fonksyon Bilgisi ✅
@@ -15,7 +16,7 @@ import { Chess } from "chess.js";
 export function getPlyFromPgnAtFen(pgn: string, fen: string): number | null {
   try {
     const game = new Chess();
-    game.loadPgn(pgn);
+    game.loadPgn(normalizeLichessPgnComments(pgn));
     const history = game.history();
     while (game.undo()) {} // Tüm hamleleri geri alır.
     if (game.fen() === fen) return 0;

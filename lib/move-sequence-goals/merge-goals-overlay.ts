@@ -21,6 +21,7 @@ export type GoalsOverlayPly = {
   ply: number | null;
   move?: string;
   title?: string;
+  strategy?: string;
   takeaway?: string;
   checkpointMessage?: string;
 };
@@ -32,8 +33,8 @@ export type GoalsOverlay = {
 };
 
 /**
- * Parse enrichment JSON shaped like MoveGoals. Only prose fields are required;
- * strategy/visuals/move from this payload are ignored when merging.
+ * Parse enrichment JSON shaped like MoveGoals. Prose + strategy are taken from
+ * this payload; visuals/move from this payload are ignored when merging.
  */
 export function parseGoalsOverlayJson(raw: string): { overlay: GoalsOverlay | null; error: string | null } {
   const trimmed = raw.trim();
@@ -64,6 +65,7 @@ export function parseGoalsOverlayJson(raw: string): { overlay: GoalsOverlay | nu
         ply: parsePly(entry.ply),
         move: asString(entry.move),
         title: asString(entry.title),
+        strategy: asString(entry.strategy),
         takeaway: asString(entry.takeaway),
         checkpointMessage: asString(entry.checkpointMessage),
       },
@@ -87,7 +89,8 @@ function findOverlayPly(overlayPlys: GoalsOverlayPly[], goal: MoveGoal): GoalsOv
 }
 
 /**
- * Keep ply/move/strategy/visuals from PGN-built goals; fill prose fields from overlay JSON.
+ * Keep ply/move/visuals from PGN-built goals; fill strategy + prose from overlay JSON.
+ * Overlay strategy falls back to PGN strategy when absent.
  */
 export function mergeGoalsWithOverlay(base: MoveGoals, overlay: GoalsOverlay | null): MoveGoals {
   if (!overlay) return base;
@@ -102,6 +105,7 @@ export function mergeGoalsWithOverlay(base: MoveGoals, overlay: GoalsOverlay | n
       return {
         ...goal,
         title: match.title ?? goal.title,
+        strategy: match.strategy ?? goal.strategy,
         takeaway: match.takeaway ?? goal.takeaway,
         checkpointMessage: match.checkpointMessage ?? goal.checkpointMessage,
       };

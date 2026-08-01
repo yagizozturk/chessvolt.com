@@ -26,24 +26,22 @@ function getPlayerMoveIndices(uciMoves: string[], startIndex = 0): number[] {
 export type ExpectedPlayerSide = "w" | "b";
 
 /**
- * Goal plies are always odd (1, 3, 5, …), including when the expected player is Black.
+ * Goal plies are always odd (1, 3, 5, …), relative to the playable sequence
+ * (after initialFen), including when the expected player is Black.
  * `playerSide` selects which color's moves become goals; defaults to the side to move.
  */
 export function getExpectedPlayerGoals(
   initialFen: string,
   uciMoves: string[],
-  plyOffset = 0,
   playerSide?: ExpectedPlayerSide,
 ) {
   const sideToMove = getInitialSideToMove(initialFen);
   const expectedSide = playerSide ?? sideToMove;
   const startIndex = expectedSide === sideToMove ? 0 : 1;
-  // Goal plies stay odd regardless of color.
-  const basePly = 1 + plyOffset;
 
   return getPlayerMoveIndices(uciMoves, startIndex).map((moveIndex, ordinal) => ({
     moveIndex,
-    ply: basePly + ordinal * 2,
+    ply: 1 + ordinal * 2,
     move: uciMoves[moveIndex]!,
   }));
 }

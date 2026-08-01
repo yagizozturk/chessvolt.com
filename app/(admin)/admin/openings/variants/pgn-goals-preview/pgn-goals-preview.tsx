@@ -28,6 +28,7 @@ const EXAMPLE_GOALS_JSON = `{
       "ply": 1,
       "move": "d2d4",
       "title": "Claim the center",
+      "strategy": "White puts a pawn in the center.",
       "takeaway": "d4 stakes space immediately.",
       "checkpointMessage": "Nice start — center claimed."
     }
@@ -94,14 +95,14 @@ export function PgnGoalsPreview() {
             spellCheck={false}
           />
           <FieldDescription>
-            Supplies <span className="font-mono">ply</span>, <span className="font-mono">move</span>,{" "}
-            <span className="font-mono">strategy</span>, and <span className="font-mono">visuals</span>. Annotated
-            side (White or Black) is detected automatically; goal plies stay odd.
+            Supplies <span className="font-mono">ply</span>, <span className="font-mono">move</span>, and{" "}
+            <span className="font-mono">visuals</span>. Strategy comments are a fallback when Goals JSON omits
+            them. Annotated side (White or Black) is detected automatically; goal plies stay odd.
           </FieldDescription>
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="pgn-goals-preview-json">Goals JSON (prose overlay)</FieldLabel>
+          <FieldLabel htmlFor="pgn-goals-preview-json">Goals JSON (prose + strategy overlay)</FieldLabel>
           <Textarea
             id="pgn-goals-preview-json"
             rows={14}
@@ -114,9 +115,9 @@ export function PgnGoalsPreview() {
           <FieldDescription>
             Optional. Merges <span className="font-mono">mainIdea</span>,{" "}
             <span className="font-mono">lessonsLearned</span>, and per-ply{" "}
-            <span className="font-mono">title</span>, <span className="font-mono">takeaway</span>,{" "}
-            <span className="font-mono">checkpointMessage</span>. Matched by ply (then move). Strategy/visuals from
-            this JSON are ignored.
+            <span className="font-mono">title</span>, <span className="font-mono">strategy</span>,{" "}
+            <span className="font-mono">takeaway</span>, <span className="font-mono">checkpointMessage</span>. Matched
+            by ply (then move). Visuals from this JSON are ignored.
           </FieldDescription>
         </Field>
       </FieldGroup>

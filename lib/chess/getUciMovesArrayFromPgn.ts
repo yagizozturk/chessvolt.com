@@ -1,6 +1,7 @@
 // TODO: Refactor
 import { Chess } from "chess.js";
 import { buildUci } from "@/lib/chess/buildUci";
+import { normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
 
 /**
  * Fonksyon Bilgisi ✅
@@ -14,7 +15,8 @@ export function getUciMovesArrayFromPgn(pgn: string): string[] | null {
     const game = new Chess();
     // PGN doğru parse edilemediği durumda try bloğu hata verir ve catch ile null döndürülür
     // Bu sebeple ana metot string[] dönmezse diye | null da döndürür.
-    game.loadPgn(pgn.trim(), { strict: false });
+    // Lichess studies emit adjacent `{ prose } { [%csl] }` comments; chess.js rejects those.
+    game.loadPgn(normalizeLichessPgnComments(pgn.trim()), { strict: false });
     // verbose history already contains legal from/to squares from the loaded PGN
     // (including SetUp/FEN-based games), so we should not replay from start position.
     const history = game.history({ verbose: true });

@@ -14,7 +14,7 @@ import {
   getOpeningVariantById,
   updateOpeningVariant,
 } from "@/features/openings/services/openings.service";
-import { parseGoalsFromForm } from "@/app/(admin)/admin/lib/parse-goals-from-form";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPly } from "@/lib/chess/getUciMovesFromPgnAfterPly";
 import { buildMoveGoalsFromPgnComments, normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
@@ -24,6 +24,8 @@ import {
 } from "@/lib/move-sequence-goals/merge-goals-overlay";
 import { parsePgn, splitPgnGames } from "@/lib/chess/parsePgn";
 import { getAdminUser } from "@/lib/supabase/auth";
+
+const DEFAULT_START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 /** Empty or missing → 0 (initial ply default). */
 function parseAdminPly(formData: FormData, key: string): number {
@@ -42,30 +44,64 @@ function newVariantUrl(formData: FormData, error: string): string {
   return `/admin/openings/variants/new?${q.toString()}`;
 }
 
+/** Build goals from annotated PGN + optional Goals JSON overlay (`goalsJson`). */
+function mergeGoalsFromForm(
+  pgn: string,
+  initialFen: string,
+  moves: string,
+  initialPly: number,
+  formData: FormData,
+  errorRedirect: string,
+): MoveGoals {
+  const goalsJson = (formData.get("goalsJson") as string | null) ?? "";
+  const { overlay, error: overlayError } = parseGoalsOverlayJson(goalsJson);
+  if (overlayError) {
+    redirect(errorRedirect);
+  }
+  return mergeGoalsWithOverlay(
+    buildMoveGoalsFromPgnComments(pgn, initialFen, moves, initialPly),
+    overlay,
+  );
+}
+
 export async function createOpeningVariantAction(formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const openingId = formData.get("openingId") as string;
-  const pgn = (formData.get("pgn") as string)?.trim();
+  const rawPgn = (formData.get("pgn") as string)?.trim();
   const initialPly = parseAdminPly(formData, "initialPly");
+  const displayPly = parseAdminPly(formData, "displayPly");
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
   const sortKey = parseInt((formData.get("sortKey") as string)?.trim() ?? "", 10);
-  const initialFen =
-    (formData.get("initialFen") as string)?.trim() ||
-    getFenFromPgnAtPly(pgn ?? "", initialPly) ||
-    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-  const displayFen = (formData.get("displayFen") as string)?.trim() || null;
-  const goals = parseGoalsFromForm(formData, newVariantUrl(formData, "invalid_goals_json"));
 
-  if (!openingId?.trim() || !pgn || Number.isNaN(sortKey)) {
+  if (!openingId?.trim() || !rawPgn || Number.isNaN(sortKey)) {
     redirect(newVariantUrl(formData, "missing_fields"));
   }
 
+  const pgn = normalizeLichessPgnComments(rawPgn);
   const moves = getUciMovesFromPgnAfterPly(pgn, initialPly);
   if (!moves) {
     redirect(newVariantUrl(formData, "invalid_pgn"));
   }
+
+  const initialFen =
+    (formData.get("initialFen") as string)?.trim() ||
+    getFenFromPgnAtPly(pgn, initialPly) ||
+    DEFAULT_START_FEN;
+  const displayFen =
+    (formData.get("displayFen") as string)?.trim() ||
+    getFenFromPgnAtPly(pgn, displayPly) ||
+    null;
+
+  const goals = mergeGoalsFromForm(
+    pgn,
+    initialFen,
+    moves,
+    initialPly,
+    formData,
+    newVariantUrl(formData, "invalid_goals_json"),
+  );
 
   const input: CreateOpeningVariantInput = {
     openingId: openingId.trim(),
@@ -123,8 +159,7 @@ export async function bulkImportPgnVariantsAction(formData: FormData) {
       continue;
     }
 
-    const initialFen =
-      getFenFromPgnAtPly(pgn, initialPly) || "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    const initialFen = getFenFromPgnAtPly(pgn, initialPly) || DEFAULT_START_FEN;
     const displayFen = initialFen;
     const parsedGame = parsePgn(pgn);
 
@@ -167,93 +202,55 @@ export async function updateOpeningVariantAction(id: string, formData: FormData)
   const title = (formData.get("title") as string) || null;
   const description = (formData.get("description") as string) || null;
   const sortKeyStr = (formData.get("sortKey") as string)?.trim();
-  const pgn = (formData.get("pgn") as string)?.trim();
+  const rawPgn = (formData.get("pgn") as string)?.trim();
   const initialPly = parseAdminPly(formData, "initialPly");
   const displayPly = parseAdminPly(formData, "displayPly");
   const initialFenManual = (formData.get("initialFen") as string)?.trim() || null;
   const displayFenManual = (formData.get("displayFen") as string)?.trim() || null;
-  const goals = parseGoalsFromForm(formData, `/admin/openings/variants/${id}?error=invalid_goals_json`);
+  const errorBase = `/admin/openings/variants/${id}`;
 
-  const input: UpdateOpeningVariantInput = {};
-  if (title !== undefined) input.title = title;
-  if (description !== undefined) input.description = description;
+  if (!rawPgn) {
+    redirect(`${errorBase}?error=missing_fields`);
+  }
+
+  const pgn = normalizeLichessPgnComments(rawPgn);
+  const moves = getUciMovesFromPgnAfterPly(pgn, initialPly);
+  if (!moves) {
+    redirect(`${errorBase}?error=invalid_pgn`);
+  }
+
+  const initialFen = initialFenManual || getFenFromPgnAtPly(pgn, initialPly) || DEFAULT_START_FEN;
+  const displayFen = displayFenManual || getFenFromPgnAtPly(pgn, displayPly) || null;
+
+  const input: UpdateOpeningVariantInput = {
+    title,
+    description,
+    pgn,
+    moves,
+    initialPly,
+    initialFen,
+    displayFen,
+    goals: mergeGoalsFromForm(
+      pgn,
+      initialFen,
+      moves,
+      initialPly,
+      formData,
+      `${errorBase}?error=invalid_goals_json`,
+    ),
+  };
+
   if (sortKeyStr !== undefined && sortKeyStr !== "") {
     const n = parseInt(sortKeyStr, 10);
     if (Number.isNaN(n)) {
-      redirect(`/admin/openings/variants/${id}?error=invalid_sort_key`);
+      redirect(`${errorBase}?error=invalid_sort_key`);
     }
     input.sortKey = n;
   }
-  if (pgn) {
-    const moves = getUciMovesFromPgnAfterPly(pgn, initialPly);
-    if (!moves) {
-      redirect(`/admin/openings/variants/${id}?error=invalid_pgn`);
-    }
-    input.pgn = pgn;
-    input.moves = moves;
-    input.initialPly = initialPly;
-    const defaultStart = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    input.initialFen = initialFenManual || getFenFromPgnAtPly(pgn, initialPly) || defaultStart;
-    input.displayFen = displayFenManual || getFenFromPgnAtPly(pgn, displayPly) || null;
-  } else {
-    if (initialFenManual) input.initialFen = initialFenManual;
-    if (displayFenManual) input.displayFen = displayFenManual;
-    input.initialPly = initialPly;
-  }
-  input.goals = goals;
 
   const variant = await updateOpeningVariant(supabase, id, input);
   if (!variant) {
-    redirect(`/admin/openings/variants/${id}?error=could_not_be_updated`);
-  }
-
-  revalidatePath("/admin/openings");
-  revalidatePath(`/admin/openings/variants/${id}`);
-  revalidatePath(`/admin/openings/main-opening/${variant.openingId}`);
-  redirect(`/admin/openings/variants/${id}`);
-}
-
-export async function updateOpeningVariantGoalsFromPgnAction(id: string, formData: FormData) {
-  const { supabase } = await getAdminUser();
-  const rawPgn = (formData.get("annotatedPgn") as string | null)?.trim();
-
-  if (!rawPgn) {
-    redirect(`/admin/openings/variants/${id}?error=missing_annotated_pgn`);
-  }
-
-  const variant = await getOpeningVariantById(supabase, id);
-  if (!variant) {
-    redirect(`/admin/openings/variants/${id}?error=variant_not_found`);
-  }
-
-  const normalizedPgn = normalizeLichessPgnComments(rawPgn);
-  const parsedMoves = getUciMovesFromPgnAfterPly(normalizedPgn, variant.initialPly);
-  if (!parsedMoves) {
-    redirect(`/admin/openings/variants/${id}?error=invalid_annotated_pgn`);
-  }
-  if (parsedMoves !== variant.moveSequence.moves) {
-    redirect(`/admin/openings/variants/${id}?error=annotated_pgn_moves_mismatch`);
-  }
-
-  const goalsJson = (formData.get("goalsJson") as string | null) ?? "";
-  const { overlay, error: overlayError } = parseGoalsOverlayJson(goalsJson);
-  if (overlayError) {
-    redirect(`/admin/openings/variants/${id}?error=invalid_goals_json`);
-  }
-
-  const goals = mergeGoalsWithOverlay(
-    buildMoveGoalsFromPgnComments(
-      normalizedPgn,
-      variant.moveSequence.initialFen,
-      variant.moveSequence.moves,
-      variant.initialPly,
-    ),
-    overlay,
-  );
-  const updated = await updateOpeningVariant(supabase, id, { goals });
-
-  if (!updated) {
-    redirect(`/admin/openings/variants/${id}?error=could_not_update_goals`);
+    redirect(`${errorBase}?error=could_not_be_updated`);
   }
 
   revalidatePath("/admin/openings");

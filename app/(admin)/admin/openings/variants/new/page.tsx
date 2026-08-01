@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getAllOpenings } from "@/features/openings/services/openings.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 
-import { JsonVariantForm } from "../components/form/json-variant-form";
+import { VariantPgnGoalsForm } from "../components/form/variant-pgn-goals-form";
 
 type Props = {
   searchParams: Promise<{ openingId?: string }>;
@@ -27,11 +27,11 @@ export default async function AdminOpeningsNewPage({ searchParams }: Props) {
       </Link>
       <Card>
         <CardHeader>
-          <CardTitle>New Opening Variant (JSON)</CardTitle>
+          <CardTitle>New Opening Variant</CardTitle>
           <CardDescription>
-            Paste variant JSON (with <code className="text-xs">pgn</code>), pick boards for{" "}
-            <code className="text-xs">initial_fen</code> / <code className="text-xs">display_fen</code>, then submit to
-            save.
+            Paste an annotated PGN (visuals + fallback strategy) and optional Goals JSON overlay. Boards set{" "}
+            <code className="text-xs">initial_fen</code> / <code className="text-xs">display_fen</code>; goals are
+            merged on save.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -40,7 +40,7 @@ export default async function AdminOpeningsNewPage({ searchParams }: Props) {
               No openings found. Create openings first in the database.
             </p>
           ) : (
-            <JsonVariantForm openings={openings} defaultOpeningId={openingId} />
+            <VariantPgnGoalsForm mode="create" openings={openings} defaultOpeningId={openingId} />
           )}
         </CardContent>
       </Card>

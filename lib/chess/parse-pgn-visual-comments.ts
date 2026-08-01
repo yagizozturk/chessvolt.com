@@ -202,7 +202,7 @@ export function buildMoveGoalsFromPgnComments(
   return {
     mainIdea: "",
     lessonsLearned: "",
-    plys: getExpectedPlayerGoals(initialFen, uciMoves, initialPly, playerSide).map(
+    plys: getExpectedPlayerGoals(initialFen, uciMoves, playerSide).map(
       ({ ply, move, moveIndex }) => {
         // Comments are keyed by absolute PGN ply (1-based from game start).
         const comment = commentsByPly.get(initialPly + moveIndex + 1);

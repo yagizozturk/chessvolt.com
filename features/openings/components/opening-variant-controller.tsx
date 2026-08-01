@@ -89,7 +89,8 @@ export default function OpeningVariantController({
     sourceId: sessionId,
     moves: variant.moveSequence.moves,
     goals: variant.moveSequence.goals,
-    initialPly: variant.initialPly,
+    // Moves/goals are already relative to initialFen (goals start at ply 1).
+    // Do not pass absolute board initialPly or early goals get auto-completed.
   });
   const { Tour } = useOpeningVariantTour({ variantId: variant.id });
   const voltScoreScoring = {

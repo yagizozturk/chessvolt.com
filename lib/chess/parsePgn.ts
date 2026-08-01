@@ -4,6 +4,7 @@
  * Extracts headers and validates PGN format.
  */
 import { Chess } from "chess.js";
+import { normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
 
 type ParsedPgn = {
   whitePlayer: string;
@@ -30,7 +31,7 @@ export function parsePgn(pgn: string): ParsedPgn | null {
 
   try {
     const game = new Chess();
-    game.loadPgn(trimmed, { strict: false });
+    game.loadPgn(normalizeLichessPgnComments(trimmed), { strict: false });
   } catch {
     return null;
   }

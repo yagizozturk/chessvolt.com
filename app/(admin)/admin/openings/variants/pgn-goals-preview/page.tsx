@@ -23,7 +23,8 @@ export default async function PgnGoalsPreviewPage() {
         <CardHeader>
           <CardTitle>PGN Goals Preview</CardTitle>
           <CardDescription>
-            Paste a Lichess study PGN for strategy/visuals, optionally merge prose from a goals JSON overlay, then
+            Paste a Lichess study PGN for visuals (and fallback strategy), optionally merge strategy/prose from a
+            goals JSON overlay, then
             copy the result. Preview only — no database writes.
           </CardDescription>
         </CardHeader>

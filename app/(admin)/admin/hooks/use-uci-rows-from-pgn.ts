@@ -5,6 +5,7 @@ import { useMemo } from "react";
 
 import { buildUci } from "@/lib/chess/buildUci";
 import { getUciMovesArrayFromPgn } from "@/lib/chess/getUciMovesArrayFromPgn";
+import { normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
 
 export const START_FEN = new Chess().fen();
 
@@ -46,11 +47,13 @@ export function useUciRowsFromPgn(pgn: string): UciRowsFromPgn {
       };
     }
     try {
+      // Lichess studies emit adjacent `{ prose } { [%csl] }` comments; chess.js rejects those.
+      const normalized = normalizeLichessPgnComments(trimmed);
       const game = new Chess();
-      game.loadPgn(trimmed, { strict: false });
-      const initialFen = extractFenFromPgn(trimmed);
+      game.loadPgn(normalized, { strict: false });
+      const initialFen = extractFenFromPgn(normalized);
 
-      let uciMoves = getUciMovesArrayFromPgn(trimmed);
+      let uciMoves = getUciMovesArrayFromPgn(normalized);
       if (!uciMoves?.length) {
         const history = game.history();
         const replay = new Chess(initialFen ?? undefined);
