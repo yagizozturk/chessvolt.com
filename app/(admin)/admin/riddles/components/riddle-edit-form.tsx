@@ -9,18 +9,18 @@ import { RiddleMetadataFields } from "@/app/(admin)/admin/riddles/components/rid
 import { initialRiddleFormState } from "@/app/(admin)/admin/riddles/lib/riddle-form-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Collection } from "@/features/collection/types/collection";
+import type { Study } from "@/features/study/types/study";
 import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 import { getPlyFromPgnAtFen } from "@/lib/chess/getPlyFromPgnAtFen";
 
 type Props = {
   riddle: RiddleWithThemes;
-  collections: Collection[];
-  collectionId: string;
+  studies: Study[];
+  studyId: string;
   initialPgn: string;
 };
 
-export function RiddleEditForm({ riddle, collections, collectionId, initialPgn }: Props) {
+export function RiddleEditForm({ riddle, studies, studyId, initialPgn }: Props) {
   const [state, formAction, isPending] = useActionState(updateRiddleAction, initialRiddleFormState);
   const [pgn, setPgn] = useState(initialPgn);
   const { rows, error: pgnError, fensByPly, uciMoves } = useUciRowsFromPgn(pgn);
@@ -96,8 +96,8 @@ export function RiddleEditForm({ riddle, collections, collectionId, initialPgn }
         </CardHeader>
         <CardContent>
           <RiddleMetadataFields
-            collections={collections}
-            defaultCollectionId={collectionId}
+            studies={studies}
+            defaultStudyId={studyId}
             defaultTitle={riddle.title}
             defaultRating={riddle.rating}
             defaultPopularity={riddle.popularity}

@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 
 import { RiddleEditForm } from "@/app/(admin)/admin/riddles/components/riddle-edit-form";
 import { resolveRiddleEditInitialPgn } from "@/app/(admin)/admin/riddles/lib/resolve-riddle-edit-pgn";
-import { getCollectionRiddlesByRiddleId } from "@/features/collection-riddles/services/collection-riddles.service";
-import { getAllCollections } from "@/features/collection/services/collection.service";
+import { getStudyRiddlesByRiddleId } from "@/features/study-riddles/services/study-riddles.service";
+import { getAllStudies } from "@/features/study/services/study.service";
 import { getGameById } from "@/features/game/services/game.service";
 import { getRiddleByIdWithThemes } from "@/features/riddle/services/riddle.service";
 import { getAdminUser } from "@/lib/supabase/auth";
@@ -22,14 +22,14 @@ export default async function AdminRiddleEditPage({ params }: Props) {
     notFound();
   }
 
-  const [collections, collectionLinks, game] = await Promise.all([
-    getAllCollections(supabase),
-    getCollectionRiddlesByRiddleId(supabase, id),
+  const [studies, studyLinks, game] = await Promise.all([
+    getAllStudies(supabase),
+    getStudyRiddlesByRiddleId(supabase, id),
     riddle.gameId ? getGameById(supabase, riddle.gameId) : null,
   ]);
 
   const initialPgn = resolveRiddleEditInitialPgn(riddle.moveSequence, game?.pgn);
-  const collectionId = collectionLinks[0]?.collectionId ?? "";
+  const studyId = studyLinks[0]?.studyId ?? "";
 
   return (
     <div className="container mx-auto max-w-4xl space-y-6 px-4 py-8">
@@ -41,8 +41,8 @@ export default async function AdminRiddleEditPage({ params }: Props) {
       </div>
       <RiddleEditForm
         riddle={riddle}
-        collections={collections}
-        collectionId={collectionId}
+        studies={studies}
+        studyId={studyId}
         initialPgn={initialPgn}
       />
     </div>

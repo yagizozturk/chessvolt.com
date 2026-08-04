@@ -88,8 +88,8 @@ export function BoardCardSkeleton({ compact = false, metaLineCount = 2 }: BoardC
   );
 }
 
-/** Mirrors collection cover cards (image + title block). */
-export function CollectionCardSkeleton() {
+/** Mirrors study cover cards (image + title block). */
+export function StudyCardSkeleton() {
   return (
     <div className="bg-card border-b-card-shadow flex flex-col overflow-hidden rounded-lg border-b-[6px]">
       <Skeleton className="h-[100px] w-full rounded-t-lg sm:h-[200px]" />

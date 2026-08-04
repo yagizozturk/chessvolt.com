@@ -10,7 +10,7 @@ const RIDDLE_ADMIN_ERRORS: Record<string, string> = {
   update_failed: "Could not save changes. Please try again.",
   delete_failed: "Could not delete the riddle. Please try again.",
   themes_sync_failed: "Riddle was saved but theme links could not be updated.",
-  collection_link_failed: "Riddle was saved but could not be linked to the collection.",
+  study_link_failed: "Riddle was saved but could not be linked to the study.",
   missing_csv: "Paste Lichess CSV data to import.",
   missing_bulk_pgn: "Paste one or more PGNs separated by blank lines.",
   invalid_bulk_pgn: "Could not find any valid PGN games in the pasted text.",

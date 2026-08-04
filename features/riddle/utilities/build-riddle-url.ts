@@ -14,7 +14,7 @@ export function parseStandaloneThemeSlug(theme?: string | null): string | undefi
 
 // ==================================================================
 // Building standalone riddle URLs according to from page params
-// Riddle can be routef from favorites or riddles if standalone, if not collection
+// Riddle can be routef from favorites or riddles if standalone, if not study
 // ==================================================================
 export function getStandaloneRiddleBackUrl(from?: "favorites" | "riddles" | null): string {
   if (from === "favorites") return "/favorites";
@@ -53,8 +53,8 @@ export function buildThemePlayUrl(themeSlug: string, options?: { nonce?: string 
 }
 
 // ==================================================================
-// Building collection riddle URLs. Riddles that are in a collection
+// Building study riddle URLs. Riddles that are in a study
 // ==================================================================
-export function buildCollectionRiddleUrl(riddleId: string, { collectionSlug }: { collectionSlug: string }): string {
-  return `/collection/${collectionSlug}/riddle/${riddleId}`;
+export function buildStudyRiddleUrl(riddleId: string, { studySlug }: { studySlug: string }): string {
+  return `/study/${studySlug}/riddle/${riddleId}`;
 }

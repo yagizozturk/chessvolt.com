@@ -52,12 +52,12 @@ const adminNavItems: AdminNavMainItem[] = [
     ],
   },
   {
-    title: "Collections",
-    url: "/admin/collections",
+    title: "Studies",
+    url: "/admin/studies",
     icon: <FolderOpenIcon />,
     items: [
-      { title: "All collections", url: "/admin/collections" },
-      { title: "New collection", url: "/admin/collections/create" },
+      { title: "All studies", url: "/admin/studies" },
+      { title: "New study", url: "/admin/studies/create" },
     ],
   },
   {

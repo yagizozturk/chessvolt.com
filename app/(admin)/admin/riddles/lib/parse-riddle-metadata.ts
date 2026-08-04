@@ -8,7 +8,7 @@ export type ParsedRiddleMetadata = {
   rating: number | null;
   popularity: number | null;
   themes: string[];
-  collectionId: string | null;
+  studyId: string | null;
   isActive: boolean;
   goals: MoveGoals | null;
   gameId: string | null;
@@ -60,7 +60,7 @@ export function parseRiddleMetadataFromForm(formData: FormData): ParseRiddleMeta
     return { ok: false, error: goalsResult.error };
   }
 
-  const collectionIdRaw = ((formData.get("collectionId") as string) || "").trim();
+  const studyIdRaw = ((formData.get("studyId") as string) || "").trim();
   const gameIdRaw = ((formData.get("gameId") as string) || "").trim();
   const sourceIdRaw = ((formData.get("sourceId") as string) || "").trim();
   const sourceRaw = ((formData.get("source") as string) || "").trim();
@@ -72,7 +72,7 @@ export function parseRiddleMetadataFromForm(formData: FormData): ParseRiddleMeta
       rating: parseRiddleRating(formData.get("rating")),
       popularity: parseRiddlePopularity(formData.get("popularity")),
       themes: parseThemesFromForm(formData),
-      collectionId: collectionIdRaw || null,
+      studyId: studyIdRaw || null,
       isActive: formData.get("isActive") === "on",
       goals: goalsResult.goals,
       gameId: gameIdRaw || null,

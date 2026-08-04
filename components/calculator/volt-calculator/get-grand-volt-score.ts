@@ -8,7 +8,7 @@
  * 1. Load all user_sequence_attempts since lookback start.
  * 2. Collect distinct sequence_id values from those attempts.
  * 3. Resolve each sequence to a riddle or opening variant (for move count + rating).
- * 4. Reuse getVoltScoresBySequenceId (same logic as collection / practice-list pages).
+ * 4. Reuse getVoltScoresBySequenceId (same logic as study / practice-list pages).
  * 5. Sum volt and maxVolt across all resolved sequences.
  *
  * Sequences with attempts but no matching riddle/variant row are skipped (orphaned data).
@@ -122,7 +122,7 @@ export async function getGrandVoltScore(
   }
 
   // ================================================================================================
-  // Step 4: Compute per-sequence Volt using the same batch helper as collection / practice pages.
+  // Step 4: Compute per-sequence Volt using the same batch helper as study / practice pages.
   // ================================================================================================
   const voltScoresBySequenceId = getVoltScoresBySequenceId(attempts, contexts);
 

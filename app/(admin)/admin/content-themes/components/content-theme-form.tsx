@@ -44,7 +44,7 @@ export function ContentThemeForm({ themes }: Props) {
           <Input
             name="parentId"
             required
-            placeholder="UUID of the riddle, collection, or opening variant"
+            placeholder="UUID of the riddle, study, or opening variant"
             className="font-mono text-sm"
           />
           <p className="text-muted-foreground mt-1 text-xs">

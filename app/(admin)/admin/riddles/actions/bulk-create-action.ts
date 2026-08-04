@@ -17,7 +17,7 @@ export async function bulkCreateAction(
   const { supabase } = await getAdminUser();
 
   const source = ((formData.get("source") as string) || "").trim() || null;
-  const defaultCollectionId = ((formData.get("collectionId") as string) || "").trim() || null;
+  const defaultStudyId = ((formData.get("studyId") as string) || "").trim() || null;
   const pgnText = ((formData.get("pgnText") as string) || "").trim();
 
   if (!pgnText) {
@@ -51,7 +51,7 @@ export async function bulkCreateAction(
       displayFen: resolved.displayFen,
       goals: buildStubGoalsFromMoves(resolved.initialFen, resolved.moves),
       isActive: true,
-      collectionId: defaultCollectionId,
+      studyId: defaultStudyId,
     });
 
     if (!result.ok) {
@@ -63,7 +63,7 @@ export async function bulkCreateAction(
   }
 
   revalidatePath("/admin/riddles");
-  revalidatePath("/collection");
+  revalidatePath("/study");
 
   return {
     error: null,

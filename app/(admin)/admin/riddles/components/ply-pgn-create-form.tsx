@@ -9,10 +9,10 @@ import { RiddleMetadataFields } from "@/app/(admin)/admin/riddles/components/rid
 import { initialRiddleFormState } from "@/app/(admin)/admin/riddles/lib/riddle-form-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Collection } from "@/features/collection/types/collection";
+import type { Study } from "@/features/study/types/study";
 
 type Props = {
-  collections: Collection[];
+  studies: Study[];
   initialPgn?: string;
   readOnlyPgn?: boolean;
   hiddenGameId?: string;
@@ -20,7 +20,7 @@ type Props = {
 };
 
 export function PlyPgnCreateForm({
-  collections,
+  studies,
   initialPgn = "",
   readOnlyPgn = false,
   hiddenGameId,
@@ -93,7 +93,7 @@ export function PlyPgnCreateForm({
           <CardTitle>Metadata</CardTitle>
         </CardHeader>
         <CardContent>
-          <RiddleMetadataFields collections={collections} defaultTitle={defaultTitle} hiddenGameId={hiddenGameId} />
+          <RiddleMetadataFields studies={studies} defaultTitle={defaultTitle} hiddenGameId={hiddenGameId} />
         </CardContent>
       </Card>
 

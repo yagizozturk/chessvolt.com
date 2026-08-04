@@ -51,8 +51,8 @@ const data = {
     },
     {
       title: "Studies",
-      url: "/collection",
-      icon: "/images/icons/icon-book-collection.png",
+      url: "/study",
+      icon: "/images/icons/icon-book-study.png",
     },
     {
       title: "Openings",

@@ -268,7 +268,7 @@ export default function RiddleController({
   };
 
   // ================================================================================================
-  // Handle the continue click and redirect to the next riddle or back to the collection
+  // Handle the continue click and redirect to the next riddle or back to the study
   // ================================================================================================
   const handleBackClick = () => {
     startTransition(() => {

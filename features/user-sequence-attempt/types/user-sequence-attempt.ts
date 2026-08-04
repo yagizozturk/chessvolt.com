@@ -18,7 +18,7 @@ export type UserSequenceAttempt = {
 };
 
 // ================================================================================================
-// Attempt stats per sequence (e.g. collection progress).
+// Attempt stats per sequence (e.g. study progress).
 // ================================================================================================
 export type SequenceAttemptStats = {
   sequenceId: string;

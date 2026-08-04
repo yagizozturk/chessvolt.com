@@ -6,8 +6,8 @@ import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCollectionRiddlesByRiddleId } from "@/features/collection-riddles/services/collection-riddles.service";
-import { getAllCollections } from "@/features/collection/services/collection.service";
+import { getStudyRiddlesByRiddleId } from "@/features/study-riddles/services/study-riddles.service";
+import { getAllStudies } from "@/features/study/services/study.service";
 import { getGameById } from "@/features/game/services/game.service";
 import { getRiddleByIdWithThemes } from "@/features/riddle/services/riddle.service";
 import { formatRiddleRatingLabel } from "@/features/riddle/types/riddle-rating";
@@ -26,13 +26,13 @@ export default async function AdminRiddleDetailPage({ params }: Props) {
     notFound();
   }
 
-  const [game, collectionLinks, collections] = await Promise.all([
+  const [game, studyLinks, studies] = await Promise.all([
     riddle.gameId ? getGameById(supabase, riddle.gameId) : null,
-    getCollectionRiddlesByRiddleId(supabase, id),
-    getAllCollections(supabase),
+    getStudyRiddlesByRiddleId(supabase, id),
+    getAllStudies(supabase),
   ]);
 
-  const collection = collectionLinks[0] ? collections.find((c) => c.id === collectionLinks[0]!.collectionId) : null;
+  const study = studyLinks[0] ? studies.find((c) => c.id === studyLinks[0]!.studyId) : null;
 
   const displayFen = riddle.moveSequence.displayFen ?? riddle.moveSequence.initialFen;
 
@@ -82,9 +82,9 @@ export default async function AdminRiddleDetailPage({ params }: Props) {
               </Badge>
             </p>
 
-            {collection ? (
+            {study ? (
               <p>
-                <span className="text-muted-foreground">Collection:</span> {collection.title}
+                <span className="text-muted-foreground">Study:</span> {study.title}
               </p>
             ) : null}
             {game ? (

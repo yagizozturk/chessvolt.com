@@ -13,7 +13,7 @@ import { getFavoriteByRiddleId } from "@/features/user-favorites/services/user-f
 // ==================================================================
 // This is a orchestration component. Helps to create standalone riddle pages
 // Standalone means, riddles that user routes from /riddles page.
-// They are not in a collection.
+// They are not in a study.
 // Theme play Next reuses /riddles/theme/[slug] (with a nonce) to pick another random riddle.
 // ==================================================================
 export async function loadStandaloneRiddlePage(props: StandaloneRiddleLoaderPageProps): Promise<RiddlePageData> {

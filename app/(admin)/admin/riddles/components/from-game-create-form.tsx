@@ -4,15 +4,15 @@ import { useMemo, useState } from "react";
 
 import { PlyPgnCreateForm } from "@/app/(admin)/admin/riddles/components/ply-pgn-create-form";
 import { Field, FieldLabel } from "@/components/ui/field";
-import type { Collection } from "@/features/collection/types/collection";
+import type { Study } from "@/features/study/types/study";
 import type { Game } from "@/features/game/types/game";
 
 type Props = {
-  collections: Collection[];
+  studies: Study[];
   games: Game[];
 };
 
-export function FromGameCreateForm({ collections, games }: Props) {
+export function FromGameCreateForm({ studies, games }: Props) {
   const [gameId, setGameId] = useState(games[0]?.id ?? "");
 
   const selectedGame = useMemo(() => games.find((g) => g.id === gameId) ?? null, [games, gameId]);
@@ -41,7 +41,7 @@ export function FromGameCreateForm({ collections, games }: Props) {
       {selectedGame ? (
         <PlyPgnCreateForm
           key={selectedGame.id}
-          collections={collections}
+          studies={studies}
           initialPgn={selectedGame.pgn}
           readOnlyPgn
           hiddenGameId={selectedGame.id}

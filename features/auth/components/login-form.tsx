@@ -152,7 +152,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 </p>
               </div>
               <Button variant="voltMuted" className="w-full" asChild>
-                <Link href="/collection">Continue As Guest</Link>
+                <Link href="/study">Continue As Guest</Link>
               </Button>
             </FieldGroup>
           </form>

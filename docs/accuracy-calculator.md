@@ -67,7 +67,7 @@ If `totalMoveCount <= 0`, return `basePercent` (100).
 - Wrong moves and hints each have their own penalty budget (40 + 20 = 60 max loss at default config).
 - Hints are measured against **player move count**, not total sequence length or “moves made so far.”
 - `getPlayerMoveCount` walks the move list the same way as the move controller: after each player move, skip one token when an opponent reply exists.
-- This differs from the legacy `computeSequenceAttemptAccuracy` in `features/user-sequence-attempt` (correct / (correct + wrong + hints)), which is still used on collection board cards until migrated.
+- This differs from the legacy `computeSequenceAttemptAccuracy` in `features/user-sequence-attempt` (correct / (correct + wrong + hints)), which is still used on study board cards until migrated.
 
 ## UI usage
 

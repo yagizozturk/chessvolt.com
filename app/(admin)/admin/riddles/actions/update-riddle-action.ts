@@ -54,7 +54,7 @@ export async function updateRiddleAction(_prevState: RiddleFormState, formData: 
       isActive: meta.data.isActive,
     },
     themeSlugs: meta.data.themes,
-    collectionId: meta.data.collectionId,
+    studyId: meta.data.studyId,
   });
 
   if (!result.ok) {
@@ -63,6 +63,6 @@ export async function updateRiddleAction(_prevState: RiddleFormState, formData: 
 
   revalidatePath("/admin/riddles");
   revalidatePath(`/admin/riddles/${id}`);
-  revalidatePath("/collection");
+  revalidatePath("/study");
   redirect(`/admin/riddles/${id}`);
 }

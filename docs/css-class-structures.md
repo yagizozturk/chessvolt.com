@@ -11,7 +11,7 @@
 - [forgot-password/page.tsx](<../app/(auth)/forgot-password/page.tsx>)
 - [update-password/page.tsx](<../app/(auth)/update-password/page.tsx>)
 
-### collection page
+### study page
 
 `container mx-auto max-w-6xl px-4 pt-10`
 

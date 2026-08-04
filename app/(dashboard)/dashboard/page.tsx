@@ -14,14 +14,14 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 // ================================================================================================
 export const metadata: Metadata = {
   title: "Dashboard | ChessVolt",
-  description: "Your ChessVolt dashboard for collections, riddles, and openings.",
+  description: "Your ChessVolt dashboard for studies, riddles, and openings.",
 };
 
 export default async function Page() {
   const { user, supabase } = await getAuthenticatedUser();
 
   // ================================================================================================
-  // Getting user profile and user collections
+  // Getting user profile
   // ================================================================================================
   const profile = await getUserProfile(supabase, user);
 
@@ -49,7 +49,7 @@ export default async function Page() {
         {/* Welcome title and message */}
         <PageHeader
           title={`Hi, ${displayName}`}
-          description="Pick up where you left off with your collections, riddles, and openings."
+          description="Pick up where you left off with your studies, riddles, and openings."
         />
 
         {/* Quick links and three column component with links */}

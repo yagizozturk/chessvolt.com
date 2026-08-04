@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { Collection } from "@/features/collection/types/collection";
+import type { Study } from "@/features/study/types/study";
 
 const initialState: BulkCreateFormState = { error: null };
 
@@ -39,10 +39,10 @@ const PLACEHOLDER_PGNS = `[Event "?"]
 1. Qg4+ Kh8 2. Rd3 fxe5 3. Rh3+ Qh4 4. Rxh4# *`;
 
 type Props = {
-  collections: Collection[];
+  studies: Study[];
 };
 
-export function BulkPgnCreateForm({ collections }: Props) {
+export function BulkPgnCreateForm({ studies }: Props) {
   const [state, formAction, isPending] = useActionState(bulkCreateAction, initialState);
 
   return (
@@ -84,13 +84,13 @@ export function BulkPgnCreateForm({ collections }: Props) {
               <Input name="source" placeholder="e.g. respond_to_check" />
             </Field>
             <Field>
-              <FieldLabel>Default collection (optional)</FieldLabel>
+              <FieldLabel>Default study (optional)</FieldLabel>
               <select
-                name="collectionId"
+                name="studyId"
                 className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
               >
                 <option value="">None</option>
-                {collections.map((c) => (
+                {studies.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.title}
                   </option>

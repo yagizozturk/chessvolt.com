@@ -1,10 +1,10 @@
-export const THEME_LINK_KINDS = ["riddle", "collection", "opening_variant"] as const;
+export const THEME_LINK_KINDS = ["riddle", "study", "opening_variant"] as const;
 
 export type ThemeLinkKind = (typeof THEME_LINK_KINDS)[number];
 
 const THEME_LINK_KIND_LABELS: Record<ThemeLinkKind, string> = {
   riddle: "Riddle",
-  collection: "Collection",
+  study: "Study",
   opening_variant: "Opening variant",
 };
 

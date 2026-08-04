@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 import { BulkPgnCreateForm } from "@/app/(admin)/admin/riddles/components/bulk-pgn-create-form";
-import { getAllCollections } from "@/features/collection/services/collection.service";
+import { getAllStudies } from "@/features/study/services/study.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 export default async function NewBulkRiddlePage() {
   const { supabase } = await getAdminUser();
-  const collections = await getAllCollections(supabase);
+  const studies = await getAllStudies(supabase);
 
   return (
     <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8">
@@ -16,7 +16,7 @@ export default async function NewBulkRiddlePage() {
         </Link>
         <h1 className="mt-2 text-2xl font-bold tracking-tight">Bulk create — PGN text</h1>
       </div>
-      <BulkPgnCreateForm collections={collections} />
+      <BulkPgnCreateForm studies={studies} />
     </div>
   );
 }

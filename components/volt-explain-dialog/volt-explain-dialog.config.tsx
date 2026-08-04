@@ -2,7 +2,7 @@ import React, { type ReactNode } from "react";
 
 import type { CarouselDialogSlide } from "@/components/carousel-dialog/carousel-dialog.types";
 
-export const VOLT_EXPLAIN_DIALOG_ID = "collection-intro";
+export const VOLT_EXPLAIN_DIALOG_ID = "study-intro";
 
 // ── First-view persistence (localStorage) ────────────────────────────────────
 // These helpers gate *automatic* display only. They do NOT block intentional opens

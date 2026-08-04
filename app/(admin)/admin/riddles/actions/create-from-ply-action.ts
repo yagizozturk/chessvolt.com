@@ -48,7 +48,7 @@ export async function createFromPlyAction(_prevState: RiddleFormState, formData:
       meta.data.goals ?? buildStubGoalsFromMoves(resolved.initialFen, resolved.moves),
     isActive: meta.data.isActive,
     themeSlugs: meta.data.themes,
-    collectionId: meta.data.collectionId,
+    studyId: meta.data.studyId,
   });
 
   if (!result.ok) {
@@ -56,6 +56,6 @@ export async function createFromPlyAction(_prevState: RiddleFormState, formData:
   }
 
   revalidatePath("/admin/riddles");
-  revalidatePath("/collection");
+  revalidatePath("/study");
   redirect(`/admin/riddles/${result.riddleId}`);
 }

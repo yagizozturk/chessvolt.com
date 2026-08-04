@@ -27,7 +27,7 @@ export async function importLichessAction(
   const summary = await importLichessRiddlesFromCsv(supabase, csvText, { minPopularity });
 
   revalidatePath("/admin/riddles");
-  revalidatePath("/collection");
+  revalidatePath("/study");
 
   return {
     error: null,

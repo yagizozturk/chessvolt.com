@@ -5,11 +5,11 @@ import { useState } from "react";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import type { Collection } from "@/features/collection/types/collection";
+import type { Study } from "@/features/study/types/study";
 
 type Props = {
-  collections: Collection[];
-  defaultCollectionId?: string;
+  studies: Study[];
+  defaultStudyId?: string;
   defaultTitle?: string;
   defaultRating?: number | null;
   defaultPopularity?: number | null;
@@ -23,8 +23,8 @@ type Props = {
 };
 
 export function RiddleMetadataFields({
-  collections,
-  defaultCollectionId = "",
+  studies,
+  defaultStudyId = "",
   defaultTitle = "",
   defaultRating = null,
   defaultPopularity = null,
@@ -65,14 +65,14 @@ export function RiddleMetadataFields({
         <Input name="themes" defaultValue={defaultThemes} placeholder="Comma-separated slugs, e.g. fork, pin" />
       </Field>
       <Field>
-        <FieldLabel>Collection (optional)</FieldLabel>
+        <FieldLabel>Study (optional)</FieldLabel>
         <select
-          name="collectionId"
-          defaultValue={defaultCollectionId}
+          name="studyId"
+          defaultValue={defaultStudyId}
           className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
         >
           <option value="">None</option>
-          {collections.map((c) => (
+          {studies.map((c) => (
             <option key={c.id} value={c.id}>
               {c.title}
             </option>

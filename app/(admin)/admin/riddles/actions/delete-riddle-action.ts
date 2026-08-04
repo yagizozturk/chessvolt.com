@@ -15,6 +15,6 @@ export async function deleteRiddleAction(id: string): Promise<void> {
   }
 
   revalidatePath("/admin/riddles");
-  revalidatePath("/collection");
+  revalidatePath("/study");
   redirect("/admin/riddles");
 }

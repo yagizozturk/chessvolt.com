@@ -1,14 +1,14 @@
 import Link from "next/link";
 
 import { FromGameCreateForm } from "@/app/(admin)/admin/riddles/components/from-game-create-form";
-import { getAllCollections } from "@/features/collection/services/collection.service";
+import { getAllStudies } from "@/features/study/services/study.service";
 import { getAllGames } from "@/features/game/services/game.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 export default async function NewFromGameRiddlePage() {
   const { supabase } = await getAdminUser();
-  const [collections, games] = await Promise.all([
-    getAllCollections(supabase),
+  const [studies, games] = await Promise.all([
+    getAllStudies(supabase),
     getAllGames(supabase),
   ]);
 
@@ -20,7 +20,7 @@ export default async function NewFromGameRiddlePage() {
         </Link>
         <h1 className="mt-2 text-2xl font-bold tracking-tight">New riddle — from game</h1>
       </div>
-      <FromGameCreateForm collections={collections} games={games} />
+      <FromGameCreateForm studies={studies} games={games} />
     </div>
   );
 }

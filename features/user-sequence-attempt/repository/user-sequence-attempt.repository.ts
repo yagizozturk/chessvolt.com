@@ -100,7 +100,7 @@ export async function findFinishedAttemptsByUserId(
 // ================================================================================================
 // Getting all attempts by user since a timestamp (inclusive).
 // Used by Grand Volt to load every attempt in the lookback window in one query,
-// instead of fetching per-sequence like collection pages do.
+// instead of fetching per-sequence like study pages do.
 // ================================================================================================
 export async function findByUserIdSince(
   supabase: SupabaseClient,
@@ -124,8 +124,8 @@ export async function findByUserIdSince(
 
 // ================================================================================================
 // Getting latest attempt summaries by user and sequence ids. Last date one on particular sequenceId
-// Collection has multiple riddles. Riddles have multiple solving attempts.
-// This function returns the latest attempt summary for each sequenceId in the collection.
+// Study has multiple riddles. Riddles have multiple solving attempts.
+// This function returns the latest attempt summary for each sequenceId in the study.
 // example output:
 // [{
 //    "sequenceId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
