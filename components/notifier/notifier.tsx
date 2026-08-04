@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import Lottie from "lottie-react";
@@ -6,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 import type { MoveGoal } from "@/features/move-sequence/types/move-goal";
-import { useAchievementSound } from "@/lib/shared/hooks/sound/use-achievement-sound";
+import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import checkpointAnimationData from "@/public/images/animations/animation-coin.json";
 
 type NotifierProps = {
@@ -15,7 +14,7 @@ type NotifierProps = {
 
 export function Notifier({ goals }: NotifierProps) {
   const previousCompletionByGoalRef = useRef<Map<number, boolean>>(new Map());
-  const { playAchievementSound } = useAchievementSound();
+  const { playLevelUpSound } = useBoardSounds();
 
   useEffect(() => {
     const nextCompletionByGoal = new Map<number, boolean>();
@@ -24,7 +23,7 @@ export function Notifier({ goals }: NotifierProps) {
       const previousCompletionState = previousCompletionByGoalRef.current.get(goal.ply) ?? goal.isCompleted;
 
       if (goal.checkpointMessage.trim() && goal.isCompleted && !previousCompletionState) {
-        playAchievementSound();
+        playLevelUpSound();
 
         toast("", {
           position: "bottom-right",
@@ -46,7 +45,7 @@ export function Notifier({ goals }: NotifierProps) {
     });
 
     previousCompletionByGoalRef.current = nextCompletionByGoal;
-  }, [goals, playAchievementSound]);
+  }, [goals, playLevelUpSound]);
 
   if (!goals.length) return null;
 

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PageHeaderWithImage } from "@/components/page-header";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
+import { getOpeningCoverImageSrc } from "@/features/openings/utilities/opening-cover-image.utils";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { computeSequenceAttemptAccuracy } from "@/features/user-sequence-attempt/utilities/compute-sequence-attempt-accuracy";
@@ -28,6 +29,9 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const sequenceIds = [...new Set(variants.map((v) => v.moveSequence.id))];
   const stats = user ? await attemptService.getLatestAttemptStatsForSequences(supabase, user.id, sequenceIds) : [];
   const mapAttemptStatsBySequenceId = createAttemptStatsBySequenceIdMap(stats);
+  const coverImageSrc = opening.coverImageUrl
+    ? getOpeningCoverImageSrc(opening.coverImageUrl)
+    : "/images/openings/bg-opening-default.png";
 
   return (
     <div className="page-container">
@@ -36,23 +40,20 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
           <PageHeaderWithImage
             title={opening.name}
             description={opening.description ?? ""}
-            imageSrc="/images/openings/bg-london-opening-5.png"
+            imageSrc={coverImageSrc}
             imageAlt={opening.name}
           />
         </div>
-        <div className="hidden gap-4 rounded-lg bg-[#FDCB15] md:flex">
+        <div
+          className="hidden gap-4 rounded-lg bg-[#FDCB15] md:flex"
+          style={opening.coverImageColor ? { background: opening.coverImageColor } : undefined}
+        >
           <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 p-6">
             <h1 className="text-2xl font-bold text-neutral-800">{opening.name}</h1>
             <p className="text-base text-neutral-600">{opening.description}</p>
           </div>
           <div className="overflow-hidden rounded-lg">
-            <Image
-              src="/images/openings/bg-london-opening-5.png"
-              alt={opening.name}
-              width={265}
-              height={150}
-              className="object-contain"
-            />
+            <Image src={coverImageSrc} alt={opening.name} width={265} height={150} className="object-contain" />
           </div>
         </div>
         <div className="page-container-grid-data-layout">

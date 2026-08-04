@@ -66,7 +66,7 @@ export function StudyCard({ study }: StudyCardProps) {
         {/* This overflow-hidden is there because the image should not override rounded corners of parent div */}
         {/* Object contain keeps the original image ratio, width is the reference */}
         <Link href={href} onClick={() => setIsLoading(true)} className="overflow-hidden">
-          <Image src={imageSrc} alt={study.title} className="object-contain" width={300} height={169} />
+          <Image src={imageSrc} alt={study.title} className="object-contain" width={275} height={155} />
         </Link>
       </div>
       {/* Study title, description and play button */}
