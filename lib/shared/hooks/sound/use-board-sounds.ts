@@ -6,7 +6,7 @@ import { useBoardSoundsStore } from "@/lib/shared/store/board-sounds-store";
 
 const BOARD_SOUND_ASSETS = {
   correctMove: {
-    src: "/audio/voltboard-false-move.mp3",
+    src: "/audio/voltboard-correct-move.mp3",
     volume: 1,
   },
   wrongMove: {
