@@ -33,6 +33,19 @@ export function OpeningForm() {
             className="font-mono text-sm"
           />
         </Field>
+        <Field>
+          <FieldLabel>Cover image</FieldLabel>
+          <Input
+            name="coverImageUrl"
+            placeholder="Optional filename, e.g. sicilian.png"
+            className="font-mono text-sm"
+          />
+          <p className="text-muted-foreground mt-1 text-xs">Filename under public/images/openings/</p>
+        </Field>
+        <Field>
+          <FieldLabel>Cover color</FieldLabel>
+          <Input name="coverImageColor" placeholder="Optional, e.g. #5D37BF" className="font-mono text-sm" />
+        </Field>
       </FieldGroup>
       <Button type="submit">Add Opening</Button>
     </form>

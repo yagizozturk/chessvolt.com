@@ -10,6 +10,7 @@ export type DbTheme = {
   category: string;
   sort_order: number;
   is_active: boolean;
+  cover_image_url: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -29,6 +30,7 @@ export function toTheme(db: DbTheme): Theme | null {
     category,
     sortOrder: db.sort_order,
     isActive: db.is_active,
+    coverImageUrl: db.cover_image_url,
     createdAt: db.created_at,
     updatedAt: db.updated_at,
   };

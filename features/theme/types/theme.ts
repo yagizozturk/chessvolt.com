@@ -8,6 +8,7 @@ export type Theme = {
   category: ThemeCategory;
   sortOrder: number;
   isActive: boolean;
+  coverImageUrl: string | null;
   createdAt: string;
   updatedAt: string;
 };

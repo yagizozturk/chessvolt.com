@@ -44,6 +44,8 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
                 variantCount={opening.variantCount}
                 href={`/openings/${opening.slug}/${opening.id}`}
                 fen={opening.displayFen}
+                coverImageUrl={opening.coverImageUrl}
+                coverImageColor={opening.coverImageColor}
               />
             );
           })}

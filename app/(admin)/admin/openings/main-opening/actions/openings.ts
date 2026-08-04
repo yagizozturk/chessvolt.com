@@ -15,6 +15,8 @@ export async function createOpeningAction(formData: FormData) {
   const description = (formData.get("description") as string) || null;
   const openingType = ((formData.get("openingType") as string) || "").trim() || null;
   const displayFen = (formData.get("displayFen") as string) || null;
+  const coverImageUrl = ((formData.get("coverImageUrl") as string) || "").trim() || null;
+  const coverImageColor = ((formData.get("coverImageColor") as string) || "").trim() || null;
 
   if (!name) {
     redirect("/admin/openings?error=missing_fields");
@@ -26,6 +28,8 @@ export async function createOpeningAction(formData: FormData) {
     description: description || null,
     type: openingType,
     displayFen: displayFen || null,
+    coverImageUrl,
+    coverImageColor,
   };
 
   const opening = await createOpening(supabase, input);
@@ -57,6 +61,8 @@ export async function updateOpeningAction(
   const description = (formData.get("description") as string) || null;
   const openingType = ((formData.get("openingType") as string) || "").trim() || null;
   const displayFen = (formData.get("displayFen") as string) || null;
+  const coverImageUrl = ((formData.get("coverImageUrl") as string) || "").trim() || null;
+  const coverImageColor = ((formData.get("coverImageColor") as string) || "").trim() || null;
 
   if (!name) {
     return { error: "Name is required." };
@@ -68,6 +74,8 @@ export async function updateOpeningAction(
     description,
     type: openingType,
     displayFen: displayFen || null,
+    coverImageUrl,
+    coverImageColor,
   };
 
   const { opening, error } = await updateOpening(supabase, id, input);

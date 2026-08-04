@@ -26,12 +26,18 @@ function parseDescription(formData: FormData): string | null {
   return raw || null;
 }
 
+function parseCoverImageUrl(formData: FormData): string | null {
+  const raw = (formData.get("coverImageUrl") as string | null)?.trim() ?? "";
+  return raw || null;
+}
+
 export async function createThemeAction(formData: FormData) {
   const { supabase } = await getAdminUser();
 
   const title = (formData.get("title") as string)?.trim();
   const slug = ((formData.get("slug") as string) || "").trim() || undefined;
   const description = parseDescription(formData);
+  const coverImageUrl = parseCoverImageUrl(formData);
   const category = parseCategoryFromForm(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
@@ -47,6 +53,7 @@ export async function createThemeAction(formData: FormData) {
     category,
     sortOrder,
     isActive,
+    coverImageUrl,
   };
 
   const theme = await createTheme(supabase, input);
@@ -76,6 +83,7 @@ export async function updateThemeAction(
   const title = (formData.get("title") as string)?.trim();
   const slug = ((formData.get("slug") as string) || "").trim() || undefined;
   const description = parseDescription(formData);
+  const coverImageUrl = parseCoverImageUrl(formData);
   const category = parseCategoryFromForm(formData);
   const sortOrder = parseSortOrder(formData.get("sortOrder"));
   const isActive = parseIsActive(formData);
@@ -91,6 +99,7 @@ export async function updateThemeAction(
     category,
     sortOrder,
     isActive,
+    coverImageUrl,
   };
 
   const theme = await updateTheme(supabase, id, input);

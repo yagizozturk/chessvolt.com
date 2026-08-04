@@ -1,4 +1,3 @@
-// TODO: Refactor
 export type Opening = {
   id: string;
   name: string;
@@ -6,5 +5,7 @@ export type Opening = {
   description: string | null;
   type: string | null;
   displayFen: string;
+  coverImageUrl: string | null;
+  coverImageColor: string | null;
   createdAt: string;
 };

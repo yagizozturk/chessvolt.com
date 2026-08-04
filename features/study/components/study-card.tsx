@@ -39,7 +39,7 @@ export function StudyCard({ study }: StudyCardProps) {
           <Spinner className="size-8" />
         </div>
       ) : null}
-      <div style={{ backgroundColor: study.coverImageColor }} className="flex overflow-hidden rounded-t-xl">
+      <div style={{ background: study.coverImageColor }} className="flex overflow-hidden rounded-t-xl">
         {/* Study cover image div */}
         {/* min-w-0: Remove the minimum width constraint of this flex item (set it to 0). No matter how large the inner content is, if the parent div shrinks, you shrink along with
               it and force the inner elements to wrap to the next line (flex-wrap) if necessary.

@@ -48,6 +48,16 @@ export function ThemeEditForm({ theme }: Props) {
             className="border-input focus-visible:border-primary focus-visible:ring-primary/50 w-full rounded-md border border-2 bg-transparent px-3 py-2 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
           />
         </Field>
+        <Field>
+          <FieldLabel>Cover image</FieldLabel>
+          <Input
+            name="coverImageUrl"
+            defaultValue={theme.coverImageUrl ?? ""}
+            placeholder="Optional filename, e.g. fork.png"
+            className="font-mono text-sm"
+          />
+          <p className="text-muted-foreground mt-1 text-xs">Filename under public/images/themes/</p>
+        </Field>
         <ThemeCategorySelect value={category} onChange={setCategory} />
         <Field>
           <FieldLabel>Sort order</FieldLabel>

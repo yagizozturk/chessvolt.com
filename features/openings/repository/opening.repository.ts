@@ -20,6 +20,8 @@ type DbOpening = {
   description: string | null;
   type: string | null;
   display_fen: string | null;
+  cover_image_url: string | null;
+  cover_image_color: string | null;
   created_at: string;
 };
 
@@ -31,6 +33,8 @@ function toOpening(db: DbOpening): Opening {
     description: db.description,
     type: db.type ?? null,
     displayFen: db.display_fen ?? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+    coverImageUrl: db.cover_image_url,
+    coverImageColor: db.cover_image_color,
     createdAt: db.created_at,
   };
 }
@@ -45,10 +49,14 @@ function dbRowMatchesUpdates(row: DbOpening, updates: Record<string, unknown>): 
   if ("description" in updates && (row.description ?? null) !== (updates.description ?? null)) return false;
   if ("type" in updates && (row.type ?? null) !== (updates.type ?? null)) return false;
   if ("display_fen" in updates && (row.display_fen ?? null) !== (updates.display_fen ?? null)) return false;
+  if ("cover_image_url" in updates && (row.cover_image_url ?? null) !== (updates.cover_image_url ?? null)) return false;
+  if ("cover_image_color" in updates && (row.cover_image_color ?? null) !== (updates.cover_image_color ?? null))
+    return false;
   return true;
 }
 
-const OPENING_COLUMNS = "id, name, slug, description, type, display_fen, created_at" as const;
+const OPENING_COLUMNS =
+  "id, name, slug, description, type, display_fen, cover_image_url, cover_image_color, created_at" as const;
 
 export async function findAll(supabase: SupabaseClient): Promise<Opening[]> {
   const { data, error } = await supabase
@@ -132,9 +140,14 @@ export type CreateOpeningInput = {
   description?: string | null;
   type?: string | null;
   displayFen?: string | null;
+  coverImageUrl?: string | null;
+  coverImageColor?: string | null;
 };
 
 export async function create(supabase: SupabaseClient, input: CreateOpeningInput): Promise<Opening | null> {
+  const coverImageUrl = input.coverImageUrl?.trim() || null;
+  const coverImageColor = input.coverImageColor?.trim() || null;
+
   const { data, error } = await supabase
     .from("openings")
     .insert({
@@ -143,6 +156,8 @@ export async function create(supabase: SupabaseClient, input: CreateOpeningInput
       description: input.description ?? null,
       type: input.type ?? null,
       display_fen: input.displayFen ?? null,
+      cover_image_url: coverImageUrl,
+      cover_image_color: coverImageColor,
     })
     .select()
     .single();
@@ -161,6 +176,8 @@ export type UpdateOpeningInput = {
   description?: string | null;
   type?: string | null;
   displayFen?: string | null;
+  coverImageUrl?: string | null;
+  coverImageColor?: string | null;
 };
 
 export type UpdateOpeningResult = {
@@ -179,6 +196,12 @@ export async function update(
   if (input.description !== undefined) updates.description = input.description;
   if (input.type !== undefined) updates.type = input.type;
   if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
+  if (input.coverImageUrl !== undefined) {
+    updates.cover_image_url = input.coverImageUrl?.trim() || null;
+  }
+  if (input.coverImageColor !== undefined) {
+    updates.cover_image_color = input.coverImageColor?.trim() || null;
+  }
 
   if (Object.keys(updates).length === 0) {
     return { opening: null, error: "No changes to save." };

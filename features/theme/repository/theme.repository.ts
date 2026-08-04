@@ -93,10 +93,12 @@ export type CreateThemeInput = {
   category: ThemeCategory;
   sortOrder?: number;
   isActive?: boolean;
+  coverImageUrl?: string | null;
 };
 
 export async function create(supabase: SupabaseClient, input: CreateThemeInput): Promise<Theme | null> {
   const description = input.description?.trim() ?? null;
+  const coverImageUrl = input.coverImageUrl?.trim() || null;
 
   const { data, error } = await supabase
     .from("themes")
@@ -107,6 +109,7 @@ export async function create(supabase: SupabaseClient, input: CreateThemeInput):
       category: input.category,
       sort_order: input.sortOrder ?? 0,
       is_active: input.isActive ?? true,
+      cover_image_url: coverImageUrl,
     })
     .select()
     .single();
@@ -126,6 +129,7 @@ export type UpdateThemeInput = {
   category?: ThemeCategory;
   sortOrder?: number;
   isActive?: boolean;
+  coverImageUrl?: string | null;
 };
 
 export async function update(
@@ -143,6 +147,9 @@ export async function update(
   if (input.category !== undefined) updates.category = input.category;
   if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
+  if (input.coverImageUrl !== undefined) {
+    updates.cover_image_url = input.coverImageUrl?.trim() || null;
+  }
 
   const { data, error } = await supabase.from("themes").update(updates).eq("id", id).select().single();
 

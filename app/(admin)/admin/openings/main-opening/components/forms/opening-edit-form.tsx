@@ -54,6 +54,25 @@ export function OpeningEditForm({ opening }: Props) {
             className="font-mono text-sm"
           />
         </Field>
+        <Field>
+          <FieldLabel>Cover image</FieldLabel>
+          <Input
+            name="coverImageUrl"
+            defaultValue={opening.coverImageUrl ?? ""}
+            placeholder="Optional filename, e.g. sicilian.png"
+            className="font-mono text-sm"
+          />
+          <p className="text-muted-foreground mt-1 text-xs">Filename under public/images/openings/</p>
+        </Field>
+        <Field>
+          <FieldLabel>Cover color</FieldLabel>
+          <Input
+            name="coverImageColor"
+            defaultValue={opening.coverImageColor ?? ""}
+            placeholder="Optional, e.g. #5D37BF"
+            className="font-mono text-sm"
+          />
+        </Field>
       </FieldGroup>
       <Button type="submit" disabled={isPending}>
         {isPending ? "Saving..." : "Save"}
