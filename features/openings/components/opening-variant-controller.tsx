@@ -18,6 +18,7 @@ import { Confetti } from "@/components/ui/confetti";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { MainIdeaButton } from "@/features/openings/components/main-idea-button";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { FavouriteButton } from "@/features/user-favorites/components/favorite-button";
@@ -64,6 +65,7 @@ export default function OpeningVariantController({
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
+  const [showMainIdea, setShowMainIdea] = useState(false);
   const [favourited, setFavourited] = useState(isFavourited);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
@@ -84,7 +86,6 @@ export default function OpeningVariantController({
     expectedCurrentCorrectMoveUci,
     lessonsLearned,
     mainIdea,
-    isFirstPly,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: variant.moveSequence.moves,
@@ -114,6 +115,7 @@ export default function OpeningVariantController({
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(false);
     setBoardMode("practice");
+    setShowMainIdea(false);
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -285,15 +287,20 @@ export default function OpeningVariantController({
                 </Link>
               </Button>
             </div>
-            <div className="flex items-center gap-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
-            <div data-tour="favorite-button">
-              {canFavourite ? (
-                <FavouriteButton
-                  openingVariantId={variant.id}
-                  isFavourited={favourited}
-                  onFavouritedChange={setFavourited}
-                />
+            <div className="flex items-center gap-2 px-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
+            <div className="flex items-center gap-2">
+              {boardMode === "learn" ? (
+                <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
               ) : null}
+              <div data-tour="favorite-button">
+                {canFavourite ? (
+                  <FavouriteButton
+                    openingVariantId={variant.id}
+                    isFavourited={favourited}
+                    onFavouritedChange={setFavourited}
+                  />
+                ) : null}
+              </div>
             </div>
           </div>
           <Tabs
@@ -318,8 +325,8 @@ export default function OpeningVariantController({
             progressValue={progressValue}
             mode={boardMode}
             turnLabel={turnLabel}
-            mainStrategy={mainIdea}
-            isFirstPly={isFirstPly}
+            mainIdea={mainIdea}
+            showMainIdea={boardMode === "learn" && showMainIdea}
           />
           <div className="mt-auto flex gap-2" data-tour="hint-button">
             {!isCompleted ? (

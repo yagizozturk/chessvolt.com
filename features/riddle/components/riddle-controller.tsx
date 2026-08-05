@@ -94,8 +94,6 @@ export default function RiddleController({
     hintRequested,
     expectedCurrentCorrectMoveUci,
     lessonsLearned,
-    mainIdea,
-    isFirstPly,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: riddle.moveSequence.moves,
@@ -385,14 +383,7 @@ export default function RiddleController({
           </Tabs>
 
           {/* Goal Viewer */}
-          <GoalViewer
-            goals={sortedGoals}
-            progressValue={progressValue}
-            mode={boardMode}
-            turnLabel={turnLabel}
-            mainStrategy={mainIdea}
-            isFirstPly={isFirstPly}
-          />
+          <GoalViewer goals={sortedGoals} progressValue={progressValue} mode={boardMode} turnLabel={turnLabel} />
 
           {/* Footer Buttons */}
           <div className="mt-auto">

@@ -1,5 +1,6 @@
 "use client";
 
+import Lottie from "lottie-react";
 import { Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -12,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { toggleFavouriteAction } from "@/features/user-favorites/actions/toggle-favorite";
 import type { ToggleFavoriteTarget } from "@/features/user-favorites/types/user-favorite";
 import { cn } from "@/lib/utils";
+import favoriteAnimationData from "@/public/images/animations/animation-favorite.json";
 
 type FavouriteButtonProps = ToggleFavoriteTarget & {
   isFavourited: boolean;
@@ -37,7 +39,22 @@ export function FavouriteButton({ isFavourited, onFavouritedChange, ...target }:
 
       if (result.ok) {
         onFavouritedChange(result.favourited);
-        toast.success(result.favourited ? "Added to favorites" : "Removed from favorites");
+        toast("", {
+          position: "bottom-right",
+          description: (
+            <div className="flex items-center">
+              <div className="size-16 shrink-0 overflow-hidden">
+                <Lottie animationData={favoriteAnimationData} loop={false} autoplay className="size-full" />
+              </div>
+              <div>
+                <p className="text-base font-bold">
+                  {result.favourited ? "Added to favorites" : "Removed from favorites"}
+                </p>
+              </div>
+            </div>
+          ),
+          duration: 4000,
+        });
         return;
       }
 

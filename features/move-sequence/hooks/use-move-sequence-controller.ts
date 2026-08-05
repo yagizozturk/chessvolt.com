@@ -65,11 +65,6 @@ export function useMoveSequenceController({
   const isAllGoalsCompleted =
     sortedGoals.length > 0 && sortedGoals.every((goal) => goal.isCompleted);
 
-  // True until the student completes their first playable goal (skips goals completed via initialPly).
-  const isFirstPly =
-    nextGoal != null &&
-    !sortedGoals.some((goal) => goal.isCompleted && (initialPly === undefined || goal.ply > initialPly));
-
   useEffect(() => {
     setHintCount(0);
     setNextExpectedMoveIndex(0);
@@ -124,7 +119,6 @@ export function useMoveSequenceController({
     mainIdea: goals?.mainIdea ?? "",
     lessonsLearned: goals?.lessonsLearned ?? "",
     isAllGoalsCompleted,
-    isFirstPly,
     hintCount,
     progressValue,
     handleMoveCheck,

@@ -31,7 +31,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const mapAttemptStatsBySequenceId = createAttemptStatsBySequenceIdMap(stats);
   const coverImageSrc = opening.coverImageUrl
     ? getOpeningCoverImageSrc(opening.coverImageUrl)
-    : "/images/openings/bg-opening-default.png";
+    : "/images/openings/bg-opening-default-cover-image.png";
 
   return (
     <div className="page-container">
