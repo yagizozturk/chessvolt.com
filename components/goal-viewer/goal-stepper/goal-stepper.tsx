@@ -2,6 +2,7 @@
 
 import Lottie from "lottie-react";
 import { BookOpen, ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { ShineBorder } from "@/components/ui/shine-border";
 import { cn } from "@/lib/utils";
 import checkpointAnimationData from "@/public/images/animations/animation-book.json";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
+import bookIcon from "@/public/images/icons/icon-book.png";
 
 import type { GoalStepperProps } from "../types/types";
 
@@ -23,6 +25,8 @@ const TAKEAWAY_SHINE_COLORS = ["#A07CFE", "#FE8FB5", "#FFBE7B"];
 export function GoalStepper({ goals }: GoalStepperProps) {
   const activeGoalIndex = goals.findIndex((goal) => !goal.isCompleted);
   const focusIndex = activeGoalIndex >= 0 ? activeGoalIndex : Math.max(0, goals.length - 1);
+  const lastCompletedTakeaway =
+    goals.findLast((goal) => goal.isCompleted && goal.takeaway.trim().length > 0) ?? null;
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [canScrollStart, setCanScrollStart] = useState(false);
@@ -217,6 +221,16 @@ export function GoalStepper({ goals }: GoalStepperProps) {
             );
           })}
         </div>
+
+        {lastCompletedTakeaway ? (
+          <div className="card-border-bottom-shadow mt-6 flex-row items-center gap-4 p-3">
+            <Image src={bookIcon} alt="" width={80} height={80} className="size-12 shrink-0 object-contain" />
+            <div className="min-w-0 flex-1 space-y-0.5">
+              <p className="text-muted-foreground text-sm font-bold">Checkpoint Importance</p>
+              <p className="leading-snug text-pretty">{lastCompletedTakeaway.takeaway}</p>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       {canScrollEnd ? (
