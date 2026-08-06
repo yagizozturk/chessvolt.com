@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * Opening Variant Theme Repository
  *
@@ -7,20 +6,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
-  toOpeningVariantTheme,
-  toOpeningVariantThemesWithTheme,
-  toOpeningVariantThemeWithTheme,
   type DbOpeningVariantTheme,
   type DbOpeningVariantThemeWithTheme,
+  toOpeningVariantTheme,
+  toOpeningVariantThemeWithTheme,
+  toOpeningVariantThemesWithTheme,
 } from "@/features/opening-variant-theme/mapper/opening-variant-theme.mapper";
 import type {
   OpeningVariantTheme,
   OpeningVariantThemeWithTheme,
 } from "@/features/opening-variant-theme/types/opening-variant-theme";
-import {
-  DEFAULT_THEME_LINK_WEIGHT,
-  type ThemeLinkWeight,
-} from "@/features/theme-link/types/theme-link-weight";
+import { DEFAULT_THEME_LINK_WEIGHT, type ThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 
 const SELECT = "*";
 const WITH_THEME_SELECT = "*, themes (*)";
@@ -106,12 +102,7 @@ export async function update(
     return rest;
   }
 
-  const { data, error } = await supabase
-    .from("opening_variant_themes")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("opening_variant_themes").update(updates).eq("id", id).select().single();
 
   if (error) {
     console.error("opening-variant-theme.repository.update error:", error);

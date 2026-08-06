@@ -1,4 +1,3 @@
-// TODO: Refactor
 /** Riddles at or below this accuracy show the low-accuracy warning on board cards. */
 export const RIDDLE_LOW_ACCURACY_THRESHOLD_PERCENT = 65;
 

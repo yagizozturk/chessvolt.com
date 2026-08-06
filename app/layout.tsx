@@ -1,7 +1,6 @@
-// TODO: Refactor
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Geist_Mono, IBM_Plex_Sans } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { ThemeProvider } from "@/components/theme-provider/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -34,11 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={cn(ibmPlexSans.variable, geistMono.variable, "dark font-sans")}
-    >
+    <html lang="en" suppressHydrationWarning className={cn(ibmPlexSans.variable, geistMono.variable, "dark font-sans")}>
       <body suppressHydrationWarning className="bg-background min-h-svh antialiased">
         {/* Dark mode is forced site-wide for now; re-enable light/system when ready. */}
         <ThemeProvider

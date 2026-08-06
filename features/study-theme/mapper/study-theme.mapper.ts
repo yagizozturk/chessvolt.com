@@ -1,12 +1,8 @@
-// TODO: Refactor
-import {
-  toStudyWithRiddleCount,
-  type DbStudyWithRiddleCount,
-} from "@/features/study/mapper/study.mapper";
 import type { StudyTheme, StudyThemeWithTheme } from "@/features/study-theme/types/study-theme";
+import { type DbStudyWithRiddleCount, toStudyWithRiddleCount } from "@/features/study/mapper/study.mapper";
 import type { StudyWithRiddleCountAndThemes } from "@/features/study/types/study";
 import { parseThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
-import { toTheme, type DbTheme } from "@/features/theme/mapper/theme.mapper";
+import { type DbTheme, toTheme } from "@/features/theme/mapper/theme.mapper";
 
 export const DEFAULT_TOP_STUDY_THEME_COUNT = 3;
 
@@ -85,9 +81,7 @@ export function takeTopStudyThemes(
   return themes.slice(0, limit);
 }
 
-export function toStudyWithRiddleCountAndThemes(
-  db: DbStudyWithRiddleCountAndThemes,
-): StudyWithRiddleCountAndThemes {
+export function toStudyWithRiddleCountAndThemes(db: DbStudyWithRiddleCountAndThemes): StudyWithRiddleCountAndThemes {
   return {
     ...toStudyWithRiddleCount(db),
     themes: sortStudyThemesByWeight(toStudyThemesWithTheme(db.study_themes ?? [])),

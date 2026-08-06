@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { Metadata } from "next";
 
 import { LegalPage } from "@/features/legal/components/legal-page";

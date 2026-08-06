@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { useState } from "react";
@@ -47,9 +46,7 @@ export function ContactForm() {
         ) : (
           <form onSubmit={handleSubmit}>
             <FieldGroup>
-              {error && (
-                <div className="bg-destructive/10 text-destructive rounded-md px-4 py-3 text-sm">{error}</div>
-              )}
+              {error && <div className="bg-destructive/10 text-destructive rounded-md px-4 py-3 text-sm">{error}</div>}
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field>
                   <FieldLabel htmlFor="name">Name</FieldLabel>

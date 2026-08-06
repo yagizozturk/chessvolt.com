@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { STUDY_RIDDLES_PAGE_SIZE } from "@/features/study/constants/study-riddles-pagination.constants";
 
 // ======================================================================

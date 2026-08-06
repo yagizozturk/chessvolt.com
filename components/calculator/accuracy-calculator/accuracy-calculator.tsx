@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { Target } from "lucide-react";
 import { useMemo } from "react";
 

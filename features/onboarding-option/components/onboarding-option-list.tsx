@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
@@ -34,8 +33,7 @@ export function OnboardingOptionList({
   const disabledOptionIdSet = new Set(disabledOptionIds);
   const selectableOptions = options.filter((option) => !disabledOptionIdSet.has(option.id));
   // Checked only when every selectable option is selected — avoid indeterminate, which renders like checked.
-  const allSelected =
-    selectableOptions.length > 0 && selectableOptions.every((option) => selectedIdSet.has(option.id));
+  const allSelected = selectableOptions.length > 0 && selectableOptions.every((option) => selectedIdSet.has(option.id));
 
   return (
     <div className="mx-auto flex w-full max-w-sm flex-col gap-3">
@@ -58,17 +56,17 @@ export function OnboardingOptionList({
         role={multiple ? "group" : undefined}
         aria-label={multiple ? "Select all that apply" : undefined}
       >
-      {options.map((option) => (
-        <li key={option.id}>
-          <OnboardingOptionCard
-            option={option}
-            selected={selectedIdSet.has(option.id)}
-            disabled={disabled || disabledOptionIdSet.has(option.id)}
-            onSelect={onSelect}
-            multiple={multiple}
-          />
-        </li>
-      ))}
+        {options.map((option) => (
+          <li key={option.id}>
+            <OnboardingOptionCard
+              option={option}
+              selected={selectedIdSet.has(option.id)}
+              disabled={disabled || disabledOptionIdSet.has(option.id)}
+              onSelect={onSelect}
+              multiple={multiple}
+            />
+          </li>
+        ))}
       </ul>
     </div>
   );

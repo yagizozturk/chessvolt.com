@@ -1,4 +1,3 @@
-// TODO: Refactor
 /** Requires local@domain.tld — rejects values like `yunus@emre`. */
 export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -15,8 +14,6 @@ export function isValidPassword(password: string): boolean {
   return PASSWORD_PATTERN.test(password);
 }
 
-export const PASSWORD_REQUIREMENT_TEXT =
-  "Must be at least 8 characters and include a letter and a number.";
+export const PASSWORD_REQUIREMENT_TEXT = "Must be at least 8 characters and include a letter and a number.";
 
-export const PASSWORD_REQUIREMENT_ERROR =
-  "Password must be at least 8 characters and include a letter and a number.";
+export const PASSWORD_REQUIREMENT_ERROR = "Password must be at least 8 characters and include a letter and a number.";

@@ -1,16 +1,13 @@
-// TODO: Refactor
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import { DEFAULT_INITIAL_FEN, toMoveSequence } from "@/features/move-sequence/mapper/move-sequence.mapper";
 import type {
   CreateMoveSequenceInput,
   MoveSequence,
   UpdateMoveSequenceInput,
 } from "@/features/move-sequence/types/move-sequence";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function create(
-  supabase: SupabaseClient,
-  input: CreateMoveSequenceInput,
-): Promise<MoveSequence | null> {
+export async function create(supabase: SupabaseClient, input: CreateMoveSequenceInput): Promise<MoveSequence | null> {
   const { data, error } = await supabase
     .from("move_sequences")
     .insert({
@@ -43,12 +40,7 @@ export async function update(
   if (input.displayFen !== undefined) updates.display_fen = input.displayFen;
   if (input.goals !== undefined) updates.goals = input.goals;
 
-  const { data, error } = await supabase
-    .from("move_sequences")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("move_sequences").update(updates).eq("id", id).select().single();
 
   if (error) {
     console.error("move-sequence.repository.update error:", error);

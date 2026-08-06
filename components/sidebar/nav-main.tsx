@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { MoreHorizontalIcon } from "lucide-react";
@@ -120,7 +119,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     isActive={groupActive}
                     aria-label={item.title}
                     aria-current={groupActive ? "true" : undefined}
-                    className="text-lg data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0 data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] md:text-sm"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground text-lg group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0 data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] md:text-sm"
                   >
                     <NavItemIcon item={item} />
                     <span className="text-lg group-data-[collapsible=icon]:hidden md:text-sm">{item.title}</span>

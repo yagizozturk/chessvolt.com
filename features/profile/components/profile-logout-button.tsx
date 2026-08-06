@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { LogOutIcon } from "lucide-react";
@@ -41,7 +40,13 @@ export function ProfileLogoutButton({ iconOnly = false }: ProfileLogoutButtonPro
         >
           {isLoggingOut ? <Spinner /> : <LogOutIcon />}
         </Button>
-        <Button type="button" variant="volt" className="hidden md:inline-flex" onClick={handleLogout} disabled={isLoggingOut}>
+        <Button
+          type="button"
+          variant="volt"
+          className="hidden md:inline-flex"
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+        >
           {isLoggingOut ? <Spinner data-icon="inline-start" /> : <LogOutIcon data-icon="inline-start" />}
           Log out
         </Button>

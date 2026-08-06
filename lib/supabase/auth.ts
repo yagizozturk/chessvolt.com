@@ -1,11 +1,10 @@
-// TODO: Refactor
 /**
  * Server-side authentication utilities
  * For use in Server Components and Server Actions
  */
+import { redirect } from "next/navigation";
 
-import { redirect } from 'next/navigation';
-import { createClient } from './server';
+import { createClient } from "./server";
 
 /**
  * Get authenticated user - throws redirect if not authenticated
@@ -18,7 +17,7 @@ export async function getAuthenticatedUser() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/login');
+    redirect("/login");
   }
 
   return { user, supabase };
@@ -52,19 +51,14 @@ export async function getAdminUser() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/login');
+    redirect("/login");
   }
 
-  const { data: profile, error } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+  const { data: profile, error } = await supabase.from("profiles").select("role").eq("id", user.id).single();
 
-  if (error || profile?.role !== 'admin') {
-    redirect('/dashboard');
+  if (error || profile?.role !== "admin") {
+    redirect("/dashboard");
   }
 
   return { user, supabase };
 }
-

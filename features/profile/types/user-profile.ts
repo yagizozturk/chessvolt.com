@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { ProfileRole } from "@/features/profile/types/profile";
 
 export type UserProfileData = {

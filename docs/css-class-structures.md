@@ -1,4 +1,3 @@
-// TODO: Refactor
 # CSS class structures
 
 ### auth-centered-shell

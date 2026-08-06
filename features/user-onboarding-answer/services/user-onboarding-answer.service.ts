@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * User Onboarding Answer Service
  *

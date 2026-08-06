@@ -1,9 +1,8 @@
-// TODO: Refactor
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import * as studyThemeRepo from "@/features/study-theme/repository/study-theme.repository";
 import * as openingVariantThemeRepo from "@/features/opening-variant-theme/repository/opening-variant-theme.repository";
 import * as riddleThemeRepo from "@/features/riddle-theme/repository/riddle-theme.repository";
+import * as studyThemeRepo from "@/features/study-theme/repository/study-theme.repository";
 import type { AdminThemeLink } from "@/features/theme-link/types/admin-theme-link";
 import type { ThemeLinkKind } from "@/features/theme-link/types/theme-link-kind";
 import type { ThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";

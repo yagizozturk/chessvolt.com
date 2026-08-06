@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";

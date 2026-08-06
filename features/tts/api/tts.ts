@@ -1,4 +1,3 @@
-// TODO: Refactor
 export async function getTTS(text: string, signal?: AbortSignal) {
   const response = await fetch("/http/tts", {
     method: "POST",

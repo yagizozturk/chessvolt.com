@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { StudyThemeWithTheme } from "@/features/study-theme/types/study-theme";
 import type { StudyDifficulty } from "@/features/study/types/study-difficulty";
 

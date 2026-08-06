@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { getUciMovesArrayFromPgn } from "./getUciMovesArrayFromPgn";
 
 /**
@@ -8,10 +7,7 @@ import { getUciMovesArrayFromPgn } from "./getUciMovesArrayFromPgn";
  * @returns UCI formatında bir string döndürür.
  * @returns: "e2e4 e7e5 d4d5 d5f4"
  */
-export function getUciMovesFromPgnAfterPly(
-  pgn: string,
-  ply: number,
-): string | null {
+export function getUciMovesFromPgnAfterPly(pgn: string, ply: number): string | null {
   const arr = getUciMovesArrayFromPgn(pgn);
   if (!arr || ply < 0) return null;
   if (ply >= arr.length) return null;

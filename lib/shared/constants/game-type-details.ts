@@ -1,4 +1,3 @@
-// TODO: Refactor
 export type GameTypeDetails = {
   description: string;
   quote: string;

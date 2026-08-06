@@ -1,11 +1,11 @@
-// TODO: Refactor
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import * as moveSequenceRepo from "@/features/move-sequence/repository/move-sequence.repository";
 import type {
   CreateMoveSequenceInput,
   MoveSequence,
   UpdateMoveSequenceInput,
 } from "@/features/move-sequence/types/move-sequence";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function createMoveSequence(
   supabase: SupabaseClient,

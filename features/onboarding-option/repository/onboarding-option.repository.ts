@@ -1,21 +1,20 @@
-// TODO: Refactor
 /**
  * Onboarding Option Repository
  *
  * Responsibility: CRUD access to the onboarding_options table.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
-  toOnboardingOption,
-  toOnboardingOptions,
-  toOnboardingOptionsWithQuestion,
-  toOnboardingOptionWithQuestion,
   type DbOnboardingOption,
   type DbOnboardingOptionWithQuestion,
+  toOnboardingOption,
+  toOnboardingOptionWithQuestion,
+  toOnboardingOptions,
+  toOnboardingOptionsWithQuestion,
 } from "@/features/onboarding-option/mapper/onboarding-option.mapper";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import type { OnboardingOptionWithQuestion } from "@/features/onboarding-option/types/onboarding-option-with-question";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 const OPTION_SELECT = "*";
 const OPTION_WITH_QUESTION_SELECT = "*, onboarding_questions (*)";
@@ -46,9 +45,7 @@ export async function findByQuestionId(
     query = query.eq("is_active", true);
   }
 
-  const { data, error } = await query
-    .order("sort_order", { ascending: true })
-    .order("label", { ascending: true });
+  const { data, error } = await query.order("sort_order", { ascending: true }).order("label", { ascending: true });
 
   if (error) {
     console.error("onboarding-option.repository.findByQuestionId error:", error);
@@ -62,10 +59,7 @@ export async function findByIds(supabase: SupabaseClient, ids: string[]): Promis
   const uniqueIds = [...new Set(ids.map((id) => id.trim()).filter(Boolean))];
   if (uniqueIds.length === 0) return [];
 
-  const { data, error } = await supabase
-    .from("onboarding_options")
-    .select(OPTION_SELECT)
-    .in("id", uniqueIds);
+  const { data, error } = await supabase.from("onboarding_options").select(OPTION_SELECT).in("id", uniqueIds);
 
   if (error) {
     console.error("onboarding-option.repository.findByIds error:", error);
@@ -151,12 +145,7 @@ export async function update(
   if (input.isActive !== undefined) updates.is_active = input.isActive;
   if (input.initialRating !== undefined) updates.initial_rating = input.initialRating;
 
-  const { data, error } = await supabase
-    .from("onboarding_options")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("onboarding_options").update(updates).eq("id", id).select().single();
 
   if (error) {
     console.error("onboarding-option.repository.update error:", error);
@@ -176,4 +165,3 @@ export async function remove(supabase: SupabaseClient, id: string): Promise<bool
 
   return true;
 }
-

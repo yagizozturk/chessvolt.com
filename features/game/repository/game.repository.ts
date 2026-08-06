@@ -1,19 +1,15 @@
-// TODO: Refactor
 /**
  * Game Repository
  *
  * Responsibility: CRUD access to the games table.
  */
-
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Game } from "@/features/game/types/game";
+
 import { toGame } from "@/features/game/mapper/game.mapper";
+import type { Game } from "@/features/game/types/game";
 
 export async function findAll(supabase: SupabaseClient): Promise<Game[]> {
-  const { data: games, error } = await supabase
-    .from("games")
-    .select("*")
-    .order("played_at", { ascending: false });
+  const { data: games, error } = await supabase.from("games").select("*").order("played_at", { ascending: false });
 
   if (error) {
     console.error("game.repository.findAll error:", error);
@@ -23,15 +19,8 @@ export async function findAll(supabase: SupabaseClient): Promise<Game[]> {
   return (games ?? []).map(toGame);
 }
 
-export async function findById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<Game | null> {
-  const { data, error } = await supabase
-    .from("games")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+export async function findById(supabase: SupabaseClient, id: string): Promise<Game | null> {
+  const { data, error } = await supabase.from("games").select("*").eq("id", id).maybeSingle();
 
   if (error) {
     console.error("game.repository.findById error:", error);
@@ -43,16 +32,10 @@ export async function findById(
   return toGame(data);
 }
 
-export async function findByIds(
-  supabase: SupabaseClient,
-  ids: string[],
-): Promise<Game[]> {
+export async function findByIds(supabase: SupabaseClient, ids: string[]): Promise<Game[]> {
   if (ids.length === 0) return [];
 
-  const { data: games, error } = await supabase
-    .from("games")
-    .select("*")
-    .in("id", ids);
+  const { data: games, error } = await supabase.from("games").select("*").in("id", ids);
 
   if (error) {
     console.error("game.repository.findByIds error:", error);
@@ -74,10 +57,7 @@ export type CreateGameInput = {
   description?: string | null;
 };
 
-export async function create(
-  supabase: SupabaseClient,
-  input: CreateGameInput,
-): Promise<Game | null> {
+export async function create(supabase: SupabaseClient, input: CreateGameInput): Promise<Game | null> {
   const { data, error } = await supabase
     .from("games")
     .insert({
@@ -114,11 +94,7 @@ export type UpdateGameInput = {
   description?: string | null;
 };
 
-export async function update(
-  supabase: SupabaseClient,
-  id: string,
-  input: UpdateGameInput,
-): Promise<Game | null> {
+export async function update(supabase: SupabaseClient, id: string, input: UpdateGameInput): Promise<Game | null> {
   const updates: Record<string, unknown> = {};
   if (input.whitePlayer !== undefined) updates.white_player = input.whitePlayer;
   if (input.blackPlayer !== undefined) updates.black_player = input.blackPlayer;
@@ -130,12 +106,7 @@ export async function update(
   if (input.opening !== undefined) updates.opening = input.opening;
   if (input.description !== undefined) updates.description = input.description;
 
-  const { data, error } = await supabase
-    .from("games")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("games").update(updates).eq("id", id).select().single();
 
   if (error) {
     console.error("game.repository.update error:", error);
@@ -145,10 +116,7 @@ export async function update(
   return toGame(data);
 }
 
-export async function remove(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<boolean> {
+export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
   const { error } = await supabase.from("games").delete().eq("id", id);
 
   if (error) {

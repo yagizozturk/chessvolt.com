@@ -1,9 +1,7 @@
-// TODO: Refactor
 import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
 import { parseMoveGoalsFromDb } from "@/features/move-sequence/validation/move-sequence-goals";
 
-export const DEFAULT_INITIAL_FEN =
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+export const DEFAULT_INITIAL_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 export type DbMoveSequence = {
   id: string;

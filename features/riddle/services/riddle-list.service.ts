@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getGamesByIds } from "@/features/game/services/game.service";

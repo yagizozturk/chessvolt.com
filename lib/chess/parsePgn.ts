@@ -1,9 +1,9 @@
-// TODO: Refactor
 /**
  * PGN Parser
  * Extracts headers and validates PGN format.
  */
 import { Chess } from "chess.js";
+
 import { normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
 
 type ParsedPgn = {
@@ -79,9 +79,7 @@ export function splitPgnGames(pgn: string): string[] {
   // Split on one or more blank lines followed by [Event (lookahead to preserve it)
   const parts = trimmed.split(/\n(?:\s*\n)+(?=\[Event)/);
 
-  return parts
-    .map((p) => p.trim())
-    .filter((p) => p && (p.includes("[Event") || p.includes("1.")));
+  return parts.map((p) => p.trim()).filter((p) => p && (p.includes("[Event") || p.includes("1.")));
 }
 
 /**
@@ -93,8 +91,7 @@ function normalizeResult(result: string): string {
   if (r === "*" || !r) return "1/2-1/2"; // unknown -> draw
   if (r === "1-0" || r.toLowerCase() === "white wins") return "1-0";
   if (r === "0-1" || r.toLowerCase() === "black wins") return "0-1";
-  if (r === "1/2-1/2" || r === "½-½" || r.toLowerCase() === "draw")
-    return "1/2-1/2";
+  if (r === "1/2-1/2" || r === "½-½" || r.toLowerCase() === "draw") return "1/2-1/2";
   return "1/2-1/2"; // fallback
 }
 
@@ -110,7 +107,5 @@ function parsePgnDate(dateStr: string | undefined): string {
   if (parts.length !== 3) return new Date().toISOString().slice(0, 19);
   const [year, month, day] = parts.map((p) => (p === "??" ? "01" : p));
   const date = new Date(`${year}-${month}-${day}`);
-  return isNaN(date.getTime())
-    ? new Date().toISOString().slice(0, 19)
-    : date.toISOString().slice(0, 19);
+  return isNaN(date.getTime()) ? new Date().toISOString().slice(0, 19) : date.toISOString().slice(0, 19);
 }

@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use server";
 
 import { submitContactMessage } from "@/features/contact/services/contact-message.service";

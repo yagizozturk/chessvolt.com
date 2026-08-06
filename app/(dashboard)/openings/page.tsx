@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { PageHeader } from "@/components/page-header";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { OpeningTypeFilter } from "@/features/openings/components/opening-type-filter";

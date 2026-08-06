@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { MoveGoal, MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { normalizeMoveVisuals } from "@/features/move-sequence/validation/move-sequence-goals";
 import type { ExpectedPlayerGoal } from "@/lib/move-sequence-goals/expected-goals";

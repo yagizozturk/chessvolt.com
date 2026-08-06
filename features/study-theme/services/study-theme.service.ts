@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { DEFAULT_TOP_STUDY_THEME_COUNT } from "@/features/study-theme/mapper/study-theme.mapper";

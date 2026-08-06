@@ -1,4 +1,3 @@
-// TODO: Refactor
 export const GLOBAL_ANSWER_RULES = `
 Answering Rules:
 - Use this information to provide context-aware chess coaching to the player.

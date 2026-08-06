@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
@@ -13,15 +12,9 @@ export function ProfileSoundsSwitch() {
     <Field className="flex flex-row items-center justify-between gap-4">
       <div className="space-y-1">
         <FieldLabel className="mb-0">Sound effects</FieldLabel>
-        <FieldDescription>
-          Play move sounds and feedback on the site.
-        </FieldDescription>
+        <FieldDescription>Play move sounds and feedback on the site.</FieldDescription>
       </div>
-      <Switch
-        checked={enabled}
-        onCheckedChange={setEnabled}
-        aria-label={enabled ? "Mute sounds" : "Unmute sounds"}
-      />
+      <Switch checked={enabled} onCheckedChange={setEnabled} aria-label={enabled ? "Mute sounds" : "Unmute sounds"} />
     </Field>
   );
 }

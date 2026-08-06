@@ -1,16 +1,12 @@
-// TODO: Refactor
 import { notFound } from "next/navigation";
 
-import { getActiveRiddlesByStudyId } from "@/features/study-riddles/services/study-riddles.service";
-import { getStudyBySlug } from "@/features/study/services/study.service";
 import { getRiddleById } from "@/features/riddle/services/riddle.service";
-import type {
-  RiddleLoaderPageProps,
-  RiddlePageData,
-} from "@/features/riddle/types/riddle-loader-page-props";
+import type { RiddleLoaderPageProps, RiddlePageData } from "@/features/riddle/types/riddle-loader-page-props";
+import { buildStudyRiddleUrl } from "@/features/riddle/utilities/build-riddle-url";
 import { getNextRiddleUrl } from "@/features/riddle/utilities/get-next-riddle-url";
 import { getParentStudyUrl } from "@/features/riddle/utilities/get-parent-study-url";
-import { buildStudyRiddleUrl } from "@/features/riddle/utilities/build-riddle-url";
+import { getActiveRiddlesByStudyId } from "@/features/study-riddles/services/study-riddles.service";
+import { getStudyBySlug } from "@/features/study/services/study.service";
 import { getFavoriteByRiddleId } from "@/features/user-favorites/services/user-favorite.service";
 
 // ==================================================================
@@ -49,9 +45,7 @@ export async function loadStudyRiddlePage(props: RiddleLoaderPageProps): Promise
   // ==================================================================
   // We have the current page URL. Get the next one based on sort order in the study
   // ==================================================================
-  const nextRiddleUrl = getNextRiddleUrl(riddles, riddle.id, (id) =>
-    buildStudyRiddleUrl(id, { studySlug: slug }),
-  );
+  const nextRiddleUrl = getNextRiddleUrl(riddles, riddle.id, (id) => buildStudyRiddleUrl(id, { studySlug: slug }));
 
   // ==================================================================
   // Check if the riddle is favourited by the user

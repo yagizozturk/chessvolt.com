@@ -1,5 +1,5 @@
-// TODO: Refactor
 import { create } from "zustand";
+
 import { Move } from "@/lib/shared/types/move";
 
 type CoachStore = {
@@ -36,13 +36,11 @@ export const useCoachStore = create<CoachStore>((set) => ({
   setBestMove: (bestMove: Move) => set({ bestMove }),
   setAlternativeMoves: (alternativeMoves: Move[]) => set({ alternativeMoves }),
   resetAlternativeMoves: () => set({ alternativeMoves: [] }),
-  setIsSquareHintsShown: (isShown: boolean) =>
-    set({ isSquareHintsShown: isShown }),
+  setIsSquareHintsShown: (isShown: boolean) => set({ isSquareHintsShown: isShown }),
   setIsMoveHintsShown: (isShown: boolean) => set({ isMoveHintsShown: isShown }),
   setIsCoachStarted: (isCoachStarted: boolean) => set({ isCoachStarted }),
   setShowFirstHintButton: (show: boolean) => set({ showFirstHintButton: show }),
-  setShowSecondHintButton: (show: boolean) =>
-    set({ showSecondHintButton: show }),
+  setShowSecondHintButton: (show: boolean) => set({ showSecondHintButton: show }),
   resetCoach: () =>
     set({
       fen: "",

@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { Pencil } from "lucide-react";
@@ -8,10 +7,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  type UpdateUsernameFormState,
-  updateUsernameAction,
-} from "@/features/profile/actions/update-username";
+import { type UpdateUsernameFormState, updateUsernameAction } from "@/features/profile/actions/update-username";
 
 const initialState: UpdateUsernameFormState = {
   error: null,
@@ -71,12 +67,7 @@ export function ProfileUsernameForm({ initialUsername, displayName }: ProfileUse
             {isPending ? <Spinner data-icon="inline-start" /> : null}
             Save
           </Button>
-          <Button
-            type="button"
-            variant="voltMuted"
-            disabled={isPending}
-            onClick={() => setIsEditing(false)}
-          >
+          <Button type="button" variant="voltMuted" disabled={isPending} onClick={() => setIsEditing(false)}>
             Cancel
           </Button>
         </div>

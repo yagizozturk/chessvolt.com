@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { VoltExplainDialog } from "@/components/volt-explain-dialog/volt-explain-dialog";

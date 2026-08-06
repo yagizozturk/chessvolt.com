@@ -1,22 +1,21 @@
-// TODO: Refactor
 # Rating–timing calculator
 
 Computes a **0–100% timing** score for one solve attempt based on **how long** the user took versus a **rating-based** time budget (harder content → more time allowed for full credit).
 
 ## Files
 
-| File | Role |
-|------|------|
-| `rating-timing.config.ts` | Intervals, grace settings, default variant rating |
-| `compute-rating-timing.ts` | Interpolation + percent formula |
-| `rating-timing-calculator.tsx` | React UI (`Clock` icon, `"X% timing"`) |
+| File                           | Role                                              |
+| ------------------------------ | ------------------------------------------------- |
+| `rating-timing.config.ts`      | Intervals, grace settings, default variant rating |
+| `compute-rating-timing.ts`     | Interpolation + percent formula                   |
+| `rating-timing-calculator.tsx` | React UI (`Clock` icon, `"X% timing"`)            |
 
 ## Inputs
 
-| Field | Meaning |
-|-------|---------|
-| `rating` | Elo-style difficulty (e.g. 1200–2600); riddles use `getRiddleRatingForScoring(riddle.rating)` |
-| `durationMs` | Elapsed solve time in ms; `null` or `≤ 0` → full score (not started) |
+| Field        | Meaning                                                                                       |
+| ------------ | --------------------------------------------------------------------------------------------- |
+| `rating`     | Elo-style difficulty (e.g. 1200–2600); riddles use `getRiddleRatingForScoring(riddle.rating)` |
+| `durationMs` | Elapsed solve time in ms; `null` or `≤ 0` → full score (not started)                          |
 
 ## Config
 
@@ -25,33 +24,33 @@ Computes a **0–100% timing** score for one solve attempt based on **how long**
 Piecewise tiers: at each `rating`, solve at or under `fullTimeMs` earns the start of the timing curve for that tier. Rows must be sorted by ascending `rating`. Exposed as `RATING_TIMING_CONFIG.ratingIntervals`.
 
 | Rating | Full-score time |
-|--------|-----------------|
-| 1200 | 45s |
-| 1400 | 50s |
-| 1600 | 55s |
-| 1800 | 1m |
-| 2000 | 1m 30s |
-| 2200 | 2m |
-| 2400 | 2m 30s |
-| 2600 | 3m |
+| ------ | --------------- |
+| 1200   | 45s             |
+| 1400   | 50s             |
+| 1600   | 55s             |
+| 1800   | 1m              |
+| 2000   | 1m 30s          |
+| 2200   | 2m              |
+| 2400   | 2m 30s          |
+| 2600   | 3m              |
 
 Between two rows, `fullTimeMs` is **linearly interpolated**. Rating is clamped to `[minRating, maxRating]` from the interval table.
 
 ### `RATING_TIMING_CONFIG`
 
-| Key | Default | Meaning |
-|-----|---------|---------|
-| `basePercent` | `100` | Timing % at or under full threshold |
-| `gracePenaltyWeight` | `20` | Max % lost after grace window |
-| `graceDurationRatio` | `2/3` | Grace length = `fullTimeMs × ratio` |
-| `defaultOpeningVariantRating` | `2000` | When variant has no rating field |
+| Key                           | Default | Meaning                             |
+| ----------------------------- | ------- | ----------------------------------- |
+| `basePercent`                 | `100`   | Timing % at or under full threshold |
+| `gracePenaltyWeight`          | `20`    | Max % lost after grace window       |
+| `graceDurationRatio`          | `2/3`   | Grace length = `fullTimeMs × ratio` |
+| `defaultOpeningVariantRating` | `2000`  | When variant has no rating field    |
 
 ### Riddle rating for scoring
 
 Riddles store an explicit `rating` (100–3000). For timing/Volt:
 
 ```ts
-getRiddleRatingForScoring(riddle.rating)   // null → DEFAULT_RIDDLE_RATING (1600)
+getRiddleRatingForScoring(riddle.rating); // null → DEFAULT_RIDDLE_RATING (1600)
 ```
 
 ## Step 1 — Full-score time
@@ -88,18 +87,18 @@ timing = round(clamp(basePercent - penaltyRatio × gracePenaltyWeight, 0, basePe
 
 ### Rating 2600 (full 3 min, grace 2 min)
 
-| Solve time | Timing % |
-|------------|----------|
-| ≤ 3:00 | **100%** |
-| 4:00 | 90% (halfway through grace) |
-| ≥ 5:00 | **80%** |
+| Solve time | Timing %                    |
+| ---------- | --------------------------- |
+| ≤ 3:00     | **100%**                    |
+| 4:00       | 90% (halfway through grace) |
+| ≥ 5:00     | **80%**                     |
 
 ### Rating 1800 (full 1 min, grace 40 s)
 
 | Solve time | Timing % |
-|------------|----------|
-| ≤ 1:00 | **100%** |
-| ≥ 1:40 | **80%** |
+| ---------- | -------- |
+| ≤ 1:00     | **100%** |
+| ≥ 1:40     | **80%**  |
 
 ## UI usage
 

@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { type VariantProps, cva } from "class-variance-authority";
 import { Slot } from "radix-ui";
 import * as React from "react";

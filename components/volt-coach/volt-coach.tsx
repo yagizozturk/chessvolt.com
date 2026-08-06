@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { Volume2, VolumeX } from "lucide-react";

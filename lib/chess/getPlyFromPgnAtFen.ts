@@ -1,5 +1,5 @@
-// TODO: Refactor
 import { Chess } from "chess.js";
+
 import { normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
 
 /**

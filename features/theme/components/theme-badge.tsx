@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { ComponentProps } from "react";
 
 import { Badge } from "@/components/ui/badge";

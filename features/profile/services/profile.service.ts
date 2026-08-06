@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * Profile Service
  *

@@ -1,4 +1,3 @@
-// TODO: Refactor
 import Lottie from "lottie-react";
 
 import { MainIdeaCard } from "@/components/main-idea-card/main-idea-card";

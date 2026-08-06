@@ -1,8 +1,6 @@
-// TODO: Refactor
 import { apiClient } from "@/api-client/client";
-
-import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import type { SequenceVoltScoring } from "@/components/calculator/volt-calculator/get-sequence-volt-score";
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import type { SequenceAttemptEventType } from "@/features/user-sequence-attempt-event/types/sequence-attempt-event-type";
 import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
 
@@ -42,23 +40,17 @@ export type RecordSequenceAttemptEventPayload = {
   timeFromStartMs?: number | null;
 };
 
-export async function startSequenceAttempt(
-  sequenceId: string,
-): Promise<{ data: StartSequenceAttemptResponse }> {
-  return await apiClient.post<{ data: StartSequenceAttemptResponse }>(
-    `/move-sequence/${sequenceId}/attempt`,
-    { status: "started" },
-  );
+export async function startSequenceAttempt(sequenceId: string): Promise<{ data: StartSequenceAttemptResponse }> {
+  return await apiClient.post<{ data: StartSequenceAttemptResponse }>(`/move-sequence/${sequenceId}/attempt`, {
+    status: "started",
+  });
 }
 
 export async function updateSequenceAttempt(
   sequenceId: string,
   data: UpdateSequenceAttemptPayload,
 ): Promise<{ data: UpdateSequenceAttemptResponse }> {
-  return await apiClient.post<{ data: UpdateSequenceAttemptResponse }>(
-    `/move-sequence/${sequenceId}/attempt`,
-    data,
-  );
+  return await apiClient.post<{ data: UpdateSequenceAttemptResponse }>(`/move-sequence/${sequenceId}/attempt`, data);
 }
 
 export async function recordSequenceAttemptEvent(

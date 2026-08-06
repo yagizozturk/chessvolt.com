@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { GLOBAL_ANSWER_RULES } from "./ai.config";
 
 export function concateGlobalPromptToAvatarPrompt(avatarRolePrompt: string) {

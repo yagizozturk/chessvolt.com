@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import Image from "next/image";
@@ -7,7 +6,14 @@ import { useCallback, useEffect, useState } from "react";
 import type { CarouselDialogSlide } from "@/components/carousel-dialog/carousel-dialog.types";
 import { Button } from "@/components/ui/button";
 import { Carousel, type CarouselApi, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { cn } from "@/lib/utils";
 
@@ -19,12 +25,7 @@ export type CarouselDialogProps = {
   showSkip?: boolean;
 };
 
-export function CarouselDialog({
-  open,
-  onOpenChange,
-  slides,
-  showSkip = true,
-}: CarouselDialogProps) {
+export function CarouselDialog({ open, onOpenChange, slides, showSkip = true }: CarouselDialogProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 

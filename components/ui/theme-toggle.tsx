@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { Moon, Sun } from "lucide-react";

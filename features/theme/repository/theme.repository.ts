@@ -1,15 +1,14 @@
-// TODO: Refactor
 /**
  * Theme Repository
  *
  * Responsibility: CRUD access to the themes table.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { toTheme, toThemes, type DbTheme } from "@/features/theme/mapper/theme.mapper";
+import { type DbTheme, toTheme, toThemes } from "@/features/theme/mapper/theme.mapper";
 import type { Theme } from "@/features/theme/types/theme";
 import type { ThemeCategory } from "@/features/theme/types/theme-category";
 import { slugify } from "@/lib/utils/slugify";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 function slugFromTitle(title: string): string {
   return slugify(title) || "theme";
@@ -132,11 +131,7 @@ export type UpdateThemeInput = {
   coverImageUrl?: string | null;
 };
 
-export async function update(
-  supabase: SupabaseClient,
-  id: string,
-  input: UpdateThemeInput,
-): Promise<Theme | null> {
+export async function update(supabase: SupabaseClient, id: string, input: UpdateThemeInput): Promise<Theme | null> {
   const updates: Record<string, unknown> = {};
   if (input.title !== undefined) updates.title = input.title.trim();
   if (input.slug !== undefined) updates.slug = input.slug.trim();

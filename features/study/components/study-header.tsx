@@ -1,15 +1,11 @@
-// TODO: Refactor
 import Image from "next/image";
 
 import type { Study } from "@/features/study/types/study";
-import { formatStudyDifficultyLabel } from "@/features/study/utilities/study-difficulty.utils";
 import { getStudyCoverImageSrc } from "@/features/study/utilities/study-cover-image.utils";
+import { formatStudyDifficultyLabel } from "@/features/study/utilities/study-difficulty.utils";
 import { DEFAULT_GAME_TYPE_DETAILS } from "@/lib/shared/constants/game-type-details";
 
-type StudyHeaderStudy = Pick<
-  Study,
-  "title" | "description" | "coverImageUrl" | "coverImageColor" | "difficulty"
->;
+type StudyHeaderStudy = Pick<Study, "title" | "description" | "coverImageUrl" | "coverImageColor" | "difficulty">;
 
 type StudyHeaderQuote = {
   quote: string;

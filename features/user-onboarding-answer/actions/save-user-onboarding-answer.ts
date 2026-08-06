@@ -1,12 +1,9 @@
-// TODO: Refactor
 "use server";
 
 import { saveUserOnboardingAnswer } from "@/features/user-onboarding-answer/services/user-onboarding-answer.service";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
-export type SaveUserOnboardingAnswerResult =
-  | { success: true; answerId: string }
-  | { success: false; error: string };
+export type SaveUserOnboardingAnswerResult = { success: true; answerId: string } | { success: false; error: string };
 
 export async function saveUserOnboardingAnswerAction(
   questionId: string,

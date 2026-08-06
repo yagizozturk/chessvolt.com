@@ -1,4 +1,3 @@
-// TODO: Refactor
 export type MoveQuality = "best_move" | "good_move" | "inaccuracy" | "blunder";
 
 export function getMoveFeedbackClass(moveQuality: MoveQuality) {

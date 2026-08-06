@@ -1,4 +1,3 @@
-// TODO: Refactor
 const RIDDLE_ADMIN_ERRORS: Record<string, string> = {
   missing_title: "Title is required.",
   missing_pgn: "PGN is required.",

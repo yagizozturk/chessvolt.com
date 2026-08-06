@@ -1,25 +1,21 @@
-// TODO: Refactor
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 
+import { getGamesByIds } from "@/features/game/services/game.service";
+import { getPrimaryThemesByRiddleIds } from "@/features/riddle-theme/services/riddle-theme.service";
+import type { Riddle } from "@/features/riddle/types/riddle";
+import { buildStudyRiddleUrl } from "@/features/riddle/utilities/build-riddle-url";
 import {
   getActiveRiddlesByStudyId,
   getActiveRiddlesCountByStudyId,
 } from "@/features/study-riddles/services/study-riddles.service";
 import { STUDY_RIDDLES_PAGE_SIZE } from "@/features/study/constants/study-riddles-pagination.constants";
 import { getStudyBySlug } from "@/features/study/services/study.service";
-import type {
-  StudyRiddleCardItemData,
-  StudyRiddlesPageData,
-} from "@/features/study/types/study-riddles";
+import type { StudyRiddleCardItemData, StudyRiddlesPageData } from "@/features/study/types/study-riddles";
 import {
   clampStudyRiddlesPage,
   getStudyRiddlesTotalPages,
 } from "@/features/study/utilities/study-riddles-pagination.utils";
-import { getGamesByIds } from "@/features/game/services/game.service";
-import { getPrimaryThemesByRiddleIds } from "@/features/riddle-theme/services/riddle-theme.service";
-import type { Riddle } from "@/features/riddle/types/riddle";
-import { buildStudyRiddleUrl } from "@/features/riddle/utilities/build-riddle-url";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-attempt/utilities/create-attempt-stats-by-sequence-id-map";

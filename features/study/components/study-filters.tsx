@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -64,7 +63,7 @@ export function StudyFilters({
         >
           <SelectTrigger
             id="study-difficulty"
-            className="w-full rounded-xl border-2 bg-background"
+            className="bg-background w-full rounded-xl border-2"
             aria-label="Filter by difficulty"
           >
             <SelectValue />
@@ -88,7 +87,7 @@ export function StudyFilters({
         >
           <SelectTrigger
             id="study-theme"
-            className="w-full rounded-xl border-2 bg-background"
+            className="bg-background w-full rounded-xl border-2"
             aria-label="Filter by theme"
           >
             <SelectValue />

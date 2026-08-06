@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { UserOnboardingAnswerWithDetails } from "@/features/user-onboarding-answer/types/user-onboarding-answer";
 
 type Props = {

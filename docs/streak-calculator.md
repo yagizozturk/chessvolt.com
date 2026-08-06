@@ -1,22 +1,21 @@
-// TODO: Refactor
 # Streak calculator
 
 Computes a **0–100% streak** score from the **longest consecutive correct moves** (`maxCorrectStreak`) relative to **player move count**.
 
 ## Files
 
-| File | Role |
-|------|------|
-| `streak.config.ts` | Ratio → percent tiers |
-| `compute-streak.ts` | Piecewise interpolation |
+| File                    | Role                                   |
+| ----------------------- | -------------------------------------- |
+| `streak.config.ts`      | Ratio → percent tiers                  |
+| `compute-streak.ts`     | Piecewise interpolation                |
 | `streak-calculator.tsx` | React UI (`Flame` icon, `"X% streak"`) |
 
 ## Inputs
 
-| Field | Meaning |
-|-------|---------|
-| `maxCorrectStreak` | Longest run of correct moves in the attempt (stored on `user_sequence_attempt`) |
-| `totalMoveCount` | **Player half-moves** the human must find (`getPlayerMoveCount`; excludes opponent auto-replies) |
+| Field              | Meaning                                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------------------ |
+| `maxCorrectStreak` | Longest run of correct moves in the attempt (stored on `user_sequence_attempt`)                  |
+| `totalMoveCount`   | **Player half-moves** the human must find (`getPlayerMoveCount`; excludes opponent auto-replies) |
 
 ## Streak ratio
 
@@ -27,25 +26,25 @@ streakRatio = min(max(maxCorrectStreak, 0) / totalMoveCount, 1)
 Examples with `totalMoveCount = 10` (player moves):
 
 | maxCorrectStreak | streakRatio |
-|------------------|-------------|
-| 0 | 0 |
-| 5 | 0.5 |
-| 8 | 0.8 |
-| 10 | 1.0 |
+| ---------------- | ----------- |
+| 0                | 0           |
+| 5                | 0.5         |
+| 8                | 0.8         |
+| 10               | 1.0         |
 
 ## Config (`STREAK_RATIO_INTERVALS`)
 
 Piecewise tiers: at each `streakRatio`, the table defines the streak **%**. Sorted ascending by `streakRatio`.
 
 | streakRatio | streakPercent |
-|-------------|---------------|
-| 0.0 | 0% |
-| 0.3 | 35% |
-| 0.5 | 55% |
-| 0.6 | 70% |
-| 0.7 | 85% |
-| 0.8 | 100% |
-| 1.0 | 100% |
+| ----------- | ------------- |
+| 0.0         | 0%            |
+| 0.3         | 35%           |
+| 0.5         | 55%           |
+| 0.6         | 70%           |
+| 0.7         | 85%           |
+| 0.8         | 100%          |
+| 1.0         | 100%          |
 
 `STREAK_CONFIG.basePercent` caps the result at **100**. Intervals are exposed as `STREAK_CONFIG.streakIntervals`.
 
@@ -70,13 +69,13 @@ return round(clamp(raw, 0, basePercent))
 ## Examples (`totalMoveCount = 10`)
 
 | maxCorrectStreak | streakRatio | streak % |
-|------------------|-------------|----------|
-| 0 | 0 | **0%** |
-| 3 | 0.3 | **35%** |
-| 5 | 0.5 | **55%** |
-| 7 | 0.7 | **85%** |
-| 8 | 0.8 | **100%** |
-| 10 | 1.0 | **100%** |
+| ---------------- | ----------- | -------- |
+| 0                | 0           | **0%**   |
+| 3                | 0.3         | **35%**  |
+| 5                | 0.5         | **55%**  |
+| 7                | 0.7         | **85%**  |
+| 8                | 0.8         | **100%** |
+| 10               | 1.0         | **100%** |
 
 Between tiers (e.g. ratio **0.75** between 0.7→85% and 0.8→100%): **92.5%** → **93%** rounded.
 
@@ -90,10 +89,7 @@ Between tiers (e.g. ratio **0.75** between 0.7→85% and 0.8→100%): **92.5%** 
 ## UI usage
 
 ```tsx
-<StreakCalculator
-  maxCorrectStreak={maxCorrectStreak}
-  totalMoveCount={getPlayerMoveCount(moves)}
-/>
+<StreakCalculator maxCorrectStreak={maxCorrectStreak} totalMoveCount={getPlayerMoveCount(moves)} />
 ```
 
 Updates on correct moves (via `attemptStatsTick`) and wrong moves (streak reset).

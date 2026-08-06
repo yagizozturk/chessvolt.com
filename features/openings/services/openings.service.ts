@@ -1,25 +1,21 @@
-// TODO: Refactor
 /**
  * Openings Service
  *
  * Responsibility: Opening and opening variant business logic.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import * as openingVariantRepo from "@/features/openings/repository/opening-variant.repository";
 import type { OpeningWithVariantCount } from "@/features/openings/repository/opening.repository";
 import * as openingRepo from "@/features/openings/repository/opening.repository";
 import type { Opening } from "@/features/openings/types/opening";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getAllOpenings(
-  supabase: SupabaseClient,
-): Promise<Opening[]> {
+export async function getAllOpenings(supabase: SupabaseClient): Promise<Opening[]> {
   return openingRepo.findAll(supabase);
 }
 
-export async function getOpeningsWithVariantCount(
-  supabase: SupabaseClient,
-): Promise<OpeningWithVariantCount[]> {
+export async function getOpeningsWithVariantCount(supabase: SupabaseClient): Promise<OpeningWithVariantCount[]> {
   return openingRepo.findAllWithVariantCount(supabase);
 }
 
@@ -30,10 +26,7 @@ export async function getOpeningsWithVariantCountByType(
   return openingRepo.findByTypeWithVariantCount(supabase, type);
 }
 
-export async function getOpeningById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<Opening | null> {
+export async function getOpeningById(supabase: SupabaseClient, id: string): Promise<Opening | null> {
   return openingRepo.findById(supabase, id);
 }
 
@@ -52,10 +45,7 @@ export async function updateOpening(
   return openingRepo.update(supabase, id, input);
 }
 
-export async function deleteOpening(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<boolean> {
+export async function deleteOpening(supabase: SupabaseClient, id: string): Promise<boolean> {
   return openingRepo.remove(supabase, id);
 }
 
@@ -66,17 +56,11 @@ export async function getOpeningVariantsByOpeningId(
   return openingVariantRepo.findByOpeningId(supabase, openingId);
 }
 
-export async function getMaxSortKeyByOpeningId(
-  supabase: SupabaseClient,
-  openingId: string,
-): Promise<number> {
+export async function getMaxSortKeyByOpeningId(supabase: SupabaseClient, openingId: string): Promise<number> {
   return openingVariantRepo.getMaxSortKeyByOpeningId(supabase, openingId);
 }
 
-export async function getOpeningVariantById(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<OpeningVariant | null> {
+export async function getOpeningVariantById(supabase: SupabaseClient, id: string): Promise<OpeningVariant | null> {
   return openingVariantRepo.findById(supabase, id);
 }
 
@@ -95,10 +79,6 @@ export async function updateOpeningVariant(
   return openingVariantRepo.update(supabase, id, input);
 }
 
-export async function deleteOpeningVariant(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<boolean> {
+export async function deleteOpeningVariant(supabase: SupabaseClient, id: string): Promise<boolean> {
   return openingVariantRepo.remove(supabase, id);
 }
-

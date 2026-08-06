@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -32,8 +31,7 @@ function initializeGoals(goals: MoveGoals | null, initialPly?: number): MoveGoal
     .sort((a, b) => a.ply - b.ply)
     .map((goal) => ({
       ...goal,
-      isCompleted:
-        goal.isCompleted || (initialPly !== undefined && initialPly >= goal.ply),
+      isCompleted: goal.isCompleted || (initialPly !== undefined && initialPly >= goal.ply),
     }));
 }
 
@@ -62,8 +60,7 @@ export function useMoveSequenceController({
     return Math.round((completedGoalsCount / sortedGoals.length) * 100);
   }, [sortedGoals]);
 
-  const isAllGoalsCompleted =
-    sortedGoals.length > 0 && sortedGoals.every((goal) => goal.isCompleted);
+  const isAllGoalsCompleted = sortedGoals.length > 0 && sortedGoals.every((goal) => goal.isCompleted);
 
   useEffect(() => {
     setHintCount(0);
@@ -77,13 +74,14 @@ export function useMoveSequenceController({
     return { isCorrect };
   }
 
+  // ====================================================================================
+  // Volt boardda doğru hamle oynandığı zaman goal isCompleted true yapılıyor. TODO: neden move-sequence içinde?
+  // ====================================================================================
   function handleSuccessMovePlayed(move: Move) {
     const { uci } = move;
     if (!uci) return;
 
-    setGoalsState((prev) =>
-      prev.map((goal) => (goal.move === uci ? { ...goal, isCompleted: true } : goal)),
-    );
+    setGoalsState((prev) => prev.map((goal) => (goal.move === uci ? { ...goal, isCompleted: true } : goal)));
   }
 
   function handleNextMoveRequest() {

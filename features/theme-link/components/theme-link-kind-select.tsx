@@ -1,10 +1,9 @@
-// TODO: Refactor
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
-  formatThemeLinkKindLabel,
-  isThemeLinkKind,
   THEME_LINK_KINDS,
   type ThemeLinkKind,
+  formatThemeLinkKindLabel,
+  isThemeLinkKind,
 } from "@/features/theme-link/types/theme-link-kind";
 import { cn } from "@/lib/utils/cn";
 

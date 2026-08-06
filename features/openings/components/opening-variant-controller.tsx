@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { Bot, ChevronLeft, Eye, Swords } from "lucide-react";

@@ -1,27 +1,27 @@
-// TODO: Refactor
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
+
+import { DASHBOARD_HOME_URL, ONBOARDING_PATH } from "@/features/onboarding/constants/onboarding-routes";
 import {
   isDashboardPath,
   isOnboardingPath,
   shouldSkipOnboardingCheck,
-} from '@/features/onboarding/utilities/get-onboarding-routes'
-import { DASHBOARD_HOME_URL, ONBOARDING_PATH } from '@/features/onboarding/constants/onboarding-routes'
+} from "@/features/onboarding/utilities/get-onboarding-routes";
 
 function redirectWithSession(request: NextRequest, pathname: string, supabaseResponse: NextResponse) {
-  const url = request.nextUrl.clone()
-  url.pathname = pathname
-  const redirectResponse = NextResponse.redirect(url)
+  const url = request.nextUrl.clone();
+  url.pathname = pathname;
+  const redirectResponse = NextResponse.redirect(url);
   supabaseResponse.cookies.getAll().forEach((cookie) => {
-    redirectResponse.cookies.set(cookie.name, cookie.value)
-  })
-  return redirectResponse
+    redirectResponse.cookies.set(cookie.name, cookie.value);
+  });
+  return redirectResponse;
 }
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
-  })
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,20 +29,18 @@ export async function updateSession(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value));
           supabaseResponse = NextResponse.next({
             request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
+          });
+          cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
         },
       },
-    }
-  )
+    },
+  );
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
@@ -50,34 +48,34 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
-  const pathname = request.nextUrl.pathname
+  const pathname = request.nextUrl.pathname;
 
   // Only require auth for /admin paths
-  if (!user && pathname.startsWith('/admin')) {
-    return redirectWithSession(request, '/login', supabaseResponse)
+  if (!user && pathname.startsWith("/admin")) {
+    return redirectWithSession(request, "/login", supabaseResponse);
   }
 
   if (!user && isOnboardingPath(pathname)) {
-    return redirectWithSession(request, '/login', supabaseResponse)
+    return redirectWithSession(request, "/login", supabaseResponse);
   }
 
   if (user && !shouldSkipOnboardingCheck(pathname)) {
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('onboarding_completed')
-      .eq('id', user.id)
-      .maybeSingle()
+      .from("profiles")
+      .select("onboarding_completed")
+      .eq("id", user.id)
+      .maybeSingle();
 
-    const onboardingCompleted = profile?.onboarding_completed ?? false
+    const onboardingCompleted = profile?.onboarding_completed ?? false;
 
     if (!onboardingCompleted && isDashboardPath(pathname)) {
-      return redirectWithSession(request, ONBOARDING_PATH, supabaseResponse)
+      return redirectWithSession(request, ONBOARDING_PATH, supabaseResponse);
     }
 
     if (onboardingCompleted && isOnboardingPath(pathname)) {
-      return redirectWithSession(request, DASHBOARD_HOME_URL, supabaseResponse)
+      return redirectWithSession(request, DASHBOARD_HOME_URL, supabaseResponse);
     }
   }
 
@@ -94,6 +92,5 @@ export async function updateSession(request: NextRequest) {
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely.
 
-  return supabaseResponse
+  return supabaseResponse;
 }
-

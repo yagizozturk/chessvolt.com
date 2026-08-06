@@ -1,6 +1,5 @@
-// TODO: Refactor
-import type { Study, StudyWithRiddleCount } from "@/features/study/types/study";
 import { DEFAULT_STUDY_DIFFICULTY } from "@/features/study/constants/study-difficulty.constants";
+import type { Study, StudyWithRiddleCount } from "@/features/study/types/study";
 import type { StudyDifficulty } from "@/features/study/types/study-difficulty";
 import { parseStudyDifficulty } from "@/features/study/utilities/study-difficulty.utils";
 

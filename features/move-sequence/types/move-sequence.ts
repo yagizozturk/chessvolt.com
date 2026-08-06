@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 
 export type MoveSequence = {

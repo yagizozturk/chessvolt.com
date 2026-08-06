@@ -1,4 +1,3 @@
-// TODO: Refactor
 export class ApiClient {
   private baseUrl: string;
 
@@ -6,10 +5,7 @@ export class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  async handleRequest<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  async handleRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       headers: {
         "Content-Type": "application/json",

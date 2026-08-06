@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * User Sequence Attempt Service
  *
@@ -83,14 +82,9 @@ export async function getLatestFinishedAttemptsByUser(
 // ================================================================================================
 // Sequence ids the user has solved at least once (any completed attempt).
 // ================================================================================================
-export async function getCompletedSequenceIdsByUser(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<Set<string>> {
+export async function getCompletedSequenceIdsByUser(supabase: SupabaseClient, userId: string): Promise<Set<string>> {
   const attempts = await userSequenceAttemptRepo.findFinishedAttemptsByUserId(supabase, userId);
-  return new Set(
-    attempts.filter((attempt) => attempt.status === "completed").map((attempt) => attempt.sequenceId),
-  );
+  return new Set(attempts.filter((attempt) => attempt.status === "completed").map((attempt) => attempt.sequenceId));
 }
 
 // ================================================================================================

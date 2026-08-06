@@ -1,6 +1,5 @@
-// TODO: Refactor
+import { type VariantProps, cva } from "class-variance-authority";
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
@@ -28,21 +27,11 @@ type TextProps<T extends TextElement = "p"> = {
 } & VariantProps<typeof textVariants> &
   Omit<React.ComponentPropsWithoutRef<T>, "as">;
 
-function Text<T extends TextElement = "p">({
-  as,
-  className,
-  variant,
-  ...props
-}: TextProps<T>) {
+function Text<T extends TextElement = "p">({ as, className, variant, ...props }: TextProps<T>) {
   const Comp = (as ?? "p") as React.ElementType;
 
   return (
-    <Comp
-      data-slot="text"
-      data-variant={variant}
-      className={cn(textVariants({ variant }), className)}
-      {...props}
-    />
+    <Comp data-slot="text" data-variant={variant} className={cn(textVariants({ variant }), className)} {...props} />
   );
 }
 

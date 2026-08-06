@@ -1,11 +1,7 @@
-// TODO: Refactor
 "use server";
 
 import * as profileService from "@/features/profile/services/profile.service";
-import type {
-  ProfileRatingOutcome,
-  UpdateProfileRatingResult,
-} from "@/features/profile/services/profile.service";
+import type { ProfileRatingOutcome, UpdateProfileRatingResult } from "@/features/profile/services/profile.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 export async function updateProfileRatingAction(input: {

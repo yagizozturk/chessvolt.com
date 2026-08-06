@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { useTheme } from "next-themes";

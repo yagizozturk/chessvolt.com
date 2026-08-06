@@ -1,16 +1,8 @@
-// TODO: Refactor
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as studyRepo from "@/features/study/repository/study.repository";
-import type {
-  Study,
-  StudyWithRiddleCount,
-  StudyWithRiddleCountAndThemes,
-} from "@/features/study/types/study";
-import type {
-  CreateStudyPayload,
-  UpdateStudyPayload,
-} from "@/features/study/types/study-payload";
+import type { Study, StudyWithRiddleCount, StudyWithRiddleCountAndThemes } from "@/features/study/types/study";
+import type { CreateStudyPayload, UpdateStudyPayload } from "@/features/study/types/study-payload";
 
 // ============================================================================
 // Getting all studies
@@ -52,10 +44,7 @@ export async function getActiveStudiesWithRiddleCountAndThemes(
 // ============================================================================
 // Creating a study
 // ============================================================================
-export async function createStudy(
-  supabase: SupabaseClient,
-  payload: CreateStudyPayload,
-): Promise<Study | null> {
+export async function createStudy(supabase: SupabaseClient, payload: CreateStudyPayload): Promise<Study | null> {
   return studyRepo.createStudy(supabase, payload);
 }
 
@@ -76,4 +65,3 @@ export async function updateStudy(
 export async function deleteStudy(supabase: SupabaseClient, id: string): Promise<boolean> {
   return studyRepo.removeStudy(supabase, id);
 }
-

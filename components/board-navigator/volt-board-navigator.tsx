@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { Chess } from "chess.js";

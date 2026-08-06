@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { Clock } from "lucide-react";
 import { useMemo } from "react";
 
@@ -11,10 +10,7 @@ type RatingTimingCalculatorProps = {
 };
 
 export function RatingTimingCalculator({ rating, durationMs }: RatingTimingCalculatorProps) {
-  const ratingTimingPercent = useMemo(
-    () => computeRatingTimingPercent({ rating, durationMs }),
-    [rating, durationMs],
-  );
+  const ratingTimingPercent = useMemo(() => computeRatingTimingPercent({ rating, durationMs }), [rating, durationMs]);
 
   return (
     <BoardCardMetaRow

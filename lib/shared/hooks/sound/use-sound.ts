@@ -1,5 +1,4 @@
-// TODO: Refactor
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function useSound(src: string, volume: number = 0.5) {
   const audioRef = useRef<HTMLAudioElement | null>(null);

@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { redirect } from "next/navigation";
 
 import { getOnboardingOptionsForQuestion } from "@/features/onboarding-option/services/onboarding-option.service";

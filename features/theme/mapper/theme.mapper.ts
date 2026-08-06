@@ -1,6 +1,5 @@
-// TODO: Refactor
 import type { Theme } from "@/features/theme/types/theme";
-import { parseThemeCategory, type ThemeCategory } from "@/features/theme/types/theme-category";
+import { type ThemeCategory, parseThemeCategory } from "@/features/theme/types/theme-category";
 
 export type DbTheme = {
   id: string;

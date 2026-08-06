@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * Onboarding Option Service
  *

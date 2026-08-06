@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * Riddle Repository
  *

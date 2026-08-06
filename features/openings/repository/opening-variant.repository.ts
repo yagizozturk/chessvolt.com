@@ -1,14 +1,14 @@
-// TODO: Refactor
 /**
  * Opening Variant Repository
  *
  * Responsibility: CRUD access to the opening_variants table.
  */
-import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
-import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
-import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
-import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import type { SupabaseClient } from "@supabase/supabase-js";
+
+import * as moveSequenceService from "@/features/move-sequence/services/move-sequence.service";
+import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
+import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
+import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<OpeningVariant | null> {
   const { data, error } = await supabase

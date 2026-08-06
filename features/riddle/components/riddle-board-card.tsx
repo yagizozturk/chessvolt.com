@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { Calendar, Circle, Flag, Gauge, Puzzle, Tags, Target } from "lucide-react";

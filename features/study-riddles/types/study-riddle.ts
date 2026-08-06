@@ -1,4 +1,3 @@
-// TODO: Refactor
 export type StudyRiddle = {
   id: string;
   riddleId: string;

@@ -1,10 +1,9 @@
-// TODO: Refactor
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
-  formatThemeLinkWeightLabel,
-  isThemeLinkWeight,
   THEME_LINK_WEIGHTS,
   type ThemeLinkWeight,
+  formatThemeLinkWeightLabel,
+  isThemeLinkWeight,
 } from "@/features/theme-link/types/theme-link-weight";
 import { cn } from "@/lib/utils/cn";
 

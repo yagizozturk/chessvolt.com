@@ -1,18 +1,16 @@
-// TODO: Refactor
 /**
  * Riddle Theme Service
  *
  * Responsibility: Link riddles to themes through riddle_themes.
  */
-
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as riddleThemeRepo from "@/features/riddle-theme/repository/riddle-theme.repository";
-import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 import type { Riddle } from "@/features/riddle/types/riddle";
+import type { RiddleWithThemes } from "@/features/riddle/types/riddle-with-themes";
 import { clampThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
-import type { Theme } from "@/features/theme/types/theme";
 import * as themeRepo from "@/features/theme/repository/theme.repository";
+import type { Theme } from "@/features/theme/types/theme";
 
 export type PrimaryRiddleTheme = Pick<Theme, "title" | "slug">;
 

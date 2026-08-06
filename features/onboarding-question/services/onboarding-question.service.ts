@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as onboardingQuestionRepo from "@/features/onboarding-question/repository/onboarding-question.repository";

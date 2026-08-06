@@ -1,4 +1,3 @@
-// TODO: Refactor
 export type ParsedUci = {
   from: string;
   to: string;

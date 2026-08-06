@@ -1,8 +1,4 @@
-// TODO: Refactor
-import {
-  STREAK_CONFIG,
-  type StreakInterval,
-} from "@/components/calculator/streak-calculator/streak.config";
+import { STREAK_CONFIG, type StreakInterval } from "@/components/calculator/streak-calculator/streak.config";
 
 export type StreakInput = {
   maxCorrectStreak: number;

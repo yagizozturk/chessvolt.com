@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * Study Theme Repository
  *
@@ -7,17 +6,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
-  toStudyTheme,
-  toStudyThemesWithTheme,
-  toStudyThemeWithTheme,
   type DbStudyTheme,
   type DbStudyThemeWithTheme,
+  toStudyTheme,
+  toStudyThemeWithTheme,
+  toStudyThemesWithTheme,
 } from "@/features/study-theme/mapper/study-theme.mapper";
 import type { StudyTheme, StudyThemeWithTheme } from "@/features/study-theme/types/study-theme";
-import {
-  DEFAULT_THEME_LINK_WEIGHT,
-  type ThemeLinkWeight,
-} from "@/features/theme-link/types/theme-link-weight";
+import { DEFAULT_THEME_LINK_WEIGHT, type ThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 
 const SELECT = "*";
 const WITH_THEME_SELECT = "*, themes (*)";
@@ -35,15 +31,8 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<St
   return toStudyTheme(data as DbStudyTheme);
 }
 
-export async function findByIdWithTheme(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<StudyThemeWithTheme | null> {
-  const { data, error } = await supabase
-    .from("study_themes")
-    .select(WITH_THEME_SELECT)
-    .eq("id", id)
-    .maybeSingle();
+export async function findByIdWithTheme(supabase: SupabaseClient, id: string): Promise<StudyThemeWithTheme | null> {
+  const { data, error } = await supabase.from("study_themes").select(WITH_THEME_SELECT).eq("id", id).maybeSingle();
 
   if (error) {
     console.error("study-theme.repository.findByIdWithTheme error:", error);
@@ -94,10 +83,7 @@ export type CreateStudyThemeInput = {
   weight?: ThemeLinkWeight;
 };
 
-export async function create(
-  supabase: SupabaseClient,
-  input: CreateStudyThemeInput,
-): Promise<StudyTheme | null> {
+export async function create(supabase: SupabaseClient, input: CreateStudyThemeInput): Promise<StudyTheme | null> {
   const { data, error } = await supabase
     .from("study_themes")
     .insert({

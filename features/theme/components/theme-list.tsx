@@ -1,4 +1,3 @@
-// TODO: Refactor
 import Link from "next/link";
 
 import { buildThemePlayUrl } from "@/features/riddle/utilities/build-riddle-url";

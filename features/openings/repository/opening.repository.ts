@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * Opening Repository
  * CRUD access to the openings table (parent of opening_variants).
@@ -59,10 +58,7 @@ const OPENING_COLUMNS =
   "id, name, slug, description, type, display_fen, cover_image_url, cover_image_color, created_at" as const;
 
 export async function findAll(supabase: SupabaseClient): Promise<Opening[]> {
-  const { data, error } = await supabase
-    .from("openings")
-    .select(OPENING_COLUMNS)
-    .order("name", { ascending: true });
+  const { data, error } = await supabase.from("openings").select(OPENING_COLUMNS).order("name", { ascending: true });
 
   if (error) {
     console.error("opening.repository.findAll error:", error);
@@ -120,11 +116,7 @@ export async function findByTypeWithVariantCount(
 }
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<Opening | null> {
-  const { data, error } = await supabase
-    .from("openings")
-    .select(OPENING_COLUMNS)
-    .eq("id", id)
-    .maybeSingle();
+  const { data, error } = await supabase.from("openings").select(OPENING_COLUMNS).eq("id", id).maybeSingle();
 
   if (error) {
     console.error("opening.repository.findById error:", error);

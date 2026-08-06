@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { OnboardingQuestion } from "@/features/onboarding-question/components/onboarding-question";
 import type { OnboardingQuestion as OnboardingQuestionModel } from "@/features/onboarding-question/types/onboarding-question";
 
@@ -15,11 +14,7 @@ export function OnboardingQuestionList({ questions, renderOptions }: OnboardingQ
   return (
     <div className="space-y-10">
       {questions.map((question, index) => (
-        <OnboardingQuestion
-          key={question.id}
-          question={question}
-          options={renderOptions(question, index)}
-        />
+        <OnboardingQuestion key={question.id} question={question} options={renderOptions(question, index)} />
       ))}
     </div>
   );

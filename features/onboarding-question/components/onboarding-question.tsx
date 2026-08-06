@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { Text } from "@/components/ui/text";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
 

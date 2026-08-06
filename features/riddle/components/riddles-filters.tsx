@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -7,13 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   ATTEMPTED_RIDDLES_SORT_OPTIONS,
-  RIDDLES_THEME_FILTER_ALL,
   type AttemptedRiddlesSortBy,
+  RIDDLES_THEME_FILTER_ALL,
 } from "@/features/riddle/constants/riddles-list.constants";
-import {
-  buildRiddlesFilterHref,
-  type RiddlesFilterState,
-} from "@/features/riddle/utilities/riddle-filter.utils";
+import { type RiddlesFilterState, buildRiddlesFilterHref } from "@/features/riddle/utilities/riddle-filter.utils";
 import type { Theme } from "@/features/theme/types/theme";
 
 type RiddlesFiltersProps = {
@@ -41,7 +37,7 @@ export function RiddlesFilters({ themes, themeFilter, sortBy, hasActiveFilters }
         >
           <SelectTrigger
             id="riddles-theme"
-            className="w-full rounded-xl border-2 bg-background"
+            className="bg-background w-full rounded-xl border-2"
             aria-label="Filter by theme"
           >
             <SelectValue placeholder="All themes" />
@@ -67,7 +63,7 @@ export function RiddlesFilters({ themes, themeFilter, sortBy, hasActiveFilters }
         >
           <SelectTrigger
             id="riddles-sort"
-            className="w-full rounded-xl border-2 bg-background"
+            className="bg-background w-full rounded-xl border-2"
             aria-label="Sort riddles"
           >
             <SelectValue placeholder="Sort by" />

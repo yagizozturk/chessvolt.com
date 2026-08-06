@@ -1,4 +1,3 @@
-// TODO: Refactor
 import Image from "next/image";
 import type { ReactNode } from "react";
 
@@ -14,9 +13,7 @@ const defaultClassName = "bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)]";
 
 export function PageHeader({ title, description, className = defaultClassName, actions }: PageHeaderProps) {
   return (
-    <div
-      className={`flex flex-col gap-4 rounded-xl p-6 lg:flex-row lg:items-center lg:justify-between ${className}`}
-    >
+    <div className={`flex flex-col gap-4 rounded-xl p-6 lg:flex-row lg:items-center lg:justify-between ${className}`}>
       <div className="flex flex-col gap-2">
         <h1 className="section-header-title">{title}</h1>
         <p className="text-muted-foreground text-sm md:text-base">{description}</p>

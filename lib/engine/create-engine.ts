@@ -1,8 +1,4 @@
-// TODO: Refactor
-import {
-  SkillLevel,
-  SKILL_LEVEL_MAP,
-} from "@/lib/shared/types/game-difficulty";
+import { SKILL_LEVEL_MAP, SkillLevel } from "@/lib/shared/types/game-difficulty";
 
 export interface EngineConfig {
   skillLevel?: SkillLevel | number;
@@ -18,10 +14,7 @@ export function createEngine(config: EngineConfig = {}): Worker {
 
   // Converts Beginner skill level to 1 for Stockfish.
   if (skillLevel !== undefined) {
-    const levelValue =
-      typeof skillLevel === "number"
-        ? skillLevel
-        : SKILL_LEVEL_MAP[skillLevel as SkillLevel];
+    const levelValue = typeof skillLevel === "number" ? skillLevel : SKILL_LEVEL_MAP[skillLevel as SkillLevel];
 
     if (levelValue !== undefined) {
       worker.postMessage(`setoption name Skill Level value ${levelValue}`);

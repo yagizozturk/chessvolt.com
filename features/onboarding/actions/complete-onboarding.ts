@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use server";
 
 import { completeOnboarding } from "@/features/onboarding/services/complete-onboarding.service";

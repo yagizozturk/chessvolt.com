@@ -1,12 +1,9 @@
-// TODO: Refactor
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import type { OnboardingOptionWithQuestion } from "@/features/onboarding-option/types/onboarding-option-with-question";
+import { parseOnboardingInitialRating } from "@/features/onboarding-option/types/onboarding-rating";
 import {
-  parseOnboardingInitialRating,
-} from "@/features/onboarding-option/types/onboarding-rating";
-import {
-  toOnboardingQuestion,
   type DbOnboardingQuestion,
+  toOnboardingQuestion,
 } from "@/features/onboarding-question/mapper/onboarding-question.mapper";
 
 export type DbOnboardingOption = {

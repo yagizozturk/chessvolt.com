@@ -1,17 +1,13 @@
-// TODO: Refactor
 /**
  * Contact Message Repository
  *
  * Responsibility: CRUD access to the contact_messages table.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-import {
-  toContactMessage,
-  type DbContactMessage,
-} from "@/features/contact/mapper/contact-message.mapper";
+import { type DbContactMessage, toContactMessage } from "@/features/contact/mapper/contact-message.mapper";
 import type { ContactMessage, CreateContactMessageInput } from "@/features/contact/types/contact-message";
 import { postgrestUserMessage } from "@/lib/supabase/postgrest-user-message";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 export async function create(
   supabase: SupabaseClient,

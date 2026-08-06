@@ -1,4 +1,3 @@
-// TODO: Refactor
 export const RIDDLES_THEME_FILTER_ALL = "all";
 
 export type AttemptedRiddlesSortBy = "lastPlayed" | "accuracy";

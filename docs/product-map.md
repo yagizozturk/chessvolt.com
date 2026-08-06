@@ -1,4 +1,3 @@
-// TODO: Refactor
 # ChessVolt Product Map
 
 High-level map of what the app does, which routes users hit, and where the code lives. Use this to regain scope before refactoring.
@@ -23,20 +22,20 @@ Content is managed through an **admin** panel. Auth and data are backed by **Sup
 
 ## User journeys
 
-| Journey              | Routes                                                      | Feature folder(s)                                                                                                        | Notes                                           |
-| -------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
-| Landing / marketing  | `/`                                                         | `features/landing`                                                                                                       | Public homepage                                 |
-| Contact              | `/contact`                                                  | `features/contact`                                                                                                       | Contact form → Supabase                         |
-| Sign up / log in     | `/signup`, `/login`, `/forgot-password`, `/update-password` | `features/auth`                                                                                                          | Supabase auth                                   |
-| Auth callback        | `/auth/callback`                                            | `lib/supabase`                                                                                                           | OAuth / email confirmation                      |
-| Onboarding           | `/onboarding`                                               | `onboarding`, `onboarding-question`, `onboarding-option`, `user-onboarding-answer`, `profile` | Gated by middleware |
-| Browse studies   | `/study`                                               | `study`, `content-theme`, `theme`                                                                                   | Filterable list with themes                     |
-| Study detail    | `/study/[slug]`                                        | `study`, `riddle`, `study-riddles`, `game`, `user-sequence-attempt`                                             | Riddle cards with progress + volt               |
-| Play a riddle        | `/study/[slug]/riddle/[id]`                                           | `riddle`, `move-sequence`, `user-sequence-attempt`, `user-sequence-attempt-event`, `study-riddles`                   | Core play loop                                  |
-| My Practices         | `/my-practices`                                                | `study`, `user-practice-opening-variant`                                                                            | Custom studies + practice openings tabs     |
-| Openings list        | `/openings`                                                 | `openings`                                                                                                               | Filter by opening type                          |
-| Opening detail       | `/openings/[slug]/[id]`                                     | `openings`                                                                                                               | Variants for one opening                        |
-| Play opening variant | `/openings/variant/[id]`                                    | `openings`, `move-sequence`, `user-sequence-attempt`, `user-practice-opening-variant`                                    | Same play loop as riddles                       |
+| Journey              | Routes                                                      | Feature folder(s)                                                                                  | Notes                                   |
+| -------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| Landing / marketing  | `/`                                                         | `features/landing`                                                                                 | Public homepage                         |
+| Contact              | `/contact`                                                  | `features/contact`                                                                                 | Contact form → Supabase                 |
+| Sign up / log in     | `/signup`, `/login`, `/forgot-password`, `/update-password` | `features/auth`                                                                                    | Supabase auth                           |
+| Auth callback        | `/auth/callback`                                            | `lib/supabase`                                                                                     | OAuth / email confirmation              |
+| Onboarding           | `/onboarding`                                               | `onboarding`, `onboarding-question`, `onboarding-option`, `user-onboarding-answer`, `profile`      | Gated by middleware                     |
+| Browse studies       | `/study`                                                    | `study`, `content-theme`, `theme`                                                                  | Filterable list with themes             |
+| Study detail         | `/study/[slug]`                                             | `study`, `riddle`, `study-riddles`, `game`, `user-sequence-attempt`                                | Riddle cards with progress + volt       |
+| Play a riddle        | `/study/[slug]/riddle/[id]`                                 | `riddle`, `move-sequence`, `user-sequence-attempt`, `user-sequence-attempt-event`, `study-riddles` | Core play loop                          |
+| My Practices         | `/my-practices`                                             | `study`, `user-practice-opening-variant`                                                           | Custom studies + practice openings tabs |
+| Openings list        | `/openings`                                                 | `openings`                                                                                         | Filter by opening type                  |
+| Opening detail       | `/openings/[slug]/[id]`                                     | `openings`                                                                                         | Variants for one opening                |
+| Play opening variant | `/openings/variant/[id]`                                    | `openings`, `move-sequence`, `user-sequence-attempt`, `user-practice-opening-variant`              | Same play loop as riddles               |
 
 ---
 
@@ -94,32 +93,32 @@ Each folder under `features/` is a domain module. Most data-backed features foll
 types/ → repository/ → mapper/ → services/ → components/ | hooks/ | actions/
 ```
 
-| Folder                          | Responsibility                                     |
-| ------------------------------- | -------------------------------------------------- |
-| `arrows`                        | Arrow drill UI for openings                        |
-| `auth`                          | Login / signup forms                               |
-| `chat`                          | AI chat API + streaming hook                       |
-| `coach`                         | Stockfish coach overlay                            |
-| `study`                    | Studies (curated + custom), filters, headers   |
-| `contact`                       | Contact form + message storage                     |
+| Folder                          | Responsibility                                |
+| ------------------------------- | --------------------------------------------- |
+| `arrows`                        | Arrow drill UI for openings                   |
+| `auth`                          | Login / signup forms                          |
+| `chat`                          | AI chat API + streaming hook                  |
+| `coach`                         | Stockfish coach overlay                       |
+| `study`                         | Studies (curated + custom), filters, headers  |
+| `contact`                       | Contact form + message storage                |
 | `content-theme`                 | Content theme links (study ↔ theme weighting) |
-| `game`                          | Chess games (PGN source for riddles)               |
-| `home`                          | Dashboard navbar                                   |
-| `landing`                       | Marketing pages (hero, features, footer)           |
-| `move-sequence`                 | Move sequences, goals, play controller hook        |
-| `onboarding`                    | Onboarding flow orchestration                      |
-| `onboarding-option`             | Onboarding answer options                          |
-| `onboarding-question`           | Onboarding questions                               |
-| `openings`                      | Openings, variants, practice UI                    |
-| `profile`                       | User profile + onboarding status                   |
-| `riddle`                        | Riddles, board cards, play controller              |
-| `study-riddles`            | Many-to-many: riddles ↔ studies                |
-| `theme`                         | Theme categories and badges                        |
-| `tts`                           | Text-to-speech config, cache, controller           |
-| `user-onboarding-answer`        | Saved onboarding answers per user                  |
-| `user-practice-opening-variant` | User's saved opening variants                      |
-| `user-sequence-attempt`         | Play attempts, accuracy, volt inputs               |
-| `user-sequence-attempt-event`   | Granular attempt events                            |
+| `game`                          | Chess games (PGN source for riddles)          |
+| `home`                          | Dashboard navbar                              |
+| `landing`                       | Marketing pages (hero, features, footer)      |
+| `move-sequence`                 | Move sequences, goals, play controller hook   |
+| `onboarding`                    | Onboarding flow orchestration                 |
+| `onboarding-option`             | Onboarding answer options                     |
+| `onboarding-question`           | Onboarding questions                          |
+| `openings`                      | Openings, variants, practice UI               |
+| `profile`                       | User profile + onboarding status              |
+| `riddle`                        | Riddles, board cards, play controller         |
+| `study-riddles`                 | Many-to-many: riddles ↔ studies               |
+| `theme`                         | Theme categories and badges                   |
+| `tts`                           | Text-to-speech config, cache, controller      |
+| `user-onboarding-answer`        | Saved onboarding answers per user             |
+| `user-practice-opening-variant` | User's saved opening variants                 |
+| `user-sequence-attempt`         | Play attempts, accuracy, volt inputs          |
+| `user-sequence-attempt-event`   | Granular attempt events                       |
 
 ---
 
@@ -141,19 +140,19 @@ Rule of thumb: domain UI → `features/{domain}/components`. Shared chess/UI →
 
 ## Admin panel (`/admin/*`)
 
-| Section     | Routes                                       | Manages                                         |
-| ----------- | -------------------------------------------- | ----------------------------------------------- |
-| Dashboard   | `/admin`                                     | Overview                                        |
-| Users       | `/admin/users`                               | User list                                       |
-| Games       | `/admin/games/*`                             | PGN games (riddle source)                       |
-| Riddles     | `/admin/riddles/*`                           | Create/edit/bulk riddles                        |
-| Studies | `/admin/studies/*`                       | Curated studies                             |
-| Themes      | `/admin/themes/*`, `/admin/content-themes/*` | Theme tags + content theme weights              |
-| Onboarding  | `/admin/onboarding-*`                        | Questions, options, option themes, user answers |
-| Openings    | `/admin/openings/*`                          | Openings + variants (bulk import)               |
-| Storybook   | `/admin/storybook/*`                         | UI component previews                           |
-| Refactor    | `/admin/refactor`                            | Refactor + docs review tracker                  |
-| Test        | `/admin/test/*`                              | Dev playgrounds (board, joyride, PGN, etc.)     |
+| Section    | Routes                                       | Manages                                         |
+| ---------- | -------------------------------------------- | ----------------------------------------------- |
+| Dashboard  | `/admin`                                     | Overview                                        |
+| Users      | `/admin/users`                               | User list                                       |
+| Games      | `/admin/games/*`                             | PGN games (riddle source)                       |
+| Riddles    | `/admin/riddles/*`                           | Create/edit/bulk riddles                        |
+| Studies    | `/admin/studies/*`                           | Curated studies                                 |
+| Themes     | `/admin/themes/*`, `/admin/content-themes/*` | Theme tags + content theme weights              |
+| Onboarding | `/admin/onboarding-*`                        | Questions, options, option themes, user answers |
+| Openings   | `/admin/openings/*`                          | Openings + variants (bulk import)               |
+| Storybook  | `/admin/storybook/*`                         | UI component previews                           |
+| Refactor   | `/admin/refactor`                            | Refactor + docs review tracker                  |
+| Test       | `/admin/test/*`                              | Dev playgrounds (board, joyride, PGN, etc.)     |
 
 Admin pages live in `app/(admin)/admin/`. Business logic still comes from `features/*/services`.
 

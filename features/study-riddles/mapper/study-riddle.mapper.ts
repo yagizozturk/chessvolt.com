@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { StudyRiddle } from "@/features/study-riddles/types/study-riddle";
 
 export type DbStudyRiddle = {

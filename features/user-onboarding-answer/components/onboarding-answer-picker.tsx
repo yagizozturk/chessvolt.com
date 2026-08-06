@@ -1,14 +1,12 @@
-// TODO: Refactor
 "use client";
 
 import { useTransition } from "react";
 
 import { Spinner } from "@/components/ui/spinner";
-
-import { saveUserOnboardingAnswerAction } from "@/features/user-onboarding-answer/actions/save-user-onboarding-answer";
 import { OnboardingOptionList } from "@/features/onboarding-option/components/onboarding-option-list";
 import type { OnboardingOption } from "@/features/onboarding-option/types/onboarding-option";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
+import { saveUserOnboardingAnswerAction } from "@/features/user-onboarding-answer/actions/save-user-onboarding-answer";
 
 type Props = {
   question: OnboardingQuestion;

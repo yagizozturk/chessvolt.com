@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { OnboardingCompletionData } from "@/features/onboarding/types/onboarding-completion-data";
 import type { OnboardingQuestionAnswers } from "@/features/onboarding/types/onboarding-question-answers";
 

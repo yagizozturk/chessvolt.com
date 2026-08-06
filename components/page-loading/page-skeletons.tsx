@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { ReactNode } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
@@ -130,7 +129,10 @@ export function ThemeListSkeleton({
             {Array.from({ length: badgesPerCategory }, (_, badgeIndex) => (
               <li key={badgeIndex}>
                 <Skeleton
-                  className={cn("h-6 rounded-full", THEME_BADGE_WIDTHS[(categoryIndex + badgeIndex) % THEME_BADGE_WIDTHS.length])}
+                  className={cn(
+                    "h-6 rounded-full",
+                    THEME_BADGE_WIDTHS[(categoryIndex + badgeIndex) % THEME_BADGE_WIDTHS.length],
+                  )}
                 />
               </li>
             ))}

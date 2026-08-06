@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { CompleteOnboardingResult } from "@/features/onboarding/types/complete-onboarding-result";

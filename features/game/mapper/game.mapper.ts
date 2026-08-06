@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { Game } from "@/features/game/types/game";
 
 type DbGame = {

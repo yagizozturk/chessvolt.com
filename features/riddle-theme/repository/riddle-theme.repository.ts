@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * Riddle Theme Repository
  *
@@ -7,20 +6,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
-  toRiddleTheme,
-  toRiddleThemes,
-  toRiddleThemesWithTheme,
-  toRiddleThemeWithTheme,
   type DbRiddleTheme,
   type DbRiddleThemeWithTheme,
+  toRiddleTheme,
+  toRiddleThemeWithTheme,
+  toRiddleThemes,
+  toRiddleThemesWithTheme,
 } from "@/features/riddle-theme/mapper/riddle-theme.mapper";
 import type { RiddleTheme, RiddleThemeWithTheme } from "@/features/riddle-theme/types/riddle-theme";
-import { toRiddle, type DbRiddle } from "@/features/riddle/mapper/riddle.mapper";
+import { type DbRiddle, toRiddle } from "@/features/riddle/mapper/riddle.mapper";
 import type { Riddle } from "@/features/riddle/types/riddle";
-import {
-  DEFAULT_THEME_LINK_WEIGHT,
-  type ThemeLinkWeight,
-} from "@/features/theme-link/types/theme-link-weight";
+import { DEFAULT_THEME_LINK_WEIGHT, type ThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 
 const SELECT = "*";
 const WITH_THEME_SELECT = "*, themes (*)";
@@ -38,15 +34,8 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<Ri
   return toRiddleTheme(data as DbRiddleTheme);
 }
 
-export async function findByIdWithTheme(
-  supabase: SupabaseClient,
-  id: string,
-): Promise<RiddleThemeWithTheme | null> {
-  const { data, error } = await supabase
-    .from("riddle_themes")
-    .select(WITH_THEME_SELECT)
-    .eq("id", id)
-    .maybeSingle();
+export async function findByIdWithTheme(supabase: SupabaseClient, id: string): Promise<RiddleThemeWithTheme | null> {
+  const { data, error } = await supabase.from("riddle_themes").select(WITH_THEME_SELECT).eq("id", id).maybeSingle();
 
   if (error) {
     console.error("riddle-theme.repository.findByIdWithTheme error:", error);
@@ -72,10 +61,7 @@ export async function findAllWithTheme(supabase: SupabaseClient): Promise<Riddle
   return toRiddleThemesWithTheme((data ?? []) as DbRiddleThemeWithTheme[]);
 }
 
-export async function findActiveRiddlesByThemeId(
-  supabase: SupabaseClient,
-  themeId: string,
-): Promise<Riddle[]> {
+export async function findActiveRiddlesByThemeId(supabase: SupabaseClient, themeId: string): Promise<Riddle[]> {
   const { data, error } = await supabase
     .from("riddle_themes")
     .select("riddles (*, move_sequences (*))")
@@ -191,10 +177,7 @@ export async function create(supabase: SupabaseClient, input: CreateRiddleThemeI
   return toRiddleTheme(data as DbRiddleTheme);
 }
 
-export async function createMany(
-  supabase: SupabaseClient,
-  inputs: CreateRiddleThemeInput[],
-): Promise<RiddleTheme[]> {
+export async function createMany(supabase: SupabaseClient, inputs: CreateRiddleThemeInput[]): Promise<RiddleTheme[]> {
   if (inputs.length === 0) return [];
 
   const rows = inputs.map((input) => ({

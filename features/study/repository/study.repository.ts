@@ -1,18 +1,10 @@
-// TODO: Refactor
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { toStudyWithRiddleCountAndThemes } from "@/features/study-theme/mapper/study-theme.mapper";
-import { toStudy, toStudyWithRiddleCount } from "@/features/study/mapper/study.mapper";
-import type {
-  Study,
-  StudyWithRiddleCount,
-  StudyWithRiddleCountAndThemes,
-} from "@/features/study/types/study";
 import { DEFAULT_STUDY_DIFFICULTY } from "@/features/study/constants/study-difficulty.constants";
-import type {
-  CreateStudyPayload,
-  UpdateStudyPayload,
-} from "@/features/study/types/study-payload";
+import { toStudy, toStudyWithRiddleCount } from "@/features/study/mapper/study.mapper";
+import type { Study, StudyWithRiddleCount, StudyWithRiddleCountAndThemes } from "@/features/study/types/study";
+import type { CreateStudyPayload, UpdateStudyPayload } from "@/features/study/types/study-payload";
 import { slugify } from "@/lib/utils/slugify";
 
 function slugFromTitle(title: string): string {
@@ -43,9 +35,7 @@ const STUDY_WITH_RIDDLE_COUNT_AND_THEMES_SELECT =
 // ============================================================================
 // Finding all studies with Riddle Count
 // ============================================================================
-export async function findAllStudiesWithRiddleCount(
-  supabase: SupabaseClient,
-): Promise<StudyWithRiddleCount[]> {
+export async function findAllStudiesWithRiddleCount(supabase: SupabaseClient): Promise<StudyWithRiddleCount[]> {
   const { data, error } = await supabase
     .from("studies")
     .select("*, study_riddles(count)")
@@ -101,11 +91,7 @@ export async function findStudyById(supabase: SupabaseClient, id: string): Promi
 // Finding study by Slug
 // ============================================================================
 export async function findStudyBySlug(supabase: SupabaseClient, slug: string): Promise<Study | null> {
-  const { data, error } = await supabase
-    .from("studies")
-    .select("*")
-    .eq("slug", slug)
-    .maybeSingle();
+  const { data, error } = await supabase.from("studies").select("*").eq("slug", slug).maybeSingle();
 
   if (error) {
     console.error("study.repository.findStudyBySlug error:", error);
@@ -120,10 +106,7 @@ export async function findStudyBySlug(supabase: SupabaseClient, slug: string): P
 // ============================================================================
 // Creating a study
 // ============================================================================
-export async function createStudy(
-  supabase: SupabaseClient,
-  payload: CreateStudyPayload,
-): Promise<Study | null> {
+export async function createStudy(supabase: SupabaseClient, payload: CreateStudyPayload): Promise<Study | null> {
   const { data, error } = await supabase
     .from("studies")
     .insert({
@@ -189,5 +172,3 @@ export async function removeStudy(supabase: SupabaseClient, id: string): Promise
 
   return true;
 }
-
-

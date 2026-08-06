@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { Volume2, VolumeX } from "lucide-react";
@@ -31,11 +30,7 @@ export function BoardSoundsToggle({ className }: { className?: string }) {
       aria-pressed={enabled}
       aria-label={enabled ? "Mute board sounds" : "Unmute board sounds"}
     >
-      {enabled ? (
-        <Volume2 className="h-[1.2rem] w-[1.2rem]" />
-      ) : (
-        <VolumeX className="h-[1.2rem] w-[1.2rem]" />
-      )}
+      {enabled ? <Volume2 className="h-[1.2rem] w-[1.2rem]" /> : <VolumeX className="h-[1.2rem] w-[1.2rem]" />}
     </Button>
   );
 }

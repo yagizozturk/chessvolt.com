@@ -1,4 +1,3 @@
-// TODO: Refactor
 # Onboarding Middleware Logic
 
 ## Why `middleware.ts` exists at project root

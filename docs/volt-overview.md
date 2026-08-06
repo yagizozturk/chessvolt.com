@@ -1,16 +1,15 @@
-// TODO: Refactor
 # Calculator modules
 
 This folder contains scoring calculators used during play and for aggregate **Volt** progress. Each subfolder has its own `README.md` with full formulas and logic.
 
 ## Overview
 
-| Module | Purpose | Output |
-|--------|---------|--------|
-| [accuracy-calculator](./accuracy-calculator/README.md) | Penalize wrong moves and hints vs sequence length | 0–100% accuracy |
-| [rating-timing-calculator](./rating-timing-calculator/README.md) | Score solve speed vs content rating | 0–100% timing |
-| [streak-calculator](./streak-calculator/README.md) | Score longest correct run vs sequence length | 0–100% streak |
-| [volt-calculator](./volt-calculator/README.md) | Aggregate historical attempts into Volt | 0–700 Volt (configurable) |
+| Module                                                           | Purpose                                           | Output                    |
+| ---------------------------------------------------------------- | ------------------------------------------------- | ------------------------- |
+| [accuracy-calculator](./accuracy-calculator/README.md)           | Penalize wrong moves and hints vs sequence length | 0–100% accuracy           |
+| [rating-timing-calculator](./rating-timing-calculator/README.md) | Score solve speed vs content rating               | 0–100% timing             |
+| [streak-calculator](./streak-calculator/README.md)               | Score longest correct run vs sequence length      | 0–100% streak             |
+| [volt-calculator](./volt-calculator/README.md)                   | Aggregate historical attempts into Volt           | 0–700 Volt (configurable) |
 
 ## How they relate
 

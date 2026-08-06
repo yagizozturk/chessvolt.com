@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { Curve } from "@/features/landing/components/curve";
 import { Features } from "@/features/landing/components/features";
 import { Footer } from "@/features/landing/components/footer";

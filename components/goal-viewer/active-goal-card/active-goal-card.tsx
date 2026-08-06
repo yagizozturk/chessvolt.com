@@ -1,4 +1,3 @@
-// TODO: Refactor
 import { VoltCoach } from "@/components/volt-coach/volt-coach";
 
 import type { ActiveGoalCardProps } from "../types/types";

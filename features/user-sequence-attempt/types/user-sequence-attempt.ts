@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
 
 export type UserSequenceAttempt = {

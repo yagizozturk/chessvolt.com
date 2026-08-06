@@ -1,4 +1,3 @@
-// TODO: Refactor
 import {
   RATING_TIMING_CONFIG,
   type RatingTimingInterval,
@@ -114,4 +113,3 @@ export function computeRatingTimingPercent({ rating, durationMs }: RatingTimingI
 
   return Math.round(Math.max(0, Math.min(basePercent, raw)));
 }
-

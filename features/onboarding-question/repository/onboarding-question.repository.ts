@@ -1,18 +1,17 @@
-// TODO: Refactor
 /**
  * Onboarding Question Repository
  *
  * Responsibility: CRUD access to the onboarding_questions table.
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
+  type DbOnboardingQuestion,
   toOnboardingQuestion,
   toOnboardingQuestions,
-  type DbOnboardingQuestion,
 } from "@/features/onboarding-question/mapper/onboarding-question.mapper";
 import type { OnboardingQuestion } from "@/features/onboarding-question/types/onboarding-question";
 import { slugify } from "@/lib/utils/slugify";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 function slugFromTitle(title: string): string {
   return slugify(title) || "onboarding-question";
@@ -50,11 +49,7 @@ export async function findAllActive(supabase: SupabaseClient): Promise<Onboardin
 }
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<OnboardingQuestion | null> {
-  const { data, error } = await supabase
-    .from("onboarding_questions")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  const { data, error } = await supabase.from("onboarding_questions").select("*").eq("id", id).maybeSingle();
 
   if (error) {
     console.error("onboarding-question.repository.findById error:", error);
@@ -114,12 +109,7 @@ export async function update(
   if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
   if (input.isActive !== undefined) updates.is_active = input.isActive;
 
-  const { data, error } = await supabase
-    .from("onboarding_questions")
-    .update(updates)
-    .eq("id", id)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("onboarding_questions").update(updates).eq("id", id).select().single();
 
   if (error) {
     console.error("onboarding-question.repository.update error:", error);

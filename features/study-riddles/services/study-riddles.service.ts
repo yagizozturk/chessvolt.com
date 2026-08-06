@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * Study Riddles Service
  *
@@ -7,14 +6,11 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import type { Riddle } from "@/features/riddle/types/riddle";
 import * as studyRiddleRepo from "@/features/study-riddles/repository/study-riddle.repository";
 import type { StudyRiddle } from "@/features/study-riddles/types/study-riddle";
-import type { Riddle } from "@/features/riddle/types/riddle";
 
-export async function getStudyRiddlesByRiddleId(
-  supabase: SupabaseClient,
-  riddleId: string,
-): Promise<StudyRiddle[]> {
+export async function getStudyRiddlesByRiddleId(supabase: SupabaseClient, riddleId: string): Promise<StudyRiddle[]> {
   return studyRiddleRepo.findByRiddleId(supabase, riddleId);
 }
 
@@ -26,10 +22,7 @@ export async function getActiveRiddlesByStudyId(
   return studyRiddleRepo.findActiveByStudyId(supabase, studyId, input);
 }
 
-export async function getActiveRiddlesCountByStudyId(
-  supabase: SupabaseClient,
-  studyId: string,
-): Promise<number> {
+export async function getActiveRiddlesCountByStudyId(supabase: SupabaseClient, studyId: string): Promise<number> {
   return studyRiddleRepo.countActiveByStudyId(supabase, studyId);
 }
 

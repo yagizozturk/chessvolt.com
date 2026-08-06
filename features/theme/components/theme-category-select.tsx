@@ -1,10 +1,9 @@
-// TODO: Refactor
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
-  formatThemeCategoryLabel,
-  isThemeCategory,
   THEME_CATEGORIES,
   type ThemeCategory,
+  formatThemeCategoryLabel,
+  isThemeCategory,
 } from "@/features/theme/types/theme-category";
 import { cn } from "@/lib/utils/cn";
 

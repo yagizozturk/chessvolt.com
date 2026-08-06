@@ -1,14 +1,9 @@
-// TODO: Refactor
 "use client";
 
-import { cn } from "@/lib/utils/cn";
 import { AnimatePresence, type MotionProps, motion } from "motion/react";
-import React, {
-  type ComponentPropsWithoutRef,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { type ComponentPropsWithoutRef, useEffect, useMemo, useState } from "react";
+
+import { cn } from "@/lib/utils/cn";
 
 export function AnimatedListItem({ children }: { children: React.ReactNode }) {
   const animations: MotionProps = {
@@ -30,50 +25,40 @@ export interface AnimatedListProps extends ComponentPropsWithoutRef<"div"> {
   delay?: number;
 }
 
-export const AnimatedList = React.memo(
-  ({ children, className, delay = 1000, ...props }: AnimatedListProps) => {
-    const [index, setIndex] = useState(0);
-    const childrenArray = useMemo(
-      () => React.Children.toArray(children),
-      [children],
-    );
+export const AnimatedList = React.memo(({ children, className, delay = 1000, ...props }: AnimatedListProps) => {
+  const [index, setIndex] = useState(0);
+  const childrenArray = useMemo(() => React.Children.toArray(children), [children]);
 
-    useEffect(() => {
-      let timeout: ReturnType<typeof setTimeout> | null = null;
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
 
-      if (index < childrenArray.length - 1) {
-        timeout = setTimeout(() => {
-          setIndex((prevIndex) => (prevIndex + 1) % childrenArray.length);
-        }, delay);
+    if (index < childrenArray.length - 1) {
+      timeout = setTimeout(() => {
+        setIndex((prevIndex) => (prevIndex + 1) % childrenArray.length);
+      }, delay);
+    }
+
+    return () => {
+      if (timeout !== null) {
+        clearTimeout(timeout);
       }
+    };
+  }, [index, delay, childrenArray.length]);
 
-      return () => {
-        if (timeout !== null) {
-          clearTimeout(timeout);
-        }
-      };
-    }, [index, delay, childrenArray.length]);
+  const itemsToShow = useMemo(() => {
+    const result = childrenArray.slice(0, index + 1).reverse();
+    return result;
+  }, [index, childrenArray]);
 
-    const itemsToShow = useMemo(() => {
-      const result = childrenArray.slice(0, index + 1).reverse();
-      return result;
-    }, [index, childrenArray]);
-
-    return (
-      <div
-        className={cn(`flex flex-col items-center gap-4`, className)}
-        {...props}
-      >
-        <AnimatePresence>
-          {itemsToShow.map((item) => (
-            <AnimatedListItem key={(item as React.ReactElement).key}>
-              {item}
-            </AnimatedListItem>
-          ))}
-        </AnimatePresence>
-      </div>
-    );
-  },
-);
+  return (
+    <div className={cn(`flex flex-col items-center gap-4`, className)} {...props}>
+      <AnimatePresence>
+        {itemsToShow.map((item) => (
+          <AnimatedListItem key={(item as React.ReactElement).key}>{item}</AnimatedListItem>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+});
 
 AnimatedList.displayName = "AnimatedList";

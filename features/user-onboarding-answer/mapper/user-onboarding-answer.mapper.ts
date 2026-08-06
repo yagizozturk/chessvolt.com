@@ -1,16 +1,15 @@
-// TODO: Refactor
+import {
+  type DbOnboardingOption,
+  toOnboardingOption,
+} from "@/features/onboarding-option/mapper/onboarding-option.mapper";
+import {
+  type DbOnboardingQuestion,
+  toOnboardingQuestion,
+} from "@/features/onboarding-question/mapper/onboarding-question.mapper";
 import type {
   UserOnboardingAnswer,
   UserOnboardingAnswerWithDetails,
 } from "@/features/user-onboarding-answer/types/user-onboarding-answer";
-import {
-  toOnboardingOption,
-  type DbOnboardingOption,
-} from "@/features/onboarding-option/mapper/onboarding-option.mapper";
-import {
-  toOnboardingQuestion,
-  type DbOnboardingQuestion,
-} from "@/features/onboarding-question/mapper/onboarding-question.mapper";
 
 export type DbUserOnboardingAnswer = {
   id: string;

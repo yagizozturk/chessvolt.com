@@ -1,4 +1,3 @@
-// TODO: Refactor
 export function parseMovesFromSequence(moves: string): string[] {
   return moves
     .trim()
@@ -30,11 +29,7 @@ export type ExpectedPlayerSide = "w" | "b";
  * (after initialFen), including when the expected player is Black.
  * `playerSide` selects which color's moves become goals; defaults to the side to move.
  */
-export function getExpectedPlayerGoals(
-  initialFen: string,
-  uciMoves: string[],
-  playerSide?: ExpectedPlayerSide,
-) {
+export function getExpectedPlayerGoals(initialFen: string, uciMoves: string[], playerSide?: ExpectedPlayerSide) {
   const sideToMove = getInitialSideToMove(initialFen);
   const expectedSide = playerSide ?? sideToMove;
   const startIndex = expectedSide === sideToMove ? 0 : 1;

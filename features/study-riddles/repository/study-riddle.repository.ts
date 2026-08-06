@@ -1,4 +1,3 @@
-// TODO: Refactor
 /**
  * Study Riddle Repository
  *
@@ -6,10 +5,10 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { toStudyRiddle } from "@/features/study-riddles/mapper/study-riddle.mapper";
-import type { StudyRiddle } from "@/features/study-riddles/types/study-riddle";
 import { type DbRiddle, toRiddle } from "@/features/riddle/mapper/riddle.mapper";
 import type { Riddle } from "@/features/riddle/types/riddle";
+import { toStudyRiddle } from "@/features/study-riddles/mapper/study-riddle.mapper";
+import type { StudyRiddle } from "@/features/study-riddles/types/study-riddle";
 
 export async function findByRiddleId(supabase: SupabaseClient, riddleId: string): Promise<StudyRiddle[]> {
   const { data, error } = await supabase
@@ -96,10 +95,7 @@ export type CreateStudyRiddleInput = {
   sortOrder?: number;
 };
 
-export async function create(
-  supabase: SupabaseClient,
-  input: CreateStudyRiddleInput,
-): Promise<StudyRiddle | null> {
+export async function create(supabase: SupabaseClient, input: CreateStudyRiddleInput): Promise<StudyRiddle | null> {
   const { data, error } = await supabase
     .from("study_riddles")
     .insert({

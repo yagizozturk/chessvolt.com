@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { useEffect, useState } from "react";

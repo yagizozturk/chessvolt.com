@@ -1,4 +1,3 @@
-// TODO: Refactor
 import * as React from "react";
 
 import { RainbowButton, type RainbowButtonProps } from "@/components/ui/rainbow-button";

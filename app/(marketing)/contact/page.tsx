@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { Metadata } from "next";
 
 import { ContactForm } from "@/features/contact/components/contact-form";

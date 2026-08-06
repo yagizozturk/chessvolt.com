@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -33,7 +32,7 @@ export function OpeningTypeFilter({ filterType }: OpeningTypeFilterProps) {
       >
         <SelectTrigger
           id="opening-type"
-          className="w-full rounded-xl border-2 bg-background"
+          className="bg-background w-full rounded-xl border-2"
           aria-label="Filter by opening type"
         >
           <SelectValue />

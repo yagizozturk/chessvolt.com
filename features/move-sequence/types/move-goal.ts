@@ -1,4 +1,3 @@
-// TODO: Refactor
 import type { MoveVisual } from "./move-visual";
 
 export type MoveGoal = {

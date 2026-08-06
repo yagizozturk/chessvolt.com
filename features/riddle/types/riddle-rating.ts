@@ -1,24 +1,14 @@
-// TODO: Refactor
 import {
   DEFAULT_RIDDLE_RATING,
   MAX_RIDDLE_RATING,
   MIN_RIDDLE_RATING,
 } from "@/features/riddle/constants/riddle-rating.constants";
 
-export type RiddleRatingBand =
-  | "all"
-  | "beginner"
-  | "intermediate"
-  | "advanced"
-  | "master"
-  | "grandmaster";
+export type RiddleRatingBand = "all" | "beginner" | "intermediate" | "advanced" | "master" | "grandmaster";
 
 export function isRiddleRating(value: unknown): value is number {
   return (
-    typeof value === "number" &&
-    Number.isInteger(value) &&
-    value >= MIN_RIDDLE_RATING &&
-    value <= MAX_RIDDLE_RATING
+    typeof value === "number" && Number.isInteger(value) && value >= MIN_RIDDLE_RATING && value <= MAX_RIDDLE_RATING
   );
 }
 
@@ -51,11 +41,7 @@ export function isRiddleRatingBand(value: unknown): value is RiddleRatingBand {
   );
 }
 
-export function isRiddleRatingWithinTolerance(
-  rating: number | null,
-  targetRating: number,
-  tolerance: number,
-): boolean {
+export function isRiddleRatingWithinTolerance(rating: number | null, targetRating: number, tolerance: number): boolean {
   if (rating == null) return false;
   return Math.abs(rating - targetRating) <= tolerance;
 }
