@@ -1,4 +1,3 @@
-// TODO: Refactor
 "use client";
 
 import type { DrawShape } from "@lichess-org/chessground/draw";
@@ -18,6 +17,7 @@ import { useChessground } from "@/lib/chessground/hooks/use-chessgroud";
 import {
   CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS,
   DEFAULT_PROMOTION_PIECE,
+  OPPONENT_MOVE_DELAY_MS,
   WRONG_MOVE_REVERT_DELAY_MS,
 } from "@/lib/shared/constants/chess";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
@@ -76,13 +76,26 @@ function VoltBoard(
   }: VoltBoardProps,
   ref: Ref<VoltBoardHandle>,
 ) {
-  // 1. Refs (En üstte, çünkü genellikle diğer hooklar bunlara ihtiyaç duymaz)
+  // React render'ı gerektirmeyen, Chessground akışına ait geçici değerleri ref içinde tutuyoruz.
   const boardRef = useRef<HTMLDivElement>(null);
   const orientationRef = useRef<"white" | "black">(playerOrientation ?? getOrientationFromFen(initialFen));
-  const lastMoveRef = useRef<[Key, Key] | undefined>(undefined); // Last move remembers the last moves two square from -> to, so chessground can highlight them
-  const clearCustomHighlightsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null); // useRef doesnt re render after a variable value change
+
+  // Chessground'un son oynanan iki kareyi vurgulaması için kullanılır.
+  const lastMoveRef = useRef<[Key, Key] | undefined>(undefined);
+
+  // Doğru/yanlış hamle highlight'larını daha sonra temizleyen timer.
+  const clearCustomHighlightsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Oyuncu doğru hamleyi yaptıktan sonra, rakip hamlesi board'a uygulanana kadar yeni goal oklarını çizdirmeyiz.
+  // Bu bir state değil ref'tir; değişmesi component'i yeniden render etmez.
+  const isOpponentMovePendingRefLock = useRef(false);
+
+  // Parent'tan gelen en güncel goal oklarını saklar.
+  // Oklar kilit sırasında çizilmez; rakip hamlesi uygulandıktan sonra bu ref'ten çizilir.
+  const latestGoalShapesRef = useRef<DrawShape[]>([]);
   const activeGoalShapes = useMemo<DrawShape[]>(() => {
-    // useMemo is used for heavy calculations not to do make again in every render.
+    // Parent'tan gelen uygulama tipindeki görselleri Chessground'un DrawShape formatına çevirir.
+    // Practice modunda goal okları gösterilmez.
     if (mode !== "learn" || !activeGoalVisuals?.length) return [];
 
     return activeGoalVisuals.map((visual) => ({
@@ -109,7 +122,11 @@ function VoltBoard(
     coordinates,
     lastMoveRef,
     onMove: (from, to) => {
-      clearCustomHighlightsTimeout(); // Hamle yapıldıktan sonra customHighlight silinir.
+      // Chessground oyuncu taşını görsel olarak hareket ettirdi ve ardından bu callback'i çağırdı.
+      // Önceki hamleden kalmış highlight temizleme timer'ını iptal ediyoruz.
+      clearCustomHighlightsTimeout();
+
+      // Hamleyi chess.js'e işlemeden önceki pozisyon, doğruluk kontrolünde kullanılır.
       const fenBefore = game.current.fen();
       const turn = game.current.turn() === "w" ? "white" : "black";
       const uci = buildMoveUci(game.current, from, to);
@@ -132,14 +149,17 @@ function VoltBoard(
   });
 
   // ============================================================================
-  // Clearing drawn shapes on board
+  // Board üzerindeki otomatik goal/hint şekillerini temizler.
   // ============================================================================
   function clearHintShapes() {
     ground.current?.setAutoShapes([]);
   }
 
   // ============================================================================
-  // Oyuncu yanlış hamle yapınca event bu metodu tetikler
+  // Yanlış hamle:
+  // Chessground taşı ekranda hareket ettirmiştir fakat chess.js pozisyonu değiştirilmez.
+  // Önce hata geri bildirimi gösterilir, ardından scheduleWrongMoveRevert()
+  // Chessground'u chess.js'in hâlâ tuttuğu doğru pozisyona geri senkronize eder.
   // ============================================================================
   function boardWrongMoveHandler(to: string) {
     clearSquareCustomHighlights();
@@ -147,13 +167,12 @@ function VoltBoard(
     ground.current?.setAutoShapes(activeGoalShapes);
     setSquareCustomHighlight(to, "custom-wrong-move");
     playWrongMoveSound();
-    scheduleClearCustomHighlights(WRONG_MOVE_REVERT_DELAY_MS); // On wrong move, after a delay clear.
+    scheduleWrongMoveRevert();
   }
 
   // ============================================================================
-  // Clear custom highlights timeout
-  // Component state/ref/useEffect bağımlılığı varsa → component içinde kalsın.
-  // useCallback makes RAM uses the old pointed function unless [] dependency valus change for every render.
+  // Bekleyen highlight timer'ını iptal eder.
+  // Yeni bir hamle başladığında eski timer'ın yeni geri bildirimi silmesini engeller.
   // ============================================================================
   function clearCustomHighlightsTimeout() {
     if (clearCustomHighlightsTimeoutRef.current) {
@@ -163,20 +182,37 @@ function VoltBoard(
   }
 
   // ============================================================================
-  // Schedule custom highlight clear
-  // Delay sonunda tüm custom highlight'ları temizler.
+  // Doğru hamle geri bildiriminde yalnızca kare highlight'ını temizler.
+  // Burada updateBoard() çağrılmaz; çünkü doğru hamlede taş geri alınmamalıdır.
   // ============================================================================
   function scheduleClearCustomHighlights(delayMs: number) {
     clearCustomHighlightsTimeout();
     clearCustomHighlightsTimeoutRef.current = setTimeout(() => {
       clearCustomHighlightsTimeoutRef.current = null;
       clearSquareCustomHighlights();
-      updateBoard();
     }, delayMs);
   }
 
   // ============================================================================
-  // Oyuncu doğru hamle yapınca event bu metodu tetikler
+  // Yanlış hamle geri alma:
+  // chess.js yanlış hamleyi hiç kabul etmediği için hâlâ doğru pozisyonu tutar.
+  // Gecikme sonunda updateBoard(), Chessground'u bu doğru pozisyona geri getirir.
+  // ============================================================================
+  function scheduleWrongMoveRevert() {
+    clearCustomHighlightsTimeout();
+
+    clearCustomHighlightsTimeoutRef.current = setTimeout(() => {
+      clearCustomHighlightsTimeoutRef.current = null;
+      clearSquareCustomHighlights();
+      updateBoard();
+    }, WRONG_MOVE_REVERT_DELAY_MS);
+  }
+
+  // ============================================================================
+  // Doğru oyuncu hamlesi:
+  // 1. Hamleyi chess.js'e işler.
+  // 2. Parent goal'u ilerletmeden hemen önce ok çizimini kilitler.
+  // 3. Oyuncu hamlesinin ekranda görünmesi için rakip hamlesini kısa süre geciktirir.
   // ============================================================================
   function boardCorrectMoveHandler(from: string, to: string, uci: string) {
     clearHintShapes();
@@ -186,7 +222,12 @@ function VoltBoard(
     if (!move) {
       return;
     }
-    onSuccessMovePlayed({ ...move, uci }); // Parent is notified about the correct move.
+
+    // Bu satır parent callback'inden önce olmalıdır.
+    // Çünkü callback goal'u ilerletir ve yeni activeGoalShapes hemen VoltBoard'a gelebilir.
+    isOpponentMovePendingRefLock.current = true;
+
+    onSuccessMovePlayed({ ...move, uci }); // Parent doğru hamleyi kaydeder ve sıradaki goal'u aktif eder.
     playCorrectSound();
     setSquareCustomHighlight(to, "custom-correct-move");
     scheduleClearCustomHighlights(CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS);
@@ -194,13 +235,24 @@ function VoltBoard(
     lastMoveRef.current = [from as Key, to as Key];
     const nextMove = onNextMoveRequest?.();
 
+    // Rakip hamlesi aynı JavaScript akışı içinde hemen uygulanırsa updateBoard()
+    // doğrudan iki hamle sonraki FEN'i gönderir ve oyuncu taşı ışınlanmış gibi görünebilir.
+    // Bu gecikme oyuncu hamlesinin önce ekranda görünmesine fırsat verir.
     if (nextMove) {
-      boardApplyOpponentMove(nextMove);
+      setTimeout(() => {
+        boardApplyOpponentMove(nextMove);
+      }, OPPONENT_MOVE_DELAY_MS);
+    } else {
+      // Oynanacak rakip hamlesi yoksa bekleme süreci de yoktur.
+      isOpponentMovePendingRefLock.current = false;
     }
   }
 
   // ============================================================================
-  // Opponent move is played
+  // Rakip hamlesi:
+  // makeMove() önce chess.js modelini günceller.
+  // updateBoard() daha sonra aynı pozisyonu Chessground'a gönderir.
+  // Tahta senkronize edildikten sonra ok kilidi açılır ve bekleyen goal okları çizilir.
   // ============================================================================
   function boardApplyOpponentMove(nextMove: string) {
     const opponentFrom = nextMove.slice(0, 2);
@@ -208,9 +260,22 @@ function VoltBoard(
     const opponentPromotion = nextMove[4] ?? DEFAULT_PROMOTION_PIECE;
     const opponentMove = makeMove(opponentFrom, opponentTo, opponentPromotion);
 
-    if (opponentMove) {
-      lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
+    if (!opponentMove) {
+      // Geçersiz rakip hamlesinde kilidi açık bırakmıyoruz.
+      isOpponentMovePendingRefLock.current = false;
+      return;
     }
+
+    lastMoveRef.current = [opponentFrom as Key, opponentTo as Key];
+
+    // chess.js güncel, Chessground ise hâlâ oyuncu hamlesi sonrasındaki görüntüdedir.
+    // updateBoard() rakip hamlesini içeren güncel FEN ile ikisini senkronize eder.
+    updateBoard();
+
+    // Ref kilidini açmak useEffect'i yeniden çalıştırmaz.
+    // Bu nedenle kilit sırasında saklanan en güncel okları burada doğrudan çiziyoruz.
+    isOpponentMovePendingRefLock.current = false;
+    ground.current?.setAutoShapes(latestGoalShapesRef.current);
   }
 
   // ============================================================================
@@ -237,9 +302,16 @@ function VoltBoard(
   }, [sourceId, initialFen, playerOrientation, updateBoard, clearSquareCustomHighlights, ground]);
 
   // ============================================================================
-  // Settings arrows for active goal
+  // Aktif goal okları:
+  // - Normal durumda activeGoalShapes değişince hemen çizilir.
+  // - Rakip hamlesi bekleniyorsa yeni oklar yalnızca latestGoalShapesRef içinde saklanır.
+  //   Rakip hamlesi board'a uygulandığında boardApplyOpponentMove() bu bekleyen okları çizer.
   // ============================================================================
   useEffect(() => {
+    latestGoalShapesRef.current = activeGoalShapes;
+
+    if (isOpponentMovePendingRefLock.current) return;
+
     ground.current?.setAutoShapes(activeGoalShapes);
   }, [ground, activeGoalShapes, sourceId]);
 
