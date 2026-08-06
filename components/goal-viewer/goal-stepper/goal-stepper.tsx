@@ -25,7 +25,8 @@ const TAKEAWAY_SHINE_COLORS = ["#A07CFE", "#FE8FB5", "#FFBE7B"];
 export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
   const activeGoalIndex = goals.findIndex((goal) => !goal.isCompleted);
   const focusIndex = activeGoalIndex >= 0 ? activeGoalIndex : Math.max(0, goals.length - 1);
-  const lastCompletedGoal = goals.findLast((goal) => goal.isCompleted) ?? null;
+  const lastCompletedIndex = goals.findLastIndex((goal) => goal.isCompleted);
+  const lastCompletedGoal = lastCompletedIndex >= 0 ? goals[lastCompletedIndex] : null;
   const lastCompletedTakeaway =
     mode === "learn" && lastCompletedGoal && lastCompletedGoal.takeaway.trim().length > 0
       ? lastCompletedGoal
@@ -34,9 +35,12 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [canScrollStart, setCanScrollStart] = useState(false);
   const [canScrollEnd, setCanScrollEnd] = useState(false);
+  const [connector, setConnector] = useState<{ left: number; top: number; height: number } | null>(null);
 
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const takeawayCardRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLButtonElement | HTMLDivElement | null)[]>([]);
 
   const setItemRef = useCallback((index: number, node: HTMLButtonElement | HTMLDivElement | null) => {
@@ -68,6 +72,33 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
     [cancelScheduledClose],
   );
 
+  const updateConnector = useCallback(() => {
+    const container = containerRef.current;
+    const step = lastCompletedTakeaway ? itemRefs.current[lastCompletedIndex] : null;
+    const card = takeawayCardRef.current;
+
+    if (!container || !step || !card) {
+      setConnector(null);
+      return;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const stepRect = step.getBoundingClientRect();
+    const cardRect = card.getBoundingClientRect();
+    const height = cardRect.top - stepRect.bottom;
+
+    if (height <= 0) {
+      setConnector(null);
+      return;
+    }
+
+    setConnector({
+      left: stepRect.left + stepRect.width / 2 - containerRect.left,
+      top: stepRect.bottom - containerRect.top,
+      height,
+    });
+  }, [lastCompletedIndex, lastCompletedTakeaway]);
+
   const updateScrollEdges = useCallback(() => {
     const container = scrollRef.current;
     if (!container) return;
@@ -77,7 +108,8 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
 
     setCanScrollStart(scrollLeft > SCROLL_EDGE_THRESHOLD_PX);
     setCanScrollEnd(maxScrollLeft > SCROLL_EDGE_THRESHOLD_PX && scrollLeft < maxScrollLeft - SCROLL_EDGE_THRESHOLD_PX);
-  }, []);
+    updateConnector();
+  }, [updateConnector]);
 
   const scrollByPage = useCallback((direction: "left" | "right") => {
     const container = scrollRef.current;
@@ -91,6 +123,10 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
     itemRefs.current[focusIndex]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }, [focusIndex]);
 
+  useLayoutEffect(() => {
+    updateConnector();
+  }, [updateConnector, goals]);
+
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
@@ -99,6 +135,7 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
 
     const resizeObserver = new ResizeObserver(updateScrollEdges);
     resizeObserver.observe(container);
+    if (containerRef.current) resizeObserver.observe(containerRef.current);
 
     return () => resizeObserver.disconnect();
   }, [goals.length, updateScrollEdges]);
@@ -118,7 +155,7 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
         </Button>
       ) : null}
 
-      <div className="relative min-w-0 flex-1">
+      <div ref={containerRef} className="relative min-w-0 flex-1">
         <div
           aria-hidden
           className={cn(
@@ -134,11 +171,19 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
           )}
         />
 
+        {connector ? (
+          <div
+            aria-hidden
+            className="bg-primary pointer-events-none absolute z-0 w-1 -translate-x-1/2"
+            style={{ left: connector.left, top: connector.top, height: connector.height }}
+          />
+        ) : null}
+
         <div
           ref={scrollRef}
           role="list"
           aria-label="Goal progress"
-          className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="relative z-[1] flex snap-x snap-mandatory items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           onScroll={updateScrollEdges}
         >
           {goals.map((goal, index) => {
@@ -226,11 +271,14 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
         </div>
 
         {lastCompletedTakeaway ? (
-          <div className="card-border-bottom-shadow mt-6 flex-row items-center gap-4 p-3">
+          <div
+            ref={takeawayCardRef}
+            className="card-border-bottom-shadow relative z-[1] mt-6 flex-row items-center gap-4 p-3"
+          >
             <Image src={bookIcon} alt="" width={80} height={80} className="size-12 shrink-0 object-contain" />
             <div className="min-w-0 flex-1 space-y-0.5">
-              <p className="text-muted-foreground text-sm font-bold">Checkpoint Importance</p>
-              <p className="leading-snug text-pretty">{lastCompletedTakeaway.takeaway}</p>
+              <p className="text-sm font-bold">Checkpoint Importance</p>
+              <p className="text-muted-foreground leading-snug text-pretty">{lastCompletedTakeaway.takeaway}</p>
             </div>
           </div>
         ) : null}
