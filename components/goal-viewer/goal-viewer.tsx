@@ -40,7 +40,7 @@ export function GoalViewer({
           <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
         </div>
       </div>
-      <GoalStepper goals={goals} data-tour="goal-stepper-2" />
+      <GoalStepper goals={goals} mode={mode} />
     </div>
   );
 }

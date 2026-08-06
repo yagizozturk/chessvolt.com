@@ -19,4 +19,6 @@ export type ActiveGoalCardProps = {
   turnLabel: string;
 };
 
-export type GoalStepperProps = GoalsProps;
+export type GoalStepperProps = GoalsProps & {
+  mode?: VoltBoardMode;
+};

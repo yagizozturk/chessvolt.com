@@ -22,11 +22,14 @@ const SCROLL_PAGE_RATIO = 0.85;
 const GOAL_ITEM_CLASS = "shrink-0 snap-center";
 const TAKEAWAY_SHINE_COLORS = ["#A07CFE", "#FE8FB5", "#FFBE7B"];
 
-export function GoalStepper({ goals }: GoalStepperProps) {
+export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
   const activeGoalIndex = goals.findIndex((goal) => !goal.isCompleted);
   const focusIndex = activeGoalIndex >= 0 ? activeGoalIndex : Math.max(0, goals.length - 1);
+  const lastCompletedGoal = goals.findLast((goal) => goal.isCompleted) ?? null;
   const lastCompletedTakeaway =
-    goals.findLast((goal) => goal.isCompleted && goal.takeaway.trim().length > 0) ?? null;
+    mode === "learn" && lastCompletedGoal && lastCompletedGoal.takeaway.trim().length > 0
+      ? lastCompletedGoal
+      : null;
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [canScrollStart, setCanScrollStart] = useState(false);
