@@ -45,6 +45,23 @@ export async function findAllActive(supabase: SupabaseClient): Promise<Theme[]> 
   return toThemes((data ?? []) as DbTheme[]);
 }
 
+export async function findAllActiveWithCoverImage(supabase: SupabaseClient): Promise<Theme[]> {
+  const { data, error } = await supabase
+    .from("themes")
+    .select("*")
+    .eq("is_active", true)
+    .not("cover_image_url", "is", null)
+    .order("sort_order", { ascending: true })
+    .order("title", { ascending: true });
+
+  if (error) {
+    console.error("theme.repository.findAllActiveWithCoverImage error:", error);
+    return [];
+  }
+
+  return toThemes((data ?? []) as DbTheme[]);
+}
+
 export async function findById(supabase: SupabaseClient, id: string): Promise<Theme | null> {
   const { data, error } = await supabase.from("themes").select("*").eq("id", id).maybeSingle();
 

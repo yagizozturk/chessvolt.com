@@ -15,6 +15,10 @@ export async function getAllActiveThemes(supabase: SupabaseClient): Promise<Them
   return themeRepo.findAllActive(supabase);
 }
 
+export async function getAllActiveThemesWithCoverImage(supabase: SupabaseClient): Promise<Theme[]> {
+  return themeRepo.findAllActiveWithCoverImage(supabase);
+}
+
 export async function getThemeById(supabase: SupabaseClient, id: string): Promise<Theme | null> {
   return themeRepo.findById(supabase, id);
 }

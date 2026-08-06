@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 
 import { RiddleThemes } from "@/features/theme/components/riddle-themes";
-import { getAllActiveThemes } from "@/features/theme/services/theme.service";
+import { getAllActiveThemesWithCoverImage } from "@/features/theme/services/theme.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 export default async function RiddlesPage() {
   const { supabase } = await getPublicUser();
-  const themes = await getAllActiveThemes(supabase);
+  const themes = await getAllActiveThemesWithCoverImage(supabase);
 
   return (
     <div className="page-container">
