@@ -121,10 +121,23 @@ export function useChessground({
     [game],
   );
 
-  /** Sadece ref'i temizler; tahtayı güncellemek için hemen ardından `updateBoard()` çağrılmalıdır. */
+  // ============================================================================
+  // Sadece custom kare highlight'larını temizler.
+  // Artık tüm board'u updateBoard() ile yeniden kurmuyoruz.
+  // Böylece doğru hamle highlight'ı ekrandan silinirken taş hareketi ve Chessground animasyonu bozulmaz.
+  // ============================================================================
   const clearSquareCustomHighlights = useCallback(() => {
     customSquareHighlightsRef.current = new Map();
-  }, []);
+
+    if (!ground.current) return;
+
+    ground.current.set({
+      highlight: {
+        check: game.current.isCheck(),
+        custom: new Map(),
+      },
+    });
+  }, [game]);
 
   // ============================================================================
   // Update board
