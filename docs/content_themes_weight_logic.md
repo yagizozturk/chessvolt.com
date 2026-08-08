@@ -13,13 +13,13 @@ Bir içerik tek bir theme’e ait olmayabilir.
 Örnek:
 
 ```txt
-Riddle A
+Puzzle A
 - fork
 - attraction
 - sacrifice
 ```
 
-Bu riddle’ın ana fikri `fork` olabilir ama içinde `attraction` ve `sacrifice` fikirleri de bulunabilir.
+Bu puzzle’ın ana fikri `fork` olabilir ama içinde `attraction` ve `sacrifice` fikirleri de bulunabilir.
 
 Bu durumda hepsini aynı güçte işaretlemek doğru olmaz.
 
@@ -82,7 +82,7 @@ Noise tag varsa          → ignore
 
 ## Önerilen import stratejisi
 
-Milyonlarca riddle için admin panelden elle düzeltme yapılmaz.
+Milyonlarca puzzle için admin panelden elle düzeltme yapılmaz.
 
 Bu yüzden import sırasında otomatik mapping kullanılmalı.
 
@@ -174,7 +174,7 @@ pin     weight 9
 skewer  weight 8
 ```
 
-Bir riddle da şöyle taglenmiş olabilir:
+Bir puzzle da şöyle taglenmiş olabilir:
 
 ```txt
 fork        weight 10
@@ -191,12 +191,12 @@ priority = onboarding_theme_weight × content_theme_weight
 
 ```txt
 fork onboarding weight = 10
-riddle fork weight = 10
+puzzle fork weight = 10
 
 priority = 100
 ```
 
-Bu riddle feed’de daha öne çıkar.
+Bu puzzle feed’de daha öne çıkar.
 
 ---
 

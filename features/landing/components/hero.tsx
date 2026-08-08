@@ -27,7 +27,7 @@ export function Hero() {
             <br className="hidden md:block" /> And Repeat
           </h1>
           <p className="text-foreground w-full text-center text-[clamp(0.95rem,1.4vw+0.5rem,1.25rem)] leading-relaxed md:text-right">
-            Learn openings, solve riddles, play real famous games, <br /> and train with interactive chess games that{" "}
+            Learn openings, solve puzzles, play real famous games, <br /> and train with interactive chess games that{" "}
             <br />
             aims to teach you the idea behind the moves.
           </p>

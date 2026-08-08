@@ -56,7 +56,7 @@ export type LatestFinishedAttempt = {
 };
 
 // ================================================================================================
-// Latest completed/failed attempt per sequence for a user (riddles history source).
+// Latest completed/failed attempt per sequence for a user (puzzles history source).
 // ================================================================================================
 export async function getLatestFinishedAttemptsByUser(
   supabase: SupabaseClient,

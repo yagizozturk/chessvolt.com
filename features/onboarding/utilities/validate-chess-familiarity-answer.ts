@@ -7,7 +7,7 @@ import type { ValidateChessFamiliarityAnswerResult } from "@/features/onboarding
 // Validate Chess Familiarity Answer
 //
 // Confirms the chess_familiarity question was answered with an option that
-// carries an initial_rating. That rating drives profile setup and riddle selection.
+// carries an initial_rating. That rating drives profile setup and puzzle selection.
 // ============================================================================
 // validateChessFamiliarityAnswer
 //

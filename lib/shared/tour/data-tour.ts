@@ -9,7 +9,7 @@ export const TOUR_TARGETS = {
   mouseRequired: "mouse-required",
   actionButton: "action-button",
   favoritesOpeningList: "favorites-opening-list",
-  favoritesRiddleList: "favorites-riddle-list",
+  favoritesPuzzleList: "favorites-puzzle-list",
 } as const;
 
 export type TourTarget = (typeof TOUR_TARGETS)[keyof typeof TOUR_TARGETS];

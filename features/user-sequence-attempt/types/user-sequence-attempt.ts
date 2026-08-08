@@ -1,10 +1,10 @@
-import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
+import type { PuzzleAttemptStatus } from "@/features/user-sequence-attempt/types/puzzle-attempt-status";
 
 export type UserSequenceAttempt = {
   id: string;
   userId: string;
   sequenceId: string;
-  status: RiddleAttemptStatus;
+  status: PuzzleAttemptStatus;
   startedAt: string;
   completedAt: string | null;
   durationMs: number | null;
@@ -21,7 +21,7 @@ export type UserSequenceAttempt = {
 // ================================================================================================
 export type SequenceAttemptStats = {
   sequenceId: string;
-  status: RiddleAttemptStatus;
+  status: PuzzleAttemptStatus;
   isCompleted: boolean;
   correctMoveCount: number;
   wrongMoveCount: number;
@@ -37,7 +37,7 @@ export type SequenceAttemptData = {
 export type CreateUserSequenceAttemptInput = {
   userId: string;
   sequenceId: string;
-  status?: RiddleAttemptStatus;
+  status?: PuzzleAttemptStatus;
   startedAt?: string;
   completedAt?: string | null;
   durationMs?: number | null;
@@ -48,7 +48,7 @@ export type CreateUserSequenceAttemptInput = {
 };
 
 export type UpdateUserSequenceAttemptInput = {
-  status?: RiddleAttemptStatus;
+  status?: PuzzleAttemptStatus;
   completedAt?: string | null;
   durationMs?: number | null;
   correctMoveCount?: number;

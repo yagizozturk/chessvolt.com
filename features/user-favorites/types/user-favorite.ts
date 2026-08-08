@@ -1,11 +1,11 @@
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import type { Riddle } from "@/features/riddle/types/riddle";
+import type { Puzzle } from "@/features/puzzle/types/puzzle";
 
 export type UserFavorite = {
   id: string;
   userId: string;
   openingVariantId: string | null;
-  riddleId: string | null;
+  puzzleId: string | null;
   isPinned: boolean;
   note: string | null;
   createdAt: string;
@@ -13,17 +13,17 @@ export type UserFavorite = {
 
 export type UserFavoriteWithDetails = UserFavorite & {
   openingVariant: OpeningVariant | null;
-  riddle: Riddle | null;
+  puzzle: Puzzle | null;
 };
 
 export type SaveUserFavoriteInput = {
   userId: string;
   openingVariantId?: string | null;
-  riddleId?: string | null;
+  puzzleId?: string | null;
   isPinned?: boolean;
   note?: string | null;
 };
 
 export type ToggleFavoriteTarget =
-  | { openingVariantId: string; riddleId?: never }
-  | { riddleId: string; openingVariantId?: never };
+  | { openingVariantId: string; puzzleId?: never }
+  | { puzzleId: string; openingVariantId?: never };

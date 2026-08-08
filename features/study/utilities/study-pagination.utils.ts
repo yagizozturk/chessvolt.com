@@ -1,5 +1,5 @@
 import { STUDY_PAGE_SIZE } from "@/features/study/constants/study-pagination.constants";
-import type { StudyWithRiddleCountAndThemes } from "@/features/study/types/study";
+import type { StudyWithPuzzleCountAndThemes } from "@/features/study/types/study";
 import type { StudyFilterState } from "@/features/study/types/study-filter";
 import { buildStudyFilterUrl } from "@/features/study/utilities/study-filter.utils";
 
@@ -18,9 +18,9 @@ export function clampStudyPage(page: number, totalPages: number): number {
 }
 
 export function paginateStudies(
-  studies: StudyWithRiddleCountAndThemes[],
+  studies: StudyWithPuzzleCountAndThemes[],
   page: number,
-): StudyWithRiddleCountAndThemes[] {
+): StudyWithPuzzleCountAndThemes[] {
   const offset = (page - 1) * STUDY_PAGE_SIZE;
   return studies.slice(offset, offset + STUDY_PAGE_SIZE);
 }

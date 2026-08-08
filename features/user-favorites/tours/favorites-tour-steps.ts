@@ -14,18 +14,18 @@ function getOpeningsStep(): Step {
   };
 }
 
-function getRiddlesStep(): Step {
+function getPuzzlesStep(): Step {
   return {
-    target: tourTargetSelector(TOUR_TARGETS.favoritesRiddleList),
-    title: "Favorite riddles",
-    content: "Open saved riddles here and keep tracking your Volt score over time.",
+    target: tourTargetSelector(TOUR_TARGETS.favoritesPuzzleList),
+    title: "Favorite puzzles",
+    content: "Open saved puzzles here and keep tracking your Volt score over time.",
     placement: "top",
   };
 }
 
 export function getFavoritesTourSteps(view: FavoritesView): Step[] {
   if (view === "openings") return [getOpeningsStep()];
-  if (view === "riddles") return [getRiddlesStep()];
+  if (view === "puzzles") return [getPuzzlesStep()];
 
-  return [getOpeningsStep(), getRiddlesStep()];
+  return [getOpeningsStep(), getPuzzlesStep()];
 }

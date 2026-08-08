@@ -14,7 +14,7 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 // ================================================================================================
 export const metadata: Metadata = {
   title: "Dashboard | ChessVolt",
-  description: "Your ChessVolt dashboard for studies, riddles, and openings.",
+  description: "Your ChessVolt dashboard for studies, puzzles, and openings.",
 };
 
 export default async function Page() {
@@ -49,7 +49,7 @@ export default async function Page() {
         {/* Welcome title and message */}
         <PageHeader
           title={`Hi, ${displayName}`}
-          description="Pick up where you left off with your studies, riddles, and openings."
+          description="Pick up where you left off with your studies, puzzles, and openings."
         />
 
         {/* Quick links and three column component with links */}

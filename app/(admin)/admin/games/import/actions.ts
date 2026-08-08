@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createGame } from "@/features/game/services/game.service";
-import { createRiddle } from "@/features/riddle/services/riddle.service";
+import { createPuzzle } from "@/features/puzzle/services/puzzle.service";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getUciMovesFromPgnAfterPlyAtMoveCount } from "@/lib/chess/getUciMovesFromPgnAfterPlyAtMoveCount";
 import { parsePgn, splitPgnGames } from "@/lib/chess/parsePgn";
@@ -53,7 +53,7 @@ export async function importPgnAction(formData: FormData) {
         parsed.description?.trim() || `Find the first move - ${parsed.whitePlayer} vs ${parsed.blackPlayer}`;
       const displayFen = getFenFromPgnAtPly(parsed.pgn, 0);
 
-      await createRiddle(supabase, {
+      await createPuzzle(supabase, {
         gameId: game.id,
         title: defaultTitle,
         rating: 1200,

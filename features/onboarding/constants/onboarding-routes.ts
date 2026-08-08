@@ -8,8 +8,8 @@ export const DASHBOARD_PATH_PREFIXES = [
   POST_ONBOARDING_URL,
   "/study",
   "/openings",
-  "/riddle",
-  "/riddles",
+  "/puzzle",
+  "/puzzles",
   "/favorites",
   "/profile",
 ] as const;

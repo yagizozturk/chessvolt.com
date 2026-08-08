@@ -35,7 +35,7 @@ export default async function AdminCreateThemePage({ searchParams }: Props) {
         <CardHeader>
           <CardTitle>New theme</CardTitle>
           <CardDescription>
-            Themes tag riddles and other content. Sort order controls list position within a category.
+            Themes tag puzzles and other content. Sort order controls list position within a category.
           </CardDescription>
         </CardHeader>
         <CardContent>

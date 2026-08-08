@@ -16,8 +16,8 @@ export type Study = {
   updatedAt: string;
 };
 
-export type StudyWithRiddleCount = Study & { riddleCount: number };
+export type StudyWithPuzzleCount = Study & { puzzleCount: number };
 
-export type StudyWithRiddleCountAndThemes = StudyWithRiddleCount & {
+export type StudyWithPuzzleCountAndThemes = StudyWithPuzzleCount & {
   themes: StudyThemeWithTheme[];
 };

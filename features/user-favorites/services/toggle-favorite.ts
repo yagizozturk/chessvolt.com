@@ -9,7 +9,7 @@ export type ToggleFavoriteResult =
 
 type ParsedTarget =
   | { kind: "opening_variant"; openingVariantId: string }
-  | { kind: "riddle"; riddleId: string };
+  | { kind: "puzzle"; puzzleId: string };
 
 function parseTarget(target: ToggleFavoriteTarget): ParsedTarget | null {
   if ("openingVariantId" in target) {
@@ -18,9 +18,9 @@ function parseTarget(target: ToggleFavoriteTarget): ParsedTarget | null {
     return { kind: "opening_variant", openingVariantId };
   }
 
-  const riddleId = target.riddleId?.trim();
-  if (!riddleId) return null;
-  return { kind: "riddle", riddleId };
+  const puzzleId = target.puzzleId?.trim();
+  if (!puzzleId) return null;
+  return { kind: "puzzle", puzzleId };
 }
 
 export async function toggleFavourite(
@@ -35,7 +35,7 @@ export async function toggleFavourite(
   const existing =
     target.kind === "opening_variant"
       ? await userFavouriteRepo.findByUserAndOpeningVariantId(supabase, input.userId, target.openingVariantId)
-      : await userFavouriteRepo.findByRiddleId(supabase, input.userId, target.riddleId);
+      : await userFavouriteRepo.findByPuzzleId(supabase, input.userId, target.puzzleId);
 
   if (existing) {
     const deleted = await userFavouriteRepo.deleteById(supabase, existing.id);
@@ -48,7 +48,7 @@ export async function toggleFavourite(
   const row = await userFavouriteRepo.create(supabase, {
     userId: input.userId,
     openingVariantId: target.kind === "opening_variant" ? target.openingVariantId : null,
-    riddleId: target.kind === "riddle" ? target.riddleId : null,
+    puzzleId: target.kind === "puzzle" ? target.puzzleId : null,
   });
 
   if (!row) {

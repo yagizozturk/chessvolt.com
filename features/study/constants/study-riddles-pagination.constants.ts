@@ -1,1 +1,0 @@
-export const STUDY_RIDDLES_PAGE_SIZE = 10;

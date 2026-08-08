@@ -7,15 +7,15 @@ import {
 import { getSequenceVoltScore } from "@/components/calculator/volt-calculator/get-sequence-volt-score";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import {
-  isRiddleAttemptStatus,
-  type RiddleAttemptStatus,
-} from "@/features/user-sequence-attempt/types/riddle-attempt-status";
+  isPuzzleAttemptStatus,
+  type PuzzleAttemptStatus,
+} from "@/features/user-sequence-attempt/types/puzzle-attempt-status";
 
 type RouteParams = {
   params: Promise<{ sequenceId: string }>;
 };
 
-const TERMINAL_STATUSES: RiddleAttemptStatus[] = ["completed", "failed", "abandoned"];
+const TERMINAL_STATUSES: PuzzleAttemptStatus[] = ["completed", "failed", "abandoned"];
 
 type AttemptBody = {
   attemptId?: string;
@@ -72,7 +72,7 @@ async function handlePOST(req: Request, { params }: RouteParams) {
     return errorResponse("attemptId is required to update a sequence attempt", 400);
   }
 
-  if (!body.status || !isRiddleAttemptStatus(body.status)) {
+  if (!body.status || !isPuzzleAttemptStatus(body.status)) {
     return errorResponse("Invalid attempt status", 400);
   }
 

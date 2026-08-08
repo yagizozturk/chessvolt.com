@@ -75,7 +75,7 @@ export async function findByUserAndSequenceIds(
 
 // ================================================================================================
 // Getting finished attempts by user (completed or failed), newest first.
-// Used by riddles history to list sequences the user actually tried to solve.
+// Used by puzzles history to list sequences the user actually tried to solve.
 // ================================================================================================
 export async function findFinishedAttemptsByUserId(
   supabase: SupabaseClient,
@@ -123,7 +123,7 @@ export async function findByUserIdSince(
 
 // ================================================================================================
 // Getting latest attempt summaries by user and sequence ids. Last date one on particular sequenceId
-// Study has multiple riddles. Riddles have multiple solving attempts.
+// Study has multiple puzzles. Puzzles have multiple solving attempts.
 // This function returns the latest attempt summary for each sequenceId in the study.
 // example output:
 // [{

@@ -37,7 +37,7 @@ export default async function Page() {
       <div className="page-container-children-layout">
         <PageHeader
           title="My Profile"
-          description="View your account details as you solve riddles and learn openings."
+          description="View your account details as you solve puzzles and learn openings."
         />
 
         <Card>

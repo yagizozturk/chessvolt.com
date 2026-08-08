@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as openingVariantThemeRepo from "@/features/opening-variant-theme/repository/opening-variant-theme.repository";
-import * as riddleThemeRepo from "@/features/riddle-theme/repository/riddle-theme.repository";
+import * as puzzleThemeRepo from "@/features/puzzle-theme/repository/puzzle-theme.repository";
 import * as studyThemeRepo from "@/features/study-theme/repository/study-theme.repository";
 import type { AdminThemeLink } from "@/features/theme-link/types/admin-theme-link";
 import type { ThemeLinkKind } from "@/features/theme-link/types/theme-link-kind";
@@ -30,14 +30,14 @@ function toAdminThemeLink(
 }
 
 export async function getAllAdminThemeLinks(supabase: SupabaseClient): Promise<AdminThemeLink[]> {
-  const [riddleThemes, studyThemes, openingVariantThemes] = await Promise.all([
-    riddleThemeRepo.findAllWithTheme(supabase),
+  const [puzzleThemes, studyThemes, openingVariantThemes] = await Promise.all([
+    puzzleThemeRepo.findAllWithTheme(supabase),
     studyThemeRepo.findAllWithTheme(supabase),
     openingVariantThemeRepo.findAllWithTheme(supabase),
   ]);
 
   const links: AdminThemeLink[] = [
-    ...riddleThemes.map((item) => toAdminThemeLink("riddle", item.riddleId, item)),
+    ...puzzleThemes.map((item) => toAdminThemeLink("puzzle", item.puzzleId, item)),
     ...studyThemes.map((item) => toAdminThemeLink("study", item.studyId, item)),
     ...openingVariantThemes.map((item) => toAdminThemeLink("opening_variant", item.openingVariantId, item)),
   ];
@@ -50,9 +50,9 @@ export async function getAdminThemeLinkByKindAndId(
   kind: ThemeLinkKind,
   id: string,
 ): Promise<AdminThemeLink | null> {
-  if (kind === "riddle") {
-    const item = await riddleThemeRepo.findByIdWithTheme(supabase, id);
-    return item ? toAdminThemeLink("riddle", item.riddleId, item) : null;
+  if (kind === "puzzle") {
+    const item = await puzzleThemeRepo.findByIdWithTheme(supabase, id);
+    return item ? toAdminThemeLink("puzzle", item.puzzleId, item) : null;
   }
 
   if (kind === "study") {
@@ -75,14 +75,14 @@ export async function createAdminThemeLink(
   supabase: SupabaseClient,
   input: CreateAdminThemeLinkInput,
 ): Promise<AdminThemeLink | null> {
-  if (input.kind === "riddle") {
-    const link = await riddleThemeRepo.create(supabase, {
-      riddleId: input.parentId,
+  if (input.kind === "puzzle") {
+    const link = await puzzleThemeRepo.create(supabase, {
+      puzzleId: input.parentId,
       themeId: input.themeId,
       weight: input.weight,
     });
     if (!link) return null;
-    return getAdminThemeLinkByKindAndId(supabase, "riddle", link.id);
+    return getAdminThemeLinkByKindAndId(supabase, "puzzle", link.id);
   }
 
   if (input.kind === "study") {
@@ -110,8 +110,8 @@ export async function updateAdminThemeLink(
   id: string,
   input: { weight?: ThemeLinkWeight },
 ): Promise<AdminThemeLink | null> {
-  if (kind === "riddle") {
-    const link = await riddleThemeRepo.update(supabase, id, input);
+  if (kind === "puzzle") {
+    const link = await puzzleThemeRepo.update(supabase, id, input);
     return link ? getAdminThemeLinkByKindAndId(supabase, kind, link.id) : null;
   }
 
@@ -129,7 +129,7 @@ export async function deleteAdminThemeLink(
   kind: ThemeLinkKind,
   id: string,
 ): Promise<boolean> {
-  if (kind === "riddle") return riddleThemeRepo.remove(supabase, id);
+  if (kind === "puzzle") return puzzleThemeRepo.remove(supabase, id);
   if (kind === "study") return studyThemeRepo.remove(supabase, id);
   return openingVariantThemeRepo.remove(supabase, id);
 }

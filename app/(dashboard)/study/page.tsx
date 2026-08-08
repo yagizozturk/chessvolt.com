@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/page-header";
 import { StudyCard } from "@/features/study/components/study-card";
 import { StudyFilters } from "@/features/study/components/study-filters";
 import { StudyPagination } from "@/features/study/components/study-pagination";
-import { getActiveStudiesWithRiddleCountAndThemes } from "@/features/study/services/study.service";
+import { getActiveStudiesWithPuzzleCountAndThemes } from "@/features/study/services/study.service";
 import type { StudyPageSearchParams } from "@/features/study/types/study-search-params";
 import {
   filterStudies,
@@ -24,9 +24,9 @@ export default async function StudyPage({ searchParams }: { searchParams: StudyP
   const params = await searchParams;
 
   // ========================================================================
-  // Get active studies with riddle count and themes
+  // Get active studies with puzzle count and themes
   // ========================================================================
-  const studies = await getActiveStudiesWithRiddleCountAndThemes(supabase);
+  const studies = await getActiveStudiesWithPuzzleCountAndThemes(supabase);
 
   // ========================================================================
   // Parse study filter state from theme filter, difficulty filter and
@@ -60,7 +60,7 @@ export default async function StudyPage({ searchParams }: { searchParams: StudyP
         {/* Page header */}
         <PageHeader
           title="Studies"
-          description="Explore curated riddle studies."
+          description="Explore curated puzzle studies."
           actions={
             studies.length > 0 ? (
               <StudyFilters

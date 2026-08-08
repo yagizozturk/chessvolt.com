@@ -10,7 +10,7 @@ import {
   startSequenceAttempt,
   updateSequenceAttempt,
 } from "@/features/user-sequence-attempt/api/sequence-attempt";
-import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
+import type { PuzzleAttemptStatus } from "@/features/user-sequence-attempt/types/puzzle-attempt-status";
 
 type AttemptCounters = Omit<UpdateSequenceAttemptPayload, "attemptId" | "status">;
 
@@ -66,7 +66,7 @@ export function useSequenceAttempt(sequenceId: string, replayKey = 0) {
   }, [sequenceId]);
 
   const updateAttemptResults = useCallback(
-    async (status: RiddleAttemptStatus, counters?: AttemptCounters): Promise<VoltScoreResult | null> => {
+    async (status: PuzzleAttemptStatus, counters?: AttemptCounters): Promise<VoltScoreResult | null> => {
       const attemptId = await ensureAttemptStarted();
       if (!attemptId) return null;
 

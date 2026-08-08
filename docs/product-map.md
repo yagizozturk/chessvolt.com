@@ -11,10 +11,10 @@ Last updated: 2025-06-05
 ChessVolt is a chess training app where users:
 
 1. Sign up and complete onboarding
-2. Browse curated **studies** of chess **riddles** (interactive move sequences from real games)
-3. Play riddles on an interactive board, earn **volt scores**, and track progress
+2. Browse curated **studies** of chess **puzzles** (interactive move sequences from real games)
+3. Play puzzles on an interactive board, earn **volt scores**, and track progress
 4. Practice **openings** via variants and arrow drills
-5. Save riddles to **my studies** (custom studies)
+5. Save puzzles to **my studies** (custom studies)
 
 Content is managed through an **admin** panel. Auth and data are backed by **Supabase**.
 
@@ -30,16 +30,16 @@ Content is managed through an **admin** panel. Auth and data are backed by **Sup
 | Auth callback        | `/auth/callback`                                            | `lib/supabase`                                                                                     | OAuth / email confirmation              |
 | Onboarding           | `/onboarding`                                               | `onboarding`, `onboarding-question`, `onboarding-option`, `user-onboarding-answer`, `profile`      | Gated by middleware                     |
 | Browse studies       | `/study`                                                    | `study`, `content-theme`, `theme`                                                                  | Filterable list with themes             |
-| Study detail         | `/study/[slug]`                                             | `study`, `riddle`, `study-riddles`, `game`, `user-sequence-attempt`                                | Riddle cards with progress + volt       |
-| Play a riddle        | `/study/[slug]/riddle/[id]`                                 | `riddle`, `move-sequence`, `user-sequence-attempt`, `user-sequence-attempt-event`, `study-riddles` | Core play loop                          |
+| Study detail         | `/study/[slug]`                                             | `study`, `puzzle`, `study-puzzles`, `game`, `user-sequence-attempt`                                | Puzzle cards with progress + volt       |
+| Play a puzzle        | `/study/[slug]/puzzle/[id]`                                 | `puzzle`, `move-sequence`, `user-sequence-attempt`, `user-sequence-attempt-event`, `study-puzzles` | Core play loop                          |
 | My Practices         | `/my-practices`                                             | `study`, `user-practice-opening-variant`                                                           | Custom studies + practice openings tabs |
 | Openings list        | `/openings`                                                 | `openings`                                                                                         | Filter by opening type                  |
 | Opening detail       | `/openings/[slug]/[id]`                                     | `openings`                                                                                         | Variants for one opening                |
-| Play opening variant | `/openings/variant/[id]`                                    | `openings`, `move-sequence`, `user-sequence-attempt`, `user-practice-opening-variant`              | Same play loop as riddles               |
+| Play opening variant | `/openings/variant/[id]`                                    | `openings`, `move-sequence`, `user-sequence-attempt`, `user-practice-opening-variant`              | Same play loop as puzzles               |
 
 ---
 
-## Core play loop (shared by riddles & openings)
+## Core play loop (shared by puzzles & openings)
 
 Most interactive training modes follow the same pipeline:
 
@@ -68,7 +68,7 @@ Key shared pieces:
 
 Entry points to trace first:
 
-- `app/(dashboard)/study/[slug]/riddle/[id]/page.tsx` → `features/riddle/components/riddle-controller.tsx`
+- `app/(dashboard)/study/[slug]/puzzle/[id]/page.tsx` → `features/puzzle/components/puzzle-controller.tsx`
 - `app/(dashboard)/openings/variant/[id]/page.tsx` → `features/openings/components/opening-variant-controller.tsx`
 - `app/(dashboard)/study/[slug]/page.tsx` → study list + attempt summaries
 
@@ -102,7 +102,7 @@ types/ → repository/ → mapper/ → services/ → components/ | hooks/ | acti
 | `study`                         | Studies (curated + custom), filters, headers  |
 | `contact`                       | Contact form + message storage                |
 | `content-theme`                 | Content theme links (study ↔ theme weighting) |
-| `game`                          | Chess games (PGN source for riddles)          |
+| `game`                          | Chess games (PGN source for puzzles)          |
 | `home`                          | Dashboard navbar                              |
 | `landing`                       | Marketing pages (hero, features, footer)      |
 | `move-sequence`                 | Move sequences, goals, play controller hook   |
@@ -111,8 +111,8 @@ types/ → repository/ → mapper/ → services/ → components/ | hooks/ | acti
 | `onboarding-question`           | Onboarding questions                          |
 | `openings`                      | Openings, variants, practice UI               |
 | `profile`                       | User profile + onboarding status              |
-| `riddle`                        | Riddles, board cards, play controller         |
-| `study-riddles`                 | Many-to-many: riddles ↔ studies               |
+| `puzzle`                        | Puzzles, board cards, play controller         |
+| `study-puzzles`                 | Many-to-many: puzzles ↔ studies               |
 | `theme`                         | Theme categories and badges                   |
 | `tts`                           | Text-to-speech config, cache, controller      |
 | `user-onboarding-answer`        | Saved onboarding answers per user             |
@@ -144,8 +144,8 @@ Rule of thumb: domain UI → `features/{domain}/components`. Shared chess/UI →
 | ---------- | -------------------------------------------- | ----------------------------------------------- |
 | Dashboard  | `/admin`                                     | Overview                                        |
 | Users      | `/admin/users`                               | User list                                       |
-| Games      | `/admin/games/*`                             | PGN games (riddle source)                       |
-| Riddles    | `/admin/riddles/*`                           | Create/edit/bulk riddles                        |
+| Games      | `/admin/games/*`                             | PGN games (puzzle source)                       |
+| Puzzles    | `/admin/puzzles/*`                           | Create/edit/bulk puzzles                        |
 | Studies    | `/admin/studies/*`                           | Curated studies                                 |
 | Themes     | `/admin/themes/*`, `/admin/content-themes/*` | Theme tags + content theme weights              |
 | Onboarding | `/admin/onboarding-*`                        | Questions, options, option themes, user answers |

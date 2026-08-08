@@ -1,5 +1,5 @@
 import { DEFAULT_STUDY_DIFFICULTY } from "@/features/study/constants/study-difficulty.constants";
-import type { Study, StudyWithRiddleCount } from "@/features/study/types/study";
+import type { Study, StudyWithPuzzleCount } from "@/features/study/types/study";
 import type { StudyDifficulty } from "@/features/study/types/study-difficulty";
 import { parseStudyDifficulty } from "@/features/study/utilities/study-difficulty.utils";
 
@@ -22,13 +22,13 @@ export type DbStudy = {
 };
 
 // ============================================================================
-// Row shape when a study query embeds a riddle count aggregate,
-// e.g. `select("*, study_riddles(count)")`.
+// Row shape when a study query embeds a puzzle count aggregate,
+// e.g. `select("*, study_puzzles(count)")`.
 // PostgREST returns the aggregate as an array with one object: `[{ count: N }]`.
 // Moved here from the repository so DB shapes and mapping live in one place.
 // ============================================================================
-export type DbStudyWithRiddleCount = DbStudy & {
-  study_riddles: [{ count: number }] | null;
+export type DbStudyWithPuzzleCount = DbStudy & {
+  study_puzzles: [{ count: number }] | null;
 };
 
 // ============================================================================
@@ -52,11 +52,11 @@ export function toStudy(db: DbStudy): Study {
 }
 
 // ============================================================================
-// Maps a study row that includes `study_riddles(count)` to `StudyWithRiddleCount`.
-// Reads the aggregate count from `study_riddles[0].count`, defaulting to 0 when missing.
-// Shared by study repository queries and extended by `toStudyWithRiddleCountAndThemes`.
+// Maps a study row that includes `study_puzzles(count)` to `StudyWithPuzzleCount`.
+// Reads the aggregate count from `study_puzzles[0].count`, defaulting to 0 when missing.
+// Shared by study repository queries and extended by `toStudyWithPuzzleCountAndThemes`.
 // ============================================================================
-export function toStudyWithRiddleCount(db: DbStudyWithRiddleCount): StudyWithRiddleCount {
-  const riddleCount = db.study_riddles?.[0]?.count ?? 0;
-  return { ...toStudy(db), riddleCount };
+export function toStudyWithPuzzleCount(db: DbStudyWithPuzzleCount): StudyWithPuzzleCount {
+  const puzzleCount = db.study_puzzles?.[0]?.count ?? 0;
+  return { ...toStudy(db), puzzleCount };
 }

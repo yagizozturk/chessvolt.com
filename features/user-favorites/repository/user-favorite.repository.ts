@@ -23,7 +23,7 @@ export async function findByUserIdWithDetails(
 ): Promise<UserFavoriteWithDetails[]> {
   const { data, error } = await supabase
     .from("user_favorites")
-    .select("*, opening_variants (*, move_sequences (*)), riddles (*, move_sequences (*))")
+    .select("*, opening_variants (*, move_sequences (*)), puzzles (*, move_sequences (*))")
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
 
@@ -58,22 +58,22 @@ export async function findByUserAndOpeningVariantId(
 }
 
 // ==================================================================
-// Checking if riddle id is favorited
+// Checking if puzzle id is favorited
 // ==================================================================
-export async function findByRiddleId(
+export async function findByPuzzleId(
   supabase: SupabaseClient,
   userId: string,
-  riddleId: string,
+  puzzleId: string,
 ): Promise<UserFavorite | null> {
   const { data, error } = await supabase
     .from("user_favorites")
     .select("*")
     .eq("user_id", userId)
-    .eq("riddle_id", riddleId)
+    .eq("puzzle_id", puzzleId)
     .maybeSingle();
 
   if (error) {
-    console.error("user-favorites.repository.findByRiddleId error:", error);
+    console.error("user-favorites.repository.findByPuzzleId error:", error);
     return null;
   }
 
@@ -88,7 +88,7 @@ export async function create(supabase: SupabaseClient, input: SaveUserFavoriteIn
     .insert({
       user_id: input.userId,
       opening_variant_id: input.openingVariantId ?? null,
-      riddle_id: input.riddleId ?? null,
+      puzzle_id: input.puzzleId ?? null,
       is_pinned: input.isPinned ?? false,
       note: input.note ?? null,
     })

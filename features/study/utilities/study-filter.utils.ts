@@ -1,4 +1,4 @@
-import type { StudyWithRiddleCountAndThemes } from "@/features/study/types/study";
+import type { StudyWithPuzzleCountAndThemes } from "@/features/study/types/study";
 import type { StudyDifficulty } from "@/features/study/types/study-difficulty";
 import {
   STUDY_DIFFICULTY_OPTIONS,
@@ -15,7 +15,7 @@ const STUDY_PAGE_PATH = "/study";
 // themes, slug can show up many times. The Map keeps each theme once
 // so the dropdown doesn’t list duplicates.
 // ============================================================================
-export function getThemeFilterOptions(studies: StudyWithRiddleCountAndThemes[]): Theme[] {
+export function getThemeFilterOptions(studies: StudyWithPuzzleCountAndThemes[]): Theme[] {
   const themesBySlug = new Map<string, Theme>();
 
   for (const study of studies) {
@@ -63,7 +63,7 @@ function matchesDifficultyOption(difficulty: StudyDifficulty, option: StudyDiffi
 // Matches the search query to the study
 // Searching for title, description and even themes
 // ============================================================================
-function matchesSearchQuery(study: StudyWithRiddleCountAndThemes, searchQuery: string): boolean {
+function matchesSearchQuery(study: StudyWithPuzzleCountAndThemes, searchQuery: string): boolean {
   const normalizedQuery = searchQuery.trim().toLowerCase();
   if (!normalizedQuery) return true;
 
@@ -85,13 +85,13 @@ function matchesSearchQuery(study: StudyWithRiddleCountAndThemes, searchQuery: s
 // Filters the studies
 // ============================================================================
 export function filterStudies(
-  studies: StudyWithRiddleCountAndThemes[],
+  studies: StudyWithPuzzleCountAndThemes[],
   filters: StudyFilterState,
-): StudyWithRiddleCountAndThemes[] {
+): StudyWithPuzzleCountAndThemes[] {
   // e.g. "all" (no theme filter), "" (same as no filter), or a theme slug like "tactics" | "endgames"
   const themeSlug = filters.themeFilter.trim();
 
-  // e.g. [{ id: "…", title: "Italian Opening", difficulty: 2, riddleCount: 12, themes: [...] }] or [] when nothing matches
+  // e.g. [{ id: "…", title: "Italian Opening", difficulty: 2, puzzleCount: 12, themes: [...] }] or [] when nothing matches
   return studies.filter((study) => {
     const matchesSearch = matchesSearchQuery(study, filters.searchQuery);
     const matchesDifficulty = matchesDifficultyOption(study.difficulty, filters.difficultyFilter);

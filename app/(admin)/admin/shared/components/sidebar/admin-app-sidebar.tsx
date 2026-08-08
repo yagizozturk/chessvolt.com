@@ -40,15 +40,15 @@ const adminNavItems: AdminNavMainItem[] = [
     ],
   },
   {
-    title: "Riddles",
-    url: "/admin/riddles",
+    title: "Puzzles",
+    url: "/admin/puzzles",
     icon: <HelpCircleIcon />,
     items: [
-      { title: "All riddles", url: "/admin/riddles" },
-      { title: "PGN + ply", url: "/admin/riddles/new/pgn-ply" },
-      { title: "From game", url: "/admin/riddles/new/from-game" },
-      { title: "Bulk PGN", url: "/admin/riddles/new/bulk" },
-      { title: "Lichess CSV", url: "/admin/riddles/new/lichess" },
+      { title: "All puzzles", url: "/admin/puzzles" },
+      { title: "PGN + ply", url: "/admin/puzzles/new/pgn-ply" },
+      { title: "From game", url: "/admin/puzzles/new/from-game" },
+      { title: "Bulk PGN", url: "/admin/puzzles/new/bulk" },
+      { title: "Lichess CSV", url: "/admin/puzzles/new/lichess" },
     ],
   },
   {

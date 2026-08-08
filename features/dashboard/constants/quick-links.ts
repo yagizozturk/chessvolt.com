@@ -1,13 +1,13 @@
 export const QUICK_LINKS = [
   {
     title: "Favorites",
-    description: "Favorite openings and riddles to check your Volt score.",
+    description: "Favorite openings and puzzles to check your Volt score.",
     href: "/favorites",
     icon: "/images/icons/icon-favorite.png",
   },
   {
     title: "Library",
-    description: "Browse curated riddle studies.",
+    description: "Browse curated puzzle studies.",
     href: "/study",
     icon: "/images/icons/icon-library-tr.png",
   },
@@ -18,9 +18,9 @@ export const QUICK_LINKS = [
     icon: "/images/icons/icon-openings.png",
   },
   {
-    title: "Riddles",
-    description: "Discover random riddles by theme.",
-    href: "/riddles",
-    icon: "/images/icons/icon-riddle.png",
+    title: "Puzzles",
+    description: "Discover random puzzles by theme.",
+    href: "/puzzles",
+    icon: "/images/icons/icon-puzzle.png",
   },
 ] as const;

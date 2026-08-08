@@ -1,6 +1,6 @@
 # Accuracy calculator
 
-Computes a **0–100% accuracy** score for one solve attempt. Used live on the riddle page and inside Volt when scoring stored attempts.
+Computes a **0–100% accuracy** score for one solve attempt. Used live on the puzzle page and inside Volt when scoring stored attempts.
 
 ## Files
 
@@ -74,7 +74,7 @@ If `totalMoveCount <= 0`, return `basePercent` (100).
 <AccuracyCalculator wrongMoveCount={wrongMoveCount} hintCount={hintCount} totalMoveCount={getPlayerMoveCount(moves)} />
 ```
 
-Wired in `features/riddle/components/riddle-controller.tsx` with live refs and `attemptStatsTick` re-renders on wrong moves and hints.
+Wired in `features/puzzle/components/puzzle-controller.tsx` with live refs and `attemptStatsTick` re-renders on wrong moves and hints.
 
 ## Calibration
 

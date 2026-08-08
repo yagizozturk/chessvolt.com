@@ -1,10 +1,10 @@
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeaderWithImage } from "@/components/page-header";
-import { StudyRiddlesPagination } from "@/features/study/components/study-riddles-pagination";
-import { loadStudyRiddles } from "@/features/study/loaders/study-riddles-page.loader";
+import { StudyPuzzlesPagination } from "@/features/study/components/study-puzzles-pagination";
+import { loadStudyPuzzles } from "@/features/study/loaders/study-puzzles-page.loader";
 import { getStudyCoverImageSrc } from "@/features/study/utilities/study-cover-image.utils";
-import { getPaginationParams } from "@/features/study/utilities/study-riddles-pagination.utils";
-import { RiddleBoardCard } from "@/features/riddle/components/riddle-board-card";
+import { getPaginationParams } from "@/features/study/utilities/study-puzzles-pagination.utils";
+import { PuzzleBoardCard } from "@/features/puzzle/components/puzzle-board-card";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Props = {
@@ -19,9 +19,9 @@ export default async function StudyDetailPage({ params, searchParams }: Props) {
   const page = getPaginationParams(pageParam);
 
   // ==================================================================
-  // Getting all study riddles from loader
+  // Getting all study puzzles from loader
   // ==================================================================
-  const { study, studyRiddles, pagination } = await loadStudyRiddles({
+  const { study, studyPuzzles, pagination } = await loadStudyPuzzles({
     supabase,
     user,
     slug,
@@ -39,14 +39,14 @@ export default async function StudyDetailPage({ params, searchParams }: Props) {
         />
 
         {/* Check If there are studies, if not, empty state */}
-        {pagination?.totalRiddleCount === 0 && <EmptyState message="No riddles found in this study." />}
+        {pagination?.totalPuzzleCount === 0 && <EmptyState message="No puzzles found in this study." />}
 
         {/* If there are studies, display them in a grid */}
         <div className="page-container-grid-data-layout">
-          {studyRiddles.map(({ riddle, game, href, displayFen, accuracyPercent, primaryTheme, isComplete }) => (
-            <RiddleBoardCard
-              key={riddle.id}
-              riddle={riddle}
+          {studyPuzzles.map(({ puzzle, game, href, displayFen, accuracyPercent, primaryTheme, isComplete }) => (
+            <PuzzleBoardCard
+              key={puzzle.id}
+              puzzle={puzzle}
               game={game}
               boardWrapperClassName="aspect-square w-[180px] shrink-0"
               href={href}
@@ -60,7 +60,7 @@ export default async function StudyDetailPage({ params, searchParams }: Props) {
 
         {/* If there are studies and pages, display the pagination navigator */}
         {pagination ? (
-          <StudyRiddlesPagination
+          <StudyPuzzlesPagination
             basePath={`/study/${slug}`}
             page={pagination.page}
             totalPages={pagination.totalPages}

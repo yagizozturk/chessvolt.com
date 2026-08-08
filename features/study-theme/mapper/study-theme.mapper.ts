@@ -1,6 +1,6 @@
 import type { StudyTheme, StudyThemeWithTheme } from "@/features/study-theme/types/study-theme";
-import { type DbStudyWithRiddleCount, toStudyWithRiddleCount } from "@/features/study/mapper/study.mapper";
-import type { StudyWithRiddleCountAndThemes } from "@/features/study/types/study";
+import { type DbStudyWithPuzzleCount, toStudyWithPuzzleCount } from "@/features/study/mapper/study.mapper";
+import type { StudyWithPuzzleCountAndThemes } from "@/features/study/types/study";
 import { parseThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 import { type DbTheme, toTheme } from "@/features/theme/mapper/theme.mapper";
 
@@ -62,7 +62,7 @@ export function toStudyThemesWithTheme(rows: DbStudyThemeWithTheme[]): StudyThem
   return items;
 }
 
-export type DbStudyWithRiddleCountAndThemes = DbStudyWithRiddleCount & {
+export type DbStudyWithPuzzleCountAndThemes = DbStudyWithPuzzleCount & {
   study_themes: DbStudyThemeWithTheme[] | null;
 };
 
@@ -81,9 +81,9 @@ export function takeTopStudyThemes(
   return themes.slice(0, limit);
 }
 
-export function toStudyWithRiddleCountAndThemes(db: DbStudyWithRiddleCountAndThemes): StudyWithRiddleCountAndThemes {
+export function toStudyWithPuzzleCountAndThemes(db: DbStudyWithPuzzleCountAndThemes): StudyWithPuzzleCountAndThemes {
   return {
-    ...toStudyWithRiddleCount(db),
+    ...toStudyWithPuzzleCount(db),
     themes: sortStudyThemesByWeight(toStudyThemesWithTheme(db.study_themes ?? [])),
   };
 }

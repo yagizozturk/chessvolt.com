@@ -34,7 +34,7 @@ export default async function AdminCreateStudyPage({ searchParams }: Props) {
       <Card>
         <CardHeader>
           <CardTitle>New study</CardTitle>
-          <CardDescription>Create a study to group riddles on the public site.</CardDescription>
+          <CardDescription>Create a study to group puzzles on the public site.</CardDescription>
         </CardHeader>
         <CardContent>
           <StudyForm />

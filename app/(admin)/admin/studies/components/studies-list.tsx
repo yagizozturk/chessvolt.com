@@ -6,17 +6,17 @@ import { deleteStudyAction } from "@/app/(admin)/admin/studies/actions/studies";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type { StudyWithRiddleCount } from "@/features/study/types/study";
+import type { StudyWithPuzzleCount } from "@/features/study/types/study";
 import { formatStudyDifficultyLabel } from "@/features/study/utilities/study-difficulty.utils";
-import { formatStudyRiddleCount } from "@/features/study/utilities/study-riddle-count-format.utils";
+import { formatStudyPuzzleCount } from "@/features/study/utilities/study-puzzle-count-format.utils";
 
 type Props = {
-  studies: StudyWithRiddleCount[];
+  studies: StudyWithPuzzleCount[];
 };
 
 export function StudiesList({ studies }: Props) {
   async function handleDelete(id: string, title: string) {
-    if (!confirm(`Delete "${title}"? Riddle links in this study will also be removed.`)) return;
+    if (!confirm(`Delete "${title}"? Puzzle links in this study will also be removed.`)) return;
     await deleteStudyAction(id);
   }
 
@@ -41,7 +41,7 @@ export function StudiesList({ studies }: Props) {
           </div>
           <p className="text-muted-foreground line-clamp-2 text-xs">{study.description || "No description"}</p>
           <p className="text-muted-foreground text-xs">
-            {formatStudyDifficultyLabel(study.difficulty)} · {formatStudyRiddleCount(study.riddleCount)} ·
+            {formatStudyDifficultyLabel(study.difficulty)} · {formatStudyPuzzleCount(study.puzzleCount)} ·
             /{study.slug}
           </p>
           <div className="mt-auto flex flex-wrap gap-2">

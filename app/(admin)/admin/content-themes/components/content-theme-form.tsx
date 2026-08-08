@@ -20,7 +20,7 @@ type Props = {
   themes: Theme[];
 };
 
-const DEFAULT_KIND: ThemeLinkKind = "riddle";
+const DEFAULT_KIND: ThemeLinkKind = "puzzle";
 
 export function ContentThemeForm({ themes }: Props) {
   const [kind, setKind] = useState<ThemeLinkKind>(DEFAULT_KIND);
@@ -44,7 +44,7 @@ export function ContentThemeForm({ themes }: Props) {
           <Input
             name="parentId"
             required
-            placeholder="UUID of the riddle, study, or opening variant"
+            placeholder="UUID of the puzzle, study, or opening variant"
             className="font-mono text-sm"
           />
           <p className="text-muted-foreground mt-1 text-xs">

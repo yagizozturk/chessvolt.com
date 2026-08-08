@@ -15,5 +15,5 @@ export function filterThemes(themes: Theme[], searchQuery: string): Theme[] {
 
 export function buildThemeFilterUrl(searchQuery: string): string {
   const q = searchQuery.trim();
-  return q ? `/riddles?q=${encodeURIComponent(q)}` : "/riddles";
+  return q ? `/puzzles?q=${encodeURIComponent(q)}` : "/puzzles";
 }

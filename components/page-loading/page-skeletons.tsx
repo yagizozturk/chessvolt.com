@@ -66,7 +66,7 @@ type BoardCardSkeletonProps = {
   metaLineCount?: number;
 };
 
-/** Mirrors `RiddleBoardCard` / `OpeningBoardCard` with a smaller board on mobile. */
+/** Mirrors `PuzzleBoardCard` / `OpeningBoardCard` with a smaller board on mobile. */
 export function BoardCardSkeleton({ compact = false, metaLineCount = 2 }: BoardCardSkeletonProps) {
   return (
     <div className="bg-card border-b-card-shadow flex flex-row items-stretch gap-3 rounded-lg border-b-[6px] p-3 sm:gap-6 sm:p-6">
@@ -143,8 +143,8 @@ export function ThemeListSkeleton({
   );
 }
 
-/** Mirrors `RiddleController` board + side panel layout. */
-export function RiddleControllerSkeleton() {
+/** Mirrors `PuzzleController` board + side panel layout. */
+export function PuzzleControllerSkeleton() {
   return (
     <div className="page-container">
       <div className="page-container-controller-layout">

@@ -1,6 +1,6 @@
 # Volt calculator
 
-Aggregates a user’s **historical attempts** on one riddle or opening variant into a single **Volt** score (e.g. **110/220 Volt**), with a per-day breakdown for detail views.
+Aggregates a user’s **historical attempts** on one puzzle or opening variant into a single **Volt** score (e.g. **110/220 Volt**), with a per-day breakdown for detail views.
 
 Volt composes the three sub-calculators: **accuracy**, **rating–timing**, and **streak**.
 
@@ -17,7 +17,7 @@ Volt composes the three sub-calculators: **accuracy**, **rating–timing**, and 
 
 ## Scope
 
-- **One move sequence** = one riddle or one opening variant (`sequenceId`).
+- **One move sequence** = one puzzle or one opening variant (`sequenceId`).
 - **Logged-in user** only; guests get `result: null`.
 - Data source: `user_sequence_attempt` rows (`getAttemptsByUserAndSequence`).
 
@@ -75,7 +75,7 @@ attemptScore = accuracyPercent × 0.6
 ```
 
 - `totalMoveCount` = **player half-moves** via `getPlayerMoveCount(moves)` (excludes opponent auto-replies).
-- `rating` from `getRiddleRatingForScoring(riddle.rating)` on riddles (defaults to **1600** when null); opening variants use `defaultOpeningVariantRating` (**2000**) or a custom value.
+- `rating` from `getPuzzleRatingForScoring(puzzle.rating)` on puzzles (defaults to **1600** when null); opening variants use `defaultOpeningVariantRating` (**2000**) or a custom value.
 
 ---
 
@@ -186,17 +186,17 @@ VoltAttemptBreakdown = {
 
 ## Integration
 
-### Server (riddle / variant page)
+### Server (puzzle / variant page)
 
 ```ts
 calculateVoltScore({
   attempts: await getAttemptsByUserAndSequence(supabase, userId, sequenceId),
-  totalMoveCount: getPlayerMoveCount(riddle.moveSequence.moves),
-  rating: getRiddleRatingForScoring(riddle.rating),
+  totalMoveCount: getPlayerMoveCount(puzzle.moveSequence.moves),
+  rating: getPuzzleRatingForScoring(puzzle.rating),
 });
 ```
 
-Passed to `RiddleController` / `OpeningVariantController` → `<VoltCalculator result={voltScore} />`.
+Passed to `PuzzleController` / `OpeningVariantController` → `<VoltCalculator result={voltScore} />`.
 
 ### Refresh behavior
 

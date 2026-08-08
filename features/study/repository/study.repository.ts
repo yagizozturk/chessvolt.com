@@ -1,9 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { toStudyWithRiddleCountAndThemes } from "@/features/study-theme/mapper/study-theme.mapper";
+import { toStudyWithPuzzleCountAndThemes } from "@/features/study-theme/mapper/study-theme.mapper";
 import { DEFAULT_STUDY_DIFFICULTY } from "@/features/study/constants/study-difficulty.constants";
-import { toStudy, toStudyWithRiddleCount } from "@/features/study/mapper/study.mapper";
-import type { Study, StudyWithRiddleCount, StudyWithRiddleCountAndThemes } from "@/features/study/types/study";
+import { toStudy, toStudyWithPuzzleCount } from "@/features/study/mapper/study.mapper";
+import type { Study, StudyWithPuzzleCount, StudyWithPuzzleCountAndThemes } from "@/features/study/types/study";
 import type { CreateStudyPayload, UpdateStudyPayload } from "@/features/study/types/study-payload";
 import { slugify } from "@/lib/utils/slugify";
 
@@ -29,46 +29,46 @@ export async function findAllStudies(supabase: SupabaseClient): Promise<Study[]>
   return (data ?? []).map(toStudy);
 }
 
-const STUDY_WITH_RIDDLE_COUNT_AND_THEMES_SELECT =
-  "*, study_riddles(count), study_themes(id, study_id, theme_id, weight, created_at, themes(*))";
+const STUDY_WITH_PUZZLE_COUNT_AND_THEMES_SELECT =
+  "*, study_puzzles(count), study_themes(id, study_id, theme_id, weight, created_at, themes(*))";
 
 // ============================================================================
-// Finding all studies with Riddle Count
+// Finding all studies with Puzzle Count
 // ============================================================================
-export async function findAllStudiesWithRiddleCount(supabase: SupabaseClient): Promise<StudyWithRiddleCount[]> {
+export async function findAllStudiesWithPuzzleCount(supabase: SupabaseClient): Promise<StudyWithPuzzleCount[]> {
   const { data, error } = await supabase
     .from("studies")
-    .select("*, study_riddles(count)")
+    .select("*, study_puzzles(count)")
     .order("sort_order", { ascending: true })
     .order("title", { ascending: true });
 
   if (error) {
-    console.error("study.repository.findAllStudiesWithRiddleCount error:", error);
+    console.error("study.repository.findAllStudiesWithPuzzleCount error:", error);
     return [];
   }
 
-  return (data ?? []).map(toStudyWithRiddleCount);
+  return (data ?? []).map(toStudyWithPuzzleCount);
 }
 
 // ============================================================================
-// Finding all ACTIVE studies with Riddle Count and Themes
+// Finding all ACTIVE studies with Puzzle Count and Themes
 // ============================================================================
-export async function findAllActiveStudiesWithRiddleCountAndThemes(
+export async function findAllActiveStudiesWithPuzzleCountAndThemes(
   supabase: SupabaseClient,
-): Promise<StudyWithRiddleCountAndThemes[]> {
+): Promise<StudyWithPuzzleCountAndThemes[]> {
   const { data, error } = await supabase
     .from("studies")
-    .select(STUDY_WITH_RIDDLE_COUNT_AND_THEMES_SELECT)
+    .select(STUDY_WITH_PUZZLE_COUNT_AND_THEMES_SELECT)
     .eq("is_active", true)
     .order("sort_order", { ascending: true })
     .order("title", { ascending: true });
 
   if (error) {
-    console.error("study.repository.findAllActiveStudiesWithRiddleCountAndThemes error:", error);
+    console.error("study.repository.findAllActiveStudiesWithPuzzleCountAndThemes error:", error);
     return [];
   }
 
-  return (data ?? []).map((row) => toStudyWithRiddleCountAndThemes(row));
+  return (data ?? []).map((row) => toStudyWithPuzzleCountAndThemes(row));
 }
 
 // ============================================================================

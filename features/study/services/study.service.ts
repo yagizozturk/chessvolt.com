@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as studyRepo from "@/features/study/repository/study.repository";
-import type { Study, StudyWithRiddleCount, StudyWithRiddleCountAndThemes } from "@/features/study/types/study";
+import type { Study, StudyWithPuzzleCount, StudyWithPuzzleCountAndThemes } from "@/features/study/types/study";
 import type { CreateStudyPayload, UpdateStudyPayload } from "@/features/study/types/study-payload";
 
 // ============================================================================
@@ -12,10 +12,10 @@ export async function getAllStudies(supabase: SupabaseClient): Promise<Study[]> 
 }
 
 // ============================================================================
-// Getting all studies with Riddle Count
+// Getting all studies with Puzzle Count
 // ============================================================================
-export async function getAllStudiesWithRiddleCount(supabase: SupabaseClient): Promise<StudyWithRiddleCount[]> {
-  return studyRepo.findAllStudiesWithRiddleCount(supabase);
+export async function getAllStudiesWithPuzzleCount(supabase: SupabaseClient): Promise<StudyWithPuzzleCount[]> {
+  return studyRepo.findAllStudiesWithPuzzleCount(supabase);
 }
 
 // ============================================================================
@@ -33,12 +33,12 @@ export async function getStudyBySlug(supabase: SupabaseClient, slug: string): Pr
 }
 
 // ============================================================================
-// Getting ACTIVE studies with Riddle Count and Themes related
+// Getting ACTIVE studies with Puzzle Count and Themes related
 // ============================================================================
-export async function getActiveStudiesWithRiddleCountAndThemes(
+export async function getActiveStudiesWithPuzzleCountAndThemes(
   supabase: SupabaseClient,
-): Promise<StudyWithRiddleCountAndThemes[]> {
-  return studyRepo.findAllActiveStudiesWithRiddleCountAndThemes(supabase);
+): Promise<StudyWithPuzzleCountAndThemes[]> {
+  return studyRepo.findAllActiveStudiesWithPuzzleCountAndThemes(supabase);
 }
 
 // ============================================================================

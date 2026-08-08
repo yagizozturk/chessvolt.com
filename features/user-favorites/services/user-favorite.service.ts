@@ -19,12 +19,12 @@ export async function getUserFavoriteByUserAndOpeningVariant(
 }
 
 // ==================================================================
-// Checking if riddle id is favorited by querying riddle id in userFavorite repo
+// Checking if puzzle id is favorited by querying puzzle id in userFavorite repo
 // ==================================================================
-export async function getFavoriteByRiddleId(
+export async function getFavoriteByPuzzleId(
   supabase: SupabaseClient,
   userId: string,
-  riddleId: string,
+  puzzleId: string,
 ): Promise<UserFavorite | null> {
-  return userFavoriteRepo.findByRiddleId(supabase, userId, riddleId);
+  return userFavoriteRepo.findByPuzzleId(supabase, userId, puzzleId);
 }

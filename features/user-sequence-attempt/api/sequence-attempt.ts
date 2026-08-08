@@ -2,7 +2,7 @@ import { apiClient } from "@/api-client/client";
 import type { SequenceVoltScoring } from "@/components/calculator/volt-calculator/get-sequence-volt-score";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import type { SequenceAttemptEventType } from "@/features/user-sequence-attempt-event/types/sequence-attempt-event-type";
-import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
+import type { PuzzleAttemptStatus } from "@/features/user-sequence-attempt/types/puzzle-attempt-status";
 
 export type StartSequenceAttemptResponse = {
   success: boolean;
@@ -22,7 +22,7 @@ export type RecordSequenceAttemptEventResponse = {
 
 export type UpdateSequenceAttemptPayload = {
   attemptId: string;
-  status: RiddleAttemptStatus;
+  status: PuzzleAttemptStatus;
   durationMs?: number | null;
   correctMoveCount?: number;
   wrongMoveCount?: number;

@@ -1,9 +1,9 @@
-import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
+import type { PuzzleAttemptStatus } from "@/features/user-sequence-attempt/types/puzzle-attempt-status";
 
 // ================================================================================================
-// Maps and returns complete status to show icons on the riddleboard
+// Maps and returns complete status to show icons on the puzzleboard
 // ================================================================================================
-export function attemptStatusToIsComplete(status: RiddleAttemptStatus | undefined): boolean | undefined {
+export function attemptStatusToIsComplete(status: PuzzleAttemptStatus | undefined): boolean | undefined {
   if (status === "completed") return true;
   if (status === "failed") return false;
   return undefined;

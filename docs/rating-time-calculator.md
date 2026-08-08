@@ -14,7 +14,7 @@ Computes a **0–100% timing** score for one solve attempt based on **how long**
 
 | Field        | Meaning                                                                                       |
 | ------------ | --------------------------------------------------------------------------------------------- |
-| `rating`     | Elo-style difficulty (e.g. 1200–2600); riddles use `getRiddleRatingForScoring(riddle.rating)` |
+| `rating`     | Elo-style difficulty (e.g. 1200–2600); puzzles use `getPuzzleRatingForScoring(puzzle.rating)` |
 | `durationMs` | Elapsed solve time in ms; `null` or `≤ 0` → full score (not started)                          |
 
 ## Config
@@ -45,12 +45,12 @@ Between two rows, `fullTimeMs` is **linearly interpolated**. Rating is clamped t
 | `graceDurationRatio`          | `2/3`   | Grace length = `fullTimeMs × ratio` |
 | `defaultOpeningVariantRating` | `2000`  | When variant has no rating field    |
 
-### Riddle rating for scoring
+### Puzzle rating for scoring
 
-Riddles store an explicit `rating` (100–3000). For timing/Volt:
+Puzzles store an explicit `rating` (100–3000). For timing/Volt:
 
 ```ts
-getRiddleRatingForScoring(riddle.rating); // null → DEFAULT_RIDDLE_RATING (1600)
+getPuzzleRatingForScoring(puzzle.rating); // null → DEFAULT_PUZZLE_RATING (1600)
 ```
 
 ## Step 1 — Full-score time
@@ -106,14 +106,14 @@ timing = round(clamp(basePercent - penaltyRatio × gracePenaltyWeight, 0, basePe
 <RatingTimingCalculator rating={timingRating} durationMs={elapsedMs} />
 ```
 
-- `timingRating` from `getRiddleRatingForScoring(riddle.rating)`
+- `timingRating` from `getPuzzleRatingForScoring(puzzle.rating)`
 - `elapsedMs` updated every 500 ms while solving; frozen on completion
 
 ## Calibration
 
 1. Edit rows in `RATING_TIMING_INTERVALS` for per-rating time budgets.
 2. Edit `gracePenaltyWeight` / `graceDurationRatio` for how harsh overtime is.
-3. Edit `DEFAULT_RIDDLE_RATING` in `features/riddle/types/riddle-rating.ts` for unrated riddles.
+3. Edit `DEFAULT_PUZZLE_RATING` in `features/puzzle/types/puzzle-rating.ts` for unrated puzzles.
 
 ## Exported helpers
 

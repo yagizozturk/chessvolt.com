@@ -1,17 +1,17 @@
 /**
  * Grand Volt Score
  *
- * Computes the user's total Volt across all riddles and opening variants they played
+ * Computes the user's total Volt across all puzzles and opening variants they played
  * within the standard Volt lookback window (VOLT_CONFIG.lookbackMonths, default 3 months).
  *
  * Pipeline:
  * 1. Load all user_sequence_attempts since lookback start.
  * 2. Collect distinct sequence_id values from those attempts.
- * 3. Resolve each sequence to a riddle or opening variant (for move count + rating).
+ * 3. Resolve each sequence to a puzzle or opening variant (for move count + rating).
  * 4. Reuse getVoltScoresBySequenceId (same logic as study / practice-list pages).
  * 5. Sum volt and maxVolt across all resolved sequences.
  *
- * Sequences with attempts but no matching riddle/variant row are skipped (orphaned data).
+ * Sequences with attempts but no matching puzzle/variant row are skipped (orphaned data).
  */
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import {
@@ -25,43 +25,43 @@ import {
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { getVoltLookbackStart, VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
 import * as openingVariantRepo from "@/features/openings/repository/opening-variant.repository";
-import * as riddleRepo from "@/features/riddle/repository/riddle.repository";
-import { getRiddleRatingForScoring } from "@/features/riddle/types/riddle-rating";
+import * as puzzleRepo from "@/features/puzzle/repository/puzzle.repository";
+import { getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Maps DB rows to SequenceVoltContext inputs required by calculateVoltScore.
- * Riddles take precedence when a sequence_id appears in both tables (should not happen in practice).
+ * Puzzles take precedence when a sequence_id appears in both tables (should not happen in practice).
  */
 function buildSequenceContexts(
   sequenceIds: string[],
-  riddles: Awaited<ReturnType<typeof riddleRepo.findByMoveSequenceIds>>,
+  puzzles: Awaited<ReturnType<typeof puzzleRepo.findByMoveSequenceIds>>,
   openingVariants: Awaited<ReturnType<typeof openingVariantRepo.findByMoveSequenceIds>>,
 ): {
   contexts: SequenceVoltContext[];
-  riddleSequenceIds: Set<string>;
+  puzzleSequenceIds: Set<string>;
   openingVariantSequenceIds: Set<string>;
 } {
-  const riddleSequenceIds = new Set<string>();
+  const puzzleSequenceIds = new Set<string>();
   const openingVariantSequenceIds = new Set<string>();
   const contexts: SequenceVoltContext[] = [];
 
-  for (const riddle of riddles) {
-    const sequenceId = riddle.moveSequence.id;
+  for (const puzzle of puzzles) {
+    const sequenceId = puzzle.moveSequence.id;
     if (!sequenceIds.includes(sequenceId)) continue;
 
     contexts.push({
       sequenceId,
-      totalMoveCount: getPlayerMoveCount(riddle.moveSequence.moves),
-      rating: getRiddleRatingForScoring(riddle.rating),
+      totalMoveCount: getPlayerMoveCount(puzzle.moveSequence.moves),
+      rating: getPuzzleRatingForScoring(puzzle.rating),
     });
-    riddleSequenceIds.add(sequenceId);
+    puzzleSequenceIds.add(sequenceId);
   }
 
   for (const variant of openingVariants) {
     const sequenceId = variant.moveSequence.id;
-    if (!sequenceIds.includes(sequenceId) || riddleSequenceIds.has(sequenceId)) continue;
+    if (!sequenceIds.includes(sequenceId) || puzzleSequenceIds.has(sequenceId)) continue;
 
     contexts.push({
       sequenceId,
@@ -71,7 +71,7 @@ function buildSequenceContexts(
     openingVariantSequenceIds.add(sequenceId);
   }
 
-  return { contexts, riddleSequenceIds, openingVariantSequenceIds };
+  return { contexts, puzzleSequenceIds, openingVariantSequenceIds };
 }
 
 export async function getGrandVoltScore(
@@ -100,17 +100,17 @@ export async function getGrandVoltScore(
   }
 
   // ================================================================================================
-  // Step 3: Resolve sequence metadata — riddles and opening variants in parallel.
+  // Step 3: Resolve sequence metadata — puzzles and opening variants in parallel.
   // Each sequence needs totalMoveCount (player moves) and rating for timing/Volt scoring.
   // ================================================================================================
-  const [riddles, openingVariants] = await Promise.all([
-    riddleRepo.findByMoveSequenceIds(supabase, sequenceIds),
+  const [puzzles, openingVariants] = await Promise.all([
+    puzzleRepo.findByMoveSequenceIds(supabase, sequenceIds),
     openingVariantRepo.findByMoveSequenceIds(supabase, sequenceIds),
   ]);
 
-  const { contexts, riddleSequenceIds, openingVariantSequenceIds } = buildSequenceContexts(
+  const { contexts, puzzleSequenceIds, openingVariantSequenceIds } = buildSequenceContexts(
     sequenceIds,
-    riddles,
+    puzzles,
     openingVariants,
   );
 
@@ -127,11 +127,11 @@ export async function getGrandVoltScore(
   const voltScoresBySequenceId = getVoltScoresBySequenceId(attempts, contexts);
 
   // ================================================================================================
-  // Step 5: Sum totals and split by source (riddles vs opening variants) for Profile breakdown.
+  // Step 5: Sum totals and split by source (puzzles vs opening variants) for Profile breakdown.
   // ================================================================================================
   let volt = 0;
   let maxVolt = 0;
-  let riddleVolt = 0;
+  let puzzleVolt = 0;
   let openingVariantVolt = 0;
 
   for (const context of contexts) {
@@ -139,8 +139,8 @@ export async function getGrandVoltScore(
     volt += score.volt;
     maxVolt += score.maxVolt;
 
-    if (riddleSequenceIds.has(context.sequenceId)) {
-      riddleVolt += score.volt;
+    if (puzzleSequenceIds.has(context.sequenceId)) {
+      puzzleVolt += score.volt;
     } else if (openingVariantSequenceIds.has(context.sequenceId)) {
       openingVariantVolt += score.volt;
     }
@@ -151,9 +151,9 @@ export async function getGrandVoltScore(
     maxVolt,
     lookbackMonths: VOLT_CONFIG.lookbackMonths,
     sequenceCount: contexts.length,
-    riddleVolt,
+    puzzleVolt,
     openingVariantVolt,
-    riddleCount: riddleSequenceIds.size,
+    puzzleCount: puzzleSequenceIds.size,
     openingVariantCount: openingVariantSequenceIds.size,
   };
 }

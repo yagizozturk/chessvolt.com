@@ -56,7 +56,7 @@ type VoltBoardProps = {
 // With a forwardRef, parent can get a remote control on this board.
 // ref is the remoter control, parent uses it to call showHint()
 // VoltBoardHandle dışarıdan tetikelenebiliyor. Çünkü içerde hint ile ok çizmeye ihtiyaç var
-// Ok çizen de dışarıdaki parent da olan (riddlecontroller) hint button.
+// Ok çizen de dışarıdaki parent da olan (puzzlecontroller) hint button.
 // Function args (runtime): (props, ref) — props first, like a normal component,
 // then ref added. Different from forwardRef
 // ============================================================================

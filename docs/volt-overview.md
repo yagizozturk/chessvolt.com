@@ -19,12 +19,12 @@ Single attempt (live or stored)
   ├── computeRatingTimingPercent() → timing %
   └── computeStreakPercent()     → streak %
 
-Volt (historical, per riddle/variant)
+Volt (historical, per puzzle/variant)
   └── Combines many attempts over N day slots
         └── Each attempt uses the three calculators above
 ```
 
-**Live UI** (riddle solve sidebar): accuracy, timing, and streak update during the session.
+**Live UI** (puzzle solve sidebar): accuracy, timing, and streak update during the session.
 
 **Volt UI**: built on the server from `user_sequence_attempt` rows for the move sequence; shown as `400/700 Volt` with an expandable day breakdown.
 

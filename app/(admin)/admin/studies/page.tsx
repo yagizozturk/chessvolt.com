@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import { StudiesList } from "@/app/(admin)/admin/studies/components/studies-list";
-import { getAllStudiesWithRiddleCount } from "@/features/study/services/study.service";
+import { getAllStudiesWithPuzzleCount } from "@/features/study/services/study.service";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 const STUDY_ADMIN_ERRORS: Record<string, string> = {
@@ -17,7 +17,7 @@ type Props = {
 
 export default async function AdminStudiesPage({ searchParams }: Props) {
   const { supabase } = await getAdminUser();
-  const studies = await getAllStudiesWithRiddleCount(supabase);
+  const studies = await getAllStudiesWithPuzzleCount(supabase);
   const { error } = await searchParams;
   const errorMessage = error ? (STUDY_ADMIN_ERRORS[error] ?? `An error occurred (${error}).`) : null;
 

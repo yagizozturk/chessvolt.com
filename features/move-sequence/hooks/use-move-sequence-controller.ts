@@ -10,7 +10,7 @@ import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload
 export const MAX_HINT_COUNT = 2;
 
 export type UseMoveSequenceControllerParams = {
-  /** Resets play state when this id changes (variant id, riddle id, etc.) */
+  /** Resets play state when this id changes (variant id, puzzle id, etc.) */
   sourceId: string;
   moves: string;
   goals: MoveGoals | null;

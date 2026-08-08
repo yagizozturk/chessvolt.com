@@ -6,7 +6,7 @@ import { FeatureItem } from "@/features/landing/components/featute-item";
 
 const sharedFeatures = [
   {
-    title: "Solve Riddles & Repeat",
+    title: "Solve Puzzles & Repeat",
     description: "Learn opening plans by drawing arrows that reveal where your pieces should go and why.",
     icon: Puzzle,
     imageSrc: "/images/cards/bg-arrows-game.png",
@@ -39,7 +39,7 @@ export function Features() {
               Understand Why And Repeat
             </h2>
             <p className="text-secondary/80 mx-auto max-w-2xl text-lg leading-relaxed">
-              <span className="text-primary font-medium">Solve riddles</span> to learn opening plans, earn up to{" "}
+              <span className="text-primary font-medium">Solve puzzles</span> to learn opening plans, earn up to{" "}
               <span className="text-primary font-medium">220 Volt</span> in five days, and practice your way to your
               target rating.
             </p>

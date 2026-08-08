@@ -1,5 +1,5 @@
-import type { RiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
-import { isRiddleAttemptStatus } from "@/features/user-sequence-attempt/types/riddle-attempt-status";
+import type { PuzzleAttemptStatus } from "@/features/user-sequence-attempt/types/puzzle-attempt-status";
+import { isPuzzleAttemptStatus } from "@/features/user-sequence-attempt/types/puzzle-attempt-status";
 import type {
   SequenceAttemptStats,
   UserSequenceAttempt,
@@ -21,9 +21,9 @@ export type DbUserSequenceAttempt = {
   updated_at: string;
 };
 
-function toStatus(dbStatus: string): RiddleAttemptStatus {
-  if (!isRiddleAttemptStatus(dbStatus)) {
-    throw new Error(`Invalid riddle_attempt_status: ${dbStatus}`);
+function toStatus(dbStatus: string): PuzzleAttemptStatus {
+  if (!isPuzzleAttemptStatus(dbStatus)) {
+    throw new Error(`Invalid puzzle_attempt_status: ${dbStatus}`);
   }
   return dbStatus;
 }

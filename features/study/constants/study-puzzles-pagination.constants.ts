@@ -1,0 +1,1 @@
+export const STUDY_PUZZLES_PAGE_SIZE = 10;

@@ -12,8 +12,8 @@ import { getAvatarUrlFromUser } from "@/features/profile/utilities/user-avatar";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import type { UserSequenceAttempt } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 
-export const RIDDLE_SOLVE_RATING_INCREMENT = 5;
-export const RIDDLE_FAIL_RATING_DECREMENT = 5;
+export const PUZZLE_SOLVE_RATING_INCREMENT = 5;
+export const PUZZLE_FAIL_RATING_DECREMENT = 5;
 
 export type ProfileRatingOutcome = "success" | "failure";
 
@@ -77,7 +77,7 @@ export async function updateProfileRatingForSequence(
     return { updated: false, currentRating };
   }
 
-  const delta = outcome === "success" ? RIDDLE_SOLVE_RATING_INCREMENT : -RIDDLE_FAIL_RATING_DECREMENT;
+  const delta = outcome === "success" ? PUZZLE_SOLVE_RATING_INCREMENT : -PUZZLE_FAIL_RATING_DECREMENT;
   const newRating = await profileRepo.adjustProfileCurrentRating(supabase, userId, delta);
 
   return { updated: newRating != null, currentRating: newRating ?? currentRating };

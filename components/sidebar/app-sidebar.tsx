@@ -65,9 +65,9 @@ const data = {
       ],
     },
     {
-      title: "Riddles",
-      url: "/riddles",
-      icon: "/images/icons/icon-riddle.png",
+      title: "Puzzles",
+      url: "/puzzles",
+      icon: "/images/icons/icon-puzzle.png",
     },
     {
       title: "Other",

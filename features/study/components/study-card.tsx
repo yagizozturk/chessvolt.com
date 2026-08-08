@@ -9,15 +9,15 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { takeTopStudyThemes } from "@/features/study-theme/mapper/study-theme.mapper";
-import type { StudyWithRiddleCountAndThemes } from "@/features/study/types/study";
+import type { StudyWithPuzzleCountAndThemes } from "@/features/study/types/study";
 import { getStudyCoverImageSrc } from "@/features/study/utilities/study-cover-image.utils";
 import { formatStudyDifficultyLabel } from "@/features/study/utilities/study-difficulty.utils";
-import { formatStudyRiddleCount } from "@/features/study/utilities/study-riddle-count-format.utils";
+import { formatStudyPuzzleCount } from "@/features/study/utilities/study-puzzle-count-format.utils";
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
 import { cn } from "@/lib/utils";
 
 type StudyCardProps = {
-  study: StudyWithRiddleCountAndThemes;
+  study: StudyWithPuzzleCountAndThemes;
 };
 
 export function StudyCard({ study }: StudyCardProps) {
@@ -56,7 +56,7 @@ export function StudyCard({ study }: StudyCardProps) {
             </Badge>
             <Badge variant="default" className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
               <ChessPawn data-icon="inline-start" />
-              {formatStudyRiddleCount(study.riddleCount)}
+              {formatStudyPuzzleCount(study.puzzleCount)}
             </Badge>
             {takeTopStudyThemes(study.themes).map((item) => (
               <ThemeBadge key={item.id} theme={item.theme} />

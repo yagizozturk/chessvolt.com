@@ -6,13 +6,13 @@ import { FavoritesViewFilter } from "@/features/favorites/components/favorites-v
 import { parseFavoritesView } from "@/features/favorites/types/favorites-view";
 import { FavoritesTour } from "@/features/user-favorites/components/favorites-tour";
 import { UserFavoriteOpeningVariants } from "@/features/user-favorites/components/user-favorite-opening-variants";
-import { UserFavoriteRiddles } from "@/features/user-favorites/components/user-favorite-riddles";
+import { UserFavoritePuzzles } from "@/features/user-favorites/components/user-favorite-puzzles";
 import { FAVORITES_TOUR_ID } from "@/features/user-favorites/tours/favorites-tour-steps";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
   title: "Favorites | ChessVolt",
-  description: "Favorite openings and riddles to check your Volt score.",
+  description: "Favorite openings and puzzles to check your Volt score.",
 };
 
 type SearchParams = Promise<{ view?: string }>;
@@ -24,7 +24,7 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
 
   // ================================================================================================
   // Getting favorites count for the user so to show dialog if not 0.
-  // Because I need to show dialog if there is VoltScore shown in any card, riddle or opening.
+  // Because I need to show dialog if there is VoltScore shown in any card, puzzle or opening.
   // ================================================================================================
   const { count: favoritesCount } = await supabase
     .from("user_favorites")
@@ -36,7 +36,7 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
       <div className="page-container-children-layout">
         <PageHeader
           title="Favorites"
-          description="Your favorite openings and riddles to check your Volt score."
+          description="Your favorite openings and puzzles to check your Volt score."
           actions={<FavoritesViewFilter view={view} />}
         />
 
@@ -52,10 +52,10 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
               <UserFavoriteOpeningVariants userId={user.id} supabase={supabase} />
             </div>
           )}
-          {(view === "all" || view === "riddles") && (
-            <div data-tour="favorites-riddle-list">
-              <h2 className="mb-3 text-lg font-bold">Riddles</h2>
-              <UserFavoriteRiddles userId={user.id} supabase={supabase} />
+          {(view === "all" || view === "puzzles") && (
+            <div data-tour="favorites-puzzle-list">
+              <h2 className="mb-3 text-lg font-bold">Puzzles</h2>
+              <UserFavoritePuzzles userId={user.id} supabase={supabase} />
             </div>
           )}
         </div>
