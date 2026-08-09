@@ -22,7 +22,6 @@ const EXAMPLE_PGN = `[Event "London System Repertoire: test"]
 
 const EXAMPLE_GOALS_JSON = `{
   "mainIdea": "Control the center and develop calmly.",
-  "lessonsLearned": "In the London, piece activity comes before pawn storms.",
   "plys": [
     {
       "ply": 1,
@@ -113,8 +112,7 @@ export function PgnGoalsPreview() {
             spellCheck={false}
           />
           <FieldDescription>
-            Optional. Merges <span className="font-mono">mainIdea</span>,{" "}
-            <span className="font-mono">lessonsLearned</span>, and per-ply{" "}
+            Optional. Merges <span className="font-mono">mainIdea</span> and per-ply{" "}
             <span className="font-mono">title</span>, <span className="font-mono">strategy</span>,{" "}
             <span className="font-mono">takeaway</span>, <span className="font-mono">checkpointMessage</span>. Matched
             by ply (then move). Visuals from this JSON are ignored.

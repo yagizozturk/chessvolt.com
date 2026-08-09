@@ -85,8 +85,8 @@ export function parseGoalsContent(
 
   console.log(`${providerLabel} raw JSON response:`, JSON.stringify(parsed, null, 2));
 
-  if (!isRecord(parsed) || typeof parsed.mainIdea !== "string" || typeof parsed.lessonsLearned !== "string") {
-    throw new Error(`${providerLabel} response missing mainIdea or lessonsLearned`);
+  if (!isRecord(parsed) || typeof parsed.mainIdea !== "string") {
+    throw new Error(`${providerLabel} response missing mainIdea`);
   }
 
   const candidates = collectGoalCandidates(parsed);
@@ -96,7 +96,6 @@ export function parseGoalsContent(
 
   const goals = {
     mainIdea: parsed.mainIdea,
-    lessonsLearned: parsed.lessonsLearned,
     plys: normalized.sort((a, b) => a.ply - b.ply),
   };
   console.log(`${providerLabel} goals for DB insert:`, JSON.stringify(goals, null, 2));

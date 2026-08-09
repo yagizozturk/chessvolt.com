@@ -5,7 +5,6 @@ export function buildStubGoalsFromMoves(initialFen: string, moves: string): Move
   const uciMoves = parseMovesFromSequence(moves);
   return {
     mainIdea: "",
-    lessonsLearned: "",
     plys: getExpectedPlayerGoals(initialFen, uciMoves).map(({ ply, move }) => ({
       ply,
       move,

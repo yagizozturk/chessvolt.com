@@ -115,7 +115,6 @@ export function useMoveSequenceController({
     sortedGoals,
     nextGoal,
     mainIdea: goals?.mainIdea ?? "",
-    lessonsLearned: goals?.lessonsLearned ?? "",
     isAllGoalsCompleted,
     hintCount,
     progressValue,

@@ -95,7 +95,6 @@ export default function PuzzleController({
     hintCount,
     hintRequested,
     expectedCurrentCorrectMoveUci,
-    lessonsLearned,
     mainIdea,
   } = useMoveSequenceController({
     sourceId: sessionId,
@@ -295,7 +294,6 @@ export default function PuzzleController({
         onOpenChange={setSuccessDialogOpen}
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
-        lessonsLearned={lessonsLearned}
         stats={completionStats}
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}

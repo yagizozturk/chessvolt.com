@@ -83,7 +83,6 @@ export default function OpeningVariantController({
     hintCount,
     hintRequested,
     expectedCurrentCorrectMoveUci,
-    lessonsLearned,
     mainIdea,
   } = useMoveSequenceController({
     sourceId: sessionId,
@@ -243,7 +242,6 @@ export default function OpeningVariantController({
         title="Congratulations!"
         destinationPath={successDestinationPath}
         buttonLabel={successButtonLabel}
-        lessonsLearned={lessonsLearned}
         stats={completionStats}
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}

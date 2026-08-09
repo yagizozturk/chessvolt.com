@@ -29,7 +29,7 @@ export async function toggleFavouriteAction(
     if ("openingVariantId" in target && target.openingVariantId) {
       revalidatePath(`/openings/variant/${target.openingVariantId}`);
     }
-    revalidatePath("/favorites");
+    revalidatePath("/volt-tracker");
   }
 
   return result;

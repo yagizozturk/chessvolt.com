@@ -17,7 +17,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import { formatAttemptDurationMs } from "@/features/user-sequence-attempt/utilities/format-attempt-duration";
-import { cn } from "@/lib/utils";
 import infoAnimationData from "@/public/images/animations/animation-info-question.json";
 import animationData from "@/public/images/animations/animation-trophy.json";
 
@@ -27,7 +26,6 @@ export type SolveSuccessDialogProps = {
   title?: string;
   destinationPath?: string | null;
   buttonLabel?: string | null;
-  lessonsLearned?: string;
   stats?: MoveSequenceCompleteDialogStats | null;
   voltScore?: VoltScoreResult | null;
   isVoltScoreShowing?: boolean;
@@ -41,7 +39,6 @@ export function SolveSuccessDialog({
   title = "Congratulations!",
   destinationPath = null,
   buttonLabel = null,
-  lessonsLearned,
   stats,
   voltScore = null,
   isVoltScoreShowing = false,
@@ -51,8 +48,6 @@ export function SolveSuccessDialog({
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const hasContinueButton = destinationPath != null && buttonLabel != null;
-  const trimmedLessons = lessonsLearned?.trim() ?? "";
-  const hasLessons = trimmedLessons.length > 0;
   const hasVoltScore = isVoltScoreShowing || isValidVoltScore(voltScore);
 
   const handleContinue = async () => {
@@ -76,40 +71,16 @@ export function SolveSuccessDialog({
           <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
         </DialogHeader>
 
-        {/* Lessons Learned + Volt score */}
-        {hasLessons || hasVoltScore ? (
+        {/* Volt score */}
+        {hasVoltScore ? (
           <div className="mt-4 flex gap-4">
-            {/* Lessons Learned */}
-            {hasLessons ? (
-              <div
-                className={cn(
-                  "card-border-bottom-shadow justify-center p-4 text-center",
-                  hasVoltScore ? "flex-2/3" : "flex-1",
-                )}
-              >
-                <p className="font-semibold">Lessons Learned</p>
-                <p className="text-muted-foreground mt-1 text-sm text-pretty">{trimmedLessons}</p>
-              </div>
-            ) : null}
-
-            {/* Volt score */}
             {isVoltScoreShowing ? (
-              <div
-                className={cn(
-                  "card-border-bottom-shadow flex flex-col items-center justify-center gap-3 py-6",
-                  hasLessons ? "flex-1/3" : "flex-1",
-                )}
-              >
+              <div className="card-border-bottom-shadow flex flex-1 flex-col items-center justify-center gap-3 py-6">
                 <p className="text-muted-foreground text-center text-sm">Volt score is calculating</p>
                 <Spinner className="size-8" />
               </div>
             ) : isValidVoltScore(voltScore) ? (
-              <div
-                className={cn(
-                  "card-border-bottom-shadow relative flex min-h-30 items-center justify-center",
-                  hasLessons ? "flex-1/3" : "flex-1",
-                )}
-              >
+              <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 items-center justify-center">
                 <VoltCalculator result={voltScore} chartSize={150} />
                 <div className="absolute top-2 right-2 hidden sm:block">
                   <Tooltip>

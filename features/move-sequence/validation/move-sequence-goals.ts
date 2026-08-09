@@ -83,7 +83,6 @@ export function isMoveGoals(value: unknown): value is MoveGoals {
   return (
     isRecord(value) &&
     typeof value.mainIdea === "string" &&
-    typeof value.lessonsLearned === "string" &&
     Array.isArray(value.plys) &&
     value.plys.length > 0 &&
     value.plys.every(isMoveGoal)
@@ -94,7 +93,6 @@ export function normalizeMoveGoals(value: unknown): MoveGoals | null {
   if (
     !isRecord(value) ||
     typeof value.mainIdea !== "string" ||
-    typeof value.lessonsLearned !== "string" ||
     !Array.isArray(value.plys) ||
     value.plys.length === 0
   ) {
@@ -106,7 +104,6 @@ export function normalizeMoveGoals(value: unknown): MoveGoals | null {
 
   return {
     mainIdea: value.mainIdea,
-    lessonsLearned: value.lessonsLearned,
     plys: plys as MoveGoal[],
   };
 }

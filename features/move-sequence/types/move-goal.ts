@@ -13,6 +13,5 @@ export type MoveGoal = {
 
 export type MoveGoals = {
   mainIdea: string;
-  lessonsLearned: string;
   plys: MoveGoal[];
 };

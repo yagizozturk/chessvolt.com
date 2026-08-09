@@ -40,7 +40,6 @@ function goalsToOverlayJson(goals: MoveGoals | null | undefined): string {
   return JSON.stringify(
     {
       mainIdea: goals.mainIdea,
-      lessonsLearned: goals.lessonsLearned,
       plys: goals.plys.map(({ ply, move, title, strategy, takeaway, checkpointMessage }) => ({
         ply,
         move,
@@ -270,11 +269,10 @@ export function VariantPgnGoalsForm(props: Props) {
             onChange={(e) => setGoalsJson(e.target.value)}
             className="font-mono"
             spellCheck={false}
-            placeholder='{"mainIdea":"...","lessonsLearned":"...","plys":[{"ply":1,"title":"...","strategy":"...","takeaway":"...","checkpointMessage":"..."}]}'
+            placeholder='{"mainIdea":"...","plys":[{"ply":1,"title":"...","strategy":"...","takeaway":"...","checkpointMessage":"..."}]}'
           />
           <FieldDescription>
-            Optional. Merges <span className="font-mono">mainIdea</span>,{" "}
-            <span className="font-mono">lessonsLearned</span>, <span className="font-mono">title</span>,{" "}
+            Optional. Merges <span className="font-mono">mainIdea</span>, <span className="font-mono">title</span>,{" "}
             <span className="font-mono">strategy</span>, <span className="font-mono">takeaway</span>, and{" "}
             <span className="font-mono">checkpointMessage</span>. Visuals stay from PGN; missing strategy falls
             back to PGN comments.

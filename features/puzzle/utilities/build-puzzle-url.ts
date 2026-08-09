@@ -17,7 +17,7 @@ export function parseStandaloneThemeSlug(theme?: string | null): string | undefi
 // Puzzle can be routef from favorites or puzzles if standalone, if not study
 // ==================================================================
 export function getStandalonePuzzleBackUrl(from?: "favorites" | "puzzles" | null): string {
-  if (from === "favorites") return "/favorites";
+  if (from === "favorites") return "/volt-tracker";
   return "/puzzles";
 }
 

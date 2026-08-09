@@ -28,7 +28,6 @@ export type GoalsOverlayPly = {
 
 export type GoalsOverlay = {
   mainIdea?: string;
-  lessonsLearned?: string;
   plys: GoalsOverlayPly[];
 };
 
@@ -75,7 +74,6 @@ export function parseGoalsOverlayJson(raw: string): { overlay: GoalsOverlay | nu
   return {
     overlay: {
       mainIdea: asString(parsed.mainIdea),
-      lessonsLearned: asString(parsed.lessonsLearned),
       plys,
     },
     error: null,
@@ -97,7 +95,6 @@ export function mergeGoalsWithOverlay(base: MoveGoals, overlay: GoalsOverlay | n
 
   return {
     mainIdea: overlay.mainIdea ?? base.mainIdea,
-    lessonsLearned: overlay.lessonsLearned ?? base.lessonsLearned,
     plys: base.plys.map((goal) => {
       const match = findOverlayPly(overlay.plys, goal);
       if (!match) return goal;

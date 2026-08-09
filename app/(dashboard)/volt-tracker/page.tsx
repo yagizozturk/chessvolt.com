@@ -11,7 +11,7 @@ import { FAVORITES_TOUR_ID } from "@/features/user-favorites/tours/favorites-tou
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
-  title: "Favorites | ChessVolt",
+  title: "Volt Tracker | ChessVolt",
   description: "Favorite openings and puzzles to check your Volt score.",
 };
 
@@ -35,7 +35,7 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
     <div className="page-container">
       <div className="page-container-children-layout">
         <PageHeader
-          title="Favorites"
+          title="Volt Tracker"
           description="Your favorite openings and puzzles to check your Volt score."
           actions={<FavoritesViewFilter view={view} />}
         />

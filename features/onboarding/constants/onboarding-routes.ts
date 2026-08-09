@@ -10,6 +10,6 @@ export const DASHBOARD_PATH_PREFIXES = [
   "/openings",
   "/puzzle",
   "/puzzles",
-  "/favorites",
+  "/volt-tracker",
   "/profile",
 ] as const;

@@ -44,14 +44,14 @@ const profileSection = {
 const data = {
   navMain: [
     {
-      title: "Favorites",
-      url: "/favorites",
+      title: "Volt Tracker",
+      url: "/volt-tracker",
       icon: "/images/icons/icon-favorite.png",
     },
     {
-      title: "Studies",
-      url: "/study",
-      icon: "/images/icons/icon-book-study.png",
+      title: "Puzzles",
+      url: "/puzzles",
+      icon: "/images/icons/icon-puzzle.png",
     },
     {
       title: "Openings",
@@ -65,9 +65,9 @@ const data = {
       ],
     },
     {
-      title: "Puzzles",
-      url: "/puzzles",
-      icon: "/images/icons/icon-puzzle.png",
+      title: "Studies",
+      url: "/study",
+      icon: "/images/icons/icon-book-study.png",
     },
     {
       title: "Other",
