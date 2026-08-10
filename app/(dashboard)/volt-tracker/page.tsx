@@ -4,10 +4,8 @@ import { PageHeader } from "@/components/page-header";
 import { VoltExplainDialogAutoStart } from "@/components/volt-explain-dialog/volt-explain-dialog-auto-start";
 import { FavoritesViewFilter } from "@/features/favorites/components/favorites-view-filter";
 import { parseFavoritesView } from "@/features/favorites/types/favorites-view";
-import { FavoritesTour } from "@/features/user-favorites/components/favorites-tour";
 import { UserFavoriteOpeningVariants } from "@/features/user-favorites/components/user-favorite-opening-variants";
 import { UserFavoritePuzzles } from "@/features/user-favorites/components/user-favorite-puzzles";
-import { FAVORITES_TOUR_ID } from "@/features/user-favorites/tours/favorites-tour-steps";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
@@ -40,20 +38,17 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
           actions={<FavoritesViewFilter view={view} />}
         />
 
-        <FavoritesTour view={view} />
-
-        {/* Volt Explain: second visit (after favorites tour); only when user has favorites */}
-        {(favoritesCount ?? 0) > 0 ? <VoltExplainDialogAutoStart requireTourSeenId={FAVORITES_TOUR_ID} /> : null}
+        {(favoritesCount ?? 0) > 0 ? <VoltExplainDialogAutoStart /> : null}
 
         <div className="flex flex-col gap-8">
           {(view === "all" || view === "openings") && (
-            <div data-tour="favorites-opening-list">
+            <div>
               <h2 className="mb-3 text-lg font-bold">Opening variants</h2>
               <UserFavoriteOpeningVariants userId={user.id} supabase={supabase} />
             </div>
           )}
           {(view === "all" || view === "puzzles") && (
-            <div data-tour="favorites-puzzle-list">
+            <div>
               <h2 className="mb-3 text-lg font-bold">Puzzles</h2>
               <UserFavoritePuzzles userId={user.id} supabase={supabase} />
             </div>

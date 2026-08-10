@@ -46,7 +46,7 @@ const data = {
     {
       title: "Volt Tracker",
       url: "/volt-tracker",
-      icon: "/images/icons/icon-chart-tracker.png",
+      icon: "/images/icons/icon-circle-volt.png",
     },
     {
       title: "Puzzles",
