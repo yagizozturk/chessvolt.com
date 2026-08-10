@@ -3,13 +3,13 @@ export const QUICK_LINKS = [
     title: "Volt Tracker",
     description: "Favorite openings and puzzles to check your Volt score.",
     href: "/volt-tracker",
-    icon: "/images/icons/icon-favorite.png",
+    icon: "/images/icons/icon-chart-tracker.png",
   },
   {
-    title: "Library",
+    title: "Studies",
     description: "Browse curated puzzle studies.",
     href: "/study",
-    icon: "/images/icons/icon-library-tr.png",
+    icon: "/images/icons/icon-book-study.png",
   },
   {
     title: "Openings",

@@ -103,6 +103,8 @@ export default function PuzzleController({
   });
 
   const { Tour } = usePuzzleTour({ puzzleId: puzzle.id });
+  const hasMainIdea = Boolean(mainIdea?.trim());
+  const effectiveBoardMode = hasMainIdea ? boardMode : "practice";
   const voltScore = {
     totalMoveCount: getPlayerMoveCount(puzzle.moveSequence.moves),
     rating: getPuzzleRatingForScoring(puzzle.rating),
@@ -327,7 +329,7 @@ export default function PuzzleController({
           <VoltBoard
             ref={boardRef}
             sourceId={sessionId}
-            mode={boardMode}
+            mode={effectiveBoardMode}
             initialFen={puzzle.moveSequence.initialFen}
             coordinates={!isMobile}
             drawHintMove={expectedCurrentCorrectMoveUci}
@@ -359,7 +361,7 @@ export default function PuzzleController({
               Puzzles
             </div>
             <div className="flex items-center gap-2">
-              {boardMode === "learn" ? (
+              {effectiveBoardMode === "learn" ? (
                 <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
               ) : null}
               <FavouriteButton
@@ -370,31 +372,33 @@ export default function PuzzleController({
             </div>
           </div>
 
-          <Tabs
-            value={boardMode}
-            onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
-            aria-label="Board mode"
-          >
-            <TabsList variant="green" className="w-full rounded-lg">
-              <TabsTrigger value="practice">
-                <Swords />
-                Practice
-              </TabsTrigger>
-              <TabsTrigger value="learn">
-                <Bot />
-                Coach Me
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {hasMainIdea ? (
+            <Tabs
+              value={boardMode}
+              onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
+              aria-label="Board mode"
+            >
+              <TabsList variant="green" className="w-full rounded-lg">
+                <TabsTrigger value="practice">
+                  <Swords />
+                  Practice
+                </TabsTrigger>
+                <TabsTrigger value="learn">
+                  <Bot />
+                  Coach Me
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          ) : null}
 
           {/* Goal Viewer */}
           <GoalViewer
             goals={sortedGoals}
             progressValue={progressValue}
-            mode={boardMode}
+            mode={effectiveBoardMode}
             turnLabel={turnLabel}
             mainIdea={mainIdea}
-            showMainIdea={boardMode === "learn" && showMainIdea}
+            showMainIdea={effectiveBoardMode === "learn" && showMainIdea}
           />
 
           {/* Footer Buttons */}

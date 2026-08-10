@@ -16,7 +16,7 @@ export function Hero() {
   const cta = profile ? { href: "/dashboard", label: "Start Playing" } : { href: "/login", label: "Start Learning" };
 
   return (
-    <div className="container mx-auto bg-[#5734B3] px-4 pt-32 pb-24 md:px-6">
+    <div className="container mx-auto bg-[#5734B3] px-4 pt-32 pb-16 md:px-6">
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="order-2 flex flex-1 flex-col items-center space-y-6 text-center md:order-1 md:items-end md:text-right">
           <h1 className="w-full text-center text-[clamp(1.5rem,2.8vw+0.5rem,4.5rem)] leading-tight font-extrabold tracking-tighter md:text-right">
