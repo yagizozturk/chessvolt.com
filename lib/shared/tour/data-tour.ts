@@ -1,7 +1,7 @@
 export const TOUR_TARGETS = {
   board: "board",
+  gameMode: "game-mode",
   titleBar: "title-bar",
-  goals: "goals",
   hintButton: "hint-button",
   boardMode: "board-mode",
   favoriteButton: "favorite-button",

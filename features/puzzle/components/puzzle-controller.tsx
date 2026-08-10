@@ -301,11 +301,7 @@ export default function PuzzleController({
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
         footerExtra={
-          <FavouriteButton
-            puzzleId={puzzle.id}
-            isFavourited={isFavourited}
-            onFavouritedChange={setIsFavourited}
-          />
+          <FavouriteButton puzzleId={puzzle.id} isFavourited={isFavourited} onFavouritedChange={setIsFavourited} />
         }
       />
 
@@ -364,11 +360,13 @@ export default function PuzzleController({
               {effectiveBoardMode === "learn" ? (
                 <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
               ) : null}
-              <FavouriteButton
-                puzzleId={puzzle.id}
-                isFavourited={isFavourited}
-                onFavouritedChange={setIsFavourited}
-              />
+              <div data-tour="favorite-button">
+                <FavouriteButton
+                  puzzleId={puzzle.id}
+                  isFavourited={isFavourited}
+                  onFavouritedChange={setIsFavourited}
+                />
+              </div>
             </div>
           </div>
 
@@ -376,7 +374,8 @@ export default function PuzzleController({
             <Tabs
               value={boardMode}
               onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
-              aria-label="Board mode"
+              aria-label="Game Mode"
+              data-tour="game-mode"
             >
               <TabsList variant="green" className="w-full rounded-lg">
                 <TabsTrigger value="practice">
@@ -403,7 +402,7 @@ export default function PuzzleController({
 
           {/* Footer Buttons */}
           <div className="mt-auto">
-            <div className="flex gap-2" data-tour="hint-button">
+            <div className="flex gap-2">
               {!isCompleted ? (
                 <Button
                   variant="voltGreen"
@@ -412,7 +411,7 @@ export default function PuzzleController({
                   className="w-full min-w-0 flex-1"
                 >
                   <Eye data-icon="inline-start" />
-                  Show the move
+                  Hint
                 </Button>
               ) : (
                 <>

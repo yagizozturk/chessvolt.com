@@ -25,7 +25,7 @@ export function GoalViewer({
   const showingMainIdea = showMainIdea && trimmedMainIdea.length > 0;
 
   return (
-    <div data-tour="goals">
+    <div>
       {showingMainIdea ? (
         <div className="card-border-bottom-shadow mb-3">
           <MainIdeaCard mainIdea={trimmedMainIdea} />
