@@ -28,13 +28,12 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
   const lastCompletedIndex = goals.findLastIndex((goal) => goal.isCompleted);
   const lastCompletedGoal = lastCompletedIndex >= 0 ? goals[lastCompletedIndex] : null;
   const lastCompletedTakeaway =
-    mode === "learn" && lastCompletedGoal && lastCompletedGoal.takeaway.trim().length > 0
-      ? lastCompletedGoal
-      : null;
+    mode === "learn" && lastCompletedGoal && lastCompletedGoal.takeaway.trim().length > 0 ? lastCompletedGoal : null;
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [canScrollStart, setCanScrollStart] = useState(false);
   const [canScrollEnd, setCanScrollEnd] = useState(false);
+  const [isTakeawayStepVisible, setIsTakeawayStepVisible] = useState(true);
   const [connector, setConnector] = useState<{ left: number; top: number; height: number } | null>(null);
 
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -42,6 +41,7 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const takeawayCardRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLButtonElement | HTMLDivElement | null)[]>([]);
+  const showTakeaway = Boolean(lastCompletedTakeaway) && isTakeawayStepVisible;
 
   const setItemRef = useCallback((index: number, node: HTMLButtonElement | HTMLDivElement | null) => {
     itemRefs.current[index] = node;
@@ -74,7 +74,7 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
 
   const updateConnector = useCallback(() => {
     const container = containerRef.current;
-    const step = lastCompletedTakeaway ? itemRefs.current[lastCompletedIndex] : null;
+    const step = showTakeaway ? itemRefs.current[lastCompletedIndex] : null;
     const card = takeawayCardRef.current;
 
     if (!container || !step || !card) {
@@ -97,7 +97,7 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
       top: stepRect.bottom - containerRect.top,
       height,
     });
-  }, [lastCompletedIndex, lastCompletedTakeaway]);
+  }, [lastCompletedIndex, showTakeaway]);
 
   const updateScrollEdges = useCallback(() => {
     const container = scrollRef.current;
@@ -108,8 +108,25 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
 
     setCanScrollStart(scrollLeft > SCROLL_EDGE_THRESHOLD_PX);
     setCanScrollEnd(maxScrollLeft > SCROLL_EDGE_THRESHOLD_PX && scrollLeft < maxScrollLeft - SCROLL_EDGE_THRESHOLD_PX);
+
+    if (lastCompletedTakeaway) {
+      const step = itemRefs.current[lastCompletedIndex];
+      if (step) {
+        const containerRect = container.getBoundingClientRect();
+        const stepRect = step.getBoundingClientRect();
+        setIsTakeawayStepVisible(
+          stepRect.right > containerRect.left + SCROLL_EDGE_THRESHOLD_PX &&
+            stepRect.left < containerRect.right - SCROLL_EDGE_THRESHOLD_PX,
+        );
+      } else {
+        setIsTakeawayStepVisible(false);
+      }
+    } else {
+      setIsTakeawayStepVisible(false);
+    }
+
     updateConnector();
-  }, [updateConnector]);
+  }, [lastCompletedIndex, lastCompletedTakeaway, updateConnector]);
 
   const scrollByPage = useCallback((direction: "left" | "right") => {
     const container = scrollRef.current;
@@ -141,160 +158,162 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
   }, [goals.length, updateScrollEdges]);
 
   return (
-    <div className="flex min-w-0 items-center gap-1">
-      {canScrollStart ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className="shrink-0"
-          aria-label="Scroll goals left"
-          onClick={() => scrollByPage("left")}
-        >
-          <ChevronLeft />
-        </Button>
+    <div ref={containerRef} className="relative min-w-0">
+      {connector ? (
+        <div
+          aria-hidden
+          className="bg-primary pointer-events-none absolute z-0 w-1 -translate-x-1/2"
+          style={{ left: connector.left, top: connector.top, height: connector.height }}
+        />
       ) : null}
 
-      <div ref={containerRef} className="relative min-w-0 flex-1">
-        <div
-          aria-hidden
-          className={cn(
-            "from-card pointer-events-none absolute top-0 left-0 z-10 h-12 w-8 bg-gradient-to-r to-transparent transition-opacity duration-200",
-            canScrollStart ? "opacity-100" : "opacity-0",
-          )}
-        />
-        <div
-          aria-hidden
-          className={cn(
-            "from-card pointer-events-none absolute top-0 right-0 z-10 h-12 w-8 bg-gradient-to-l to-transparent transition-opacity duration-200",
-            canScrollEnd ? "opacity-100" : "opacity-0",
-          )}
-        />
-
-        {connector ? (
-          <div
-            aria-hidden
-            className="bg-primary pointer-events-none absolute z-0 w-1 -translate-x-1/2"
-            style={{ left: connector.left, top: connector.top, height: connector.height }}
-          />
+      <div className="flex min-w-0 items-center gap-1">
+        {canScrollStart ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="shrink-0"
+            aria-label="Scroll goals left"
+            onClick={() => scrollByPage("left")}
+          >
+            <ChevronLeft />
+          </Button>
         ) : null}
 
-        <div
-          ref={scrollRef}
-          role="list"
-          aria-label="Goal progress"
-          className="relative z-[1] flex snap-x snap-mandatory items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          onScroll={updateScrollEdges}
-        >
-          {goals.map((goal, index) => {
-            const hasTakeaway = Boolean(goal.takeaway.trim());
+        <div className="relative min-w-0 flex-1">
+          <div
+            aria-hidden
+            className={cn(
+              "from-card pointer-events-none absolute top-0 left-0 z-10 h-12 w-8 bg-gradient-to-r to-transparent transition-opacity duration-200",
+              canScrollStart ? "opacity-100" : "opacity-0",
+            )}
+          />
+          <div
+            aria-hidden
+            className={cn(
+              "from-card pointer-events-none absolute top-0 right-0 z-10 h-12 w-8 bg-gradient-to-l to-transparent transition-opacity duration-200",
+              canScrollEnd ? "opacity-100" : "opacity-0",
+            )}
+          />
 
-            const completedButton = (
-              <button
-                ref={(node) => setItemRef(index, node)}
-                type="button"
-                role="listitem"
-                className={cn(
-                  GOAL_ITEM_CLASS,
-                  "bg-muted relative size-8 cursor-default overflow-hidden rounded-full border-0 p-0",
-                )}
-                aria-label={`Goal ${index + 1} completed`}
-                onMouseEnter={
-                  hasTakeaway
-                    ? () => {
-                        cancelScheduledClose();
-                        setOpenIndex(index);
-                      }
-                    : undefined
-                }
-                onMouseLeave={hasTakeaway ? scheduleClose : undefined}
-              >
-                {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
-                <Lottie
-                  animationData={hasTakeaway ? checkpointAnimationData : completeAnimationData}
-                  loop={false}
-                  autoplay={true}
-                  className="pointer-events-none absolute inset-0 size-full scale-[1.90]"
-                />
-              </button>
-            );
+          <div
+            ref={scrollRef}
+            role="list"
+            aria-label="Goal progress"
+            className="relative z-[1] flex snap-x snap-mandatory items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            onScroll={updateScrollEdges}
+          >
+            {goals.map((goal, index) => {
+              const hasTakeaway = Boolean(goal.takeaway.trim());
 
-            return goal.isCompleted ? (
-              hasTakeaway ? (
-                <Popover
-                  key={index}
-                  modal={false}
-                  open={openIndex === index}
-                  onOpenChange={(open) => handlePopoverOpenChange(open, index)}
+              const completedButton = (
+                <button
+                  ref={(node) => setItemRef(index, node)}
+                  type="button"
+                  role="listitem"
+                  className={cn(
+                    GOAL_ITEM_CLASS,
+                    "bg-muted relative size-8 cursor-default overflow-hidden rounded-full border-0 p-0",
+                  )}
+                  aria-label={`Goal ${index + 1} completed`}
+                  onMouseEnter={
+                    hasTakeaway
+                      ? () => {
+                          cancelScheduledClose();
+                          setOpenIndex(index);
+                        }
+                      : undefined
+                  }
+                  onMouseLeave={hasTakeaway ? scheduleClose : undefined}
                 >
-                  <PopoverTrigger asChild>{completedButton}</PopoverTrigger>
-                  <PopoverContent
-                    side="bottom"
-                    align="center"
-                    sideOffset={12}
-                    collisionPadding={{ top: 16, bottom: 12, left: 12, right: 12 }}
-                    className="bg-muted w-72 gap-2 p-3 ring-0"
-                    onOpenAutoFocus={(e) => e.preventDefault()}
-                    onMouseEnter={cancelScheduledClose}
-                    onMouseLeave={scheduleClose}
+                  {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
+                  <Lottie
+                    animationData={hasTakeaway ? checkpointAnimationData : completeAnimationData}
+                    loop={false}
+                    autoplay={true}
+                    className="pointer-events-none absolute inset-0 size-full scale-[1.90]"
+                  />
+                </button>
+              );
+
+              return goal.isCompleted ? (
+                hasTakeaway ? (
+                  <Popover
+                    key={index}
+                    modal={false}
+                    open={openIndex === index}
+                    onOpenChange={(open) => handlePopoverOpenChange(open, index)}
                   >
-                    <PopoverHeader className="gap-1.5">
-                      <p className="text-primary flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
-                        <BookOpen className="size-3.5 shrink-0" aria-hidden />
-                        Why Important?
-                      </p>
-                      <p className="text-sm font-medium">{goal.takeaway}</p>
-                    </PopoverHeader>
-                  </PopoverContent>
-                </Popover>
+                    <PopoverTrigger asChild>{completedButton}</PopoverTrigger>
+                    <PopoverContent
+                      side="bottom"
+                      align="center"
+                      sideOffset={12}
+                      collisionPadding={{ top: 16, bottom: 12, left: 12, right: 12 }}
+                      className="bg-muted w-72 gap-2 p-3 ring-0"
+                      onOpenAutoFocus={(e) => e.preventDefault()}
+                      onMouseEnter={cancelScheduledClose}
+                      onMouseLeave={scheduleClose}
+                    >
+                      <PopoverHeader className="gap-1.5">
+                        <p className="text-primary flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
+                          <BookOpen className="size-3.5 shrink-0" aria-hidden />
+                          Why Important?
+                        </p>
+                        <p className="text-sm font-medium">{goal.takeaway}</p>
+                      </PopoverHeader>
+                    </PopoverContent>
+                  </Popover>
+                ) : (
+                  <Fragment key={index}>{completedButton}</Fragment>
+                )
               ) : (
-                <Fragment key={index}>{completedButton}</Fragment>
-              )
-            ) : (
-              <div
-                key={index}
-                ref={(node) => setItemRef(index, node)}
-                role="listitem"
-                className={cn(
-                  GOAL_ITEM_CLASS,
-                  "relative grid size-8 place-items-center rounded-full text-xs font-bold",
-                  activeGoalIndex === index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
-                )}
-                aria-label={`Goal ${index + 1}`}
-                aria-current={activeGoalIndex === index ? "step" : undefined}
-              >
-                {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
-                {index + 1}
-              </div>
-            );
-          })}
+                <div
+                  key={index}
+                  ref={(node) => setItemRef(index, node)}
+                  role="listitem"
+                  className={cn(
+                    GOAL_ITEM_CLASS,
+                    "relative grid size-8 place-items-center rounded-full text-xs font-bold",
+                    activeGoalIndex === index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                  )}
+                  aria-label={`Goal ${index + 1}`}
+                  aria-current={activeGoalIndex === index ? "step" : undefined}
+                >
+                  {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
+                  {index + 1}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {lastCompletedTakeaway ? (
-          <div
-            ref={takeawayCardRef}
-            className="card-border-bottom-shadow relative z-[1] mt-6 flex-row items-center gap-4 p-3"
+        {canScrollEnd ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="shrink-0"
+            aria-label="Scroll goals right"
+            onClick={() => scrollByPage("right")}
           >
-            <Image src={bookIcon} alt="" width={80} height={80} className="size-12 shrink-0 object-contain" />
-            <div className="min-w-0 flex-1 space-y-0.5">
-              <p className="text-sm font-bold">Checkpoint Importance</p>
-              <p className="text-muted-foreground leading-snug text-pretty">{lastCompletedTakeaway.takeaway}</p>
-            </div>
-          </div>
+            <ChevronRight />
+          </Button>
         ) : null}
       </div>
 
-      {canScrollEnd ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className="shrink-0"
-          aria-label="Scroll goals right"
-          onClick={() => scrollByPage("right")}
+      {showTakeaway && lastCompletedTakeaway ? (
+        <div
+          ref={takeawayCardRef}
+          className="card-border-bottom-shadow relative z-[1] mt-6 flex-row items-center gap-4 p-3"
         >
-          <ChevronRight />
-        </Button>
+          <Image src={bookIcon} alt="" width={80} height={80} className="size-12 shrink-0 object-contain" />
+          <div className="min-w-0 flex-1 space-y-0.5">
+            <p className="text-sm font-bold">Checkpoint Importance</p>
+            <p className="text-muted-foreground leading-snug text-pretty">{lastCompletedTakeaway.takeaway}</p>
+          </div>
+        </div>
       ) : null}
     </div>
   );
