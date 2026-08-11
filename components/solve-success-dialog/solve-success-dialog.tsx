@@ -7,6 +7,7 @@ import { type ReactNode, useState } from "react";
 
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import { LastAttemptVoltPoints } from "@/components/calculator/volt-calculator/last-attempt-volt-points";
+import { VoltDayBreakdown } from "@/components/calculator/volt-calculator/volt-calculator";
 import { VoltScoreChart } from "@/components/calculator/volt-calculator/volt-score-chart";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
@@ -110,23 +111,28 @@ export function SolveSuccessDialog({
             ) : isValidVoltScore(voltScore) ? (
               <>
                 <LastAttemptVoltPoints result={voltScore} stats={stats} />
-                <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 items-center justify-center px-4 py-3">
-                  <VoltScoreChart result={voltScore} chartSize={150} />
-                  <div className="absolute top-2 right-2 hidden sm:block">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          type="button"
-                          className="focus-visible:ring-ring inline-flex cursor-default rounded-full focus-visible:ring-2 focus-visible:outline-none"
-                          aria-label="About Volt score"
-                        >
-                          <Lottie animationData={infoAnimationData} loop autoplay className="size-9" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" sideOffset={6} className="max-w-52 text-left">
-                        Your Volt score is a combination of accuracy, timing, and streak.
-                      </TooltipContent>
-                    </Tooltip>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
+                  <div className="card-border-bottom-shadow flex-1">
+                    <VoltDayBreakdown result={voltScore} />
+                  </div>
+                  <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 items-center justify-center px-4 py-3">
+                    <VoltScoreChart result={voltScore} chartSize={150} />
+                    <div className="absolute top-2 right-2 hidden sm:block">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            className="focus-visible:ring-ring inline-flex cursor-default rounded-full focus-visible:ring-2 focus-visible:outline-none"
+                            aria-label="About Volt score"
+                          >
+                            <Lottie animationData={infoAnimationData} loop autoplay className="size-9" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" sideOffset={6} className="max-w-52 text-left">
+                          Your Volt score is a combination of accuracy, timing, and streak.
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                   </div>
                 </div>
               </>

@@ -72,7 +72,6 @@ export function LastAttemptVoltPoints({ result, stats = null, className }: LastA
 
   return (
     <div className={cn("flex w-full flex-col gap-2", className)}>
-      <div></div>
       <div className="grid grid-cols-3 gap-2">
         <NumberTickerStats
           icon={Target}

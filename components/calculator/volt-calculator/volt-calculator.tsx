@@ -27,6 +27,10 @@ type VoltCalculatorProps = {
   showDetails?: boolean;
 };
 
+function toCalendarDayKey(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
 function formatDayLabel(date: string | null): string {
   if (!date) {
     return "No play";
@@ -40,6 +44,24 @@ function formatDayLabel(date: string | null): string {
   } catch {
     return date;
   }
+}
+
+function formatSlotLabel(slotIndex: number, date: string | null, now = new Date()): string {
+  if (!date) {
+    return `Day ${slotIndex}`;
+  }
+
+  if (date === toCalendarDayKey(now)) {
+    return "Today";
+  }
+
+  const yesterday = new Date(now);
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  if (date === toCalendarDayKey(yesterday)) {
+    return "Yesterday";
+  }
+
+  return `Day ${slotIndex}`;
 }
 
 function getAttemptTooltipMeta(attemptIndex: number, attemptWeight: number, dayMaxVolt: number) {
@@ -89,7 +111,7 @@ function VoltMetricIcon({ icon: Icon, label, className }: { icon: typeof Clock; 
   );
 }
 
-function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
+export function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
   return (
     <TooltipProvider>
       <div className="flex flex-col gap-2 text-left text-sm">
@@ -101,7 +123,7 @@ function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
                 className="group h-auto w-full justify-between rounded-lg px-3 py-2 font-normal hover:bg-transparent"
               >
                 <span className="font-medium">
-                  Day {day.slotIndex}
+                  {formatSlotLabel(day.slotIndex, day.date)}
                   {day.date ? ` · ${formatDayLabel(day.date)}` : ""}
                 </span>
                 <span className="flex items-center gap-2">
