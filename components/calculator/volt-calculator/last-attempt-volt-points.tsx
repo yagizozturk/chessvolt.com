@@ -4,6 +4,8 @@ import { Clock, Flame, Target } from "lucide-react";
 
 import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltAttemptBreakdown, VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
+import { ColumnBasedStats } from "@/components/stats/column-based-stats";
+import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import { formatAttemptDurationMs } from "@/features/user-sequence-attempt/utilities/format-attempt-duration";
 import { cn } from "@/lib/utils";
@@ -64,41 +66,20 @@ export function LastAttemptVoltPoints({ result, stats = null, className }: LastA
   }
 
   const points = getMetricVoltPoints(latest.attempt, latest.dayMaxVolt);
-  const metrics = [
-    {
-      icon: Target,
-      label: "Accuracy",
-      detail: stats?.accuracyPercent != null ? `${stats.accuracyPercent}%` : `${latest.attempt.accuracyPercent}%`,
-      value: points.accuracy,
-    },
-    {
-      icon: Clock,
-      label: "Timing",
-      detail: formatAttemptDurationMs(stats?.durationMs ?? null) ?? `${latest.attempt.timingPercent}%`,
-      value: points.timing,
-    },
-    {
-      icon: Flame,
-      label: "Streak",
-      detail: stats != null ? String(stats.maxCorrectStreak) : `${latest.attempt.streakPercent}%`,
-      value: points.streak,
-    },
-  ] as const;
+  const accuracyValue = stats?.accuracyPercent ?? latest.attempt.accuracyPercent;
+  const streakValue = stats?.maxCorrectStreak ?? latest.attempt.streakPercent;
+  const timeValue =
+    formatAttemptDurationMs(stats?.durationMs ?? null) ?? `${latest.attempt.timingPercent}%`;
 
   return (
-    <div className={cn("flex w-full flex-col gap-2 text-sm", className)}>
+    <div className={cn("flex w-full flex-col gap-2", className)}>
       <p className="text-muted-foreground text-center text-xs font-medium">Last attempt</p>
-      <ul className="flex flex-col gap-1.5">
-        {metrics.map(({ icon: Icon, label, detail, value }) => (
-          <li key={label} className="flex items-center gap-2">
-            <Icon aria-hidden className="text-primary size-4 shrink-0" />
-            <span className="text-muted-foreground flex-1">{label}</span>
-            <span className="text-muted-foreground tabular-nums">{detail}</span>
-            <span className="min-w-8 text-right font-medium tabular-nums">+{value}</span>
-          </li>
-        ))}
-      </ul>
-      <p className="border-border flex items-center justify-between border-t pt-1.5 font-medium tabular-nums">
+      <div className="grid grid-cols-3 gap-2">
+        <NumberTickerStats icon={Target} label="Accuracy" value={accuracyValue} suffix="%" points={points.accuracy} />
+        <NumberTickerStats icon={Flame} label="Max streak" value={streakValue} points={points.streak} />
+        <ColumnBasedStats icon={Clock} label="Time" value={timeValue} points={points.timing} />
+      </div>
+      <p className="border-border flex items-center justify-between border-t pt-1.5 text-sm font-medium tabular-nums">
         <span className="text-muted-foreground">Total</span>
         <span>+{points.total}</span>
       </p>

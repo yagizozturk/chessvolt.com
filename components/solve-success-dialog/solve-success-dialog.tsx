@@ -74,7 +74,7 @@ export function SolveSuccessDialog({
 
         {/* Volt score */}
         {hasVoltScore ? (
-          <div className="mt-4 flex gap-4">
+          <div className="mt-4 flex flex-col gap-4">
             {isVoltScoreShowing ? (
               <div className="card-border-bottom-shadow flex flex-1 flex-col items-center justify-center gap-3 py-6">
                 <p className="text-muted-foreground text-center text-sm">Volt score is calculating</p>
@@ -82,9 +82,7 @@ export function SolveSuccessDialog({
               </div>
             ) : isValidVoltScore(voltScore) ? (
               <>
-                <div className="card-border-bottom-shadow flex min-h-30 flex-1 items-center justify-center px-4 py-3">
-                  <LastAttemptVoltPoints result={voltScore} stats={stats} />
-                </div>
+                <LastAttemptVoltPoints result={voltScore} stats={stats} />
                 <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 items-center justify-center px-4 py-3">
                   <VoltScoreChart result={voltScore} chartSize={150} />
                   <div className="absolute top-2 right-2 hidden sm:block">
