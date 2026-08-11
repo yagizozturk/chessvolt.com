@@ -6,7 +6,7 @@ export const DEFAULT_FAVORITES_VIEW: FavoritesView = "all";
 
 export const FAVORITES_VIEW_OPTIONS = [
   { label: "All", value: "all" as const, href: "/volt-tracker" },
-  { label: "Opening variants", value: "openings" as const, href: "/volt-tracker?view=openings" },
+  { label: "Openings", value: "openings" as const, href: "/volt-tracker?view=openings" },
   { label: "Puzzles", value: "puzzles" as const, href: "/volt-tracker?view=puzzles" },
 ] as const;
 

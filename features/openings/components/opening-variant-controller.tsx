@@ -334,7 +334,7 @@ export default function OpeningVariantController({
                 className="min-w-0 flex-1"
               >
                 <Eye data-icon="inline-start" />
-                Show the move
+                Hint
               </Button>
             ) : (
               <Button

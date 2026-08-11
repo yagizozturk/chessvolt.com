@@ -43,7 +43,7 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
         <div className="flex flex-col gap-8">
           {(view === "all" || view === "openings") && (
             <div>
-              <h2 className="mb-3 text-lg font-bold">Opening variants</h2>
+              <h2 className="mb-3 text-lg font-bold">Openings</h2>
               <UserFavoriteOpeningVariants userId={user.id} supabase={supabase} />
             </div>
           )}

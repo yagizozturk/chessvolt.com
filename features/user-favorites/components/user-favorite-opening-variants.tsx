@@ -9,17 +9,14 @@ import { getUserFavoritesForUserWithDetails } from "@/features/user-favorites/se
 import type { UserFavoriteWithDetails } from "@/features/user-favorites/types/user-favorite";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 
-export async function UserFavoriteOpeningVariants({
-  userId,
-  supabase,
-}: {
-  userId: string;
-  supabase: SupabaseClient;
-}) {
+export async function UserFavoriteOpeningVariants({ userId, supabase }: { userId: string; supabase: SupabaseClient }) {
   const favourites = await getUserFavoritesForUserWithDetails(supabase, userId);
   const openingFavourites = favourites.filter(
-    (favourite): favourite is UserFavoriteWithDetails & { openingVariant: NonNullable<UserFavoriteWithDetails["openingVariant"]> } =>
-      favourite.openingVariant != null,
+    (
+      favourite,
+    ): favourite is UserFavoriteWithDetails & {
+      openingVariant: NonNullable<UserFavoriteWithDetails["openingVariant"]>;
+    } => favourite.openingVariant != null,
   );
 
   const openingVariantSequenceIds = [
@@ -44,7 +41,7 @@ export async function UserFavoriteOpeningVariants({
       : {};
 
   if (openingFavourites.length === 0) {
-    return <EmptyDataMessage message="You haven't favourited any opening variants yet." />;
+    return <EmptyDataMessage message="You haven't added any opening variants to Volt Tracker yet." />;
   }
 
   return (
