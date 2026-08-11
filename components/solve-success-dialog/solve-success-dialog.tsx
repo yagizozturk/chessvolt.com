@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { type ReactNode, useState } from "react";
 
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
-import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
+import { LastAttemptVoltPoints } from "@/components/calculator/volt-calculator/last-attempt-volt-points";
+import { VoltScoreChart } from "@/components/calculator/volt-calculator/volt-score-chart";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
@@ -80,26 +81,30 @@ export function SolveSuccessDialog({
                 <Spinner className="size-8" />
               </div>
             ) : isValidVoltScore(voltScore) ? (
-              <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 items-center justify-center">
-                <VoltCalculator result={voltScore} chartSize={150} />
-                <div className="absolute top-2 right-2 hidden sm:block">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        type="button"
-                        className="focus-visible:ring-ring inline-flex cursor-default rounded-full focus-visible:ring-2 focus-visible:outline-none"
-                        aria-label="About Volt score"
-                      >
-                        <Lottie animationData={infoAnimationData} loop autoplay className="size-9" />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" sideOffset={6} className="max-w-52 text-left">
-                      Your Volt score is a combination of accuracy, timing, and streak. Hover on the graph to see more
-                      details.
-                    </TooltipContent>
-                  </Tooltip>
+              <>
+                <div className="card-border-bottom-shadow flex min-h-30 flex-1 items-center justify-center px-4 py-3">
+                  <LastAttemptVoltPoints result={voltScore} stats={stats} />
                 </div>
-              </div>
+                <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 items-center justify-center px-4 py-3">
+                  <VoltScoreChart result={voltScore} chartSize={150} />
+                  <div className="absolute top-2 right-2 hidden sm:block">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          className="focus-visible:ring-ring inline-flex cursor-default rounded-full focus-visible:ring-2 focus-visible:outline-none"
+                          aria-label="About Volt score"
+                        >
+                          <Lottie animationData={infoAnimationData} loop autoplay className="size-9" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" sideOffset={6} className="max-w-52 text-left">
+                        Your Volt score is a combination of accuracy, timing, and streak.
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                </div>
+              </>
             ) : null}
           </div>
         ) : null}

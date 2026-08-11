@@ -1,0 +1,107 @@
+"use client";
+
+import { Clock, Flame, Target } from "lucide-react";
+
+import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
+import type { VoltAttemptBreakdown, VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
+import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
+import { formatAttemptDurationMs } from "@/features/user-sequence-attempt/utilities/format-attempt-duration";
+import { cn } from "@/lib/utils";
+
+type LastAttemptVoltPointsProps = {
+  result: VoltScoreResult | null;
+  stats?: MoveSequenceCompleteDialogStats | null;
+  className?: string;
+};
+
+type LatestAttemptContext = {
+  attempt: VoltAttemptBreakdown;
+  dayMaxVolt: number;
+};
+
+type MetricVoltPoints = {
+  accuracy: number;
+  timing: number;
+  streak: number;
+  total: number;
+};
+
+function getLatestAttempt(result: VoltScoreResult): LatestAttemptContext | null {
+  let latest: LatestAttemptContext | null = null;
+
+  for (const day of result.days) {
+    for (const attempt of day.attempts) {
+      if (!latest || new Date(attempt.startedAt).getTime() > new Date(latest.attempt.startedAt).getTime()) {
+        latest = { attempt, dayMaxVolt: day.dayMaxVolt };
+      }
+    }
+  }
+
+  return latest;
+}
+
+/** Same scale as day-breakdown attempt volt: weightedContribution × dayMaxVolt / 100. */
+function getMetricVoltPoints(attempt: VoltAttemptBreakdown, dayMaxVolt: number): MetricVoltPoints {
+  const { accuracy, timing, streak } = VOLT_CONFIG.metricWeights;
+  const toVolt = (metricShare: number) => Math.round((metricShare * attempt.attemptWeight * dayMaxVolt) / 100);
+
+  return {
+    accuracy: toVolt(attempt.accuracyPercent * accuracy),
+    timing: toVolt(attempt.timingPercent * timing),
+    streak: toVolt(attempt.streakPercent * streak),
+    total: Math.round((attempt.weightedContribution * dayMaxVolt) / 100),
+  };
+}
+
+export function LastAttemptVoltPoints({ result, stats = null, className }: LastAttemptVoltPointsProps) {
+  if (!result) {
+    return null;
+  }
+
+  const latest = getLatestAttempt(result);
+  if (!latest) {
+    return null;
+  }
+
+  const points = getMetricVoltPoints(latest.attempt, latest.dayMaxVolt);
+  const metrics = [
+    {
+      icon: Target,
+      label: "Accuracy",
+      detail: stats?.accuracyPercent != null ? `${stats.accuracyPercent}%` : `${latest.attempt.accuracyPercent}%`,
+      value: points.accuracy,
+    },
+    {
+      icon: Clock,
+      label: "Timing",
+      detail: formatAttemptDurationMs(stats?.durationMs ?? null) ?? `${latest.attempt.timingPercent}%`,
+      value: points.timing,
+    },
+    {
+      icon: Flame,
+      label: "Streak",
+      detail: stats != null ? String(stats.maxCorrectStreak) : `${latest.attempt.streakPercent}%`,
+      value: points.streak,
+    },
+  ] as const;
+
+  return (
+    <div className={cn("flex w-full flex-col gap-2 text-sm", className)}>
+      <p className="text-muted-foreground text-center text-xs font-medium">Last attempt</p>
+      <ul className="flex flex-col gap-1.5">
+        {metrics.map(({ icon: Icon, label, detail, value }) => (
+          <li key={label} className="flex items-center gap-2">
+            <Icon aria-hidden className="text-primary size-4 shrink-0" />
+            <span className="text-muted-foreground flex-1">{label}</span>
+            <span className="text-muted-foreground tabular-nums">{detail}</span>
+            <span className="min-w-8 text-right font-medium tabular-nums">+{value}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="border-border flex items-center justify-between border-t pt-1.5 font-medium tabular-nums">
+        <span className="text-muted-foreground">Total</span>
+        <span>+{points.total}</span>
+      </p>
+    </div>
+  );
+}

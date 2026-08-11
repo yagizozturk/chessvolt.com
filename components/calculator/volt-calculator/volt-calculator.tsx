@@ -2,8 +2,8 @@
 
 import { ChevronDown, Clock, Flame, Target } from "lucide-react";
 
+import { VoltScoreChart } from "@/components/calculator/volt-calculator/volt-score-chart";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
-import { RadialChart } from "@/components/radial-chart/radial-chart";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -197,12 +197,16 @@ export function VoltCalculator({
   };
 
   return (
-    <div className={cn("flex w-full flex-col gap-2", className)} onClick={stopLinkActivation} onPointerDown={stopLinkActivation}>
+    <div
+      className={cn("flex w-full flex-col gap-2", className)}
+      onClick={stopLinkActivation}
+      onPointerDown={stopLinkActivation}
+    >
       {showDetails ? (
         <HoverCard openDelay={150} closeDelay={100}>
           <HoverCardTrigger asChild>
             <div className="cursor-default">
-              <RadialChart currentValue={result.volt} totalValue={Math.max(result.maxVolt, 1)} size={chartSize} />
+              <VoltScoreChart result={result} chartSize={chartSize} />
             </div>
           </HoverCardTrigger>
           <HoverCardContent
