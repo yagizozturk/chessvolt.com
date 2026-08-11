@@ -13,6 +13,8 @@ type NumberTickerStatsProps = {
   value: number | null;
   points?: number | null;
   suffix?: string;
+  /** When false, renders the value as static text instead of NumberTicker. Defaults to true. */
+  animation?: boolean;
   backgroundClassName?: string;
   className?: string;
 };
@@ -23,27 +25,29 @@ export function NumberTickerStats({
   value,
   points,
   suffix,
+  animation = true,
   backgroundClassName,
   className,
 }: NumberTickerStatsProps) {
+  const displayValue = value ?? 0;
+
   return (
     <div className={cn("card-border-bottom-shadow min-w-0", className)}>
-      <div
-        className={cn(
-          "flex w-full items-center justify-center gap-1 rounded-t-2xl p-1",
-          backgroundClassName,
-        )}
-      >
+      <div className={cn("flex w-full items-center justify-center gap-1 rounded-t-2xl p-1", backgroundClassName)}>
         <Icon className="size-4 shrink-0" aria-hidden />
         <span className="text-sm font-bold">{label}</span>
       </div>
-      <div className="flex w-full flex-1 items-center justify-center gap-1 p-2">
+      <div className="flex w-full flex-1 items-center justify-center gap-1 p-3">
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="text-foreground flex min-w-0 flex-1 cursor-default flex-col items-center text-lg font-bold tabular-nums">
               <Icon className="size-5 shrink-0" aria-hidden />
               <span className="inline-flex items-center">
-                <NumberTicker value={value ?? 0} className="text-lg font-bold" />
+                {animation ? (
+                  <NumberTicker value={displayValue} className="text-lg font-bold" />
+                ) : (
+                  <span className="text-lg font-bold">{displayValue}</span>
+                )}
                 {suffix ? <span className="text-[10px] font-medium">{suffix}</span> : null}
               </span>
             </div>

@@ -72,7 +72,7 @@ export function LastAttemptVoltPoints({ result, stats = null, className }: LastA
 
   return (
     <div className={cn("flex w-full flex-col gap-2", className)}>
-      <p className="text-muted-foreground text-center text-xs font-medium">Last attempt</p>
+      <div></div>
       <div className="grid grid-cols-3 gap-2">
         <NumberTickerStats
           icon={Target}
@@ -80,6 +80,7 @@ export function LastAttemptVoltPoints({ result, stats = null, className }: LastA
           value={accuracyValue}
           suffix="%"
           points={points.accuracy}
+          animation={false}
           backgroundClassName="bg-emerald-500"
         />
         <NumberTickerStats
@@ -87,6 +88,7 @@ export function LastAttemptVoltPoints({ result, stats = null, className }: LastA
           label="Max streak"
           value={streakValue}
           points={points.streak}
+          animation={false}
           backgroundClassName="bg-rose-500"
         />
         <ColumnBasedStats
@@ -97,10 +99,6 @@ export function LastAttemptVoltPoints({ result, stats = null, className }: LastA
           backgroundClassName="bg-sky-500"
         />
       </div>
-      <p className="border-border flex items-center justify-between border-t pt-1.5 text-sm font-medium tabular-nums">
-        <span className="text-muted-foreground">Total</span>
-        <span>+{points.total}</span>
-      </p>
     </div>
   );
 }

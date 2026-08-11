@@ -76,9 +76,36 @@ export function SolveSuccessDialog({
         {hasVoltScore ? (
           <div className="mt-4 flex flex-col gap-4">
             {isVoltScoreShowing ? (
-              <div className="card-border-bottom-shadow flex flex-1 flex-col items-center justify-center gap-3 py-6">
-                <p className="text-muted-foreground text-center text-sm">Volt score is calculating</p>
-                <Spinner className="size-8" />
+              <div className="flex flex-col gap-4">
+                {stats ? (
+                  <div className="grid grid-cols-3 gap-2">
+                    <NumberTickerStats
+                      icon={Target}
+                      label="Accuracy"
+                      value={stats.accuracyPercent}
+                      suffix="%"
+                      animation
+                      backgroundClassName="bg-emerald-500"
+                    />
+                    <NumberTickerStats
+                      icon={Flame}
+                      label="Max streak"
+                      value={stats.maxCorrectStreak}
+                      animation
+                      backgroundClassName="bg-emerald-500"
+                    />
+                    <ColumnBasedStats
+                      icon={Clock}
+                      label="Time"
+                      value={formatAttemptDurationMs(stats.durationMs) ?? "—"}
+                      backgroundClassName="bg-sky-500"
+                    />
+                  </div>
+                ) : null}
+                <div className="card-border-bottom-shadow flex flex-1 flex-col items-center justify-center gap-3 py-6">
+                  <p className="text-muted-foreground text-center text-sm">Volt score is calculating</p>
+                  <Spinner className="size-8" />
+                </div>
               </div>
             ) : isValidVoltScore(voltScore) ? (
               <>
@@ -104,31 +131,6 @@ export function SolveSuccessDialog({
                 </div>
               </>
             ) : null}
-          </div>
-        ) : null}
-
-        {/* Stats */}
-        {stats ? (
-          <div className="grid grid-cols-3 gap-2">
-            <NumberTickerStats
-              icon={Target}
-              label="Accuracy"
-              value={stats.accuracyPercent}
-              suffix="%"
-              backgroundClassName="bg-emerald-500"
-            />
-            <NumberTickerStats
-              icon={Flame}
-              label="Max streak"
-              value={stats.maxCorrectStreak}
-              backgroundClassName="bg-emerald-500"
-            />
-            <ColumnBasedStats
-              icon={Clock}
-              label="Time"
-              value={formatAttemptDurationMs(stats.durationMs) ?? "—"}
-              backgroundClassName="bg-sky-500"
-            />
           </div>
         ) : null}
 
