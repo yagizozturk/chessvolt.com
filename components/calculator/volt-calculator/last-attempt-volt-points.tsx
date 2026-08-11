@@ -68,16 +68,34 @@ export function LastAttemptVoltPoints({ result, stats = null, className }: LastA
   const points = getMetricVoltPoints(latest.attempt, latest.dayMaxVolt);
   const accuracyValue = stats?.accuracyPercent ?? latest.attempt.accuracyPercent;
   const streakValue = stats?.maxCorrectStreak ?? latest.attempt.streakPercent;
-  const timeValue =
-    formatAttemptDurationMs(stats?.durationMs ?? null) ?? `${latest.attempt.timingPercent}%`;
+  const timeValue = formatAttemptDurationMs(stats?.durationMs ?? null) ?? `${latest.attempt.timingPercent}%`;
 
   return (
     <div className={cn("flex w-full flex-col gap-2", className)}>
       <p className="text-muted-foreground text-center text-xs font-medium">Last attempt</p>
       <div className="grid grid-cols-3 gap-2">
-        <NumberTickerStats icon={Target} label="Accuracy" value={accuracyValue} suffix="%" points={points.accuracy} />
-        <NumberTickerStats icon={Flame} label="Max streak" value={streakValue} points={points.streak} />
-        <ColumnBasedStats icon={Clock} label="Time" value={timeValue} points={points.timing} />
+        <NumberTickerStats
+          icon={Target}
+          label="Accuracy"
+          value={accuracyValue}
+          suffix="%"
+          points={points.accuracy}
+          backgroundClassName="bg-emerald-500"
+        />
+        <NumberTickerStats
+          icon={Flame}
+          label="Max streak"
+          value={streakValue}
+          points={points.streak}
+          backgroundClassName="bg-rose-500"
+        />
+        <ColumnBasedStats
+          icon={Clock}
+          label="Time"
+          value={timeValue}
+          points={points.timing}
+          backgroundClassName="bg-sky-500"
+        />
       </div>
       <p className="border-border flex items-center justify-between border-t pt-1.5 text-sm font-medium tabular-nums">
         <span className="text-muted-foreground">Total</span>

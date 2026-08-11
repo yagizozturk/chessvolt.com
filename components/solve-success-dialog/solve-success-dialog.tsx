@@ -110,9 +110,25 @@ export function SolveSuccessDialog({
         {/* Stats */}
         {stats ? (
           <div className="grid grid-cols-3 gap-2">
-            <NumberTickerStats icon={Target} label="Accuracy" value={stats.accuracyPercent} suffix="%" />
-            <NumberTickerStats icon={Flame} label="Max streak" value={stats.maxCorrectStreak} />
-            <ColumnBasedStats icon={Clock} label="Time" value={formatAttemptDurationMs(stats.durationMs) ?? "—"} />
+            <NumberTickerStats
+              icon={Target}
+              label="Accuracy"
+              value={stats.accuracyPercent}
+              suffix="%"
+              backgroundClassName="bg-emerald-500"
+            />
+            <NumberTickerStats
+              icon={Flame}
+              label="Max streak"
+              value={stats.maxCorrectStreak}
+              backgroundClassName="bg-emerald-500"
+            />
+            <ColumnBasedStats
+              icon={Clock}
+              label="Time"
+              value={formatAttemptDurationMs(stats.durationMs) ?? "—"}
+              backgroundClassName="bg-sky-500"
+            />
           </div>
         ) : null}
 

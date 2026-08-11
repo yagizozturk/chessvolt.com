@@ -1,5 +1,9 @@
-import type { LucideIcon } from "lucide-react";
+"use client";
 
+import type { LucideIcon } from "lucide-react";
+import { Zap } from "lucide-react";
+
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 type ColumnBasedStatsProps = {
@@ -7,18 +11,58 @@ type ColumnBasedStatsProps = {
   label: string;
   value: string;
   points?: number | null;
+  backgroundClassName?: string;
   className?: string;
 };
 
-export function ColumnBasedStats({ icon: Icon, label, value, points, className }: ColumnBasedStatsProps) {
+export function ColumnBasedStats({
+  icon: Icon,
+  label,
+  value,
+  points,
+  backgroundClassName,
+  className,
+}: ColumnBasedStatsProps) {
   return (
-    <div className={cn("card-border-bottom-shadow relative min-w-0 items-center gap-1 px-3 py-3", className)}>
-      {points != null ? (
-        <span className="text-primary absolute top-1.5 right-1.5 text-xs font-medium tabular-nums">+{points}</span>
-      ) : null}
-      <Icon className="text-primary size-6 shrink-0" />
-      <span className="text-foreground text-lg font-bold tabular-nums">{value}</span>
-      <span className="text-muted-foreground text-xs font-medium">{label}</span>
+    <div className={cn("card-border-bottom-shadow min-w-0", className)}>
+      <div
+        className={cn(
+          "flex w-full items-center justify-center gap-1 rounded-t-2xl p-1",
+          backgroundClassName,
+        )}
+      >
+        <Icon className="size-4 shrink-0" aria-hidden />
+        <span className="text-sm font-bold">{label}</span>
+      </div>
+      <div className="flex w-full flex-1 items-center justify-center gap-1 p-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="text-foreground flex min-w-0 flex-1 cursor-default flex-col items-center text-lg font-bold tabular-nums">
+              <Icon className="size-5 shrink-0" aria-hidden />
+              <span>{value}</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={4}>
+            {label} value for last try
+          </TooltipContent>
+        </Tooltip>
+        {points != null ? (
+          <>
+            <div className="border-border self-stretch border-l border-dashed" aria-hidden />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="text-primary flex min-w-0 flex-1 cursor-default flex-col items-center text-lg font-bold tabular-nums">
+                  <Zap className="size-5 shrink-0 fill-current" aria-hidden />
+                  <span>+{points}</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={4}>
+                Volt points for {label.toLowerCase()}
+              </TooltipContent>
+            </Tooltip>
+          </>
+        ) : null}
+      </div>
     </div>
   );
 }
