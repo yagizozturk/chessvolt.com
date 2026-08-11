@@ -5,8 +5,8 @@ import { TOUR_TARGETS, tourTargetSelector } from "@/lib/shared/tour/data-tour";
 export const OPENING_VARIANT_TOUR_STEPS: Step[] = [
   {
     target: tourTargetSelector(TOUR_TARGETS.favoriteButton),
-    title: "Add to favorites",
-    content: "Favorite this variant to track your Volt score and find it later.",
+    title: "Add to Volt Tracker",
+    content: "Add this variant to Volt Tracker to track your Volt score and find it later.",
     placement: "bottom",
   },
   {

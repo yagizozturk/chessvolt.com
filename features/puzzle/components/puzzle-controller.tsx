@@ -158,11 +158,11 @@ export default function PuzzleController({
     // Setting the completion stats for UI Dialog show
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
-    setIsVoltScoreShowing(favorited);
+    setIsVoltScoreShowing(true);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, favorited, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, playLevelUpSound]);
 
   // ================================================================================================
   // Insert the completion attempt to the db
@@ -180,7 +180,7 @@ export default function PuzzleController({
 
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
-      ...(favorited ? { voltScore } : {}),
+      voltScore,
     });
 
     setCompletionVoltScore(voltScoreResult);

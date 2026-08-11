@@ -21,15 +21,15 @@ type FavoriteButtonProps = ToggleFavoriteTarget & {
 };
 
 const ERROR_MESSAGES: Record<string, string> = {
-  invalid_target: "This item could not be favorited.",
-  failed: "Could not update favorite. Please try again.",
+  invalid_target: "This item could not be added to Volt Tracker.",
+  failed: "Could not update Volt Tracker. Please try again.",
 };
 
 export function FavoriteButton({ isFavorited, onFavoritedChange, ...target }: FavoriteButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const label = isFavorited ? "Remove from favorites" : "Add to favorites";
-  const tooltip = isFavorited ? "Remove from favorites" : "Favorite to track your Volt score";
+  const label = isFavorited ? "Remove from Volt Tracker" : "Add to Volt Tracker";
+  const tooltip = isFavorited ? "Remove from Volt Tracker" : "Add to Volt Tracker to track your Volt score";
 
   const handleClick = () => {
     if (isPending) return;

@@ -10,7 +10,7 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
   title: "Volt Tracker | ChessVolt",
-  description: "Favorite openings and puzzles to check your Volt score.",
+  description: "Openings and puzzles in your Volt Tracker to check your Volt score.",
 };
 
 type SearchParams = Promise<{ view?: string }>;
@@ -34,7 +34,7 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
       <div className="page-container-children-layout">
         <PageHeader
           title="Volt Tracker"
-          description="Your favorite openings and puzzles to check your Volt score."
+          description="Openings and puzzles in your Volt Tracker to check your Volt score."
           actions={<FavoritesViewFilter view={view} />}
         />
 

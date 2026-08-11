@@ -24,7 +24,7 @@ export function FavoritesViewFilter({ view }: FavoritesViewFilterProps) {
         <SelectTrigger
           id="favorites-view"
           className="w-full rounded-xl border-2 bg-background"
-          aria-label="Filter favorites by source"
+          aria-label="Filter Volt Tracker by source"
         >
           <SelectValue />
         </SelectTrigger>

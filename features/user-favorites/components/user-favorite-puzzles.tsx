@@ -48,7 +48,7 @@ export async function UserFavoritePuzzles({
   const attemptStatsBySequenceIdMap = createAttemptStatsBySequenceIdMap(getLatestAttemptStats(puzzleAttempts));
 
   if (puzzleFavorites.length === 0) {
-    return <EmptyDataMessage message="You haven't favorited any puzzles yet." />;
+    return <EmptyDataMessage message="You haven't added any puzzles to Volt Tracker yet." />;
   }
 
   return (

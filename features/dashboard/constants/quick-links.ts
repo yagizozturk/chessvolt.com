@@ -1,7 +1,7 @@
 export const QUICK_LINKS = [
   {
     title: "Volt Tracker",
-    description: "Favorite openings and puzzles to check your Volt score.",
+    description: "Track openings and puzzles to check your Volt score.",
     href: "/volt-tracker",
     icon: "/images/icons/icon-circle-volt.png",
   },
