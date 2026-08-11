@@ -16,12 +16,6 @@ export const OPENING_VARIANT_TOUR_STEPS: Step[] = [
     placement: "bottom",
   },
   {
-    target: tourTargetSelector(TOUR_TARGETS.goals),
-    title: "Variant goals",
-    content: "Follow each goal step by step. Volt can also guide you with voice.",
-    placement: "left",
-  },
-  {
     target: tourTargetSelector(TOUR_TARGETS.hintButton),
     title: "Hints",
     content: "Need help? First hint highlights the piece, second shows where it goes.",
