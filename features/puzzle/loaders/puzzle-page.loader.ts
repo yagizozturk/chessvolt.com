@@ -48,7 +48,7 @@ export async function loadStudyPuzzlePage(props: PuzzleLoaderPageProps): Promise
   const nextPuzzleUrl = getNextPuzzleUrl(puzzles, puzzle.id, (id) => buildStudyPuzzleUrl(id, { studySlug: slug }));
 
   // ==================================================================
-  // Check if the puzzle is favourited by the user
+  // Check if the puzzle is favorited by the user
   // ==================================================================
   const isFavoritedPuzzle = user ? await getFavoriteByPuzzleId(supabase, user.id, puzzle.id) : null;
 

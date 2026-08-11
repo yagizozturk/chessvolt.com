@@ -1,5 +1,5 @@
 /**
- * User Favourites Repository
+ * User Favorites Repository
  *
  * Responsibility: CRUD access to the user_favorites table.
  */

@@ -31,8 +31,9 @@ export function GoalViewer({
           <MainIdeaCard mainIdea={trimmedMainIdea} />
         </div>
       ) : null}
-      <div className="card-border-bottom-shadow mb-3">
+      <div className="card-border-bottom-shadow mb-3 p-4">
         <ActiveGoalCard goal={activeGoal} mode={mode} turnLabel={turnLabel} />
+        <div>Theme</div>
       </div>
       <div className="mb-3 flex items-center">
         <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />

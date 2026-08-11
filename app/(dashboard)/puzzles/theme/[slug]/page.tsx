@@ -14,7 +14,7 @@ type PageProps = {
 // ==================================================================
 // Theme play entry. Picks a rating-matched unsolved puzzle, then
 // redirects to the stable /puzzles/[id]?theme=… URL so refreshes
-// (e.g. after favouriting) cannot re-roll the board.
+// (e.g. after favoriting) cannot re-roll the board.
 // Next puzzle navigates here again with a nonce to pick another.
 // ==================================================================
 export default async function ThemePuzzlePage({ params, searchParams }: PageProps) {

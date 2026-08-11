@@ -1,10 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import * as userFavouriteRepo from "@/features/user-favorites/repository/user-favorite.repository";
+import * as userFavoriteRepo from "@/features/user-favorites/repository/user-favorite.repository";
 import type { ToggleFavoriteTarget, UserFavorite } from "@/features/user-favorites/types/user-favorite";
 
 export type ToggleFavoriteResult =
-  | { ok: true; favourited: boolean; row: UserFavorite | null }
+  | { ok: true; favorited: boolean; row: UserFavorite | null }
   | { ok: false; reason: "invalid_target" | "failed" };
 
 type ParsedTarget =
@@ -23,7 +23,7 @@ function parseTarget(target: ToggleFavoriteTarget): ParsedTarget | null {
   return { kind: "puzzle", puzzleId };
 }
 
-export async function toggleFavourite(
+export async function toggleFavorite(
   supabase: SupabaseClient,
   input: { userId: string } & ToggleFavoriteTarget,
 ): Promise<ToggleFavoriteResult> {
@@ -34,18 +34,18 @@ export async function toggleFavourite(
 
   const existing =
     target.kind === "opening_variant"
-      ? await userFavouriteRepo.findByUserAndOpeningVariantId(supabase, input.userId, target.openingVariantId)
-      : await userFavouriteRepo.findByPuzzleId(supabase, input.userId, target.puzzleId);
+      ? await userFavoriteRepo.findByUserAndOpeningVariantId(supabase, input.userId, target.openingVariantId)
+      : await userFavoriteRepo.findByPuzzleId(supabase, input.userId, target.puzzleId);
 
   if (existing) {
-    const deleted = await userFavouriteRepo.deleteById(supabase, existing.id);
+    const deleted = await userFavoriteRepo.deleteById(supabase, existing.id);
     if (!deleted) {
       return { ok: false, reason: "failed" };
     }
-    return { ok: true, favourited: false, row: null };
+    return { ok: true, favorited: false, row: null };
   }
 
-  const row = await userFavouriteRepo.create(supabase, {
+  const row = await userFavoriteRepo.create(supabase, {
     userId: input.userId,
     openingVariantId: target.kind === "opening_variant" ? target.openingVariantId : null,
     puzzleId: target.kind === "puzzle" ? target.puzzleId : null,
@@ -55,5 +55,5 @@ export async function toggleFavourite(
     return { ok: false, reason: "failed" };
   }
 
-  return { ok: true, favourited: true, row };
+  return { ok: true, favorited: true, row };
 }

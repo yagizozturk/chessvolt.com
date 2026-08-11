@@ -21,7 +21,7 @@ export function VoltCoach({ title, message, ttsKey, ttsText }: VoltCoachProps) {
   const muted = !enabled;
 
   return (
-    <div className="relative flex gap-4 rounded-xl p-4">
+    <div className="relative flex gap-4">
       <TTSController key={ttsKey} text={ttsText ?? message} muted={muted} />
       {/* min-w-0 needs to be refactored after max 2 words prompt */}
       <div className="flex min-w-0 flex-1 flex-col gap-1">

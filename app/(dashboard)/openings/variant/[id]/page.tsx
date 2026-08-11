@@ -55,13 +55,13 @@ export default async function OpeningVariantPage({ params }: Params) {
   const opening = await getOpeningById(supabase, variant.openingId);
   const parentOpeningUrl = opening?.slug && opening?.id ? `/openings/${opening.slug}/${opening.id}` : "/openings";
 
-  const favouriteRow = user
+  const favoriteRow = user
     ? await getUserFavoriteByUserAndOpeningVariant(supabase, user.id, variant.id)
     : null;
-  const isFavourited = Boolean(favouriteRow);
+  const isFavorited = Boolean(favoriteRow);
 
   const voltScore =
-    user && isFavourited
+    user && isFavorited
       ? calculateVoltScore({
           attempts: await attemptService.getAttemptsByUserAndSequence(
             supabase,
@@ -79,8 +79,8 @@ export default async function OpeningVariantPage({ params }: Params) {
         variant={variant}
         nextVariantId={nextVariant?.id ?? null}
         parentOpeningUrl={parentOpeningUrl}
-        canFavourite={Boolean(user)}
-        isFavourited={isFavourited}
+        canFavorite={Boolean(user)}
+        isFavorited={isFavorited}
         voltScore={voltScore}
       />
     </>

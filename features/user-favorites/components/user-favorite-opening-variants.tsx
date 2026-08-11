@@ -10,17 +10,17 @@ import type { UserFavoriteWithDetails } from "@/features/user-favorites/types/us
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 
 export async function UserFavoriteOpeningVariants({ userId, supabase }: { userId: string; supabase: SupabaseClient }) {
-  const favourites = await getUserFavoritesForUserWithDetails(supabase, userId);
-  const openingFavourites = favourites.filter(
+  const favorites = await getUserFavoritesForUserWithDetails(supabase, userId);
+  const openingFavorites = favorites.filter(
     (
-      favourite,
-    ): favourite is UserFavoriteWithDetails & {
+      favorite,
+    ): favorite is UserFavoriteWithDetails & {
       openingVariant: NonNullable<UserFavoriteWithDetails["openingVariant"]>;
-    } => favourite.openingVariant != null,
+    } => favorite.openingVariant != null,
   );
 
   const openingVariantSequenceIds = [
-    ...new Set(openingFavourites.map((favourite) => favourite.openingVariant.moveSequence.id)),
+    ...new Set(openingFavorites.map((favorite) => favorite.openingVariant.moveSequence.id)),
   ];
 
   const openingAttempts =
@@ -32,25 +32,25 @@ export async function UserFavoriteOpeningVariants({ userId, supabase }: { userId
     openingVariantSequenceIds.length > 0
       ? getVoltScoresBySequenceId(
           openingAttempts,
-          openingFavourites.map((favourite) => ({
-            sequenceId: favourite.openingVariant.moveSequence.id,
-            totalMoveCount: getPlayerMoveCount(favourite.openingVariant.moveSequence.moves),
+          openingFavorites.map((favorite) => ({
+            sequenceId: favorite.openingVariant.moveSequence.id,
+            totalMoveCount: getPlayerMoveCount(favorite.openingVariant.moveSequence.moves),
             rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
           })),
         )
       : {};
 
-  if (openingFavourites.length === 0) {
+  if (openingFavorites.length === 0) {
     return <EmptyDataMessage message="You haven't added any opening variants to Volt Tracker yet." />;
   }
 
   return (
     <div className="page-container-grid-data-layout">
-      {openingFavourites.map((favourite) => {
-        const { openingVariant } = favourite;
+      {openingFavorites.map((favorite) => {
+        const { openingVariant } = favorite;
         return (
           <OpeningBoardCard
-            key={favourite.id}
+            key={favorite.id}
             id={openingVariant.id}
             name={openingVariant.title ?? "Untitled variant"}
             boardWrapperClassName="aspect-square w-[180px] shrink-0"

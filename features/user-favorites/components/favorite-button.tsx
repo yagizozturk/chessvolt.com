@@ -10,14 +10,14 @@ import { Button } from "@/components/ui/button";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { toggleFavouriteAction } from "@/features/user-favorites/actions/toggle-favorite";
+import { toggleFavoriteAction } from "@/features/user-favorites/actions/toggle-favorite";
 import type { ToggleFavoriteTarget } from "@/features/user-favorites/types/user-favorite";
 import { cn } from "@/lib/utils";
 import favoriteAnimationData from "@/public/images/animations/animation-favorite.json";
 
-type FavouriteButtonProps = ToggleFavoriteTarget & {
-  isFavourited: boolean;
-  onFavouritedChange: (favourited: boolean) => void;
+type FavoriteButtonProps = ToggleFavoriteTarget & {
+  isFavorited: boolean;
+  onFavoritedChange: (favorited: boolean) => void;
 };
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -25,20 +25,20 @@ const ERROR_MESSAGES: Record<string, string> = {
   failed: "Could not update favorite. Please try again.",
 };
 
-export function FavouriteButton({ isFavourited, onFavouritedChange, ...target }: FavouriteButtonProps) {
+export function FavoriteButton({ isFavorited, onFavoritedChange, ...target }: FavoriteButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const label = isFavourited ? "Remove from favorites" : "Add to favorites";
-  const tooltip = isFavourited ? "Remove from favorites" : "Favorite to track your Volt score";
+  const label = isFavorited ? "Remove from favorites" : "Add to favorites";
+  const tooltip = isFavorited ? "Remove from favorites" : "Favorite to track your Volt score";
 
   const handleClick = () => {
     if (isPending) return;
 
     startTransition(async () => {
-      const result = await toggleFavouriteAction(target);
+      const result = await toggleFavoriteAction(target);
 
       if (result.ok) {
-        onFavouritedChange(result.favourited);
+        onFavoritedChange(result.favorited);
         toast("", {
           position: "bottom-right",
           description: (
@@ -48,7 +48,7 @@ export function FavouriteButton({ isFavourited, onFavouritedChange, ...target }:
               </div>
               <div>
                 <p className="text-base font-bold">
-                  {result.favourited ? "Added to favorites" : "Removed from favorites"}
+                  {result.favorited ? "Added to favorites" : "Removed from favorites"}
                 </p>
               </div>
             </div>
@@ -77,10 +77,10 @@ export function FavouriteButton({ isFavourited, onFavouritedChange, ...target }:
           onClick={handleClick}
           disabled={isPending}
           aria-label={label}
-          aria-pressed={isFavourited}
+          aria-pressed={isFavorited}
         >
           <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
-          {isPending ? <Spinner /> : <ZapIcon className={cn("size-5", isFavourited && "fill-primary text-primary")} />}
+          {isPending ? <Spinner /> : <ZapIcon className={cn("size-5", isFavorited && "fill-primary text-primary")} />}
         </Button>
       </TooltipTrigger>
       <TooltipContent side="bottom" sideOffset={4}>

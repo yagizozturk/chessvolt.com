@@ -20,13 +20,13 @@ export async function UserFavoritePuzzles({
   userId: string;
   supabase: SupabaseClient;
 }) {
-  const favourites = await getUserFavoritesForUserWithDetails(supabase, userId);
-  const puzzleFavourites = favourites.filter(
-    (favourite): favourite is UserFavoriteWithDetails & { puzzle: NonNullable<UserFavoriteWithDetails["puzzle"]> } =>
-      favourite.puzzle != null,
+  const favorites = await getUserFavoritesForUserWithDetails(supabase, userId);
+  const puzzleFavorites = favorites.filter(
+    (favorite): favorite is UserFavoriteWithDetails & { puzzle: NonNullable<UserFavoriteWithDetails["puzzle"]> } =>
+      favorite.puzzle != null,
   );
 
-  const puzzleSequenceIds = [...new Set(puzzleFavourites.map((favourite) => favourite.puzzle.moveSequence.id))];
+  const puzzleSequenceIds = [...new Set(puzzleFavorites.map((favorite) => favorite.puzzle.moveSequence.id))];
 
   const puzzleAttempts =
     puzzleSequenceIds.length > 0
@@ -37,27 +37,27 @@ export async function UserFavoritePuzzles({
     puzzleSequenceIds.length > 0
       ? getVoltScoresBySequenceId(
           puzzleAttempts,
-          puzzleFavourites.map((favourite) => ({
-            sequenceId: favourite.puzzle.moveSequence.id,
-            totalMoveCount: getPlayerMoveCount(favourite.puzzle.moveSequence.moves),
-            rating: getPuzzleRatingForScoring(favourite.puzzle.rating),
+          puzzleFavorites.map((favorite) => ({
+            sequenceId: favorite.puzzle.moveSequence.id,
+            totalMoveCount: getPlayerMoveCount(favorite.puzzle.moveSequence.moves),
+            rating: getPuzzleRatingForScoring(favorite.puzzle.rating),
           })),
         )
       : {};
 
   const attemptStatsBySequenceIdMap = createAttemptStatsBySequenceIdMap(getLatestAttemptStats(puzzleAttempts));
 
-  if (puzzleFavourites.length === 0) {
-    return <EmptyDataMessage message="You haven't favourited any puzzles yet." />;
+  if (puzzleFavorites.length === 0) {
+    return <EmptyDataMessage message="You haven't favorited any puzzles yet." />;
   }
 
   return (
     <div className="page-container-grid-data-layout">
-      {puzzleFavourites.map((favourite) => {
-        const { puzzle } = favourite;
+      {puzzleFavorites.map((favorite) => {
+        const { puzzle } = favorite;
         return (
           <PuzzleBoardCard
-            key={favourite.id}
+            key={favorite.id}
             puzzle={puzzle}
             game={null}
             boardWrapperClassName="aspect-square w-[180px] shrink-0"

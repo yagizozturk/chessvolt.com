@@ -86,7 +86,7 @@ export async function loadStudyPuzzles({
   const gameIds = [...new Set(paginatedPuzzles.map((r) => r.gameId).filter((id): id is string => id != null))];
 
   // ================================================================================================
-  // Attempts: accuracyPercent only (volt-score is in favourites-only).
+  // Attempts: accuracyPercent only (volt-score is in favorites-only).
   // ================================================================================================
   const [puzzleAttempts, realPlayedGames, primaryThemesByPuzzleId] = await Promise.all([
     // Getting attemopts for sequence ids for that user

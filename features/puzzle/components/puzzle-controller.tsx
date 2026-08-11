@@ -21,7 +21,7 @@ import { updateProfileRatingAction } from "@/features/profile/actions/update-pro
 import { usePuzzleTour } from "@/features/puzzle/hooks/use-puzzle-tour";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 import { getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
-import { FavouriteButton } from "@/features/user-favorites/components/favorite-button";
+import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
@@ -67,7 +67,7 @@ export default function PuzzleController({
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
   const [showMainIdea, setShowMainIdea] = useState(false);
-  const [isFavourited, setIsFavourited] = useState(isFavorited);
+  const [favorited, setFavorited] = useState(isFavorited);
   const [isPending, startTransition] = useTransition();
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
@@ -115,7 +115,7 @@ export default function PuzzleController({
   }, [puzzle.id]);
 
   useEffect(() => {
-    setIsFavourited(isFavorited);
+    setFavorited(isFavorited);
   }, [puzzle.id, isFavorited]);
 
   // ================================================================================================
@@ -155,11 +155,11 @@ export default function PuzzleController({
     // Setting the completion stats for UI Dialog show
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
-    setIsVoltScoreShowing(isFavourited);
+    setIsVoltScoreShowing(favorited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, isFavourited, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, favorited, playLevelUpSound]);
 
   // ================================================================================================
   // Insert the completion attempt to the db
@@ -177,7 +177,7 @@ export default function PuzzleController({
 
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
-      ...(isFavourited ? { voltScore } : {}),
+      ...(favorited ? { voltScore } : {}),
     });
 
     setCompletionVoltScore(voltScoreResult);
@@ -301,7 +301,7 @@ export default function PuzzleController({
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
         footerExtra={
-          <FavouriteButton puzzleId={puzzle.id} isFavourited={isFavourited} onFavouritedChange={setIsFavourited} />
+          <FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
         }
       />
 
@@ -361,10 +361,10 @@ export default function PuzzleController({
                 <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
               ) : null}
               <div data-tour="favorite-button">
-                <FavouriteButton
+                <FavoriteButton
                   puzzleId={puzzle.id}
-                  isFavourited={isFavourited}
-                  onFavouritedChange={setIsFavourited}
+                  isFavorited={favorited}
+                  onFavoritedChange={setFavorited}
                 />
               </div>
             </div>

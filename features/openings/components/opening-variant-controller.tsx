@@ -20,7 +20,7 @@ import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-seque
 import { MainIdeaButton } from "@/features/openings/components/main-idea-button";
 import { useOpeningVariantTour } from "@/features/openings/hooks/use-opening-variant-tour";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
-import { FavouriteButton } from "@/features/user-favorites/components/favorite-button";
+import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
@@ -39,8 +39,8 @@ type OpeningVariantControllerProps = {
   variant: OpeningVariant;
   nextVariantId: string | null;
   parentOpeningUrl: string;
-  canFavourite?: boolean;
-  isFavourited?: boolean;
+  canFavorite?: boolean;
+  isFavorited?: boolean;
   voltScore?: VoltScoreResult | null;
 };
 
@@ -48,8 +48,8 @@ export default function OpeningVariantController({
   variant,
   nextVariantId,
   parentOpeningUrl,
-  canFavourite = false,
-  isFavourited = false,
+  canFavorite = false,
+  isFavorited = false,
 }: OpeningVariantControllerProps) {
   const sequenceId = variant.moveSequence.id;
   const [replayKey, setReplayKey] = useState(0);
@@ -65,7 +65,7 @@ export default function OpeningVariantController({
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
   const [showMainIdea, setShowMainIdea] = useState(false);
-  const [favourited, setFavourited] = useState(isFavourited);
+  const [favorited, setFavorited] = useState(isFavorited);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
   const correctMoveCountRef = useRef(0);
@@ -102,8 +102,8 @@ export default function OpeningVariantController({
   }, [variant.id]);
 
   useEffect(() => {
-    setFavourited(isFavourited);
-  }, [variant.id, isFavourited]);
+    setFavorited(isFavorited);
+  }, [variant.id, isFavorited]);
 
   useEffect(() => {
     setIsCompleted(false);
@@ -136,21 +136,21 @@ export default function OpeningVariantController({
 
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
-    setIsVoltScoreShowing(favourited);
+    setIsVoltScoreShowing(favorited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, favourited, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, favorited, playLevelUpSound]);
 
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
 
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
-      ...(favourited ? { voltScore: voltScoreScoring } : {}),
+      ...(favorited ? { voltScore: voltScoreScoring } : {}),
     });
 
-    if (favourited) {
+    if (favorited) {
       setCompletionVoltScore(voltScoreResult);
       setIsVoltScoreShowing(false);
     }
@@ -247,11 +247,11 @@ export default function OpeningVariantController({
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
         footerExtra={
-          canFavourite ? (
-            <FavouriteButton
+          canFavorite ? (
+            <FavoriteButton
               openingVariantId={variant.id}
-              isFavourited={favourited}
-              onFavouritedChange={setFavourited}
+              isFavorited={favorited}
+              onFavoritedChange={setFavorited}
             />
           ) : null
         }
@@ -290,11 +290,11 @@ export default function OpeningVariantController({
                 <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
               ) : null}
               <div data-tour="favorite-button">
-                {canFavourite ? (
-                  <FavouriteButton
+                {canFavorite ? (
+                  <FavoriteButton
                     openingVariantId={variant.id}
-                    isFavourited={favourited}
-                    onFavouritedChange={setFavourited}
+                    isFavorited={favorited}
+                    onFavoritedChange={setFavorited}
                   />
                 ) : null}
               </div>
