@@ -1,6 +1,7 @@
 "use client";
 
 import { Clock, Flame, Target } from "lucide-react";
+import { useEffect } from "react";
 
 import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltAttemptBreakdown, VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
@@ -14,6 +15,7 @@ type LastAttemptVoltPointsProps = {
   result: VoltScoreResult | null;
   stats?: MoveSequenceCompleteDialogStats | null;
   className?: string;
+  onTotalVoltsChange?: (totalVolts: number | null) => void;
 };
 
 type LatestAttemptContext = {
@@ -55,17 +57,23 @@ function getMetricVoltPoints(attempt: VoltAttemptBreakdown, dayMaxVolt: number):
   };
 }
 
-export function LastAttemptVoltPoints({ result, stats = null, className }: LastAttemptVoltPointsProps) {
-  if (!result) {
+export function LastAttemptVoltPoints({
+  result,
+  stats = null,
+  className,
+  onTotalVoltsChange,
+}: LastAttemptVoltPointsProps) {
+  const latest = result ? getLatestAttempt(result) : null;
+  const points = latest ? getMetricVoltPoints(latest.attempt, latest.dayMaxVolt) : null;
+
+  useEffect(() => {
+    onTotalVoltsChange?.(points?.total ?? null);
+  }, [onTotalVoltsChange, points?.total]);
+
+  if (!result || !latest || !points) {
     return null;
   }
 
-  const latest = getLatestAttempt(result);
-  if (!latest) {
-    return null;
-  }
-
-  const points = getMetricVoltPoints(latest.attempt, latest.dayMaxVolt);
   const accuracyValue = stats?.accuracyPercent ?? latest.attempt.accuracyPercent;
   const streakValue = stats?.maxCorrectStreak ?? latest.attempt.streakPercent;
   const timeValue = formatAttemptDurationMs(stats?.durationMs ?? null) ?? `${latest.attempt.timingPercent}%`;

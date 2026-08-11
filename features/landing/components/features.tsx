@@ -13,12 +13,12 @@ const sharedFeatures = [
     imageAlt: "Move explanations while you play",
   },
   {
-    title: "Earn max 220 Volt in 5 days",
+    title: "Earn max 220 Volt in 4 days",
     description:
       "Master openings by solving key positions again and again, while learning the reason behind every move.",
     icon: Zap,
     imageSrc: "/images/cards/bg-earn-volt.png",
-    imageAlt: "Earn up to 220 Volt in any 5 days",
+    imageAlt: "Earn up to 220 Volt in any 4 days",
   },
   {
     title: "Reach Your Target Rating",
@@ -40,7 +40,7 @@ export function Features() {
             </h2>
             <p className="text-secondary/80 mx-auto max-w-2xl text-lg leading-relaxed">
               <span className="text-primary font-medium">Solve puzzles</span> to learn opening plans, earn up to{" "}
-              <span className="text-primary font-medium">220 Volt</span> in five days, and practice your way to your
+              <span className="text-primary font-medium">220 Volt</span> in four days, and practice your way to your
               target rating.
             </p>
           </div>

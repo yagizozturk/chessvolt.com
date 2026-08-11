@@ -7,8 +7,8 @@ export type VoltMetricWeights = {
 /** Calibration-only: tune without changing aggregation logic. */
 export const VOLT_CONFIG = {
   lookbackMonths: 3,
-  scoredDayCount: 5,
-  dayMaxVolt: 44,
+  scoredDayCount: 4,
+  dayMaxVolt: 55,
   /** Attempts per calendar day that can contribute (4th+ ignored). */
   attemptsPerDayCounted: 3,
   /** Per-day attempt slot weights; length should match attemptsPerDayCounted. */

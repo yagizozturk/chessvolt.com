@@ -1,9 +1,9 @@
 "use client";
 
 import Lottie from "lottie-react";
-import { ArrowRight, Clock, Flame, RotateCcw, Target } from "lucide-react";
+import { ArrowRight, Clock, Flame, RotateCcw, Target, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import { LastAttemptVoltPoints } from "@/components/calculator/volt-calculator/last-attempt-volt-points";
@@ -49,8 +49,15 @@ export function SolveSuccessDialog({
 }: SolveSuccessDialogProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  const [lastAttemptVolts, setLastAttemptVolts] = useState<number | null>(null);
   const hasContinueButton = destinationPath != null && buttonLabel != null;
   const hasVoltScore = isVoltScoreShowing || isValidVoltScore(voltScore);
+
+  useEffect(() => {
+    if (!open || isVoltScoreShowing || !isValidVoltScore(voltScore)) {
+      setLastAttemptVolts(null);
+    }
+  }, [open, isVoltScoreShowing, voltScore]);
 
   const handleContinue = async () => {
     if (!destinationPath) return;
@@ -70,7 +77,16 @@ export function SolveSuccessDialog({
 
         {/* Dialog Header */}
         <DialogHeader className="mt-[-30px] items-center text-center">
-          <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">
+            {lastAttemptVolts != null ? (
+              <span className="inline-flex items-center gap-1.5">
+                Wow, You Won {lastAttemptVolts}
+                <Zap className="fill-primary text-primary size-6 shrink-0" aria-label="Volt" />
+              </span>
+            ) : (
+              title
+            )}
+          </DialogTitle>
         </DialogHeader>
 
         {/* Volt score */}
@@ -110,12 +126,13 @@ export function SolveSuccessDialog({
               </div>
             ) : isValidVoltScore(voltScore) ? (
               <>
-                <LastAttemptVoltPoints result={voltScore} stats={stats} />
+                <LastAttemptVoltPoints result={voltScore} stats={stats} onTotalVoltsChange={setLastAttemptVolts} />
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
-                  <div className="card-border-bottom-shadow flex-1">
+                  <div className="card-border-bottom-shadow flex-2 p-2">
                     <VoltDayBreakdown result={voltScore} />
                   </div>
-                  <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 items-center justify-center px-4 py-3">
+                  <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 flex-col items-center justify-center gap-2 px-4 py-3">
+                    <p className="text-muted-foreground text-center text-sm font-medium">Total Volt Score</p>
                     <VoltScoreChart result={voltScore} chartSize={150} />
                     <div className="absolute top-2 right-2 hidden sm:block">
                       <Tooltip>

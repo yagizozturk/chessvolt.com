@@ -75,7 +75,7 @@ export const DEFAULT_VOLT_EXPLAIN_DIALOG_SLIDES: CarouselDialogSlide[] = [
       </span>,
       " across ",
       <span key="scored-days" className="text-primary font-medium">
-        any 5 days
+        any 4 days
       </span>,
       " in the ",
       <span key="lookback" className="text-primary font-medium">
@@ -83,7 +83,7 @@ export const DEFAULT_VOLT_EXPLAIN_DIALOG_SLIDES: CarouselDialogSlide[] = [
       </span>,
       ", with a daily maximum of ",
       <span key="day-max-volt" className="text-primary font-medium">
-        44 Volt
+        55 Volt
       </span>,
       ". Only your first 3 practices each day count: 1st practice 60%, 2nd 25%, and 3rd 15%.",
     ] satisfies ReactNode,

@@ -48,7 +48,7 @@ export function FavoriteButton({ isFavorited, onFavoritedChange, ...target }: Fa
               </div>
               <div>
                 <p className="text-base font-bold">
-                  {result.favorited ? "Added to favorites" : "Removed from favorites"}
+                  {result.favorited ? "Added to Volt Tracker" : "Removed from Volt Tracker"}
                 </p>
               </div>
             </div>

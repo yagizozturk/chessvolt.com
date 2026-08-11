@@ -26,8 +26,8 @@ Volt composes the three sub-calculators: **accuracy**, **rating–timing**, and 
 | Key                      | Default           | Meaning                                               |
 | ------------------------ | ----------------- | ----------------------------------------------------- |
 | `lookbackMonths`         | `3`               | Only attempts with `startedAt` in this window         |
-| `scoredDayCount`         | `5`               | Always **5 slots** in the sum                         |
-| `dayMaxVolt`             | `44`              | Max points per played day                             |
+| `scoredDayCount`         | `4`               | Always **4 slots** in the sum                         |
+| `dayMaxVolt`             | `55`              | Max points per played day                             |
 | `attemptsPerDayCounted`  | `3`               | 1st–3rd tries per day; **4th+ ignored**               |
 | `attemptSlotWeights`     | `[0.5, 0.3, 0.2]` | Per-try weights within a day (**no renormalization**) |
 | `metricWeights.accuracy` | `0.6`             | Per-attempt composite                                 |
@@ -37,7 +37,7 @@ Volt composes the three sub-calculators: **accuracy**, **rating–timing**, and 
 **Max Volt:**
 
 ```
-maxVolt = scoredDayCount × dayMaxVolt   // default 5 × 44 = 220
+maxVolt = scoredDayCount × dayMaxVolt   // default 4 × 55 = 220
 ```
 
 Helpers: `getVoltMaxScore()`, `getVoltLookbackStart(now?)`.
@@ -105,13 +105,13 @@ Per-attempt Volt contribution (used in UI):
 attemptVoltPoints = round(weightedContribution × dayMaxVolt / 100)
 ```
 
-### Day max examples (all attempt scores = 100, `dayMaxVolt = 44`)
+### Day max examples (all attempt scores = 100, `dayMaxVolt = 55`)
 
 | Tries that day | rawDayScore        | dayVolt |
 | -------------- | ------------------ | ------- |
-| 1              | 100 × 0.50 = 50    | **22**  |
-| 2              | 50 + 30 = 80       | **35**  |
-| 3              | 50 + 30 + 20 = 100 | **44**  |
+| 1              | 100 × 0.50 = 50    | **28**  |
+| 2              | 50 + 30 = 80       | **44**  |
+| 3              | 50 + 30 + 20 = 100 | **55**  |
 
 **Full day credit requires 3 attempts** when weights are `[0.5, 0.3, 0.2]`.
 
@@ -130,7 +130,7 @@ volt = Σ days[i].dayVolt
 display: "{volt}/{maxVolt} Volt" (detail) or "{volt}v" (compact list cards)
 ```
 
-Example: 3 strong play days (44 each) + 2 padding slots → **132/220 Volt**.
+Example: 3 strong play days (55 each) + 1 padding slot → **165/220 Volt**.
 
 ---
 
@@ -168,7 +168,7 @@ VoltDaySlot = {
   slotIndex: number;         // 1..N, newest play day = 1
   date: string | null;       // YYYY-MM-DD or null if padding
   dayVolt: number;
-  dayMaxVolt: number;        // 44
+  dayMaxVolt: number;        // 55
   isPlayed: boolean;
   attempts: VoltAttemptBreakdown[];
 }

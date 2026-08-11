@@ -20,7 +20,7 @@ const steps = [
     imageAlt: "How Volt Score Is Calculated",
     title: "How Volt Score Is Calculated",
     description:
-      "Volt Score repetition theory is based on Hermann Ebbinghaus's forgetting curve. It analyzes your performance on accuracy (60%), timing (30%), and streak (10%) in a game. Play 5 days in last 3 months to get max Volt Score.",
+      "Volt Score repetition theory is based on Hermann Ebbinghaus's forgetting curve. It analyzes your performance on accuracy (60%), timing (30%), and streak (10%) in a game. Play 4 days in last 3 months to get max Volt Score.",
   },
 ];
 
