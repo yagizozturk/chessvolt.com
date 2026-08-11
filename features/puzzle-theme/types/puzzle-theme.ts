@@ -12,3 +12,6 @@ export type PuzzleTheme = {
 export type PuzzleThemeWithTheme = PuzzleTheme & {
   theme: Theme;
 };
+
+/** Primary theme for a puzzle — title for UI, slug to match/filter. */
+export type PuzzlePrimaryTheme = Pick<Theme, "title" | "slug">;

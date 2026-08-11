@@ -8,6 +8,7 @@ import {
   getStandalonePuzzleBackUrl,
 } from "@/features/puzzle/utilities/build-puzzle-url";
 import { getNextPuzzleUrl } from "@/features/puzzle/utilities/get-next-puzzle-url";
+import * as themeRepo from "@/features/theme/repository/theme.repository";
 import { getFavoriteByPuzzleId } from "@/features/user-favorites/services/user-favorite.service";
 
 // ==================================================================
@@ -24,6 +25,8 @@ export async function loadStandalonePuzzlePage(props: StandalonePuzzleLoaderPage
     notFound();
   }
 
+  const theme = themeSlug ? await themeRepo.findBySlug(supabase, themeSlug) : null;
+
   const nextPuzzleUrl = themeSlug
     ? buildThemePlayUrl(themeSlug, { nonce: crypto.randomUUID() })
     : getNextPuzzleUrl(await getAllActivePuzzles(supabase), puzzle.id, (id) =>
@@ -38,5 +41,6 @@ export async function loadStandalonePuzzlePage(props: StandalonePuzzleLoaderPage
     backUrl: getStandalonePuzzleBackUrl(from),
     isUserLoggedIn: Boolean(user),
     isFavorited: Boolean(favoriteRow),
+    theme: theme ? { title: theme.title, slug: theme.slug } : null,
   };
 }

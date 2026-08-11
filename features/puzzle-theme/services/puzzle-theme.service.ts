@@ -6,20 +6,19 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as puzzleThemeRepo from "@/features/puzzle-theme/repository/puzzle-theme.repository";
+import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 import type { PuzzleWithThemes } from "@/features/puzzle/types/puzzle-with-themes";
 import { clampThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 import * as themeRepo from "@/features/theme/repository/theme.repository";
 import type { Theme } from "@/features/theme/types/theme";
 
-export type PrimaryPuzzleTheme = Pick<Theme, "title" | "slug">;
-
 export async function getPrimaryThemesByPuzzleIds(
   supabase: SupabaseClient,
   puzzleIds: string[],
-): Promise<Map<string, PrimaryPuzzleTheme>> {
+): Promise<Map<string, PuzzlePrimaryTheme>> {
   const uniqueIds = [...new Set(puzzleIds.map((id) => id.trim()).filter(Boolean))];
-  const primaryByPuzzleId = new Map<string, PrimaryPuzzleTheme>();
+  const primaryByPuzzleId = new Map<string, PuzzlePrimaryTheme>();
   if (uniqueIds.length === 0) return primaryByPuzzleId;
 
   const puzzleThemes = await puzzleThemeRepo.findByPuzzleIdsWithTheme(supabase, uniqueIds);

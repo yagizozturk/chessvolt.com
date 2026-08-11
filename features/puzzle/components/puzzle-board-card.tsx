@@ -12,7 +12,7 @@ import type { VoltScoreResult } from "@/components/calculator/volt-calculator/vo
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Game } from "@/features/game/types/game";
-import type { PrimaryPuzzleTheme } from "@/features/puzzle-theme/services/puzzle-theme.service";
+import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 import { formatPuzzleRatingLabel } from "@/features/puzzle/types/puzzle-rating";
 import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
@@ -28,7 +28,7 @@ type PuzzleBoardCardProps = {
   showVoltScore?: boolean;
   voltScore?: VoltScoreResult | null;
   accuracyPercent?: number | null;
-  primaryTheme?: PrimaryPuzzleTheme | null;
+  primaryTheme?: PuzzlePrimaryTheme | null;
   /** true = solved, false = wrong, undefined = not attempted */
   isComplete?: boolean;
 };

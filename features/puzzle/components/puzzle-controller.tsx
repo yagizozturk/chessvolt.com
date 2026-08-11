@@ -21,6 +21,7 @@ import { updateProfileRatingAction } from "@/features/profile/actions/update-pro
 import { usePuzzleTour } from "@/features/puzzle/hooks/use-puzzle-tour";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 import { getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
+import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
@@ -41,6 +42,7 @@ type PuzzleControllerProps = {
   backUrl?: string;
   isUserLoggedIn?: boolean; // Checks for the persist events
   isFavorited?: boolean;
+  theme?: PuzzlePrimaryTheme | null;
 };
 
 export default function PuzzleController({
@@ -49,6 +51,7 @@ export default function PuzzleController({
   backUrl = "/",
   isUserLoggedIn = false,
   isFavorited = false,
+  theme = null,
 }: PuzzleControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
@@ -398,6 +401,7 @@ export default function PuzzleController({
             turnLabel={turnLabel}
             mainIdea={mainIdea}
             showMainIdea={effectiveBoardMode === "learn" && showMainIdea}
+            theme={theme}
           />
 
           {/* Footer Buttons */}

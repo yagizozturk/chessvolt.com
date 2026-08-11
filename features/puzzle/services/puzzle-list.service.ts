@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import type { Game } from "@/features/game/types/game";
 import * as puzzleThemeRepo from "@/features/puzzle-theme/repository/puzzle-theme.repository";
-import type { PrimaryPuzzleTheme } from "@/features/puzzle-theme/services/puzzle-theme.service";
+import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import type { AttemptedPuzzlesSortBy } from "@/features/puzzle/constants/puzzles-list.constants";
 import { PUZZLES_THEME_FILTER_ALL } from "@/features/puzzle/constants/puzzles-list.constants";
 import * as puzzleRepo from "@/features/puzzle/repository/puzzle.repository";
@@ -15,7 +15,7 @@ export type AttemptedPuzzleListItem = {
   puzzle: Puzzle;
   game: Game | null;
   themeSlugs: string[];
-  primaryTheme: PrimaryPuzzleTheme | null;
+  primaryTheme: PuzzlePrimaryTheme | null;
   lastPlayedAt: string;
   accuracyPercent: number | null;
 };

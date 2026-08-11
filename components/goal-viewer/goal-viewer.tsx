@@ -2,6 +2,7 @@ import Lottie from "lottie-react";
 
 import { MainIdeaCard } from "@/components/main-idea-card/main-idea-card";
 import { Progress } from "@/components/ui/progress";
+import { ThemeBadge } from "@/features/theme/components/theme-badge";
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
 import { ActiveGoalCard } from "./active-goal-card/active-goal-card";
@@ -15,6 +16,7 @@ export function GoalViewer({
   turnLabel,
   mainIdea = "",
   showMainIdea = false,
+  theme = null,
 }: GoalViewerProps) {
   if (!goals.length) return null;
 
@@ -33,7 +35,7 @@ export function GoalViewer({
       ) : null}
       <div className="card-border-bottom-shadow mb-3 p-4">
         <ActiveGoalCard goal={activeGoal} mode={mode} turnLabel={turnLabel} />
-        <div>Theme</div>
+        {theme ? <ThemeBadge theme={theme} showIcon variant="secondary" /> : null}
       </div>
       <div className="mb-3 flex items-center">
         <Progress value={progressValue} className="h-4 flex-1 rounded-r-none" />

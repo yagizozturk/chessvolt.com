@@ -1,6 +1,6 @@
 import type { Study } from "@/features/study/types/study";
 import type { Game } from "@/features/game/types/game";
-import type { PrimaryPuzzleTheme } from "@/features/puzzle-theme/services/puzzle-theme.service";
+import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 
 // ============================================================
@@ -12,7 +12,7 @@ export type StudyPuzzleCardItemData = {
   href: string;
   displayFen: string | null;
   accuracyPercent: number | null;
-  primaryTheme: PrimaryPuzzleTheme | null;
+  primaryTheme: PuzzlePrimaryTheme | null;
   isComplete: boolean | undefined;
 };
 
