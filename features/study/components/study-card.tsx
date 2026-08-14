@@ -86,7 +86,7 @@ export function StudyCard({ study }: StudyCardProps) {
             onClick={() => setIsLoading(true)}
             className={cn(buttonVariants({ variant: "voltCompact", size: "xs" }), "ml-auto shrink-0")}
           >
-            Play
+            See Games
           </Link>
         </div>
       </div>

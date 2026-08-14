@@ -48,7 +48,6 @@ export default async function StudyDetailPage({ params, searchParams }: Props) {
               key={puzzle.id}
               puzzle={puzzle}
               game={game}
-              boardWrapperClassName="aspect-square w-[180px] shrink-0"
               href={href}
               displayFen={displayFen}
               accuracyPercent={accuracyPercent}

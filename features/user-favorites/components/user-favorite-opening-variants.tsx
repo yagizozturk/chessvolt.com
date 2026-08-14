@@ -53,7 +53,6 @@ export async function UserFavoriteOpeningVariants({ userId, supabase }: { userId
             key={favorite.id}
             id={openingVariant.id}
             name={openingVariant.title ?? "Untitled variant"}
-            boardWrapperClassName="aspect-square w-[180px] shrink-0"
             href={`/openings/variant/${openingVariant.id}`}
             fen={openingVariant.moveSequence.displayFen ?? openingVariant.moveSequence.initialFen}
             description={openingVariant.description}

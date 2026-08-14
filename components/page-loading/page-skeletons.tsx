@@ -61,21 +61,14 @@ export function FilterControlsSkeleton({ widths = ["sm:w-36", "sm:w-32"] }: { wi
 }
 
 type BoardCardSkeletonProps = {
-  /** Matches list pages that pass `w-[180px]` vs default `w-[240px]`. */
-  compact?: boolean;
   metaLineCount?: number;
 };
 
 /** Mirrors `PuzzleBoardCard` / `OpeningBoardCard` with a smaller board on mobile. */
-export function BoardCardSkeleton({ compact = false, metaLineCount = 2 }: BoardCardSkeletonProps) {
+export function BoardCardSkeleton({ metaLineCount = 2 }: BoardCardSkeletonProps) {
   return (
     <div className="bg-card border-b-card-shadow flex flex-row items-stretch gap-3 rounded-lg border-b-[6px] p-3 sm:gap-6 sm:p-6">
-      <Skeleton
-        className={cn(
-          "aspect-square shrink-0 self-start rounded-lg",
-          compact ? "w-[120px] sm:w-[180px]" : "w-[120px] sm:w-[240px]",
-        )}
-      />
+      <Skeleton className="aspect-square w-[120px] shrink-0 self-start rounded-lg sm:w-[240px]" />
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <Skeleton className="h-6 w-3/4 sm:h-7" />
         {Array.from({ length: metaLineCount }, (_, index) => (

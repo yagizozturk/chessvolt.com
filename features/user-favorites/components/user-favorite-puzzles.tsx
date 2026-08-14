@@ -60,7 +60,6 @@ export async function UserFavoritePuzzles({
             key={favorite.id}
             puzzle={puzzle}
             game={null}
-            boardWrapperClassName="aspect-square w-[180px] shrink-0"
             href={buildStandalonePuzzleUrl(puzzle.id, { from: "favorites" })}
             displayFen={puzzle.moveSequence.displayFen}
             showVoltScore
