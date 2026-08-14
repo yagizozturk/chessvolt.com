@@ -1,10 +1,9 @@
 import { EmptyState } from "@/components/empty-state/empty-state";
-import { PageHeader, PageHeaderWithImage } from "@/components/page-header";
+import { PageHeader } from "@/components/page-header";
 import { PuzzleBoardCard } from "@/features/puzzle/components/puzzle-board-card";
 import { buildThemePuzzlesUrl } from "@/features/puzzle/utilities/build-puzzle-url";
 import { ThemePuzzlesPagination } from "@/features/theme/components/theme-puzzles-pagination";
 import { loadThemePuzzles } from "@/features/theme/loaders/theme-puzzles-page.loader";
-import { getThemeCoverImageSrc } from "@/features/theme/utilities/theme-cover-image.utils";
 import { getThemePuzzlesPageParam } from "@/features/theme/utilities/theme-puzzles-pagination.utils";
 import { getPublicUser } from "@/lib/supabase/auth";
 
@@ -26,21 +25,10 @@ export default async function ThemePuzzlesPage({ params, searchParams }: Props) 
     pagination: page,
   });
 
-  const coverImageSrc = theme.coverImageUrl ? getThemeCoverImageSrc(theme.coverImageUrl) : null;
-
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
-        {coverImageSrc ? (
-          <PageHeaderWithImage
-            title={theme.title}
-            description={theme.description ?? ""}
-            imageSrc={coverImageSrc}
-            imageAlt={theme.title}
-          />
-        ) : (
-          <PageHeader title={theme.title} description={theme.description ?? ""} />
-        )}
+        <PageHeader title={theme.title} description={theme.description ?? ""} />
 
         {pagination?.totalPuzzleCount === 0 && <EmptyState message="No puzzles found in this theme." />}
 
