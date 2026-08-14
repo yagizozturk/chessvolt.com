@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import { PageHeader } from "@/components/page-header";
 import { ThreeColCard } from "@/components/three-col-card/three-col-card";
+import { VoltHowToCarousel } from "@/features/dashboard/components/volt-how-to-carousel";
 import { QUICK_LINKS } from "@/features/dashboard/constants/quick-links";
 import { getUserProfile } from "@/features/profile/services/profile.service";
 import { getDisplayName } from "@/features/profile/utilities/user-avatar";
@@ -51,6 +52,8 @@ export default async function Page() {
           title={`Hi, ${displayName}`}
           description="Pick up where you left off with your studies, puzzles, and openings."
         />
+
+        <VoltHowToCarousel />
 
         {/* Quick links and three column component with links */}
         <div className="page-container-grid-data-layout">
