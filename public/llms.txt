@@ -1,0 +1,38 @@
+# ChessVolt
+ChessVolt is an interactive chess learning, training, and practice platform for children, teenagers, adults, and developing chess players. It combines structured chess openings and variations, puzzles, historical games, and guided learning experiences with an AI-powered chess coach called Volt Coach. ChessVolt is designed to help players understand chess ideas, not merely memorize moves.
+Understand Why. Practice. Improve.
+Volt Coach is ChessVolt's virtual chess coach and provides vocal, written, and visual coaching. It provides instructional guidance intended to help players understand why a move is strong, what strategic or tactical idea is involved, and how the position should be approached. The Volt Tracker system tracks the Volts that represent progress.
+
+## About
+- Chess puzzles and training exercises
+- Chess Opening and variation study materials
+- Famous games
+- Learning paths and guided improvement study plans
+- User progress tracking (with Volt)
+
+## Main public pages
+- https://chessvolt.com: Home page and primary entry point
+- https://chessvolt.com/puzzles: Puzzle and tactical training resources
+- https://chessvolt.com/openings: Openings and variations learning resources
+- https://chessvolt.com/study: Famous chess games and various exercises
+- https://chessvolt.com/login: Login page
+- https://chessvolt.com/signup: Sign-up page
+- https://chessvolt.com/privacy: Privacy policy
+- https://chessvolt.com/terms: Terms of service
+- https://chessvolt.com/contact: Contact
+
+## Content types
+- Chess puzzles
+- Opening theory and study content
+- Famous chess games
+- User-facing learning and improvement resources
+- Personalized training and progress tracking
+
+## Restricted areas
+- Admin panel
+- User-only dashboards
+- Private account pages
+- Internal management and operational interfaces
+
+## Note
+This file is intended to help search engines and LLM-based systems understand the public-facing purpose of the site. It does not include private user data, internal tools, or admin-only content.

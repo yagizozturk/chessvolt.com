@@ -1,0 +1,9 @@
+# Hi robot nice to see you. Please take a look at our site. 
+
+User-agent: *
+Allow: /
+
+# No need to index admin pages
+Disallow: /admin/
+
+# Hope to see you again. Please visit us soon. 
