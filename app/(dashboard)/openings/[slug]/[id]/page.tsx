@@ -45,7 +45,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
           />
         </div>
         <div
-          className="hidden gap-4 rounded-lg bg-[#FDCB15] md:flex"
+          className="hidden gap-4 rounded-lg md:flex"
           style={opening.coverImageColor ? { background: opening.coverImageColor } : undefined}
         >
           <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 p-6">
