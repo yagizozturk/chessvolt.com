@@ -13,6 +13,18 @@ import { clampThemeLinkWeight } from "@/features/theme-link/types/theme-link-wei
 import * as themeRepo from "@/features/theme/repository/theme.repository";
 import type { Theme } from "@/features/theme/types/theme";
 
+export async function getActivePuzzlesByThemeId(
+  supabase: SupabaseClient,
+  themeId: string,
+  input: puzzleThemeRepo.FindActiveByThemeIdInput = {},
+): Promise<Puzzle[]> {
+  return puzzleThemeRepo.findActivePuzzlesByThemeId(supabase, themeId, input);
+}
+
+export async function getActivePuzzlesCountByThemeId(supabase: SupabaseClient, themeId: string): Promise<number> {
+  return puzzleThemeRepo.countActivePuzzlesByThemeId(supabase, themeId);
+}
+
 export async function getPrimaryThemesByPuzzleIds(
   supabase: SupabaseClient,
   puzzleIds: string[],

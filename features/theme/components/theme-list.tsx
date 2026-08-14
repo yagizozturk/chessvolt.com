@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { buildThemePlayUrl } from "@/features/puzzle/utilities/build-puzzle-url";
+import { buildThemePuzzlesUrl } from "@/features/puzzle/utilities/build-puzzle-url";
 import type { Theme } from "@/features/theme/types/theme";
 import { THEME_CATEGORIES, formatThemeCategoryLabel } from "@/features/theme/types/theme-category";
 import { groupThemesByCategory } from "@/features/theme/utilities/group-themes-by-category";
@@ -53,7 +53,7 @@ export function ThemeList({ themes, groupByCategory = true }: ThemeListProps) {
 }
 
 // ================================================================================
-// Theme list item component. This link redirect to /puzzle/[id]
+// Theme list item. Links to the puzzle list for this theme.
 // ================================================================================
 function ThemeListItem({ theme }: { theme: Theme }) {
   const imageSrc = theme.coverImageUrl ? getThemeCoverImageSrc(theme.coverImageUrl) : null;
@@ -61,7 +61,7 @@ function ThemeListItem({ theme }: { theme: Theme }) {
   return (
     <li>
       <Link
-        href={buildThemePlayUrl(theme.slug)}
+        href={buildThemePuzzlesUrl(theme.slug)}
         className="group flex w-28 flex-col items-center gap-2 transition-opacity hover:opacity-90"
       >
         {imageSrc ? (

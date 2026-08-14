@@ -61,11 +61,43 @@ export async function findAllWithTheme(supabase: SupabaseClient): Promise<Puzzle
   return toPuzzleThemesWithTheme((data ?? []) as DbPuzzleThemeWithTheme[]);
 }
 
-export async function findActivePuzzlesByThemeId(supabase: SupabaseClient, themeId: string): Promise<Puzzle[]> {
-  const { data, error } = await supabase
+export type FindActiveByThemeIdInput = {
+  offset?: number;
+  limit?: number;
+};
+
+export async function countActivePuzzlesByThemeId(supabase: SupabaseClient, themeId: string): Promise<number> {
+  const { count, error } = await supabase
     .from("puzzle_themes")
-    .select("puzzles (*, move_sequences (*))")
-    .eq("theme_id", themeId);
+    .select("puzzles!inner(id)", { count: "exact", head: true })
+    .eq("theme_id", themeId)
+    .eq("puzzles.is_active", true);
+
+  if (error) {
+    console.error("puzzle-theme.repository.countActivePuzzlesByThemeId error:", error);
+    return 0;
+  }
+
+  return count ?? 0;
+}
+
+export async function findActivePuzzlesByThemeId(
+  supabase: SupabaseClient,
+  themeId: string,
+  input: FindActiveByThemeIdInput = {},
+): Promise<Puzzle[]> {
+  let query = supabase
+    .from("puzzle_themes")
+    .select("created_at, puzzles!inner(*, move_sequences (*))")
+    .eq("theme_id", themeId)
+    .eq("puzzles.is_active", true)
+    .order("created_at", { ascending: true });
+
+  if (input.offset != null && input.limit != null) {
+    query = query.range(input.offset, input.offset + input.limit - 1);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("puzzle-theme.repository.findActivePuzzlesByThemeId error:", error);

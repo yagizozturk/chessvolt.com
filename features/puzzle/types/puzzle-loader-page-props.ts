@@ -15,7 +15,6 @@ export type StandalonePuzzleLoaderPageProps = {
   user: User | null;
   puzzleId: string;
   from?: "favorites" | "puzzles";
-  themeSlug?: string;
 };
 
 export type PuzzlePageData = {

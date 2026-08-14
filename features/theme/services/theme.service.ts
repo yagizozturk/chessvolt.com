@@ -23,6 +23,10 @@ export async function getThemeById(supabase: SupabaseClient, id: string): Promis
   return themeRepo.findById(supabase, id);
 }
 
+export async function getThemeBySlug(supabase: SupabaseClient, slug: string): Promise<Theme | null> {
+  return themeRepo.findBySlug(supabase, slug);
+}
+
 export async function createTheme(
   supabase: SupabaseClient,
   input: themeRepo.CreateThemeInput,

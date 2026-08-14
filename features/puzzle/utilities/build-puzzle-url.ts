@@ -14,7 +14,7 @@ export function parseStandaloneThemeSlug(theme?: string | null): string | undefi
 
 // ==================================================================
 // Building standalone puzzle URLs according to from page params
-// Puzzle can be routef from favorites or puzzles if standalone, if not study
+// Puzzle can be routed from favorites or puzzles if standalone, if not study
 // ==================================================================
 export function getStandalonePuzzleBackUrl(from?: "favorites" | "puzzles" | null): string {
   if (from === "favorites") return "/volt-tracker";
@@ -26,7 +26,7 @@ export function getStandalonePuzzleBackUrl(from?: "favorites" | "puzzles" | null
 // ==================================================================
 export function buildStandalonePuzzleUrl(
   puzzleId: string,
-  options?: { from?: "favorites" | "puzzles"; theme?: string },
+  options?: { from?: "favorites" | "puzzles" },
 ): string {
   const path = `/puzzles/${puzzleId}`;
   const params = new URLSearchParams();
@@ -35,21 +35,23 @@ export function buildStandalonePuzzleUrl(
   } else if (options?.from === "puzzles") {
     params.set("from", "puzzles");
   }
-  if (options?.theme) {
-    params.set("theme", options.theme);
-  }
   const query = params.toString();
   return query ? `${path}?${query}` : path;
 }
 
 // ==================================================================
-// Building theme play URLs. Renders a random puzzle for the theme.
-// Optional nonce forces a fresh pick when navigating to the same path (e.g. Next).
+// Building theme puzzle list and play URLs
 // ==================================================================
-export function buildThemePlayUrl(themeSlug: string, options?: { nonce?: string }): string {
-  const path = `/puzzles/theme/${themeSlug}`;
-  if (!options?.nonce) return path;
-  return `${path}?n=${options.nonce}`;
+export function buildThemePuzzlesUrl(themeSlug: string): string {
+  return `/puzzles/theme/${themeSlug}`;
+}
+
+export function buildThemePuzzleUrl(puzzleId: string, { themeSlug }: { themeSlug: string }): string {
+  return `/puzzles/theme/${themeSlug}/${puzzleId}`;
+}
+
+export function getParentThemeUrl(themeSlug: string): string {
+  return buildThemePuzzlesUrl(themeSlug);
 }
 
 // ==================================================================

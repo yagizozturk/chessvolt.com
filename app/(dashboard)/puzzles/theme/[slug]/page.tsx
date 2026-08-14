@@ -1,40 +1,72 @@
-import { redirect } from "next/navigation";
-
-import * as profileRepo from "@/features/profile/repository/profile.repository";
-import { DEFAULT_PUZZLE_RATING } from "@/features/puzzle/constants/puzzle-rating.constants";
-import { getFirstRandomPuzzleForTheme } from "@/features/puzzle/services/random-puzzle-by-theme.service";
-import { buildStandalonePuzzleUrl } from "@/features/puzzle/utilities/build-puzzle-url";
+import { EmptyState } from "@/components/empty-state/empty-state";
+import { PageHeader, PageHeaderWithImage } from "@/components/page-header";
+import { PuzzleBoardCard } from "@/features/puzzle/components/puzzle-board-card";
+import { buildThemePuzzlesUrl } from "@/features/puzzle/utilities/build-puzzle-url";
+import { ThemePuzzlesPagination } from "@/features/theme/components/theme-puzzles-pagination";
+import { loadThemePuzzles } from "@/features/theme/loaders/theme-puzzles-page.loader";
+import { getThemeCoverImageSrc } from "@/features/theme/utilities/theme-cover-image.utils";
+import { getThemePuzzlesPageParam } from "@/features/theme/utilities/theme-puzzles-pagination.utils";
 import { getPublicUser } from "@/lib/supabase/auth";
 
-type PageProps = {
+type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ n?: string }>;
+  searchParams: Promise<{ page?: string }>;
 };
 
-// ==================================================================
-// Theme play entry. Picks a rating-matched unsolved puzzle, then
-// redirects to the stable /puzzles/[id]?theme=… URL so refreshes
-// (e.g. after favoriting) cannot re-roll the board.
-// Next puzzle navigates here again with a nonce to pick another.
-// ==================================================================
-export default async function ThemePuzzlePage({ params, searchParams }: PageProps) {
-  const { slug } = await params;
-  await searchParams;
+export default async function ThemePuzzlesPage({ params, searchParams }: Props) {
   const { user, supabase } = await getPublicUser();
+  const { slug } = await params;
+  const { page: pageParam } = await searchParams;
+  const page = getThemePuzzlesPageParam(pageParam);
 
-  const targetRating = user
-    ? ((await profileRepo.getProfileCurrentRating(supabase, user.id)) ?? DEFAULT_PUZZLE_RATING)
-    : DEFAULT_PUZZLE_RATING;
-
-  const puzzle = await getFirstRandomPuzzleForTheme(supabase, {
-    themeSlug: slug,
-    userId: user?.id,
-    targetRating,
+  const { theme, themePuzzles, pagination } = await loadThemePuzzles({
+    supabase,
+    user,
+    slug,
+    pagination: page,
   });
 
-  if (!puzzle) {
-    redirect("/puzzles");
-  }
+  const coverImageSrc = theme.coverImageUrl ? getThemeCoverImageSrc(theme.coverImageUrl) : null;
 
-  redirect(buildStandalonePuzzleUrl(puzzle.id, { theme: slug }));
+  return (
+    <div className="page-container">
+      <div className="page-container-children-layout">
+        {coverImageSrc ? (
+          <PageHeaderWithImage
+            title={theme.title}
+            description={theme.description ?? ""}
+            imageSrc={coverImageSrc}
+            imageAlt={theme.title}
+          />
+        ) : (
+          <PageHeader title={theme.title} description={theme.description ?? ""} />
+        )}
+
+        {pagination?.totalPuzzleCount === 0 && <EmptyState message="No puzzles found in this theme." />}
+
+        <div className="page-container-grid-data-layout">
+          {themePuzzles.map(({ puzzle, game, href, displayFen, accuracyPercent, primaryTheme, isComplete }) => (
+            <PuzzleBoardCard
+              key={puzzle.id}
+              puzzle={puzzle}
+              game={game}
+              href={href}
+              displayFen={displayFen}
+              accuracyPercent={accuracyPercent}
+              primaryTheme={primaryTheme}
+              isComplete={isComplete}
+            />
+          ))}
+        </div>
+
+        {pagination ? (
+          <ThemePuzzlesPagination
+            basePath={buildThemePuzzlesUrl(slug)}
+            page={pagination.page}
+            totalPages={pagination.totalPages}
+          />
+        ) : null}
+      </div>
+    </div>
+  );
 }
