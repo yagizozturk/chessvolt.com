@@ -9,18 +9,55 @@ import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-val
 import { LastAttemptVoltPoints } from "@/components/calculator/volt-calculator/last-attempt-volt-points";
 import { VoltDayBreakdown } from "@/components/calculator/volt-calculator/volt-calculator";
 import { VoltScoreChart } from "@/components/calculator/volt-calculator/volt-score-chart";
+import { VOLT_CONFIG, getVoltMaxScore } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import { formatAttemptDurationMs } from "@/features/user-sequence-attempt/utilities/format-attempt-duration";
 import infoAnimationData from "@/public/images/animations/animation-info-question.json";
 import animationData from "@/public/images/animations/animation-trophy.json";
+
+function VoltScoreHelp() {
+  const firstSolveShare = Math.round(VOLT_CONFIG.attemptSlotWeights[0] * 100);
+  const extraSolvesToFillDay = VOLT_CONFIG.attemptsPerDayCounted - 1;
+
+  return (
+    <HoverCard openDelay={150} closeDelay={100}>
+      <HoverCardTrigger asChild>
+        <button
+          type="button"
+          className="focus-visible:ring-ring inline-flex cursor-default rounded-full focus-visible:ring-2 focus-visible:outline-none"
+          aria-label="About Volt score"
+        >
+          <Lottie animationData={infoAnimationData} loop autoplay className="size-9" />
+        </button>
+      </HoverCardTrigger>
+      <HoverCardContent side="top" align="end" className="w-80">
+        <div className="flex flex-col gap-2">
+          <p className="font-medium">This is not just this solve</p>
+          <p className="text-muted-foreground">
+            Your Volt is the sum of your best {VOLT_CONFIG.scoredDayCount} practice days in the last{" "}
+            {VOLT_CONFIG.lookbackMonths} months, up to {getVoltMaxScore()} Volt.
+          </p>
+          <p className="text-muted-foreground">
+            A day can reach {VOLT_CONFIG.dayMaxVolt} Volt. The first solve is worth {firstSolveShare}% of that day —
+            play it {extraSolvesToFillDay} more {extraSolvesToFillDay === 1 ? "time" : "times"} the same day to fill
+            the rest. After that, extra solves don&apos;t count.
+          </p>
+          <p className="text-muted-foreground">
+            Each solve itself is mostly accuracy, then speed, then streak.
+          </p>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
 
 export type SolveSuccessDialogProps = {
   open: boolean;
@@ -80,7 +117,7 @@ export function SolveSuccessDialog({
           <DialogTitle className="text-2xl font-bold">
             {lastAttemptVolts != null ? (
               <span className="inline-flex items-center gap-1.5">
-                Wow, You Won {lastAttemptVolts}
+                Wow, You Won <span className="text-primary">{lastAttemptVolts}</span>
                 <Zap className="fill-primary text-primary size-6 shrink-0" aria-label="Volt" />
               </span>
             ) : (
@@ -109,7 +146,7 @@ export function SolveSuccessDialog({
                       label="Max streak"
                       value={stats.maxCorrectStreak}
                       animation
-                      backgroundClassName="bg-emerald-500"
+                      backgroundClassName="bg-rose-500"
                     />
                     <ColumnBasedStats
                       icon={Clock}
@@ -135,20 +172,7 @@ export function SolveSuccessDialog({
                     <p className="text-muted-foreground text-center text-sm font-medium">Total Volt Score</p>
                     <VoltScoreChart result={voltScore} chartSize={150} />
                     <div className="absolute top-2 right-2 hidden sm:block">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            type="button"
-                            className="focus-visible:ring-ring inline-flex cursor-default rounded-full focus-visible:ring-2 focus-visible:outline-none"
-                            aria-label="About Volt score"
-                          >
-                            <Lottie animationData={infoAnimationData} loop autoplay className="size-9" />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" sideOffset={6} className="max-w-52 text-left">
-                          Your Volt score is a combination of accuracy, timing, and streak.
-                        </TooltipContent>
-                      </Tooltip>
+                      <VoltScoreHelp />
                     </div>
                   </div>
                 </div>
