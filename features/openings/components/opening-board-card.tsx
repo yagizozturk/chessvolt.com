@@ -58,7 +58,7 @@ export function OpeningBoardCard({
     <div
       aria-busy={isLoading}
       className={cn(
-        "bg-card border-b-card-shadow relative flex flex-col overflow-hidden rounded-lg border-b-[6px]",
+        "bg-card border-b-card-shadow relative flex flex-col rounded-lg border-b-[6px]",
         isLoading && "pointer-events-none",
       )}
     >
