@@ -16,7 +16,7 @@ export default function TermsPage() {
 
   return (
     <LegalPage title="Terms of Service" description="Please read these terms carefully before using ChessVolt.">
-      
+
       {/* add for testing server-side error handling. After testing, remove this form to avoid accidental errors in production.
         <form action={triggerServerError}>
           <button type="submit">Sunucu Hatası Fırlat</button>
