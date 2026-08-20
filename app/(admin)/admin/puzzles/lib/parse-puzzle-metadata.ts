@@ -1,5 +1,5 @@
 import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
-import { isMoveGoals } from "@/features/move-sequence/validation/move-sequence-goals";
+import { normalizeMoveGoals } from "@/features/move-sequence/validation/move-sequence-goals";
 import { parsePuzzleRating } from "@/features/puzzle/types/puzzle-rating";
 import { parsePuzzlePopularity } from "@/features/puzzle/utilities/parse-puzzle-popularity";
 
@@ -36,14 +36,15 @@ function parseGoalsFromFormData(formData: FormData): { goals: MoveGoals | null; 
   try {
     const parsed = JSON.parse(str) as unknown;
     if (parsed === null) return { goals: null };
-    if (!isMoveGoals(parsed)) {
+    const goals = normalizeMoveGoals(parsed);
+    if (!goals) {
       return {
         goals: null,
         error:
           "Goals must include mainIdea and valid plys with move details.",
       };
     }
-    return { goals: parsed };
+    return { goals };
   } catch {
     return { goals: null, error: "Goals must be valid JSON." };
   }

@@ -71,7 +71,7 @@ export function isMoveGoal(value: unknown): value is MoveGoal {
     Number.isFinite(value.ply) &&
     typeof value.move === "string" &&
     typeof value.title === "string" &&
-    isMoveVisualValue(value.visuals) &&
+    normalizeMoveVisuals(value.visuals) !== null &&
     typeof value.strategy === "string" &&
     typeof value.takeaway === "string" &&
     typeof value.checkpointMessage === "string" &&
