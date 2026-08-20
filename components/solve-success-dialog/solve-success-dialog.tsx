@@ -59,6 +59,34 @@ function VoltScoreHelp() {
   );
 }
 
+function AttemptStatsGrid({ stats }: { stats: MoveSequenceCompleteDialogStats }) {
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      <NumberTickerStats
+        icon={Target}
+        label="Accuracy"
+        value={stats.accuracyPercent}
+        suffix="%"
+        animation
+        backgroundClassName="bg-emerald-500"
+      />
+      <NumberTickerStats
+        icon={Flame}
+        label="Max streak"
+        value={stats.maxCorrectStreak}
+        animation
+        backgroundClassName="bg-rose-500"
+      />
+      <ColumnBasedStats
+        icon={Clock}
+        label="Time"
+        value={formatAttemptDurationMs(stats.durationMs) ?? "—"}
+        backgroundClassName="bg-sky-500"
+      />
+    </div>
+  );
+}
+
 export type SolveSuccessDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -126,36 +154,12 @@ export function SolveSuccessDialog({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Volt score */}
+        {/* Attempt stats (always when present; volt UI may replace this with scored metrics) */}
         {hasVoltScore ? (
           <div className="mt-4 flex flex-col gap-4">
             {isVoltScoreShowing ? (
               <div className="flex flex-col gap-4">
-                {stats ? (
-                  <div className="grid grid-cols-3 gap-2">
-                    <NumberTickerStats
-                      icon={Target}
-                      label="Accuracy"
-                      value={stats.accuracyPercent}
-                      suffix="%"
-                      animation
-                      backgroundClassName="bg-emerald-500"
-                    />
-                    <NumberTickerStats
-                      icon={Flame}
-                      label="Max streak"
-                      value={stats.maxCorrectStreak}
-                      animation
-                      backgroundClassName="bg-rose-500"
-                    />
-                    <ColumnBasedStats
-                      icon={Clock}
-                      label="Time"
-                      value={formatAttemptDurationMs(stats.durationMs) ?? "—"}
-                      backgroundClassName="bg-sky-500"
-                    />
-                  </div>
-                ) : null}
+                {stats ? <AttemptStatsGrid stats={stats} /> : null}
                 <div className="card-border-bottom-shadow flex flex-1 flex-col items-center justify-center gap-3 py-6">
                   <p className="text-muted-foreground text-center text-sm">Volt score is calculating</p>
                   <Spinner className="size-8" />
@@ -178,6 +182,10 @@ export function SolveSuccessDialog({
                 </div>
               </>
             ) : null}
+          </div>
+        ) : stats ? (
+          <div className="mt-4">
+            <AttemptStatsGrid stats={stats} />
           </div>
         ) : null}
 
