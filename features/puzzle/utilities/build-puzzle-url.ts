@@ -58,5 +58,5 @@ export function getParentThemeUrl(themeSlug: string): string {
 // Building study puzzle URLs. Puzzles that are in a study
 // ==================================================================
 export function buildStudyPuzzleUrl(puzzleId: string, { studySlug }: { studySlug: string }): string {
-  return `/study/${studySlug}/puzzle/${puzzleId}`;
+  return `/studies/${studySlug}/puzzle/${puzzleId}`;
 }

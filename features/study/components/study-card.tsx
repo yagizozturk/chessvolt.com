@@ -23,7 +23,7 @@ type StudyCardProps = {
 export function StudyCard({ study }: StudyCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const imageSrc = getStudyCoverImageSrc(study.coverImageUrl);
-  const href = `/study/${study.slug}`;
+  const href = `/studies/${study.slug}`;
 
   return (
     <div

@@ -20,7 +20,7 @@ export const QUICK_LINKS = [
   {
     title: "Studies",
     description: "Browse curated puzzle studies.",
-    href: "/study",
+    href: "/studies",
     icon: "/images/icons/icon-book-study.png",
   },
 ] as const;

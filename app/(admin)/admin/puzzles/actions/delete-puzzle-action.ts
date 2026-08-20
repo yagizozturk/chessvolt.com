@@ -15,6 +15,6 @@ export async function deletePuzzleAction(id: string): Promise<void> {
   }
 
   revalidatePath("/admin/puzzles");
-  revalidatePath("/study");
+  revalidatePath("/studies");
   redirect("/admin/puzzles");
 }

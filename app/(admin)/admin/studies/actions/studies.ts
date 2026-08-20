@@ -61,7 +61,7 @@ export async function createStudyAction(formData: FormData) {
   }
 
   revalidatePath("/admin/studies");
-  revalidatePath("/study");
+  revalidatePath("/studies");
   redirect("/admin/studies");
 }
 
@@ -110,8 +110,8 @@ export async function updateStudyAction(
   }
 
   revalidatePath("/admin/studies");
-  revalidatePath("/study");
-  revalidatePath(`/study/${study.slug}`);
+  revalidatePath("/studies");
+  revalidatePath(`/studies/${study.slug}`);
   redirect("/admin/studies");
 }
 
@@ -124,6 +124,6 @@ export async function deleteStudyAction(id: string): Promise<void> {
   }
 
   revalidatePath("/admin/studies");
-  revalidatePath("/study");
+  revalidatePath("/studies");
   redirect("/admin/studies");
 }
