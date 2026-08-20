@@ -63,7 +63,7 @@ export async function bulkCreateAction(
   }
 
   revalidatePath("/admin/puzzles");
-  revalidatePath("/study");
+  revalidatePath("/studies");
 
   return {
     error: null,

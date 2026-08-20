@@ -6,7 +6,7 @@ export const AUTH_PATH_PREFIXES = ["/login", "/signup", "/forgot-password", "/au
 export const DASHBOARD_PATH_PREFIXES = [
   DASHBOARD_HOME_URL,
   POST_ONBOARDING_URL,
-  "/study",
+  "/studies",
   "/openings",
   "/puzzle",
   "/puzzles",

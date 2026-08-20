@@ -63,6 +63,6 @@ export async function updatePuzzleAction(_prevState: PuzzleFormState, formData: 
 
   revalidatePath("/admin/puzzles");
   revalidatePath(`/admin/puzzles/${id}`);
-  revalidatePath("/study");
+  revalidatePath("/studies");
   redirect(`/admin/puzzles/${id}`);
 }

@@ -56,6 +56,6 @@ export async function createFromPlyAction(_prevState: PuzzleFormState, formData:
   }
 
   revalidatePath("/admin/puzzles");
-  revalidatePath("/study");
+  revalidatePath("/studies");
   redirect(`/admin/puzzles/${result.puzzleId}`);
 }

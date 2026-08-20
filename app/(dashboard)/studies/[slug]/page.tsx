@@ -64,7 +64,7 @@ export default async function StudyDetailPage({ params, searchParams }: Props) {
         {/* If there are studies and pages, display the pagination navigator */}
         {pagination ? (
           <StudyPuzzlesPagination
-            basePath={`/study/${slug}`}
+            basePath={`/studies/${slug}`}
             page={pagination.page}
             totalPages={pagination.totalPages}
           />

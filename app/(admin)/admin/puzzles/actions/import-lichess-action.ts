@@ -27,7 +27,7 @@ export async function importLichessAction(
   const summary = await importLichessPuzzlesFromCsv(supabase, csvText, { minPopularity });
 
   revalidatePath("/admin/puzzles");
-  revalidatePath("/study");
+  revalidatePath("/studies");
 
   return {
     error: null,

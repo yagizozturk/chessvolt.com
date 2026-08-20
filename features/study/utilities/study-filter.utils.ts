@@ -7,7 +7,7 @@ import {
 } from "@/features/study/types/study-filter";
 import type { Theme } from "@/features/theme/types/theme";
 
-const STUDY_PAGE_PATH = "/study";
+const STUDY_PAGE_PATH = "/studies";
 
 // ============================================================================
 // Gets the theme options for filter

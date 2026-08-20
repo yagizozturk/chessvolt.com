@@ -30,7 +30,7 @@ export function StudiesList({ studies }: Props) {
         <div key={study.id} className="border-border flex min-h-0 flex-col gap-3 rounded-lg border p-4">
           <div className="flex items-start justify-between gap-2">
             <Link
-              href={`/study/${study.slug}`}
+              href={`/studies/${study.slug}`}
               className="hover:text-primary line-clamp-2 min-w-0 font-medium transition-colors"
             >
               {study.title}

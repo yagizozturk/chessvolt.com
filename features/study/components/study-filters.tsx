@@ -114,7 +114,7 @@ export function StudyFilters({
         />
       </div>
       {hasActiveFilters && (
-        <Button type="button" variant="volt" size="sm" onClick={() => router.push("/study")}>
+        <Button type="button" variant="volt" size="sm" onClick={() => router.push("/studies")}>
           Clear filters
         </Button>
       )}

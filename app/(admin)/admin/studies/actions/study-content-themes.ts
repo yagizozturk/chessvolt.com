@@ -23,7 +23,7 @@ function studyEditPath(studyId: string) {
 function revalidateStudyThemePaths(studyId: string) {
   revalidatePath(studyEditPath(studyId));
   revalidatePath("/admin/studies");
-  revalidatePath("/study");
+  revalidatePath("/studies");
   revalidatePath("/user-study");
 }
 

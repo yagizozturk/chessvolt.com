@@ -66,7 +66,7 @@ const data = {
     },
     {
       title: "Studies",
-      url: "/study",
+      url: "/studies",
       icon: "/images/icons/icon-book-study.png",
     },
     {
