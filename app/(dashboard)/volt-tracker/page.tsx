@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { PageHeader } from "@/components/page-header";
 import { VoltExplainDialogAutoStart } from "@/components/volt-explain-dialog/volt-explain-dialog-auto-start";
 import { FavoritesViewFilter } from "@/features/favorites/components/favorites-view-filter";
@@ -29,6 +30,9 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
     .select("id", { count: "exact", head: true })
     .eq("user_id", user.id);
 
+  const hasFavorites = (favoritesCount ?? 0) > 0;
+  const showMergedEmptyState = view === "all" && !hasFavorites;
+
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
@@ -38,22 +42,26 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
           actions={<FavoritesViewFilter view={view} />}
         />
 
-        {(favoritesCount ?? 0) > 0 ? <VoltExplainDialogAutoStart /> : null}
+        {hasFavorites ? <VoltExplainDialogAutoStart /> : null}
 
-        <div className="flex flex-col gap-8">
-          {(view === "all" || view === "openings") && (
-            <div>
-              <h2 className="mb-3 text-lg font-bold">Openings</h2>
-              <UserFavoriteOpeningVariants userId={user.id} supabase={supabase} />
-            </div>
-          )}
-          {(view === "all" || view === "puzzles") && (
-            <div>
-              <h2 className="mb-3 text-lg font-bold">Puzzles</h2>
-              <UserFavoritePuzzles userId={user.id} supabase={supabase} />
-            </div>
-          )}
-        </div>
+        {showMergedEmptyState ? (
+          <EmptyDataMessage message="You haven't added any openings or puzzles to Volt Tracker yet." />
+        ) : (
+          <div className="flex flex-col gap-8">
+            {(view === "all" || view === "openings") && (
+              <div>
+                <h2 className="mb-3 text-lg font-bold">Openings</h2>
+                <UserFavoriteOpeningVariants userId={user.id} supabase={supabase} />
+              </div>
+            )}
+            {(view === "all" || view === "puzzles") && (
+              <div>
+                <h2 className="mb-3 text-lg font-bold">Puzzles</h2>
+                <UserFavoritePuzzles userId={user.id} supabase={supabase} />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
