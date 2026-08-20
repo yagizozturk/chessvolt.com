@@ -9,7 +9,15 @@ import { getUserFavoritesForUserWithDetails } from "@/features/user-favorites/se
 import type { UserFavoriteWithDetails } from "@/features/user-favorites/types/user-favorite";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 
-export async function UserFavoriteOpeningVariants({ userId, supabase }: { userId: string; supabase: SupabaseClient }) {
+export async function UserFavoriteOpeningVariants({
+  userId,
+  supabase,
+  showEmptyMessage = true,
+}: {
+  userId: string;
+  supabase: SupabaseClient;
+  showEmptyMessage?: boolean;
+}) {
   const favorites = await getUserFavoritesForUserWithDetails(supabase, userId);
   const openingFavorites = favorites.filter(
     (
@@ -41,26 +49,35 @@ export async function UserFavoriteOpeningVariants({ userId, supabase }: { userId
       : {};
 
   if (openingFavorites.length === 0) {
-    return <EmptyDataMessage message="You haven't added any opening variants to Volt Tracker yet." />;
+    if (!showEmptyMessage) return null;
+    return (
+      <div>
+        <h2 className="mb-3 text-lg font-bold">Openings</h2>
+        <EmptyDataMessage message="You haven't added any opening variants to Volt Tracker yet." />
+      </div>
+    );
   }
 
   return (
-    <div className="page-container-grid-data-layout">
-      {openingFavorites.map((favorite) => {
-        const { openingVariant } = favorite;
-        return (
-          <OpeningBoardCard
-            key={favorite.id}
-            id={openingVariant.id}
-            name={openingVariant.title ?? "Untitled variant"}
-            href={`/openings/variant/${openingVariant.id}`}
-            fen={openingVariant.moveSequence.displayFen ?? openingVariant.moveSequence.initialFen}
-            description={openingVariant.description}
-            moves={openingVariant.moveSequence.moves}
-            voltScore={voltScoresBySequenceId[openingVariant.moveSequence.id] ?? null}
-          />
-        );
-      })}
+    <div>
+      <h2 className="mb-3 text-lg font-bold">Openings</h2>
+      <div className="page-container-grid-data-layout">
+        {openingFavorites.map((favorite) => {
+          const { openingVariant } = favorite;
+          return (
+            <OpeningBoardCard
+              key={favorite.id}
+              id={openingVariant.id}
+              name={openingVariant.title ?? "Untitled variant"}
+              href={`/openings/variant/${openingVariant.id}`}
+              fen={openingVariant.moveSequence.displayFen ?? openingVariant.moveSequence.initialFen}
+              description={openingVariant.description}
+              moves={openingVariant.moveSequence.moves}
+              voltScore={voltScoresBySequenceId[openingVariant.moveSequence.id] ?? null}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }

@@ -49,16 +49,14 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
         ) : (
           <div className="flex flex-col gap-8">
             {(view === "all" || view === "openings") && (
-              <div>
-                <h2 className="mb-3 text-lg font-bold">Openings</h2>
-                <UserFavoriteOpeningVariants userId={user.id} supabase={supabase} />
-              </div>
+              <UserFavoriteOpeningVariants
+                userId={user.id}
+                supabase={supabase}
+                showEmptyMessage={view === "openings"}
+              />
             )}
             {(view === "all" || view === "puzzles") && (
-              <div>
-                <h2 className="mb-3 text-lg font-bold">Puzzles</h2>
-                <UserFavoritePuzzles userId={user.id} supabase={supabase} />
-              </div>
+              <UserFavoritePuzzles userId={user.id} supabase={supabase} showEmptyMessage={view === "puzzles"} />
             )}
           </div>
         )}

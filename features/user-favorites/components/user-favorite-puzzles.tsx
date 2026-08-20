@@ -16,9 +16,11 @@ import { getLatestAttemptStats } from "@/features/user-sequence-attempt/utilitie
 export async function UserFavoritePuzzles({
   userId,
   supabase,
+  showEmptyMessage = true,
 }: {
   userId: string;
   supabase: SupabaseClient;
+  showEmptyMessage?: boolean;
 }) {
   const favorites = await getUserFavoritesForUserWithDetails(supabase, userId);
   const puzzleFavorites = favorites.filter(
@@ -48,26 +50,35 @@ export async function UserFavoritePuzzles({
   const attemptStatsBySequenceIdMap = createAttemptStatsBySequenceIdMap(getLatestAttemptStats(puzzleAttempts));
 
   if (puzzleFavorites.length === 0) {
-    return <EmptyDataMessage message="You haven't added any puzzles to Volt Tracker yet." />;
+    if (!showEmptyMessage) return null;
+    return (
+      <div>
+        <h2 className="mb-3 text-lg font-bold">Puzzles</h2>
+        <EmptyDataMessage message="You haven't added any puzzles to Volt Tracker yet." />
+      </div>
+    );
   }
 
   return (
-    <div className="page-container-grid-data-layout">
-      {puzzleFavorites.map((favorite) => {
-        const { puzzle } = favorite;
-        return (
-          <PuzzleBoardCard
-            key={favorite.id}
-            puzzle={puzzle}
-            game={null}
-            href={buildStandalonePuzzleUrl(puzzle.id, { from: "favorites" })}
-            displayFen={puzzle.moveSequence.displayFen}
-            showVoltScore
-            voltScore={voltScoresBySequenceId[puzzle.moveSequence.id] ?? null}
-            isComplete={attemptStatusToIsComplete(attemptStatsBySequenceIdMap[puzzle.moveSequence.id]?.status)}
-          />
-        );
-      })}
+    <div>
+      <h2 className="mb-3 text-lg font-bold">Puzzles</h2>
+      <div className="page-container-grid-data-layout">
+        {puzzleFavorites.map((favorite) => {
+          const { puzzle } = favorite;
+          return (
+            <PuzzleBoardCard
+              key={favorite.id}
+              puzzle={puzzle}
+              game={null}
+              href={buildStandalonePuzzleUrl(puzzle.id, { from: "favorites" })}
+              displayFen={puzzle.moveSequence.displayFen}
+              showVoltScore
+              voltScore={voltScoresBySequenceId[puzzle.moveSequence.id] ?? null}
+              isComplete={attemptStatusToIsComplete(attemptStatsBySequenceIdMap[puzzle.moveSequence.id]?.status)}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
