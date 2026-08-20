@@ -4,15 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import type { CreateStudyThemeInput } from "@/features/study-theme/repository/study-theme.repository";
-import {
-  addStudyTheme,
-  deleteStudyTheme,
-  updateStudyTheme,
-} from "@/features/study-theme/services/study-theme.service";
+import { addStudyTheme, deleteStudyTheme, updateStudyTheme } from "@/features/study-theme/services/study-theme.service";
 import {
   DEFAULT_THEME_LINK_WEIGHT,
-  parseThemeLinkWeight,
   type ThemeLinkWeight,
+  parseThemeLinkWeight,
 } from "@/features/theme-link/types/theme-link-weight";
 import { getAdminUser } from "@/lib/supabase/auth";
 
@@ -24,7 +20,6 @@ function revalidateStudyThemePaths(studyId: string) {
   revalidatePath(studyEditPath(studyId));
   revalidatePath("/admin/studies");
   revalidatePath("/studies");
-  revalidatePath("/user-study");
 }
 
 function parseStudyId(formData: FormData): string | null {
@@ -92,10 +87,7 @@ export async function updateStudyContentThemeAction(formData: FormData) {
   redirect(studyEditPath(studyId));
 }
 
-export async function deleteStudyContentThemeAction(
-  studyThemeId: string,
-  studyId: string,
-): Promise<void> {
+export async function deleteStudyContentThemeAction(studyThemeId: string, studyId: string): Promise<void> {
   const { supabase } = await getAdminUser();
 
   const ok = await deleteStudyTheme(supabase, studyThemeId);
