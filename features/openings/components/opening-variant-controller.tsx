@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, ChevronLeft, Eye, Swords } from "lucide-react";
+import { Bot, ChevronLeft, Eye, RotateCcw, Swords } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -335,15 +335,21 @@ export default function OpeningVariantController({
                 Hint
               </Button>
             ) : (
-              <Button
-                variant="volt"
-                onClick={handleContinueClick}
-                disabled={isContinuePending}
-                className="min-w-0 flex-1"
-              >
-                {isContinuePending && <Spinner data-icon="inline-start" />}
-                {successButtonLabel}
-              </Button>
+              <>
+                <Button variant="voltGreen" onClick={handlePlayAgain} className="min-w-0 flex-1">
+                  <RotateCcw data-icon="inline-start" />
+                  Play again
+                </Button>
+                <Button
+                  variant="volt"
+                  onClick={handleContinueClick}
+                  disabled={isContinuePending}
+                  className="min-w-0 flex-1"
+                >
+                  {isContinuePending && <Spinner data-icon="inline-start" />}
+                  {successButtonLabel}
+                </Button>
+              </>
             )}
           </div>
         </div>
