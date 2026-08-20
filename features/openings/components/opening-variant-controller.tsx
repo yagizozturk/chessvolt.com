@@ -136,18 +136,18 @@ export default function OpeningVariantController({
 
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
-    setIsVoltScoreShowing(true);
+    setIsVoltScoreShowing(favorited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, getTimeFromStartMs, isCompleted, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, favorited, getTimeFromStartMs, isCompleted, playLevelUpSound]);
 
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
 
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
-      voltScore: voltScoreScoring,
+      ...(favorited ? { voltScore: voltScoreScoring } : {}),
     });
 
     setCompletionVoltScore(voltScoreResult);
