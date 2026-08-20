@@ -43,18 +43,22 @@ export default async function StudyDetailPage({ params, searchParams }: Props) {
 
         {/* If there are studies, display them in a grid */}
         <div className="page-container-grid-data-layout">
-          {studyPuzzles.map(({ puzzle, game, href, displayFen, accuracyPercent, primaryTheme, isComplete }) => (
-            <PuzzleBoardCard
-              key={puzzle.id}
-              puzzle={puzzle}
-              game={game}
-              href={href}
-              displayFen={displayFen}
-              accuracyPercent={accuracyPercent}
-              primaryTheme={primaryTheme}
-              isComplete={isComplete}
-            />
-          ))}
+          {studyPuzzles.map(
+            ({ puzzle, game, href, displayFen, accuracyPercent, primaryTheme, isComplete, showVoltScore, voltScore }) => (
+              <PuzzleBoardCard
+                key={puzzle.id}
+                puzzle={puzzle}
+                game={game}
+                href={href}
+                displayFen={displayFen}
+                accuracyPercent={accuracyPercent}
+                primaryTheme={primaryTheme}
+                isComplete={isComplete}
+                showVoltScore={showVoltScore}
+                voltScore={voltScore}
+              />
+            ),
+          )}
         </div>
 
         {/* If there are studies and pages, display the pagination navigator */}

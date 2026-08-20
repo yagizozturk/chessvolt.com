@@ -2,6 +2,7 @@ import type { Study } from "@/features/study/types/study";
 import type { Game } from "@/features/game/types/game";
 import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
+import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 
 // ============================================================
 // This type has the puzzle card data in study listing page
@@ -14,6 +15,8 @@ export type StudyPuzzleCardItemData = {
   accuracyPercent: number | null;
   primaryTheme: PuzzlePrimaryTheme | null;
   isComplete: boolean | undefined;
+  showVoltScore: boolean;
+  voltScore: VoltScoreResult | null;
 };
 
 // ============================================================

@@ -28,3 +28,19 @@ export async function getFavoriteByPuzzleId(
 ): Promise<UserFavorite | null> {
   return userFavoriteRepo.findByPuzzleId(supabase, userId, puzzleId);
 }
+
+export async function getFavoritedOpeningVariantIds(
+  supabase: SupabaseClient,
+  userId: string,
+  openingVariantIds: string[],
+): Promise<Set<string>> {
+  return userFavoriteRepo.findFavoritedOpeningVariantIds(supabase, userId, openingVariantIds);
+}
+
+export async function getFavoritedPuzzleIds(
+  supabase: SupabaseClient,
+  userId: string,
+  puzzleIds: string[],
+): Promise<Set<string>> {
+  return userFavoriteRepo.findFavoritedPuzzleIds(supabase, userId, puzzleIds);
+}

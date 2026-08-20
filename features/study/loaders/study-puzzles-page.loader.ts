@@ -1,9 +1,12 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 
+import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
+import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { getGamesByIds } from "@/features/game/services/game.service";
 import { getPrimaryThemesByPuzzleIds } from "@/features/puzzle-theme/services/puzzle-theme.service";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
+import { getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
 import { buildStudyPuzzleUrl } from "@/features/puzzle/utilities/build-puzzle-url";
 import {
   getActivePuzzlesByStudyId,
@@ -16,6 +19,7 @@ import {
   clampStudyPuzzlesPage,
   getStudyPuzzlesTotalPages,
 } from "@/features/study/utilities/study-puzzles-pagination.utils";
+import { getFavoritedPuzzleIds } from "@/features/user-favorites/services/user-favorite.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-attempt/utilities/create-attempt-stats-by-sequence-id-map";
@@ -84,11 +88,12 @@ export async function loadStudyPuzzles({
   // Games: optional FK for board context. Themes: primary theme per puzzle.
   // ================================================================================================
   const gameIds = [...new Set(paginatedPuzzles.map((r) => r.gameId).filter((id): id is string => id != null))];
+  const puzzleIds = paginatedPuzzles.map((puzzle) => puzzle.id);
 
   // ================================================================================================
-  // Attempts: accuracyPercent only (volt-score is in favorites-only).
+  // Attempts for accuracy; favorited IDs for volt score on listing cards.
   // ================================================================================================
-  const [puzzleAttempts, realPlayedGames, primaryThemesByPuzzleId] = await Promise.all([
+  const [puzzleAttempts, realPlayedGames, primaryThemesByPuzzleId, favoritedPuzzleIds] = await Promise.all([
     // Getting attemopts for sequence ids for that user
     user && puzzleSequenceIds.length > 0
       ? attemptService.getAttemptsByUserAndSequenceIds(supabase, user.id, puzzleSequenceIds)
@@ -102,6 +107,8 @@ export async function loadStudyPuzzles({
       supabase,
       paginatedPuzzles.map((puzzle) => puzzle.id),
     ),
+
+    user ? getFavoritedPuzzleIds(supabase, user.id, puzzleIds) : Promise.resolve(new Set<string>()),
   ]);
 
   // mapping game map
@@ -111,6 +118,19 @@ export async function loadStudyPuzzles({
   const attemptStatsBySequenceIdMap = createAttemptStatsBySequenceIdMap(
     getLatestAttemptStats(puzzleAttempts), // get the last attempt stats
   );
+
+  const favoritedPuzzles = paginatedPuzzles.filter((puzzle) => favoritedPuzzleIds.has(puzzle.id));
+  const voltScoresBySequenceId =
+    favoritedPuzzles.length > 0
+      ? getVoltScoresBySequenceId(
+          puzzleAttempts,
+          favoritedPuzzles.map((puzzle) => ({
+            sequenceId: puzzle.moveSequence.id,
+            totalMoveCount: getPlayerMoveCount(puzzle.moveSequence.moves),
+            rating: getPuzzleRatingForScoring(puzzle.rating),
+          })),
+        )
+      : {};
 
   // ================================================================================================
   // Mapping items for the page
@@ -127,6 +147,7 @@ export async function loadStudyPuzzles({
     .map(({ puzzle, game }) => {
       const rawAttemptStats = attemptStatsBySequenceIdMap[puzzle.moveSequence.id];
       const attemptStats = getSequenceAttemptStats(rawAttemptStats);
+      const showVoltScore = favoritedPuzzleIds.has(puzzle.id);
 
       return {
         puzzle,
@@ -136,6 +157,8 @@ export async function loadStudyPuzzles({
         accuracyPercent: attemptStats.accuracyPercent,
         primaryTheme: primaryThemesByPuzzleId.get(puzzle.id) ?? null,
         isComplete: attemptStatusToIsComplete(rawAttemptStats?.status),
+        showVoltScore,
+        voltScore: showVoltScore ? (voltScoresBySequenceId[puzzle.moveSequence.id] ?? null) : null,
       };
     });
 

@@ -82,6 +82,54 @@ export async function findByPuzzleId(
   return toUserFavorite(data as DbUserFavorite);
 }
 
+export async function findFavoritedOpeningVariantIds(
+  supabase: SupabaseClient,
+  userId: string,
+  openingVariantIds: string[],
+): Promise<Set<string>> {
+  if (openingVariantIds.length === 0) return new Set();
+
+  const { data, error } = await supabase
+    .from("user_favorites")
+    .select("opening_variant_id")
+    .eq("user_id", userId)
+    .in("opening_variant_id", openingVariantIds);
+
+  if (error) {
+    console.error("user-favorites.repository.findFavoritedOpeningVariantIds error:", error);
+    return new Set();
+  }
+
+  return new Set(
+    (data ?? [])
+      .map((row) => row.opening_variant_id as string | null)
+      .filter((id): id is string => id != null),
+  );
+}
+
+export async function findFavoritedPuzzleIds(
+  supabase: SupabaseClient,
+  userId: string,
+  puzzleIds: string[],
+): Promise<Set<string>> {
+  if (puzzleIds.length === 0) return new Set();
+
+  const { data, error } = await supabase
+    .from("user_favorites")
+    .select("puzzle_id")
+    .eq("user_id", userId)
+    .in("puzzle_id", puzzleIds);
+
+  if (error) {
+    console.error("user-favorites.repository.findFavoritedPuzzleIds error:", error);
+    return new Set();
+  }
+
+  return new Set(
+    (data ?? []).map((row) => row.puzzle_id as string | null).filter((id): id is string => id != null),
+  );
+}
+
 export async function create(supabase: SupabaseClient, input: SaveUserFavoriteInput): Promise<UserFavorite | null> {
   const { data, error } = await supabase
     .from("user_favorites")

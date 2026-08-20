@@ -1,10 +1,14 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
+import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
+import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
+import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { PageHeaderWithImage } from "@/components/page-header";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
 import { getOpeningCoverImageSrc } from "@/features/openings/utilities/opening-cover-image.utils";
+import { getFavoritedOpeningVariantIds } from "@/features/user-favorites/services/user-favorite.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { computeSequenceAttemptAccuracy } from "@/features/user-sequence-attempt/utilities/compute-sequence-attempt-accuracy";
@@ -27,7 +31,33 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const variants = await getOpeningVariantsByOpeningId(supabase, opening.id);
 
   const sequenceIds = [...new Set(variants.map((v) => v.moveSequence.id))];
-  const stats = user ? await attemptService.getLatestAttemptStatsForSequences(supabase, user.id, sequenceIds) : [];
+  const variantIds = variants.map((v) => v.id);
+
+  const [stats, favoritedVariantIds] = await Promise.all([
+    user ? attemptService.getLatestAttemptStatsForSequences(supabase, user.id, sequenceIds) : Promise.resolve([]),
+    user ? getFavoritedOpeningVariantIds(supabase, user.id, variantIds) : Promise.resolve(new Set<string>()),
+  ]);
+
+  const favoritedVariants = variants.filter((variant) => favoritedVariantIds.has(variant.id));
+  const favoritedSequenceIds = [...new Set(favoritedVariants.map((variant) => variant.moveSequence.id))];
+
+  const favoritedAttempts =
+    user && favoritedSequenceIds.length > 0
+      ? await attemptService.getAttemptsByUserAndSequenceIds(supabase, user.id, favoritedSequenceIds)
+      : [];
+
+  const voltScoresBySequenceId =
+    favoritedSequenceIds.length > 0
+      ? getVoltScoresBySequenceId(
+          favoritedAttempts,
+          favoritedVariants.map((variant) => ({
+            sequenceId: variant.moveSequence.id,
+            totalMoveCount: getPlayerMoveCount(variant.moveSequence.moves),
+            rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
+          })),
+        )
+      : {};
+
   const mapAttemptStatsBySequenceId = createAttemptStatsBySequenceIdMap(stats);
   const coverImageSrc = opening.coverImageUrl
     ? getOpeningCoverImageSrc(opening.coverImageUrl)
@@ -59,6 +89,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
         <div className="page-container-grid-data-layout">
           {variants.map((variant) => {
             const attemptStats = mapAttemptStatsBySequenceId[variant.moveSequence.id];
+            const isFavorited = favoritedVariantIds.has(variant.id);
 
             return (
               <OpeningBoardCard
@@ -71,6 +102,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 accuracyPercent={attemptStats ? computeSequenceAttemptAccuracy(attemptStats) : null}
                 description={variant.description}
                 moves={variant.moveSequence.moves}
+                voltScore={isFavorited ? (voltScoresBySequenceId[variant.moveSequence.id] ?? null) : null}
               />
             );
           })}

@@ -33,18 +33,22 @@ export default async function ThemePuzzlesPage({ params, searchParams }: Props) 
         {pagination?.totalPuzzleCount === 0 && <EmptyState message="No puzzles found in this theme." />}
 
         <div className="page-container-grid-data-layout">
-          {themePuzzles.map(({ puzzle, game, href, displayFen, accuracyPercent, primaryTheme, isComplete }) => (
-            <PuzzleBoardCard
-              key={puzzle.id}
-              puzzle={puzzle}
-              game={game}
-              href={href}
-              displayFen={displayFen}
-              accuracyPercent={accuracyPercent}
-              primaryTheme={primaryTheme}
-              isComplete={isComplete}
-            />
-          ))}
+          {themePuzzles.map(
+            ({ puzzle, game, href, displayFen, accuracyPercent, primaryTheme, isComplete, showVoltScore, voltScore }) => (
+              <PuzzleBoardCard
+                key={puzzle.id}
+                puzzle={puzzle}
+                game={game}
+                href={href}
+                displayFen={displayFen}
+                accuracyPercent={accuracyPercent}
+                primaryTheme={primaryTheme}
+                isComplete={isComplete}
+                showVoltScore={showVoltScore}
+                voltScore={voltScore}
+              />
+            ),
+          )}
         </div>
 
         {pagination ? (
