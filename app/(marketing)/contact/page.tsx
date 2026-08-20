@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ContactForm } from "@/features/contact/components/contact-form";
 
 export const metadata: Metadata = {
-  title: "Contact Us | ChessVolt",
+  title: "Contact Us",
   description: "Get in touch with the ChessVolt team. Questions, feedback, and support.",
 };
 

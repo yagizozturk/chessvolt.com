@@ -6,10 +6,19 @@ import { getStudyCoverImageSrc } from "@/features/study/utilities/study-cover-im
 import { getPaginationParams } from "@/features/study/utilities/study-puzzles-pagination.utils";
 import { PuzzleBoardCard } from "@/features/puzzle/components/puzzle-board-card";
 import { getPublicUser } from "@/lib/supabase/auth";
+import { Metadata } from "next";
 
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string }>;
+};
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Studies",
+  description: "Your ChessVolt library for studying and practicing curated studies, famous games, puzzles and more.",
 };
 
 export default async function StudyDetailPage({ params, searchParams }: Props) {

@@ -1,9 +1,18 @@
 import PuzzleController from "@/features/puzzle/components/puzzle-controller";
 import { loadStudyPuzzlePage } from "@/features/puzzle/loaders/puzzle-page.loader";
 import { getPublicUser } from "@/lib/supabase/auth";
+import { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ slug: string; id: string }>;
+};
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Study",
+  description: "Your ChessVolt library for studying and practicing curated studies, famous games, puzzles and more.",
 };
 
 // ==================================================================

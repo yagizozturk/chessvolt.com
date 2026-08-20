@@ -10,9 +10,18 @@ import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/util
 import { computeSequenceAttemptAccuracy } from "@/features/user-sequence-attempt/utilities/compute-sequence-attempt-accuracy";
 import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-attempt/utilities/create-attempt-stats-by-sequence-id-map";
 import { getPublicUser } from "@/lib/supabase/auth";
+import { Metadata } from "next";
 
 type Params = {
   params: Promise<{ slug: string; id: string }>;
+};
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Openings",
+  description: "Your ChessVolt openings library for studying and practicing.",
 };
 
 export default async function OpeningBySlugAndIdPage({ params }: Params) {

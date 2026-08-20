@@ -9,7 +9,7 @@ import { UserFavoritePuzzles } from "@/features/user-favorites/components/user-f
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
-  title: "Volt Tracker | ChessVolt",
+  title: "Volt Tracker",
   description: "Openings and puzzles in your Volt Tracker to check your Volt score.",
 };
 

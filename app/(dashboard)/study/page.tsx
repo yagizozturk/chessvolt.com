@@ -18,6 +18,15 @@ import {
   parseStudyPage,
 } from "@/features/study/utilities/study-pagination.utils";
 import { getPublicUser } from "@/lib/supabase/auth";
+import type { Metadata } from "next";
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Studies",
+  description: "Your ChessVolt library for studying and practicing curated studies, famous games, puzzles and more.",
+};
 
 export default async function StudyPage({ searchParams }: { searchParams: StudyPageSearchParams }) {
   const { supabase } = await getPublicUser();

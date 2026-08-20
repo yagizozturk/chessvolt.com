@@ -1,4 +1,13 @@
 import { ForgotPasswordForm } from "@/features/auth/components/forgot-password-form";
+import type { Metadata } from "next";
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Forgot Password",
+  description: "Reset your ChessVolt password.",
+};
 
 export default function Page() {
   return (

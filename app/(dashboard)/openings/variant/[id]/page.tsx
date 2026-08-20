@@ -12,9 +12,18 @@ import {
 } from "@/features/openings/services/openings.service";
 import { getUserFavoriteByUserAndOpeningVariant } from "@/features/user-favorites/services/user-favorite.service";
 import { getPublicUser } from "@/lib/supabase/auth";
+import { Metadata } from "next";
 
 type Params = {
   params: Promise<{ id: string }>;
+};
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Variant | Openings",
+  description: "Your ChessVolt opening variant studying and practicing page.",
 };
 
 /**

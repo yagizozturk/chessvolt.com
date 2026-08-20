@@ -4,7 +4,7 @@ import { LegalPage } from "@/features/legal/components/legal-page";
 import { TermsContent } from "@/features/legal/components/terms-content";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | ChessVolt",
+  title: "Terms of Service",
   description: "Read the ChessVolt Terms of Service and Conditions.",
 };
 

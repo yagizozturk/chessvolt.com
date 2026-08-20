@@ -1,9 +1,18 @@
 import PuzzleController from "@/features/puzzle/components/puzzle-controller";
 import { loadThemePuzzlePage } from "@/features/puzzle/loaders/theme-puzzle-page.loader";
 import { getPublicUser } from "@/lib/supabase/auth";
+import { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ slug: string; id: string }>;
+};
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Puzzle",
+  description: "Your ChessVolt puzzle for studying and practicing.",
 };
 
 export default async function ThemePuzzlePage({ params }: PageProps) {

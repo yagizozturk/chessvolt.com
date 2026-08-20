@@ -1,4 +1,13 @@
 import { LoginForm } from "@/features/auth/components/login-form";
+import type { Metadata } from "next";
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Login",
+  description: "Sign in to your ChessVolt account.",
+};
 
 export default function Page() {
   return (

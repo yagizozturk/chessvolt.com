@@ -19,11 +19,55 @@ const geistMono = Geist_Mono({
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata: Metadata = {
-  title: "ChessVolt",
+  metadataBase: new URL("https://chessvolt.com"),
+  title: {
+    default: "ChessVolt",
+    template: "%s | ChessVolt",
+  },
+  // title: "ChessVolt",
   description:
-    "ChessVolt is a gamified, community-focused, and modern learning platform. Push your limits, shine with Volt.",
+    "ChessVolt is a gamified, community focused, and modern chess learning platform that helps players understand chess, practice puzzles, study openings and famous games, and improve with Volt Coach. Push your limits, shine with Volt.",
   icons: {
     icon: "/images/favicon/favicon.svg",
+  },
+  applicationName: "ChessVolt",
+  keywords: [
+    "ChessVolt",
+    "chess learning platform",
+    "chess training platform",
+    "learn chess",
+    "improve chess",
+    "study chess",
+    "AI chess coach",
+    "Volt Coach",
+    "chess coach",
+    "chess puzzles",
+    "chess openings",
+    "opening variations",
+    "opening variants",
+    "chess training",
+    "chess practice",
+    "chess games",
+    "famous chess games",
+  ],
+  authors: [
+    {
+      name: "ChessVolt",
+      url: "https://chessvolt.com",
+    },
+  ],
+  robots: {
+    index: true, // Allow indexing of the main site. Admin layout.tsx has its own robots metadata to prevent indexing of admin pages.
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 

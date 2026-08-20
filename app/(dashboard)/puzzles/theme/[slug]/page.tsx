@@ -6,10 +6,19 @@ import { ThemePuzzlesPagination } from "@/features/theme/components/theme-puzzle
 import { loadThemePuzzles } from "@/features/theme/loaders/theme-puzzles-page.loader";
 import { getThemePuzzlesPageParam } from "@/features/theme/utilities/theme-puzzles-pagination.utils";
 import { getPublicUser } from "@/lib/supabase/auth";
+import { Metadata } from "next";
 
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string }>;
+};
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Puzzles",
+  description: "Your ChessVolt puzzles library for studying and practicing.",
 };
 
 export default async function ThemePuzzlesPage({ params, searchParams }: Props) {

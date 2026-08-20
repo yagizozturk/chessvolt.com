@@ -4,7 +4,7 @@ import { LegalPage } from "@/features/legal/components/legal-page";
 import { PrivacyContent } from "@/features/legal/components/privacy-content";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | ChessVolt",
+  title: "Privacy Policy",
   description: "Learn how ChessVolt collects, uses, and protects your personal information.",
 };
 

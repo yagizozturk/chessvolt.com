@@ -7,6 +7,15 @@ import { ONBOARDING_QUESTION_SLUG } from "@/features/onboarding/constants/onboar
 import { DASHBOARD_HOME_URL } from "@/features/onboarding/constants/onboarding-routes";
 import { getProfileOnboardingStatus } from "@/features/profile/repository/profile.repository";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
+import type { Metadata } from "next";
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Onboarding",
+  description: "Complete your ChessVolt onboarding.",
+}; 
 
 // ======================================================================
 // Onboarding page

@@ -6,8 +6,17 @@ import {
   getOpeningsWithVariantCountByType,
 } from "@/features/openings/services/openings.service";
 import { getPublicUser } from "@/lib/supabase/auth";
+import { Metadata } from "next";
 
 type SearchParams = Promise<{ type?: string }>;
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Openings",
+  description: "Your ChessVolt openings library for studying and practicing.",
+};
 
 export default async function OpeningsPage({ searchParams }: { searchParams: SearchParams }) {
   const { supabase } = await getPublicUser();

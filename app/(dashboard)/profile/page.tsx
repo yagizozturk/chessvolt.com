@@ -12,7 +12,7 @@ import { getDisplayName } from "@/features/profile/utilities/user-avatar";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
-  title: "My Profile | ChessVolt",
+  title: "My Profile",
   description: "View your ChessVolt profile and account details.",
 };
 

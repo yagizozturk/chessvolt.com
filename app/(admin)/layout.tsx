@@ -1,5 +1,16 @@
 import { AdminShell } from "@/app/(admin)/admin/shared/components/admin-shell";
 import { getAdminUser } from "@/lib/supabase/auth";
+import { Metadata } from 'next';
+
+// Prevent indexing of admin pages by search engines
+export const metadata: Metadata = {
+  title: "Admin Panel",
+  robots: {
+    index: false,
+    follow: false, 
+    nocache: true,
+  },
+};
 
 export default async function AdminLayout({
   children,

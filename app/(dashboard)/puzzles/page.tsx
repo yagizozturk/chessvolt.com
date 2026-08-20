@@ -4,6 +4,16 @@ import { PuzzleThemes } from "@/features/theme/components/puzzle-themes";
 import { getAllActiveThemesWithCoverImage } from "@/features/theme/services/theme.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
+import type { Metadata } from "next";
+
+// ================================================================================================
+// Metadata of the page
+// ================================================================================================
+export const metadata: Metadata = {
+  title: "Puzzles",
+  description: "Your ChessVolt puzzles library for studying and practicing.",
+};
+
 export default async function PuzzlesPage() {
   const { supabase } = await getPublicUser();
   const themes = await getAllActiveThemesWithCoverImage(supabase);

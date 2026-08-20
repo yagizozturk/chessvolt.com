@@ -14,7 +14,7 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 // Metadata of the page
 // ================================================================================================
 export const metadata: Metadata = {
-  title: "Dashboard | ChessVolt",
+  title: "Dashboard",
   description: "Your ChessVolt dashboard for studies, puzzles, and openings.",
 };
 
