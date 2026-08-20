@@ -29,14 +29,11 @@ export function OnboardingForm({ familiarityQuestion }: OnboardingFormProps) {
   const [isPending, startTransition] = useTransition();
 
   const hasLinkedAccount = hasPlatformUsername({ chesscomUsername, lichessUsername });
-  // First chess_familiarity option is unsupported for now — keep it visible but unselectable.
-  const disabledOptionIds = familiarityQuestion?.options[0] ? [familiarityQuestion.options[0].id] : [];
 
   // ======================================================================
   // Handles the selection of the familiarity option.
   // ======================================================================
   function handleSelect(option: OnboardingOption) {
-    if (disabledOptionIds.includes(option.id)) return;
     setError(null);
     setSelectedOptionId(option.id);
   }
@@ -135,7 +132,6 @@ export function OnboardingForm({ familiarityQuestion }: OnboardingFormProps) {
                 selectedIds={selectedOptionId ? [selectedOptionId] : []}
                 onSelect={handleSelect}
                 disabled={isPending}
-                disabledOptionIds={disabledOptionIds}
                 multiple={false}
               />
             }
