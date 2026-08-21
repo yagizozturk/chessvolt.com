@@ -53,8 +53,8 @@ function BrandLogo({ onNavigate, variant = "header" }: { onNavigate?: () => void
       href="/"
       onClick={onNavigate}
       className={cn(
-        "flex items-center gap-2 font-bold transition-opacity hover:opacity-90",
-        sheet ? "text-xl text-white" : "text-foreground text-2xl tracking-tighter",
+        "flex items-center gap-2 font-bold transition-opacity hover:opacity-90 text-white",
+        sheet ? "text-xl text-white" : "text-foreground text-2xl tracking-tighter text-white",
       )}
       aria-label={sheet ? "ChessVolt - Go to home" : "ChessVolt - Home"}
     >
