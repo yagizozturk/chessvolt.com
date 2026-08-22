@@ -1,6 +1,14 @@
 import { context, trace } from "@opentelemetry/api";
 import pino, { type TransportTargetOptions } from "pino";
+
+/* 
+logger sadece sunucuda değil, doğrudan tarayıcı (client) tarafında da aktif olarak kullanılıyor.
+Bu yüzden logger dosyasındaki server-only kısıtlaması uygulamayı çökertiyor; 
+çünkü tarayıcı, bazı yerlerde client üzerinden logger'a ulaşmaya çalışıyor.
+Bu sebeple logger.ts dosyasındaki "server-only" importunu kaldırdım. 
+Yani logger artık hem sunucu hem de tarayıcı tarafında kullanılabilir.
 import "server-only";
+*/
 
 const isProduction = process.env.NODE_ENV === "production";
 
