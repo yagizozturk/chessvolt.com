@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { LegalPage } from "@/features/legal/components/legal-page";
 import { TermsContent } from "@/features/legal/components/terms-content";
+import { logger } from "@/lib/logger/logger";
 
 export const metadata: Metadata = {
   title: "Terms of Service | ChessVolt",
@@ -13,6 +14,8 @@ export default function TermsPage() {
     'use server'
     throw new Error("Server-side global error test");
   }
+
+  logger.info("Rendering Terms of Service page");
 
   return (
     <LegalPage title="Terms of Service" description="Please read these terms carefully before using ChessVolt.">
