@@ -23,4 +23,10 @@ export const QUICK_LINKS = [
     href: "/studies",
     icon: "/images/icons/icon-book-study.png",
   },
+  {
+    title: "Analysis",
+    description: "Paste a PGN and grade every move with Stockfish.",
+    href: "/analysis",
+    icon: "/images/icons/icon-chart-tracker.png",
+  },
 ] as const;

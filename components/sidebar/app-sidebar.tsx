@@ -70,6 +70,11 @@ const data = {
       icon: "/images/icons/icon-book-study.png",
     },
     {
+      title: "Analysis",
+      url: "/analysis",
+      icon: "/images/icons/icon-chart-tracker.png",
+    },
+    {
       title: "Other",
       url: "#",
       icon: "/images/icons/icon-more.png",

@@ -8,29 +8,59 @@ import VoltBoard from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getOrientationFromFen } from "@/lib/chess/getOrientationFromFen";
+import { normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
 
 type VoltBoardNavigatorProps = {
   pgn: string;
   sourceId?: string;
   onFenChange?: (fen: string) => void;
+  /** Controlled ply (0 = start). When set with onPlyChange, parent owns navigation. */
+  ply?: number;
+  onPlyChange?: (ply: number) => void;
 };
 
 export default function VoltBoardNavigator({
   pgn,
   sourceId = "volt-board-navigator",
   onFenChange,
+  ply: plyProp,
+  onPlyChange,
 }: VoltBoardNavigatorProps) {
-  const [ply, setPly] = useState(0);
+  const [internalPly, setInternalPly] = useState(0);
+  const controlled = plyProp !== undefined;
+  const ply = controlled ? plyProp : internalPly;
+
+  const setPly = (next: number | ((prev: number) => number)) => {
+    const value = typeof next === "function" ? next(ply) : next;
+    if (controlled) {
+      onPlyChange?.(value);
+    } else {
+      setInternalPly(value);
+    }
+  };
 
   const totalPly = useMemo(() => {
     try {
       const game = new Chess();
-      game.loadPgn(pgn.trim(), { strict: false });
+      game.loadPgn(normalizeLichessPgnComments(pgn.trim()), { strict: false });
       return game.history().length;
     } catch {
       return 0;
     }
   }, [pgn]);
+
+  useEffect(() => {
+    if (!controlled) {
+      setInternalPly(0);
+    }
+  }, [pgn, controlled]);
+
+  useEffect(() => {
+    if (ply > totalPly) {
+      setPly(totalPly);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- clamp when PGN shortens
+  }, [totalPly, ply]);
 
   const fen = useMemo(() => {
     return getFenFromPgnAtPly(pgn, ply) ?? new Chess().fen();
@@ -72,7 +102,7 @@ export default function VoltBoardNavigator({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [totalPly]);
+  }, [totalPly, ply, controlled, onPlyChange]);
 
   const canGoLeft = ply > 0;
   const canGoRight = ply < totalPly;
@@ -92,7 +122,7 @@ export default function VoltBoardNavigator({
         />
       </div>
 
-      <div className="flex items-center justify-center gap-3 md:hidden">
+      <div className="flex items-center justify-center gap-3">
         <Button
           variant="voltIcon"
           onClick={() => setPly((prev) => Math.max(prev - 1, 0))}
@@ -101,6 +131,10 @@ export default function VoltBoardNavigator({
         >
           <ChevronLeft className="size-5" />
         </Button>
+
+        <span className="text-muted-foreground min-w-16 text-center font-mono text-xs tabular-nums">
+          {ply}/{totalPly}
+        </span>
 
         <Button
           variant="voltIcon"
