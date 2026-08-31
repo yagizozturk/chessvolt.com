@@ -331,6 +331,7 @@ export default function OpeningVariantController({
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
 
+          {/* null ise normal oyun. reviewFen değiştiğinde, yeni bir VoltBoard oluşturulur ve reviewFen değeri ile başlatılır. */}
           {reviewFen ? (
             <div className="bg-background absolute inset-0 z-20">
               <VoltBoard
