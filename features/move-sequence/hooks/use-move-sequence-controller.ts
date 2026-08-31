@@ -121,6 +121,7 @@ export function useMoveSequenceController({
     handleMoveCheck,
     handleSuccessMovePlayed,
     handleNextMoveRequest,
+    nextExpectedMoveIndex,
     incrementNextExpectedMoveIndex,
     resetNextExpectedMoveIndex,
     hintRequested,

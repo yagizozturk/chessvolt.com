@@ -1,11 +1,10 @@
 "use client";
 
 import { Chess } from "chess.js";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import VoltBoard from "@/components/boards/volt-board/volt-board";
-import { Button } from "@/components/ui/button";
+import { MoveNavigatorControls } from "@/components/move-navigator-controls/move-navigator-controls";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getOrientationFromFen } from "@/lib/chess/getOrientationFromFen";
 
@@ -41,41 +40,21 @@ export default function VoltBoardNavigator({
     return getOrientationFromFen(startFen);
   }, [pgn]);
 
+  const goToPreviousPly = useCallback(() => {
+    setPly((prev) => Math.max(prev - 1, 0));
+  }, []);
+
+  const goToNextPly = useCallback(() => {
+    setPly((prev) => Math.min(prev + 1, totalPly));
+  }, [totalPly]);
+
+  useEffect(() => {
+    setPly((prev) => Math.min(prev, totalPly));
+  }, [totalPly]);
+
   useEffect(() => {
     onFenChange?.(fen);
   }, [fen, onFenChange]);
-
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-
-      const target = event.target;
-      if (
-        target instanceof HTMLElement &&
-        (target.isContentEditable ||
-          target.tagName === "INPUT" ||
-          target.tagName === "TEXTAREA" ||
-          target.tagName === "SELECT")
-      ) {
-        return;
-      }
-
-      event.preventDefault();
-
-      if (event.key === "ArrowLeft") {
-        setPly((prev) => Math.max(prev - 1, 0));
-        return;
-      }
-
-      setPly((prev) => Math.min(prev + 1, totalPly));
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [totalPly]);
-
-  const canGoLeft = ply > 0;
-  const canGoRight = ply < totalPly;
 
   return (
     <div className="flex flex-col gap-4">
@@ -91,26 +70,13 @@ export default function VoltBoardNavigator({
           onNextMoveRequest={() => undefined}
         />
       </div>
-
-      <div className="flex items-center justify-center gap-3 md:hidden">
-        <Button
-          variant="voltIcon"
-          onClick={() => setPly((prev) => Math.max(prev - 1, 0))}
-          disabled={!canGoLeft}
-          aria-label="Previous move"
-        >
-          <ChevronLeft className="size-5" />
-        </Button>
-
-        <Button
-          variant="voltIcon"
-          onClick={() => setPly((prev) => Math.min(prev + 1, totalPly))}
-          disabled={!canGoRight}
-          aria-label="Next move"
-        >
-          <ChevronRight className="size-5" />
-        </Button>
-      </div>
+      <MoveNavigatorControls
+        currentPly={ply}
+        totalPly={totalPly}
+        onPrevious={goToPreviousPly}
+        onNext={goToNextPly}
+        className="md:hidden"
+      />
     </div>
   );
 }

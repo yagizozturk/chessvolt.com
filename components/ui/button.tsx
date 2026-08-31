@@ -22,6 +22,8 @@ const buttonVariants = cva(
         volt: "bg-primary text-white uppercase tracking-[0.1em] font-bold shadow-[0_5px_0_#bc8a00] hover:brightness-95 active:shadow-none active:translate-y-[2px] border-0",
         voltGreen:
           "bg-green-500 text-white uppercase tracking-[0.1em] font-bold shadow-[0_5px_0_#008000] hover:brightness-95 active:shadow-none active:translate-y-[2px] border-0",
+        voltRed:
+          "bg-red-500 text-white uppercase tracking-[0.1em] font-bold shadow-[0_5px_0_#800000] hover:brightness-95 active:shadow-none active:translate-y-[2px] border-0",
         voltMuted:
           "bg-gray-500 text-white uppercase tracking-[0.1em] font-bold shadow-[0_5px_0_#4b5563] hover:brightness-95 active:shadow-none active:translate-y-[2px] border-0",
         voltCompact:
@@ -45,7 +47,7 @@ const buttonVariants = cva(
     compoundVariants: [
       // After variant + size in CVA, so this overrides xs/sm `rounded-[min(...)]` for volt styles.
       {
-        variant: ["volt", "voltMuted", "voltGreen", "voltIcon"],
+        variant: ["volt", "voltMuted", "voltGreen", "voltIcon", "voltRed"],
         class: "rounded-xl",
       },
       {

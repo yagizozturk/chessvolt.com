@@ -3,13 +3,14 @@
 import { Bot, ChevronLeft, Eye, RotateCcw, Swords } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
+import { MoveNavigatorControls } from "@/components/move-navigator-controls/move-navigator-controls";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,8 @@ import {
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getFenFromMovesAtPly } from "@/lib/chess/getFenFromMovesAtPly";
+import { getOrientationFromFen } from "@/lib/chess/getOrientationFromFen";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
@@ -53,10 +56,13 @@ export default function OpeningVariantController({
 }: OpeningVariantControllerProps) {
   const sequenceId = variant.moveSequence.id;
   const [replayKey, setReplayKey] = useState(0);
+  const [reviewPly, setReviewPly] = useState<number | null>(null);
+
   const sessionId = `${variant.id}:${replayKey}`;
   const router = useRouter();
   const isMobile = useIsMobile();
   const boardRef = useRef<VoltBoardHandle>(null);
+
   const [isCompleted, setIsCompleted] = useState(false);
   const [isContinuePending, setIsContinuePending] = useState(false);
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
@@ -66,14 +72,18 @@ export default function OpeningVariantController({
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
   const [showMainIdea, setShowMainIdea] = useState(false);
   const [favorited, setFavorited] = useState(isFavorited);
+
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
+
   const correctMoveCountRef = useRef(0);
   const wrongMoveCountRef = useRef(0);
   const totalHintCountRef = useRef(0);
   const currentCorrectStreakRef = useRef(0);
   const maxCorrectStreakRef = useRef(0);
+
   const {
+    moves,
     handleMoveCheck,
     handleSuccessMovePlayed,
     handleNextMoveRequest,
@@ -82,16 +92,61 @@ export default function OpeningVariantController({
     progressValue,
     hintCount,
     hintRequested,
+    nextExpectedMoveIndex,
     expectedCurrentCorrectMoveUci,
     mainIdea,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: variant.moveSequence.moves,
     goals: variant.moveSequence.goals,
-    // Moves/goals are already relative to initialFen (goals start at ply 1).
-    // Do not pass absolute board initialPly or early goals get auto-completed.
   });
+
   const { Tour } = useOpeningVariantTour({ variantId: variant.id });
+
+  const totalPly = moves.length;
+  const livePly = Math.min(nextExpectedMoveIndex, totalPly);
+  const isReviewing = reviewPly !== null;
+  const navigatorPly = reviewPly ?? livePly;
+
+  const playerOrientation = useMemo(() => {
+    return getOrientationFromFen(variant.moveSequence.initialFen);
+  }, [variant.moveSequence.initialFen]);
+
+  const reviewFen = useMemo(() => {
+    if (reviewPly === null) return null;
+
+    return getFenFromMovesAtPly(variant.moveSequence.initialFen, moves, reviewPly) ?? variant.moveSequence.initialFen;
+  }, [reviewPly, variant.moveSequence.initialFen, moves]);
+
+  const viewerGoals = useMemo(() => {
+    if (reviewPly === null) return sortedGoals;
+
+    return sortedGoals.map((goal) => ({
+      ...goal,
+      isCompleted: goal.ply <= reviewPly,
+    }));
+  }, [reviewPly, sortedGoals]);
+
+  const viewerProgressValue = useMemo(() => {
+    if (reviewPly === null) return progressValue;
+    if (!viewerGoals.length) return 0;
+
+    const completedGoalsCount = viewerGoals.filter((goal) => goal.isCompleted).length;
+    return Math.round((completedGoalsCount / viewerGoals.length) * 100);
+  }, [reviewPly, progressValue, viewerGoals]);
+
+  const goToPreviousPly = useCallback(() => {
+    setReviewPly((prev) => Math.max((prev ?? livePly) - 1, 0));
+  }, [livePly]);
+
+  const goToNextPly = useCallback(() => {
+    setReviewPly((prev) => Math.min((prev ?? livePly) + 1, totalPly));
+  }, [livePly, totalPly]);
+
+  const closeReview = useCallback(() => {
+    setReviewPly(null);
+  }, []);
+
   const voltScoreScoring = {
     totalMoveCount: getPlayerMoveCount(variant.moveSequence.moves),
     rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
@@ -114,6 +169,7 @@ export default function OpeningVariantController({
     setIsVoltScoreShowing(false);
     setBoardMode("practice");
     setShowMainIdea(false);
+    setReviewPly(null);
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -168,6 +224,7 @@ export default function OpeningVariantController({
           expectedUci: expectedCurrentCorrectMoveUci ?? undefined,
           isCorrect: false,
         });
+
         await updateAttemptResults(
           "failed",
           createAttemptPayload(
@@ -199,13 +256,13 @@ export default function OpeningVariantController({
   }
 
   function handleBoardNextMoveRequest() {
-    const nextMove = handleNextMoveRequest();
-    return nextMove;
+    return handleNextMoveRequest();
   }
 
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
     if (nextHintCount == null || !expectedCurrentCorrectMoveUci) return;
+
     boardRef.current?.showHint(nextHintCount);
     totalHintCountRef.current += 1;
 
@@ -234,6 +291,7 @@ export default function OpeningVariantController({
   return (
     <div className="page-container">
       {Tour}
+
       <SolveSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
@@ -246,18 +304,17 @@ export default function OpeningVariantController({
         onPlayAgain={handlePlayAgain}
         footerExtra={
           canFavorite ? (
-            <FavoriteButton
-              openingVariantId={variant.id}
-              isFavorited={favorited}
-              onFavoritedChange={setFavorited}
-            />
+            <FavoriteButton openingVariantId={variant.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
           ) : null
         }
       />
+
       {successDialogOpen ? (
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
       ) : null}
+
       <Notifier goals={sortedGoals} />
+
       <div className="page-container-controller-layout">
         <div key={sessionId} className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]">
           <VoltBoard
@@ -265,6 +322,7 @@ export default function OpeningVariantController({
             sourceId={sessionId}
             mode={boardMode}
             initialFen={variant.moveSequence.initialFen}
+            playerOrientation={playerOrientation}
             coordinates={!isMobile}
             drawHintMove={expectedCurrentCorrectMoveUci}
             activeGoalVisuals={nextGoal?.visuals}
@@ -272,21 +330,40 @@ export default function OpeningVariantController({
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
+
+          {reviewFen ? (
+            <div className="bg-background absolute inset-0 z-20">
+              <VoltBoard
+                key={`${sessionId}:review:${reviewFen}`}
+                sourceId={`${sessionId}:review`}
+                mode={boardMode}
+                initialFen={reviewFen}
+                playerOrientation={playerOrientation}
+                coordinates={!isMobile}
+                viewOnly
+                onCheckMove={() => true}
+                onSuccessMovePlayed={() => {}}
+                onNextMoveRequest={() => undefined}
+              />
+            </div>
+          ) : null}
         </div>
+
         <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
           <div className="flex justify-between">
-            <div>
-              <Button variant="voltIcon" asChild>
-                <Link href={parentOpeningUrl} aria-label="Back to opening">
-                  <ChevronLeft className="size-5" />
-                </Link>
-              </Button>
-            </div>
+            <Button variant="voltIcon" asChild>
+              <Link href={parentOpeningUrl} aria-label="Back to opening">
+                <ChevronLeft className="size-5" />
+              </Link>
+            </Button>
+
             <div className="flex items-center gap-2 px-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
+
             <div className="flex items-center gap-2">
               {boardMode === "learn" ? (
                 <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
               ) : null}
+
               <div data-tour="favorite-button">
                 {canFavorite ? (
                   <FavoriteButton
@@ -298,11 +375,11 @@ export default function OpeningVariantController({
               </div>
             </div>
           </div>
+
           <Tabs
             value={boardMode}
             onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
             aria-label="Board mode"
-            data-tour="board-mode"
           >
             <TabsList variant="primary" className="w-full rounded-lg">
               <TabsTrigger value="practice">
@@ -315,20 +392,32 @@ export default function OpeningVariantController({
               </TabsTrigger>
             </TabsList>
           </Tabs>
+
           <GoalViewer
-            goals={sortedGoals}
-            progressValue={progressValue}
+            goals={viewerGoals}
+            progressValue={viewerProgressValue}
             mode={boardMode}
             turnLabel={turnLabel}
             mainIdea={mainIdea}
             showMainIdea={boardMode === "learn" && showMainIdea}
           />
+
+          <MoveNavigatorControls
+            currentPly={navigatorPly}
+            totalPly={totalPly}
+            onPrevious={goToPreviousPly}
+            onNext={goToNextPly}
+            onClose={isReviewing ? closeReview : undefined}
+            enableKeyboard={!successDialogOpen}
+            className={isReviewing ? "mt-5 p-2" : "hidden"}
+          />
+
           <div className="mt-auto flex gap-2" data-tour="hint-button">
             {!isCompleted ? (
               <Button
                 variant="voltGreen"
                 onClick={handleHintClick}
-                disabled={hintCount >= MAX_HINT_COUNT}
+                disabled={isReviewing || hintCount >= MAX_HINT_COUNT}
                 className="min-w-0 flex-1"
               >
                 <Eye data-icon="inline-start" />
