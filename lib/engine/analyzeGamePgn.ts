@@ -34,6 +34,15 @@ export type AnalyzeGamePgnProgress = {
   total: number;
 };
 
+function isTerminalFen(fen: string): boolean {
+  try {
+    const g = new Chess(fen);
+    return g.isGameOver(); // checkmate, stalemate, draw
+  } catch {
+    return false;
+  }
+}
+
 function playUci(fen: string, uci: string): string | null {
   const g = new Chess(fen);
   const from = uci.slice(0, 2);
@@ -118,9 +127,14 @@ export async function analyzeGamePgn(options: {
   });
   const cache = new Map<string, EngineSearchResult>();
 
+  const TERMINAL: EngineSearchResult = { bestmove: "(none)", infos: [] };
+
   const cachedSearch = async (fen: string): Promise<EngineSearchResult> => {
     const hit = cache.get(fen);
     if (hit) return hit;
+    // Skip engine for terminal positions (checkmate / stalemate / draw).
+    // Stockfish takes full depth to return bestmove (none) — this avoids the hang.
+    if (isTerminalFen(fen)) return TERMINAL;
     const result = await session.search(fen, depth);
     cache.set(fen, result);
     return result;
