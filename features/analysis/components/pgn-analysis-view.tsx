@@ -179,9 +179,26 @@ export function PgnAnalysisView() {
                     {selectedMove.verdict.label}
                   </p>
                   <p className="text-muted-foreground text-xs">
-                    Approx. loss: ~
-                    {Math.round(selectedMove.verdict.lossCpApprox)} cp · Engine
-                    best before:{" "}
+                    {selectedMove.verdict.expectedPointsLost !== undefined ? (
+                      <>
+                        EP loss:{" "}
+                        <span className="text-foreground font-mono">
+                          {(selectedMove.verdict.expectedPointsLost * 100).toFixed(1)}%
+                        </span>
+                        {selectedMove.verdict.expectedPointsBefore !== undefined &&
+                        selectedMove.verdict.expectedPointsAfter !== undefined ? (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            ({(selectedMove.verdict.expectedPointsBefore * 100).toFixed(0)}%{" "}
+                            → {(selectedMove.verdict.expectedPointsAfter * 100).toFixed(0)}%)
+                          </span>
+                        ) : null}
+                        {" · "}
+                      </>
+                    ) : (
+                      <>Approx. loss: ~{Math.round(selectedMove.verdict.lossCpApprox)} cp · </>
+                    )}
+                    Engine best before:{" "}
                     <span className="text-foreground font-mono">
                       {selectedMove.engineBestUciFromBefore || "—"}
                     </span>

@@ -3,9 +3,10 @@ import { Chess } from "chess.js";
 import { buildUci } from "@/lib/chess/buildUci";
 import { normalizeLichessPgnComments } from "@/lib/chess/parse-pgn-visual-comments";
 import { evalCpEquivalent } from "@/lib/engine/evalCpEquivalent";
+import { expectedPointsFromCp } from "@/lib/engine/expected-points";
 import {
   normalizeUci,
-  verdictFromLoss,
+  verdictFromExpectedPointsLoss,
   type MoveVerdict,
 } from "@/lib/engine/move-verdict";
 import {
@@ -53,6 +54,10 @@ export async function analyzeGamePgn(options: {
   timeoutMs?: number;
   signal?: AbortSignal;
   onProgress?: (progress: AnalyzeGamePgnProgress) => void;
+  /** Return false to skip analysis for a step (verdict will be "best"). */
+  shouldAnalyzeMove?: (step: { ply: number; san: string; uci: string }) => boolean;
+  /** Provide a player rating for a step to tune expected-points scale. */
+  getPlayerRating?: (step: { ply: number; san: string; uci: string }) => number | undefined;
 }): Promise<AnalyzedMove[]> {
   const depth = options.depth ?? 12;
   const trimmed = options.pgn.trim();
@@ -132,6 +137,21 @@ export async function analyzeGamePgn(options: {
       const step = steps[i];
       options.onProgress?.({ done: i, total: steps.length });
 
+      // Optional: skip analysis for certain moves (e.g. only analyse user's colour).
+      if (options.shouldAnalyzeMove && !options.shouldAnalyzeMove(step)) {
+        const afterSearch = await cachedSearch(step.fenAfter);
+        results.push({
+          ...step,
+          verdict: { kind: "best", label: "Skipped", lossCpApprox: 0 },
+          engineBestUciFromBefore: "",
+          fenAfterInfos: afterSearch.infos,
+          fenAfterBestmove: afterSearch.bestmove,
+        });
+        continue;
+      }
+
+      const playerRating = options.getPlayerRating?.(step);
+
       const beforeSearch = await cachedSearch(step.fenBefore);
       const bm = beforeSearch.bestmove?.trim() ?? "";
 
@@ -177,13 +197,24 @@ export async function analyzeGamePgn(options: {
       }
 
       const searchUser = await cachedSearch(step.fenAfter);
-      const infoBest = getDeepestInfoForMultipv(searchBest.infos, 1);
+
+      // --- Expected-points classification (Chess.com style) ---
+      // infoBefore: score from player's perspective (side to move = this player).
+      const infoBefore = getDeepestInfoForMultipv(beforeSearch.infos, 1);
+      // infoUser: score from opponent's perspective (side to move flipped after move).
+      // Negate to get back to this player's frame.
       const infoUser = getDeepestInfoForMultipv(searchUser.infos, 1);
-      const lossRaw = evalCpEquivalent(infoUser) - evalCpEquivalent(infoBest);
+
+      const playerCpBefore = evalCpEquivalent(infoBefore);
+      const playerCpAfter = -evalCpEquivalent(infoUser);
+
+      const epBefore = expectedPointsFromCp(playerCpBefore, playerRating);
+      const epAfter = expectedPointsFromCp(playerCpAfter, playerRating);
+      const epLost = epBefore - epAfter;
 
       results.push({
         ...step,
-        verdict: verdictFromLoss(lossRaw, isExactBest),
+        verdict: verdictFromExpectedPointsLoss(epLost, isExactBest, epBefore, epAfter),
         engineBestUciFromBefore: bm,
         fenAfterInfos: searchUser.infos,
         fenAfterBestmove: searchUser.bestmove,

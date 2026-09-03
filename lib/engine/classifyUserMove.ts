@@ -1,9 +1,8 @@
-import { Chess } from "chess.js";
-
 import { evalCpEquivalent } from "@/lib/engine/evalCpEquivalent";
+import { expectedPointsFromCp } from "@/lib/engine/expected-points";
 import {
   normalizeUci,
-  verdictFromLoss,
+  verdictFromExpectedPointsLoss,
   type MoveVerdict,
 } from "@/lib/engine/move-verdict";
 import { runEngineSearch } from "@/lib/engine/runEngineSearch";
@@ -30,6 +29,8 @@ export async function classifyUserMove(options: {
   fenAfterUser: string;
   userUci: string;
   depth?: number;
+  /** Optional player rating to tune the expected-points scale. */
+  playerRating?: number;
 }): Promise<ClassifyUserMoveResult> {
   const depth = options.depth ?? 12;
   const { fenBefore, fenAfterUser, userUci } = options;
@@ -53,41 +54,25 @@ export async function classifyUserMove(options: {
   const engineBestNorm = normalizeUci(bm);
   const userNorm = normalizeUci(userUci);
 
-  const g = new Chess(fenBefore);
-  const from = bm.slice(0, 2);
-  const to = bm.slice(2, 4);
-  const promotion =
-    bm.length > 4 ? (bm[4] as "q" | "r" | "b" | "n") : undefined;
-  const played = g.move({ from, to, promotion });
-
-  if (!played) {
-    return {
-      verdict: {
-        kind: "mistake",
-        label: "Engine suggestion could not be played",
-        lossCpApprox: 0,
-      },
-      fenAfterInfos: [],
-      fenAfterBestmove: "",
-      engineBestUciFromBefore: bm,
-    };
-  }
-
-  const fenAfterBest = g.fen();
-
-  const searchBest = await runEngineSearch({ fen: fenAfterBest, depth });
+  // EP classification uses infoBefore (player's frame) — no need to search fenAfterBest.
   const searchUser = await runEngineSearch({ fen: fenAfterUser, depth });
 
-  const infoBest = getDeepestInfoForMultipv(searchBest.infos, 1);
   const infoUser = getDeepestInfoForMultipv(searchUser.infos, 1);
 
-  const evBest = evalCpEquivalent(infoBest);
-  const evUser = evalCpEquivalent(infoUser);
-
-  const lossRaw = evUser - evBest;
   const isExactBest = userNorm === engineBestNorm;
 
-  const verdict = verdictFromLoss(lossRaw, isExactBest);
+  // --- Expected-points classification (Chess.com style) ---
+  // beforeSearch score is from the player's perspective (side to move = player).
+  // searchUser score is from opponent's perspective; negate to get player's frame.
+  const infoBefore = getDeepestInfoForMultipv(beforeSearch.infos, 1);
+  const playerCpBefore = evalCpEquivalent(infoBefore);
+  const playerCpAfter = -evalCpEquivalent(infoUser);
+
+  const epBefore = expectedPointsFromCp(playerCpBefore, options.playerRating);
+  const epAfter = expectedPointsFromCp(playerCpAfter, options.playerRating);
+  const epLost = epBefore - epAfter;
+
+  const verdict = verdictFromExpectedPointsLoss(epLost, isExactBest, epBefore, epAfter);
 
   return {
     verdict,
