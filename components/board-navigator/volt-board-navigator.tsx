@@ -2,7 +2,7 @@
 
 import { Chess } from "chess.js";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import VoltBoard from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,32 @@ type VoltBoardNavigatorProps = {
   pgn: string;
   sourceId?: string;
   onFenChange?: (fen: string) => void;
+  /** Controlled ply (0 = start position). When set with onPlyChange, navigation is controlled. */
+  ply?: number;
+  onPlyChange?: (ply: number) => void;
 };
 
 export default function VoltBoardNavigator({
   pgn,
   sourceId = "volt-board-navigator",
   onFenChange,
+  ply: controlledPly,
+  onPlyChange,
 }: VoltBoardNavigatorProps) {
-  const [ply, setPly] = useState(0);
+  const [internalPly, setInternalPly] = useState(0);
+  const isControlled = controlledPly !== undefined;
+  const ply = isControlled ? controlledPly : internalPly;
+
+  const setPly = useCallback(
+    (next: number | ((prev: number) => number)) => {
+      const resolved = typeof next === "function" ? next(ply) : next;
+      if (!isControlled) {
+        setInternalPly(resolved);
+      }
+      onPlyChange?.(resolved);
+    },
+    [isControlled, onPlyChange, ply],
+  );
 
   const totalPly = useMemo(() => {
     try {
@@ -72,7 +90,7 @@ export default function VoltBoardNavigator({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [totalPly]);
+  }, [setPly, totalPly]);
 
   const canGoLeft = ply > 0;
   const canGoRight = ply < totalPly;

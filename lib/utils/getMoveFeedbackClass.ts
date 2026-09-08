@@ -1,4 +1,4 @@
-export type MoveQuality = "best_move" | "good_move" | "inaccuracy" | "blunder";
+export type MoveQuality = "best_move" | "good_move" | "inaccuracy" | "mistake" | "blunder";
 
 export function getMoveFeedbackClass(moveQuality: MoveQuality) {
   switch (moveQuality) {
@@ -8,6 +8,8 @@ export function getMoveFeedbackClass(moveQuality: MoveQuality) {
       return "custom-good-move";
     case "inaccuracy":
       return "custom-inaccuracy-move";
+    case "mistake":
+      return "custom-mistake-move";
     case "blunder":
       return "custom-blunder-move";
   }

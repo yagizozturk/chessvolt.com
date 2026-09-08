@@ -242,6 +242,7 @@ cg-board > square.custom-correct-move,
 cg-board > square.custom-wrong-move,
 cg-board > square.custom-good-move,
 cg-board > square.custom-inaccuracy-move,
+cg-board > square.custom-mistake-move,
 cg-board > square.custom-blunder-move,
 cg-board > square.custom-king-move,
 cg-board > square.custom-bishop-move,
@@ -255,6 +256,7 @@ cg-board > square.custom-correct-move::after,
 cg-board > square.custom-wrong-move::after,
 cg-board > square.custom-good-move::after,
 cg-board > square.custom-inaccuracy-move::after,
+cg-board > square.custom-mistake-move::after,
 cg-board > square.custom-blunder-move::after,
 cg-board > square.custom-king-move::after,
 cg-board > square.custom-bishop-move::after,
@@ -301,6 +303,10 @@ cg-board > square.custom-good-move::after {
 }
 
 cg-board > square.custom-inaccuracy-move::after {
+  background-image: url("/images/icons/icon-warning.png") !important;
+}
+
+cg-board > square.custom-mistake-move::after {
   background-image: url("/images/icons/icon-warning.png") !important;
 }
 
