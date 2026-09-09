@@ -136,9 +136,14 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
     container.scrollBy({ left: delta, behavior: "smooth" });
   }, []);
 
+  /* Mobil web'de ekran dikeyde sığmadığı için, stepper'ın ortalanması için focusIndex kullanılıyor. 
+  Ancak, bu özellik mobil web'de her hamleden board'un yukarı kaymasına neden oluyor. 
+  Bu nedenle, aşağıdaki kod yorum satırı haline getirildi.
+  
   useLayoutEffect(() => {
     itemRefs.current[focusIndex]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }, [focusIndex]);
+*/
 
   useLayoutEffect(() => {
     updateConnector();
