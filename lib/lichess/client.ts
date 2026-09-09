@@ -7,7 +7,9 @@ const REQUEST_TIMEOUT_MS = 10_000;
 export async function lichessFetch(url: string, init?: RequestInit): Promise<Response> {
   const headers = new Headers(init?.headers);
   headers.set("User-Agent", LICHESS_USER_AGENT);
-  headers.set("Accept", "application/json");
+  if (!headers.has("Accept")) {
+    headers.set("Accept", "application/json");
+  }
 
   const request = async () => {
     const timeoutSignal = AbortSignal.timeout(REQUEST_TIMEOUT_MS);

@@ -43,7 +43,7 @@ export default function PgnNavigatorPage() {
             selectedPly={selectedMoment?.ply ?? null}
             isLoading={status === "loading"}
             error={error}
-            moveCount={result?.moveCount}
+            hasResult={status === "success"}
             disabled={!pgn.trim()}
             onReview={() => {
               void review(pgn);
