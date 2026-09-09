@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Calendar, Circle, Flag, Gauge, Puzzle as PuzzleIcon, Tags, Target } from "lucide-react";
 import Link from "next/link";
 
@@ -10,6 +11,7 @@ import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-val
 import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-calculator";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Game } from "@/features/game/types/game";
 import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
@@ -64,17 +66,29 @@ export function PuzzleBoardCard({
   primaryTheme = null,
   isComplete,
 }: PuzzleBoardCardProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const moveCountLabel = formatMoveCountLabel(puzzle.moveSequence.moves);
   const isShowingVoltScore = showVoltScore && isValidVoltScore(voltScore);
 
   return (
     <TooltipProvider>
-      <div className="bg-card border-b-card-shadow relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6">
+      <div className={cn(
+        "bg-card border-b-card-shadow relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6",
+        isLoading && "pointer-events-none"
+      )}>
+        {isLoading && (
+          <div className="bg-background/60 absolute inset-0 z-10 flex items-center justify-center rounded-lg">
+            <Spinner className="size-8" />
+          </div>
+        )}
+        
         {isComplete === true && <BoardStatusIcon status="solved" />}
         {isComplete === false && <BoardStatusIcon status="wrong" />}
 
         <div className={cn("self-start", boardWrapperClassName)}>
-          <DisplayBoard sourceId={puzzle.id} initialFen={displayFen ?? undefined} coordinates={false} />
+          <Link href={href} onClick={() => setIsLoading(true)}>
+            <DisplayBoard sourceId={puzzle.id} initialFen={displayFen ?? undefined} coordinates={false} />
+          </Link>
         </div>
 
         {/* Puzzle Board Card Content */}
@@ -85,7 +99,7 @@ export function PuzzleBoardCard({
               <VoltCalculator result={voltScore} chartSize={130} className="w-fit" />
             </div>
           ) : null}
-          <Link href={href} className="text-xl font-bold hover:underline">
+          <Link href={href} onClick={() => setIsLoading(true)} className="text-xl font-bold hover:underline">
             {puzzle.title}
           </Link>
           {game ? (
@@ -131,7 +145,7 @@ export function PuzzleBoardCard({
           ) : null}
           <div className={cn("mt-auto flex", isShowingVoltScore ? "justify-start" : "justify-end")}>
             <Button variant="voltCompact" size="xs" className="w-fit shrink-0" asChild>
-              <Link href={href}>Play</Link>
+              <Link href={href} onClick={() => setIsLoading(true)}>Play</Link>
             </Button>
           </div>
         </div>
