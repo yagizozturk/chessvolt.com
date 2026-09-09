@@ -14,7 +14,7 @@ export async function bulkCreateAction(
   _prevState: BulkCreateFormState,
   formData: FormData,
 ): Promise<BulkCreateFormState> {
-  const { supabase } = await getAdminUser();
+  const { supabase, user } = await getAdminUser();
 
   const source = ((formData.get("source") as string) || "").trim() || null;
   const defaultStudyId = ((formData.get("studyId") as string) || "").trim() || null;
@@ -51,6 +51,7 @@ export async function bulkCreateAction(
       displayFen: resolved.displayFen,
       goals: buildStubGoalsFromMoves(resolved.initialFen, resolved.moves),
       isActive: true,
+      createdBy: user.id,
       studyId: defaultStudyId,
     });
 

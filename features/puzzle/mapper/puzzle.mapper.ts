@@ -13,6 +13,7 @@ export type DbPuzzle = {
   rating: number | null;
   popularity: number | null;
   is_active: boolean;
+  created_by: string | null;
   created_at: string;
   move_sequences?: DbMoveSequence | DbMoveSequence[] | null;
 };
@@ -32,6 +33,7 @@ export function toPuzzle(db: DbPuzzle): Puzzle {
     rating: parsePuzzleRating(db.rating),
     popularity: parsePuzzlePopularity(db.popularity),
     isActive: db.is_active,
+    createdBy: db.created_by ?? null,
     moveSequence: toMoveSequence(seqRow),
     createdAt: db.created_at,
   };

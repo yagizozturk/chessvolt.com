@@ -7,7 +7,12 @@ import {
 import { ChessApiError } from "@/lib/chess-api/errors";
 import { saveGameAnalysis } from "@/features/game-analysis/services/game-analysis.service";
 import { isGameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import { createReviewPuzzles } from "@/features/game-review/services/create-review-puzzles.service";
 import { reviewGame } from "@/features/game-review/services/game-review.service";
+import {
+  filterUserMistakeMoments,
+  getPgnPlayerColor,
+} from "@/features/game-review/utilities/filter-user-mistake-moments";
 
 export const maxDuration = 300;
 
@@ -17,6 +22,7 @@ type ReviewBody = {
   includeInaccuracies?: boolean;
   source?: string;
   gameId?: string;
+  username?: string;
 };
 
 async function handlePOST(req: Request) {
@@ -40,13 +46,22 @@ async function handlePOST(req: Request) {
       includeInaccuracies: body.includeInaccuracies === true,
     });
 
+    const username = typeof body.username === "string" ? body.username.trim() : "";
+    const userColor = username ? getPgnPlayerColor(pgn, username) : null;
+    const output = username
+      ? {
+          ...result,
+          criticalMoments: userColor ? filterUserMistakeMoments(result.criticalMoments, userColor) : [],
+        }
+      : result;
+
     const gameId = typeof body.gameId === "string" ? body.gameId.trim() : "";
     if (isGameAnalysisSource(body.source) && gameId) {
       const saved = await saveGameAnalysis(auth.supabase, {
         userId: auth.user.id,
         gameId,
         source: body.source,
-        data: { ...result, pgn },
+        data: { ...output, pgn },
       });
 
       if (!saved) {
@@ -56,9 +71,23 @@ async function handlePOST(req: Request) {
           gameId,
         });
       }
+
+      if (username) {
+        try {
+          await createReviewPuzzles({
+            userId: auth.user.id,
+            username,
+            source: body.source,
+            gameId,
+            moments: output.criticalMoments,
+          });
+        } catch (error) {
+          console.error("game-review.route: failed to create review puzzles", error);
+        }
+      }
     }
 
-    return successResponse(result);
+    return successResponse(output);
   } catch (error) {
     if (error instanceof ChessApiError) {
       return errorResponse(error.message, error.status && error.status >= 400 ? error.status : 502);

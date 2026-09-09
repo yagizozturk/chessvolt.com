@@ -9,6 +9,7 @@ export type ReviewGameRequest = {
   includeInaccuracies?: boolean;
   source?: GameAnalysisSource;
   gameId?: string;
+  username?: string;
 };
 
 export async function requestGameReview(body: ReviewGameRequest) {

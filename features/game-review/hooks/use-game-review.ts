@@ -37,6 +37,7 @@ export function useGameReview(initialResult?: GameReviewResult | null) {
           includeInaccuracies: options?.includeInaccuracies,
           source: options?.source,
           gameId: options?.gameId,
+          username: options?.username,
         });
 
         if (!response.success || !response.data) {

@@ -11,7 +11,7 @@ export async function importLichessAction(
   _prevState: LichessImportFormState,
   formData: FormData,
 ): Promise<LichessImportFormState> {
-  const { supabase } = await getAdminUser();
+  const { supabase, user } = await getAdminUser();
 
   const csvText = String(formData.get("csvData") ?? "").trim();
   if (!csvText) {
@@ -24,7 +24,7 @@ export async function importLichessAction(
       ? minPopularityRaw
       : DEFAULT_LICHESS_IMPORT_CONFIG.minPopularity;
 
-  const summary = await importLichessPuzzlesFromCsv(supabase, csvText, { minPopularity });
+  const summary = await importLichessPuzzlesFromCsv(supabase, csvText, { minPopularity, createdBy: user.id });
 
   revalidatePath("/admin/puzzles");
   revalidatePath("/studies");

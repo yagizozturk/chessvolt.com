@@ -16,7 +16,7 @@ function parsePly(formData: FormData, key: string): number {
 }
 
 export async function createFromPlyAction(_prevState: PuzzleFormState, formData: FormData): Promise<PuzzleFormState> {
-  const { supabase } = await getAdminUser();
+  const { supabase, user } = await getAdminUser();
 
   const pgn = ((formData.get("pgn") as string) || "").trim();
   const initialPly = parsePly(formData, "initialPly");
@@ -47,6 +47,7 @@ export async function createFromPlyAction(_prevState: PuzzleFormState, formData:
     goals:
       meta.data.goals ?? buildStubGoalsFromMoves(resolved.initialFen, resolved.moves),
     isActive: meta.data.isActive,
+    createdBy: user.id,
     themeSlugs: meta.data.themes,
     studyId: meta.data.studyId,
   });

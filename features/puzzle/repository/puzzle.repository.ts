@@ -72,6 +72,7 @@ export type CreatePuzzleInput = {
   displayFen?: string | null;
   goals?: MoveGoals | null;
   isActive?: boolean;
+  createdBy?: string | null;
 };
 
 export async function create(supabase: SupabaseClient, input: CreatePuzzleInput): Promise<Puzzle | null> {
@@ -99,6 +100,7 @@ export async function create(supabase: SupabaseClient, input: CreatePuzzleInput)
       popularity: input.popularity ?? null,
       move_sequence_id: moveSequence.id,
       is_active: input.isActive ?? true,
+      created_by: input.createdBy ?? null,
     })
     .select("*, move_sequences (*)")
     .single();

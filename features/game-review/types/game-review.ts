@@ -14,6 +14,7 @@ export type CriticalMoment = {
   deltaCp: number;
   quality: CriticalMomentQuality;
   mate: number | null;
+  turn: "w" | "b";
 };
 
 export type GameReviewResult = {

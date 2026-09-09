@@ -53,9 +53,10 @@ export default function GameReviewController({
     new Chess().fen();
   useEffect(() => {
     if (didAutoReview.current || analysis?.data.criticalMoments.length || !pgn) return;
+    if (!focusUsername.trim()) return;
     didAutoReview.current = true;
-    void review(pgn, { source, gameId });
-  }, [analysis, gameId, pgn, review, source]);
+    void review(pgn, { source, gameId, username: focusUsername });
+  }, [analysis, focusUsername, gameId, pgn, review, source]);
 
   useEffect(() => {
     if (selectedMoment || criticalMoments.length === 0) return;
@@ -114,7 +115,7 @@ export default function GameReviewController({
             hasResult={status === "success"}
             disabled={!pgn}
             onReview={() => {
-              void review(pgn, { source, gameId });
+              void review(pgn, { source, gameId, username: focusUsername });
             }}
             onSelectMoment={selectMoment}
           />
