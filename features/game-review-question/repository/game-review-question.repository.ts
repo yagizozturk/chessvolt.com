@@ -14,8 +14,14 @@ import type {
   SaveGameReviewQuestionInput,
 } from "@/features/game-review-question/types/game-review-question";
 
+const QUESTION_SELECT = "*, move_sequences (*)";
+
 export async function findById(supabase: SupabaseClient, id: string): Promise<GameReviewQuestion | null> {
-  const { data, error } = await supabase.from("game_review_questions").select("*").eq("id", id).maybeSingle();
+  const { data, error } = await supabase
+    .from("game_review_questions")
+    .select(QUESTION_SELECT)
+    .eq("id", id)
+    .maybeSingle();
 
   if (error) {
     console.error("game-review-question.repository.findById error:", error);
@@ -30,7 +36,7 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<Ga
 export async function findByUserId(supabase: SupabaseClient, userId: string): Promise<GameReviewQuestion[]> {
   const { data, error } = await supabase
     .from("game_review_questions")
-    .select("*")
+    .select(QUESTION_SELECT)
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
@@ -48,7 +54,7 @@ export async function findByGameAnalysisId(
 ): Promise<GameReviewQuestion[]> {
   const { data, error } = await supabase
     .from("game_review_questions")
-    .select("*")
+    .select(QUESTION_SELECT)
     .eq("game_analysis_id", gameAnalysisId)
     .order("ply", { ascending: true });
 
@@ -76,7 +82,7 @@ export async function create(
       ply: input.ply,
       quality: input.quality,
     })
-    .select()
+    .select(QUESTION_SELECT)
     .single();
 
   if (error) {

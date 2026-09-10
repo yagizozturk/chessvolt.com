@@ -1,3 +1,5 @@
+import type { MoveSequence } from "@/features/move-sequence/types/move-sequence";
+
 export type GameReviewQuestionQuality = "mistake" | "blunder";
 
 export type GameReviewQuestion = {
@@ -5,6 +7,7 @@ export type GameReviewQuestion = {
   userId: string;
   gameAnalysisId: string | null;
   moveSequenceId: string;
+  moveSequence: MoveSequence;
   gameId: string;
   source: string;
   title: string;

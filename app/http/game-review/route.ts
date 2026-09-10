@@ -7,6 +7,7 @@ import {
 import { ChessApiError } from "@/lib/chess-api/errors";
 import { saveGameAnalysis } from "@/features/game-analysis/services/game-analysis.service";
 import { isGameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { createReviewQuestions } from "@/features/game-review/services/create-review-questions.service";
 import { reviewGame } from "@/features/game-review/services/game-review.service";
 import {
@@ -56,6 +57,7 @@ async function handlePOST(req: Request) {
       : result;
 
     const gameId = typeof body.gameId === "string" ? body.gameId.trim() : "";
+    let reviewQuestions: GameReviewQuestion[] = [];
     if (isGameAnalysisSource(body.source) && gameId) {
       const saved = await saveGameAnalysis(auth.supabase, {
         userId: auth.user.id,
@@ -74,7 +76,7 @@ async function handlePOST(req: Request) {
 
       if (username) {
         try {
-          await createReviewQuestions({
+          reviewQuestions = await createReviewQuestions({
             supabase: auth.supabase,
             userId: auth.user.id,
             username,
@@ -89,7 +91,7 @@ async function handlePOST(req: Request) {
       }
     }
 
-    return successResponse(output);
+    return successResponse({ ...output, reviewQuestions });
   } catch (error) {
     if (error instanceof ChessApiError) {
       return errorResponse(error.message, error.status && error.status >= 400 ? error.status : 502);

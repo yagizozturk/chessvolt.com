@@ -1,27 +1,33 @@
 "use client";
 
 import { Chess } from "chess.js";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Eye, RotateCcw } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 
-import VoltBoard from "@/components/boards/volt-board/volt-board";
+import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useImportedGames } from "@/features/analysis/components/imported-games-provider";
 import { importedGameFocus } from "@/features/analysis/utilities/imported-game-label";
 import type { GameAnalysis, GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { BoardPlayerName } from "@/features/game-review/components/board-player-name";
 import { GameReviewPanel } from "@/features/game-review/components/game-review-panel";
 import { useGameReview } from "@/features/game-review/hooks/use-game-review";
+import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
+import { getTurnLabel } from "@/lib/chess/getTurnLabel";
+import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
 type GameReviewControllerProps = {
   analysis: GameAnalysis | null;
   source: GameAnalysisSource;
   gameId: string;
+  reviewQuestions: GameReviewQuestion[];
   backUrl?: string;
 };
 
@@ -34,14 +40,21 @@ export default function GameReviewController({
   analysis,
   source,
   gameId,
+  reviewQuestions: initialReviewQuestions,
   backUrl = "/analysis",
 }: GameReviewControllerProps) {
   const router = useRouter();
   const isMobile = useIsMobile();
   const [isPending, startTransition] = useTransition();
   const didAutoReview = useRef(false);
+  const boardRef = useRef<VoltBoardHandle>(null);
+  const [activeQuestion, setActiveQuestion] = useState<GameReviewQuestion | null>(null);
+  const [replayKey, setReplayKey] = useState(0);
   const { findGame, chesscomUsername, lichessUsername } = useImportedGames();
-  const { status, error, criticalMoments, selectedMoment, review, selectMoment } = useGameReview(analysis?.data);
+  const { status, error, criticalMoments, reviewQuestions, selectedMoment, review, selectMoment } = useGameReview(
+    analysis?.data,
+    initialReviewQuestions,
+  );
 
   const importedGame = findGame(source, gameId);
   const pgn = analysis?.data.pgn?.trim() || importedGame?.pgn?.trim() || "";
@@ -54,7 +67,35 @@ export default function GameReviewController({
     pgnHeader(pgn, "WhiteElo") ?? (importedGame?.white.rating != null ? String(importedGame.white.rating) : null);
   const blackElo =
     pgnHeader(pgn, "BlackElo") ?? (importedGame?.black.rating != null ? String(importedGame.black.rating) : null);
-  const boardFen = selectedMoment?.fen ?? criticalMoments[0]?.fen ?? getFenFromPgnAtPly(pgn, 0) ?? new Chess().fen();
+  const reviewQuestionByPly = useMemo(() => {
+    return reviewQuestions.reduce<Record<number, GameReviewQuestion>>((acc, question) => {
+      acc[question.ply] = question;
+      return acc;
+    }, {});
+  }, [reviewQuestions]);
+  const activeMoveSequence = activeQuestion?.moveSequence ?? null;
+  const boardFen =
+    activeMoveSequence?.initialFen ?? selectedMoment?.fen ?? criticalMoments[0]?.fen ?? getFenFromPgnAtPly(pgn, 0) ?? new Chess().fen();
+  const playSessionId = activeQuestion ? `${activeQuestion.id}:${replayKey}` : `${sourceId}:${boardFen}`;
+  const turnLabel = getTurnLabel(activeMoveSequence?.initialFen ?? boardFen);
+  const {
+    handleMoveCheck,
+    handleSuccessMovePlayed,
+    handleNextMoveRequest,
+    sortedGoals,
+    nextGoal,
+    progressValue,
+    hintCount,
+    hintRequested,
+    expectedCurrentCorrectMoveUci,
+    mainIdea,
+  } = useMoveSequenceController({
+    sourceId: playSessionId,
+    moves: activeMoveSequence?.moves ?? "",
+    goals: activeMoveSequence?.goals ?? null,
+  });
+  const isCompleted = Boolean(activeQuestion && expectedCurrentCorrectMoveUci == null);
+
   useEffect(() => {
     if (didAutoReview.current || analysis?.data.criticalMoments.length || !pgn) return;
     if (!focusUsername.trim()) return;
@@ -73,21 +114,50 @@ export default function GameReviewController({
     });
   };
 
+  const handleSelectMoment = (moment: (typeof criticalMoments)[number]) => {
+    setActiveQuestion(null);
+    selectMoment(moment);
+  };
+
+  const handlePlayQuestion = (moment: (typeof criticalMoments)[number], question: GameReviewQuestion) => {
+    selectMoment(moment);
+    setActiveQuestion(question);
+    setReplayKey((key) => key + 1);
+  };
+
+  const handleBoardCheckMove = (move: MoveAttemptPayload) => {
+    if (!activeQuestion || isCompleted) return false;
+    return handleMoveCheck(move).isCorrect;
+  };
+
+  const handleHintClick = () => {
+    const nextHintCount = hintRequested();
+    if (nextHintCount == null || !expectedCurrentCorrectMoveUci) return;
+    boardRef.current?.showHint(nextHintCount);
+  };
+
+  const handlePlayAgain = () => {
+    setReplayKey((key) => key + 1);
+  };
+
   return (
     <div className="page-container">
       <div className="page-container-controller-layout">
         <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-2 self-start md:flex-[3]">
           <div className="relative aspect-square w-full">
             <VoltBoard
-              key={`${sourceId}-${boardFen}`}
-              sourceId={sourceId}
+              ref={boardRef}
+              key={playSessionId}
+              sourceId={playSessionId}
               initialFen={boardFen}
               coordinates={!isMobile}
               playerOrientation={youAreBlack ? "black" : "white"}
-              viewOnly
-              onCheckMove={() => true}
-              onSuccessMovePlayed={() => {}}
-              onNextMoveRequest={() => undefined}
+              viewOnly={!activeQuestion}
+              drawHintMove={expectedCurrentCorrectMoveUci}
+              activeGoalVisuals={nextGoal?.visuals}
+              onCheckMove={activeQuestion ? handleBoardCheckMove : () => true}
+              onSuccessMovePlayed={activeQuestion ? handleSuccessMovePlayed : () => {}}
+              onNextMoveRequest={activeQuestion ? handleNextMoveRequest : () => undefined}
             />
           </div>
           <BoardPlayerName
@@ -127,12 +197,47 @@ export default function GameReviewController({
 
           <GameReviewPanel
             moments={criticalMoments}
+            reviewQuestionByPly={reviewQuestionByPly}
             selectedPly={selectedMoment?.ply ?? null}
+            activeQuestionId={activeQuestion?.id ?? null}
             isLoading={status === "loading"}
             error={error}
             hasResult={status === "success"}
-            onSelectMoment={selectMoment}
+            onSelectMoment={handleSelectMoment}
+            onPlayQuestion={handlePlayQuestion}
           />
+
+          {activeQuestion ? (
+            <>
+              <GoalViewer
+                goals={sortedGoals}
+                progressValue={progressValue}
+                mode="practice"
+                turnLabel={turnLabel}
+                mainIdea={mainIdea}
+                showMainIdea={false}
+              />
+
+              <div className="mt-auto flex gap-2">
+                {!isCompleted ? (
+                  <Button
+                    variant="voltGreen"
+                    onClick={handleHintClick}
+                    disabled={hintCount >= MAX_HINT_COUNT}
+                    className="w-full min-w-0 flex-1"
+                  >
+                    <Eye data-icon="inline-start" />
+                    Hint
+                  </Button>
+                ) : (
+                  <Button variant="voltGreen" onClick={handlePlayAgain} className="w-full min-w-0 flex-1">
+                    <RotateCcw data-icon="inline-start" />
+                    Play again
+                  </Button>
+                )}
+              </div>
+            </>
+          ) : null}
         </div>
       </div>
     </div>

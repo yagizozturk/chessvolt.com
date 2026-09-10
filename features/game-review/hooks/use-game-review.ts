@@ -4,14 +4,16 @@ import { useCallback, useState } from "react";
 
 import type { ApiError } from "@/api-client/client";
 import { requestGameReview, type ReviewGameRequest } from "@/features/game-review/api/game-review";
+import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import type { CriticalMoment, GameReviewResult } from "@/features/game-review/types/game-review";
 
 type ReviewStatus = "idle" | "loading" | "success" | "error";
 
-export function useGameReview(initialResult?: GameReviewResult | null) {
+export function useGameReview(initialResult?: GameReviewResult | null, initialReviewQuestions: GameReviewQuestion[] = []) {
   const [status, setStatus] = useState<ReviewStatus>(initialResult ? "success" : "idle");
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<GameReviewResult | null>(initialResult ?? null);
+  const [reviewQuestions, setReviewQuestions] = useState<GameReviewQuestion[]>(initialReviewQuestions);
   const [selectedMoment, setSelectedMoment] = useState<CriticalMoment | null>(null);
 
   const review = useCallback(
@@ -45,6 +47,7 @@ export function useGameReview(initialResult?: GameReviewResult | null) {
         }
 
         setResult(response.data);
+        setReviewQuestions(response.data.reviewQuestions ?? []);
         setStatus("success");
         return response.data;
       } catch (err) {
@@ -56,6 +59,7 @@ export function useGameReview(initialResult?: GameReviewResult | null) {
               : "Review failed";
         setError(message);
         setResult(null);
+        setReviewQuestions([]);
         setStatus("error");
         return null;
       }
@@ -71,6 +75,7 @@ export function useGameReview(initialResult?: GameReviewResult | null) {
     setStatus("idle");
     setError(null);
     setResult(null);
+    setReviewQuestions([]);
     setSelectedMoment(null);
   }, []);
 
@@ -79,6 +84,7 @@ export function useGameReview(initialResult?: GameReviewResult | null) {
     error,
     result,
     criticalMoments: result?.criticalMoments ?? [],
+    reviewQuestions,
     selectedMoment,
     review,
     selectMoment,

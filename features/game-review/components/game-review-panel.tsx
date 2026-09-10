@@ -1,17 +1,23 @@
 "use client";
 
+import { Play } from "lucide-react";
 import Image from "next/image";
 
+import { Button } from "@/components/ui/button";
+import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import type { CriticalMoment } from "@/features/game-review/types/game-review";
 import { cn } from "@/lib/utils/cn";
 
 type GameReviewPanelProps = {
   moments: CriticalMoment[];
+  reviewQuestionByPly?: Record<number, GameReviewQuestion>;
   selectedPly: number | null;
+  activeQuestionId?: string | null;
   isLoading: boolean;
   error: string | null;
   hasResult?: boolean;
   onSelectMoment: (moment: CriticalMoment) => void;
+  onPlayQuestion?: (moment: CriticalMoment, question: GameReviewQuestion) => void;
 };
 
 function qualityLabel(quality: CriticalMoment["quality"]) {
@@ -28,11 +34,14 @@ function qualityIcon(quality: CriticalMoment["quality"]) {
 
 export function GameReviewPanel({
   moments,
+  reviewQuestionByPly = {},
   selectedPly,
+  activeQuestionId = null,
   isLoading,
   error,
   hasResult = false,
   onSelectMoment,
+  onPlayQuestion,
 }: GameReviewPanelProps) {
   const visibleMoments = moments.filter((moment) => moment.quality === "mistake" || moment.quality === "blunder");
 
@@ -47,36 +56,50 @@ export function GameReviewPanel({
       ) : null}
 
       {!isLoading && visibleMoments.length > 0 ? (
-        <ul className="flex max-h-[420px] flex-col gap-3 overflow-y-auto">
+        <ul className="grid max-h-[420px] grid-cols-2 gap-3 overflow-y-auto">
           {visibleMoments.map((moment) => {
             const selected = selectedPly === moment.ply;
             const quality = qualityLabel(moment.quality);
             const iconSrc = qualityIcon(moment.quality);
+            const question = reviewQuestionByPly[moment.ply];
+            const active = question?.id === activeQuestionId;
+            const qualityTextClassName = cn(
+              "text-lg font-bold",
+              moment.quality === "mistake" ? "text-primary" : "text-red-500",
+            );
             return (
-              <li key={`${moment.ply}-${moment.playedUci}`} className="card-border-bottom-shadow">
-                <button
-                  type="button"
-                  onClick={() => onSelectMoment(moment)}
-                  className={cn(
-                    "hover:bg-muted/60 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors",
-                    selected && "bg-muted/80",
-                  )}
-                >
-                  {iconSrc ? (
-                    <span className="bg-background flex size-12 shrink-0 items-center justify-center rounded-full">
-                      <Image src={iconSrc} alt={quality ?? "Move quality"} width={28} height={28} />
-                    </span>
-                  ) : null}
-                  <span className="flex min-w-0 flex-col gap-1">
-                    {quality ? <span className="text-lg font-bold text-red-500">{quality}</span> : null}
+              <li
+                key={`${moment.ply}-${moment.playedUci}`}
+                className={cn("card-border-bottom-shadow", (selected || active) && "bg-muted/80")}
+              >
+                <div className="flex h-full flex-col gap-2 p-3">
+                  <button
+                    type="button"
+                    onClick={() => onSelectMoment(moment)}
+                    className="hover:bg-muted/60 flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg p-1 text-center transition-colors"
+                  >
+                    {iconSrc ? <Image src={iconSrc} alt={quality ?? "Move quality"} width={32} height={32} /> : null}
+                    {quality ? <span className={qualityTextClassName}>{quality}</span> : null}
                     <span className="text-sm">
-                      <span className="text-lg font-bold text-red-500">{moment.playedSan}</span> Played
+                      <span className={qualityTextClassName}>{moment.playedSan}</span> Played
                     </span>
                     <span className="text-muted-foreground text-sm">
-                      Best Move <span className="text-foreground font-semibold text-green-500">{moment.bestSan}</span>
+                      Best <span className="text-foreground font-semibold text-green-500">{moment.bestSan}</span>
                     </span>
-                  </span>
-                </button>
+                  </button>
+                  {question && onPlayQuestion ? (
+                    <Button
+                      type="button"
+                      variant={active ? "voltGreen" : "volt"}
+                      size="sm"
+                      onClick={() => onPlayQuestion(moment, question)}
+                      className="w-full"
+                    >
+                      <Play data-icon="inline-start" />
+                      Play
+                    </Button>
+                  ) : null}
+                </div>
               </li>
             );
           })}

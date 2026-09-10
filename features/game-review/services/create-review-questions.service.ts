@@ -2,7 +2,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
 import { saveGameReviewQuestion } from "@/features/game-review-question/services/game-review-question.service";
-import type { GameReviewQuestionQuality } from "@/features/game-review-question/types/game-review-question";
+import type {
+  GameReviewQuestion,
+  GameReviewQuestionQuality,
+} from "@/features/game-review-question/types/game-review-question";
 import type { CriticalMoment } from "@/features/game-review/types/game-review";
 import { createMoveSequence } from "@/features/move-sequence/services/move-sequence.service";
 import { buildStubGoalsFromMoves } from "@/lib/move-sequence-goals/build-stub-goals";
@@ -25,13 +28,14 @@ export async function createReviewQuestions(input: {
   gameId: string;
   gameAnalysisId?: string | null;
   moments: CriticalMoment[];
-}): Promise<void> {
+}): Promise<GameReviewQuestion[]> {
   const username = input.username.trim();
   const gameId = input.gameId.trim();
-  if (!username || !gameId || input.moments.length === 0) return;
+  if (!username || !gameId || input.moments.length === 0) return [];
 
   const admin = createAdminClient();
   const source = reviewQuestionSource(input.source, username);
+  const questions: GameReviewQuestion[] = [];
 
   for (const moment of input.moments) {
     const bestUci = moment.bestUci.trim();
@@ -73,6 +77,10 @@ export async function createReviewQuestions(input: {
         ply: moment.ply,
         moveSequenceId: moveSequence.id,
       });
+    } else {
+      questions.push(question);
     }
   }
+
+  return questions;
 }
