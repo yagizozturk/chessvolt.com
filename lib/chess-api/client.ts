@@ -8,9 +8,15 @@ import type {
 
 export const CHESS_API_URL = "https://chess-api.com/v1";
 const REQUEST_TIMEOUT_MS = 120_000;
+const RETRY_DELAY_MS = 1_000;
+const MAX_ATTEMPTS = 3;
 const DEFAULT_DEPTH = 12;
 const DEFAULT_VARIANTS = 1;
 const DEFAULT_MAX_THINKING_TIME_MS = 50;
+
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status === 504;
+}
 
 const analysisCache = new Map<string, PositionAnalysis>();
 
@@ -31,10 +37,12 @@ async function chessApiFetch(body: ChessApiAnalyzeRequest): Promise<ChessApiRawR
 
   try {
     let response = await request();
+    let attempt = 1;
 
-    if (response.status === 429) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    while (!response.ok && isRetryableStatus(response.status) && attempt < MAX_ATTEMPTS) {
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS * attempt));
       response = await request();
+      attempt += 1;
     }
 
     if (response.status === 429) {

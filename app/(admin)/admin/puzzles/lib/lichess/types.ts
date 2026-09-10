@@ -66,7 +66,6 @@ export type LichessImportSummary = {
 
 export type LichessImportConfig = {
   minPopularity: number;
-  createdBy?: string | null;
 };
 
 export const LICHESS_IMPORT_SOURCE = "lichess";

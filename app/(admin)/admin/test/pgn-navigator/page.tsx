@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import VoltBoardNavigator from "@/components/board-navigator/volt-board-navigator";
+import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/textarea";
 import { GameReviewPanel } from "@/features/game-review/components/game-review-panel";
@@ -38,16 +39,16 @@ export default function PgnNavigatorPage() {
             </Field>
           </FieldGroup>
 
+          <Button disabled={!pgn.trim() || status === "loading"} onClick={() => void review(pgn)}>
+            {status === "loading" ? "Analyzing…" : "Review game"}
+          </Button>
+
           <GameReviewPanel
             moments={criticalMoments}
             selectedPly={selectedMoment?.ply ?? null}
             isLoading={status === "loading"}
             error={error}
             hasResult={status === "success"}
-            disabled={!pgn.trim()}
-            onReview={() => {
-              void review(pgn);
-            }}
             onSelectMoment={(moment) => {
               selectMoment(moment);
               setPly(moment.ply);

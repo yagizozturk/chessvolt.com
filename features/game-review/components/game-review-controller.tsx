@@ -12,6 +12,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useImportedGames } from "@/features/analysis/components/imported-games-provider";
 import { importedGameFocus } from "@/features/analysis/utilities/imported-game-label";
 import type { GameAnalysis, GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import { BoardPlayerName } from "@/features/game-review/components/board-player-name";
 import { GameReviewPanel } from "@/features/game-review/components/game-review-panel";
 import { useGameReview } from "@/features/game-review/hooks/use-game-review";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -24,6 +25,11 @@ type GameReviewControllerProps = {
   backUrl?: string;
 };
 
+function pgnHeader(pgn: string, tag: string): string | null {
+  const value = pgn.match(new RegExp(`\\[${tag}\\s+"([^"]*)"\\]`, "i"))?.[1]?.trim();
+  return value || null;
+}
+
 export default function GameReviewController({
   analysis,
   source,
@@ -35,22 +41,20 @@ export default function GameReviewController({
   const [isPending, startTransition] = useTransition();
   const didAutoReview = useRef(false);
   const { findGame, chesscomUsername, lichessUsername } = useImportedGames();
-  const { status, error, criticalMoments, selectedMoment, review, selectMoment } = useGameReview(
-    analysis?.data,
-  );
+  const { status, error, criticalMoments, selectedMoment, review, selectMoment } = useGameReview(analysis?.data);
 
   const importedGame = findGame(source, gameId);
   const pgn = analysis?.data.pgn?.trim() || importedGame?.pgn?.trim() || "";
   const sourceId = `game-review-${source}-${gameId}`;
   const focusUsername = source === "chesscom" ? chesscomUsername : lichessUsername;
-  const { youAreBlack } = importedGame
-    ? importedGameFocus(importedGame, focusUsername)
-    : { youAreBlack: false };
-  const boardFen =
-    selectedMoment?.fen ??
-    criticalMoments[0]?.fen ??
-    getFenFromPgnAtPly(pgn, 0) ??
-    new Chess().fen();
+  const { youAreBlack } = importedGame ? importedGameFocus(importedGame, focusUsername) : { youAreBlack: false };
+  const whitePlayer = pgnHeader(pgn, "White");
+  const blackPlayer = pgnHeader(pgn, "Black");
+  const whiteElo =
+    pgnHeader(pgn, "WhiteElo") ?? (importedGame?.white.rating != null ? String(importedGame.white.rating) : null);
+  const blackElo =
+    pgnHeader(pgn, "BlackElo") ?? (importedGame?.black.rating != null ? String(importedGame.black.rating) : null);
+  const boardFen = selectedMoment?.fen ?? criticalMoments[0]?.fen ?? getFenFromPgnAtPly(pgn, 0) ?? new Chess().fen();
   useEffect(() => {
     if (didAutoReview.current || analysis?.data.criticalMoments.length || !pgn) return;
     if (!focusUsername.trim()) return;
@@ -72,17 +76,31 @@ export default function GameReviewController({
   return (
     <div className="page-container">
       <div className="page-container-controller-layout">
-        <div className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]">
-          <VoltBoard
-            key={`${sourceId}-${boardFen}`}
-            sourceId={sourceId}
-            initialFen={boardFen}
-            coordinates={!isMobile}
-            playerOrientation={youAreBlack ? "black" : "white"}
-            viewOnly
-            onCheckMove={() => true}
-            onSuccessMovePlayed={() => {}}
-            onNextMoveRequest={() => undefined}
+        <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-2 self-start md:flex-[3]">
+          <div className="relative aspect-square w-full">
+            <VoltBoard
+              key={`${sourceId}-${boardFen}`}
+              sourceId={sourceId}
+              initialFen={boardFen}
+              coordinates={!isMobile}
+              playerOrientation={youAreBlack ? "black" : "white"}
+              viewOnly
+              onCheckMove={() => true}
+              onSuccessMovePlayed={() => {}}
+              onNextMoveRequest={() => undefined}
+            />
+          </div>
+          <BoardPlayerName
+            name={youAreBlack ? whitePlayer : blackPlayer}
+            elo={youAreBlack ? whiteElo : blackElo}
+            color={youAreBlack ? "white" : "black"}
+            className="absolute top-[-30px] left-0"
+          />
+          <BoardPlayerName
+            name={youAreBlack ? blackPlayer : whitePlayer}
+            elo={youAreBlack ? blackElo : whiteElo}
+            color={youAreBlack ? "black" : "white"}
+            className="absolute bottom-[-40px] left-0"
           />
         </div>
 
@@ -113,10 +131,6 @@ export default function GameReviewController({
             isLoading={status === "loading"}
             error={error}
             hasResult={status === "success"}
-            disabled={!pgn}
-            onReview={() => {
-              void review(pgn, { source, gameId, username: focusUsername });
-            }}
             onSelectMoment={selectMoment}
           />
         </div>

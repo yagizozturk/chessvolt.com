@@ -120,7 +120,6 @@ export async function importLichessPuzzlesFromCsv(
         goals: null,
         gameId: null,
         isActive: true,
-        createdBy: config.createdBy ?? null,
       });
 
       if (!puzzle) throw new Error("Could not create puzzle");

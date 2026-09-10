@@ -7,7 +7,7 @@ import {
 import { ChessApiError } from "@/lib/chess-api/errors";
 import { saveGameAnalysis } from "@/features/game-analysis/services/game-analysis.service";
 import { isGameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
-import { createReviewPuzzles } from "@/features/game-review/services/create-review-puzzles.service";
+import { createReviewQuestions } from "@/features/game-review/services/create-review-questions.service";
 import { reviewGame } from "@/features/game-review/services/game-review.service";
 import {
   filterUserMistakeMoments,
@@ -74,15 +74,17 @@ async function handlePOST(req: Request) {
 
       if (username) {
         try {
-          await createReviewPuzzles({
+          await createReviewQuestions({
+            supabase: auth.supabase,
             userId: auth.user.id,
             username,
             source: body.source,
             gameId,
+            gameAnalysisId: saved?.id ?? null,
             moments: output.criticalMoments,
           });
         } catch (error) {
-          console.error("game-review.route: failed to create review puzzles", error);
+          console.error("game-review.route: failed to create review questions", error);
         }
       }
     }

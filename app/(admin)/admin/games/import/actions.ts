@@ -11,7 +11,7 @@ import { parsePgn, splitPgnGames } from "@/lib/chess/parsePgn";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 export async function importPgnAction(formData: FormData) {
-  const { supabase, user } = await getAdminUser();
+  const { supabase } = await getAdminUser();
 
   const pgnText = formData.get("pgn") as string;
   if (!pgnText?.trim()) {
@@ -59,7 +59,6 @@ export async function importPgnAction(formData: FormData) {
         rating: 1200,
         moves: movesAtPly0 ?? "",
         displayFen,
-        createdBy: user.id,
       });
     } else {
       errors.push(`${parsed.whitePlayer} vs ${parsed.blackPlayer} could not be added`);

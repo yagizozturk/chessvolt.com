@@ -9,7 +9,6 @@ export type Puzzle = {
   rating: number | null;
   popularity: number | null;
   isActive: boolean;
-  createdBy: string | null;
   moveSequence: MoveSequence;
   createdAt: string;
 };
