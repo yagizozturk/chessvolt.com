@@ -19,6 +19,7 @@ import { useGameReview } from "@/features/game-review/hooks/use-game-review";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
+import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
 type GameReviewControllerProps = {
@@ -49,6 +50,7 @@ export default function GameReviewController({
   const completedSessionRef = useRef<string | null>(null);
   const [activeQuestion, setActiveQuestion] = useState<GameReviewQuestion | null>(null);
   const [completedQuestionIds, setCompletedQuestionIds] = useState<Set<string>>(() => new Set());
+  const [successfulMoveSessionId, setSuccessfulMoveSessionId] = useState<string | null>(null);
   const [replayKey, setReplayKey] = useState(0);
   const { findGame, chesscomUsername, lichessUsername } = useImportedGames();
   const { status, error, criticalMoments, reviewQuestions, review } = useGameReview(
@@ -89,7 +91,9 @@ export default function GameReviewController({
     moves: activeMoveSequence?.moves ?? "",
     goals: activeMoveSequence?.goals ?? null,
   });
-  const isCompleted = Boolean(activeQuestion && expectedCurrentCorrectMoveUci == null);
+  const isCompleted = Boolean(
+    activeQuestion && successfulMoveSessionId === playSessionId && expectedCurrentCorrectMoveUci == null,
+  );
 
   useEffect(() => {
     if (didAutoReview.current || analysis?.data.criticalMoments.length || !pgn) return;
@@ -145,6 +149,11 @@ export default function GameReviewController({
     return handleMoveCheck(move).isCorrect;
   };
 
+  const handleQuestionSuccessMovePlayed = (move: Move) => {
+    setSuccessfulMoveSessionId(playSessionId);
+    handleSuccessMovePlayed(move);
+  };
+
   return (
     <div className="page-container">
       <div className="page-container-controller-layout">
@@ -159,7 +168,7 @@ export default function GameReviewController({
               viewOnly={!activeQuestion}
               drawHintMove={expectedCurrentCorrectMoveUci}
               onCheckMove={activeQuestion ? handleBoardCheckMove : () => true}
-              onSuccessMovePlayed={activeQuestion ? handleSuccessMovePlayed : () => {}}
+              onSuccessMovePlayed={activeQuestion ? handleQuestionSuccessMovePlayed : () => {}}
               onNextMoveRequest={activeQuestion ? handleNextMoveRequest : () => undefined}
             />
           </div>

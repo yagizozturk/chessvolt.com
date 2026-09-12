@@ -4,6 +4,7 @@ import { Check, Play } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,7 @@ export function GameReviewQuestionStepper({
   onSelectQuestion,
 }: GameReviewQuestionStepperProps) {
   const completedCount = questions.filter((question) => completedQuestionIds.has(question.id)).length;
+  const progressValue = questions.length > 0 ? Math.round((completedCount / questions.length) * 100) : 0;
 
   return (
     <div className="flex flex-col gap-4">
@@ -45,6 +47,15 @@ export function GameReviewQuestionStepper({
           </Badge>
         ) : null}
       </div>
+
+      {questions.length > 0 ? (
+        <div className="flex flex-col gap-2">
+          <Progress value={progressValue} className="h-3" aria-label="Solved questions progress" />
+          <p className="text-muted-foreground text-sm">
+            {completedCount} of {questions.length} questions solved
+          </p>
+        </div>
+      ) : null}
 
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
 
