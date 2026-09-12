@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 type GameReviewQuestionStepperProps = {
   questions: GameReviewQuestion[];
+  originalMoveByPly: Record<number, string>;
   activeQuestionId: string | null;
   completedQuestionIds: Set<string>;
   isLoading: boolean;
@@ -22,8 +23,14 @@ function qualityLabel(quality: GameReviewQuestion["quality"]) {
   return quality === "blunder" ? "Blunder" : "Mistake";
 }
 
+function questionTitle(question: GameReviewQuestion, originalMoveByPly: Record<number, string>) {
+  const originalMove = originalMoveByPly[question.ply]?.trim();
+  return originalMove ? `Played ${originalMove}` : question.title;
+}
+
 export function GameReviewQuestionStepper({
   questions,
+  originalMoveByPly,
   activeQuestionId,
   completedQuestionIds,
   isLoading,
@@ -72,6 +79,7 @@ export function GameReviewQuestionStepper({
               const active = question.id === activeQuestionId;
               const completed = completedQuestionIds.has(question.id);
               const previousCompleted = index > 0 && completedQuestionIds.has(questions[index - 1].id);
+              const title = questionTitle(question, originalMoveByPly);
 
               return (
                 <li key={question.id} className="relative flex w-28 flex-col items-center gap-2 text-center">
@@ -91,7 +99,7 @@ export function GameReviewQuestionStepper({
                     onClick={() => onSelectQuestion(question)}
                     className="relative rounded-full"
                     aria-current={active ? "step" : undefined}
-                    aria-label={`Question ${index + 1}: ${question.title}`}
+                    aria-label={`Question ${index + 1}: ${title}`}
                   >
                     {completed ? <Check /> : active ? <Play /> : index + 1}
                   </Button>
@@ -104,7 +112,7 @@ export function GameReviewQuestionStepper({
                     >
                       {qualityLabel(question.quality)}
                     </span>
-                    <span className="line-clamp-2 text-sm leading-tight font-medium">{question.title}</span>
+                    <span className="line-clamp-2 text-sm leading-tight font-medium">{title}</span>
                     <span className="text-muted-foreground text-xs">Ply {question.ply}</span>
                   </div>
                 </li>

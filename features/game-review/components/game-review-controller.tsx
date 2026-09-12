@@ -4,7 +4,7 @@ import { Chess } from "chess.js";
 import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 
 import VoltBoard from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
@@ -69,6 +69,12 @@ export default function GameReviewController({
     pgnHeader(pgn, "WhiteElo") ?? (importedGame?.white.rating != null ? String(importedGame.white.rating) : null);
   const blackElo =
     pgnHeader(pgn, "BlackElo") ?? (importedGame?.black.rating != null ? String(importedGame.black.rating) : null);
+  const originalMoveByPly = useMemo(() => {
+    return criticalMoments.reduce<Record<number, string>>((acc, moment) => {
+      acc[moment.ply] = moment.playedSan;
+      return acc;
+    }, {});
+  }, [criticalMoments]);
   const activeMoveSequence = activeQuestion?.moveSequence ?? null;
   const boardFen =
     activeMoveSequence?.initialFen ??
@@ -80,6 +86,8 @@ export default function GameReviewController({
   const activeQuestionIndex = activeQuestion
     ? reviewQuestions.findIndex((question) => question.id === activeQuestion.id)
     : -1;
+  const activeQuestionOriginalMove = activeQuestion ? originalMoveByPly[activeQuestion.ply]?.trim() : "";
+  const activeQuestionTitle = activeQuestionOriginalMove ? `Played ${activeQuestionOriginalMove}` : activeQuestion?.title;
   const hasNextQuestion = activeQuestionIndex >= 0 && activeQuestionIndex < reviewQuestions.length - 1;
   const {
     handleMoveCheck,
@@ -209,6 +217,7 @@ export default function GameReviewController({
 
           <GameReviewQuestionStepper
             questions={reviewQuestions}
+            originalMoveByPly={originalMoveByPly}
             activeQuestionId={activeQuestion?.id ?? null}
             completedQuestionIds={completedQuestionIds}
             isLoading={status === "loading"}
@@ -220,7 +229,7 @@ export default function GameReviewController({
           {activeQuestion ? (
             <div className="card-border-bottom-shadow mt-auto gap-1 p-4">
               <p className="text-muted-foreground text-sm">Solving now</p>
-              <p className="font-bold">{activeQuestion.title}</p>
+              <p className="font-bold">{activeQuestionTitle}</p>
               <p className="text-muted-foreground text-sm">
                 {isCompleted
                   ? hasNextQuestion

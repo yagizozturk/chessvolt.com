@@ -64,7 +64,7 @@ export async function createReviewQuestions(input: {
       moveSequenceId: moveSequence.id,
       gameId,
       source,
-      title: moment.bestSan ? `Find ${moment.bestSan}` : "Find the better move",
+      title: moment.playedSan ? `Played ${moment.playedSan}` : "Original game move",
       ply: moment.ply,
       quality: moment.quality,
     });
