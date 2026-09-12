@@ -1,13 +1,12 @@
 "use client";
 
 import { Chess } from "chess.js";
-import { ChevronLeft, Eye, RotateCcw } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
-import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
-import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
+import VoltBoard from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useImportedGames } from "@/features/analysis/components/imported-games-provider";
@@ -15,12 +14,11 @@ import { importedGameFocus } from "@/features/analysis/utilities/imported-game-l
 import type { GameAnalysis, GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { BoardPlayerName } from "@/features/game-review/components/board-player-name";
-import { GameReviewPanel } from "@/features/game-review/components/game-review-panel";
+import { GameReviewQuestionStepper } from "@/features/game-review/components/game-review-question-stepper";
 import { useGameReview } from "@/features/game-review/hooks/use-game-review";
-import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
-import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 
 type GameReviewControllerProps = {
@@ -47,11 +45,13 @@ export default function GameReviewController({
   const isMobile = useIsMobile();
   const [isPending, startTransition] = useTransition();
   const didAutoReview = useRef(false);
-  const boardRef = useRef<VoltBoardHandle>(null);
+  const completedQuestionIdsRef = useRef<Set<string>>(new Set());
+  const completedSessionRef = useRef<string | null>(null);
   const [activeQuestion, setActiveQuestion] = useState<GameReviewQuestion | null>(null);
+  const [completedQuestionIds, setCompletedQuestionIds] = useState<Set<string>>(() => new Set());
   const [replayKey, setReplayKey] = useState(0);
   const { findGame, chesscomUsername, lichessUsername } = useImportedGames();
-  const { status, error, criticalMoments, reviewQuestions, selectedMoment, review, selectMoment } = useGameReview(
+  const { status, error, criticalMoments, reviewQuestions, review } = useGameReview(
     analysis?.data,
     initialReviewQuestions,
   );
@@ -67,28 +67,23 @@ export default function GameReviewController({
     pgnHeader(pgn, "WhiteElo") ?? (importedGame?.white.rating != null ? String(importedGame.white.rating) : null);
   const blackElo =
     pgnHeader(pgn, "BlackElo") ?? (importedGame?.black.rating != null ? String(importedGame.black.rating) : null);
-  const reviewQuestionByPly = useMemo(() => {
-    return reviewQuestions.reduce<Record<number, GameReviewQuestion>>((acc, question) => {
-      acc[question.ply] = question;
-      return acc;
-    }, {});
-  }, [reviewQuestions]);
   const activeMoveSequence = activeQuestion?.moveSequence ?? null;
   const boardFen =
-    activeMoveSequence?.initialFen ?? selectedMoment?.fen ?? criticalMoments[0]?.fen ?? getFenFromPgnAtPly(pgn, 0) ?? new Chess().fen();
+    activeMoveSequence?.initialFen ??
+    criticalMoments[0]?.fen ??
+    reviewQuestions[0]?.moveSequence.initialFen ??
+    getFenFromPgnAtPly(pgn, 0) ??
+    new Chess().fen();
   const playSessionId = activeQuestion ? `${activeQuestion.id}:${replayKey}` : `${sourceId}:${boardFen}`;
-  const turnLabel = getTurnLabel(activeMoveSequence?.initialFen ?? boardFen);
+  const activeQuestionIndex = activeQuestion
+    ? reviewQuestions.findIndex((question) => question.id === activeQuestion.id)
+    : -1;
+  const hasNextQuestion = activeQuestionIndex >= 0 && activeQuestionIndex < reviewQuestions.length - 1;
   const {
     handleMoveCheck,
     handleSuccessMovePlayed,
     handleNextMoveRequest,
-    sortedGoals,
-    nextGoal,
-    progressValue,
-    hintCount,
-    hintRequested,
     expectedCurrentCorrectMoveUci,
-    mainIdea,
   } = useMoveSequenceController({
     sourceId: playSessionId,
     moves: activeMoveSequence?.moves ?? "",
@@ -104,9 +99,35 @@ export default function GameReviewController({
   }, [analysis, focusUsername, gameId, pgn, review, source]);
 
   useEffect(() => {
-    if (selectedMoment || criticalMoments.length === 0) return;
-    selectMoment(criticalMoments[0]);
-  }, [criticalMoments, selectMoment, selectedMoment]);
+    const validQuestionIds = new Set(reviewQuestions.map((question) => question.id));
+    const nextCompletedQuestionIds = new Set(
+      [...completedQuestionIdsRef.current].filter((questionId) => validQuestionIds.has(questionId)),
+    );
+
+    completedQuestionIdsRef.current = nextCompletedQuestionIds;
+    setCompletedQuestionIds(nextCompletedQuestionIds);
+  }, [reviewQuestions]);
+
+  useEffect(() => {
+    if (!activeQuestion || !isCompleted) return;
+    if (completedSessionRef.current === playSessionId) return;
+
+    completedSessionRef.current = playSessionId;
+    const nextCompletedQuestionIds = new Set(completedQuestionIdsRef.current);
+    nextCompletedQuestionIds.add(activeQuestion.id);
+    completedQuestionIdsRef.current = nextCompletedQuestionIds;
+    setCompletedQuestionIds(nextCompletedQuestionIds);
+
+    const nextQuestion = activeQuestionIndex >= 0 ? reviewQuestions[activeQuestionIndex + 1] : null;
+    if (!nextQuestion) return;
+
+    const timeoutId = setTimeout(() => {
+      setActiveQuestion(nextQuestion);
+      setReplayKey((key) => key + 1);
+    }, 800);
+
+    return () => clearTimeout(timeoutId);
+  }, [activeQuestion, activeQuestionIndex, isCompleted, playSessionId, reviewQuestions]);
 
   const handleBackClick = () => {
     startTransition(() => {
@@ -114,13 +135,7 @@ export default function GameReviewController({
     });
   };
 
-  const handleSelectMoment = (moment: (typeof criticalMoments)[number]) => {
-    setActiveQuestion(null);
-    selectMoment(moment);
-  };
-
-  const handlePlayQuestion = (moment: (typeof criticalMoments)[number], question: GameReviewQuestion) => {
-    selectMoment(moment);
+  const handleSelectQuestion = (question: GameReviewQuestion) => {
     setActiveQuestion(question);
     setReplayKey((key) => key + 1);
   };
@@ -130,23 +145,12 @@ export default function GameReviewController({
     return handleMoveCheck(move).isCorrect;
   };
 
-  const handleHintClick = () => {
-    const nextHintCount = hintRequested();
-    if (nextHintCount == null || !expectedCurrentCorrectMoveUci) return;
-    boardRef.current?.showHint(nextHintCount);
-  };
-
-  const handlePlayAgain = () => {
-    setReplayKey((key) => key + 1);
-  };
-
   return (
     <div className="page-container">
       <div className="page-container-controller-layout">
         <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-2 self-start md:flex-[3]">
           <div className="relative aspect-square w-full">
             <VoltBoard
-              ref={boardRef}
               key={playSessionId}
               sourceId={playSessionId}
               initialFen={boardFen}
@@ -154,7 +158,6 @@ export default function GameReviewController({
               playerOrientation={youAreBlack ? "black" : "white"}
               viewOnly={!activeQuestion}
               drawHintMove={expectedCurrentCorrectMoveUci}
-              activeGoalVisuals={nextGoal?.visuals}
               onCheckMove={activeQuestion ? handleBoardCheckMove : () => true}
               onSuccessMovePlayed={activeQuestion ? handleSuccessMovePlayed : () => {}}
               onNextMoveRequest={activeQuestion ? handleNextMoveRequest : () => undefined}
@@ -195,48 +198,28 @@ export default function GameReviewController({
             <div className="size-9" />
           </div>
 
-          <GameReviewPanel
-            moments={criticalMoments}
-            reviewQuestionByPly={reviewQuestionByPly}
-            selectedPly={selectedMoment?.ply ?? null}
+          <GameReviewQuestionStepper
+            questions={reviewQuestions}
             activeQuestionId={activeQuestion?.id ?? null}
+            completedQuestionIds={completedQuestionIds}
             isLoading={status === "loading"}
             error={error}
             hasResult={status === "success"}
-            onSelectMoment={handleSelectMoment}
-            onPlayQuestion={handlePlayQuestion}
+            onSelectQuestion={handleSelectQuestion}
           />
 
           {activeQuestion ? (
-            <>
-              <GoalViewer
-                goals={sortedGoals}
-                progressValue={progressValue}
-                mode="practice"
-                turnLabel={turnLabel}
-                mainIdea={mainIdea}
-                showMainIdea={false}
-              />
-
-              <div className="mt-auto flex gap-2">
-                {!isCompleted ? (
-                  <Button
-                    variant="voltGreen"
-                    onClick={handleHintClick}
-                    disabled={hintCount >= MAX_HINT_COUNT}
-                    className="w-full min-w-0 flex-1"
-                  >
-                    <Eye data-icon="inline-start" />
-                    Hint
-                  </Button>
-                ) : (
-                  <Button variant="voltGreen" onClick={handlePlayAgain} className="w-full min-w-0 flex-1">
-                    <RotateCcw data-icon="inline-start" />
-                    Play again
-                  </Button>
-                )}
-              </div>
-            </>
+            <div className="card-border-bottom-shadow mt-auto gap-1 p-4">
+              <p className="text-muted-foreground text-sm">Solving now</p>
+              <p className="font-bold">{activeQuestion.title}</p>
+              <p className="text-muted-foreground text-sm">
+                {isCompleted
+                  ? hasNextQuestion
+                    ? "Nice. Loading the next question..."
+                    : "All questions complete."
+                  : "Play the best move on the board."}
+              </p>
+            </div>
           ) : null}
         </div>
       </div>

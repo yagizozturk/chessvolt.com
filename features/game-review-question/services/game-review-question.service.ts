@@ -33,6 +33,14 @@ export async function getGameReviewQuestionsByAnalysisId(
   return gameReviewQuestionRepo.findByGameAnalysisId(supabase, gameAnalysisId);
 }
 
+export async function getGameReviewQuestionsByGameId(
+  supabase: SupabaseClient,
+  userId: string,
+  gameId: string,
+): Promise<GameReviewQuestion[]> {
+  return gameReviewQuestionRepo.findByUserGameId(supabase, userId, gameId);
+}
+
 export async function saveGameReviewQuestion(
   supabase: SupabaseClient,
   input: SaveGameReviewQuestionInput,

@@ -66,6 +66,26 @@ export async function findByGameAnalysisId(
   return (data ?? []).map((row) => toGameReviewQuestion(row as DbGameReviewQuestion));
 }
 
+export async function findByUserGameId(
+  supabase: SupabaseClient,
+  userId: string,
+  gameId: string,
+): Promise<GameReviewQuestion[]> {
+  const { data, error } = await supabase
+    .from("game_review_questions")
+    .select(QUESTION_SELECT)
+    .eq("user_id", userId)
+    .eq("game_id", gameId)
+    .order("ply", { ascending: true });
+
+  if (error) {
+    console.error("game-review-question.repository.findByUserGameId error:", error);
+    return [];
+  }
+
+  return (data ?? []).map((row) => toGameReviewQuestion(row as DbGameReviewQuestion));
+}
+
 export async function create(
   supabase: SupabaseClient,
   input: SaveGameReviewQuestionInput,

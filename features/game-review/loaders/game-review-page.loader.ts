@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getGameAnalysisByUserSourceAndGame } from "@/features/game-analysis/services/game-analysis.service";
 import type { GameAnalysis, GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
-import { getGameReviewQuestionsByAnalysisId } from "@/features/game-review-question/services/game-review-question.service";
+import { getGameReviewQuestionsByGameId } from "@/features/game-review-question/services/game-review-question.service";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 
 export type GameReviewPageData = {
@@ -25,7 +25,7 @@ export async function loadGameReviewPage(props: {
     props.source,
     props.gameId,
   );
-  const reviewQuestions = analysis ? await getGameReviewQuestionsByAnalysisId(props.supabase, analysis.id) : [];
+  const reviewQuestions = await getGameReviewQuestionsByGameId(props.supabase, props.userId, props.gameId);
 
   return {
     analysis,
