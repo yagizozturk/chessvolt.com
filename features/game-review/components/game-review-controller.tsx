@@ -1,13 +1,16 @@
 "use client";
 
 import { Chess } from "chess.js";
+import Lottie from "lottie-react";
 import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 
 import VoltBoard from "@/components/boards/volt-board/volt-board";
+import { VoltCoach } from "@/components/volt-coach/volt-coach";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { useImportedGames } from "@/features/analysis/components/imported-games-provider";
 import { importedGameFocus } from "@/features/analysis/utilities/imported-game-label";
@@ -19,8 +22,10 @@ import { useGameReview } from "@/features/game-review/hooks/use-game-review";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
+import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
 type GameReviewControllerProps = {
   analysis: GameAnalysis | null;
@@ -33,6 +38,14 @@ type GameReviewControllerProps = {
 function pgnHeader(pgn: string, tag: string): string | null {
   const value = pgn.match(new RegExp(`\\[${tag}\\s+"([^"]*)"\\]`, "i"))?.[1]?.trim();
   return value || null;
+}
+
+function playedMoveLabel(question: GameReviewQuestion, originalMoveByPly: Record<number, string>): string {
+  const originalMove = originalMoveByPly[question.ply]?.trim();
+  if (originalMove) return originalMove;
+
+  const title = question.title.trim();
+  return /^played\s+/i.test(title) ? title.replace(/^played\s+/i, "").trim() : "";
 }
 
 export default function GameReviewController({
@@ -86,9 +99,16 @@ export default function GameReviewController({
   const activeQuestionIndex = activeQuestion
     ? reviewQuestions.findIndex((question) => question.id === activeQuestion.id)
     : -1;
-  const activeQuestionOriginalMove = activeQuestion ? originalMoveByPly[activeQuestion.ply]?.trim() : "";
-  const activeQuestionTitle = activeQuestionOriginalMove ? `Played ${activeQuestionOriginalMove}` : activeQuestion?.title;
-  const hasNextQuestion = activeQuestionIndex >= 0 && activeQuestionIndex < reviewQuestions.length - 1;
+  const activeQuestionPlayedMove = activeQuestion ? playedMoveLabel(activeQuestion, originalMoveByPly) : "";
+  const completedQuestionsCount = reviewQuestions.filter((question) => completedQuestionIds.has(question.id)).length;
+  const questionProgressValue =
+    reviewQuestions.length > 0 ? Math.round((completedQuestionsCount / reviewQuestions.length) * 100) : 0;
+  const coachTitle = activeQuestion ? getTurnLabel(activeMoveSequence?.initialFen ?? boardFen) : "Game review";
+  const coachMessage = activeQuestion
+    ? activeQuestionPlayedMove
+      ? `You played ${activeQuestionPlayedMove} in the game.`
+      : "Solve the original game position on the board."
+    : "Pick a review question to solve it on the board.";
   const {
     handleMoveCheck,
     handleSuccessMovePlayed,
@@ -215,6 +235,23 @@ export default function GameReviewController({
             <div className="size-9" />
           </div>
 
+          <div className="card-border-bottom-shadow p-4">
+            <VoltCoach title={coachTitle} message={coachMessage} ttsKey={activeQuestion ? playSessionId : sourceId} />
+          </div>
+
+          {reviewQuestions.length > 0 ? (
+            <div className="flex items-center">
+              <Progress
+                value={questionProgressValue}
+                className="h-4 flex-1 rounded-r-none"
+                aria-label="Solved questions progress"
+              />
+              <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
+                <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
+              </div>
+            </div>
+          ) : null}
+
           <GameReviewQuestionStepper
             questions={reviewQuestions}
             originalMoveByPly={originalMoveByPly}
@@ -225,20 +262,6 @@ export default function GameReviewController({
             hasResult={status === "success"}
             onSelectQuestion={handleSelectQuestion}
           />
-
-          {activeQuestion ? (
-            <div className="card-border-bottom-shadow mt-auto gap-1 p-4">
-              <p className="text-muted-foreground text-sm">Solving now</p>
-              <p className="font-bold">{activeQuestionTitle}</p>
-              <p className="text-muted-foreground text-sm">
-                {isCompleted
-                  ? hasNextQuestion
-                    ? "Nice. Loading the next question..."
-                    : "All questions complete."
-                  : "Play the best move on the board."}
-              </p>
-            </div>
-          ) : null}
         </div>
       </div>
     </div>
