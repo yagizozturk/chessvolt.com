@@ -49,6 +49,11 @@ const data = {
       icon: "/images/icons/icon-circle-volt.png",
     },
     {
+      title: "Analysis",
+      url: "/analysis",
+      icon: "/images/icons/icon-sword.png",
+    },
+    {
       title: "Puzzles",
       url: "/puzzles",
       icon: "/images/icons/icon-puzzle.png",
@@ -68,11 +73,6 @@ const data = {
       title: "Studies",
       url: "/studies",
       icon: "/images/icons/icon-book-study.png",
-    },
-    {
-      title: "Analysis",
-      url: "/analysis",
-      icon: "/images/icons/icon-sword.png",
     },
     {
       title: "Other",

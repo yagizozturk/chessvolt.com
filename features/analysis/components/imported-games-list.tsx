@@ -57,7 +57,7 @@ export function ImportedGamesList() {
               autoComplete="off"
             />
           </Field>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" variant="volt" disabled={isLoading}>
             {isLoading ? <Spinner data-icon="inline-start" /> : null}
             {isLoading ? "Loading…" : "Load games"}
           </Button>
