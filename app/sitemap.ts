@@ -5,7 +5,7 @@ import { getActiveStudiesWithPuzzleCountAndThemes } from "@/features/study/servi
 import { getAllActiveThemes } from "@/features/theme/services/theme.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
-const siteUrl = process.env.PUBLIC_SITE_URL || "https://chessvolt.com";
+const siteUrl = process.env.PUBLIC_SITE_URL || "https://www.chessvolt.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
