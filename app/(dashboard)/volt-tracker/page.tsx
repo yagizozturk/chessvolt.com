@@ -5,13 +5,14 @@ import { PageHeader } from "@/components/page-header";
 import { VoltExplainDialogAutoStart } from "@/components/volt-explain-dialog/volt-explain-dialog-auto-start";
 import { FavoritesViewFilter } from "@/features/favorites/components/favorites-view-filter";
 import { parseFavoritesView } from "@/features/favorites/types/favorites-view";
+import { UserFavoriteGameReviewQuestions } from "@/features/user-favorites/components/user-favorite-game-review-questions";
 import { UserFavoriteOpeningVariants } from "@/features/user-favorites/components/user-favorite-opening-variants";
 import { UserFavoritePuzzles } from "@/features/user-favorites/components/user-favorite-puzzles";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
   title: "Volt Tracker | ChessVolt",
-  description: "Openings and puzzles in your Volt Tracker to check your Volt score.",
+  description: "Openings, puzzles, and game review questions in your Volt Tracker.",
 };
 
 type SearchParams = Promise<{ view?: string }>;
@@ -38,14 +39,14 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
       <div className="page-container-children-layout">
         <PageHeader
           title="Volt Tracker"
-          description="Openings and puzzles in your Volt Tracker to check your Volt score."
+          description="Openings, puzzles, and game review questions in your Volt Tracker."
           actions={<FavoritesViewFilter view={view} />}
         />
 
         {hasFavorites ? <VoltExplainDialogAutoStart /> : null}
 
         {showMergedEmptyState ? (
-          <EmptyDataMessage message="You haven't added any openings or puzzles to Volt Tracker yet." />
+          <EmptyDataMessage message="You haven't added anything to Volt Tracker yet." />
         ) : (
           <div className="flex flex-col gap-8">
             {(view === "all" || view === "openings") && (
@@ -57,6 +58,13 @@ export default async function FavoritesPage({ searchParams }: { searchParams: Se
             )}
             {(view === "all" || view === "puzzles") && (
               <UserFavoritePuzzles userId={user.id} supabase={supabase} showEmptyMessage={view === "puzzles"} />
+            )}
+            {(view === "all" || view === "game-reviews") && (
+              <UserFavoriteGameReviewQuestions
+                userId={user.id}
+                supabase={supabase}
+                showEmptyMessage={view === "game-reviews"}
+              />
             )}
           </div>
         )}

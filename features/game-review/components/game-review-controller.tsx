@@ -20,6 +20,7 @@ import { BoardPlayerName } from "@/features/game-review/components/board-player-
 import { GameReviewQuestionStepper } from "@/features/game-review/components/game-review-question-stepper";
 import { useGameReview } from "@/features/game-review/hooks/use-game-review";
 import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
@@ -32,6 +33,7 @@ type GameReviewControllerProps = {
   source: GameAnalysisSource;
   gameId: string;
   reviewQuestions: GameReviewQuestion[];
+  favoritedGameReviewQuestionIds: string[];
   backUrl?: string;
 };
 
@@ -53,6 +55,7 @@ export default function GameReviewController({
   source,
   gameId,
   reviewQuestions: initialReviewQuestions,
+  favoritedGameReviewQuestionIds,
   backUrl = "/analysis",
 }: GameReviewControllerProps) {
   const router = useRouter();
@@ -63,6 +66,9 @@ export default function GameReviewController({
   const completedSessionRef = useRef<string | null>(null);
   const [activeQuestion, setActiveQuestion] = useState<GameReviewQuestion | null>(null);
   const [completedQuestionIds, setCompletedQuestionIds] = useState<Set<string>>(() => new Set());
+  const [favoritedQuestionIds, setFavoritedQuestionIds] = useState<Set<string>>(
+    () => new Set(favoritedGameReviewQuestionIds),
+  );
   const [successfulMoveSessionId, setSuccessfulMoveSessionId] = useState<string | null>(null);
   const [replayKey, setReplayKey] = useState(0);
   const { findGame, chesscomUsername, lichessUsername } = useImportedGames();
@@ -103,6 +109,7 @@ export default function GameReviewController({
   const completedQuestionsCount = reviewQuestions.filter((question) => completedQuestionIds.has(question.id)).length;
   const questionProgressValue =
     reviewQuestions.length > 0 ? Math.round((completedQuestionsCount / reviewQuestions.length) * 100) : 0;
+  const isActiveQuestionFavorited = activeQuestion ? favoritedQuestionIds.has(activeQuestion.id) : false;
   const coachTitle = activeQuestion ? getTurnLabel(activeMoveSequence?.initialFen ?? boardFen) : "Game review";
   const coachMessage = activeQuestion
     ? activeQuestionPlayedMove
@@ -172,6 +179,18 @@ export default function GameReviewController({
     setReplayKey((key) => key + 1);
   };
 
+  const handleQuestionFavoritedChange = (questionId: string, favorited: boolean) => {
+    setFavoritedQuestionIds((current) => {
+      const next = new Set(current);
+      if (favorited) {
+        next.add(questionId);
+      } else {
+        next.delete(questionId);
+      }
+      return next;
+    });
+  };
+
   const handleBoardCheckMove = (move: MoveAttemptPayload) => {
     if (!activeQuestion || isCompleted) return false;
     return handleMoveCheck(move).isCorrect;
@@ -232,7 +251,19 @@ export default function GameReviewController({
               />
               Game review
             </div>
-            <div className="size-9" />
+            <div className="flex items-center gap-2">
+              {activeQuestion ? (
+                <div data-tour="favorite-button">
+                  <FavoriteButton
+                    gameReviewQuestionId={activeQuestion.id}
+                    isFavorited={isActiveQuestionFavorited}
+                    onFavoritedChange={(favorited) => handleQuestionFavoritedChange(activeQuestion.id, favorited)}
+                  />
+                </div>
+              ) : (
+                <div className="size-9" />
+              )}
+            </div>
           </div>
 
           <div className="card-border-bottom-shadow p-4">

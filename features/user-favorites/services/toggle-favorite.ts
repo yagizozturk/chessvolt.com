@@ -9,7 +9,8 @@ export type ToggleFavoriteResult =
 
 type ParsedTarget =
   | { kind: "opening_variant"; openingVariantId: string }
-  | { kind: "puzzle"; puzzleId: string };
+  | { kind: "puzzle"; puzzleId: string }
+  | { kind: "game_review_question"; gameReviewQuestionId: string };
 
 function parseTarget(target: ToggleFavoriteTarget): ParsedTarget | null {
   if ("openingVariantId" in target) {
@@ -18,9 +19,15 @@ function parseTarget(target: ToggleFavoriteTarget): ParsedTarget | null {
     return { kind: "opening_variant", openingVariantId };
   }
 
-  const puzzleId = target.puzzleId?.trim();
-  if (!puzzleId) return null;
-  return { kind: "puzzle", puzzleId };
+  if ("puzzleId" in target) {
+    const puzzleId = target.puzzleId?.trim();
+    if (!puzzleId) return null;
+    return { kind: "puzzle", puzzleId };
+  }
+
+  const gameReviewQuestionId = target.gameReviewQuestionId?.trim();
+  if (!gameReviewQuestionId) return null;
+  return { kind: "game_review_question", gameReviewQuestionId };
 }
 
 export async function toggleFavorite(
@@ -35,7 +42,9 @@ export async function toggleFavorite(
   const existing =
     target.kind === "opening_variant"
       ? await userFavoriteRepo.findByUserAndOpeningVariantId(supabase, input.userId, target.openingVariantId)
-      : await userFavoriteRepo.findByPuzzleId(supabase, input.userId, target.puzzleId);
+      : target.kind === "puzzle"
+        ? await userFavoriteRepo.findByPuzzleId(supabase, input.userId, target.puzzleId)
+        : await userFavoriteRepo.findByGameReviewQuestionId(supabase, input.userId, target.gameReviewQuestionId);
 
   if (existing) {
     const deleted = await userFavoriteRepo.deleteById(supabase, existing.id);
@@ -49,6 +58,7 @@ export async function toggleFavorite(
     userId: input.userId,
     openingVariantId: target.kind === "opening_variant" ? target.openingVariantId : null,
     puzzleId: target.kind === "puzzle" ? target.puzzleId : null,
+    gameReviewQuestionId: target.kind === "game_review_question" ? target.gameReviewQuestionId : null,
   });
 
   if (!row) {

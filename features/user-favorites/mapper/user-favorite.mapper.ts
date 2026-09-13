@@ -1,4 +1,8 @@
 import {
+  type DbGameReviewQuestion,
+  toGameReviewQuestion,
+} from "@/features/game-review-question/mapper/game-review-question.mapper";
+import {
   toOpeningVariant,
   type DbOpeningVariant,
 } from "@/features/openings/mapper/opening-variant.mapper";
@@ -13,6 +17,7 @@ export type DbUserFavorite = {
   user_id: string;
   opening_variant_id: string | null;
   puzzle_id: string | null;
+  game_review_question_id: string | null;
   is_pinned: boolean;
   note: string | null;
   created_at: string;
@@ -21,6 +26,7 @@ export type DbUserFavorite = {
 export type DbUserFavoriteWithDetails = DbUserFavorite & {
   opening_variants: DbOpeningVariant | null;
   puzzles: DbPuzzle | null;
+  game_review_questions: DbGameReviewQuestion | null;
 };
 
 export function toUserFavorite(db: DbUserFavorite): UserFavorite {
@@ -29,6 +35,7 @@ export function toUserFavorite(db: DbUserFavorite): UserFavorite {
     userId: db.user_id,
     openingVariantId: db.opening_variant_id,
     puzzleId: db.puzzle_id,
+    gameReviewQuestionId: db.game_review_question_id,
     isPinned: db.is_pinned,
     note: db.note,
     createdAt: db.created_at,
@@ -41,13 +48,15 @@ export function toUserFavoriteWithDetails(
   const row = toUserFavorite(db);
   const openingVariant = db.opening_variants ? toOpeningVariant(db.opening_variants) : null;
   const puzzle = db.puzzles ? toPuzzle(db.puzzles) : null;
+  const gameReviewQuestion = db.game_review_questions ? toGameReviewQuestion(db.game_review_questions) : null;
 
-  if (!openingVariant && !puzzle) return null;
+  if (!openingVariant && !puzzle && !gameReviewQuestion) return null;
 
   return {
     ...row,
     openingVariant,
     puzzle,
+    gameReviewQuestion,
   };
 }
 
