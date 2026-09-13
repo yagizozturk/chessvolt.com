@@ -6,4 +6,7 @@ Allow: /
 # No need to index admin pages
 Disallow: /admin/
 
+# Here you can find our site map
+Sitemap: https://www.chessvolt.com/sitemap.xml
+
 # Hope to see you again. Please visit us soon. 
