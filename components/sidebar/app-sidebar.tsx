@@ -49,9 +49,9 @@ const data = {
       icon: "/images/icons/icon-circle-volt.png",
     },
     {
-      title: "Analysis",
+      title: "Play Your Blunders",
       url: "/analysis",
-      icon: "/images/icons/icon-sword.png",
+      icon: "/images/icons/icon-blunder-double.png",
     },
     {
       title: "Puzzles",

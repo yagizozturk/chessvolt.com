@@ -8,10 +8,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 
 import VoltBoard from "@/components/boards/volt-board/volt-board";
-import { VoltCoach } from "@/components/volt-coach/volt-coach";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
+import { VoltCoach } from "@/components/volt-coach/volt-coach";
 import { useImportedGames } from "@/features/analysis/components/imported-games-provider";
 import { importedGameFocus } from "@/features/analysis/utilities/imported-game-label";
 import type { GameAnalysis, GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
@@ -116,16 +116,12 @@ export default function GameReviewController({
       ? `You played ${activeQuestionPlayedMove} in the game.`
       : "Solve the original game position on the board."
     : "Pick a review question to solve it on the board.";
-  const {
-    handleMoveCheck,
-    handleSuccessMovePlayed,
-    handleNextMoveRequest,
-    expectedCurrentCorrectMoveUci,
-  } = useMoveSequenceController({
-    sourceId: playSessionId,
-    moves: activeMoveSequence?.moves ?? "",
-    goals: activeMoveSequence?.goals ?? null,
-  });
+  const { handleMoveCheck, handleSuccessMovePlayed, handleNextMoveRequest, expectedCurrentCorrectMoveUci } =
+    useMoveSequenceController({
+      sourceId: playSessionId,
+      moves: activeMoveSequence?.moves ?? "",
+      goals: activeMoveSequence?.goals ?? null,
+    });
   const isCompleted = Boolean(
     activeQuestion && successfulMoveSessionId === playSessionId && expectedCurrentCorrectMoveUci == null,
   );
@@ -242,14 +238,14 @@ export default function GameReviewController({
             </div>
             <div className="flex items-center gap-2 text-xl font-bold">
               <Image
-                src="/images/icons/icon-sword.png"
+                src="/images/icons/icon-blunder-double.png"
                 alt=""
                 aria-hidden
                 width={30}
                 height={30}
                 className="size-7 shrink-0"
               />
-              Game review
+              Play Your Missings
             </div>
             <div className="flex items-center gap-2">
               {activeQuestion ? (

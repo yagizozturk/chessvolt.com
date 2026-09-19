@@ -3,10 +3,11 @@
 import Lottie from "lottie-react";
 import { Check, Play } from "lucide-react";
 
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import { Button } from "@/components/ui/button";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { cn } from "@/lib/utils";
-import loaderAnimationData from "@/public/images/animations/animation-rocjet-launch.json";
+import loaderAnimationData from "@/public/images/animations/animation-loading.json";
 
 type GameReviewQuestionStepperProps = {
   questions: GameReviewQuestion[];
@@ -46,11 +47,25 @@ export function GameReviewQuestionStepper({
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
 
       {isLoading ? (
-        <div className="text-muted-foreground flex items-center gap-3 text-sm" role="status" aria-live="polite">
-          <Lottie animationData={loaderAnimationData} loop autoplay aria-hidden="true" className="size-12 shrink-0" />
-          <span>Evaluating positions via Stockfish. Large games can take a while...</span>
+        <div
+          className="text-muted-foreground flex items-center justify-center gap-3 text-sm"
+          role="status"
+          aria-live="polite"
+        >
+          <Lottie
+            animationData={loaderAnimationData}
+            loop
+            autoplay
+            aria-hidden="true"
+            className="bg-foreground/90 border-primary size-28 shrink-0 rounded-full border border-5"
+          />
         </div>
       ) : null}
+      <div className="px-4 text-center text-base">
+        <AnimatedShinyText>
+          <span className="text-white">Evaluating via Stockfish. Large games can take a while...</span>
+        </AnimatedShinyText>
+      </div>
 
       {!isLoading && questions.length > 0 ? (
         <div className="min-w-0 overflow-x-auto pb-2">
