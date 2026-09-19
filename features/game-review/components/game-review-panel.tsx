@@ -1,5 +1,6 @@
 "use client";
 
+import Lottie from "lottie-react";
 import { Play } from "lucide-react";
 import Image from "next/image";
 
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import type { CriticalMoment } from "@/features/game-review/types/game-review";
 import { cn } from "@/lib/utils/cn";
+import loaderAnimationData from "@/public/images/animations/animation-rocjet-launch.json";
 
 type GameReviewPanelProps = {
   moments: CriticalMoment[];
@@ -50,9 +52,10 @@ export function GameReviewPanel({
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
 
       {isLoading ? (
-        <p className="text-muted-foreground text-sm">
-          Evaluating positions via Stockfish. Large games can take a while…
-        </p>
+        <div className="text-muted-foreground flex items-center gap-3 text-sm" role="status" aria-live="polite">
+          <Lottie animationData={loaderAnimationData} loop autoplay aria-hidden="true" className="size-12 shrink-0" />
+          <span>Evaluating positions via Stockfish. Large games can take a while...</span>
+        </div>
       ) : null}
 
       {!isLoading && visibleMoments.length > 0 ? (

@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 
-import { PageHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/page-header/page-header";
 import { ThreeColCard } from "@/components/three-col-card/three-col-card";
 import { VoltHowToCarousel } from "@/features/dashboard/components/volt-how-to-carousel";
 import { QUICK_LINKS } from "@/features/dashboard/constants/quick-links";

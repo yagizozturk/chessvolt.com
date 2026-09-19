@@ -1,5 +1,5 @@
 import { EmptyState } from "@/components/empty-state/empty-state";
-import { PageHeaderWithImage } from "@/components/page-header";
+import { PageHeaderWithImage } from "@/components/page-header/page-header";
 import { StudyPuzzlesPagination } from "@/features/study/components/study-puzzles-pagination";
 import { loadStudyPuzzles } from "@/features/study/loaders/study-puzzles-page.loader";
 import { getStudyCoverImageSrc } from "@/features/study/utilities/study-cover-image.utils";

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
-import { PageHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/page-header/page-header";
 import { VoltExplainDialogAutoStart } from "@/components/volt-explain-dialog/volt-explain-dialog-auto-start";
 import { FavoritesViewFilter } from "@/features/favorites/components/favorites-view-filter";
 import { parseFavoritesView } from "@/features/favorites/types/favorites-view";

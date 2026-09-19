@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/page-header/page-header";
 import { ImportedGamesList } from "@/features/analysis/components/imported-games-list";
 
 export function AnalysisView() {
