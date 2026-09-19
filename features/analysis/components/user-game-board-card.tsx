@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Puzzle, Swords } from "lucide-react";
+import { ChessPawn, Clock, Swords } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -88,7 +88,7 @@ export function UserGameBoardCard({
             </Badge>
             <BoardCardMetaRow icon={Clock} label={game.timeClass} className="capitalize" />
             {result ? <BoardCardMetaRow icon={Swords} label={result} className="capitalize" /> : null}
-            {moveCountLabel ? <BoardCardMetaRow icon={Puzzle} label={moveCountLabel} /> : null}
+            {moveCountLabel ? <BoardCardMetaRow icon={ChessPawn} label={moveCountLabel} /> : null}
           </div>
           {playedAt ? <p className="text-muted-foreground text-sm">{playedAt}</p> : null}
           <div className="mt-auto flex justify-end">

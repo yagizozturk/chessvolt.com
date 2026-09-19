@@ -5,13 +5,12 @@ interface PageHeaderProps {
   title: string;
   description: string;
   className?: string;
-  /** Optional right-aligned slot (e.g. filters or actions) shown beside the title. */
-  actions?: ReactNode;
+  actions?: ReactNode; // means actions can be any renderable React content: a button, link, icon group, fragment, text, null, etc
 }
 
-const defaultClassName = "bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)]";
+const defaultBackgroundClassName = "bg-[linear-gradient(to_right,_#4A00E0,_#8E2DE2)]";
 
-export function PageHeader({ title, description, className = defaultClassName, actions }: PageHeaderProps) {
+export function PageHeader({ title, description, className = defaultBackgroundClassName, actions }: PageHeaderProps) {
   return (
     <div className={`flex flex-col gap-4 rounded-xl p-6 lg:flex-row lg:items-center lg:justify-between ${className}`}>
       <div className="flex flex-col gap-2">
@@ -33,7 +32,7 @@ export function PageHeaderWithImage({
   description,
   imageSrc,
   imageAlt,
-  className = defaultClassName,
+  className = defaultBackgroundClassName,
 }: PageHeaderWithImageProps) {
   return (
     <div className={`flex items-center gap-4 rounded-xl ${className}`}>

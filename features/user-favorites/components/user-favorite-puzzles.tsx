@@ -6,7 +6,6 @@ import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-mes
 import { PuzzleBoardCard } from "@/features/puzzle/components/puzzle-board-card";
 import { getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
 import { buildStandalonePuzzleUrl } from "@/features/puzzle/utilities/build-puzzle-url";
-import { getUserFavoritesForUserWithDetails } from "@/features/user-favorites/services/user-favorite.service";
 import type { UserFavoriteWithDetails } from "@/features/user-favorites/types/user-favorite";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
@@ -14,15 +13,18 @@ import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-atte
 import { getLatestAttemptStats } from "@/features/user-sequence-attempt/utilities/get-latest-attempt-stats";
 
 export async function UserFavoritePuzzles({
+  favorites,
   userId,
   supabase,
+  emptyMessage = "You haven't added any puzzles to Volt Tracker yet.",
   showEmptyMessage = true,
 }: {
+  favorites: UserFavoriteWithDetails[];
   userId: string;
   supabase: SupabaseClient;
+  emptyMessage?: string;
   showEmptyMessage?: boolean;
 }) {
-  const favorites = await getUserFavoritesForUserWithDetails(supabase, userId);
   const puzzleFavorites = favorites.filter(
     (favorite): favorite is UserFavoriteWithDetails & { puzzle: NonNullable<UserFavoriteWithDetails["puzzle"]> } =>
       favorite.puzzle != null,
@@ -54,7 +56,7 @@ export async function UserFavoritePuzzles({
     return (
       <div>
         <h2 className="mb-3 text-lg font-bold">Puzzles</h2>
-        <EmptyDataMessage message="You haven't added any puzzles to Volt Tracker yet." />
+        <EmptyDataMessage message={emptyMessage} />
       </div>
     );
   }
