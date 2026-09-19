@@ -1,10 +1,9 @@
 "use client";
 
 import Lottie from "lottie-react";
-import { Check, Play } from "lucide-react";
+import Image from "next/image";
 
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
-import { Button } from "@/components/ui/button";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { cn } from "@/lib/utils";
 import loaderAnimationData from "@/public/images/animations/animation-loading.json";
@@ -68,36 +67,39 @@ export function GameReviewQuestionStepper({
       </div>
 
       {!isLoading && questions.length > 0 ? (
-        <div className="min-w-0 overflow-x-auto pb-2">
-          <ol className="flex min-w-max items-start gap-3" aria-label="Game review questions">
+        <div className="min-w-0 pb-2">
+          <ol className="grid grid-cols-2 gap-3" aria-label="Game review questions">
             {questions.map((question, index) => {
               const active = question.id === activeQuestionId;
               const completed = completedQuestionIds.has(question.id);
-              const previousCompleted = index > 0 && completedQuestionIds.has(questions[index - 1].id);
+              const iconSrc =
+                question.quality === "blunder"
+                  ? "/images/icons/icon-blunder-double.png"
+                  : "/images/icons/icon-mistake.png";
               const title = questionTitle(question, originalMoveByPly);
+              const moveNumber = Math.floor(question.ply / 2);
 
               return (
-                <li key={question.id} className="relative flex w-28 flex-col items-center gap-2 text-center">
-                  {index > 0 ? (
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "bg-border absolute top-5 right-[calc(50%+1.25rem)] h-1 w-[calc(100%-1.5rem)] rounded-full",
-                        previousCompleted && "bg-primary",
-                      )}
-                    />
-                  ) : null}
-                  <Button
-                    type="button"
-                    variant={completed ? "voltGreen" : active ? "volt" : "voltIcon"}
-                    size="icon"
-                    onClick={() => onSelectQuestion(question)}
-                    className="relative rounded-full"
-                    aria-current={active ? "step" : undefined}
-                    aria-label={`Question ${index + 1}: ${title}`}
-                  >
-                    {completed ? <Check /> : active ? <Play /> : index + 1}
-                  </Button>
+                <li
+                  key={question.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => onSelectQuestion(question)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      onSelectQuestion(question);
+                    }
+                  }}
+                  className={cn(
+                    "border-border focus-visible:border-ring focus-visible:ring-ring/50 hover:bg-muted/50 flex min-w-0 cursor-pointer items-center gap-3 rounded-lg border-2 p-3 text-left transition-colors outline-none focus-visible:ring-3",
+                    active && "border-primary",
+                    completed && "border-green-500 bg-green-500/15 hover:bg-green-500/20",
+                  )}
+                  aria-current={active ? "step" : undefined}
+                  aria-label={`Question ${index + 1}: ${title}`}
+                >
+                  <Image src={iconSrc} alt="" aria-hidden width={36} height={36} className="size-9 shrink-0" />
                   <div className="flex min-w-0 flex-col gap-0.5">
                     <span
                       className={cn(
@@ -108,7 +110,7 @@ export function GameReviewQuestionStepper({
                       {qualityLabel(question.quality)}
                     </span>
                     <span className="line-clamp-2 text-sm leading-tight font-medium">{title}</span>
-                    <span className="text-muted-foreground text-xs">Ply {question.ply}</span>
+                    <span className="text-muted-foreground text-xs">Move {moveNumber}</span>
                   </div>
                 </li>
               );

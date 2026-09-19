@@ -2,12 +2,12 @@
 
 import { Chess } from "chess.js";
 import Lottie from "lottie-react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Eye } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 
-import VoltBoard from "@/components/boards/volt-board/volt-board";
+import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
@@ -19,7 +19,7 @@ import type { GameReviewQuestion } from "@/features/game-review-question/types/g
 import { BoardPlayerName } from "@/features/game-review/components/board-player-name";
 import { GameReviewQuestionStepper } from "@/features/game-review/components/game-review-question-stepper";
 import { useGameReview } from "@/features/game-review/hooks/use-game-review";
-import { useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
@@ -59,12 +59,15 @@ export default function GameReviewController({
   backUrl = "/analysis",
 }: GameReviewControllerProps) {
   const router = useRouter();
+  const boardRef = useRef<VoltBoardHandle>(null);
   const isMobile = useIsMobile();
   const [isPending, startTransition] = useTransition();
   const didAutoReview = useRef(false);
   const completedQuestionIdsRef = useRef<Set<string>>(new Set());
   const completedSessionRef = useRef<string | null>(null);
-  const [activeQuestion, setActiveQuestion] = useState<GameReviewQuestion | null>(null);
+  const [activeQuestion, setActiveQuestion] = useState<GameReviewQuestion | null>(
+    () => initialReviewQuestions[0] ?? null,
+  );
   const [completedQuestionIds, setCompletedQuestionIds] = useState<Set<string>>(() => new Set());
   const [favoritedQuestionIds, setFavoritedQuestionIds] = useState<Set<string>>(
     () => new Set(favoritedGameReviewQuestionIds),
@@ -113,15 +116,21 @@ export default function GameReviewController({
   const coachTitle = activeQuestion ? getTurnLabel(activeMoveSequence?.initialFen ?? boardFen) : "Game review";
   const coachMessage = activeQuestion
     ? activeQuestionPlayedMove
-      ? `You played ${activeQuestionPlayedMove} in the game.`
+      ? `You played ${activeQuestionPlayedMove} in the game. Find the best move to play here.`
       : "Solve the original game position on the board."
     : "Pick a review question to solve it on the board.";
-  const { handleMoveCheck, handleSuccessMovePlayed, handleNextMoveRequest, expectedCurrentCorrectMoveUci } =
-    useMoveSequenceController({
-      sourceId: playSessionId,
-      moves: activeMoveSequence?.moves ?? "",
-      goals: activeMoveSequence?.goals ?? null,
-    });
+  const {
+    handleMoveCheck,
+    handleSuccessMovePlayed,
+    handleNextMoveRequest,
+    hintCount,
+    hintRequested,
+    expectedCurrentCorrectMoveUci,
+  } = useMoveSequenceController({
+    sourceId: playSessionId,
+    moves: activeMoveSequence?.moves ?? "",
+    goals: activeMoveSequence?.goals ?? null,
+  });
   const isCompleted = Boolean(
     activeQuestion && successfulMoveSessionId === playSessionId && expectedCurrentCorrectMoveUci == null,
   );
@@ -142,6 +151,19 @@ export default function GameReviewController({
     completedQuestionIdsRef.current = nextCompletedQuestionIds;
     setCompletedQuestionIds(nextCompletedQuestionIds);
   }, [reviewQuestions]);
+
+  useEffect(() => {
+    const firstQuestion = reviewQuestions[0] ?? null;
+
+    if (!firstQuestion) {
+      if (activeQuestion) setActiveQuestion(null);
+      return;
+    }
+
+    if (activeQuestion && reviewQuestions.some((question) => question.id === activeQuestion.id)) return;
+
+    setActiveQuestion(firstQuestion);
+  }, [activeQuestion, reviewQuestions]);
 
   useEffect(() => {
     if (!activeQuestion || !isCompleted) return;
@@ -197,12 +219,19 @@ export default function GameReviewController({
     handleSuccessMovePlayed(move);
   };
 
+  const handleHintClick = () => {
+    const nextHintCount = hintRequested();
+    if (nextHintCount == null || !expectedCurrentCorrectMoveUci) return;
+    boardRef.current?.showHint(nextHintCount);
+  };
+
   return (
     <div className="page-container">
       <div className="page-container-controller-layout">
         <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-2 self-start md:flex-[3]">
           <div className="relative aspect-square w-full">
             <VoltBoard
+              ref={boardRef}
               key={playSessionId}
               sourceId={playSessionId}
               initialFen={boardFen}
@@ -289,6 +318,21 @@ export default function GameReviewController({
             hasResult={status === "success"}
             onSelectQuestion={handleSelectQuestion}
           />
+
+          {activeQuestion && !isCompleted ? (
+            <div className="mt-auto flex gap-2">
+              <Button
+                type="button"
+                variant="voltGreen"
+                onClick={handleHintClick}
+                disabled={hintCount >= MAX_HINT_COUNT || !expectedCurrentCorrectMoveUci}
+                className="min-w-0 flex-1"
+              >
+                <Eye data-icon="inline-start" />
+                Hint
+              </Button>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
