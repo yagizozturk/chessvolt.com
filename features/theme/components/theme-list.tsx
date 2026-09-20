@@ -70,7 +70,7 @@ function ThemeListItem({ theme }: { theme: Theme }) {
             alt={theme.title}
             width={112}
             height={112}
-            className="ring-muted/70 hover:ring-primary size-28 rounded-xl object-contain ring-4 transition-all"
+            className="ring-muted/70 hover:ring-primary size-28 rounded-xl bg-[#0C181D] object-contain p-2 ring-4 transition-all"
           />
         ) : null}
         <span className="text-center text-sm font-medium">{theme.title}</span>

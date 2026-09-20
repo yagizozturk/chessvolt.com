@@ -11,6 +11,7 @@ import { VoltCalculator } from "@/components/calculator/volt-calculator/volt-cal
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +45,8 @@ export function OpeningBoardCard({
   const [isLoading, setIsLoading] = useState(false);
   const moveCountLabel = formatMoveCountLabel(moves ?? null);
   const isShowingVoltScore = isValidVoltScore(voltScore);
+  const variantCountLabel =
+    variantCount === undefined ? null : `${variantCount} opening ${variantCount === 1 ? "variant" : "variants"}`;
 
   return (
     <Link
@@ -91,16 +94,23 @@ export function OpeningBoardCard({
           {/* Accuracy percent */}
           {accuracyPercent != null ? (
             <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
-              <Target />
+              <Target className={cn(accuracyPercent > 60 ? "text-emerald-500" : "text-red-500")} />
               <span>{accuracyPercent}% accuracy</span>
             </Badge>
           ) : null}
           {/* Variant count */}
-          {variantCount !== undefined ? (
-            <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
-              <BookOpen />
-              <span>{variantCount}</span>
-            </Badge>
+          {variantCountLabel ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant="default" className="w-fit rounded-xl px-2 py-3">
+                  <BookOpen />
+                  <span>{variantCount}</span>
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={4}>
+                {variantCountLabel}
+              </TooltipContent>
+            </Tooltip>
           ) : null}
         </div>
       </div>

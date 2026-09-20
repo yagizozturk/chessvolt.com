@@ -1,16 +1,17 @@
 "use client";
 
-import { ChessPawn, Clock, Swords } from "lucide-react";
+import { ChessKnight, ChessPawn, Clock, Swords } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import { BoardCardMetaRow } from "@/components/board-card-meta/board-card-meta-row";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import type { ImportedGame } from "@/features/analysis/types/imported-game";
-import { getImportedGameDisplayFen, getImportedGameMoveCountLabel } from "@/features/analysis/utilities/imported-game-board";
+import {
+  getImportedGameDisplayFen,
+  getImportedGameMoveCountLabel,
+} from "@/features/analysis/utilities/imported-game-board";
 import { importedGameFocus, importedGameHref } from "@/features/analysis/utilities/imported-game-label";
 import { cn } from "@/lib/utils";
 
@@ -22,10 +23,10 @@ type UserGameBoardCardProps = {
 
 function formatPlayedAt(endTime: number): string {
   if (!endTime) return "";
-  return new Date(endTime * 1000).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-  });
+  const playedDate = new Date(endTime * 1000);
+  const month = playedDate.toLocaleDateString(undefined, { month: "short" });
+
+  return `${playedDate.getDate()} ${month}`;
 }
 
 function resultForFocus(game: ImportedGame, focusUsername: string): string {
@@ -51,10 +52,12 @@ export function UserGameBoardCard({
   const platformLabel = game.platform === "chesscom" ? "Chess.com" : "Lichess";
 
   return (
-    <div
+    <Link
+      href={href}
+      onClick={() => setIsLoading(true)}
       aria-busy={isLoading}
       className={cn(
-        "bg-card border-b-card-shadow relative flex flex-col rounded-lg border-b-[6px]",
+        "bg-card border-b-card-shadow text-foreground relative flex flex-col rounded-lg border-b-[6px] no-underline",
         isLoading && "pointer-events-none",
       )}
     >
@@ -74,32 +77,44 @@ export function UserGameBoardCard({
           />
         </div>
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
-          <Link href={href} onClick={() => setIsLoading(true)} className="text-xl font-bold hover:underline">
-            {title}
-          </Link>
+          <span className="text-xl font-bold">{title}</span>
           <p className="text-muted-foreground hidden text-base md:block">
             {game.white.username}
             {game.white.rating != null ? ` (${game.white.rating})` : ""} vs {game.black.username}
             {game.black.rating != null ? ` (${game.black.rating})` : ""}
           </p>
-          <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-            <Badge variant="secondary" className="rounded-lg p-3">
-              {platformLabel}
+          <div className="text-muted-foreground flex items-center text-sm">
+            <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
+              {game.platform === "chesscom" ? (
+                <ChessPawn className="text-emerald-500" />
+              ) : (
+                <ChessKnight className="text-white" />
+              )}
+              <span>
+                {platformLabel} &#8226; {playedAt ? <span className="text-primary">{playedAt}</span> : null}
+              </span>
             </Badge>
-            <BoardCardMetaRow icon={Clock} label={game.timeClass} className="capitalize" />
-            {result ? <BoardCardMetaRow icon={Swords} label={result} className="capitalize" /> : null}
-            {moveCountLabel ? <BoardCardMetaRow icon={ChessPawn} label={moveCountLabel} /> : null}
           </div>
-          {playedAt ? <p className="text-muted-foreground text-sm">{playedAt}</p> : null}
-          <div className="mt-auto flex justify-end">
-            <Button variant="voltCompact" size="xs" className="w-fit shrink-0" asChild>
-              <Link href={href} onClick={() => setIsLoading(true)}>
-                Review
-              </Link>
-            </Button>
+          <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
+            <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3 capitalize">
+              <Clock className="text-blue-500" />
+              <span>{game.timeClass}</span>
+            </Badge>
+            {result ? (
+              <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3 capitalize">
+                <Swords className="text-red-500" />
+                <span>{result}</span>
+              </Badge>
+            ) : null}
+            {moveCountLabel ? (
+              <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
+                <ChessPawn className="text-primary" />
+                <span>{moveCountLabel}</span>
+              </Badge>
+            ) : null}
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

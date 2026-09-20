@@ -65,7 +65,7 @@ export const DEFAULT_VOLT_EXPLAIN_DIALOG_SLIDES: CarouselDialogSlide[] = [
     ] satisfies ReactNode,
   },
   {
-    imageSrc: "/images/volt-explain/slide-3-1.png",
+    imageSrc: "/images/volt-explain/slide-3a.png",
     imageAlt: "How Volt Score Is Calculated",
     title: "How Volt Score Is Calculated",
     description: [
