@@ -12,14 +12,19 @@ Volt Coach is ChessVolt's virtual chess coach and provides vocal, written, and v
 
 ## Main public pages
 - https://chessvolt.com: Home page and primary entry point
-- https://chessvolt.com/puzzles: Puzzle and tactical training resources
+- 
+- https://chessvolt.com/puzzles: Puzzles and tactical training resources
 - https://chessvolt.com/openings: Openings and variations learning resources
-- https://chessvolt.com/study: Famous chess games and various exercises
+- https://chessvolt.com/studies: Famous chess games and various exercises
 - https://chessvolt.com/login: Login page
 - https://chessvolt.com/signup: Sign-up page
 - https://chessvolt.com/privacy: Privacy policy
 - https://chessvolt.com/terms: Terms of service
 - https://chessvolt.com/contact: Contact
+- https://chessvolt.com/dashboard: Dashboard for logged in user
+- https://chessvolt.com/volt-tracker: List of openings and puzzles tracked by Volt scores 
+- https://chessvolt.com/profile: Profile page for logged in user
+
 
 ## Content types
 - Chess puzzles
@@ -32,7 +37,11 @@ Volt Coach is ChessVolt's virtual chess coach and provides vocal, written, and v
 - Admin panel
 - User-only dashboards
 - Private account pages
+- Volt tracker page
 - Internal management and operational interfaces
+
+## Technical resources
+- Sitemap: https://www.chessvolt.com/sitemap.xml
 
 ## Note
 This file is intended to help search engines and LLM-based systems understand the public-facing purpose of the site. It does not include private user data, internal tools, or admin-only content.

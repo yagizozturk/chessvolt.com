@@ -111,7 +111,9 @@ export function OpeningBoardCard({
         {isComplete === false && <BoardStatusIcon status="wrong" />}
 
         <div className={cn("self-start", boardWrapperClassName)}>
-          <DisplayBoard sourceId={id} initialFen={fen} coordinates={false} />
+          <Link href={href} onClick={() => setIsLoading(true)}>
+            <DisplayBoard sourceId={id} initialFen={fen} coordinates={false} />
+          </Link>
         </div>
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
           {isShowingVoltScore ? (
