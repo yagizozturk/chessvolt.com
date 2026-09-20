@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
-import { PageHeaderWithImage } from "@/components/page-header";
+import { PageHeaderWithImage } from "@/components/page-header/page-header";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
 import { getOpeningCoverImageSrc } from "@/features/openings/utilities/opening-cover-image.utils";

@@ -1,9 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FAVORITES_VIEW_OPTIONS, type FavoritesView } from "@/features/favorites/types/favorites-view";
+import {
+  DEFAULT_FAVORITES_VIEW,
+  FAVORITES_VIEW_OPTIONS,
+  type FavoritesView,
+} from "@/features/favorites/types/favorites-view";
 
 type FavoritesViewFilterProps = {
   view: FavoritesView;
@@ -11,6 +15,21 @@ type FavoritesViewFilterProps = {
 
 export function FavoritesViewFilter({ view }: FavoritesViewFilterProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  function updateView(value: FavoritesView) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("filter");
+
+    if (value === DEFAULT_FAVORITES_VIEW) {
+      params.delete("view");
+    } else {
+      params.set("view", value);
+    }
+
+    const queryString = params.toString();
+    router.push(queryString ? `/volt-tracker?${queryString}` : "/volt-tracker");
+  }
 
   return (
     <div className="min-w-0 sm:max-w-56">
@@ -18,7 +37,7 @@ export function FavoritesViewFilter({ view }: FavoritesViewFilterProps) {
         value={view}
         onValueChange={(value) => {
           const option = FAVORITES_VIEW_OPTIONS.find((item) => item.value === value);
-          if (option) router.push(option.href);
+          if (option) updateView(option.value);
         }}
       >
         <SelectTrigger

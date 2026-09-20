@@ -5,20 +5,22 @@ import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculat
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
-import { getUserFavoritesForUserWithDetails } from "@/features/user-favorites/services/user-favorite.service";
 import type { UserFavoriteWithDetails } from "@/features/user-favorites/types/user-favorite";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 
 export async function UserFavoriteOpeningVariants({
+  favorites,
   userId,
   supabase,
+  emptyMessage = "You haven't added any opening variants to Volt Tracker yet.",
   showEmptyMessage = true,
 }: {
+  favorites: UserFavoriteWithDetails[];
   userId: string;
   supabase: SupabaseClient;
+  emptyMessage?: string;
   showEmptyMessage?: boolean;
 }) {
-  const favorites = await getUserFavoritesForUserWithDetails(supabase, userId);
   const openingFavorites = favorites.filter(
     (
       favorite,
@@ -53,7 +55,7 @@ export async function UserFavoriteOpeningVariants({
     return (
       <div>
         <h2 className="mb-3 text-lg font-bold">Openings</h2>
-        <EmptyDataMessage message="You haven't added any opening variants to Volt Tracker yet." />
+        <EmptyDataMessage message={emptyMessage} />
       </div>
     );
   }

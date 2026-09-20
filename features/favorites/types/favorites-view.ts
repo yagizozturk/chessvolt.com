@@ -1,4 +1,4 @@
-export const FAVORITES_VIEW_VALUES = ["all", "openings", "puzzles"] as const;
+export const FAVORITES_VIEW_VALUES = ["all", "openings", "puzzles", "game-reviews"] as const;
 
 export type FavoritesView = (typeof FAVORITES_VIEW_VALUES)[number];
 
@@ -8,6 +8,7 @@ export const FAVORITES_VIEW_OPTIONS = [
   { label: "All", value: "all" as const, href: "/volt-tracker" },
   { label: "Openings", value: "openings" as const, href: "/volt-tracker?view=openings" },
   { label: "Puzzles", value: "puzzles" as const, href: "/volt-tracker?view=puzzles" },
+  { label: "Game reviews", value: "game-reviews" as const, href: "/volt-tracker?view=game-reviews" },
 ] as const;
 
 export function parseFavoritesView(value: string | undefined): FavoritesView {

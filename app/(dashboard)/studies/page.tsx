@@ -1,5 +1,5 @@
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
-import { PageHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/page-header/page-header";
 import { StudyCard } from "@/features/study/components/study-card";
 import { StudyFilters } from "@/features/study/components/study-filters";
 import { StudyPagination } from "@/features/study/components/study-pagination";

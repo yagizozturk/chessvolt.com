@@ -23,7 +23,9 @@ export async function findByUserIdWithDetails(
 ): Promise<UserFavoriteWithDetails[]> {
   const { data, error } = await supabase
     .from("user_favorites")
-    .select("*, opening_variants (*, move_sequences (*)), puzzles (*, move_sequences (*))")
+    .select(
+      "*, opening_variants (*, move_sequences (*)), puzzles (*, move_sequences (*)), game_review_questions (*, move_sequences (*))",
+    )
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
 
@@ -82,6 +84,28 @@ export async function findByPuzzleId(
   return toUserFavorite(data as DbUserFavorite);
 }
 
+export async function findByGameReviewQuestionId(
+  supabase: SupabaseClient,
+  userId: string,
+  gameReviewQuestionId: string,
+): Promise<UserFavorite | null> {
+  const { data, error } = await supabase
+    .from("user_favorites")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("game_review_question_id", gameReviewQuestionId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("user-favorites.repository.findByGameReviewQuestionId error:", error);
+    return null;
+  }
+
+  if (!data) return null;
+
+  return toUserFavorite(data as DbUserFavorite);
+}
+
 export async function findFavoritedOpeningVariantIds(
   supabase: SupabaseClient,
   userId: string,
@@ -130,6 +154,31 @@ export async function findFavoritedPuzzleIds(
   );
 }
 
+export async function findFavoritedGameReviewQuestionIds(
+  supabase: SupabaseClient,
+  userId: string,
+  gameReviewQuestionIds: string[],
+): Promise<Set<string>> {
+  if (gameReviewQuestionIds.length === 0) return new Set();
+
+  const { data, error } = await supabase
+    .from("user_favorites")
+    .select("game_review_question_id")
+    .eq("user_id", userId)
+    .in("game_review_question_id", gameReviewQuestionIds);
+
+  if (error) {
+    console.error("user-favorites.repository.findFavoritedGameReviewQuestionIds error:", error);
+    return new Set();
+  }
+
+  return new Set(
+    (data ?? [])
+      .map((row) => row.game_review_question_id as string | null)
+      .filter((id): id is string => id != null),
+  );
+}
+
 export async function create(supabase: SupabaseClient, input: SaveUserFavoriteInput): Promise<UserFavorite | null> {
   const { data, error } = await supabase
     .from("user_favorites")
@@ -137,6 +186,7 @@ export async function create(supabase: SupabaseClient, input: SaveUserFavoriteIn
       user_id: input.userId,
       opening_variant_id: input.openingVariantId ?? null,
       puzzle_id: input.puzzleId ?? null,
+      game_review_question_id: input.gameReviewQuestionId ?? null,
       is_pinned: input.isPinned ?? false,
       note: input.note ?? null,
     })

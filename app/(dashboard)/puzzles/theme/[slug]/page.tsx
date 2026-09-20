@@ -1,5 +1,5 @@
 import { EmptyState } from "@/components/empty-state/empty-state";
-import { PageHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/page-header/page-header";
 import { PuzzleBoardCard } from "@/features/puzzle/components/puzzle-board-card";
 import { buildThemePuzzlesUrl } from "@/features/puzzle/utilities/build-puzzle-url";
 import { ThemePuzzlesPagination } from "@/features/theme/components/theme-puzzles-pagination";

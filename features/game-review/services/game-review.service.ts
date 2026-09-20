@@ -117,6 +117,7 @@ export async function reviewGame(pgn: string, options: ReviewGameOptions = {}): 
       deltaCp,
       quality,
       mate: before.mate,
+      turn: move.turn,
     });
   }
 

@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/page-header/page-header";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { OpeningTypeFilter } from "@/features/openings/components/opening-type-filter";
 import {
@@ -43,8 +43,6 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
                 variantCount={opening.variantCount}
                 href={`/openings/${opening.slug}/${opening.id}`}
                 fen={opening.displayFen}
-                coverImageUrl={opening.coverImageUrl}
-                coverImageColor={opening.coverImageColor}
               />
             );
           })}
