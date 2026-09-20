@@ -22,8 +22,7 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Admin panel is ready. Manage users, games, studies, themes,
-              onboarding, and openings from the sidebar.
+              Admin panel is ready. Manage users, games, studies, themes, and openings from the sidebar.
             </p>
           </CardContent>
         </Card>
