@@ -63,14 +63,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.7,
     }));
-
-  const puzzleThemePages: MetadataRoute.Sitemap = themes.map((theme) => ({
-    url: `${siteUrl}/puzzles/theme/${theme.slug}`,
-    lastModified: new Date(theme.updatedAt),
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
-
+  
   const studyPages: MetadataRoute.Sitemap = studies.map((study) => ({
     url: `${siteUrl}/studies/${study.slug}`,
     lastModified: new Date(study.updatedAt),
@@ -78,5 +71,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...openingPages, ...puzzleThemePages, ...studyPages];
+  /* Commented out because we don't want to include puzzle theme pages in the sitemap for now. We can uncomment this later if we decide to include them.
+  const puzzleThemePages: MetadataRoute.Sitemap = themes.map((theme) => ({
+    url: `${siteUrl}/puzzles/theme/${theme.slug}`,
+    lastModified: new Date(theme.updatedAt),
+    changeFrequency: "weekly",
+    priority: 0.7,
+  }));
+  */ 
+
+
+  return [...staticPages, ...openingPages, ...studyPages];
 }
