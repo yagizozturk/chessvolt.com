@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Highlighter } from "@/components/ui/highlighter";
 import { Spinner } from "@/components/ui/spinner";
 import { useProfile } from "@/features/profile/hooks/use-profile";
 import { cn } from "@/lib/utils";
@@ -18,15 +19,22 @@ export function Hero() {
   return (
     <div className="container mx-auto bg-[#5734B3] px-4 pt-32 pb-16 md:px-6">
       <div className="flex flex-col gap-8 md:flex-row">
-        <div className="order-2 flex flex-1 flex-col items-center space-y-6 text-center md:order-1 md:items-end md:text-right">
-          <h1 className="w-full text-center text-[clamp(1.5rem,2.8vw+0.5rem,4.5rem)] leading-tight font-extrabold tracking-tighter md:text-right">
-            Practice Your <br className="hidden md:block" />
-            <span className="text-primary decoration-foreground/20 underline underline-offset-8 md:text-[clamp(2.25rem,4vw+1rem,6rem)]">
-              chess.com & lichess
-            </span>{" "}
-            <br className="hidden md:block" /> Blunders
+        <div className="order-2 flex flex-1 flex-col items-center gap-6 text-center md:order-1 md:items-end md:text-right">
+          <h1 className="w-full text-center text-2xl leading-tight font-extrabold tracking-tighter md:text-right md:text-6xl">
+            Connect Your <br className="hidden md:block" />
+            <Image
+              src="/images/hero/hero-account-logo.png"
+              alt="Chess.com and Lichess"
+              width={900}
+              height={240}
+              className="mt-[-20px] inline-block h-auto w-72 align-middle md:w-[32rem]"
+            />{" "}
+            accounts to practice your &nbsp;
+            <Highlighter action="highlight" color="#FE8B14">
+              blunders
+            </Highlighter>
           </h1>
-          <p className="text-foreground w-full text-center text-[clamp(0.95rem,1.4vw+0.5rem,1.25rem)] leading-relaxed md:text-right">
+          <p className="text-foreground w-full text-center text-xl leading-relaxed md:text-right">
             Learn openings, solve puzzles, play real famous games, <br /> and train with interactive chess games that{" "}
             <br />
             aims to teach you the idea behind the moves.

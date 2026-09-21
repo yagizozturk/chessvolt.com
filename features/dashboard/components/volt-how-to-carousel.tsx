@@ -15,21 +15,28 @@ import { cn } from "@/lib/utils";
 
 const SLIDES = [
   {
-    imageSrc: "/images/volt-explain/how_to_step1.png",
+    imageSrc: "/images/volt-explain/how_to_step_1.png",
+    imageAlt: "Connect your chess.com and lichess.org accounts",
+    title: "Connect your Chess.com and Lichess accounts",
+    description:
+      "Volt finds mistakes from your own games and turns them into practice positions, so you can review the moments that need the most work.",
+  },
+  {
+    imageSrc: "/images/volt-explain/how_to_step_2.png",
     imageAlt: "Volt coaching you while you practice chess",
     title: "Play openings and solve puzzles",
     description:
       "Start by solving puzzles, training openings, and playing curated studies or famous games. Volt coaches you through the ideas as you go, so you are not just guessing moves — you are learning why they work. The more you practice the same material, the more those patterns stay with you.",
   },
   {
-    imageSrc: "/images/volt-explain/how_to_step2.png",
+    imageSrc: "/images/volt-explain/how_to_step_3.png",
     imageAlt: "Adding a game to Volt Tracker",
     title: "Add games to Volt Tracker",
     description:
       "When you find an opening or puzzle you want to master, tap the Volt button on the top right of the game panel to add it to Volt Tracker. That is how ChessVolt knows which content to score. Your Volt Score for each item then appears on the Volt Tracker page, so you can see what you know well and what still needs review.",
   },
   {
-    imageSrc: "/images/volt-explain/how_to_step3_8.png",
+    imageSrc: "/images/volt-explain/how_to_step_4.png",
     imageAlt: "How Volt Score measures memory with the forgetting curve",
     title: "Volt tracks what you remember",
     description:

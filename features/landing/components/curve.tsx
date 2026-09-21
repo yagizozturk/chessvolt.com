@@ -2,25 +2,32 @@ import Image from "next/image";
 
 const steps = [
   {
-    imageSrc: "/images/volt-explain/how_to_step1.png",
-    imageAlt: "Chess puzzle board",
-    title: "Play Openings, Solve Puzzles",
+    imageSrc: "/images/volt-explain/how_to_step_1.png",
+    imageAlt: "Connect your chess.com and lichess.org accounts",
+    title: "Connect Your Accounts",
     description:
-      "Solve puzzles, play curated studies, practice old famous games. In learn mode, Volt will help you learn the openings and ideas for the long term.",
+      "Connect your Chess.com and Lichess accounts so ChessVolt can learn from your games and turn key mistakes into practice positions.",
   },
   {
-    imageSrc: "/images/volt-explain/how_to_step2.png",
-    imageAlt: "Volt Tracker Button",
-    title: "Volt Tracker Button",
+    imageSrc: "/images/volt-explain/how_to_step_2.png",
+    imageAlt: "Volt coaching you while you practice chess",
+    title: "Practice Chess Patterns",
     description:
-      "Add games you want to focus and improve to your Volt Tracker with a button on the top right of the game panel. Your Volt Score will be visible in Volt Tracker page.",
+      "Solve puzzles, train openings, and play curated studies or famous games while Volt coaches you through the ideas.",
   },
   {
-    imageSrc: "/images/volt-explain/how_to_step3_8.png",
-    imageAlt: "How Volt Score Is Calculated",
-    title: "How Volt Score Is Calculated",
+    imageSrc: "/images/volt-explain/how_to_step_3.png",
+    imageAlt: "Adding a game to Volt Tracker",
+    title: "Add Items To Volt Tracker",
     description:
-      "Volt Score repetition theory is based on Hermann Ebbinghaus's forgetting curve. It analyzes your performance on accuracy (60%), timing (30%), and streak (10%) in a game. Play 4 days in last 3 months to get max Volt Score.",
+      "Use the Volt button on a game panel to add content you want to master, then track its score on the Volt Tracker page.",
+  },
+  {
+    imageSrc: "/images/volt-explain/how_to_step_4.png",
+    imageAlt: "How Volt Score measures memory with the forgetting curve",
+    title: "Build Long-Term Memory",
+    description:
+      "Volt Score uses the forgetting curve to measure how well you remember each item across accuracy, timing, and streak.",
   },
 ];
 
@@ -40,7 +47,7 @@ export function Curve() {
               repetitions will increase your Volt Score.
             </p>
           </div>
-          <div className="flex flex-col gap-16 lg:grid lg:grid-cols-3 lg:grid-rows-[auto_auto_auto] lg:gap-x-8 lg:gap-y-4">
+          <div className="flex flex-col gap-16 lg:grid lg:grid-cols-4 lg:grid-rows-[auto_auto_auto] lg:gap-x-6 lg:gap-y-4">
             {steps.map((step) => (
               <div key={step.title} className="flex flex-col gap-4 lg:row-span-3 lg:grid lg:grid-rows-subgrid">
                 <div className="flex items-center justify-center overflow-hidden rounded-2xl">

@@ -25,10 +25,10 @@ export function OnboardingPlatformUsernameStep({
     <section className="space-y-4" aria-labelledby="onboarding-platform-username-heading">
       <div className="space-y-2 text-center">
         <Text as="h2" variant="heading" id="onboarding-platform-username-heading">
-          Link your chess account
+          Connect your accounts
         </Text>
         <Text variant="muted" as="p">
-          Let us know you better..
+          Add your Chess.com and Lichess usernames so we can import your games and you can practice your mistakes.
         </Text>
       </div>
 

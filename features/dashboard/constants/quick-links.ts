@@ -23,13 +23,12 @@ export const QUICK_LINKS = [
     href: "/openings",
     icon: "/images/icons/icon-openings.png",
   },
-  {
+  /*{
     title: "Studies",
     description: "Browse curated puzzle studies.",
     href: "/studies",
     icon: "/images/icons/icon-book-study.png",
-  },
-
+  },*/
   {
     title: "Profile",
     description: "Manage your account and preferences.",
