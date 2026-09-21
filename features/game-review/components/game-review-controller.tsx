@@ -8,7 +8,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
 import { Button } from "@/components/ui/button";
+import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { VoltCoach } from "@/components/volt-coach/volt-coach";
@@ -21,6 +23,12 @@ import { GameReviewQuestionStepper } from "@/features/game-review/components/gam
 import { useGameReview } from "@/features/game-review/hooks/use-game-review";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
+import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
+import {
+  createAttemptPayload,
+  createSequenceCompleteStats,
+} from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
+import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getFenFromPgnAtPly } from "@/lib/chess/getFenFromPgnAtPly";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
@@ -65,6 +73,12 @@ export default function GameReviewController({
   const didAutoReview = useRef(false);
   const completedQuestionIdsRef = useRef<Set<string>>(new Set());
   const completedSessionRef = useRef<string | null>(null);
+  const reviewStartedAtRef = useRef<number | null>(null);
+  const correctMoveCountRef = useRef(0);
+  const wrongMoveCountRef = useRef(0);
+  const totalHintCountRef = useRef(0);
+  const currentCorrectStreakRef = useRef(0);
+  const maxCorrectStreakRef = useRef(0);
   const [activeQuestion, setActiveQuestion] = useState<GameReviewQuestion | null>(
     () => initialReviewQuestions[0] ?? null,
   );
@@ -74,6 +88,8 @@ export default function GameReviewController({
   );
   const [successfulMoveSessionId, setSuccessfulMoveSessionId] = useState<string | null>(null);
   const [replayKey, setReplayKey] = useState(0);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null);
   const { findGame, chesscomUsername, lichessUsername } = useImportedGames();
   const { status, error, criticalMoments, reviewQuestions, review } = useGameReview(
     analysis?.data,
@@ -117,6 +133,7 @@ export default function GameReviewController({
   const activeQuestionPlayedMove = activeQuestion ? playedMoveLabel(activeQuestion, originalMoveByPly) : "";
   const activeQuestionPlayedMoveUci = activeQuestion ? originalMoveUciByPly[activeQuestion.ply] : null;
   const completedQuestionsCount = reviewQuestions.filter((question) => completedQuestionIds.has(question.id)).length;
+  const reviewQuestionIdsKey = useMemo(() => reviewQuestions.map((question) => question.id).join("|"), [reviewQuestions]);
   const questionProgressValue =
     reviewQuestions.length > 0 ? Math.round((completedQuestionsCount / reviewQuestions.length) * 100) : 0;
   const isActiveQuestionFavorited = activeQuestion ? favoritedQuestionIds.has(activeQuestion.id) : false;
@@ -157,7 +174,16 @@ export default function GameReviewController({
 
     completedQuestionIdsRef.current = nextCompletedQuestionIds;
     setCompletedQuestionIds(nextCompletedQuestionIds);
-  }, [reviewQuestions]);
+    completedSessionRef.current = null;
+    reviewStartedAtRef.current = reviewQuestions.length > 0 ? Date.now() : null;
+    correctMoveCountRef.current = 0;
+    wrongMoveCountRef.current = 0;
+    totalHintCountRef.current = 0;
+    currentCorrectStreakRef.current = 0;
+    maxCorrectStreakRef.current = 0;
+    setSuccessDialogOpen(false);
+    setCompletionStats(null);
+  }, [reviewQuestions, reviewQuestionIdsKey]);
 
   useEffect(() => {
     const firstQuestion = reviewQuestions[0] ?? null;
@@ -181,6 +207,24 @@ export default function GameReviewController({
     nextCompletedQuestionIds.add(activeQuestion.id);
     completedQuestionIdsRef.current = nextCompletedQuestionIds;
     setCompletedQuestionIds(nextCompletedQuestionIds);
+
+    const nextCompletedQuestionsCount = reviewQuestions.filter((question) =>
+      nextCompletedQuestionIds.has(question.id),
+    ).length;
+    if (reviewQuestions.length > 0 && nextCompletedQuestionsCount === reviewQuestions.length) {
+      const durationMs = reviewStartedAtRef.current == null ? null : Date.now() - reviewStartedAtRef.current;
+      const attemptPayload = createAttemptPayload(
+        correctMoveCountRef.current,
+        wrongMoveCountRef.current,
+        totalHintCountRef.current,
+        maxCorrectStreakRef.current,
+        durationMs,
+      );
+
+      setCompletionStats(createSequenceCompleteStats(attemptPayload));
+      setSuccessDialogOpen(true);
+      return;
+    }
 
     const nextQuestion = activeQuestionIndex >= 0 ? reviewQuestions[activeQuestionIndex + 1] : null;
     if (!nextQuestion) return;
@@ -218,7 +262,17 @@ export default function GameReviewController({
 
   const handleBoardCheckMove = (move: MoveAttemptPayload) => {
     if (!activeQuestion || isCompleted) return false;
-    return handleMoveCheck(move).isCorrect;
+    const { isCorrect } = handleMoveCheck(move);
+
+    if (isCorrect) {
+      correctMoveCountRef.current += 1;
+      updateCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
+      return true;
+    }
+
+    wrongMoveCountRef.current += 1;
+    currentCorrectStreakRef.current = 0;
+    return false;
   };
 
   const handleQuestionSuccessMovePlayed = (move: Move) => {
@@ -230,10 +284,24 @@ export default function GameReviewController({
     const nextHintCount = hintRequested();
     if (nextHintCount == null || !expectedCurrentCorrectMoveUci) return;
     boardRef.current?.showHint(nextHintCount);
+    totalHintCountRef.current += 1;
   };
 
   return (
     <div className="page-container">
+      <SolveSuccessDialog
+        open={successDialogOpen}
+        onOpenChange={setSuccessDialogOpen}
+        title="Game review complete!"
+        destinationPath={backUrl}
+        buttonLabel="Back to analysis"
+        stats={completionStats}
+      />
+
+      {successDialogOpen ? (
+        <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
+      ) : null}
+
       <div className="page-container-controller-layout">
         <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-2 self-start md:flex-[3]">
           <div className="relative aspect-square w-full">
