@@ -20,7 +20,7 @@ export function Hero() {
     <div className="container mx-auto bg-[#5734B3] px-4 pt-32 pb-16 md:px-6">
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="order-2 flex flex-1 flex-col items-center gap-6 text-center md:order-1 md:items-end md:text-right">
-          <h1 className="w-full text-center text-2xl leading-tight font-extrabold tracking-tighter md:text-right md:text-6xl">
+          <h2 className="w-full text-center text-2xl leading-tight font-extrabold tracking-tighter md:text-right md:text-6xl">
             Connect Your <br className="hidden md:block" />
             <Image
               src="/images/hero/hero-account-logo.png"
@@ -33,7 +33,7 @@ export function Hero() {
             <Highlighter action="highlight" color="#FE8B14">
               blunders
             </Highlighter>
-          </h1>
+          </h2>
           <p className="text-foreground w-full text-center text-xl leading-relaxed md:text-right">
             Learn openings, solve puzzles, play real famous games, <br /> and train with interactive chess games that{" "}
             <br />
