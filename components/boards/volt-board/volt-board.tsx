@@ -46,6 +46,7 @@ type VoltBoardProps = {
   coordinates?: boolean;
   playerOrientation?: "white" | "black";
   drawHintMove?: string | null;
+  playedMoveArrow?: string | null;
   activeGoalVisuals?: MoveGoal["visuals"];
   onCheckMove: (payload: MoveAttemptPayload) => boolean;
   onSuccessMovePlayed: (move: Move) => void;
@@ -68,6 +69,7 @@ function VoltBoard(
     coordinates = true,
     playerOrientation,
     drawHintMove,
+    playedMoveArrow,
     activeGoalVisuals,
     mode = "practice",
     onCheckMove,
@@ -90,9 +92,9 @@ function VoltBoard(
   // Bu bir state değil ref'tir; değişmesi component'i yeniden render etmez.
   const isOpponentMovePendingRefLock = useRef(false);
 
-  // Parent'tan gelen en güncel goal oklarını saklar.
+  // Parent'tan gelen en güncel otomatik okları saklar.
   // Oklar kilit sırasında çizilmez; rakip hamlesi uygulandıktan sonra bu ref'ten çizilir.
-  const latestGoalShapesRef = useRef<DrawShape[]>([]);
+  const latestAutoShapesRef = useRef<DrawShape[]>([]);
   const activeGoalShapes = useMemo<DrawShape[]>(() => {
     // Parent'tan gelen uygulama tipindeki görselleri Chessground'un DrawShape formatına çevirir.
     // Practice modunda goal okları gösterilmez.
@@ -104,6 +106,15 @@ function VoltBoard(
       ...(visual.brush ? { brush: visual.brush } : {}),
     }));
   }, [activeGoalVisuals, mode]);
+  const playedMoveShapes = useMemo<DrawShape[]>(() => {
+    const parsedUci = playedMoveArrow ? parseUci(playedMoveArrow) : null;
+    if (!parsedUci) return [];
+
+    return [{ orig: parsedUci.from as Key, dest: parsedUci.to as Key, brush: "red" }];
+  }, [playedMoveArrow]);
+  const baseAutoShapes = useMemo<DrawShape[]>(() => {
+    return [...activeGoalShapes, ...playedMoveShapes];
+  }, [activeGoalShapes, playedMoveShapes]);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
   // chess.js hamle yapabilsin die makeMove methodu kullnaır ve oyunu tutar.
@@ -152,7 +163,7 @@ function VoltBoard(
   // Board üzerindeki otomatik goal/hint şekillerini temizler.
   // ============================================================================
   function clearHintShapes() {
-    ground.current?.setAutoShapes([]);
+    ground.current?.setAutoShapes(baseAutoShapes);
   }
 
   // ============================================================================
@@ -164,7 +175,6 @@ function VoltBoard(
   function boardWrongMoveHandler(to: string) {
     clearSquareCustomHighlights();
     clearHintShapes();
-    ground.current?.setAutoShapes(activeGoalShapes);
     setSquareCustomHighlight(to, "custom-wrong-move");
     playWrongMoveSound();
     scheduleWrongMoveRevert();
@@ -275,7 +285,7 @@ function VoltBoard(
     // Ref kilidini açmak useEffect'i yeniden çalıştırmaz.
     // Bu nedenle kilit sırasında saklanan en güncel okları burada doğrudan çiziyoruz.
     isOpponentMovePendingRefLock.current = false;
-    ground.current?.setAutoShapes(latestGoalShapesRef.current);
+    ground.current?.setAutoShapes(latestAutoShapesRef.current);
   }
 
   // ============================================================================
@@ -302,18 +312,18 @@ function VoltBoard(
   }, [sourceId, initialFen, playerOrientation, updateBoard, clearSquareCustomHighlights, ground]);
 
   // ============================================================================
-  // Aktif goal okları:
-  // - Normal durumda activeGoalShapes değişince hemen çizilir.
-  // - Rakip hamlesi bekleniyorsa yeni oklar yalnızca latestGoalShapesRef içinde saklanır.
+  // Aktif otomatik oklar:
+  // - Normal durumda baseAutoShapes değişince hemen çizilir.
+  // - Rakip hamlesi bekleniyorsa yeni oklar yalnızca latestAutoShapesRef içinde saklanır.
   //   Rakip hamlesi board'a uygulandığında boardApplyOpponentMove() bu bekleyen okları çizer.
   // ============================================================================
   useEffect(() => {
-    latestGoalShapesRef.current = activeGoalShapes;
+    latestAutoShapesRef.current = baseAutoShapes;
 
     if (isOpponentMovePendingRefLock.current) return;
 
-    ground.current?.setAutoShapes(activeGoalShapes);
-  }, [ground, activeGoalShapes, sourceId]);
+    ground.current?.setAutoShapes(baseAutoShapes);
+  }, [ground, baseAutoShapes, sourceId]);
 
   // ============================================================================
   // Hint (drawable shapes) - exposed via ref
@@ -328,12 +338,12 @@ function VoltBoard(
 
         const orig = parsedUci.from as Key;
         const dest = parsedUci.to as Key;
-        const hintShape: DrawShape = hintLevel <= 1 ? { orig, brush: "red" } : { orig, dest, brush: "red" };
-        ground.current.setAutoShapes([...activeGoalShapes, hintShape]);
+        const hintShape: DrawShape = hintLevel <= 1 ? { orig, brush: "yellow" } : { orig, dest, brush: "yellow" };
+        ground.current.setAutoShapes([...baseAutoShapes, hintShape]);
         playHintSound();
       },
     }),
-    [drawHintMove, ground, activeGoalShapes, playHintSound],
+    [drawHintMove, ground, baseAutoShapes, playHintSound],
   );
 
   return (

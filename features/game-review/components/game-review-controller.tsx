@@ -97,6 +97,12 @@ export default function GameReviewController({
       return acc;
     }, {});
   }, [criticalMoments]);
+  const originalMoveUciByPly = useMemo(() => {
+    return criticalMoments.reduce<Record<number, string>>((acc, moment) => {
+      acc[moment.ply] = moment.playedUci;
+      return acc;
+    }, {});
+  }, [criticalMoments]);
   const activeMoveSequence = activeQuestion?.moveSequence ?? null;
   const boardFen =
     activeMoveSequence?.initialFen ??
@@ -109,6 +115,7 @@ export default function GameReviewController({
     ? reviewQuestions.findIndex((question) => question.id === activeQuestion.id)
     : -1;
   const activeQuestionPlayedMove = activeQuestion ? playedMoveLabel(activeQuestion, originalMoveByPly) : "";
+  const activeQuestionPlayedMoveUci = activeQuestion ? originalMoveUciByPly[activeQuestion.ply] : null;
   const completedQuestionsCount = reviewQuestions.filter((question) => completedQuestionIds.has(question.id)).length;
   const questionProgressValue =
     reviewQuestions.length > 0 ? Math.round((completedQuestionsCount / reviewQuestions.length) * 100) : 0;
@@ -239,6 +246,7 @@ export default function GameReviewController({
               playerOrientation={youAreBlack ? "black" : "white"}
               viewOnly={!activeQuestion}
               drawHintMove={expectedCurrentCorrectMoveUci}
+              playedMoveArrow={activeQuestionPlayedMoveUci}
               onCheckMove={activeQuestion ? handleBoardCheckMove : () => true}
               onSuccessMovePlayed={activeQuestion ? handleQuestionSuccessMovePlayed : () => {}}
               onNextMoveRequest={activeQuestion ? handleNextMoveRequest : () => undefined}
