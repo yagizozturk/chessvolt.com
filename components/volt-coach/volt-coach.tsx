@@ -37,7 +37,7 @@ export function VoltCoach({ title, message, ttsKey, ttsText }: VoltCoachProps) {
         type="button"
         variant="voltIcon"
         size="icon-sm"
-        className="absolute right-4 bottom-4"
+        className="absolute right-2 bottom-0"
         aria-label={muted ? "Unmute coach" : "Mute coach"}
         onClick={toggle}
       >

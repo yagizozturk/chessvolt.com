@@ -6,6 +6,7 @@ import Image from "next/image";
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { cn } from "@/lib/utils";
+import completeAnimationData from "@/public/images/animations/animation-complete.json";
 import loaderAnimationData from "@/public/images/animations/animation-loading.json";
 
 type GameReviewQuestionStepperProps = {
@@ -46,25 +47,23 @@ export function GameReviewQuestionStepper({
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
 
       {isLoading ? (
-        <div
-          className="text-muted-foreground flex items-center justify-center gap-3 text-sm"
-          role="status"
-          aria-live="polite"
-        >
-          <Lottie
-            animationData={loaderAnimationData}
-            loop
-            autoplay
-            aria-hidden="true"
-            className="bg-foreground/90 border-primary size-28 shrink-0 rounded-full border border-5"
-          />
+        <div className="flex flex-col items-center gap-3" role="status" aria-live="polite">
+          <div className="text-muted-foreground flex items-center justify-center gap-3 text-sm">
+            <Lottie
+              animationData={loaderAnimationData}
+              loop
+              autoplay
+              aria-hidden="true"
+              className="bg-foreground/90 border-primary size-28 shrink-0 rounded-full border border-5"
+            />
+          </div>
+          <div className="px-4 text-center text-base">
+            <AnimatedShinyText>
+              <span className="text-white">Evaluating via Stockfish. Large games can take a while...</span>
+            </AnimatedShinyText>
+          </div>
         </div>
       ) : null}
-      <div className="px-4 text-center text-base">
-        <AnimatedShinyText>
-          <span className="text-white">Evaluating via Stockfish. Large games can take a while...</span>
-        </AnimatedShinyText>
-      </div>
 
       {!isLoading && questions.length > 0 ? (
         <div className="min-w-0 pb-2">
@@ -99,8 +98,25 @@ export function GameReviewQuestionStepper({
                   aria-current={active ? "step" : undefined}
                   aria-label={`Question ${index + 1}: ${title}`}
                 >
-                  <Image src={iconSrc} alt="" aria-hidden width={36} height={36} className="size-9 shrink-0" />
-                  <div className="flex min-w-0 flex-col gap-0.5">
+                  <div
+                    className={cn(
+                      "bg-muted flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold",
+                      completed && "overflow-hidden p-0",
+                    )}
+                    aria-hidden
+                  >
+                    {completed ? (
+                      <Lottie
+                        animationData={completeAnimationData}
+                        loop={false}
+                        autoplay={true}
+                        className="pointer-events-none size-full scale-[1.90]"
+                      />
+                    ) : (
+                      index + 1
+                    )}
+                  </div>
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span
                       className={cn(
                         "text-xs font-bold",
@@ -112,6 +128,7 @@ export function GameReviewQuestionStepper({
                     <span className="line-clamp-2 text-sm leading-tight font-medium">{title}</span>
                     <span className="text-muted-foreground text-xs">Move {moveNumber}</span>
                   </div>
+                  <Image src={iconSrc} alt="" aria-hidden width={36} height={36} className="ml-auto size-9 shrink-0" />
                 </li>
               );
             })}
