@@ -53,6 +53,17 @@ export async function updateProfileUsername(
   return profileRepo.updateProfileUsername(supabase, userId, username);
 }
 
+export async function updateProfilePlatformUsernames(
+  supabase: SupabaseClient,
+  userId: string,
+  input: {
+    chesscomUsername: string | null;
+    lichessUsername: string | null;
+  },
+): Promise<boolean> {
+  return profileRepo.updateProfilePlatformUsernames(supabase, userId, input);
+}
+
 /** True if this sequence already consumed its one rating-affecting result. */
 export function hasSequenceAlreadyBeenRated(attempts: UserSequenceAttempt[]): boolean {
   return attempts.some(

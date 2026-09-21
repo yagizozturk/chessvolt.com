@@ -179,6 +179,33 @@ export async function updateProfileUsername(
   return true;
 }
 
+export async function updateProfilePlatformUsernames(
+  supabase: SupabaseClient,
+  userId: string,
+  input: {
+    chesscomUsername: string | null;
+    lichessUsername: string | null;
+  },
+): Promise<boolean> {
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      chesscom_username: input.chesscomUsername?.trim() || null,
+      lichess_username: input.lichessUsername?.trim() || null,
+    })
+    .eq("id", userId);
+
+  if (error) {
+    console.error("profile.repository.updateProfilePlatformUsernames error:", {
+      message: error.message,
+      code: error.code,
+    });
+    return false;
+  }
+
+  return true;
+}
+
 // ======================================================================
 // Ensures a profile exists for the user in PROFILES(own DB table) table,
 // not in Supabase. Creates a row if there is none.

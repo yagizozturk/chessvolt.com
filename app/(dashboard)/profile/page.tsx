@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/page-header/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProfileLogoutButton } from "@/features/profile/components/profile-logout-button";
+import { ProfilePlatformUsernamesForm } from "@/features/profile/components/profile-platform-usernames-form";
 import { ProfileSoundsSwitch } from "@/features/profile/components/profile-sounds-switch";
 import { ProfileUsernameForm } from "@/features/profile/components/profile-username-form";
 import { UserAvatar } from "@/features/profile/components/user-avatar";
@@ -62,6 +63,19 @@ export default async function Page() {
               <ProfileLogoutButton iconOnly />
             </div>
           </CardHeader>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Linked Chess Accounts</CardTitle>
+            <CardDescription>Save your Chess.com and Lichess usernames for game imports.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ProfilePlatformUsernamesForm
+              initialChesscomUsername={profile.chesscomUsername}
+              initialLichessUsername={profile.lichessUsername}
+            />
+          </CardContent>
         </Card>
 
         <Card>
