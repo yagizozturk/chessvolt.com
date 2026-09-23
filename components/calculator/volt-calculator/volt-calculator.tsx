@@ -3,6 +3,7 @@
 import Lottie from "lottie-react";
 
 import { VoltScoreChart } from "@/components/calculator/volt-calculator/volt-score-chart";
+import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -149,6 +150,10 @@ export function VoltCalculator({
     return null;
   }
 
+  const firstSolveShare = Math.round(VOLT_CONFIG.attemptSlotWeights[0] * 100);
+  const extraSolvesToFillDay = result.attemptsPerDayCounted - 1;
+  const dayMaxVolt = result.days[0]?.dayMaxVolt ?? VOLT_CONFIG.dayMaxVolt;
+
   // Portaled HoverCard content still bubbles React click events to ancestors (e.g. a parent Link).
   const stopLinkActivation = (event: React.MouseEvent | React.PointerEvent) => {
     event.preventDefault();
@@ -175,7 +180,16 @@ export function VoltCalculator({
             onClick={stopLinkActivation}
             onPointerDown={stopLinkActivation}
           >
-            <p className="mb-2 font-medium">Day breakdown</p>
+            <div className="mb-3 flex flex-col gap-1">
+              <p className="font-medium">How this Volt adds up</p>
+              <p className="text-muted-foreground text-xs leading-relaxed">
+                These rows are your most recent practice days from the last {result.lookbackMonths} months, up to{" "}
+                {result.scoredDayCount} days, and they add up to the chart. Each day can reach {dayMaxVolt} Volt. The
+                first solve is worth {firstSolveShare}% of that day — play it {extraSolvesToFillDay} more{" "}
+                {extraSolvesToFillDay === 1 ? "time" : "times"} the same day to fill the rest. After that, extra solves
+                don&apos;t count.
+              </p>
+            </div>
             <VoltDayBreakdown result={result} />
           </HoverCardContent>
         </HoverCard>

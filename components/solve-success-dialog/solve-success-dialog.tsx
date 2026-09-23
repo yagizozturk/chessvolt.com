@@ -47,12 +47,10 @@ function VoltScoreHelp() {
           </p>
           <p className="text-muted-foreground">
             A day can reach {VOLT_CONFIG.dayMaxVolt} Volt. The first solve is worth {firstSolveShare}% of that day —
-            play it {extraSolvesToFillDay} more {extraSolvesToFillDay === 1 ? "time" : "times"} the same day to fill
-            the rest. After that, extra solves don&apos;t count.
+            play it {extraSolvesToFillDay} more {extraSolvesToFillDay === 1 ? "time" : "times"} the same day to fill the
+            rest. After that, extra solves don&apos;t count.
           </p>
-          <p className="text-muted-foreground">
-            Each solve itself is mostly accuracy, then speed, then streak.
-          </p>
+          <p className="text-muted-foreground">Each solve itself is mostly accuracy, then speed, then streak.</p>
         </div>
       </HoverCardContent>
     </HoverCard>
@@ -169,15 +167,15 @@ export function SolveSuccessDialog({
               <>
                 <LastAttemptVoltPoints result={voltScore} stats={stats} onTotalVoltsChange={setLastAttemptVolts} />
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
-                  <div className="card-border-bottom-shadow flex-2 p-2">
-                    <VoltDayBreakdown result={voltScore} />
-                  </div>
                   <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 flex-col items-center justify-center gap-2 px-4 py-3">
                     <p className="text-muted-foreground text-center text-sm font-medium">Total Volt Score</p>
                     <VoltScoreChart result={voltScore} chartSize={150} />
-                    <div className="absolute top-2 right-2 hidden sm:block">
+                    <div className="absolute top-[-10px] right-[-27px] hidden sm:block">
                       <VoltScoreHelp />
                     </div>
+                  </div>
+                  <div className="card-border-bottom-shadow flex-2 p-2">
+                    <VoltDayBreakdown result={voltScore} />
                   </div>
                 </div>
               </>
