@@ -15,13 +15,13 @@ import {
   useState,
 } from "react";
 
-import { requestImportedGames } from "@/features/analysis/api/imported-games";
+import { requestImportedGames } from "@/features/game-review/api/imported-games";
 // Oyunlari isteyen API fonksiyonu.
 import type {
   ImportedGame,
   // Tek bir oyunun veri yapisi; bu import sadece TypeScript icindir.
   ImportedGamePlatform, // Desteklenen platform adlarinin tipi: chesscom veya lichess.
-} from "@/features/analysis/types/imported-game";
+} from "@/features/game-review/types/imported-game";
 import { useProfile } from "@/features/profile/hooks/use-profile";
 
 // Profilde kayitli kullanici adlarini okumak icin.

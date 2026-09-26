@@ -1,4 +1,4 @@
-import type { ImportedGame, ImportedGamePlayer } from "@/features/analysis/types/imported-game";
+import type { ImportedGame, ImportedGamePlayer } from "@/features/game-review/types/imported-game";
 
 export function importedGameHref(platform: string, id: string) {
   const params = new URLSearchParams({ source: platform });

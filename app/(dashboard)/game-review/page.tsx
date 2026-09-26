@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { PageHeader } from "@/components/page-header/page-header";
-import { ImportedGamesList } from "@/features/analysis/components/imported-games-list";
-import { importedGameHref } from "@/features/analysis/utilities/imported-game-label";
+import { ImportedGamesList } from "@/features/game-review/components/imported-games-list";
+import { importedGameHref } from "@/features/game-review/utilities/imported-game-label";
 import { isGameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 

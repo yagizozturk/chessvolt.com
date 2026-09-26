@@ -1,7 +1,7 @@
 import type { ChessComGame } from "@/lib/chess-com/types";
 import type { LichessGame, LichessGamePlayer } from "@/lib/lichess/types";
 
-import type { ImportedGame, ImportedGamePlayer } from "@/features/analysis/types/imported-game";
+import type { ImportedGame, ImportedGamePlayer } from "@/features/game-review/types/imported-game";
 
 function chessComPlayer(player: ChessComGame["white"]): ImportedGamePlayer {
   return {

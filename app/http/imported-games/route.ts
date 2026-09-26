@@ -2,8 +2,8 @@ import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@
 import {
   getImportedGames,
   importedGamesUpstreamStatus,
-} from "@/features/analysis/services/imported-games.service";
-import type { ImportedGamePlatform } from "@/features/analysis/types/imported-game";
+} from "@/features/game-review/services/imported-games.service";
+import type { ImportedGamePlatform } from "@/features/game-review/types/imported-game";
 
 function isImportedGamePlatform(value: string | null): value is ImportedGamePlatform {
   return value === "chesscom" || value === "lichess";

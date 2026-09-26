@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { VoltExplainDialog } from "@/components/volt-explain-dialog/volt-explain-dialog";
-import { ImportedGamesProvider } from "@/features/analysis/components/imported-games-provider";
+import { ImportedGamesProvider } from "@/features/game-review/components/imported-games-provider";
 import { getAllOpenings } from "@/features/openings/services/openings.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 

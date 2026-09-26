@@ -6,12 +6,12 @@ import { getLichessRecentGames } from "@/lib/lichess/get-recent-games";
 import {
   toImportedGameFromChessCom,
   toImportedGameFromLichess,
-} from "@/features/analysis/mappers/to-imported-game";
+} from "@/features/game-review/mappers/to-imported-game";
 import {
   IMPORTED_GAMES_LIMIT,
   type ImportedGame,
   type ImportedGamePlatform,
-} from "@/features/analysis/types/imported-game";
+} from "@/features/game-review/types/imported-game";
 
 export async function getImportedGames(
   platform: ImportedGamePlatform,

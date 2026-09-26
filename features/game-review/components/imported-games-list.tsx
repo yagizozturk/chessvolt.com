@@ -1,9 +1,9 @@
 "use client";
 
 import { EmptyState } from "@/components/empty-state/empty-state";
-import { ImportedGamesForm } from "@/features/analysis/components/imported-games-form";
-import { ImportedGamesGrid } from "@/features/analysis/components/imported-games-grid";
-import { useImportedGames } from "@/features/analysis/components/imported-games-provider";
+import { ImportedGamesForm } from "@/features/game-review/components/imported-games-form";
+import { ImportedGamesGrid } from "@/features/game-review/components/imported-games-grid";
+import { useImportedGames } from "@/features/game-review/components/imported-games-provider";
 
 export function ImportedGamesList() {
   const { games, chesscomError, lichessError, chesscomStatus, lichessStatus, isLoading } = useImportedGames();

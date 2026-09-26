@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { useImportedGames } from "@/features/analysis/components/imported-games-provider";
+import { useImportedGames } from "@/features/game-review/components/imported-games-provider";
 
 export function ImportedGamesForm() {
   const {
