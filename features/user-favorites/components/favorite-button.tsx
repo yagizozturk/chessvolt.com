@@ -1,7 +1,7 @@
 "use client";
 
 import Lottie from "lottie-react";
-import { ZapIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -80,7 +80,17 @@ export function FavoriteButton({ isFavorited, onFavoritedChange, ...target }: Fa
           aria-pressed={isFavorited}
         >
           <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
-          {isPending ? <Spinner /> : <ZapIcon className={cn("size-5", isFavorited && "fill-primary text-primary")} />}
+          {isPending ? (
+            <Spinner />
+          ) : (
+            <Image
+              src="/images/icons/icon-tracker-3.png"
+              alt=""
+              width={25}
+              height={25}
+              className={cn("size-5", !isFavorited && "opacity-40")}
+            />
+          )}
         </Button>
       </TooltipTrigger>
       <TooltipContent side="bottom" sideOffset={4}>

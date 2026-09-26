@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { isGameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import { isGameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 import GameReviewController from "@/features/game-review/components/game-review-controller";
 import { loadGameReviewPage } from "@/features/game-review/loaders/game-review-page.loader";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";

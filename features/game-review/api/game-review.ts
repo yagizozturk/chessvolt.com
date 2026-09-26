@@ -1,6 +1,6 @@
 import type { ApiResponse } from "@/api-client/route-handler";
 import { apiClient } from "@/api-client/client";
-import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import type { GameReviewResult } from "@/features/game-review/types/game-review";
 

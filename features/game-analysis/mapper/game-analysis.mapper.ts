@@ -1,4 +1,6 @@
-import type { GameAnalysis, GameAnalysisData, GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysis } from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysisData } from "@/features/game-analysis/types/game-analysis-data";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 
 export type DbGameAnalysis = {
   id: string;

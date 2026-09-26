@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 import { saveGameReviewQuestion } from "@/features/game-review-question/services/game-review-question.service";
 import type {
   GameReviewQuestion,

@@ -6,11 +6,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { type DbGameAnalysis, toGameAnalysis } from "@/features/game-analysis/mapper/game-analysis.mapper";
-import type {
-  GameAnalysis,
-  GameAnalysisSource,
-  SaveGameAnalysisInput,
-} from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysis } from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
+import type { SaveGameAnalysisInput } from "@/features/game-analysis/types/save-game-analysis-input";
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<GameAnalysis | null> {
   const { data, error } = await supabase.from("game_analyses").select("*").eq("id", id).maybeSingle();

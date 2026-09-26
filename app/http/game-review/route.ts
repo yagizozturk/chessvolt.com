@@ -6,7 +6,7 @@ import {
 } from "@/api-client/route-handler";
 import { ChessApiError } from "@/lib/chess-api/errors";
 import { saveGameAnalysis } from "@/features/game-analysis/services/game-analysis.service";
-import { isGameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import { isGameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { createReviewQuestions } from "@/features/game-review/services/create-review-questions.service";
 import { reviewGame } from "@/features/game-review/services/game-review.service";

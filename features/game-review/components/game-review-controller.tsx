@@ -16,7 +16,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { VoltCoach } from "@/components/volt-coach/volt-coach";
 import { useImportedGames } from "@/features/analysis/components/imported-games-provider";
 import { importedGameFocus } from "@/features/analysis/utilities/imported-game-label";
-import type { GameAnalysis, GameAnalysisSource } from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysis } from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { BoardPlayerName } from "@/features/game-review/components/board-player-name";
 import { GameReviewQuestionStepper } from "@/features/game-review/components/game-review-question-stepper";
@@ -64,7 +65,7 @@ export default function GameReviewController({
   gameId,
   reviewQuestions: initialReviewQuestions,
   favoritedGameReviewQuestionIds,
-  backUrl = "/analysis",
+  backUrl = "/game-review",
 }: GameReviewControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
@@ -133,7 +134,10 @@ export default function GameReviewController({
   const activeQuestionPlayedMove = activeQuestion ? playedMoveLabel(activeQuestion, originalMoveByPly) : "";
   const activeQuestionPlayedMoveUci = activeQuestion ? originalMoveUciByPly[activeQuestion.ply] : null;
   const completedQuestionsCount = reviewQuestions.filter((question) => completedQuestionIds.has(question.id)).length;
-  const reviewQuestionIdsKey = useMemo(() => reviewQuestions.map((question) => question.id).join("|"), [reviewQuestions]);
+  const reviewQuestionIdsKey = useMemo(
+    () => reviewQuestions.map((question) => question.id).join("|"),
+    [reviewQuestions],
+  );
   const questionProgressValue =
     reviewQuestions.length > 0 ? Math.round((completedQuestionsCount / reviewQuestions.length) * 100) : 0;
   const isActiveQuestionFavorited = activeQuestion ? favoritedQuestionIds.has(activeQuestion.id) : false;

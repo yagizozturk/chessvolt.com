@@ -46,11 +46,11 @@ const data = {
     {
       title: "Volt Tracker",
       url: "/volt-tracker",
-      icon: "/images/icons/icon-circle-volt.png",
+      icon: "/images/icons/icon-tracker-3.png",
     },
     {
       title: "Play Your Blunders",
-      url: "/analysis",
+      url: "/game-review",
       icon: "/images/icons/icon-blunder-double.png",
     },
     {

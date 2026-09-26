@@ -1,11 +1,12 @@
-import type { GameReviewResult } from "@/features/game-review/types/game-review";
+import type { GameAnalysisData } from "@/features/game-analysis/types/game-analysis-data";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 
-export type GameAnalysisSource = "chesscom" | "lichess";
-
-export type GameAnalysisData = GameReviewResult & {
-  pgn?: string;
-};
-
+// ==========================================================================================
+// Game Analysis is saved in DB after a game is analyzed through api of chess-api.com
+// source: is whether lichess or chess.com
+// gameId: The Id that the platform assigned for the game
+// data: What returns from the api call
+// ==========================================================================================
 export type GameAnalysis = {
   id: string;
   userId: string;
@@ -15,14 +16,3 @@ export type GameAnalysis = {
   createdAt: string;
   updatedAt: string;
 };
-
-export type SaveGameAnalysisInput = {
-  userId: string;
-  gameId: string;
-  source: GameAnalysisSource;
-  data: GameAnalysisData;
-};
-
-export function isGameAnalysisSource(value: unknown): value is GameAnalysisSource {
-  return value === "chesscom" || value === "lichess";
-}

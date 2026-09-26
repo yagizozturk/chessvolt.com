@@ -7,11 +7,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import * as gameAnalysisRepo from "@/features/game-analysis/repository/game-analysis.repository";
-import type {
-  GameAnalysis,
-  GameAnalysisSource,
-  SaveGameAnalysisInput,
-} from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysis } from "@/features/game-analysis/types/game-analysis";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
+import type { SaveGameAnalysisInput } from "@/features/game-analysis/types/save-game-analysis-input";
 
 export async function getGameAnalysisById(supabase: SupabaseClient, id: string): Promise<GameAnalysis | null> {
   return gameAnalysisRepo.findById(supabase, id);

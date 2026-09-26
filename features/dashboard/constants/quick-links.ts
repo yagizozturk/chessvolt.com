@@ -8,7 +8,7 @@ export const QUICK_LINKS = [
   {
     title: "Game Analysis",
     description: "Review recent Chess.com and Lichess games.",
-    href: "/analysis",
+    href: "/game-review",
     icon: "/images/icons/icon-blunder-double.png",
   },
   {
