@@ -19,7 +19,7 @@ export function ThemeList({ themes, groupByCategory = true }: ThemeListProps) {
 
   if (!groupByCategory) {
     return (
-      <ul className="flex flex-wrap gap-4">
+      <ul className="grid grid-cols-3 gap-4 sm:flex sm:flex-wrap">
         {themes.map((theme) => (
           <ThemeListItem key={theme.id} theme={theme} />
         ))}
@@ -40,7 +40,7 @@ export function ThemeList({ themes, groupByCategory = true }: ThemeListProps) {
             <h3 className="text-muted-foreground mb-3 text-sm font-medium tracking-wide uppercase">
               {formatThemeCategoryLabel(category)}
             </h3>
-            <ul className="flex flex-wrap gap-4">
+            <ul className="grid grid-cols-3 gap-4 sm:flex sm:flex-wrap">
               {items.map((theme) => (
                 <ThemeListItem key={theme.id} theme={theme} />
               ))}
@@ -62,15 +62,15 @@ function ThemeListItem({ theme }: { theme: Theme }) {
     <li>
       <Link
         href={buildThemePuzzlesUrl(theme.slug)}
-        className="group flex w-28 flex-col items-center gap-2 transition-opacity hover:opacity-90"
+        className="group flex w-full min-w-0 flex-col items-center gap-2 transition-opacity hover:opacity-90 sm:w-28"
       >
         {imageSrc ? (
           <Image
             src={imageSrc}
             alt={theme.title}
-            width={112}
-            height={112}
-            className="ring-muted/70 hover:ring-primary size-28 rounded-xl bg-[#0C181D] object-contain p-2 ring-4 transition-all"
+            width={110}
+            height={110}
+            className="ring-muted/70 hover:ring-primary aspect-square w-full rounded-xl bg-[#0C181D] object-contain p-2 ring-4 transition-all sm:size-28"
           />
         ) : null}
         <span className="text-center text-sm font-medium">{theme.title}</span>
