@@ -39,7 +39,7 @@ function resultForFocus(game: ImportedGame, focusUsername: string): string {
 export function UserGameBoardCard({
   game,
   focusUsername,
-  boardWrapperClassName = "aspect-square w-[240px] shrink-0",
+  boardWrapperClassName = "aspect-square w-full md:w-[240px] shrink-0",
 }: UserGameBoardCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const href = importedGameHref(game.platform, game.id);
@@ -67,7 +67,7 @@ export function UserGameBoardCard({
         </div>
       ) : null}
 
-      <div className="relative flex flex-row items-stretch gap-6 p-6">
+      <div className="relative flex flex-col items-stretch gap-6 p-6 md:flex-row">
         <div className={cn("self-start", boardWrapperClassName)}>
           <DisplayBoard
             sourceId={`user-game-${game.platform}-${game.id}`}

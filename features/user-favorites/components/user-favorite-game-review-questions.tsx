@@ -91,33 +91,35 @@ export async function UserFavoriteGameReviewQuestions({
             <Link
               key={favorite.id}
               href={href}
-              className="bg-card border-b-card-shadow text-foreground relative flex flex-row items-stretch gap-6 rounded-lg border-b-[6px] p-6 no-underline"
+              className="bg-card border-b-card-shadow text-foreground relative flex flex-col rounded-lg border-b-[6px] no-underline"
             >
-              <div className="aspect-square w-[240px] shrink-0 self-start">
-                <DisplayBoard
-                  sourceId={gameReviewQuestion.id}
-                  initialFen={gameReviewQuestion.moveSequence.displayFen ?? gameReviewQuestion.moveSequence.initialFen}
-                  coordinates={false}
-                />
-              </div>
-              <div className="relative flex min-w-0 flex-1 flex-col gap-2">
-                <span className="text-xl font-bold">{gameReviewQuestion.title}</span>
-                <p className="text-muted-foreground hidden text-base md:block">
-                  {getGameReviewQuestionDescription(gameReviewQuestion.id)}
-                </p>
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
-                    <CircleX className="text-red-500" />
-                    <span>{qualityLabel(gameReviewQuestion.quality)}</span>
-                  </Badge>
-                  <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
-                    <Calendar className="text-primary" />
-                    <span>{formatDate(gameReviewQuestion.createdAt)}</span>
-                  </Badge>
-                  <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
-                    <Globe className="text-emerald-500" />
-                    <span>{sourceLabel(gameReviewQuestion.source)}</span>
-                  </Badge>
+              <div className="relative flex flex-col items-stretch gap-6 p-6 md:flex-row">
+                <div className="aspect-square w-full shrink-0 self-start md:w-[240px]">
+                  <DisplayBoard
+                    sourceId={gameReviewQuestion.id}
+                    initialFen={gameReviewQuestion.moveSequence.displayFen ?? gameReviewQuestion.moveSequence.initialFen}
+                    coordinates={false}
+                  />
+                </div>
+                <div className="relative flex min-w-0 flex-1 flex-col gap-2">
+                  <span className="text-xl font-bold">{gameReviewQuestion.title}</span>
+                  <p className="text-muted-foreground hidden text-base md:block">
+                    {getGameReviewQuestionDescription(gameReviewQuestion.id)}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
+                      <CircleX className="text-red-500" />
+                      <span>{qualityLabel(gameReviewQuestion.quality)}</span>
+                    </Badge>
+                    <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
+                      <Calendar className="text-primary" />
+                      <span>{formatDate(gameReviewQuestion.createdAt)}</span>
+                    </Badge>
+                    <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
+                      <Globe className="text-emerald-500" />
+                      <span>{sourceLabel(gameReviewQuestion.source)}</span>
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </Link>

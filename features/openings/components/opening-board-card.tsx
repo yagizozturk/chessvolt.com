@@ -32,7 +32,7 @@ type OpeningBoardCardProps = {
 export function OpeningBoardCard({
   id,
   name,
-  boardWrapperClassName = "aspect-square w-[240px] shrink-0",
+  boardWrapperClassName = "aspect-square w-full md:w-[240px] shrink-0",
   isComplete,
   accuracyPercent,
   href,
@@ -63,7 +63,7 @@ export function OpeningBoardCard({
           <Spinner className="size-8" />
         </div>
       ) : null}
-      <div className="relative flex flex-row items-stretch gap-6 p-6">
+      <div className="relative flex flex-col items-stretch gap-6 p-6 md:flex-row">
         {isComplete === true && <BoardStatusIcon status="solved" />}
         {isComplete === false && <BoardStatusIcon status="wrong" />}
 
@@ -73,6 +73,7 @@ export function OpeningBoardCard({
             <DisplayBoard sourceId={id} initialFen={fen} coordinates={false} />
           </Link>
         </div>
+        {/* Board info */}
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
           {/* Volt score */}
           {isShowingVoltScore ? (
