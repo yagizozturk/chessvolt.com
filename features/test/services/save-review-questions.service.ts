@@ -1,7 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { upsertGameReviewQuestion } from "@/features/game-review-question/services/game-review-question.service";
-import type { GameReviewQuestionQuality } from "@/features/game-review-question/types/game-review-question";
+import type {
+  GameReviewQuestion,
+  GameReviewQuestionQuality,
+} from "@/features/game-review-question/types/game-review-question";
 import type { CriticalMoment } from "@/features/test/types/critical-moment";
 import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
 import { playerColorFromPgn } from "@/features/test/utilities/player-color-from-pgn";
@@ -19,11 +22,11 @@ export async function saveReviewQuestions(input: {
   gameId: string;
   gameAnalysisId: string;
   moments: CriticalMoment[];
-}): Promise<number> {
+}): Promise<GameReviewQuestion[]> {
   const userColor = playerColorFromPgn(input.pgn, input.username);
-  if (!userColor) return 0;
+  if (!userColor) return [];
 
-  let savedCount = 0;
+  const questions: GameReviewQuestion[] = [];
 
   for (const moment of input.moments) {
     if (moment.turn !== userColor || !moment.bestUci.trim() || !isQuestionQuality(moment.quality)) continue;
@@ -38,8 +41,8 @@ export async function saveReviewQuestions(input: {
       quality: moment.quality,
     });
 
-    if (question) savedCount += 1;
+    if (question) questions.push(question);
   }
 
-  return savedCount;
+  return questions;
 }
