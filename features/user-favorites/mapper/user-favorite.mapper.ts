@@ -23,11 +23,26 @@ export type DbUserFavorite = {
   created_at: string;
 };
 
+type DbGameAnalysisEmbed = {
+  data?: {
+    criticalMoments?: { ply: number; fen: string }[];
+  };
+} | null;
+
+export type DbGameReviewQuestionWithAnalysis = DbGameReviewQuestion & {
+  game_analyses?: DbGameAnalysisEmbed;
+};
+
 export type DbUserFavoriteWithDetails = DbUserFavorite & {
   opening_variants: DbOpeningVariant | null;
   puzzles: DbPuzzle | null;
-  game_review_questions: DbGameReviewQuestion | null;
+  game_review_questions: DbGameReviewQuestionWithAnalysis | null;
 };
+
+function fenAtPly(analysis: DbGameAnalysisEmbed, ply: number): string | null {
+  const fen = analysis?.data?.criticalMoments?.find((moment) => moment.ply === ply)?.fen?.trim();
+  return fen || null;
+}
 
 export function toUserFavorite(db: DbUserFavorite): UserFavorite {
   return {
@@ -49,6 +64,9 @@ export function toUserFavoriteWithDetails(
   const openingVariant = db.opening_variants ? toOpeningVariant(db.opening_variants) : null;
   const puzzle = db.puzzles ? toPuzzle(db.puzzles) : null;
   const gameReviewQuestion = db.game_review_questions ? toGameReviewQuestion(db.game_review_questions) : null;
+  const positionFen = gameReviewQuestion
+    ? fenAtPly(db.game_review_questions?.game_analyses ?? null, gameReviewQuestion.ply)
+    : null;
 
   if (!openingVariant && !puzzle && !gameReviewQuestion) return null;
 
@@ -57,6 +75,7 @@ export function toUserFavoriteWithDetails(
     openingVariant,
     puzzle,
     gameReviewQuestion,
+    positionFen,
   };
 }
 

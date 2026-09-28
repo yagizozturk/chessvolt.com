@@ -24,7 +24,7 @@ export async function findByUserIdWithDetails(
   const { data, error } = await supabase
     .from("user_favorites")
     .select(
-      "*, opening_variants (*, move_sequences (*)), puzzles (*, move_sequences (*)), game_review_questions (*, move_sequences (*))",
+      "*, opening_variants (*, move_sequences (*)), puzzles (*, move_sequences (*)), game_review_questions (*, game_analyses (data))",
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: true });

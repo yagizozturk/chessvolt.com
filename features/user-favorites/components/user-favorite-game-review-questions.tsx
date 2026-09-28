@@ -97,7 +97,7 @@ export async function UserFavoriteGameReviewQuestions({
                 <div className="aspect-square w-full shrink-0 self-start md:w-[240px]">
                   <DisplayBoard
                     sourceId={gameReviewQuestion.id}
-                    initialFen={gameReviewQuestion.moveSequence.displayFen ?? gameReviewQuestion.moveSequence.initialFen}
+                    initialFen={favorite.positionFen ?? undefined}
                     coordinates={false}
                   />
                 </div>

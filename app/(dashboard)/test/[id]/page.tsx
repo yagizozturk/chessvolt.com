@@ -34,7 +34,11 @@ export default function TestGamePage() {
     setStatus(null);
     try {
       const response = await requestAnalyzeGame(game.pgn, game.uuid);
-      setStatus(response.success ? `Saved ${response.data?.moveCount ?? 0} moves` : "Analyze failed");
+      setStatus(
+        response.success
+          ? `Saved ${response.data?.moveCount ?? 0} moves and ${response.data?.questionCount ?? 0} questions`
+          : "Analyze failed",
+      );
     } catch (error) {
       const message =
         error && typeof error === "object" && "error" in error ? String(error.error) : "Analyze failed";

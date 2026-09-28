@@ -17,6 +17,7 @@ export type UserFavoriteWithDetails = UserFavorite & {
   openingVariant: OpeningVariant | null;
   puzzle: Puzzle | null;
   gameReviewQuestion: GameReviewQuestion | null;
+  positionFen: string | null;
 };
 
 export type SaveUserFavoriteInput = {

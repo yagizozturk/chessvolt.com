@@ -48,6 +48,13 @@ export async function saveGameReviewQuestion(
   return gameReviewQuestionRepo.create(supabase, input);
 }
 
+export async function upsertGameReviewQuestion(
+  supabase: SupabaseClient,
+  input: SaveGameReviewQuestionInput,
+): Promise<GameReviewQuestion | null> {
+  return gameReviewQuestionRepo.upsert(supabase, input);
+}
+
 export async function deleteGameReviewQuestion(supabase: SupabaseClient, id: string): Promise<boolean> {
   return gameReviewQuestionRepo.remove(supabase, id);
 }

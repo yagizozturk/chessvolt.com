@@ -1,6 +1,8 @@
 import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@/api-client/route-handler";
+import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
 import { analyzeGame } from "@/features/test/services/analyze-game.service";
 import { saveGameAnalysis } from "@/features/test/services/save-game-analysis.service";
+import { saveReviewQuestions } from "@/features/test/services/save-review-questions.service";
 import { ChessApiError } from "@/lib/chess-api/errors";
 
 export const maxDuration = 300;
@@ -28,7 +30,22 @@ async function handlePOST(req: Request) {
       return errorResponse("Failed to save game analysis", 500);
     }
 
-    return successResponse({ moveCount: result.moveCount });
+    const profile = await getProfileByUserId(auth.supabase, auth.user.id);
+    const username = profile?.chesscomUsername?.trim() ?? "";
+    const questionCount = username
+      ? await saveReviewQuestions({
+          supabase: auth.supabase,
+          userId: auth.user.id,
+          username,
+          pgn,
+          source: "chesscom",
+          gameId,
+          gameAnalysisId: saved.id,
+          moments: result.criticalMoments,
+        })
+      : 0;
+
+    return successResponse({ moveCount: result.moveCount, questionCount });
   } catch (error) {
     if (error instanceof ChessApiError) {
       return errorResponse(error.message, error.status && error.status >= 400 ? error.status : 502);

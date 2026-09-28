@@ -14,7 +14,7 @@ import type {
   SaveGameReviewQuestionInput,
 } from "@/features/game-review-question/types/game-review-question";
 
-const QUESTION_SELECT = "*, move_sequences (*)";
+const QUESTION_SELECT = "*";
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<GameReviewQuestion | null> {
   const { data, error } = await supabase
@@ -95,7 +95,6 @@ export async function create(
     .insert({
       user_id: input.userId,
       game_analysis_id: input.gameAnalysisId ?? null,
-      move_sequence_id: input.moveSequenceId,
       game_id: input.gameId,
       source: input.source,
       title: input.title,
@@ -107,6 +106,35 @@ export async function create(
 
   if (error) {
     console.error("game-review-question.repository.create error:", error);
+    return null;
+  }
+
+  return toGameReviewQuestion(data as DbGameReviewQuestion);
+}
+
+export async function upsert(
+  supabase: SupabaseClient,
+  input: SaveGameReviewQuestionInput,
+): Promise<GameReviewQuestion | null> {
+  const { data, error } = await supabase
+    .from("game_review_questions")
+    .upsert(
+      {
+        user_id: input.userId,
+        game_analysis_id: input.gameAnalysisId ?? null,
+        game_id: input.gameId,
+        source: input.source,
+        title: input.title,
+        ply: input.ply,
+        quality: input.quality,
+      },
+      { onConflict: "user_id,game_id,ply" },
+    )
+    .select(QUESTION_SELECT)
+    .single();
+
+  if (error) {
+    console.error("game-review-question.repository.upsert error:", error);
     return null;
   }
 
