@@ -16,6 +16,7 @@ import { VoltCoach } from "@/components/volt-coach/volt-coach";
 import { GameReviewQuestionStepper } from "@/features/game-review/components/game-review-question-stepper";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { BoardPlayerName } from "@/features/test/components/board-player-name";
+import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import type { ChesscomRealGame } from "@/features/test/types/chesscom-real-game";
 import type { CriticalMoment } from "@/features/test/types/critical-moment";
 import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
@@ -79,6 +80,9 @@ export default function GameTestController({ analysis, game }: GameTestControlle
 
   const [activeQuestionId, setActiveQuestionId] = useState<string | null>(questions[0]?.id ?? null);
   const [completedIds, setCompletedIds] = useState<Set<string>>(() => new Set());
+  const [favoritedQuestionIds, setFavoritedQuestionIds] = useState<Set<string>>(
+    () => new Set(analysis.favoritedQuestionIds),
+  );
   const [hintCount, setHintCount] = useState(0);
   const [solved, setSolved] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
@@ -98,6 +102,7 @@ export default function GameTestController({ analysis, game }: GameTestControlle
       : "Solve the original game position on the board."
     : "Pick a review question to solve it on the board.";
   const progressValue = questions.length > 0 ? Math.round((completedIds.size / questions.length) * 100) : 0;
+  const isActiveQuestionFavorited = active ? favoritedQuestionIds.has(active.question.id) : false;
 
   function clearAdvance() {
     if (advanceTimeoutRef.current == null) return;
@@ -127,6 +132,15 @@ export default function GameTestController({ analysis, game }: GameTestControlle
 
   function handleSelectQuestion(question: GameReviewQuestion) {
     showQuestion(question.id);
+  }
+
+  function handleQuestionFavoritedChange(questionId: string, favorited: boolean) {
+    setFavoritedQuestionIds((current) => {
+      const next = new Set(current);
+      if (favorited) next.add(questionId);
+      else next.delete(questionId);
+      return next;
+    });
   }
 
   function handleCheckMove(move: MoveAttemptPayload) {
@@ -256,7 +270,17 @@ export default function GameTestController({ analysis, game }: GameTestControlle
               />
               Play Your Missings
             </div>
-            <div className="size-9" />
+            <div className="flex items-center gap-2">
+              {active ? (
+                <FavoriteButton
+                  gameReviewQuestionId={active.question.id}
+                  isFavorited={isActiveQuestionFavorited}
+                  onFavoritedChange={(favorited) => handleQuestionFavoritedChange(active.question.id, favorited)}
+                />
+              ) : (
+                <div className="size-9" />
+              )}
+            </div>
           </div>
 
           <div className="card-border-bottom-shadow p-4">

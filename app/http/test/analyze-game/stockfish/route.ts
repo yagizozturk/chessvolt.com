@@ -1,6 +1,7 @@
 import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@/api-client/route-handler";
 import { deleteGameReviewQuestionsForGame } from "@/features/game-review-question/services/game-review-question.service";
 import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
+import { listFavoritedQuestionIds } from "@/features/test/services/get-game-analysis-with-mistakes.service";
 import { saveGameAnalysis } from "@/features/test/services/save-game-analysis.service";
 import { saveReviewQuestions } from "@/features/test/services/save-review-questions.service";
 import type { CriticalMoment } from "@/features/test/types/critical-moment";
@@ -14,8 +15,9 @@ function toPayload(
   moveCount: number,
   criticalMoments: GameAnalysisWithMistakes["criticalMoments"],
   questions: GameAnalysisWithMistakes["questions"],
+  favoritedQuestionIds: string[],
 ): GameAnalysisWithMistakes {
-  return { moveCount, criticalMoments, questions };
+  return { moveCount, criticalMoments, questions, favoritedQuestionIds };
 }
 
 function isCriticalMoment(value: unknown): value is CriticalMoment {
@@ -100,7 +102,14 @@ async function handlePOST(req: Request) {
       })
     : [];
 
-  return successResponse(toPayload(analysis.moveCount, analysis.criticalMoments, questions));
+  return successResponse(
+    toPayload(
+      analysis.moveCount,
+      analysis.criticalMoments,
+      questions,
+      await listFavoritedQuestionIds(auth.supabase, auth.user.id, questions),
+    ),
+  );
 }
 
 export const POST = withErrorHandler(handlePOST);

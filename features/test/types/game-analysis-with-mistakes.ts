@@ -5,4 +5,5 @@ export type GameAnalysisWithMistakes = {
   moveCount: number;
   criticalMoments: CriticalMoment[];
   questions: GameReviewQuestion[];
+  favoritedQuestionIds: string[];
 };

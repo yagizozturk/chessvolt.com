@@ -2,7 +2,10 @@ import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@
 import { getGameReviewQuestionsByGameId } from "@/features/game-review-question/services/game-review-question.service";
 import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
 import { analyzeGame } from "@/features/test/services/analyze-game.service";
-import { getGameAnalysisWithMistakes } from "@/features/test/services/get-game-analysis-with-mistakes.service";
+import {
+  getGameAnalysisWithMistakes,
+  listFavoritedQuestionIds,
+} from "@/features/test/services/get-game-analysis-with-mistakes.service";
 import { getGameAnalysis, saveGameAnalysis } from "@/features/test/services/save-game-analysis.service";
 import { saveReviewQuestions } from "@/features/test/services/save-review-questions.service";
 import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
@@ -16,8 +19,9 @@ function toPayload(
   moveCount: number,
   criticalMoments: GameAnalysisWithMistakes["criticalMoments"],
   questions: GameAnalysisWithMistakes["questions"],
+  favoritedQuestionIds: string[],
 ): GameAnalysisWithMistakes {
-  return { moveCount, criticalMoments, questions };
+  return { moveCount, criticalMoments, questions, favoritedQuestionIds };
 }
 
 // ========================================================================
@@ -70,7 +74,14 @@ async function handlePOST(req: Request) {
         }
       }
 
-      return successResponse(toPayload(existing.data.moveCount, existing.data.criticalMoments, questions));
+      return successResponse(
+        toPayload(
+          existing.data.moveCount,
+          existing.data.criticalMoments,
+          questions,
+          await listFavoritedQuestionIds(auth.supabase, auth.user.id, questions),
+        ),
+      );
     }
 
     if (!pgn) {
@@ -104,7 +115,14 @@ async function handlePOST(req: Request) {
         })
       : [];
 
-    return successResponse(toPayload(result.moveCount, result.criticalMoments, questions));
+    return successResponse(
+      toPayload(
+        result.moveCount,
+        result.criticalMoments,
+        questions,
+        await listFavoritedQuestionIds(auth.supabase, auth.user.id, questions),
+      ),
+    );
   } catch (error) {
     if (error instanceof ChessApiError) {
       return errorResponse(error.message, error.status && error.status >= 400 ? error.status : 502);
