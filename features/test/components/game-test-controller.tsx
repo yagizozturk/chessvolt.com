@@ -19,6 +19,12 @@ import { BoardPlayerName } from "@/features/test/components/board-player-name";
 import type { ChesscomRealGame } from "@/features/test/types/chesscom-real-game";
 import type { CriticalMoment } from "@/features/test/types/critical-moment";
 import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
+import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
+import {
+  createAttemptPayload,
+  createSequenceCompleteStats,
+} from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
+import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -58,6 +64,12 @@ export default function GameTestController({ analysis, game }: GameTestControlle
   const [isPending, startTransition] = useTransition();
   const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const solvedRef = useRef(false);
+  const startedAtRef = useRef<number | null>(null);
+  const correctMoveCountRef = useRef(0);
+  const wrongMoveCountRef = useRef(0);
+  const totalHintCountRef = useRef(0);
+  const currentCorrectStreakRef = useRef(0);
+  const maxCorrectStreakRef = useRef(0);
 
   const playable = useMemo(() => playableQuestions(analysis), [analysis]);
   const questions = useMemo(() => playable.map((item) => item.question), [playable]);
@@ -70,6 +82,7 @@ export default function GameTestController({ analysis, game }: GameTestControlle
   const [hintCount, setHintCount] = useState(0);
   const [solved, setSolved] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
+  const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null);
   const [boardKey, setBoardKey] = useState(0);
 
   const active = playable.find((item) => item.question.id === activeQuestionId) ?? null;
@@ -102,6 +115,7 @@ export default function GameTestController({ analysis, game }: GameTestControlle
   }
 
   useEffect(() => {
+    startedAtRef.current = Date.now();
     return () => clearAdvance();
   }, []);
 
@@ -117,7 +131,16 @@ export default function GameTestController({ analysis, game }: GameTestControlle
 
   function handleCheckMove(move: MoveAttemptPayload) {
     if (!active || solvedRef.current) return false;
-    return move.uci === active.moment.bestUci;
+
+    if (move.uci === active.moment.bestUci) {
+      correctMoveCountRef.current += 1;
+      updateCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
+      return true;
+    }
+
+    wrongMoveCountRef.current += 1;
+    currentCorrectStreakRef.current = 0;
+    return false;
   }
 
   function handleSuccess() {
@@ -136,6 +159,17 @@ export default function GameTestController({ analysis, game }: GameTestControlle
     const remaining = [...later, ...earlier].filter((item) => !nextCompleted.has(item.question.id));
 
     if (remaining.length === 0) {
+      setCompletionStats(
+        createSequenceCompleteStats(
+          createAttemptPayload(
+            correctMoveCountRef.current,
+            wrongMoveCountRef.current,
+            totalHintCountRef.current,
+            maxCorrectStreakRef.current,
+            startedAtRef.current == null ? null : Date.now() - startedAtRef.current,
+          ),
+        ),
+      );
       setSuccessOpen(true);
       return;
     }
@@ -152,6 +186,7 @@ export default function GameTestController({ analysis, game }: GameTestControlle
     if (!active || solved || hintCount >= MAX_HINT_COUNT) return;
     const nextHintCount = hintCount + 1;
     setHintCount(nextHintCount);
+    totalHintCountRef.current += 1;
     boardRef.current?.showHint(nextHintCount);
   }
 
@@ -163,6 +198,7 @@ export default function GameTestController({ analysis, game }: GameTestControlle
         title="Game review complete!"
         destinationPath="/test"
         buttonLabel="Back to analysis"
+        stats={completionStats}
       />
 
       {successOpen ? (

@@ -7,6 +7,7 @@ export type DbGameReviewQuestion = {
   id: string;
   user_id: string;
   game_analysis_id: string | null;
+  move_sequence_id: string | null;
   game_id: string;
   source: string;
   title: string;
@@ -21,6 +22,7 @@ export function toGameReviewQuestion(db: DbGameReviewQuestion): GameReviewQuesti
     id: db.id,
     userId: db.user_id,
     gameAnalysisId: db.game_analysis_id,
+    moveSequenceId: db.move_sequence_id,
     gameId: db.game_id,
     source: db.source,
     title: db.title,

@@ -4,6 +4,7 @@ export type GameReviewQuestion = {
   id: string;
   userId: string;
   gameAnalysisId: string | null;
+  moveSequenceId: string | null;
   gameId: string;
   source: string;
   title: string;
@@ -16,6 +17,7 @@ export type GameReviewQuestion = {
 export type SaveGameReviewQuestionInput = {
   userId: string;
   gameAnalysisId?: string | null;
+  moveSequenceId: string;
   gameId: string;
   source: string;
   title: string;

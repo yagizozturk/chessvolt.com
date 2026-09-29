@@ -95,6 +95,7 @@ export async function create(
     .insert({
       user_id: input.userId,
       game_analysis_id: input.gameAnalysisId ?? null,
+      move_sequence_id: input.moveSequenceId,
       game_id: input.gameId,
       source: input.source,
       title: input.title,
@@ -122,6 +123,7 @@ export async function upsert(
       {
         user_id: input.userId,
         game_analysis_id: input.gameAnalysisId ?? null,
+        move_sequence_id: input.moveSequenceId,
         game_id: input.gameId,
         source: input.source,
         title: input.title,
