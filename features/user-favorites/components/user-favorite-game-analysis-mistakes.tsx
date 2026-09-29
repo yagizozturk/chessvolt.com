@@ -21,7 +21,7 @@ function buildGameReviewUrl(question: GameAnalysisMistake) {
     source: getSourcePlatform(question.source) ?? question.source,
     questionId: question.id,
   });
-  return `/test/${encodeURIComponent(question.gameId)}?${params.toString()}`;
+  return `/game-analysis/${encodeURIComponent(question.gameId)}?${params.toString()}`;
 }
 
 function qualityLabel(quality: GameAnalysisMistake["quality"]) {

@@ -8,7 +8,7 @@ import type { ChesscomRealGame } from "@/features/game-analysis/types/chesscom-r
 export const ChesscomGamesContext = createContext<ChesscomGamesContextValue | null>(null);
 
 // ====================================================================================================
-// Keeps the loaded Chess.com games available to every page under /test.
+// Keeps the loaded Chess.com games available to every page under /game-analysis.
 // The list page stores games here. The detail page looks one up by uuid without fetching again.
 // ChesscomGamesContextValue ile bu provider da kullanılacak değerin şeması belli ediliyor. Ve memo da
 // tutuluyor. find metodu ile oyun bulabilme, set ile context içinde set edilebilmesi sağlanıyor.

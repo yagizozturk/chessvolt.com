@@ -132,7 +132,7 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
 
   function handleBack() {
     startTransition(() => {
-      router.push("/test");
+      router.push("/game-analysis");
     });
   }
 
@@ -216,7 +216,7 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
         open={successOpen}
         onOpenChange={setSuccessOpen}
         title="Game review complete!"
-        destinationPath="/test"
+        destinationPath="/game-analysis"
         buttonLabel="Back to analysis"
         stats={completionStats}
       />

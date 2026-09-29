@@ -12,7 +12,7 @@ import { useChesscomGames } from "@/features/game-analysis/hooks/use-chesscom-ga
 import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import { analyzePgnWithStockfish } from "@/features/game-analysis/utilities/analyze-pgn-with-stockfish";
 
-export default function TestGamePage() {
+export default function GameAnalysisGamePage() {
   const params = useParams<{ id: string }>();
   const initialQuestionId = useSearchParams().get("questionId");
   const { findGame } = useChesscomGames();
@@ -120,7 +120,7 @@ export default function TestGamePage() {
       <div className="page-container">
         <div className="page-container-children-layout">
           <p>This game is not in memory. Load games first.</p>
-          <Link href="/test">Back</Link>
+          <Link href="/game-analysis">Back</Link>
         </div>
       </div>
     );
@@ -140,7 +140,7 @@ export default function TestGamePage() {
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
-        <Link href="/test">Back</Link>
+        <Link href="/game-analysis">Back</Link>
         <h1>{game ? `${game.white.username} vs ${game.black.username}` : "Saved review"}</h1>
         {game ? (
           <div className="flex flex-wrap gap-3">

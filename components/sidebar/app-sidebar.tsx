@@ -50,7 +50,7 @@ const data = {
     },
     {
       title: "Play Your Blunders",
-      url: "/test",
+      url: "/game-analysis",
       icon: "/images/icons/icon-blunder-double.png",
     },
     {

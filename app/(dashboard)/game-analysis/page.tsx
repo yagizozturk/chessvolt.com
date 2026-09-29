@@ -11,7 +11,7 @@ import { UserPlayedGamesBoard } from "@/features/game-analysis/components/user-p
 import { useChesscomGames } from "@/features/game-analysis/hooks/use-chesscom-games";
 import { normalizeChesscomGame } from "@/features/game-analysis/utilities/normalize-chesscom-game";
 
-export default function TestPage() {
+export default function GameAnalysisPage() {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { games, setGames } = useChesscomGames();

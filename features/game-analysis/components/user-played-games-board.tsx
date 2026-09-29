@@ -42,7 +42,7 @@ export function UserPlayedGamesBoard({
   boardWrapperClassName = "aspect-square w-full md:w-[240px] shrink-0",
 }: UserPlayedGamesBoardProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const href = `/test/${game.id}`;
+  const href = `/game-analysis/${game.id}`;
   const { opponent, youAreBlack } = importedGameFocus(game, focusUsername);
   const title = opponent ? `vs ${opponent.username}` : `${game.white.username} vs ${game.black.username}`;
   const fen = useMemo(() => getImportedGameDisplayFen(game.pgn), [game.pgn]);

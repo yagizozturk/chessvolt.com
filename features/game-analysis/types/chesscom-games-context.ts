@@ -2,7 +2,7 @@ import type { ChesscomRealGame } from "@/features/game-analysis/types/chesscom-r
 
 // ====================================================================================================
 // Shape of the value shared by ChesscomGamesContext.
-// Pages under /test use it to read the loaded games, replace them, or find one game by uuid.
+// Pages under /game-analysis use it to read the loaded games, replace them, or find one game by uuid.
 // ====================================================================================================
 export type ChesscomGamesContextValue = {
   games: ChesscomRealGame[];
