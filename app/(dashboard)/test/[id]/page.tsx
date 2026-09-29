@@ -2,13 +2,18 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { requestGameAnalysis, requestOutsourceGameAnalysis } from "@/features/test/api/analyze-game";
+import {
+  requestGameAnalysis,
+  requestLocalGameAnalysis,
+  requestOutsourceGameAnalysis,
+} from "@/features/test/api/analyze-game";
 import { useChesscomGames } from "@/features/test/hooks/use-chesscom-games";
 import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
+import { analyzePgnWithStockfish } from "@/features/test/utilities/analyze-pgn-with-stockfish";
 
 export default function TestGamePage() {
   const params = useParams<{ id: string }>();
@@ -16,8 +21,9 @@ export default function TestGamePage() {
   const game = findGame(params.id);
   const [analysis, setAnalysis] = useState<GameAnalysisWithMistakes | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisEngine, setAnalysisEngine] = useState<"remote" | "local" | null>(null);
   const [status, setStatus] = useState<string | null>(null);
+  const localAbortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     let cancelled = false; // Eğer sayfada sonuç gelmeden sayfadan çıkarsa oyuncu(unmount) bu durumda request devam etmez. setAnalysis kısmına boş yere girmez.
@@ -44,14 +50,20 @@ export default function TestGamePage() {
     };
   }, [params.id]);
 
+  useEffect(() => {
+    return () => {
+      localAbortRef.current?.abort();
+    };
+  }, []);
+
   // ===================================================================================================
   // Analiz buttonuna basınca çalışır.
   // analyze metodu chess-api.com a gider ve analiz ettirir oyunu.
   // ===================================================================================================
   async function analyze() {
-    if (!game || isAnalyzing || analysis) return;
+    if (!game || analysisEngine || analysis) return;
 
-    setIsAnalyzing(true);
+    setAnalysisEngine("remote");
     setStatus(null);
     try {
       const response = await requestOutsourceGameAnalysis(game.pgn, game.uuid);
@@ -66,7 +78,48 @@ export default function TestGamePage() {
       const message = error && typeof error === "object" && "error" in error ? String(error.error) : "Analyze failed";
       setStatus(message);
     } finally {
-      setIsAnalyzing(false);
+      setAnalysisEngine(null);
+    }
+  }
+
+  async function analyzeLocally() {
+    if (!game || analysisEngine) return;
+
+    const controller = new AbortController();
+    localAbortRef.current = controller;
+    setAnalysisEngine("local");
+    setStatus("Starting Stockfish…");
+
+    try {
+      const localAnalysis = await analyzePgnWithStockfish(game.pgn, {
+        signal: controller.signal,
+        onProgress: (completed, total) => {
+          if (!controller.signal.aborted) setStatus(`Stockfish ${completed}/${total}`);
+        },
+      });
+
+      if (controller.signal.aborted) return;
+
+      setStatus("Saving questions…");
+      const response = await requestLocalGameAnalysis(game.pgn, game.uuid, localAnalysis);
+      if (!response.success || !response.data) {
+        setStatus("Local analysis failed");
+        return;
+      }
+
+      setAnalysis(response.data);
+      setStatus(`Saved ${response.data.moveCount} moves and ${response.data.questions.length} questions`);
+    } catch (error) {
+      if (controller.signal.aborted) return;
+      if (error instanceof Error) {
+        setStatus(error.message || "Local analysis failed");
+        return;
+      }
+      const message = error && typeof error === "object" && "error" in error ? String(error.error) : "Local analysis failed";
+      setStatus(message);
+    } finally {
+      if (localAbortRef.current === controller) localAbortRef.current = null;
+      if (!controller.signal.aborted) setAnalysisEngine(null);
     }
   }
 
@@ -96,12 +149,25 @@ export default function TestGamePage() {
       <div className="page-container-children-layout">
         <Link href="/test">Back</Link>
         <h1>{game ? `${game.white.username} vs ${game.black.username}` : "Saved review"}</h1>
-        {analysis ? null : (
-          <Button type="button" variant="volt" disabled={isAnalyzing} onClick={() => void analyze()}>
-            {isAnalyzing ? <Spinner data-icon="inline-start" /> : null}
-            {isAnalyzing ? "Analyzing…" : "Analyze"}
-          </Button>
-        )}
+        {game ? (
+          <div className="flex flex-wrap gap-3">
+            {analysis ? null : (
+              <Button type="button" variant="volt" disabled={analysisEngine !== null} onClick={() => void analyze()}>
+                {analysisEngine === "remote" ? <Spinner data-icon="inline-start" /> : null}
+                {analysisEngine === "remote" ? "Analyzing…" : "Analyze"}
+              </Button>
+            )}
+            <Button
+              type="button"
+              variant="voltMuted"
+              disabled={analysisEngine !== null}
+              onClick={() => void analyzeLocally()}
+            >
+              {analysisEngine === "local" ? <Spinner data-icon="inline-start" /> : null}
+              {analysisEngine === "local" ? "Analyzing locally…" : "Analyze locally"}
+            </Button>
+          </div>
+        ) : null}
         {status ? <p>{status}</p> : null}
         {analysis ? (
           <ul>

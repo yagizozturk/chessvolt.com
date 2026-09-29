@@ -141,6 +141,21 @@ export async function upsert(
   return toGameReviewQuestion(data as DbGameReviewQuestion);
 }
 
+export async function removeByUserGameId(
+  supabase: SupabaseClient,
+  userId: string,
+  gameId: string,
+): Promise<boolean> {
+  const { error } = await supabase.from("game_review_questions").delete().eq("user_id", userId).eq("game_id", gameId);
+
+  if (error) {
+    console.error("game-review-question.repository.removeByUserGameId error:", error);
+    return false;
+  }
+
+  return true;
+}
+
 export async function remove(supabase: SupabaseClient, id: string): Promise<boolean> {
   const { error } = await supabase.from("game_review_questions").delete().eq("id", id);
 

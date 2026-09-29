@@ -55,6 +55,14 @@ export async function upsertGameReviewQuestion(
   return gameReviewQuestionRepo.upsert(supabase, input);
 }
 
+export async function deleteGameReviewQuestionsForGame(
+  supabase: SupabaseClient,
+  userId: string,
+  gameId: string,
+): Promise<boolean> {
+  return gameReviewQuestionRepo.removeByUserGameId(supabase, userId, gameId);
+}
+
 export async function deleteGameReviewQuestion(supabase: SupabaseClient, id: string): Promise<boolean> {
   return gameReviewQuestionRepo.remove(supabase, id);
 }
