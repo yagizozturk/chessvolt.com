@@ -3,21 +3,21 @@ import { randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import {
-  getGameReviewQuestionsByGameId,
-  upsertGameReviewQuestions,
-} from "@/features/game-review-question/services/game-review-question.service";
+  getGameAnalysisMistakesByGameId,
+  upsertGameAnalysisMistakes,
+} from "@/features/game-analysis-mistakes/services/game-analysis-mistake.service";
 import type {
-  GameReviewQuestion,
-  GameReviewQuestionQuality,
-  SaveGameReviewQuestionInput,
-} from "@/features/game-review-question/types/game-review-question";
+  GameAnalysisMistake,
+  GameAnalysisMistakeQuality,
+  SaveGameAnalysisMistakeInput,
+} from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 import { createMoveSequences } from "@/features/move-sequence/services/move-sequence.service";
 import type { CriticalMoment } from "@/features/test/types/critical-moment";
 import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
 import { playerColorFromPgn } from "@/features/test/utilities/player-color-from-pgn";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-function isQuestionQuality(quality: CriticalMoment["quality"]): quality is GameReviewQuestionQuality {
+function isQuestionQuality(quality: CriticalMoment["quality"]): quality is GameAnalysisMistakeQuality {
   return quality === "mistake" || quality === "blunder";
 }
 
@@ -30,16 +30,16 @@ export async function saveReviewQuestions(input: {
   gameId: string;
   gameAnalysisId: string;
   moments: CriticalMoment[];
-}): Promise<GameReviewQuestion[]> {
+}): Promise<GameAnalysisMistake[]> {
   const userColor = playerColorFromPgn(input.pgn, input.username);
   if (!userColor) return [];
 
-  const existing = await getGameReviewQuestionsByGameId(input.supabase, input.userId, input.gameId);
+  const existing = await getGameAnalysisMistakesByGameId(input.supabase, input.userId, input.gameId);
   const sequenceIdByPly = new Map(
     existing.flatMap((question) => (question.moveSequenceId ? [[question.ply, question.moveSequenceId] as const] : [])),
   );
 
-  const questionsToSave: SaveGameReviewQuestionInput[] = [];
+  const questionsToSave: SaveGameAnalysisMistakeInput[] = [];
   const sequencesToCreate: { id: string; initialFen: string; displayFen: string; moves: string }[] = [];
 
   for (const moment of input.moments) {
@@ -74,7 +74,7 @@ export async function saveReviewQuestions(input: {
     const createdIds = new Set(created.map((sequence) => sequence.id));
     if (createdIds.size !== sequencesToCreate.length) {
       const reusable = new Set(sequenceIdByPly.values());
-      const saved = await upsertGameReviewQuestions(
+      const saved = await upsertGameAnalysisMistakes(
         input.supabase,
         questionsToSave.filter((question) => reusable.has(question.moveSequenceId)),
       );
@@ -82,6 +82,6 @@ export async function saveReviewQuestions(input: {
     }
   }
 
-  const saved = await upsertGameReviewQuestions(input.supabase, questionsToSave);
+  const saved = await upsertGameAnalysisMistakes(input.supabase, questionsToSave);
   return saved.sort((a, b) => a.ply - b.ply);
 }

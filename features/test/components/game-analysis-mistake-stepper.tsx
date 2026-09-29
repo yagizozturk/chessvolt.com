@@ -4,27 +4,27 @@ import Lottie from "lottie-react";
 import Image from "next/image";
 
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
-import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
+import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 import { cn } from "@/lib/utils";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
 import loaderAnimationData from "@/public/images/animations/animation-loading.json";
 
-type GameReviewQuestionStepperProps = {
-  questions: GameReviewQuestion[];
+type GameAnalysisMistakeStepperProps = {
+  questions: GameAnalysisMistake[];
   originalMoveByPly: Record<number, string>;
   activeQuestionId: string | null;
   completedQuestionIds: Set<string>;
   isLoading: boolean;
   error: string | null;
   hasResult: boolean;
-  onSelectQuestion: (question: GameReviewQuestion) => void;
+  onSelectQuestion: (question: GameAnalysisMistake) => void;
 };
 
-function qualityLabel(quality: GameReviewQuestion["quality"]) {
+function qualityLabel(quality: GameAnalysisMistake["quality"]) {
   return quality === "blunder" ? "Blunder" : "Mistake";
 }
 
-function questionTitle(question: GameReviewQuestion, originalMoveByPly: Record<number, string>) {
+function questionTitle(question: GameAnalysisMistake, originalMoveByPly: Record<number, string>) {
   const originalMove = originalMoveByPly[question.ply]?.trim();
   if (originalMove) return `Played ${originalMove}`;
 
@@ -32,7 +32,7 @@ function questionTitle(question: GameReviewQuestion, originalMoveByPly: Record<n
   return /^played\s+/i.test(title) ? title : "Original game move";
 }
 
-export function GameReviewQuestionStepper({
+export function GameAnalysisMistakeStepper({
   questions,
   originalMoveByPly,
   activeQuestionId,
@@ -41,7 +41,7 @@ export function GameReviewQuestionStepper({
   error,
   hasResult,
   onSelectQuestion,
-}: GameReviewQuestionStepperProps) {
+}: GameAnalysisMistakeStepperProps) {
   return (
     <div className="flex flex-col gap-4">
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
@@ -67,7 +67,7 @@ export function GameReviewQuestionStepper({
 
       {!isLoading && questions.length > 0 ? (
         <div className="min-w-0 pb-2">
-          <ol className="grid grid-cols-2 gap-3" aria-label="Game review questions">
+          <ol className="grid grid-cols-2 gap-3" aria-label="Game analysis mistakes">
             {questions.map((question, index) => {
               const active = question.id === activeQuestionId;
               const completed = completedQuestionIds.has(question.id);

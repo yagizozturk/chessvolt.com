@@ -24,7 +24,7 @@ export async function findByUserIdWithDetails(
   const { data, error } = await supabase
     .from("user_favorites")
     .select(
-      "*, opening_variants (*, move_sequences (*)), puzzles (*, move_sequences (*)), game_review_questions (*, game_analyses (data))",
+      "*, opening_variants (*, move_sequences (*)), puzzles (*, move_sequences (*)), game_analysis_mistakes (*, game_analyses (data))",
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
@@ -84,20 +84,20 @@ export async function findByPuzzleId(
   return toUserFavorite(data as DbUserFavorite);
 }
 
-export async function findByGameReviewQuestionId(
+export async function findByGameAnalysisMistakeId(
   supabase: SupabaseClient,
   userId: string,
-  gameReviewQuestionId: string,
+  gameAnalysisMistakeId: string,
 ): Promise<UserFavorite | null> {
   const { data, error } = await supabase
     .from("user_favorites")
     .select("*")
     .eq("user_id", userId)
-    .eq("game_review_question_id", gameReviewQuestionId)
+    .eq("game_analysis_mistake_id", gameAnalysisMistakeId)
     .maybeSingle();
 
   if (error) {
-    console.error("user-favorites.repository.findByGameReviewQuestionId error:", error);
+    console.error("user-favorites.repository.findByGameAnalysisMistakeId error:", error);
     return null;
   }
 
@@ -154,27 +154,27 @@ export async function findFavoritedPuzzleIds(
   );
 }
 
-export async function findFavoritedGameReviewQuestionIds(
+export async function findFavoritedGameAnalysisMistakeIds(
   supabase: SupabaseClient,
   userId: string,
-  gameReviewQuestionIds: string[],
+  gameAnalysisMistakeIds: string[],
 ): Promise<Set<string>> {
-  if (gameReviewQuestionIds.length === 0) return new Set();
+  if (gameAnalysisMistakeIds.length === 0) return new Set();
 
   const { data, error } = await supabase
     .from("user_favorites")
-    .select("game_review_question_id")
+    .select("game_analysis_mistake_id")
     .eq("user_id", userId)
-    .in("game_review_question_id", gameReviewQuestionIds);
+    .in("game_analysis_mistake_id", gameAnalysisMistakeIds);
 
   if (error) {
-    console.error("user-favorites.repository.findFavoritedGameReviewQuestionIds error:", error);
+    console.error("user-favorites.repository.findFavoritedGameAnalysisMistakeIds error:", error);
     return new Set();
   }
 
   return new Set(
     (data ?? [])
-      .map((row) => row.game_review_question_id as string | null)
+      .map((row) => row.game_analysis_mistake_id as string | null)
       .filter((id): id is string => id != null),
   );
 }
@@ -186,7 +186,7 @@ export async function create(supabase: SupabaseClient, input: SaveUserFavoriteIn
       user_id: input.userId,
       opening_variant_id: input.openingVariantId ?? null,
       puzzle_id: input.puzzleId ?? null,
-      game_review_question_id: input.gameReviewQuestionId ?? null,
+      game_analysis_mistake_id: input.gameAnalysisMistakeId ?? null,
       is_pinned: input.isPinned ?? false,
       note: input.note ?? null,
     })

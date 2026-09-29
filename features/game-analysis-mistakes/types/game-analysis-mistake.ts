@@ -1,6 +1,6 @@
-export type GameReviewQuestionQuality = "mistake" | "blunder";
+export type GameAnalysisMistakeQuality = "mistake" | "blunder";
 
-export type GameReviewQuestion = {
+export type GameAnalysisMistake = {
   id: string;
   userId: string;
   gameAnalysisId: string | null;
@@ -9,12 +9,12 @@ export type GameReviewQuestion = {
   source: string;
   title: string;
   ply: number;
-  quality: GameReviewQuestionQuality;
+  quality: GameAnalysisMistakeQuality;
   createdAt: string;
   updatedAt: string;
 };
 
-export type SaveGameReviewQuestionInput = {
+export type SaveGameAnalysisMistakeInput = {
   userId: string;
   gameAnalysisId?: string | null;
   moveSequenceId: string;
@@ -22,5 +22,5 @@ export type SaveGameReviewQuestionInput = {
   source: string;
   title: string;
   ply: number;
-  quality: GameReviewQuestionQuality;
+  quality: GameAnalysisMistakeQuality;
 };

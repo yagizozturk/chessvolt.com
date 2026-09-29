@@ -1,5 +1,5 @@
 import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@/api-client/route-handler";
-import { getGameReviewQuestionsByGameId } from "@/features/game-review-question/services/game-review-question.service";
+import { getGameAnalysisMistakesByGameId } from "@/features/game-analysis-mistakes/services/game-analysis-mistake.service";
 import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
 import { analyzeGame } from "@/features/test/services/analyze-game.service";
 import {
@@ -56,7 +56,7 @@ async function handlePOST(req: Request) {
   try {
     const existing = await getGameAnalysis(auth.supabase, auth.user.id, SOURCE, gameId); // Önceden analiz edilmişmi?
     if (existing) {
-      let questions = await getGameReviewQuestionsByGameId(auth.supabase, auth.user.id, gameId);
+      let questions = await getGameAnalysisMistakesByGameId(auth.supabase, auth.user.id, gameId);
       if (questions.length === 0 && pgn) {
         const profile = await getProfileByUserId(auth.supabase, auth.user.id);
         const username = profile?.chesscomUsername?.trim() ?? "";

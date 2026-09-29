@@ -1,4 +1,4 @@
-export const GAME_REVIEW_QUESTION_DESCRIPTION_TEMPLATES = [
+export const GAME_ANALYSIS_MISTAKE_DESCRIPTION_TEMPLATES = [
   "You made a mistake here. Find the move you should have played.",
   "Revisit your mistake and choose a better continuation.",
   "Can you improve on the move you played in this position?",

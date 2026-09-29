@@ -8,7 +8,7 @@ import { FavoritesSortFilter } from "@/features/favorites/components/favorites-s
 import { FavoritesViewFilter } from "@/features/favorites/components/favorites-view-filter";
 import { type FavoritesSort, parseFavoritesSort } from "@/features/favorites/types/favorites-sort";
 import { parseFavoritesView } from "@/features/favorites/types/favorites-view";
-import { UserFavoriteGameReviewQuestions } from "@/features/user-favorites/components/user-favorite-game-review-questions";
+import { UserFavoriteGameAnalysisMistakes } from "@/features/user-favorites/components/user-favorite-game-analysis-mistakes";
 import { UserFavoriteOpeningVariants } from "@/features/user-favorites/components/user-favorite-opening-variants";
 import { UserFavoritePuzzles } from "@/features/user-favorites/components/user-favorite-puzzles";
 import { getUserFavoritesForUserWithDetails } from "@/features/user-favorites/services/user-favorite.service";
@@ -35,9 +35,9 @@ function getFavoriteSearchText(favorite: UserFavoriteWithDetails) {
     favorite.puzzle?.title,
     favorite.puzzle?.source,
     favorite.puzzle?.rating?.toString(),
-    favorite.gameReviewQuestion?.title,
-    favorite.gameReviewQuestion?.source,
-    favorite.gameReviewQuestion?.quality,
+    favorite.gameAnalysisMistake?.title,
+    favorite.gameAnalysisMistake?.source,
+    favorite.gameAnalysisMistake?.quality,
   ]
     .filter((value): value is string => Boolean(value))
     .join(" ")
@@ -128,7 +128,7 @@ export default async function VoltTracker({ searchParams }: { searchParams: Sear
               />
             )}
             {(view === "all" || view === "game-reviews") && (
-              <UserFavoriteGameReviewQuestions
+              <UserFavoriteGameAnalysisMistakes
                 favorites={visibleFavorites}
                 emptyMessage={getCategorySearchEmptyMessage(query, "game review questions")}
                 showEmptyMessage={view === "game-reviews"}

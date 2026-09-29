@@ -29,12 +29,12 @@ export async function getFavoriteByPuzzleId(
   return userFavoriteRepo.findByPuzzleId(supabase, userId, puzzleId);
 }
 
-export async function getFavoriteByGameReviewQuestionId(
+export async function getFavoriteByGameAnalysisMistakeId(
   supabase: SupabaseClient,
   userId: string,
-  gameReviewQuestionId: string,
+  gameAnalysisMistakeId: string,
 ): Promise<UserFavorite | null> {
-  return userFavoriteRepo.findByGameReviewQuestionId(supabase, userId, gameReviewQuestionId);
+  return userFavoriteRepo.findByGameAnalysisMistakeId(supabase, userId, gameAnalysisMistakeId);
 }
 
 export async function getFavoritedOpeningVariantIds(
@@ -53,10 +53,10 @@ export async function getFavoritedPuzzleIds(
   return userFavoriteRepo.findFavoritedPuzzleIds(supabase, userId, puzzleIds);
 }
 
-export async function getFavoritedGameReviewQuestionIds(
+export async function getFavoritedGameAnalysisMistakeIds(
   supabase: SupabaseClient,
   userId: string,
-  gameReviewQuestionIds: string[],
+  gameAnalysisMistakeIds: string[],
 ): Promise<Set<string>> {
-  return userFavoriteRepo.findFavoritedGameReviewQuestionIds(supabase, userId, gameReviewQuestionIds);
+  return userFavoriteRepo.findFavoritedGameAnalysisMistakeIds(supabase, userId, gameAnalysisMistakeIds);
 }

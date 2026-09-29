@@ -1,7 +1,7 @@
 import {
-  type DbGameReviewQuestion,
-  toGameReviewQuestion,
-} from "@/features/game-review-question/mapper/game-review-question.mapper";
+  type DbGameAnalysisMistake,
+  toGameAnalysisMistake,
+} from "@/features/game-analysis-mistakes/mapper/game-analysis-mistake.mapper";
 import {
   toOpeningVariant,
   type DbOpeningVariant,
@@ -17,7 +17,7 @@ export type DbUserFavorite = {
   user_id: string;
   opening_variant_id: string | null;
   puzzle_id: string | null;
-  game_review_question_id: string | null;
+  game_analysis_mistake_id: string | null;
   is_pinned: boolean;
   note: string | null;
   created_at: string;
@@ -29,14 +29,14 @@ type DbGameAnalysisEmbed = {
   };
 } | null;
 
-export type DbGameReviewQuestionWithAnalysis = DbGameReviewQuestion & {
+export type DbGameAnalysisMistakeWithAnalysis = DbGameAnalysisMistake & {
   game_analyses?: DbGameAnalysisEmbed;
 };
 
 export type DbUserFavoriteWithDetails = DbUserFavorite & {
   opening_variants: DbOpeningVariant | null;
   puzzles: DbPuzzle | null;
-  game_review_questions: DbGameReviewQuestionWithAnalysis | null;
+  game_analysis_mistakes: DbGameAnalysisMistakeWithAnalysis | null;
 };
 
 function fenAtPly(analysis: DbGameAnalysisEmbed, ply: number): string | null {
@@ -50,7 +50,7 @@ export function toUserFavorite(db: DbUserFavorite): UserFavorite {
     userId: db.user_id,
     openingVariantId: db.opening_variant_id,
     puzzleId: db.puzzle_id,
-    gameReviewQuestionId: db.game_review_question_id,
+    gameAnalysisMistakeId: db.game_analysis_mistake_id,
     isPinned: db.is_pinned,
     note: db.note,
     createdAt: db.created_at,
@@ -63,18 +63,18 @@ export function toUserFavoriteWithDetails(
   const row = toUserFavorite(db);
   const openingVariant = db.opening_variants ? toOpeningVariant(db.opening_variants) : null;
   const puzzle = db.puzzles ? toPuzzle(db.puzzles) : null;
-  const gameReviewQuestion = db.game_review_questions ? toGameReviewQuestion(db.game_review_questions) : null;
-  const positionFen = gameReviewQuestion
-    ? fenAtPly(db.game_review_questions?.game_analyses ?? null, gameReviewQuestion.ply)
+  const gameAnalysisMistake = db.game_analysis_mistakes ? toGameAnalysisMistake(db.game_analysis_mistakes) : null;
+  const positionFen = gameAnalysisMistake
+    ? fenAtPly(db.game_analysis_mistakes?.game_analyses ?? null, gameAnalysisMistake.ply)
     : null;
 
-  if (!openingVariant && !puzzle && !gameReviewQuestion) return null;
+  if (!openingVariant && !puzzle && !gameAnalysisMistake) return null;
 
   return {
     ...row,
     openingVariant,
     puzzle,
-    gameReviewQuestion,
+    gameAnalysisMistake,
     positionFen,
   };
 }

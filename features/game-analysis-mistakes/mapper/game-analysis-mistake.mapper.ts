@@ -1,9 +1,9 @@
 import type {
-  GameReviewQuestion,
-  GameReviewQuestionQuality,
-} from "@/features/game-review-question/types/game-review-question";
+  GameAnalysisMistake,
+  GameAnalysisMistakeQuality,
+} from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 
-export type DbGameReviewQuestion = {
+export type DbGameAnalysisMistake = {
   id: string;
   user_id: string;
   game_analysis_id: string | null;
@@ -17,7 +17,7 @@ export type DbGameReviewQuestion = {
   updated_at: string;
 };
 
-export function toGameReviewQuestion(db: DbGameReviewQuestion): GameReviewQuestion {
+export function toGameAnalysisMistake(db: DbGameAnalysisMistake): GameAnalysisMistake {
   return {
     id: db.id,
     userId: db.user_id,
@@ -27,7 +27,7 @@ export function toGameReviewQuestion(db: DbGameReviewQuestion): GameReviewQuesti
     source: db.source,
     title: db.title,
     ply: db.ply,
-    quality: db.quality as GameReviewQuestionQuality,
+    quality: db.quality as GameAnalysisMistakeQuality,
     createdAt: db.created_at,
     updatedAt: db.updated_at,
   };

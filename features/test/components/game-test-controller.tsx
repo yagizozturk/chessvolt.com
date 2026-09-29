@@ -13,8 +13,8 @@ import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { VoltCoach } from "@/components/volt-coach/volt-coach";
-import { GameReviewQuestionStepper } from "@/features/test/components/game-review-question-stepper";
-import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
+import { GameAnalysisMistakeStepper } from "@/features/test/components/game-analysis-mistake-stepper";
+import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 import { BoardPlayerName } from "@/features/test/components/board-player-name";
 import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import type { ChesscomRealGame } from "@/features/test/types/chesscom-real-game";
@@ -41,7 +41,7 @@ type GameTestControllerProps = {
 };
 
 type PlayableQuestion = {
-  question: GameReviewQuestion;
+  question: GameAnalysisMistake;
   moment: CriticalMoment;
 };
 
@@ -136,7 +136,7 @@ export default function GameTestController({ analysis, game, initialQuestionId }
     });
   }
 
-  function handleSelectQuestion(question: GameReviewQuestion) {
+  function handleSelectQuestion(question: GameAnalysisMistake) {
     showQuestion(question.id);
   }
 
@@ -279,7 +279,7 @@ export default function GameTestController({ analysis, game, initialQuestionId }
             <div className="flex items-center gap-2">
               {active ? (
                 <FavoriteButton
-                  gameReviewQuestionId={active.question.id}
+                  gameAnalysisMistakeId={active.question.id}
                   isFavorited={isActiveQuestionFavorited}
                   onFavoritedChange={(favorited) => handleQuestionFavoritedChange(active.question.id, favorited)}
                 />
@@ -306,7 +306,7 @@ export default function GameTestController({ analysis, game, initialQuestionId }
             </div>
           ) : null}
 
-          <GameReviewQuestionStepper
+          <GameAnalysisMistakeStepper
             questions={questions}
             originalMoveByPly={originalMoveByPly}
             activeQuestionId={active?.question.id ?? null}
