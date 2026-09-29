@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { requestGameAnalysis, requestLocalGameAnalysis } from "@/features/test/api/analyze-game";
+import GameTestController from "@/features/test/components/game-test-controller";
 import { useChesscomGames } from "@/features/test/hooks/use-chesscom-games";
 import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
 import { analyzePgnWithStockfish } from "@/features/test/utilities/analyze-pgn-with-stockfish";
@@ -21,7 +21,6 @@ export default function TestGamePage() {
   const [analysisEngine, setAnalysisEngine] = useState<"local" | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const localAbortRef = useRef<AbortController | null>(null);
-  const boardRef = useRef<VoltBoardHandle>(null);
 
   // ==========================================================================================
   // Mevcutta analiz yapılmışsa Saved game analysisi çeker.
@@ -126,6 +125,16 @@ export default function TestGamePage() {
     );
   }
 
+  if (analysis) {
+    return (
+      <GameTestController
+        key={analysis.questions.map((question) => question.id).join("|")}
+        analysis={analysis}
+        game={game}
+      />
+    );
+  }
+
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
@@ -145,39 +154,6 @@ export default function TestGamePage() {
           </div>
         ) : null}
         {status ? <p>{status}</p> : null}
-        {analysis ? (
-          <ul>
-            {analysis.questions.map((question) => (
-              <li key={question.id}>
-                {question.title} · ply {question.ply} · {question.quality}
-              </li>
-            ))}
-          </ul>
-        ) : null}
-
-        {analysis ? (
-          <ul>
-            {analysis.criticalMoments.map((move) => (
-              <li key={move.ply}>{move.fen}</li>
-            ))}
-          </ul>
-        ) : null}
-        <div>
-          <div
-            key={params.id}
-            className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]"
-            data-tour="board"
-          >
-            <VoltBoard
-              ref={boardRef}
-              sourceId={params.id}
-              initialFen={analysis?.criticalMoments[0].fen}
-              onCheckMove={() => true}
-              onSuccessMovePlayed={() => {}}
-              onNextMoveRequest={() => undefined}
-            />
-          </div>
-        </div>
       </div>
     </div>
   );

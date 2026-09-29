@@ -1,0 +1,272 @@
+"use client";
+
+import Lottie from "lottie-react";
+import { ChevronLeft, Eye } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+
+import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
+import { Button } from "@/components/ui/button";
+import { Confetti } from "@/components/ui/confetti";
+import { Progress } from "@/components/ui/progress";
+import { Spinner } from "@/components/ui/spinner";
+import { VoltCoach } from "@/components/volt-coach/volt-coach";
+import { GameReviewQuestionStepper } from "@/features/game-review/components/game-review-question-stepper";
+import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
+import { BoardPlayerName } from "@/features/test/components/board-player-name";
+import type { ChesscomRealGame } from "@/features/test/types/chesscom-real-game";
+import type { CriticalMoment } from "@/features/test/types/critical-moment";
+import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { getTurnLabel } from "@/lib/chess/getTurnLabel";
+import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+import animationData from "@/public/images/animations/animation-rocjet-launch.json";
+
+const MAX_HINT_COUNT = 2;
+const NEXT_QUESTION_DELAY_MS = 800;
+
+type GameTestControllerProps = {
+  analysis: GameAnalysisWithMistakes;
+  game?: ChesscomRealGame;
+};
+
+type PlayableQuestion = {
+  question: GameReviewQuestion;
+  moment: CriticalMoment;
+};
+
+function playableQuestions(analysis: GameAnalysisWithMistakes): PlayableQuestion[] {
+  const momentByPly = new Map(analysis.criticalMoments.map((moment) => [moment.ply, moment]));
+
+  return analysis.questions.flatMap((question) => {
+    const moment = momentByPly.get(question.ply);
+    if (!moment?.bestUci.trim()) return [];
+    return [{ question, moment }];
+  });
+}
+
+function ratingLabel(rating: number | undefined): string | null {
+  return rating == null ? null : String(rating);
+}
+
+export default function GameTestController({ analysis, game }: GameTestControllerProps) {
+  const router = useRouter();
+  const boardRef = useRef<VoltBoardHandle>(null);
+  const isMobile = useIsMobile();
+  const [isPending, startTransition] = useTransition();
+  const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const solvedRef = useRef(false);
+
+  const playable = useMemo(() => playableQuestions(analysis), [analysis]);
+  const questions = useMemo(() => playable.map((item) => item.question), [playable]);
+  const originalMoveByPly = useMemo(() => {
+    return Object.fromEntries(analysis.criticalMoments.map((moment) => [moment.ply, moment.playedSan]));
+  }, [analysis.criticalMoments]);
+
+  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(questions[0]?.id ?? null);
+  const [completedIds, setCompletedIds] = useState<Set<string>>(() => new Set());
+  const [hintCount, setHintCount] = useState(0);
+  const [solved, setSolved] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [boardKey, setBoardKey] = useState(0);
+
+  const active = playable.find((item) => item.question.id === activeQuestionId) ?? null;
+  const youAreBlack = playable[0]?.moment.turn === "b";
+  const bottomPlayer = youAreBlack ? game?.black : game?.white;
+  const topPlayer = youAreBlack ? game?.white : game?.black;
+  const playSessionId = active ? `${active.question.id}:${boardKey}` : "game-test";
+  const playedMove = active ? (originalMoveByPly[active.question.ply]?.trim() ?? "") : "";
+  const coachTitle = active ? getTurnLabel(active.moment.fen) : "Game review";
+  const coachMessage = active
+    ? playedMove
+      ? `You played ${playedMove} in the game. Find the best move to play here.`
+      : "Solve the original game position on the board."
+    : "Pick a review question to solve it on the board.";
+  const progressValue = questions.length > 0 ? Math.round((completedIds.size / questions.length) * 100) : 0;
+
+  function clearAdvance() {
+    if (advanceTimeoutRef.current == null) return;
+    clearTimeout(advanceTimeoutRef.current);
+    advanceTimeoutRef.current = null;
+  }
+
+  function showQuestion(questionId: string) {
+    clearAdvance();
+    solvedRef.current = false;
+    setSolved(false);
+    setHintCount(0);
+    setActiveQuestionId(questionId);
+    setBoardKey((key) => key + 1);
+  }
+
+  useEffect(() => {
+    return () => clearAdvance();
+  }, []);
+
+  function handleBack() {
+    startTransition(() => {
+      router.push("/test");
+    });
+  }
+
+  function handleSelectQuestion(question: GameReviewQuestion) {
+    showQuestion(question.id);
+  }
+
+  function handleCheckMove(move: MoveAttemptPayload) {
+    if (!active || solvedRef.current) return false;
+    return move.uci === active.moment.bestUci;
+  }
+
+  function handleSuccess() {
+    if (!active || solvedRef.current) return;
+
+    solvedRef.current = true;
+    setSolved(true);
+
+    const nextCompleted = new Set(completedIds);
+    nextCompleted.add(active.question.id);
+    setCompletedIds(nextCompleted);
+
+    const activeIndex = playable.indexOf(active);
+    const later = playable.slice(activeIndex + 1);
+    const earlier = playable.slice(0, activeIndex);
+    const remaining = [...later, ...earlier].filter((item) => !nextCompleted.has(item.question.id));
+
+    if (remaining.length === 0) {
+      setSuccessOpen(true);
+      return;
+    }
+
+    const nextQuestionId = remaining[0].question.id;
+    clearAdvance();
+    advanceTimeoutRef.current = setTimeout(() => {
+      advanceTimeoutRef.current = null;
+      showQuestion(nextQuestionId);
+    }, NEXT_QUESTION_DELAY_MS);
+  }
+
+  function handleHint() {
+    if (!active || solved || hintCount >= MAX_HINT_COUNT) return;
+    const nextHintCount = hintCount + 1;
+    setHintCount(nextHintCount);
+    boardRef.current?.showHint(nextHintCount);
+  }
+
+  return (
+    <div className="page-container">
+      <SolveSuccessDialog
+        open={successOpen}
+        onOpenChange={setSuccessOpen}
+        title="Game review complete!"
+        destinationPath="/test"
+        buttonLabel="Back to analysis"
+      />
+
+      {successOpen ? (
+        <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
+      ) : null}
+
+      <div className="page-container-controller-layout">
+        <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-2 self-start md:flex-[3]">
+          <div className="relative aspect-square w-full">
+            {active ? (
+              <VoltBoard
+                ref={boardRef}
+                key={boardKey}
+                sourceId={playSessionId}
+                initialFen={active.moment.fen}
+                coordinates={!isMobile}
+                playerOrientation={youAreBlack ? "black" : "white"}
+                drawHintMove={active.moment.bestUci}
+                playedMoveArrow={active.moment.playedUci}
+                onCheckMove={handleCheckMove}
+                onSuccessMovePlayed={handleSuccess}
+                onNextMoveRequest={() => undefined}
+              />
+            ) : null}
+          </div>
+          <BoardPlayerName
+            name={topPlayer?.username ?? null}
+            elo={ratingLabel(topPlayer?.rating)}
+            color={youAreBlack ? "white" : "black"}
+            className="absolute top-[-30px] left-0"
+          />
+          <BoardPlayerName
+            name={bottomPlayer?.username ?? null}
+            elo={ratingLabel(bottomPlayer?.rating)}
+            color={youAreBlack ? "black" : "white"}
+            className="absolute bottom-[-40px] left-0"
+          />
+        </div>
+
+        <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
+          <div className="flex justify-between">
+            <div>
+              <Button variant="voltIcon" onClick={handleBack} disabled={isPending} aria-label="Back">
+                {isPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
+              </Button>
+            </div>
+            <div className="flex items-center gap-2 text-xl font-bold">
+              <Image
+                src="/images/icons/icon-blunder-double.png"
+                alt=""
+                aria-hidden
+                width={30}
+                height={30}
+                className="size-7 shrink-0"
+              />
+              Play Your Missings
+            </div>
+            <div className="size-9" />
+          </div>
+
+          <div className="card-border-bottom-shadow p-4">
+            <VoltCoach title={coachTitle} message={coachMessage} ttsKey={playSessionId} />
+          </div>
+
+          {questions.length > 0 ? (
+            <div className="flex items-center">
+              <Progress
+                value={progressValue}
+                className="h-4 flex-1 rounded-r-none"
+                aria-label="Solved questions progress"
+              />
+              <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
+                <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
+              </div>
+            </div>
+          ) : null}
+
+          <GameReviewQuestionStepper
+            questions={questions}
+            originalMoveByPly={originalMoveByPly}
+            activeQuestionId={active?.question.id ?? null}
+            completedQuestionIds={completedIds}
+            isLoading={false}
+            error={null}
+            hasResult
+            onSelectQuestion={handleSelectQuestion}
+          />
+
+          {active && !solved ? (
+            <div className="mt-auto flex gap-2">
+              <Button
+                type="button"
+                variant="voltGreen"
+                onClick={handleHint}
+                disabled={hintCount >= MAX_HINT_COUNT}
+                className="min-w-0 flex-1"
+              >
+                <Eye data-icon="inline-start" />
+                Hint
+              </Button>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
