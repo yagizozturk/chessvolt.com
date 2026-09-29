@@ -4,13 +4,10 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  requestGameAnalysis,
-  requestLocalGameAnalysis,
-  requestOutsourceGameAnalysis,
-} from "@/features/test/api/analyze-game";
+import { requestGameAnalysis, requestLocalGameAnalysis } from "@/features/test/api/analyze-game";
 import { useChesscomGames } from "@/features/test/hooks/use-chesscom-games";
 import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
 import { analyzePgnWithStockfish } from "@/features/test/utilities/analyze-pgn-with-stockfish";
@@ -21,10 +18,14 @@ export default function TestGamePage() {
   const game = findGame(params.id);
   const [analysis, setAnalysis] = useState<GameAnalysisWithMistakes | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [analysisEngine, setAnalysisEngine] = useState<"remote" | "local" | null>(null);
+  const [analysisEngine, setAnalysisEngine] = useState<"local" | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const localAbortRef = useRef<AbortController | null>(null);
+  const boardRef = useRef<VoltBoardHandle>(null);
 
+  // ==========================================================================================
+  // Mevcutta analiz yapılmışsa Saved game analysisi çeker.
+  // ==========================================================================================
   useEffect(() => {
     let cancelled = false; // Eğer sayfada sonuç gelmeden sayfadan çıkarsa oyuncu(unmount) bu durumda request devam etmez. setAnalysis kısmına boş yere girmez.
 
@@ -50,38 +51,18 @@ export default function TestGamePage() {
     };
   }, [params.id]);
 
+  // ==========================================================================================
+  // Stockfish analizini iptal etmek için sayfadan çıkıldığında.
+  // ==========================================================================================
   useEffect(() => {
     return () => {
       localAbortRef.current?.abort();
     };
   }, []);
 
-  // ===================================================================================================
-  // Analiz buttonuna basınca çalışır.
-  // analyze metodu chess-api.com a gider ve analiz ettirir oyunu.
-  // ===================================================================================================
-  async function analyze() {
-    if (!game || analysisEngine || analysis) return;
-
-    setAnalysisEngine("remote");
-    setStatus(null);
-    try {
-      const response = await requestOutsourceGameAnalysis(game.pgn, game.uuid);
-      if (!response.success || !response.data) {
-        setStatus("Analyze failed");
-        return;
-      }
-
-      setAnalysis(response.data);
-      setStatus(`Saved ${response.data.moveCount} moves and ${response.data.questions.length} questions`);
-    } catch (error) {
-      const message = error && typeof error === "object" && "error" in error ? String(error.error) : "Analyze failed";
-      setStatus(message);
-    } finally {
-      setAnalysisEngine(null);
-    }
-  }
-
+  // ==========================================================================================
+  // Stockfish analizini lokalde oyuncunun makinasında yapmak için.
+  // ==========================================================================================
   async function analyzeLocally() {
     if (!game || analysisEngine) return;
 
@@ -115,7 +96,8 @@ export default function TestGamePage() {
         setStatus(error.message || "Local analysis failed");
         return;
       }
-      const message = error && typeof error === "object" && "error" in error ? String(error.error) : "Local analysis failed";
+      const message =
+        error && typeof error === "object" && "error" in error ? String(error.error) : "Local analysis failed";
       setStatus(message);
     } finally {
       if (localAbortRef.current === controller) localAbortRef.current = null;
@@ -151,12 +133,6 @@ export default function TestGamePage() {
         <h1>{game ? `${game.white.username} vs ${game.black.username}` : "Saved review"}</h1>
         {game ? (
           <div className="flex flex-wrap gap-3">
-            {analysis ? null : (
-              <Button type="button" variant="volt" disabled={analysisEngine !== null} onClick={() => void analyze()}>
-                {analysisEngine === "remote" ? <Spinner data-icon="inline-start" /> : null}
-                {analysisEngine === "remote" ? "Analyzing…" : "Analyze"}
-              </Button>
-            )}
             <Button
               type="button"
               variant="voltMuted"
@@ -178,6 +154,30 @@ export default function TestGamePage() {
             ))}
           </ul>
         ) : null}
+
+        {analysis ? (
+          <ul>
+            {analysis.criticalMoments.map((move) => (
+              <li key={move.ply}>{move.fen}</li>
+            ))}
+          </ul>
+        ) : null}
+        <div>
+          <div
+            key={params.id}
+            className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]"
+            data-tour="board"
+          >
+            <VoltBoard
+              ref={boardRef}
+              sourceId={params.id}
+              initialFen={analysis?.criticalMoments[0].fen}
+              onCheckMove={() => true}
+              onSuccessMovePlayed={() => {}}
+              onNextMoveRequest={() => undefined}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

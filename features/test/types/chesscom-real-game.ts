@@ -5,6 +5,7 @@ export type ChesscomRealGame = {
   fen: string;
   end_time: number;
   time_class: string;
-  white: { username: string };
-  black: { username: string };
+  rated?: boolean;
+  white: { username: string; rating?: number; result?: string };
+  black: { username: string; rating?: number; result?: string };
 };

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -8,13 +7,19 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { requestChesscomGames } from "@/features/test/api/chesscom-games";
+import { UserPlayedGamesBoard } from "@/features/test/components/user-played-games-board";
 import { useChesscomGames } from "@/features/test/hooks/use-chesscom-games";
+import { normalizeChesscomGame } from "@/features/test/utilities/normalize-chesscom-game";
 
 export default function TestPage() {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { games, setGames } = useChesscomGames();
 
+  // ==========================================================================================
+  // Load buttonuna basınca çalışır.
+  // requestChesscomGames metodu chess.com api ye gider ve oyunları çeker.
+  // ==========================================================================================
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmed = username.trim();
@@ -57,15 +62,15 @@ export default function TestPage() {
           </FieldGroup>
         </form>
         {games.length > 0 ? (
-          <ul className="flex list-disc flex-col gap-1 pl-5">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {games.map((game) => (
-              <li key={game.uuid}>
-                <Link href={`/test/${game.uuid}`}>
-                  {game.uuid} - {game.white.username} vs {game.black.username} · {game.time_class}
-                </Link>
-              </li>
+              <UserPlayedGamesBoard
+                key={game.uuid}
+                game={normalizeChesscomGame(game)}
+                focusUsername={username.trim()}
+              />
             ))}
-          </ul>
+          </div>
         ) : null}
       </div>
     </div>
