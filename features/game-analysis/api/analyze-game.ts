@@ -5,12 +5,12 @@ import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/ga
 
 export async function requestGameAnalysis(gameId: string) {
   return apiClient.get<ApiResponse<GameAnalysisWithMistakes | null>>(
-    `/test/analyze-game?gameId=${encodeURIComponent(gameId)}`,
+    `/game-analysis/analyze-game?gameId=${encodeURIComponent(gameId)}`,
   );
 }
 
 export async function requestLocalGameAnalysis(pgn: string, gameId: string, analysis: GameAnalysisResponseData) {
-  return apiClient.post<ApiResponse<GameAnalysisWithMistakes>>("/test/analyze-game/stockfish", {
+  return apiClient.post<ApiResponse<GameAnalysisWithMistakes>>("/game-analysis/analyze-game/stockfish", {
     pgn,
     gameId,
     analysis,
