@@ -1,9 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { type DbGameAnalysis, toGameAnalysis } from "@/features/test/mapper/game-analysis.mapper";
-import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
-import type { GameAnalysis } from "@/features/test/types/game-analysis";
-import type { CreateGameAnalysisData } from "@/features/test/types/create-game-analysis-data";
+import { type DbGameAnalysis, toGameAnalysis } from "@/features/game-analysis/mapper/game-analysis.mapper";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
+import type { GameAnalysis } from "@/features/game-analysis/types/game-analysis";
+import type { CreateGameAnalysisData } from "@/features/game-analysis/types/create-game-analysis-data";
 
 export async function findByUserSourceAndGameId(
   supabase: SupabaseClient,
@@ -20,7 +20,7 @@ export async function findByUserSourceAndGameId(
     .maybeSingle();
 
   if (error || !data) {
-    if (error) console.error("test game-analysis.repository.findByUserSourceAndGameId error:", error);
+    if (error) console.error("game-analysis.repository.findByUserSourceAndGameId error:", error);
     return null;
   }
 
@@ -43,7 +43,7 @@ export async function upsert(supabase: SupabaseClient, input: CreateGameAnalysis
     .single();
 
   if (error || !data) {
-    console.error("test game-analysis.repository.upsert error:", error);
+    console.error("game-analysis.repository.upsert error:", error);
     return null;
   }
 
@@ -54,7 +54,7 @@ export async function remove(supabase: SupabaseClient, id: string): Promise<bool
   const { error } = await supabase.from("game_analyses").delete().eq("id", id);
 
   if (error) {
-    console.error("test game-analysis.repository.remove error:", error);
+    console.error("game-analysis.repository.remove error:", error);
     return false;
   }
 

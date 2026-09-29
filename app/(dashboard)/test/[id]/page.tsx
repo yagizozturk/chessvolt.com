@@ -6,11 +6,11 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { requestGameAnalysis, requestLocalGameAnalysis } from "@/features/test/api/analyze-game";
-import GameTestController from "@/features/test/components/game-test-controller";
-import { useChesscomGames } from "@/features/test/hooks/use-chesscom-games";
-import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
-import { analyzePgnWithStockfish } from "@/features/test/utilities/analyze-pgn-with-stockfish";
+import { requestGameAnalysis, requestLocalGameAnalysis } from "@/features/game-analysis/api/analyze-game";
+import GameAnalysisController from "@/features/game-analysis/components/game-analysis-controller";
+import { useChesscomGames } from "@/features/game-analysis/hooks/use-chesscom-games";
+import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
+import { analyzePgnWithStockfish } from "@/features/game-analysis/utilities/analyze-pgn-with-stockfish";
 
 export default function TestGamePage() {
   const params = useParams<{ id: string }>();
@@ -128,7 +128,7 @@ export default function TestGamePage() {
 
   if (analysis) {
     return (
-      <GameTestController
+      <GameAnalysisController
         key={`${analysis.questions.map((question) => question.id).join("|")}:${initialQuestionId ?? ""}`}
         analysis={analysis}
         game={game}

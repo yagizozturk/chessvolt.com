@@ -1,4 +1,4 @@
-import type { ImportedGame, ImportedGamePlayer } from "@/features/test/types/imported-game";
+import type { ImportedGame, ImportedGamePlayer } from "@/features/game-analysis/types/imported-game";
 
 export function importedGameFocus(game: ImportedGame, focusUsername: string) {
   const focus = focusUsername.trim().toLowerCase();

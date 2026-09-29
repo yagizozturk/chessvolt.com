@@ -2,7 +2,7 @@
 
 import { useContext } from "react";
 
-import { ChesscomGamesContext } from "@/features/test/components/chesscom-games-provider";
+import { ChesscomGamesContext } from "@/features/game-analysis/components/chesscom-games-provider";
 
 // ====================================================================================================
 // Provides the ChesscomGamesContext value to the component by this hook.

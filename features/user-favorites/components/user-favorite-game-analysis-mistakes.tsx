@@ -4,7 +4,7 @@ import Link from "next/link";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { Badge } from "@/components/ui/badge";
-import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 import { GAME_ANALYSIS_MISTAKE_DESCRIPTION_TEMPLATES } from "@/features/game-analysis-mistakes/constants/game-analysis-mistake-description.constants";
 import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 import type { UserFavoriteWithDetails } from "@/features/user-favorites/types/user-favorite";

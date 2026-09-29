@@ -1,6 +1,6 @@
 "use server";
 
-import type { ChesscomRealGame } from "@/features/test/types/chesscom-real-game";
+import type { ChesscomRealGame } from "@/features/game-analysis/types/chesscom-real-game";
 
 const CHESS_COM_GAMES_URL = "https://api.chess.com/pub/player";
 const CHESS_COM_USER_AGENT = "ChessVolt/1.0 (contact: admin@chessvolt.com)";

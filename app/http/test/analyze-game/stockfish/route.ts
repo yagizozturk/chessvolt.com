@@ -1,12 +1,12 @@
 import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@/api-client/route-handler";
 import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
-import { listFavoritedQuestionIds } from "@/features/test/services/get-game-analysis-with-mistakes.service";
-import { saveGameAnalysis } from "@/features/test/services/save-game-analysis.service";
-import { saveReviewQuestions } from "@/features/test/services/save-review-questions.service";
-import type { CriticalMoment } from "@/features/test/types/critical-moment";
-import type { GameAnalysisResponseData } from "@/features/test/types/game-analysis-response-data";
-import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
-import { turnPgnIntoMoves } from "@/features/test/utilities/turn-pgn-into-moves";
+import { listFavoritedQuestionIds } from "@/features/game-analysis/services/get-game-analysis-with-mistakes.service";
+import { saveGameAnalysis } from "@/features/game-analysis/services/save-game-analysis.service";
+import { saveReviewQuestions } from "@/features/game-analysis/services/save-review-questions.service";
+import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
+import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
+import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
+import { turnPgnIntoMoves } from "@/features/game-analysis/utilities/turn-pgn-into-moves";
 
 const SOURCE = "chesscom" as const;
 

@@ -1,4 +1,4 @@
-import type { CriticalMoment } from "@/features/test/types/critical-moment";
+import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 
 export type GameAnalysisResponseData = {
   moveCount: number;

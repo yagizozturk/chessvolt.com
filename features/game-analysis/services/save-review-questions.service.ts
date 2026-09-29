@@ -12,9 +12,9 @@ import type {
   SaveGameAnalysisMistakeInput,
 } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 import { createMoveSequences } from "@/features/move-sequence/services/move-sequence.service";
-import type { CriticalMoment } from "@/features/test/types/critical-moment";
-import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
-import { playerColorFromPgn } from "@/features/test/utilities/player-color-from-pgn";
+import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
+import { playerColorFromPgn } from "@/features/game-analysis/utilities/player-color-from-pgn";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 function isQuestionQuality(quality: CriticalMoment["quality"]): quality is GameAnalysisMistakeQuality {

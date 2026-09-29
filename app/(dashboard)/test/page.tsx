@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { requestChesscomGames } from "@/features/test/api/chesscom-games";
-import { UserPlayedGamesBoard } from "@/features/test/components/user-played-games-board";
-import { useChesscomGames } from "@/features/test/hooks/use-chesscom-games";
-import { normalizeChesscomGame } from "@/features/test/utilities/normalize-chesscom-game";
+import { requestChesscomGames } from "@/features/game-analysis/api/chesscom-games";
+import { UserPlayedGamesBoard } from "@/features/game-analysis/components/user-played-games-board";
+import { useChesscomGames } from "@/features/game-analysis/hooks/use-chesscom-games";
+import { normalizeChesscomGame } from "@/features/game-analysis/utilities/normalize-chesscom-game";
 
 export default function TestPage() {
   const [username, setUsername] = useState("");

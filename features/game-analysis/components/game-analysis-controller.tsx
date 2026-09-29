@@ -13,13 +13,13 @@ import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { VoltCoach } from "@/components/volt-coach/volt-coach";
-import { GameAnalysisMistakeStepper } from "@/features/test/components/game-analysis-mistake-stepper";
+import { GameAnalysisMistakeStepper } from "@/features/game-analysis/components/game-analysis-mistake-stepper";
 import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
-import { BoardPlayerName } from "@/features/test/components/board-player-name";
+import { BoardPlayerName } from "@/features/game-analysis/components/board-player-name";
 import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
-import type { ChesscomRealGame } from "@/features/test/types/chesscom-real-game";
-import type { CriticalMoment } from "@/features/test/types/critical-moment";
-import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
+import type { ChesscomRealGame } from "@/features/game-analysis/types/chesscom-real-game";
+import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
+import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
   createAttemptPayload,
@@ -34,7 +34,7 @@ import animationData from "@/public/images/animations/animation-rocjet-launch.js
 const MAX_HINT_COUNT = 2;
 const NEXT_QUESTION_DELAY_MS = 800;
 
-type GameTestControllerProps = {
+type GameAnalysisControllerProps = {
   analysis: GameAnalysisWithMistakes;
   game?: ChesscomRealGame;
   initialQuestionId?: string | null;
@@ -59,7 +59,7 @@ function ratingLabel(rating: number | undefined): string | null {
   return rating == null ? null : String(rating);
 }
 
-export default function GameTestController({ analysis, game, initialQuestionId }: GameTestControllerProps) {
+export default function GameAnalysisController({ analysis, game, initialQuestionId }: GameAnalysisControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const isMobile = useIsMobile();
@@ -99,7 +99,7 @@ export default function GameTestController({ analysis, game, initialQuestionId }
   const youAreBlack = playable[0]?.moment.turn === "b";
   const bottomPlayer = youAreBlack ? game?.black : game?.white;
   const topPlayer = youAreBlack ? game?.white : game?.black;
-  const playSessionId = active ? `${active.question.id}:${boardKey}` : "game-test";
+  const playSessionId = active ? `${active.question.id}:${boardKey}` : "game-analysis";
   const playedMove = active ? (originalMoveByPly[active.question.ply]?.trim() ?? "") : "";
   const coachTitle = active ? getTurnLabel(active.moment.fen) : "Game review";
   const coachMessage = active

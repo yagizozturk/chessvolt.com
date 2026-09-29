@@ -1,6 +1,6 @@
-import type { CriticalMoment } from "@/features/test/types/critical-moment";
-import type { GameAnalysisResponseData } from "@/features/test/types/game-analysis-response-data";
-import { turnPgnIntoMoves } from "@/features/test/utilities/turn-pgn-into-moves";
+import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
+import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
+import { turnPgnIntoMoves } from "@/features/game-analysis/utilities/turn-pgn-into-moves";
 import { analyzeFens } from "@/lib/chess-api/client";
 import { toSideToMoveCp } from "@/lib/chess-api/normalize";
 import { getMoveQuality } from "@/lib/utils/getMoveQuality";

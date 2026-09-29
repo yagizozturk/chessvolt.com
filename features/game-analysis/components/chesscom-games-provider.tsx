@@ -2,8 +2,8 @@
 
 import { type ReactNode, createContext, useMemo, useState } from "react";
 
-import type { ChesscomGamesContextValue } from "@/features/test/types/chesscom-games-context";
-import type { ChesscomRealGame } from "@/features/test/types/chesscom-real-game";
+import type { ChesscomGamesContextValue } from "@/features/game-analysis/types/chesscom-games-context";
+import type { ChesscomRealGame } from "@/features/game-analysis/types/chesscom-real-game";
 
 export const ChesscomGamesContext = createContext<ChesscomGamesContextValue | null>(null);
 

@@ -1,5 +1,5 @@
-import type { GameAnalysisResponseData } from "@/features/test/types/game-analysis-response-data";
-import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
+import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 
 // Saved in game_analyses after chess-api analyzes a game.
 // source is chesscom or lichess. gameId is the platform game id. data is the analysis result.

@@ -1,8 +1,8 @@
 import { Chess } from "chess.js";
 
-import type { CriticalMoment } from "@/features/test/types/critical-moment";
-import type { GameAnalysisResponseData } from "@/features/test/types/game-analysis-response-data";
-import { turnPgnIntoMoves } from "@/features/test/utilities/turn-pgn-into-moves";
+import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
+import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
+import { turnPgnIntoMoves } from "@/features/game-analysis/utilities/turn-pgn-into-moves";
 import { analyzeTerminalFen, getTurnFromFen, mateToWhiteCp, toSideToMoveCp } from "@/lib/chess-api/normalize";
 import { parseEngine } from "@/lib/engine/parse-engine";
 import type { EngineInfo } from "@/lib/shared/types/engine-info";

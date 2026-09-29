@@ -1,14 +1,14 @@
 import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@/api-client/route-handler";
 import { getGameAnalysisMistakesByGameId } from "@/features/game-analysis-mistakes/services/game-analysis-mistake.service";
 import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
-import { analyzeGame } from "@/features/test/services/analyze-game.service";
+import { analyzeGame } from "@/features/game-analysis/services/analyze-game.service";
 import {
   getGameAnalysisWithMistakes,
   listFavoritedQuestionIds,
-} from "@/features/test/services/get-game-analysis-with-mistakes.service";
-import { getGameAnalysis, saveGameAnalysis } from "@/features/test/services/save-game-analysis.service";
-import { saveReviewQuestions } from "@/features/test/services/save-review-questions.service";
-import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
+} from "@/features/game-analysis/services/get-game-analysis-with-mistakes.service";
+import { getGameAnalysis, saveGameAnalysis } from "@/features/game-analysis/services/save-game-analysis.service";
+import { saveReviewQuestions } from "@/features/game-analysis/services/save-review-questions.service";
+import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import { ChessApiError } from "@/lib/chess-api/errors";
 
 export const maxDuration = 300;

@@ -1,7 +1,7 @@
 import { apiClient } from "@/api-client/client";
 import type { ApiResponse } from "@/api-client/route-handler";
-import type { GameAnalysisResponseData } from "@/features/test/types/game-analysis-response-data";
-import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
+import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
+import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 
 export async function requestGameAnalysis(gameId: string) {
   return apiClient.get<ApiResponse<GameAnalysisWithMistakes | null>>(

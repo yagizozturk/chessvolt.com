@@ -2,9 +2,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { getGameAnalysisMistakesByGameId } from "@/features/game-analysis-mistakes/services/game-analysis-mistake.service";
 import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
-import { getGameAnalysis } from "@/features/test/services/save-game-analysis.service";
-import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
-import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
+import { getGameAnalysis } from "@/features/game-analysis/services/save-game-analysis.service";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
+import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import { getFavoritedGameAnalysisMistakeIds } from "@/features/user-favorites/services/user-favorite.service";
 
 export async function listFavoritedQuestionIds(

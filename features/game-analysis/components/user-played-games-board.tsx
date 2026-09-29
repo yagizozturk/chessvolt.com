@@ -7,12 +7,12 @@ import { useMemo, useState } from "react";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import type { ImportedGame } from "@/features/test/types/imported-game";
+import type { ImportedGame } from "@/features/game-analysis/types/imported-game";
 import {
   getImportedGameDisplayFen,
   getImportedGameMoveCountLabel,
-} from "@/features/test/utilities/imported-game-board";
-import { importedGameFocus } from "@/features/test/utilities/imported-game-focus";
+} from "@/features/game-analysis/utilities/imported-game-board";
+import { importedGameFocus } from "@/features/game-analysis/utilities/imported-game-focus";
 import { cn } from "@/lib/utils";
 
 type UserPlayedGamesBoardProps = {

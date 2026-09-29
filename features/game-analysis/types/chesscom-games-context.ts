@@ -1,4 +1,4 @@
-import type { ChesscomRealGame } from "@/features/test/types/chesscom-real-game";
+import type { ChesscomRealGame } from "@/features/game-analysis/types/chesscom-real-game";
 
 // ====================================================================================================
 // Shape of the value shared by ChesscomGamesContext.

@@ -1,5 +1,5 @@
-import type { ImportedGame } from "@/features/test/types/imported-game";
-import type { ChesscomRealGame } from "@/features/test/types/chesscom-real-game";
+import type { ImportedGame } from "@/features/game-analysis/types/imported-game";
+import type { ChesscomRealGame } from "@/features/game-analysis/types/chesscom-real-game";
 
 export function normalizeChesscomGame(game: ChesscomRealGame): ImportedGame {
   return {
