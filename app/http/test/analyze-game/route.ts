@@ -2,10 +2,10 @@ import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@
 import { getGameReviewQuestionsByGameId } from "@/features/game-review-question/services/game-review-question.service";
 import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
 import { analyzeGame } from "@/features/test/services/analyze-game.service";
-import { loadSavedReview } from "@/features/test/services/load-saved-review.service";
+import { getGameAnalysisWithMistakes } from "@/features/test/services/get-game-analysis-with-mistakes.service";
 import { getGameAnalysis, saveGameAnalysis } from "@/features/test/services/save-game-analysis.service";
 import { saveReviewQuestions } from "@/features/test/services/save-review-questions.service";
-import type { GameReviewPayload } from "@/features/test/types/game-review-payload";
+import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
 import { ChessApiError } from "@/lib/chess-api/errors";
 
 export const maxDuration = 300;
@@ -14,12 +14,15 @@ const SOURCE = "chesscom" as const;
 
 function toPayload(
   moveCount: number,
-  criticalMoments: GameReviewPayload["criticalMoments"],
-  questions: GameReviewPayload["questions"],
-): GameReviewPayload {
+  criticalMoments: GameAnalysisWithMistakes["criticalMoments"],
+  questions: GameAnalysisWithMistakes["questions"],
+): GameAnalysisWithMistakes {
   return { moveCount, criticalMoments, questions };
 }
 
+// ========================================================================
+// Sunucudan daha önceden yapılmış olan oyun analizini çeker.
+// ========================================================================
 async function handleGET(req: Request) {
   const auth = await requireAuth();
   const gameId = new URL(req.url).searchParams.get("gameId")?.trim() ?? "";
@@ -28,22 +31,26 @@ async function handleGET(req: Request) {
     return errorResponse("gameId is required", 400);
   }
 
-  const saved = await loadSavedReview(auth.supabase, auth.user.id, SOURCE, gameId);
-  return successResponse(saved);
+  // getGameAnalysisWithMistakes önce analizi çeker. sonra buradaki oynanacak soruları(questions) bulur ve onları birleştirerek döner.
+  const existingGameAnalysis = await getGameAnalysisWithMistakes(auth.supabase, auth.user.id, SOURCE, gameId);
+  return successResponse(existingGameAnalysis);
 }
 
+// ========================================================================
+// chess api ya server tarafından request atar. oyun analizi ister. soruları oluşturur ve döner.
+// ========================================================================
 async function handlePOST(req: Request) {
   const auth = await requireAuth();
   const body = (await req.json().catch(() => ({}))) as { pgn?: string; gameId?: string };
   const pgn = typeof body.pgn === "string" ? body.pgn.trim() : "";
-  const gameId = typeof body.gameId === "string" ? body.gameId.trim() : "";
+  const gameId = typeof body.gameId === "string" ? body.gameId.trim() : ""; // Bu oyun daha önceden analiz edilmişmi diye sorgu atmak için gerekli
 
   if (!gameId) {
     return errorResponse("gameId is required", 400);
   }
 
   try {
-    const existing = await getGameAnalysis(auth.supabase, auth.user.id, SOURCE, gameId);
+    const existing = await getGameAnalysis(auth.supabase, auth.user.id, SOURCE, gameId); // Önceden analiz edilmişmi?
     if (existing) {
       let questions = await getGameReviewQuestionsByGameId(auth.supabase, auth.user.id, gameId);
       if (questions.length === 0 && pgn) {

@@ -1,13 +1,13 @@
 import type { ApiResponse } from "@/api-client/route-handler";
 import { apiClient } from "@/api-client/client";
-import type { GameReviewPayload } from "@/features/test/types/game-review-payload";
+import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
 
-export async function requestSavedGameReview(gameId: string) {
-  return apiClient.get<ApiResponse<GameReviewPayload | null>>(
+export async function requestGameAnalysis(gameId: string) {
+  return apiClient.get<ApiResponse<GameAnalysisWithMistakes | null>>(
     `/test/analyze-game?gameId=${encodeURIComponent(gameId)}`,
   );
 }
 
-export async function requestAnalyzeGame(pgn: string, gameId: string) {
-  return apiClient.post<ApiResponse<GameReviewPayload>>("/test/analyze-game", { pgn, gameId });
+export async function requestOutsourceGameAnalysis(pgn: string, gameId: string) {
+  return apiClient.post<ApiResponse<GameAnalysisWithMistakes>>("/test/analyze-game", { pgn, gameId });
 }

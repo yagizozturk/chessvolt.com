@@ -6,68 +6,71 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { requestAnalyzeGame, requestSavedGameReview } from "@/features/test/api/analyze-game";
+import { requestGameAnalysis, requestOutsourceGameAnalysis } from "@/features/test/api/analyze-game";
 import { useChesscomGames } from "@/features/test/hooks/use-chesscom-games";
-import type { GameReviewPayload } from "@/features/test/types/game-review-payload";
+import type { GameAnalysisWithMistakes } from "@/features/test/types/game-analysis-with-mistakes";
 
 export default function TestGamePage() {
   const params = useParams<{ id: string }>();
   const { findGame } = useChesscomGames();
   const game = findGame(params.id);
-  const [review, setReview] = useState<GameReviewPayload | null>(null);
-  const [isLoadingSaved, setIsLoadingSaved] = useState(true);
+  const [analysis, setAnalysis] = useState<GameAnalysisWithMistakes | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    let cancelled = false; // Eğer sayfada sonuç gelmeden sayfadan çıkarsa oyuncu(unmount) bu durumda request devam etmez. setAnalysis kısmına boş yere girmez.
 
-    async function loadSaved() {
-      setIsLoadingSaved(true);
+    async function getSavedGameAnalysis() {
+      setIsLoading(true); // spinner için
       try {
-        const response = await requestSavedGameReview(params.id);
+        const response = await requestGameAnalysis(params.id); // api folder call for saved game analysis
         if (cancelled) return;
         if (response.success && response.data) {
-          setReview(response.data);
+          setAnalysis(response.data);
           setStatus(`Loaded ${response.data.questions.length} questions`);
         }
       } catch (error) {
         if (!cancelled) console.error(error);
       } finally {
-        if (!cancelled) setIsLoadingSaved(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
 
-    void loadSaved();
+    void getSavedGameAnalysis(); // React bu metodu useEffect içinde olduğundan kaydeder. React sayfadaki ID params ı değişmedikçe bu metodu loop gibi tekrar tekrar çağırmaz.
     return () => {
-      cancelled = true;
+      cancelled = true; // Burası cleanup artık. Browser kapanırsa devam etmesin diye.
     };
   }, [params.id]);
 
+  // ===================================================================================================
+  // Analiz buttonuna basınca çalışır.
+  // analyze metodu chess-api.com a gider ve analiz ettirir oyunu.
+  // ===================================================================================================
   async function analyze() {
-    if (!game || isAnalyzing || review) return;
+    if (!game || isAnalyzing || analysis) return;
 
     setIsAnalyzing(true);
     setStatus(null);
     try {
-      const response = await requestAnalyzeGame(game.pgn, game.uuid);
+      const response = await requestOutsourceGameAnalysis(game.pgn, game.uuid);
       if (!response.success || !response.data) {
         setStatus("Analyze failed");
         return;
       }
 
-      setReview(response.data);
+      setAnalysis(response.data);
       setStatus(`Saved ${response.data.moveCount} moves and ${response.data.questions.length} questions`);
     } catch (error) {
-      const message =
-        error && typeof error === "object" && "error" in error ? String(error.error) : "Analyze failed";
+      const message = error && typeof error === "object" && "error" in error ? String(error.error) : "Analyze failed";
       setStatus(message);
     } finally {
       setIsAnalyzing(false);
     }
   }
 
-  if (isLoadingSaved) {
+  if (isLoading) {
     return (
       <div className="page-container">
         <div className="page-container-children-layout">
@@ -77,7 +80,7 @@ export default function TestGamePage() {
     );
   }
 
-  if (!game && !review) {
+  if (!game && !analysis) {
     return (
       <div className="page-container">
         <div className="page-container-children-layout">
@@ -92,19 +95,17 @@ export default function TestGamePage() {
     <div className="page-container">
       <div className="page-container-children-layout">
         <Link href="/test">Back</Link>
-        <h1>
-          {game ? `${game.white.username} vs ${game.black.username}` : "Saved review"}
-        </h1>
-        {review ? null : (
+        <h1>{game ? `${game.white.username} vs ${game.black.username}` : "Saved review"}</h1>
+        {analysis ? null : (
           <Button type="button" variant="volt" disabled={isAnalyzing} onClick={() => void analyze()}>
             {isAnalyzing ? <Spinner data-icon="inline-start" /> : null}
             {isAnalyzing ? "Analyzing…" : "Analyze"}
           </Button>
         )}
         {status ? <p>{status}</p> : null}
-        {review ? (
+        {analysis ? (
           <ul>
-            {review.questions.map((question) => (
+            {analysis.questions.map((question) => (
               <li key={question.id}>
                 {question.title} · ply {question.ply} · {question.quality}
               </li>
