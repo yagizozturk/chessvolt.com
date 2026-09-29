@@ -1,13 +1,13 @@
-import type { GameAnalysis } from "@/features/game-analysis/types/game-analysis";
-import type { GameAnalysisData } from "@/features/game-analysis/types/game-analysis-data";
-import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
+import type { GameAnalysis } from "@/features/test/types/game-analysis";
+import type { GameAnalysisResponseData } from "@/features/test/types/game-analysis-response-data";
+import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
 
 export type DbGameAnalysis = {
   id: string;
   user_id: string;
   game_id: string;
   source: string;
-  data: GameAnalysisData;
+  data: GameAnalysisResponseData;
   created_at: string;
   updated_at: string;
 };

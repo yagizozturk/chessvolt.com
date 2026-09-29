@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { type DbGameAnalysis, toGameAnalysis } from "@/features/game-analysis/mapper/game-analysis.mapper";
+import { type DbGameAnalysis, toGameAnalysis } from "@/features/test/mapper/game-analysis.mapper";
 import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
 import type { GameAnalysis } from "@/features/test/types/game-analysis";
 import type { CreateGameAnalysisData } from "@/features/test/types/create-game-analysis-data";

@@ -13,7 +13,7 @@ import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { VoltCoach } from "@/components/volt-coach/volt-coach";
-import { GameReviewQuestionStepper } from "@/features/game-review/components/game-review-question-stepper";
+import { GameReviewQuestionStepper } from "@/features/test/components/game-review-question-stepper";
 import type { GameReviewQuestion } from "@/features/game-review-question/types/game-review-question";
 import { BoardPlayerName } from "@/features/test/components/board-player-name";
 import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";

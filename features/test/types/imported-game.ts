@@ -1,5 +1,3 @@
-export type ImportedGamePlatform = "chesscom" | "lichess";
-
 export type ImportedGamePlayer = {
   username: string;
   rating: number | null;
@@ -8,7 +6,7 @@ export type ImportedGamePlayer = {
 
 export type ImportedGame = {
   id: string;
-  platform: ImportedGamePlatform;
+  platform: "chesscom" | "lichess";
   url: string;
   endTime: number;
   timeClass: string;
@@ -17,5 +15,3 @@ export type ImportedGame = {
   black: ImportedGamePlayer;
   pgn: string;
 };
-
-export const IMPORTED_GAMES_LIMIT = 10;
