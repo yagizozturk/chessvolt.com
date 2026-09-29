@@ -143,6 +143,37 @@ export async function upsert(
   return toGameReviewQuestion(data as DbGameReviewQuestion);
 }
 
+export async function upsertMany(
+  supabase: SupabaseClient,
+  inputs: SaveGameReviewQuestionInput[],
+): Promise<GameReviewQuestion[]> {
+  if (inputs.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("game_review_questions")
+    .upsert(
+      inputs.map((input) => ({
+        user_id: input.userId,
+        game_analysis_id: input.gameAnalysisId ?? null,
+        move_sequence_id: input.moveSequenceId,
+        game_id: input.gameId,
+        source: input.source,
+        title: input.title,
+        ply: input.ply,
+        quality: input.quality,
+      })),
+      { onConflict: "user_id,game_id,ply" },
+    )
+    .select(QUESTION_SELECT);
+
+  if (error || !data) {
+    console.error("game-review-question.repository.upsertMany error:", error);
+    return [];
+  }
+
+  return data.map((row) => toGameReviewQuestion(row as DbGameReviewQuestion));
+}
+
 export async function removeByUserGameId(
   supabase: SupabaseClient,
   userId: string,

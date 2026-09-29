@@ -17,8 +17,11 @@ function getSourcePlatform(source: string): GameAnalysisSource | null {
 }
 
 function buildGameReviewUrl(question: GameReviewQuestion) {
-  const params = new URLSearchParams({ source: getSourcePlatform(question.source) ?? question.source });
-  return `/game-review/${encodeURIComponent(question.gameId)}?${params.toString()}`;
+  const params = new URLSearchParams({
+    source: getSourcePlatform(question.source) ?? question.source,
+    questionId: question.id,
+  });
+  return `/test/${encodeURIComponent(question.gameId)}?${params.toString()}`;
 }
 
 function qualityLabel(quality: GameReviewQuestion["quality"]) {

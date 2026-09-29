@@ -1,15 +1,20 @@
+import { randomUUID } from "node:crypto";
+
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { upsertGameReviewQuestion } from "@/features/game-review-question/services/game-review-question.service";
+import {
+  getGameReviewQuestionsByGameId,
+  upsertGameReviewQuestions,
+} from "@/features/game-review-question/services/game-review-question.service";
 import type {
   GameReviewQuestion,
   GameReviewQuestionQuality,
+  SaveGameReviewQuestionInput,
 } from "@/features/game-review-question/types/game-review-question";
-import { createMoveSequence } from "@/features/move-sequence/services/move-sequence.service";
+import { createMoveSequences } from "@/features/move-sequence/services/move-sequence.service";
 import type { CriticalMoment } from "@/features/test/types/critical-moment";
 import type { GameAnalysisSource } from "@/features/test/types/game-analysis-source";
 import { playerColorFromPgn } from "@/features/test/utilities/player-color-from-pgn";
-import { buildStubGoalsFromMoves } from "@/lib/move-sequence-goals/build-stub-goals";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 function isQuestionQuality(quality: CriticalMoment["quality"]): quality is GameReviewQuestionQuality {
@@ -29,34 +34,54 @@ export async function saveReviewQuestions(input: {
   const userColor = playerColorFromPgn(input.pgn, input.username);
   if (!userColor) return [];
 
-  const admin = createAdminClient();
-  const questions: GameReviewQuestion[] = [];
+  const existing = await getGameReviewQuestionsByGameId(input.supabase, input.userId, input.gameId);
+  const sequenceIdByPly = new Map(
+    existing.flatMap((question) => (question.moveSequenceId ? [[question.ply, question.moveSequenceId] as const] : [])),
+  );
+
+  const questionsToSave: SaveGameReviewQuestionInput[] = [];
+  const sequencesToCreate: { id: string; initialFen: string; displayFen: string; moves: string }[] = [];
 
   for (const moment of input.moments) {
     const bestUci = moment.bestUci.trim();
     if (moment.turn !== userColor || !bestUci || !isQuestionQuality(moment.quality)) continue;
 
-    const moveSequence = await createMoveSequence(admin, {
-      initialFen: moment.fen,
-      displayFen: moment.fen,
-      moves: bestUci,
-      goals: buildStubGoalsFromMoves(moment.fen, bestUci),
-    });
-    if (!moveSequence) continue;
+    let moveSequenceId = sequenceIdByPly.get(moment.ply);
+    if (!moveSequenceId) {
+      moveSequenceId = randomUUID();
+      sequencesToCreate.push({
+        id: moveSequenceId,
+        initialFen: moment.fen,
+        displayFen: moment.fen,
+        moves: bestUci,
+      });
+    }
 
-    const question = await upsertGameReviewQuestion(input.supabase, {
+    questionsToSave.push({
       userId: input.userId,
       gameAnalysisId: input.gameAnalysisId,
-      moveSequenceId: moveSequence.id,
+      moveSequenceId,
       gameId: input.gameId,
       source: input.source,
       title: moment.playedSan ? `Played ${moment.playedSan}` : "Original game move",
       ply: moment.ply,
       quality: moment.quality,
     });
-
-    if (question) questions.push(question);
   }
 
-  return questions;
+  if (sequencesToCreate.length > 0) {
+    const created = await createMoveSequences(createAdminClient(), sequencesToCreate);
+    const createdIds = new Set(created.map((sequence) => sequence.id));
+    if (createdIds.size !== sequencesToCreate.length) {
+      const reusable = new Set(sequenceIdByPly.values());
+      const saved = await upsertGameReviewQuestions(
+        input.supabase,
+        questionsToSave.filter((question) => reusable.has(question.moveSequenceId)),
+      );
+      return saved.sort((a, b) => a.ply - b.ply);
+    }
+  }
+
+  const saved = await upsertGameReviewQuestions(input.supabase, questionsToSave);
+  return saved.sort((a, b) => a.ply - b.ply);
 }

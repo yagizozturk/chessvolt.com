@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { analyzePgnWithStockfish } from "@/features/test/utilities/analyze-pgn-w
 
 export default function TestGamePage() {
   const params = useParams<{ id: string }>();
+  const initialQuestionId = useSearchParams().get("questionId");
   const { findGame } = useChesscomGames();
   const game = findGame(params.id);
   const [analysis, setAnalysis] = useState<GameAnalysisWithMistakes | null>(null);
@@ -128,9 +129,10 @@ export default function TestGamePage() {
   if (analysis) {
     return (
       <GameTestController
-        key={analysis.questions.map((question) => question.id).join("|")}
+        key={`${analysis.questions.map((question) => question.id).join("|")}:${initialQuestionId ?? ""}`}
         analysis={analysis}
         game={game}
+        initialQuestionId={initialQuestionId}
       />
     );
   }

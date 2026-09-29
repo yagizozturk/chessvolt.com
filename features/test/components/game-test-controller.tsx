@@ -37,6 +37,7 @@ const NEXT_QUESTION_DELAY_MS = 800;
 type GameTestControllerProps = {
   analysis: GameAnalysisWithMistakes;
   game?: ChesscomRealGame;
+  initialQuestionId?: string | null;
 };
 
 type PlayableQuestion = {
@@ -58,7 +59,7 @@ function ratingLabel(rating: number | undefined): string | null {
   return rating == null ? null : String(rating);
 }
 
-export default function GameTestController({ analysis, game }: GameTestControllerProps) {
+export default function GameTestController({ analysis, game, initialQuestionId }: GameTestControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const isMobile = useIsMobile();
@@ -78,7 +79,12 @@ export default function GameTestController({ analysis, game }: GameTestControlle
     return Object.fromEntries(analysis.criticalMoments.map((moment) => [moment.ply, moment.playedSan]));
   }, [analysis.criticalMoments]);
 
-  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(questions[0]?.id ?? null);
+  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(() => {
+    if (initialQuestionId && questions.some((question) => question.id === initialQuestionId)) {
+      return initialQuestionId;
+    }
+    return questions[0]?.id ?? null;
+  });
   const [completedIds, setCompletedIds] = useState<Set<string>>(() => new Set());
   const [favoritedQuestionIds, setFavoritedQuestionIds] = useState<Set<string>>(
     () => new Set(analysis.favoritedQuestionIds),

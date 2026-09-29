@@ -28,6 +28,34 @@ export async function create(supabase: SupabaseClient, input: CreateMoveSequence
   return toMoveSequence(data);
 }
 
+export async function createMany(
+  supabase: SupabaseClient,
+  inputs: CreateMoveSequenceInput[],
+): Promise<MoveSequence[]> {
+  if (inputs.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("move_sequences")
+    .insert(
+      inputs.map((input) => ({
+        ...(input.id ? { id: input.id } : {}),
+        initial_fen: input.initialFen ?? DEFAULT_INITIAL_FEN,
+        moves: input.moves,
+        pgn: input.pgn ?? null,
+        display_fen: input.displayFen ?? null,
+        goals: input.goals ?? null,
+      })),
+    )
+    .select();
+
+  if (error || !data) {
+    console.error("move-sequence.repository.createMany error:", error);
+    return [];
+  }
+
+  return data.map((row) => toMoveSequence(row));
+}
+
 export async function update(
   supabase: SupabaseClient,
   id: string,

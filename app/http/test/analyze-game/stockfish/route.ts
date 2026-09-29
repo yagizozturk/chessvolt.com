@@ -1,5 +1,4 @@
 import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@/api-client/route-handler";
-import { deleteGameReviewQuestionsForGame } from "@/features/game-review-question/services/game-review-question.service";
 import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
 import { listFavoritedQuestionIds } from "@/features/test/services/get-game-analysis-with-mistakes.service";
 import { saveGameAnalysis } from "@/features/test/services/save-game-analysis.service";
@@ -86,8 +85,6 @@ async function handlePOST(req: Request) {
 
   const profile = await getProfileByUserId(auth.supabase, auth.user.id);
   const username = profile?.chesscomUsername?.trim() ?? "";
-  const cleared = await deleteGameReviewQuestionsForGame(auth.supabase, auth.user.id, gameId);
-  if (!cleared) return errorResponse("Failed to replace review questions", 500);
 
   const questions = username
     ? await saveReviewQuestions({

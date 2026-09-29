@@ -14,6 +14,13 @@ export async function createMoveSequence(
   return moveSequenceRepo.create(supabase, input);
 }
 
+export async function createMoveSequences(
+  supabase: SupabaseClient,
+  inputs: CreateMoveSequenceInput[],
+): Promise<MoveSequence[]> {
+  return moveSequenceRepo.createMany(supabase, inputs);
+}
+
 export async function updateMoveSequence(
   supabase: SupabaseClient,
   id: string,

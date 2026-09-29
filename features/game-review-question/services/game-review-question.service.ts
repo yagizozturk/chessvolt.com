@@ -55,6 +55,13 @@ export async function upsertGameReviewQuestion(
   return gameReviewQuestionRepo.upsert(supabase, input);
 }
 
+export async function upsertGameReviewQuestions(
+  supabase: SupabaseClient,
+  inputs: SaveGameReviewQuestionInput[],
+): Promise<GameReviewQuestion[]> {
+  return gameReviewQuestionRepo.upsertMany(supabase, inputs);
+}
+
 export async function deleteGameReviewQuestionsForGame(
   supabase: SupabaseClient,
   userId: string,

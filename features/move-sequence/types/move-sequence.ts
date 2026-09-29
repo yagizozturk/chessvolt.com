@@ -12,6 +12,7 @@ export type MoveSequence = {
 };
 
 export type CreateMoveSequenceInput = {
+  id?: string;
   initialFen?: string;
   moves: string;
   pgn?: string | null;
