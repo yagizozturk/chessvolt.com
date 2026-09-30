@@ -11,7 +11,7 @@ import {
 } from "@/features/game-analysis-mistakes/mapper/game-analysis-mistake.mapper";
 import type {
   GameAnalysisMistake,
-  SaveGameAnalysisMistakeInput,
+  GameAnalysisMistakePayload,
 } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 
 const QUESTION_SELECT = "*";
@@ -88,7 +88,7 @@ export async function findByUserGameId(
 
 export async function create(
   supabase: SupabaseClient,
-  input: SaveGameAnalysisMistakeInput,
+  input: GameAnalysisMistakePayload,
 ): Promise<GameAnalysisMistake | null> {
   const { data, error } = await supabase
     .from("game_analysis_mistakes")
@@ -115,7 +115,7 @@ export async function create(
 
 export async function upsert(
   supabase: SupabaseClient,
-  input: SaveGameAnalysisMistakeInput,
+  input: GameAnalysisMistakePayload,
 ): Promise<GameAnalysisMistake | null> {
   const { data, error } = await supabase
     .from("game_analysis_mistakes")
@@ -145,7 +145,7 @@ export async function upsert(
 
 export async function upsertMany(
   supabase: SupabaseClient,
-  inputs: SaveGameAnalysisMistakeInput[],
+  inputs: GameAnalysisMistakePayload[],
 ): Promise<GameAnalysisMistake[]> {
   if (inputs.length === 0) return [];
 

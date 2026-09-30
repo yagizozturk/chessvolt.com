@@ -1,4 +1,5 @@
-import type { ChessComPlayerStats, ChessComStatsCategory } from "@/lib/chess-com/types";
+import type { ChessComPlayerStats } from "@/features/game-analysis/types/chesscom-player-stats";
+import type { ChessComStatsCategory } from "@/features/game-analysis/types/chesscom-stats-category";
 import type { LichessPerf, LichessUser } from "@/lib/lichess/types";
 
 type RatingCandidate = {

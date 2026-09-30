@@ -19,7 +19,7 @@ function getSourcePlatform(source: string): GameAnalysisSource | null {
 function buildGameReviewUrl(question: GameAnalysisMistake) {
   const params = new URLSearchParams({
     source: getSourcePlatform(question.source) ?? question.source,
-    questionId: question.id,
+    mistakeId: question.id,
   });
   return `/game-analysis/${encodeURIComponent(question.gameId)}?${params.toString()}`;
 }

@@ -1,6 +1,6 @@
 import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
-import { turnPgnIntoMoves } from "@/features/game-analysis/utilities/turn-pgn-into-moves";
+import { getMovesFromPgn } from "@/lib/chess/getMovesFromPgn";
 import { analyzeFens } from "@/lib/chess-api/client";
 import { toSideToMoveCp } from "@/lib/chess-api/normalize";
 import { getMoveQuality } from "@/lib/utils/getMoveQuality";
@@ -8,7 +8,7 @@ import { getMoveQuality } from "@/lib/utils/getMoveQuality";
 const DEPTH = 12;
 
 export async function analyzeGame(pgn: string): Promise<GameAnalysisResponseData> {
-  const moves = turnPgnIntoMoves(pgn);
+  const moves = getMovesFromPgn(pgn);
   if (!moves?.length) {
     throw new Error("Invalid or empty PGN");
   }

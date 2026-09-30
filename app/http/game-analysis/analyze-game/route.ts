@@ -1,28 +1,17 @@
 import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@/api-client/route-handler";
 import { getGameAnalysisMistakesByGameId } from "@/features/game-analysis-mistakes/services/game-analysis-mistake.service";
+import { toGameAnalysisWithMistakes } from "@/features/game-analysis/mapper/game-analysis.mapper";
 import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
 import { analyzeGame } from "@/features/game-analysis/services/analyze-game.service";
-import {
-  getGameAnalysisWithMistakes,
-  listFavoritedQuestionIds,
-} from "@/features/game-analysis/services/get-game-analysis-with-mistakes.service";
+import { getFavoritedMistakeIds } from "@/features/game-analysis/services/get-favorited-mistake-ids.service";
+import { getGameAnalysisWithMistakes } from "@/features/game-analysis/services/get-game-analysis-with-mistakes.service";
 import { getGameAnalysis, saveGameAnalysis } from "@/features/game-analysis/services/save-game-analysis.service";
 import { saveReviewQuestions } from "@/features/game-analysis/services/save-review-questions.service";
-import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import { ChessApiError } from "@/lib/chess-api/errors";
 
 export const maxDuration = 300;
 
 const SOURCE = "chesscom" as const;
-
-function toPayload(
-  moveCount: number,
-  criticalMoments: GameAnalysisWithMistakes["criticalMoments"],
-  questions: GameAnalysisWithMistakes["questions"],
-  favoritedQuestionIds: string[],
-): GameAnalysisWithMistakes {
-  return { moveCount, criticalMoments, questions, favoritedQuestionIds };
-}
 
 // ========================================================================
 // Sunucudan daha önceden yapılmış olan oyun analizini çeker.
@@ -75,11 +64,11 @@ async function handlePOST(req: Request) {
       }
 
       return successResponse(
-        toPayload(
+        toGameAnalysisWithMistakes(
           existing.data.moveCount,
           existing.data.criticalMoments,
           questions,
-          await listFavoritedQuestionIds(auth.supabase, auth.user.id, questions),
+          await getFavoritedMistakeIds(auth.supabase, auth.user.id, questions),
         ),
       );
     }
@@ -116,11 +105,11 @@ async function handlePOST(req: Request) {
       : [];
 
     return successResponse(
-      toPayload(
+      toGameAnalysisWithMistakes(
         result.moveCount,
         result.criticalMoments,
         questions,
-        await listFavoritedQuestionIds(auth.supabase, auth.user.id, questions),
+        await getFavoritedMistakeIds(auth.supabase, auth.user.id, questions),
       ),
     );
   } catch (error) {

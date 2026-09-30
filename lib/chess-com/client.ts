@@ -1,27 +1,27 @@
+import { CHESS_COM_USER_AGENT, REQUEST_TIMEOUT_MS } from "@/lib/chess-com/constants";
 import { ChessComApiError } from "@/lib/chess-com/errors";
 
-export const CHESS_COM_BASE_URL = "https://api.chess.com/pub";
-const CHESS_COM_USER_AGENT = "ChessVolt/1.0 (contact: admin@chessvolt.com)";
-const REQUEST_TIMEOUT_MS = 10_000;
-
-export async function chessComFetch(url: string, init?: RequestInit): Promise<Response> {
-  const headers = new Headers(init?.headers);
+// ================================================================================================
+// ChessCom API'ye istek gönderir. https://api.chess.com/pub
+// ================================================================================================
+export async function chessComFetch(url: string): Promise<Response> {
+  const headers = new Headers();
   headers.set("User-Agent", CHESS_COM_USER_AGENT);
 
   const request = async () => {
-    const timeoutSignal = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
     return fetch(url, {
-      ...init,
       headers,
-      signal: init?.signal ? AbortSignal.any([init.signal, timeoutSignal]) : timeoutSignal,
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS), // signal devam eden bir ağ isteğini (HTTP request) iptal etmek (abort) için kullanılan bir denetim mekanizmasıdır.
     });
   };
 
   try {
     let response = await request();
 
+    // 429: Çok fazla istek attın derse ChessCom
     if (response.status === 429) {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Promise bize bir fonksiyon verir: (resolve, reject) => {  } resolve(): Sözün tutulduğunu (işlemin bittiğini) haber verir. reject(): Bir hata oluştuğunu haber verir. await ile cevap alana kadar bekletiriz.
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // JavaScript'in async yapısında setTimeout fonksiyonunu bir Promise içine sararak kodu 1 saniye bekletiriz.
       response = await request();
     }
 

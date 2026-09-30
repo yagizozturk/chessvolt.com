@@ -6,16 +6,16 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { requestGameAnalysis, requestLocalGameAnalysis } from "@/features/game-analysis/api/analyze-game";
+import { requestGameAnalysis, requestGameAnalysisInsert } from "@/features/game-analysis/api/analyze-game";
 import GameAnalysisController from "@/features/game-analysis/components/game-analysis-controller";
-import { useChesscomGames } from "@/features/game-analysis/hooks/use-chesscom-games";
+import { useChessComGames } from "@/features/game-analysis/hooks/use-chesscom-games";
 import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import { analyzePgnWithStockfish } from "@/features/game-analysis/utilities/analyze-pgn-with-stockfish";
 
 export default function GameAnalysisGamePage() {
   const params = useParams<{ id: string }>();
-  const initialQuestionId = useSearchParams().get("questionId");
-  const { findGame } = useChesscomGames();
+  const initialMistakeId = useSearchParams().get("mistakeId");
+  const { findGame } = useChessComGames();
   const game = findGame(params.id);
   const [analysis, setAnalysis] = useState<GameAnalysisWithMistakes | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,11 +32,11 @@ export default function GameAnalysisGamePage() {
     async function getSavedGameAnalysis() {
       setIsLoading(true); // spinner için
       try {
-        const response = await requestGameAnalysis(params.id); // api folder call for saved game analysis
+        const response = await requestGameAnalysis(params.id); // api dosyasına gönderir isteği. Oradan http ye gidecek.
         if (cancelled) return;
         if (response.success && response.data) {
           setAnalysis(response.data);
-          setStatus(`Loaded ${response.data.questions.length} questions`);
+          setStatus(`Loaded ${response.data.questions.length} mistakes`);
         }
       } catch (error) {
         if (!cancelled) console.error(error);
@@ -51,38 +51,38 @@ export default function GameAnalysisGamePage() {
     };
   }, [params.id]);
 
-  // ==========================================================================================
+  // ================================================================================================
   // Stockfish analizini iptal etmek için sayfadan çıkıldığında.
-  // ==========================================================================================
+  // ================================================================================================
   useEffect(() => {
     return () => {
       localAbortRef.current?.abort();
     };
   }, []);
 
-  // ==========================================================================================
+  // ================================================================================================
   // Stockfish analizini lokalde oyuncunun makinasında yapmak için.
-  // ==========================================================================================
-  async function analyzeLocally() {
+  // ================================================================================================
+  async function analyzeWithStockfish() {
     if (!game || analysisEngine) return;
 
-    const controller = new AbortController();
+    const controller = new AbortController(); // Stockfish analizini iptal etmek için. Eğer sayfadan erken çkılırsa
     localAbortRef.current = controller;
     setAnalysisEngine("local");
     setStatus("Starting Stockfish…");
 
     try {
       const localAnalysis = await analyzePgnWithStockfish(game.pgn, {
-        signal: controller.signal,
+        signal: controller.signal, // controller setlenir
         onProgress: (completed, total) => {
           if (!controller.signal.aborted) setStatus(`Stockfish ${completed}/${total}`);
         },
       });
 
-      if (controller.signal.aborted) return;
+      if (controller.signal.aborted) return; // Eğer iptal edilirse return eder. Etmezse devam eder.
 
-      setStatus("Saving questions…");
-      const response = await requestLocalGameAnalysis(game.pgn, game.uuid, localAnalysis);
+      setStatus("Saving analysis results…");
+      const response = await requestGameAnalysisInsert(game.pgn, game.uuid, localAnalysis);
       if (!response.success || !response.data) {
         setStatus("Local analysis failed");
         return;
@@ -129,10 +129,10 @@ export default function GameAnalysisGamePage() {
   if (analysis) {
     return (
       <GameAnalysisController
-        key={`${analysis.questions.map((question) => question.id).join("|")}:${initialQuestionId ?? ""}`}
+        key={`${analysis.questions.map((question) => question.id).join("|")}:${initialMistakeId ?? ""}`}
         analysis={analysis}
         game={game}
-        initialQuestionId={initialQuestionId}
+        initialMistakeId={initialMistakeId}
       />
     );
   }
@@ -148,7 +148,7 @@ export default function GameAnalysisGamePage() {
               type="button"
               variant="voltMuted"
               disabled={analysisEngine !== null}
-              onClick={() => void analyzeLocally()}
+              onClick={() => void analyzeWithStockfish()}
             >
               {analysisEngine === "local" ? <Spinner data-icon="inline-start" /> : null}
               {analysisEngine === "local" ? "Analyzing locally…" : "Analyze locally"}

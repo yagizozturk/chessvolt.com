@@ -1,6 +1,5 @@
-import { randomUUID } from "node:crypto";
-
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { randomUUID } from "node:crypto";
 
 import {
   getGameAnalysisMistakesByGameId,
@@ -8,13 +7,13 @@ import {
 } from "@/features/game-analysis-mistakes/services/game-analysis-mistake.service";
 import type {
   GameAnalysisMistake,
+  GameAnalysisMistakePayload,
   GameAnalysisMistakeQuality,
-  SaveGameAnalysisMistakeInput,
 } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
-import { createMoveSequences } from "@/features/move-sequence/services/move-sequence.service";
 import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
-import { playerColorFromPgn } from "@/features/game-analysis/utilities/player-color-from-pgn";
+import { createMoveSequences } from "@/features/move-sequence/services/move-sequence.service";
+import { getPlayerColorFromPgn } from "@/lib/chess/getPlayerColorFromPgn";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 function isQuestionQuality(quality: CriticalMoment["quality"]): quality is GameAnalysisMistakeQuality {
@@ -31,17 +30,23 @@ export async function saveReviewQuestions(input: {
   gameAnalysisId: string;
   moments: CriticalMoment[];
 }): Promise<GameAnalysisMistake[]> {
-  const userColor = playerColorFromPgn(input.pgn, input.username);
+  const userColor = getPlayerColorFromPgn(input.pgn, input.username);
   if (!userColor) return [];
 
+  // ================================================================================================
+  // Varmı bu kaıt kontrolü. Flatmap ile boş datalar temizlenir.
+  // ================================================================================================
   const existing = await getGameAnalysisMistakesByGameId(input.supabase, input.userId, input.gameId);
   const sequenceIdByPly = new Map(
     existing.flatMap((question) => (question.moveSequenceId ? [[question.ply, question.moveSequenceId] as const] : [])),
   );
 
-  const questionsToSave: SaveGameAnalysisMistakeInput[] = [];
-  const sequencesToCreate: { id: string; initialFen: string; displayFen: string; moves: string }[] = [];
+  const mistakesToSave: GameAnalysisMistakePayload[] = [];
+  const sequencesToCreate: { id: string; initialFen: string; displayFen: string; moves: string }[] = []; // Her bir hatadaki hamle için moveSequence üretiriz ünkü volt-score larını takip etmek için. moveSequenceId si ile attempt yazıcaz.
 
+  // ================================================================================================
+  // moveSequence ve mistakes datası arraylere eklenir.
+  // ================================================================================================
   for (const moment of input.moments) {
     const bestUci = moment.bestUci.trim();
     if (moment.turn !== userColor || !bestUci || !isQuestionQuality(moment.quality)) continue;
@@ -57,7 +62,7 @@ export async function saveReviewQuestions(input: {
       });
     }
 
-    questionsToSave.push({
+    mistakesToSave.push({
       userId: input.userId,
       gameAnalysisId: input.gameAnalysisId,
       moveSequenceId,
@@ -69,6 +74,9 @@ export async function saveReviewQuestions(input: {
     });
   }
 
+  // ================================================================================================
+  // moveSequence ve mistakes datası için servis çalıştırılır.
+  // ================================================================================================
   if (sequencesToCreate.length > 0) {
     const created = await createMoveSequences(createAdminClient(), sequencesToCreate);
     const createdIds = new Set(created.map((sequence) => sequence.id));
@@ -76,12 +84,13 @@ export async function saveReviewQuestions(input: {
       const reusable = new Set(sequenceIdByPly.values());
       const saved = await upsertGameAnalysisMistakes(
         input.supabase,
-        questionsToSave.filter((question) => reusable.has(question.moveSequenceId)),
+        mistakesToSave.filter((question) => reusable.has(question.moveSequenceId)),
       );
       return saved.sort((a, b) => a.ply - b.ply);
     }
   }
 
-  const saved = await upsertGameAnalysisMistakes(input.supabase, questionsToSave);
+  // Eklenen kayıtlar geri döndürlür.
+  const saved = await upsertGameAnalysisMistakes(input.supabase, mistakesToSave);
   return saved.sort((a, b) => a.ply - b.ply);
 }

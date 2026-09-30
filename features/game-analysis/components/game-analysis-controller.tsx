@@ -13,13 +13,15 @@ import { Confetti } from "@/components/ui/confetti";
 import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { VoltCoach } from "@/components/volt-coach/volt-coach";
-import { GameAnalysisMistakeStepper } from "@/features/game-analysis/components/game-analysis-mistake-stepper";
 import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 import { BoardPlayerName } from "@/features/game-analysis/components/board-player-name";
-import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
-import type { ChesscomRealGame } from "@/features/game-analysis/types/chesscom-real-game";
-import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
+import { GameAnalysisMistakeStepper } from "@/features/game-analysis/components/game-analysis-mistake-stepper";
+import type { ChessComGame } from "@/features/game-analysis/types/chesscom-game";
 import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
+import { getMistakesByPly } from "@/features/game-analysis/utilities/get-mistakes-by-ply";
+import { getRatingLabel } from "@/features/game-analysis/utilities/get-rating-label";
+import { MAX_HINT_COUNT } from "@/features/move-sequence/hooks/use-move-sequence-controller";
+import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
 import {
   createAttemptPayload,
@@ -31,117 +33,112 @@ import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
-const MAX_HINT_COUNT = 2;
-const NEXT_QUESTION_DELAY_MS = 800;
-
 type GameAnalysisControllerProps = {
   analysis: GameAnalysisWithMistakes;
-  game?: ChesscomRealGame;
-  initialQuestionId?: string | null;
+  game?: ChessComGame;
+  initialMistakeId?: string | null;
 };
 
-type PlayableQuestion = {
-  question: GameAnalysisMistake;
-  moment: CriticalMoment;
-};
-
-function playableQuestions(analysis: GameAnalysisWithMistakes): PlayableQuestion[] {
-  const momentByPly = new Map(analysis.criticalMoments.map((moment) => [moment.ply, moment]));
-
-  return analysis.questions.flatMap((question) => {
-    const moment = momentByPly.get(question.ply);
-    if (!moment?.bestUci.trim()) return [];
-    return [{ question, moment }];
-  });
-}
-
-function ratingLabel(rating: number | undefined): string | null {
-  return rating == null ? null : String(rating);
-}
-
-export default function GameAnalysisController({ analysis, game, initialQuestionId }: GameAnalysisControllerProps) {
+export default function GameAnalysisController({ analysis, game, initialMistakeId }: GameAnalysisControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const isMobile = useIsMobile();
   const [isPending, startTransition] = useTransition();
-  const advanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const solvedRef = useRef(false);
+  const [boardKey, setBoardKey] = useState(0);
+
+  // ================================================================================================
+  // Timer ve score tracking için refler.
+  // ================================================================================================
   const startedAtRef = useRef<number | null>(null);
   const correctMoveCountRef = useRef(0);
   const wrongMoveCountRef = useRef(0);
   const totalHintCountRef = useRef(0);
   const currentCorrectStreakRef = useRef(0);
   const maxCorrectStreakRef = useRef(0);
-
-  const playable = useMemo(() => playableQuestions(analysis), [analysis]);
-  const questions = useMemo(() => playable.map((item) => item.question), [playable]);
-  const originalMoveByPly = useMemo(() => {
-    return Object.fromEntries(analysis.criticalMoments.map((moment) => [moment.ply, moment.playedSan]));
-  }, [analysis.criticalMoments]);
-
-  const [activeQuestionId, setActiveQuestionId] = useState<string | null>(() => {
-    if (initialQuestionId && questions.some((question) => question.id === initialQuestionId)) {
-      return initialQuestionId;
-    }
-    return questions[0]?.id ?? null;
-  });
-  const [completedIds, setCompletedIds] = useState<Set<string>>(() => new Set());
-  const [favoritedQuestionIds, setFavoritedQuestionIds] = useState<Set<string>>(
-    () => new Set(analysis.favoritedQuestionIds),
-  );
   const [hintCount, setHintCount] = useState(0);
   const [solved, setSolved] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null);
-  const [boardKey, setBoardKey] = useState(0);
 
-  const active = playable.find((item) => item.question.id === activeQuestionId) ?? null;
-  const youAreBlack = playable[0]?.moment.turn === "b";
-  const bottomPlayer = youAreBlack ? game?.black : game?.white;
-  const topPlayer = youAreBlack ? game?.white : game?.black;
-  const playSessionId = active ? `${active.question.id}:${boardKey}` : "game-analysis";
-  const playedMove = active ? (originalMoveByPly[active.question.ply]?.trim() ?? "") : "";
-  const coachTitle = active ? getTurnLabel(active.moment.fen) : "Game review";
-  const coachMessage = active
+  // Hataları ply ye göre gruplar.
+  const mistakesByPly = useMemo(() => getMistakesByPly(analysis), [analysis]);
+
+  // Ply ye göre gruplanmış hataları döndürür. Sadece hatalar döner.
+  const mistakes = useMemo(() => mistakesByPly.map((item) => item.mistake), [mistakesByPly]);
+
+  // Ply ye göre hamleleri döndürür. San formatında. Koç bu durumda ne oynadığını söyler. Played Nf3 gibi.
+  const userMoveByPlyWithSan = useMemo(() => {
+    return Object.fromEntries(analysis.criticalMoments.map((moment) => [moment.ply, moment.playedSan]));
+  }, [analysis.criticalMoments]);
+
+  // Aktif hangi pozisyonla başlanacağına karar verir. Favorilere eklenen hata ile başlar.
+  const [activeMistakeId, setActiveMistakeId] = useState<string | null>(() => {
+    if (initialMistakeId && mistakes.some((mistake) => mistake.id === initialMistakeId)) {
+      return initialMistakeId;
+    }
+    return mistakes[0]?.id ?? null;
+  });
+
+  // Hangi pozisyonlar çözüldü bilgisini tutar.
+  const [completedMistakeIds, setCompletedMistakeIds] = useState<Set<string>>(() => new Set());
+
+  // Hangi pozisyonlar hatalar favorilere eklendi bilgisini tutar.
+  const [favoritedMistakeIds, setFavoritedMistakeIds] = useState<Set<string>>(
+    () => new Set(analysis.favoritedQuestionIds),
+  );
+
+  // Seçili hatanın tam çifti: kayıtlı hata ve ona karşılık gelen kritik an.
+  const activeMistake = mistakesByPly.find((item) => item.mistake.id === activeMistakeId) ?? null;
+  const youAreBlack = mistakesByPly[0]?.moment.turn === "b"; // Oyuncu rengi hataya göre belirlenir.
+  const bottomPlayer = youAreBlack ? game?.black : game?.white; // Alt oyuncu.
+  const topPlayer = youAreBlack ? game?.white : game?.black; // Üst oyuncu.
+  const playSessionId = activeMistake ? `${activeMistake.mistake.id}:${boardKey}` : "game-analysis"; // Board'a bağlı olan ID.
+  const playedMove = activeMistake ? (userMoveByPlyWithSan[activeMistake.mistake.ply]?.trim() ?? "") : ""; // Koç bu durumda ne oynadığını söyler. Played Nf3 gibi.
+  const coachTitle = activeMistake ? getTurnLabel(activeMistake.moment.fen) : "Game review"; // Koç başlığı.
+  const coachMessage = activeMistake // Koç mesajı.
     ? playedMove
       ? `You played ${playedMove} in the game. Find the best move to play here.`
       : "Solve the original game position on the board."
     : "Pick a review question to solve it on the board.";
-  const progressValue = questions.length > 0 ? Math.round((completedIds.size / questions.length) * 100) : 0;
-  const isActiveQuestionFavorited = active ? favoritedQuestionIds.has(active.question.id) : false;
+  const progressValue = mistakes.length > 0 ? Math.round((completedMistakeIds.size / mistakes.length) * 100) : 0;
+  const isActiveQuestionFavorited = activeMistake ? favoritedMistakeIds.has(activeMistake.mistake.id) : false; // Seçili hatanın favori mi değil mi bilgisini tutar. Button için
 
-  function clearAdvance() {
-    if (advanceTimeoutRef.current == null) return;
-    clearTimeout(advanceTimeoutRef.current);
-    advanceTimeoutRef.current = null;
-  }
-
-  function showQuestion(questionId: string) {
-    clearAdvance();
-    solvedRef.current = false;
-    setSolved(false);
-    setHintCount(0);
-    setActiveQuestionId(questionId);
-    setBoardKey((key) => key + 1);
-  }
-
+  // Timer için kullanılır.
   useEffect(() => {
     startedAtRef.current = Date.now();
-    return () => clearAdvance();
   }, []);
 
+  // Geri butonu için kullanılır.
   function handleBack() {
     startTransition(() => {
       router.push("/game-analysis");
     });
   }
 
-  function handleSelectQuestion(question: GameAnalysisMistake) {
-    showQuestion(question.id);
+  // ================================================================================================
+  // Stepper bu metodu tetikler, handler.
+  // ================================================================================================
+  function handleSelectMistake(mistake: GameAnalysisMistake) {
+    selectMistakeToPlay(mistake.id);
   }
 
+  // ================================================================================================
+  // Seçili hatayı oynatmak için kullanılır. Aktif mistakeId yi değiştirir.
+  // ================================================================================================
+  function selectMistakeToPlay(mistakeId: string) {
+    solvedRef.current = false;
+    setSolved(false);
+    setHintCount(0);
+    setActiveMistakeId(mistakeId);
+    setBoardKey((key) => key + 1);
+  }
+
+  // ================================================================================================
+  // Favori butonu için kullanılır. Handler. Favorite button u kullanır.
+  // ================================================================================================
   function handleQuestionFavoritedChange(questionId: string, favorited: boolean) {
-    setFavoritedQuestionIds((current) => {
+    setFavoritedMistakeIds((current) => {
       const next = new Set(current);
       if (favorited) next.add(questionId);
       else next.delete(questionId);
@@ -149,10 +146,13 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
     });
   }
 
+  // ================================================================================================
+  // Board'a hamle yapıldığında kullanılır. Handler. Doğru mu yanlış mı hamle kontrolü.
+  // ================================================================================================
   function handleCheckMove(move: MoveAttemptPayload) {
-    if (!active || solvedRef.current) return false;
+    if (!activeMistake || solvedRef.current) return false;
 
-    if (move.uci === active.moment.bestUci) {
+    if (move.uci === activeMistake.moment.bestUci) {
       correctMoveCountRef.current += 1;
       updateCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
       return true;
@@ -163,20 +163,23 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
     return false;
   }
 
+  // ================================================================================================
+  // Başarılı hamlede tetiklenir.
+  // ================================================================================================
   function handleSuccess() {
-    if (!active || solvedRef.current) return;
+    if (!activeMistake || solvedRef.current) return;
 
     solvedRef.current = true;
     setSolved(true);
 
-    const nextCompleted = new Set(completedIds);
-    nextCompleted.add(active.question.id);
-    setCompletedIds(nextCompleted);
+    const nextCompleted = new Set(completedMistakeIds);
+    nextCompleted.add(activeMistake.mistake.id);
+    setCompletedMistakeIds(nextCompleted);
 
-    const activeIndex = playable.indexOf(active);
-    const later = playable.slice(activeIndex + 1);
-    const earlier = playable.slice(0, activeIndex);
-    const remaining = [...later, ...earlier].filter((item) => !nextCompleted.has(item.question.id));
+    const activeIndex = mistakesByPly.indexOf(activeMistake);
+    const later = mistakesByPly.slice(activeIndex + 1);
+    const earlier = mistakesByPly.slice(0, activeIndex);
+    const remaining = [...later, ...earlier].filter((item) => !nextCompleted.has(item.mistake.id));
 
     if (remaining.length === 0) {
       setCompletionStats(
@@ -194,16 +197,14 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
       return;
     }
 
-    const nextQuestionId = remaining[0].question.id;
-    clearAdvance();
-    advanceTimeoutRef.current = setTimeout(() => {
-      advanceTimeoutRef.current = null;
-      showQuestion(nextQuestionId);
-    }, NEXT_QUESTION_DELAY_MS);
+    selectMistakeToPlay(remaining[0].mistake.id);
   }
 
+  // ================================================================================================
+  // Hint butonu için kullanılır. Handler.
+  // ================================================================================================
   function handleHint() {
-    if (!active || solved || hintCount >= MAX_HINT_COUNT) return;
+    if (!activeMistake || solved || hintCount >= MAX_HINT_COUNT) return;
     const nextHintCount = hintCount + 1;
     setHintCount(nextHintCount);
     totalHintCountRef.current += 1;
@@ -212,6 +213,7 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
 
   return (
     <div className="page-container">
+      {/* ====== Dialog ====== */}
       <SolveSuccessDialog
         open={successOpen}
         onOpenChange={setSuccessOpen}
@@ -228,31 +230,34 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
       <div className="page-container-controller-layout">
         <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-2 self-start md:flex-[3]">
           <div className="relative aspect-square w-full">
-            {active ? (
+            {/* ====== Board ====== */}
+            {activeMistake ? (
               <VoltBoard
                 ref={boardRef}
                 key={boardKey}
                 sourceId={playSessionId}
-                initialFen={active.moment.fen}
+                initialFen={activeMistake.moment.fen}
                 coordinates={!isMobile}
                 playerOrientation={youAreBlack ? "black" : "white"}
-                drawHintMove={active.moment.bestUci}
-                playedMoveArrow={active.moment.playedUci}
+                drawHintMove={activeMistake.moment.bestUci}
+                playedMoveArrow={activeMistake.moment.playedUci}
                 onCheckMove={handleCheckMove}
                 onSuccessMovePlayed={handleSuccess}
                 onNextMoveRequest={() => undefined}
               />
             ) : null}
           </div>
+
+          {/* ====== Player Names ====== */}
           <BoardPlayerName
             name={topPlayer?.username ?? null}
-            elo={ratingLabel(topPlayer?.rating)}
+            elo={getRatingLabel(topPlayer?.rating)}
             color={youAreBlack ? "white" : "black"}
             className="absolute top-[-30px] left-0"
           />
           <BoardPlayerName
             name={bottomPlayer?.username ?? null}
-            elo={ratingLabel(bottomPlayer?.rating)}
+            elo={getRatingLabel(bottomPlayer?.rating)}
             color={youAreBlack ? "black" : "white"}
             className="absolute bottom-[-40px] left-0"
           />
@@ -260,6 +265,7 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
 
         <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
           <div className="flex justify-between">
+            {/* ====== Back Button ====== */}
             <div>
               <Button variant="voltIcon" onClick={handleBack} disabled={isPending} aria-label="Back">
                 {isPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
@@ -277,11 +283,12 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
               Play Your Missings
             </div>
             <div className="flex items-center gap-2">
-              {active ? (
+              {/* ====== Favorite Button ====== */}
+              {activeMistake ? (
                 <FavoriteButton
-                  gameAnalysisMistakeId={active.question.id}
+                  gameAnalysisMistakeId={activeMistake.mistake.id}
                   isFavorited={isActiveQuestionFavorited}
-                  onFavoritedChange={(favorited) => handleQuestionFavoritedChange(active.question.id, favorited)}
+                  onFavoritedChange={(favorited) => handleQuestionFavoritedChange(activeMistake.mistake.id, favorited)}
                 />
               ) : (
                 <div className="size-9" />
@@ -293,7 +300,8 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
             <VoltCoach title={coachTitle} message={coachMessage} ttsKey={playSessionId} />
           </div>
 
-          {questions.length > 0 ? (
+          {/* ====== Progress Bar ====== */}
+          {mistakes.length > 0 ? (
             <div className="flex items-center">
               <Progress
                 value={progressValue}
@@ -306,18 +314,20 @@ export default function GameAnalysisController({ analysis, game, initialQuestion
             </div>
           ) : null}
 
+          {/* ====== Stepper ====== */}
           <GameAnalysisMistakeStepper
-            questions={questions}
-            originalMoveByPly={originalMoveByPly}
-            activeQuestionId={active?.question.id ?? null}
-            completedQuestionIds={completedIds}
+            questions={mistakes}
+            originalMoveByPly={userMoveByPlyWithSan}
+            activeQuestionId={activeMistake?.mistake.id ?? null}
+            completedQuestionIds={completedMistakeIds}
             isLoading={false}
             error={null}
             hasResult
-            onSelectQuestion={handleSelectQuestion}
+            onSelectQuestion={handleSelectMistake}
           />
 
-          {active && !solved ? (
+          {/* ====== Hint Button ====== */}
+          {activeMistake && !solved ? (
             <div className="mt-auto flex gap-2">
               <Button
                 type="button"

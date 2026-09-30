@@ -1,4 +1,4 @@
-export function playerColorFromPgn(pgn: string, username: string): "w" | "b" | null {
+export function getPlayerColorFromPgn(pgn: string, username: string): "w" | "b" | null {
   const focus = username.trim().toLowerCase();
   if (!focus) return null;
 

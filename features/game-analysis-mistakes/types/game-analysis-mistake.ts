@@ -14,7 +14,7 @@ export type GameAnalysisMistake = {
   updatedAt: string;
 };
 
-export type SaveGameAnalysisMistakeInput = {
+export type GameAnalysisMistakePayload = {
   userId: string;
   gameAnalysisId?: string | null;
   moveSequenceId: string;

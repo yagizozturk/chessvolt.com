@@ -8,10 +8,10 @@ import { ChesscomGamesContext } from "@/features/game-analysis/components/chessc
 // Provides the ChesscomGamesContext value to the component by this hook.
 // Bu hook provider da export edilen context i, [id] altındaki detay componentine e taşıyacak.
 // ====================================================================================================
-export function useChesscomGames() {
+export function useChessComGames() {
   const context = useContext(ChesscomGamesContext);
   if (!context) {
-    throw new Error("useChesscomGames must be used within ChesscomGamesProvider");
+    throw new Error("useChessComGames must be used within ChesscomGamesProvider");
   }
   return context;
 }

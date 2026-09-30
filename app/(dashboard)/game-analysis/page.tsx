@@ -6,19 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { requestChesscomGames } from "@/features/game-analysis/api/chesscom-games";
+import { requestChessComGames } from "@/features/game-analysis/api/chesscom-games";
 import { UserPlayedGamesBoard } from "@/features/game-analysis/components/user-played-games-board";
-import { useChesscomGames } from "@/features/game-analysis/hooks/use-chesscom-games";
-import { normalizeChesscomGame } from "@/features/game-analysis/utilities/normalize-chesscom-game";
+import { useChessComGames } from "@/features/game-analysis/hooks/use-chesscom-games";
 
 export default function GameAnalysisPage() {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { games, setGames } = useChesscomGames();
+  const { chessComGames, setChessComGames } = useChessComGames(); // Provider context ile bütün çocuklara, setGames ve içindeki findGame aktarılır.
 
   // ================================================================================================
   // Chess.com oyunlarını çeker.
-  // requestChesscomGames metodu Chess.com API'sine gider ve oyunları çeker.
+  // requestChessComGames /http/game-analysis/chesscom-games üzerinden oyunları çeker.
   // ================================================================================================
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,10 +25,10 @@ export default function GameAnalysisPage() {
 
     setIsLoading(true);
     try {
-      setGames(await requestChesscomGames(username));
+      setChessComGames(await requestChessComGames(username));
     } catch (error) {
       console.error(error);
-      setGames([]);
+      setChessComGames([]);
     } finally {
       setIsLoading(false);
     }
@@ -60,13 +59,13 @@ export default function GameAnalysisPage() {
             </Button>
           </FieldGroup>
         </form>
-        {games.length > 0 ? (
+        {chessComGames.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {games.map((game) => (
+            {chessComGames.map((game) => (
               <UserPlayedGamesBoard
                 key={game.uuid}
-                game={normalizeChesscomGame(game)}
-                focusUsername={username.trim()}
+                game={game}
+                searchedUsername={username.trim().toLowerCase()}
               />
             ))}
           </div>

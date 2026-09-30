@@ -14,6 +14,9 @@ export async function getGameAnalysis(
   return gameAnalysisRepo.findByUserSourceAndGameId(supabase, userId, source, gameId);
 }
 
+// ================================================================================================
+// Oyun analizini DB'ye kaydetmek için repo ile konuşur.
+// ================================================================================================
 export async function saveGameAnalysis(
   supabase: SupabaseClient,
   data: CreateGameAnalysisData,

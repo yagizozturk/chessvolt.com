@@ -2,7 +2,7 @@ import { Chess } from "chess.js";
 
 import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
-import { turnPgnIntoMoves } from "@/features/game-analysis/utilities/turn-pgn-into-moves";
+import { getMovesFromPgn } from "@/lib/chess/getMovesFromPgn";
 import { analyzeTerminalFen, getTurnFromFen, mateToWhiteCp, toSideToMoveCp } from "@/lib/chess-api/normalize";
 import { parseEngine } from "@/lib/engine/parse-engine";
 import type { EngineInfo } from "@/lib/shared/types/engine-info";
@@ -196,7 +196,7 @@ function adjustDeltaForMateMiss(
 }
 
 function criticalMomentsFromScores(
-  moves: NonNullable<ReturnType<typeof turnPgnIntoMoves>>,
+  moves: NonNullable<ReturnType<typeof getMovesFromPgn>>,
   scores: PositionScore[],
 ): CriticalMoment[] {
   const moments: CriticalMoment[] = [];
@@ -236,7 +236,7 @@ export async function analyzePgnWithStockfish(
   pgn: string,
   options: AnalyzePgnWithStockfishOptions = {},
 ): Promise<GameAnalysisResponseData> {
-  const moves = turnPgnIntoMoves(pgn);
+  const moves = getMovesFromPgn(pgn);
   if (!moves?.length) {
     throw new Error("Invalid or empty PGN");
   }

@@ -1,55 +1,41 @@
 "use client";
 
-import { ChessKnight, ChessPawn, Clock, Swords } from "lucide-react";
+import { ChessPawn, Clock, Swords } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import type { ImportedGame } from "@/features/game-analysis/types/imported-game";
+import type { ChessComGame } from "@/features/game-analysis/types/chesscom-game";
+import { formatPlayedAt } from "@/features/game-analysis/utilities/format-played-at";
+import { getGameResult } from "@/features/game-analysis/utilities/get-game-result";
 import {
   getImportedGameDisplayFen,
   getImportedGameMoveCountLabel,
-} from "@/features/game-analysis/utilities/imported-game-board";
-import { importedGameFocus } from "@/features/game-analysis/utilities/imported-game-focus";
+} from "@/features/game-analysis/utilities/get-imported-game-display-info";
+import { getPlayerUsernames } from "@/features/game-analysis/utilities/get-player-usernames";
 import { cn } from "@/lib/utils";
 
 type UserPlayedGamesBoardProps = {
-  game: ImportedGame;
-  focusUsername: string;
+  game: ChessComGame;
+  searchedUsername: string;
   boardWrapperClassName?: string;
 };
 
-function formatPlayedAt(endTime: number): string {
-  if (!endTime) return "";
-  const playedDate = new Date(endTime * 1000);
-  const month = playedDate.toLocaleDateString(undefined, { month: "short" });
-
-  return `${playedDate.getDate()} ${month}`;
-}
-
-function resultForFocus(game: ImportedGame, focusUsername: string): string {
-  const { youAreWhite, youAreBlack } = importedGameFocus(game, focusUsername);
-  if (youAreWhite) return game.white.result;
-  if (youAreBlack) return game.black.result;
-  return game.white.result;
-}
-
 export function UserPlayedGamesBoard({
   game,
-  focusUsername,
+  searchedUsername,
   boardWrapperClassName = "aspect-square w-full md:w-[240px] shrink-0",
 }: UserPlayedGamesBoardProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const href = `/game-analysis/${game.id}`;
-  const { opponent, youAreBlack } = importedGameFocus(game, focusUsername);
+  const href = `/game-analysis/${game.uuid}`;
+  const { opponent } = getPlayerUsernames(game, searchedUsername);
   const title = opponent ? `vs ${opponent.username}` : `${game.white.username} vs ${game.black.username}`;
-  const fen = useMemo(() => getImportedGameDisplayFen(game.pgn), [game.pgn]);
-  const moveCountLabel = useMemo(() => getImportedGameMoveCountLabel(game.pgn), [game.pgn]);
-  const playedAt = formatPlayedAt(game.endTime);
-  const result = resultForFocus(game, focusUsername);
-  const platformLabel = game.platform === "chesscom" ? "Chess.com" : "Lichess";
+  const fen = useMemo(() => getImportedGameDisplayFen(game.pgn), [game.pgn]); // PGN in son hamlesindeki FEN pozisyonunu döndürür. Bileşen (component) her yeniden render olduğunda hesabı tekrar yapma, sadece bağımlılıklar değiştiğinde yeniden hesapla
+  const moveCountLabel = useMemo(() => getImportedGameMoveCountLabel(game.pgn), [game.pgn]); // PGN in hamle sayısını döndürür.
+  const playedAt = formatPlayedAt(game.end_time);
+  const result = getGameResult(game, searchedUsername); // Aranan oyuncu bilgisinin karşısındaki oyun sonucunu döndürür. Resigned örnek
 
   return (
     <Link
@@ -68,44 +54,47 @@ export function UserPlayedGamesBoard({
       ) : null}
 
       <div className="relative flex flex-col items-stretch gap-6 p-6 md:flex-row">
+        {/* ====== Oyun Tahtası ====== */}
         <div className={cn("self-start", boardWrapperClassName)}>
           <DisplayBoard
-            sourceId={`user-game-${game.platform}-${game.id}`}
+            sourceId={`user-game-chesscom-${game.uuid}`}
             initialFen={fen}
             coordinates={false}
-            playerOrientation={youAreBlack ? "black" : "white"}
+            playerOrientation="white"
           />
         </div>
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
           <span className="text-xl font-bold">{title}</span>
+
+          {/* ====== Oyuncu Bilgileri ====== */}
           <p className="text-muted-foreground hidden text-base md:block">
             {game.white.username}
             {game.white.rating != null ? ` (${game.white.rating})` : ""} vs {game.black.username}
             {game.black.rating != null ? ` (${game.black.rating})` : ""}
           </p>
           <div className="text-muted-foreground flex items-center text-sm">
+            {/* ====== Oyun Tarihi ====== */}
             <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
-              {game.platform === "chesscom" ? (
-                <ChessPawn className="text-emerald-500" />
-              ) : (
-                <ChessKnight className="text-white" />
-              )}
-              <span>
-                {platformLabel} &#8226; {playedAt ? <span className="text-primary">{playedAt}</span> : null}
-              </span>
+              <ChessPawn className="text-emerald-500" />
+              <span>Chess.com &#8226; {playedAt ? <span className="text-primary">{playedAt}</span> : null}</span>
             </Badge>
           </div>
           <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
+            {/* ====== Oyun Süresi ====== */}
             <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3 capitalize">
               <Clock className="text-blue-500" />
-              <span>{game.timeClass}</span>
+              <span>{game.time_class}</span>
             </Badge>
+
+            {/* ====== Oyun Sonucu ====== */}
             {result ? (
               <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3 capitalize">
                 <Swords className="text-red-500" />
                 <span>{result}</span>
               </Badge>
             ) : null}
+
+            {/* ====== Hamle Sayısı ====== */}
             {moveCountLabel ? (
               <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
                 <ChessPawn className="text-primary" />

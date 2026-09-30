@@ -13,7 +13,7 @@ export type NormalizedPgnMove = {
   turn: "w" | "b";
 };
 
-export function turnPgnIntoMoves(pgn: string): NormalizedPgnMove[] | null {
+export function getMovesFromPgn(pgn: string): NormalizedPgnMove[] | null {
   try {
     const game = new Chess();
     game.loadPgn(normalizeLichessPgnComments(pgn.trim()), { strict: false });

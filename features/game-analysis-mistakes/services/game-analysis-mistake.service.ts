@@ -9,7 +9,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import * as gameAnalysisMistakeRepo from "@/features/game-analysis-mistakes/repository/game-analysis-mistake.repository";
 import type {
   GameAnalysisMistake,
-  SaveGameAnalysisMistakeInput,
+  GameAnalysisMistakePayload,
 } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 
 export async function getGameAnalysisMistakeById(
@@ -33,6 +33,9 @@ export async function getGameAnalysisMistakesByAnalysisId(
   return gameAnalysisMistakeRepo.findByGameAnalysisId(supabase, gameAnalysisId);
 }
 
+// ================================================================================================
+// Hataları gameId ye ve user a öre getirmesi için repo ile konuşur.
+// ================================================================================================
 export async function getGameAnalysisMistakesByGameId(
   supabase: SupabaseClient,
   userId: string,
@@ -43,21 +46,21 @@ export async function getGameAnalysisMistakesByGameId(
 
 export async function saveGameAnalysisMistake(
   supabase: SupabaseClient,
-  input: SaveGameAnalysisMistakeInput,
+  input: GameAnalysisMistakePayload,
 ): Promise<GameAnalysisMistake | null> {
   return gameAnalysisMistakeRepo.create(supabase, input);
 }
 
 export async function upsertGameAnalysisMistake(
   supabase: SupabaseClient,
-  input: SaveGameAnalysisMistakeInput,
+  input: GameAnalysisMistakePayload,
 ): Promise<GameAnalysisMistake | null> {
   return gameAnalysisMistakeRepo.upsert(supabase, input);
 }
 
 export async function upsertGameAnalysisMistakes(
   supabase: SupabaseClient,
-  inputs: SaveGameAnalysisMistakeInput[],
+  inputs: GameAnalysisMistakePayload[],
 ): Promise<GameAnalysisMistake[]> {
   return gameAnalysisMistakeRepo.upsertMany(supabase, inputs);
 }
