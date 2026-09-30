@@ -18,6 +18,10 @@ async function chesscomFetch(url: string) {
   return response.json() as Promise<unknown>;
 }
 
+// ================================================================================================
+// API client metodu
+// Oyunların çekilmesi için http klasörüne istek atar.
+// ================================================================================================
 export async function requestChesscomGames(username: string): Promise<ChesscomRealGame[]> {
   const normalized = username.trim().toLowerCase();
   const archives = (await chesscomFetch(`${CHESS_COM_GAMES_URL}/${encodeURIComponent(normalized)}/games/archives`)) as {

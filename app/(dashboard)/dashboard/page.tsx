@@ -11,7 +11,7 @@ import { getDisplayName } from "@/features/profile/utilities/user-avatar";
 import { getAuthenticatedUser } from "@/lib/supabase/auth";
 
 // ================================================================================================
-// Metadata of the page
+// Metadata
 // ================================================================================================
 export const metadata: Metadata = {
   title: "Dashboard | ChessVolt",
@@ -22,12 +22,12 @@ export default async function Page() {
   const { user, supabase } = await getAuthenticatedUser();
 
   // ================================================================================================
-  // Getting user profile
+  // Kullanıcı profili çekilir.
   // ================================================================================================
   const profile = await getUserProfile(supabase, user);
 
   // ================================================================================================
-  // If user profile is not found, return an error message
+  // Kullanıcı profili olmadığında hata döneriz.
   // ================================================================================================
   if (!profile) {
     return (
@@ -40,28 +40,29 @@ export default async function Page() {
   }
 
   // ================================================================================================
-  // Getting display name
+  // İsim Soyisim bilgisi displayName değişkenine atanır.
   // ================================================================================================
   const displayName = getDisplayName(profile);
 
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
-        {/* Welcome title and message */}
+        {/* ====== Ortak kullanılan sayfa başlık komponenti ====== */}
         <PageHeader
           title={`Hi, ${displayName}`}
           description="Pick up where you left off with your studies, puzzles, and openings."
         />
 
+        {/* ====== Nasıl Kullanılır kartlarının dialog gösterimi ====== */}
         <VoltHowToCarousel />
 
-        {/* Quick links and three column component with links */}
+        {/* ====== Hızlı linkler. Sol menünün hızlı erişimi. 3 kolondan oluşan flex-row alan elemanlardan oluşur. Ortak kullanılır. ====== */}
         <div className="page-container-grid-data-layout">
           {QUICK_LINKS.map((link) => (
             <ThreeColCard
               key={link.href}
               href={link.href}
-              left={<Image src={link.icon} alt="" aria-hidden width={32} height={32} className="size-8" />}
+              left={<Image src={link.icon} alt={link.alt} aria-hidden width={32} height={32} className="size-8" />}
               right={
                 <ChevronRight className="text-muted-foreground size-5 transition-transform group-hover:translate-x-0.5" />
               }

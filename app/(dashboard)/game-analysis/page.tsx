@@ -16,18 +16,17 @@ export default function GameAnalysisPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { games, setGames } = useChesscomGames();
 
-  // ==========================================================================================
-  // Load buttonuna basınca çalışır.
-  // requestChesscomGames metodu chess.com api ye gider ve oyunları çeker.
-  // ==========================================================================================
+  // ================================================================================================
+  // Chess.com oyunlarını çeker.
+  // requestChesscomGames metodu Chess.com API'sine gider ve oyunları çeker.
+  // ================================================================================================
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const trimmed = username.trim();
-    if (!trimmed || isLoading) return;
+    if (!username || isLoading) return;
 
     setIsLoading(true);
     try {
-      setGames(await requestChesscomGames(trimmed));
+      setGames(await requestChesscomGames(username));
     } catch (error) {
       console.error(error);
       setGames([]);
