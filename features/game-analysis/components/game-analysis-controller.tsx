@@ -14,10 +14,12 @@ import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { VoltCoach } from "@/components/volt-coach/volt-coach";
 import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
+import { requestGameAnalysis, requestGameAnalysisInsert } from "@/features/game-analysis/api/analyze-game";
 import { BoardPlayerName } from "@/features/game-analysis/components/board-player-name";
 import { GameAnalysisMistakeStepper } from "@/features/game-analysis/components/game-analysis-mistake-stepper";
 import type { ChessComGame } from "@/features/game-analysis/types/chesscom-game";
 import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
+import { analyzePgnWithStockfish } from "@/features/game-analysis/utilities/analyze-pgn-with-stockfish";
 import { getMistakesByPly } from "@/features/game-analysis/utilities/get-mistakes-by-ply";
 import { getRatingLabel } from "@/features/game-analysis/utilities/get-rating-label";
 import { MAX_HINT_COUNT } from "@/features/move-sequence/hooks/use-move-sequence-controller";
@@ -34,18 +36,23 @@ import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
 type GameAnalysisControllerProps = {
-  analysis: GameAnalysisWithMistakes;
+  gameId: string;
   game?: ChessComGame;
   initialMistakeId?: string | null;
 };
 
-export default function GameAnalysisController({ analysis, game, initialMistakeId }: GameAnalysisControllerProps) {
+export default function GameAnalysisController({ gameId, game, initialMistakeId }: GameAnalysisControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const isMobile = useIsMobile();
   const [isPending, startTransition] = useTransition();
   const solvedRef = useRef(false);
   const [boardKey, setBoardKey] = useState(0);
+  const [analysis, setAnalysis] = useState<GameAnalysisWithMistakes | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [analysisEngine, setAnalysisEngine] = useState<"local" | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const localAbortRef = useRef<AbortController | null>(null);
 
   // ================================================================================================
   // Timer ve score tracking için refler.
@@ -61,32 +68,127 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
   const [successOpen, setSuccessOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null);
 
-  // Hataları ply ye göre gruplar.
-  const mistakesByPly = useMemo(() => getMistakesByPly(analysis), [analysis]);
+  // Hataları ply ye göre gruplar. Analiz yokken boş kalır.
+  const mistakesByPly = useMemo(() => (analysis ? getMistakesByPly(analysis) : []), [analysis]);
 
   // Ply ye göre gruplanmış hataları döndürür. Sadece hatalar döner.
   const mistakes = useMemo(() => mistakesByPly.map((item) => item.mistake), [mistakesByPly]);
 
   // Ply ye göre hamleleri döndürür. San formatında. Koç bu durumda ne oynadığını söyler. Played Nf3 gibi.
   const userMoveByPlyWithSan = useMemo(() => {
+    if (!analysis) return {};
     return Object.fromEntries(analysis.criticalMoments.map((moment) => [moment.ply, moment.playedSan]));
-  }, [analysis.criticalMoments]);
+  }, [analysis]);
 
-  // Aktif hangi pozisyonla başlanacağına karar verir. Favorilere eklenen hata ile başlar.
-  const [activeMistakeId, setActiveMistakeId] = useState<string | null>(() => {
-    if (initialMistakeId && mistakes.some((mistake) => mistake.id === initialMistakeId)) {
-      return initialMistakeId;
-    }
-    return mistakes[0]?.id ?? null;
-  });
+  // Aktif hangi pozisyonla başlanacağına karar verir. Analiz gelince applyAnalysis set eder.
+  const [activeMistakeId, setActiveMistakeId] = useState<string | null>(null);
 
   // Hangi pozisyonlar çözüldü bilgisini tutar.
   const [completedMistakeIds, setCompletedMistakeIds] = useState<Set<string>>(() => new Set());
 
   // Hangi pozisyonlar hatalar favorilere eklendi bilgisini tutar.
-  const [favoritedMistakeIds, setFavoritedMistakeIds] = useState<Set<string>>(
-    () => new Set(analysis.favoritedMistakeIds),
-  );
+  const [favoritedMistakeIds, setFavoritedMistakeIds] = useState<Set<string>>(() => new Set());
+
+  // ==========================================================================================
+  // Mevcutta analiz yapılmışsa Saved game analysisi çeker.
+  // ==========================================================================================
+  useEffect(() => {
+    let cancelled = false; // Eğer sayfada sonuç gelmeden sayfadan çıkarsa oyuncu(unmount) bu durumda request devam etmez. setAnalysis kısmına boş yere girmez.
+
+    async function getSavedGameAnalysis() {
+      setIsLoading(true); // spinner için
+      try {
+        const response = await requestGameAnalysis(gameId); // api dosyasına gönderir isteği. Oradan http ye gidecek.
+        if (cancelled) return;
+        if (response.success && response.data) {
+          applyAnalysis(response.data);
+        }
+      } catch (error) {
+        if (!cancelled) console.error(error);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    }
+
+    void getSavedGameAnalysis(); // React bu metodu useEffect içinde olduğundan kaydeder. React sayfadaki ID params ı değişmedikçe bu metodu loop gibi tekrar tekrar çağırmaz.
+    return () => {
+      cancelled = true; // Burası cleanup artık. Browser kapanırsa devam etmesin diye.
+    };
+  }, [gameId]);
+
+  // ================================================================================================
+  // Stockfish analizini iptal etmek için sayfadan çıkıldığında.
+  // ================================================================================================
+  useEffect(() => {
+    return () => {
+      localAbortRef.current?.abort();
+    };
+  }, []);
+
+  // ================================================================================================
+  // Stockfish analizini lokalde oyuncunun makinasında yapmak için.
+  // ================================================================================================
+  async function analyzeWithStockfish() {
+    if (!game || analysisEngine) return;
+
+    const controller = new AbortController(); // Stockfish analizini iptal etmek için. Eğer sayfadan erken çkılırsa
+    localAbortRef.current = controller;
+    setAnalysisEngine("local");
+    setStatus("Starting Stockfish…");
+
+    try {
+      const localAnalysis = await analyzePgnWithStockfish(game.pgn, {
+        signal: controller.signal, // controller setlenir
+        onProgress: (completed, total) => {
+          if (!controller.signal.aborted) setStatus(`Stockfish ${completed}/${total}`);
+        },
+      });
+
+      if (controller.signal.aborted) return; // Eğer iptal edilirse return eder. Etmezse devam eder.
+
+      setStatus("Saving analysis results…");
+      const response = await requestGameAnalysisInsert(game.pgn, game.uuid, localAnalysis);
+      if (!response.success || !response.data) {
+        setStatus("Local analysis failed");
+        return;
+      }
+
+      applyAnalysis(response.data);
+      setStatus(null);
+    } catch (error) {
+      if (controller.signal.aborted) return;
+      if (error instanceof Error) {
+        setStatus(error.message || "Local analysis failed");
+        return;
+      }
+      const message =
+        error && typeof error === "object" && "error" in error ? String(error.error) : "Local analysis failed";
+      setStatus(message);
+    } finally {
+      if (localAbortRef.current === controller) localAbortRef.current = null;
+      if (!controller.signal.aborted) setAnalysisEngine(null);
+    }
+  }
+
+  // ================================================================================================
+  // Analiz gelince aktif hatayı ve favorileri kurar. Review state ilk renderda oluşmaz.
+  // ================================================================================================
+  function applyAnalysis(next: GameAnalysisWithMistakes) {
+    const nextMistakes = getMistakesByPly(next).map((item) => item.mistake);
+    const nextMistakeId =
+      initialMistakeId && nextMistakes.some((mistake) => mistake.id === initialMistakeId)
+        ? initialMistakeId
+        : (nextMistakes[0]?.id ?? null);
+
+    setAnalysis(next);
+    setFavoritedMistakeIds(new Set(next.favoritedMistakeIds));
+    setCompletedMistakeIds(new Set());
+    setActiveMistakeId(nextMistakeId);
+    solvedRef.current = false;
+    setSolved(false);
+    setHintCount(0);
+    setBoardKey((key) => key + 1);
+  }
 
   // Seçili hatanın tam çifti: kayıtlı hata ve ona karşılık gelen kritik an.
   const activeMistake = mistakesByPly.find((item) => item.mistake.id === activeMistakeId) ?? null;
@@ -100,7 +202,8 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
     ? playedMove
       ? `You played ${playedMove} in the game. Find the best move to play here.`
       : "Solve the original game position on the board."
-    : "Pick a review mistake to solve it on the board.";
+    : "Analyze this game to find the moves you missed.";
+  const boardFen = activeMistake?.moment.fen ?? game?.fen ?? null;
   const progressValue = mistakes.length > 0 ? Math.round((completedMistakeIds.size / mistakes.length) * 100) : 0;
   const isActiveMistakeFavorited = activeMistake ? favoritedMistakeIds.has(activeMistake.mistake.id) : false; // Seçili hatanın favori mi değil mi bilgisini tutar. Button için
 
@@ -231,16 +334,17 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
         <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-2 self-start md:flex-[3]">
           <div className="relative aspect-square w-full">
             {/* ====== Board ====== */}
-            {activeMistake ? (
+            {boardFen ? (
               <VoltBoard
                 ref={boardRef}
                 key={boardKey}
                 sourceId={playSessionId}
-                initialFen={activeMistake.moment.fen}
+                initialFen={boardFen}
+                viewOnly={!activeMistake}
                 coordinates={!isMobile}
                 playerOrientation={youAreBlack ? "black" : "white"}
-                drawHintMove={activeMistake.moment.bestUci}
-                playedMoveArrow={activeMistake.moment.playedUci}
+                drawHintMove={activeMistake?.moment.bestUci}
+                playedMoveArrow={activeMistake?.moment.playedUci}
                 onCheckMove={handleCheckMove}
                 onSuccessMovePlayed={handleSuccess}
                 onNextMoveRequest={() => undefined}
@@ -296,6 +400,7 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
             </div>
           </div>
 
+          {/* ====== Coach ====== */}
           <div className="card-border-bottom-shadow p-4">
             <VoltCoach title={coachTitle} message={coachMessage} ttsKey={playSessionId} />
           </div>
@@ -315,16 +420,34 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
           ) : null}
 
           {/* ====== Stepper ====== */}
-          <GameAnalysisMistakeStepper
-            mistakes={mistakes}
-            originalMoveByPly={userMoveByPlyWithSan}
-            activeMistakeId={activeMistake?.mistake.id ?? null}
-            completedMistakeIds={completedMistakeIds}
-            isLoading={false}
-            error={null}
-            hasResult
-            onSelectMistake={handleSelectMistake}
-          />
+          {analysis || analysisEngine ? (
+            <GameAnalysisMistakeStepper
+              mistakes={mistakes}
+              originalMoveByPly={userMoveByPlyWithSan}
+              activeMistakeId={activeMistake?.mistake.id ?? null}
+              completedMistakeIds={completedMistakeIds}
+              isLoading={analysisEngine !== null}
+              error={null}
+              hasResult={analysis !== null}
+              onSelectMistake={handleSelectMistake}
+            />
+          ) : null}
+
+          {/* ====== Analyze Button ====== */}
+          {!isLoading && !analysis ? (
+            <div className="mt-auto flex flex-col gap-2">
+              <Button
+                type="button"
+                variant="volt"
+                disabled={analysisEngine !== null || !game}
+                onClick={() => void analyzeWithStockfish()}
+              >
+                {analysisEngine === "local" ? <Spinner data-icon="inline-start" /> : null}
+                {analysisEngine === "local" ? "Analyzing Game…" : "Analyze Game"}
+              </Button>
+              {status ? <p className="text-muted-foreground text-sm">{status}</p> : null}
+            </div>
+          ) : null}
 
           {/* ====== Hint Button ====== */}
           {activeMistake && !solved ? (
