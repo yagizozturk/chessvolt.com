@@ -17,9 +17,9 @@ export function toGameAnalysisWithMistakes(
   moveCount: number,
   criticalMoments: GameAnalysisWithMistakes["criticalMoments"],
   questions: GameAnalysisWithMistakes["questions"],
-  favoritedQuestionIds: string[],
+  favoritedMistakeIds: string[],
 ): GameAnalysisWithMistakes {
-  return { moveCount, criticalMoments, questions, favoritedQuestionIds };
+  return { moveCount, criticalMoments, questions, favoritedMistakeIds };
 }
 
 export function toGameAnalysis(db: DbGameAnalysis): GameAnalysis {

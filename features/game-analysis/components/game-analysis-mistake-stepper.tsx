@@ -10,37 +10,37 @@ import completeAnimationData from "@/public/images/animations/animation-complete
 import loaderAnimationData from "@/public/images/animations/animation-loading.json";
 
 type GameAnalysisMistakeStepperProps = {
-  questions: GameAnalysisMistake[];
+  mistakes: GameAnalysisMistake[];
   originalMoveByPly: Record<number, string>;
-  activeQuestionId: string | null;
-  completedQuestionIds: Set<string>;
+  activeMistakeId: string | null;
+  completedMistakeIds: Set<string>;
   isLoading: boolean;
   error: string | null;
   hasResult: boolean;
-  onSelectQuestion: (question: GameAnalysisMistake) => void;
+  onSelectMistake: (mistake: GameAnalysisMistake) => void;
 };
 
 function qualityLabel(quality: GameAnalysisMistake["quality"]) {
   return quality === "blunder" ? "Blunder" : "Mistake";
 }
 
-function questionTitle(question: GameAnalysisMistake, originalMoveByPly: Record<number, string>) {
-  const originalMove = originalMoveByPly[question.ply]?.trim();
+function mistakeTitle(mistake: GameAnalysisMistake, originalMoveByPly: Record<number, string>) {
+  const originalMove = originalMoveByPly[mistake.ply]?.trim();
   if (originalMove) return `Played ${originalMove}`;
 
-  const title = question.title.trim();
+  const title = mistake.title.trim();
   return /^played\s+/i.test(title) ? title : "Original game move";
 }
 
 export function GameAnalysisMistakeStepper({
-  questions,
+  mistakes,
   originalMoveByPly,
-  activeQuestionId,
-  completedQuestionIds,
+  activeMistakeId,
+  completedMistakeIds,
   isLoading,
   error,
   hasResult,
-  onSelectQuestion,
+  onSelectMistake,
 }: GameAnalysisMistakeStepperProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -65,29 +65,29 @@ export function GameAnalysisMistakeStepper({
         </div>
       ) : null}
 
-      {!isLoading && questions.length > 0 ? (
+      {!isLoading && mistakes.length > 0 ? (
         <div className="min-w-0 pb-2">
           <ol className="grid grid-cols-2 gap-3" aria-label="Game analysis mistakes">
-            {questions.map((question, index) => {
-              const active = question.id === activeQuestionId;
-              const completed = completedQuestionIds.has(question.id);
+            {mistakes.map((mistake, index) => {
+              const active = mistake.id === activeMistakeId;
+              const completed = completedMistakeIds.has(mistake.id);
               const iconSrc =
-                question.quality === "blunder"
+                mistake.quality === "blunder"
                   ? "/images/icons/icon-blunder-double.png"
                   : "/images/icons/icon-mistake.png";
-              const title = questionTitle(question, originalMoveByPly);
-              const moveNumber = Math.floor(question.ply / 2);
+              const title = mistakeTitle(mistake, originalMoveByPly);
+              const moveNumber = Math.floor(mistake.ply / 2);
 
               return (
                 <li
-                  key={question.id}
+                  key={mistake.id}
                   role="button"
                   tabIndex={0}
-                  onClick={() => onSelectQuestion(question)}
+                  onClick={() => onSelectMistake(mistake)}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault();
-                      onSelectQuestion(question);
+                      onSelectMistake(mistake);
                     }
                   }}
                   className={cn(
@@ -96,7 +96,7 @@ export function GameAnalysisMistakeStepper({
                     completed && "border-green-500 bg-green-500/15 hover:bg-green-500/20",
                   )}
                   aria-current={active ? "step" : undefined}
-                  aria-label={`Question ${index + 1}: ${title}`}
+                  aria-label={`Mistake ${index + 1}: ${title}`}
                 >
                   <div
                     className={cn(
@@ -120,10 +120,10 @@ export function GameAnalysisMistakeStepper({
                     <span
                       className={cn(
                         "text-xs font-bold",
-                        question.quality === "blunder" ? "text-destructive" : "text-primary",
+                        mistake.quality === "blunder" ? "text-destructive" : "text-primary",
                       )}
                     >
-                      {qualityLabel(question.quality)}
+                      {qualityLabel(mistake.quality)}
                     </span>
                     <span className="line-clamp-2 text-sm leading-tight font-medium">{title}</span>
                     <span className="text-muted-foreground text-xs">Move {moveNumber}</span>
@@ -136,8 +136,8 @@ export function GameAnalysisMistakeStepper({
         </div>
       ) : null}
 
-      {!isLoading && !error && hasResult && questions.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No review questions found for this game.</p>
+      {!isLoading && !error && hasResult && mistakes.length === 0 ? (
+        <p className="text-muted-foreground text-sm">No review mistakes found for this game.</p>
       ) : null}
     </div>
   );

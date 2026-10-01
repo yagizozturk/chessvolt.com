@@ -85,7 +85,7 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
 
   // Hangi pozisyonlar hatalar favorilere eklendi bilgisini tutar.
   const [favoritedMistakeIds, setFavoritedMistakeIds] = useState<Set<string>>(
-    () => new Set(analysis.favoritedQuestionIds),
+    () => new Set(analysis.favoritedMistakeIds),
   );
 
   // Seçili hatanın tam çifti: kayıtlı hata ve ona karşılık gelen kritik an.
@@ -100,9 +100,9 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
     ? playedMove
       ? `You played ${playedMove} in the game. Find the best move to play here.`
       : "Solve the original game position on the board."
-    : "Pick a review question to solve it on the board.";
+    : "Pick a review mistake to solve it on the board.";
   const progressValue = mistakes.length > 0 ? Math.round((completedMistakeIds.size / mistakes.length) * 100) : 0;
-  const isActiveQuestionFavorited = activeMistake ? favoritedMistakeIds.has(activeMistake.mistake.id) : false; // Seçili hatanın favori mi değil mi bilgisini tutar. Button için
+  const isActiveMistakeFavorited = activeMistake ? favoritedMistakeIds.has(activeMistake.mistake.id) : false; // Seçili hatanın favori mi değil mi bilgisini tutar. Button için
 
   // Timer için kullanılır.
   useEffect(() => {
@@ -137,11 +137,11 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
   // ================================================================================================
   // Favori butonu için kullanılır. Handler. Favorite button u kullanır.
   // ================================================================================================
-  function handleQuestionFavoritedChange(questionId: string, favorited: boolean) {
+  function handleMistakeFavoritedChange(mistakeId: string, favorited: boolean) {
     setFavoritedMistakeIds((current) => {
       const next = new Set(current);
-      if (favorited) next.add(questionId);
-      else next.delete(questionId);
+      if (favorited) next.add(mistakeId);
+      else next.delete(mistakeId);
       return next;
     });
   }
@@ -287,8 +287,8 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
               {activeMistake ? (
                 <FavoriteButton
                   gameAnalysisMistakeId={activeMistake.mistake.id}
-                  isFavorited={isActiveQuestionFavorited}
-                  onFavoritedChange={(favorited) => handleQuestionFavoritedChange(activeMistake.mistake.id, favorited)}
+                  isFavorited={isActiveMistakeFavorited}
+                  onFavoritedChange={(favorited) => handleMistakeFavoritedChange(activeMistake.mistake.id, favorited)}
                 />
               ) : (
                 <div className="size-9" />
@@ -306,7 +306,7 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
               <Progress
                 value={progressValue}
                 className="h-4 flex-1 rounded-r-none"
-                aria-label="Solved questions progress"
+                aria-label="Solved mistakes progress"
               />
               <div className="ml-auto flex size-10 items-center justify-center rounded-2xl bg-red-400">
                 <Lottie animationData={animationData} loop={true} autoplay={true} className="size-15" />
@@ -316,14 +316,14 @@ export default function GameAnalysisController({ analysis, game, initialMistakeI
 
           {/* ====== Stepper ====== */}
           <GameAnalysisMistakeStepper
-            questions={mistakes}
+            mistakes={mistakes}
             originalMoveByPly={userMoveByPlyWithSan}
-            activeQuestionId={activeMistake?.mistake.id ?? null}
-            completedQuestionIds={completedMistakeIds}
+            activeMistakeId={activeMistake?.mistake.id ?? null}
+            completedMistakeIds={completedMistakeIds}
             isLoading={false}
             error={null}
             hasResult
-            onSelectQuestion={handleSelectMistake}
+            onSelectMistake={handleSelectMistake}
           />
 
           {/* ====== Hint Button ====== */}

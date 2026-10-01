@@ -21,6 +21,6 @@ export async function getGameAnalysisWithMistakes(
     moveCount: analysis.data.moveCount,
     criticalMoments: analysis.data.criticalMoments,
     questions,
-    favoritedQuestionIds: await getFavoritedMistakeIds(supabase, userId, questions),
+    favoritedMistakeIds: await getFavoritedMistakeIds(supabase, userId, questions),
   };
 }

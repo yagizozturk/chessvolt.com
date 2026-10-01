@@ -14,14 +14,8 @@ import type {
   GameAnalysisMistakePayload,
 } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 
-const QUESTION_SELECT = "*";
-
 export async function findById(supabase: SupabaseClient, id: string): Promise<GameAnalysisMistake | null> {
-  const { data, error } = await supabase
-    .from("game_analysis_mistakes")
-    .select(QUESTION_SELECT)
-    .eq("id", id)
-    .maybeSingle();
+  const { data, error } = await supabase.from("game_analysis_mistakes").select("*").eq("id", id).maybeSingle();
 
   if (error) {
     console.error("game-analysis-mistake.repository.findById error:", error);
@@ -36,7 +30,7 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<Ga
 export async function findByUserId(supabase: SupabaseClient, userId: string): Promise<GameAnalysisMistake[]> {
   const { data, error } = await supabase
     .from("game_analysis_mistakes")
-    .select(QUESTION_SELECT)
+    .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
@@ -54,7 +48,7 @@ export async function findByGameAnalysisId(
 ): Promise<GameAnalysisMistake[]> {
   const { data, error } = await supabase
     .from("game_analysis_mistakes")
-    .select(QUESTION_SELECT)
+    .select("*")
     .eq("game_analysis_id", gameAnalysisId)
     .order("ply", { ascending: true });
 
@@ -73,7 +67,7 @@ export async function findByUserGameId(
 ): Promise<GameAnalysisMistake[]> {
   const { data, error } = await supabase
     .from("game_analysis_mistakes")
-    .select(QUESTION_SELECT)
+    .select("*")
     .eq("user_id", userId)
     .eq("game_id", gameId)
     .order("ply", { ascending: true });
@@ -102,7 +96,7 @@ export async function create(
       ply: input.ply,
       quality: input.quality,
     })
-    .select(QUESTION_SELECT)
+    .select("*")
     .single();
 
   if (error) {
@@ -132,7 +126,7 @@ export async function upsert(
       },
       { onConflict: "user_id,game_id,ply" },
     )
-    .select(QUESTION_SELECT)
+    .select("*")
     .single();
 
   if (error) {
@@ -164,7 +158,7 @@ export async function upsertMany(
       })),
       { onConflict: "user_id,game_id,ply" },
     )
-    .select(QUESTION_SELECT);
+    .select("*");
 
   if (error || !data) {
     console.error("game-analysis-mistake.repository.upsertMany error:", error);
@@ -174,11 +168,7 @@ export async function upsertMany(
   return data.map((row) => toGameAnalysisMistake(row as DbGameAnalysisMistake));
 }
 
-export async function removeByUserGameId(
-  supabase: SupabaseClient,
-  userId: string,
-  gameId: string,
-): Promise<boolean> {
+export async function removeByUserGameId(supabase: SupabaseClient, userId: string, gameId: string): Promise<boolean> {
   const { error } = await supabase.from("game_analysis_mistakes").delete().eq("user_id", userId).eq("game_id", gameId);
 
   if (error) {
