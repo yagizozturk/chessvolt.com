@@ -103,39 +103,6 @@ export function PageGridSkeleton({ count = 4, children }: { count?: number; chil
   );
 }
 
-const THEME_BADGE_WIDTHS = ["w-16", "w-20", "w-24", "w-14", "w-28", "w-12"] as const;
-
-/** Mirrors `ThemeList` category sections with badge-shaped chips. */
-export function ThemeListSkeleton({
-  categoryCount = 4,
-  badgesPerCategory = 6,
-}: {
-  categoryCount?: number;
-  badgesPerCategory?: number;
-}) {
-  return (
-    <div className="space-y-6">
-      {Array.from({ length: categoryCount }, (_, categoryIndex) => (
-        <section key={categoryIndex}>
-          <Skeleton className="mb-2 h-4 w-24" />
-          <ul className="flex flex-wrap gap-2">
-            {Array.from({ length: badgesPerCategory }, (_, badgeIndex) => (
-              <li key={badgeIndex}>
-                <Skeleton
-                  className={cn(
-                    "h-6 rounded-full",
-                    THEME_BADGE_WIDTHS[(categoryIndex + badgeIndex) % THEME_BADGE_WIDTHS.length],
-                  )}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
-    </div>
-  );
-}
-
 /** Mirrors `PuzzleController` board + side panel layout. */
 export function PuzzleControllerSkeleton() {
   return (
