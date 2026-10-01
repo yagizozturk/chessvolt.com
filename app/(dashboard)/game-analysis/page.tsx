@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { PageHeader } from "@/components/page-header/page-header";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,13 @@ export default function GameAnalysisPage() {
   return (
     <div className="page-container">
       <div className="page-container-children-layout">
+        {/* ====== Page Header ====== */}
+        <PageHeader
+          title="Analyze Your Chess.com and LichessGames"
+          description="Analyze your chess.com and lichess.org games and find your mistakes."
+        />
+
+        {/* ====== Chess.com Form ====== */}
         <form
           onSubmit={(event) => {
             void handleSubmit(event);
@@ -62,11 +70,7 @@ export default function GameAnalysisPage() {
         {chessComGames.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {chessComGames.map((game) => (
-              <UserPlayedGamesBoard
-                key={game.uuid}
-                game={game}
-                searchedUsername={username.trim().toLowerCase()}
-              />
+              <UserPlayedGamesBoard key={game.uuid} game={game} searchedUsername={username.trim().toLowerCase()} />
             ))}
           </div>
         ) : null}
