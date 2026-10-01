@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getAllActivePuzzles, getPuzzleById } from "@/features/puzzle/services/puzzle.service";
+import { getAllActivePuzzles, getPuzzleById, getRandomActivePuzzleId } from "@/features/puzzle/services/puzzle.service";
 import type { PuzzlePageData, StandalonePuzzleLoaderPageProps } from "@/features/puzzle/types/puzzle-loader-page-props";
 import { buildStandalonePuzzleUrl, getStandalonePuzzleBackUrl } from "@/features/puzzle/utilities/build-puzzle-url";
 import { getNextPuzzleUrl } from "@/features/puzzle/utilities/get-next-puzzle-url";
@@ -18,9 +18,16 @@ export async function loadStandalonePuzzlePage(props: StandalonePuzzleLoaderPage
     notFound();
   }
 
-  const nextPuzzleUrl = getNextPuzzleUrl(await getAllActivePuzzles(supabase), puzzle.id, (id) =>
-    buildStandalonePuzzleUrl(id, from ? { from } : undefined),
-  );
+  const nextPuzzleId =
+    from === "puzzles" ? await getRandomActivePuzzleId(supabase, { userId: user?.id, excludePuzzleId: puzzle.id }) : null;
+  const nextPuzzleUrl =
+    from === "puzzles"
+      ? nextPuzzleId
+        ? buildStandalonePuzzleUrl(nextPuzzleId, { from: "puzzles" })
+        : null
+      : getNextPuzzleUrl(await getAllActivePuzzles(supabase), puzzle.id, (id) =>
+          buildStandalonePuzzleUrl(id, from ? { from } : undefined),
+        );
 
   const favoriteRow = user ? await getFavoriteByPuzzleId(supabase, user.id, puzzle.id) : null;
 

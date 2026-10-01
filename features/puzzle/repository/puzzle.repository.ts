@@ -10,6 +10,7 @@ import * as moveSequenceService from "@/features/move-sequence/services/move-seq
 import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { toPuzzle } from "@/features/puzzle/mapper/puzzle.mapper";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
+import { normalizeUuid, normalizeUuidList } from "@/features/puzzle/utilities/normalize-uuid";
 
 export async function findAllActive(supabase: SupabaseClient): Promise<Puzzle[]> {
   const { data, error } = await supabase
@@ -24,6 +25,48 @@ export async function findAllActive(supabase: SupabaseClient): Promise<Puzzle[]>
   }
 
   return (data ?? []).map(toPuzzle);
+}
+
+export type RandomActivePuzzleFilter = {
+  excludePuzzleId?: string;
+  excludeSequenceIds?: string[];
+};
+
+// Picks one active puzzle id with an indexed UUID pivot. Avoids loading every puzzle row.
+export async function findRandomActiveId(
+  supabase: SupabaseClient,
+  filter?: RandomActivePuzzleFilter,
+): Promise<string | null> {
+  const excludePuzzleId = normalizeUuid(filter?.excludePuzzleId);
+  const excludeSequenceIds = normalizeUuidList(filter?.excludeSequenceIds);
+  const pivot = crypto.randomUUID();
+
+  const selectActiveIds = () => {
+    let query = supabase.from("puzzles").select("id").eq("is_active", true);
+    if (excludePuzzleId) query = query.neq("id", excludePuzzleId);
+    if (excludeSequenceIds.length > 0) {
+      query = query.not("move_sequence_id", "in", `(${excludeSequenceIds.join(",")})`);
+    }
+    return query;
+  };
+
+  const { data, error } = await selectActiveIds().gt("id", pivot).order("id", { ascending: true }).limit(1);
+  if (error) {
+    console.error("puzzle.repository.findRandomActiveId error:", error);
+    return null;
+  }
+
+  const pivotedId = data?.[0]?.id;
+  if (typeof pivotedId === "string") return pivotedId;
+
+  const wrapped = await selectActiveIds().order("id", { ascending: true }).limit(1);
+  if (wrapped.error) {
+    console.error("puzzle.repository.findRandomActiveId error:", wrapped.error);
+    return null;
+  }
+
+  const wrappedId = wrapped.data?.[0]?.id;
+  return typeof wrappedId === "string" ? wrappedId : null;
 }
 
 export async function findById(supabase: SupabaseClient, id: string): Promise<Puzzle | null> {

@@ -15,7 +15,7 @@ export const QUICK_LINKS = [
   },
   {
     title: "Puzzles",
-    description: "Discover random puzzles by theme.",
+    description: "Solve a random puzzle.",
     href: "/puzzles",
     icon: "/images/icons/icon-puzzle.png",
     alt: "Puzzles",

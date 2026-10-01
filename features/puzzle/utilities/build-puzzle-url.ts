@@ -18,6 +18,7 @@ export function parseStandaloneThemeSlug(theme?: string | null): string | undefi
 // ==================================================================
 export function getStandalonePuzzleBackUrl(from?: "favorites" | "puzzles" | null): string {
   if (from === "favorites") return "/volt-tracker";
+  if (from === "puzzles") return "/dashboard";
   return "/puzzles";
 }
 

@@ -97,6 +97,42 @@ export async function findFinishedAttemptsByUserId(
 }
 
 // ================================================================================================
+// Latest distinct sequence ids the user completed, newest first.
+// Extra rows are read so repeated attempts on one puzzle still fill the requested window.
+// ================================================================================================
+export async function findRecentCompletedSequenceIds(
+  supabase: SupabaseClient,
+  userId: string,
+  limit: number,
+): Promise<string[]> {
+  if (limit < 1) return [];
+
+  const { data, error } = await supabase
+    .from("user_sequence_attempts")
+    .select("sequence_id")
+    .eq("user_id", userId)
+    .eq("status", "completed")
+    .order("started_at", { ascending: false })
+    .limit(Math.max(limit * 10, limit));
+
+  if (error) {
+    console.error("user-sequence-attempt.repository.findRecentCompletedSequenceIds error:", error);
+    return [];
+  }
+
+  const sequenceIds: string[] = [];
+  const seen = new Set<string>();
+  for (const row of data ?? []) {
+    if (typeof row.sequence_id !== "string" || seen.has(row.sequence_id)) continue;
+    seen.add(row.sequence_id);
+    sequenceIds.push(row.sequence_id);
+    if (sequenceIds.length === limit) break;
+  }
+
+  return sequenceIds;
+}
+
+// ================================================================================================
 // Getting all attempts by user since a timestamp (inclusive).
 // Used by Grand Volt to load every attempt in the lookback window in one query,
 // instead of fetching per-sequence like study pages do.

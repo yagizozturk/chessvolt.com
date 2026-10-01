@@ -79,6 +79,14 @@ export async function getLatestFinishedAttemptsByUser(
   return latestBySequence;
 }
 
+export async function getRecentCompletedSequenceIds(
+  supabase: SupabaseClient,
+  userId: string,
+  limit: number,
+): Promise<string[]> {
+  return userSequenceAttemptRepo.findRecentCompletedSequenceIds(supabase, userId, limit);
+}
+
 // ================================================================================================
 // Sequence ids the user has solved at least once (any completed attempt).
 // ================================================================================================

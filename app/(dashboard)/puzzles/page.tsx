@@ -1,22 +1,33 @@
-import { Suspense } from "react";
-
-import { PuzzleThemes } from "@/features/theme/components/puzzle-themes";
-import { getAllActiveThemesWithCoverImage } from "@/features/theme/services/theme.service";
+import { EmptyState } from "@/components/empty-state/empty-state";
+import { PageHeader } from "@/components/page-header/page-header";
+import PuzzleController from "@/features/puzzle/components/puzzle-controller";
+import { loadStandalonePuzzlePage } from "@/features/puzzle/loaders/standalone-puzzle-page.loader";
+import { getRandomActivePuzzleId } from "@/features/puzzle/services/puzzle.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
-export default async function PuzzlesPage() {
-  const { supabase } = await getPublicUser();
-  const themes = await getAllActiveThemesWithCoverImage(supabase);
+export const dynamic = "force-dynamic";
 
-  return (
-    <div className="page-container">
-      <div className="page-container-children-layout">
-        {/* Suspense is used for client side searchParams filter. All themes are loaded on client and with a search, we filter around it  
-            But in openings, we filter the search params with a server side query. */}
-        <Suspense>
-          <PuzzleThemes themes={themes} />
-        </Suspense>
+export default async function PuzzlesPage() {
+  const { user, supabase } = await getPublicUser();
+  const puzzleId = await getRandomActivePuzzleId(supabase, { userId: user?.id });
+
+  if (!puzzleId) {
+    return (
+      <div className="page-container">
+        <div className="page-container-children-layout">
+          <PageHeader title="Puzzles" description="Solve a random puzzle." />
+          <EmptyState message="No puzzles available yet." />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  const pageData = await loadStandalonePuzzlePage({
+    supabase,
+    user,
+    puzzleId,
+    from: "puzzles",
+  });
+
+  return <PuzzleController {...pageData} />;
 }
