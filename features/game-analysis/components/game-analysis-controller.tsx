@@ -51,6 +51,7 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
   const [analysis, setAnalysis] = useState<GameAnalysisWithMistakes | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [analysisEngine, setAnalysisEngine] = useState<"local" | null>(null);
+  const [analysisProgress, setAnalysisProgress] = useState<{ completed: number; total: number } | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const localAbortRef = useRef<AbortController | null>(null);
 
@@ -134,13 +135,14 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
     const controller = new AbortController(); // Stockfish analizini iptal etmek için. Eğer sayfadan erken çkılırsa
     localAbortRef.current = controller;
     setAnalysisEngine("local");
+    setAnalysisProgress({ completed: 0, total: 0 });
     setStatus("Starting Stockfish…");
 
     try {
       const localAnalysis = await analyzePgnWithStockfish(game.pgn, {
         signal: controller.signal, // controller setlenir
         onProgress: (completed, total) => {
-          if (!controller.signal.aborted) setStatus(`Stockfish ${completed}/${total}`);
+          if (!controller.signal.aborted) setAnalysisProgress({ completed, total });
         },
       });
 
@@ -166,6 +168,7 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
       setStatus(message);
     } finally {
       if (localAbortRef.current === controller) localAbortRef.current = null;
+      setAnalysisProgress(null);
       if (!controller.signal.aborted) setAnalysisEngine(null);
     }
   }
@@ -406,7 +409,17 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
           </div>
 
           {/* ====== Progress Bar ====== */}
-          {mistakes.length > 0 ? (
+          {analysisProgress ? (
+            <Progress
+              value={
+                analysisProgress.total > 0
+                  ? Math.round((analysisProgress.completed / analysisProgress.total) * 100)
+                  : 0
+              }
+              className="h-4 w-full"
+              aria-label={`Stockfish analysis progress ${analysisProgress.completed} of ${analysisProgress.total}`}
+            />
+          ) : mistakes.length > 0 ? (
             <div className="flex items-center">
               <Progress
                 value={progressValue}
