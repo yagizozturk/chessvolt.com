@@ -1,10 +1,15 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 
-const steps = [
+const steps: { imageSrc: string; imageAlt: string; title: ReactNode; description: string }[] = [
   {
     imageSrc: "/images/volt-explain/how_to_step_1.png",
     imageAlt: "Connect your chess.com and lichess.org accounts",
-    title: "Connect Your Accounts",
+    title: (
+      <>
+        <span className="text-primary">Connect</span> Your Accounts
+      </>
+    ),
     description:
       "Connect your Chess.com and Lichess accounts so ChessVolt can learn from your games and turn key mistakes into practice positions.",
   },
@@ -33,14 +38,14 @@ const steps = [
 
 export function Curve() {
   return (
-    <section className="bg-mist-100 py-30">
+    <section className="py-20">
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-4 text-center">
-            <h2 className="text-secondary text-3xl font-extrabold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-extrabold tracking-tight text-neutral-100 sm:text-4xl">
               How ChessVolt Helps You Practice
             </h2>
-            <p className="text-secondary/80 mx-auto max-w-2xl text-lg leading-relaxed">
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-neutral-300">
               ChessVolt is built on the{" "}
               <span className="text-primary font-medium">forgetting curve of Hermann Ebbinghaus</span>. First 3
               repetition will be the most effective, so we recommend you to play the same game 3 times in a row. These
@@ -49,7 +54,7 @@ export function Curve() {
           </div>
           <div className="flex flex-col gap-16 lg:grid lg:grid-cols-4 lg:grid-rows-[auto_auto_auto] lg:gap-x-6 lg:gap-y-4">
             {steps.map((step) => (
-              <div key={step.title} className="flex flex-col gap-4 lg:row-span-3 lg:grid lg:grid-rows-subgrid">
+              <div key={step.imageSrc} className="flex flex-col gap-4 lg:row-span-3 lg:grid lg:grid-rows-subgrid">
                 <div className="flex items-center justify-center overflow-hidden rounded-2xl">
                   <Image
                     src={step.imageSrc}
@@ -59,8 +64,8 @@ export function Curve() {
                     className="h-auto w-full object-contain"
                   />
                 </div>
-                <h3 className="text-secondary mt-4 text-center text-2xl font-bold tracking-tight">{step.title}</h3>
-                <p className="text-secondary/80 text-center text-lg leading-relaxed">{step.description}</p>
+                <h3 className="mt-4 text-center text-2xl font-bold tracking-tight text-neutral-100">{step.title}</h3>
+                <p className="text-center text-lg leading-relaxed text-neutral-300">{step.description}</p>
               </div>
             ))}
           </div>
