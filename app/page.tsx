@@ -5,6 +5,7 @@ import { Footer } from "@/features/landing/components/footer";
 import { Hero } from "@/features/landing/components/hero";
 import { Information } from "@/features/landing/components/information";
 import { Navbar } from "@/features/landing/components/navbar";
+import { LandingCarousel } from "@/features/landing/components/landing-carousel";
 import { Rocket } from "@/features/landing/components/rocket";
 
 export default function HomePage() {
@@ -15,6 +16,7 @@ export default function HomePage() {
       <Curve />
       <DiamondStats />
       <Rocket />
+      <LandingCarousel />
       <Footer />
     </div>
   );
