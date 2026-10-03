@@ -60,7 +60,7 @@ export function UserPlayedGamesBoard({
             sourceId={`user-game-chesscom-${game.uuid}`}
             initialFen={fen}
             coordinates={false}
-            playerOrientation="white"
+            playerOrientation={searchedUsername === game.white.username ? "white" : "black"}
           />
         </div>
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
