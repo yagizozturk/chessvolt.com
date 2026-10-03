@@ -75,6 +75,11 @@ const data = {
       icon: "/images/icons/icon-book-study.png",
     },
     {
+      title: "Blog",
+      url: "/blog",
+      icon: "/images/icons/icon-blog.png",
+    },
+    {
       title: "Other",
       url: "#",
       icon: "/images/icons/icon-more.png",

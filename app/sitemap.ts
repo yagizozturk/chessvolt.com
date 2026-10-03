@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { getPublishedBlogSitemapEntries } from "@/features/blog/services/blog.service";
 import { getAllOpenings } from "@/features/openings/services/openings.service";
 import { getActiveStudiesWithPuzzleCountAndThemes } from "@/features/study/services/study.service";
 import { getAllActiveThemes } from "@/features/theme/services/theme.service";
@@ -31,6 +32,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${siteUrl}/blog`,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
       url: `${siteUrl}/contact`,
       changeFrequency: "monthly",
       priority: 0.5,
@@ -49,10 +55,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const { supabase } = await getPublicUser();
 
-  const [openings, themes, studies] = await Promise.all([
+  const [openings, themes, studies, posts] = await Promise.all([
     getAllOpenings(supabase),
     getAllActiveThemes(supabase),
     getActiveStudiesWithPuzzleCountAndThemes(supabase),
+    getPublishedBlogSitemapEntries(supabase),
   ]);
 
   const openingPages: MetadataRoute.Sitemap = openings
@@ -64,6 +71,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
   
+  const blogPages: MetadataRoute.Sitemap = posts.map((post) => ({
+    url: `${siteUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt),
+    changeFrequency: "weekly",
+    priority: 0.6,
+  }));
+
   const studyPages: MetadataRoute.Sitemap = studies.map((study) => ({
     url: `${siteUrl}/studies/${study.slug}`,
     lastModified: new Date(study.updatedAt),
@@ -81,5 +95,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   */ 
 
 
-  return [...staticPages, ...openingPages, ...studyPages];
+  return [...staticPages, ...openingPages, ...studyPages, ...blogPages];
 }

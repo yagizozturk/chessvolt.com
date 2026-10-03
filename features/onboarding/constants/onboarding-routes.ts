@@ -13,4 +13,5 @@ export const DASHBOARD_PATH_PREFIXES = [
   "/volt-tracker",
   "/profile",
   "/game-analysis",
+  "/blog",
 ] as const;

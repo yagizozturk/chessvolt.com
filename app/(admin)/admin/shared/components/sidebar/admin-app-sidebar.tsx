@@ -6,6 +6,7 @@ import {
   Gamepad2Icon,
   HelpCircleIcon,
   LayoutDashboardIcon,
+  NewspaperIcon,
   SparklesIcon,
   TagsIcon,
   UsersIcon,
@@ -79,6 +80,15 @@ const adminNavItems: AdminNavMainItem[] = [
       { title: "Create opening", url: "/admin/openings/create" },
       { title: "Bulk variants", url: "/admin/openings/variants/bulk" },
       { title: "PGN goals preview", url: "/admin/openings/variants/pgn-goals-preview" },
+    ],
+  },
+  {
+    title: "Blog",
+    url: "/admin/blog",
+    icon: <NewspaperIcon />,
+    items: [
+      { title: "All posts", url: "/admin/blog" },
+      { title: "New post", url: "/admin/blog/create" },
     ],
   },
   {
