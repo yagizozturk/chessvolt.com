@@ -1,5 +1,5 @@
 import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@/api-client/route-handler";
-import { GAME_LIST_LIMIT } from "@/lib/chess-com/constants";
+import { GAME_LIST_LIMIT, GAME_LIST_MAX_OFFSET } from "@/lib/chess-com/constants";
 import { ChessComApiError } from "@/lib/chess-com/errors";
 import { getRecentGames } from "@/lib/chess-com/get-recent-games";
 
@@ -10,15 +10,21 @@ import { getRecentGames } from "@/lib/chess-com/get-recent-games";
 // ================================================================================================
 async function handleGET(req: Request) {
   await requireAuth();
-  const username = new URL(req.url).searchParams.get("username")?.trim() ?? ""; // Eğer username değeri yok ise undefined veya null yerine "" döndürür.
+  const params = new URL(req.url).searchParams;
+  const username = params.get("username")?.trim() ?? "";
+  const offset = Number(params.get("offset") ?? "0");
 
   if (!username) {
     return errorResponse("username is required", 400);
   }
 
+  if (!Number.isInteger(offset) || offset < 0 || offset > GAME_LIST_MAX_OFFSET) {
+    return errorResponse("offset must be a non-negative integer", 400);
+  }
+
   try {
-    const { games } = await getRecentGames(username, GAME_LIST_LIMIT); // lib altındaki chess.com dosyasından ona ait metotlar tetiklenir.
-    return successResponse(games);
+    const page = await getRecentGames(username, GAME_LIST_LIMIT, offset);
+    return successResponse(page);
   } catch (error) {
     if (error instanceof ChessComApiError) {
       return errorResponse(error.message, error.status && error.status >= 400 ? error.status : 502);

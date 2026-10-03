@@ -5,30 +5,43 @@ import { chessComFetch } from "@/lib/chess-com/client";
 import { CHESS_COM_BASE_URL } from "@/lib/chess-com/constants";
 
 // ================================================================================================
-// En yenisi başta gelecek şekeilde Chess.com oyun arşivini aylara göre çeker.
-// Limiti bulana kadar(biz belirleriz), en son aydan en eski aya kadar o sayıda oyunu bulur.
+// Chess.com has no page cursor. Archives are monthly, newest month last.
+// Skip `offset` newest games, then return the next `limit`. `hasMore` is true when one more game exists.
 // ================================================================================================
-export async function getRecentGames(username: string, limit = 10): Promise<{ games: ChessComGame[] }> {
-  const safeLimit = Math.min(Math.max(1, Math.floor(limit)), 50); // Math.floor ile 1 den düşük olmamasını sağlarız. Math.max ile 50 den büyükse 50'ye eşitleriz.
+export async function getRecentGames(
+  username: string,
+  limit = 10,
+  offset = 0,
+): Promise<{ games: ChessComGame[]; hasMore: boolean }> {
+  const safeLimit = Math.min(Math.max(1, Math.floor(limit)), 50);
+  const safeOffset = Math.max(0, Math.floor(offset));
   const archives = await getPlayerMonthlyArchives(username);
   if (archives.length === 0) {
-    return { games: [] };
+    return { games: [], hasMore: false };
   }
 
-  const chessComGames: ChessComGame[] = [];
+  const games: ChessComGame[] = [];
+  let skipped = 0;
 
-  // En yenisi başta gelecek şekeilde Chess.com oyun arşivini aylara göre çeker.
-  for (let i = archives.length - 1; i >= 0 && chessComGames.length < safeLimit; i--) {
+  for (let i = archives.length - 1; i >= 0; i--) {
     const monthGames = await getGamesByMonth(archives[i]!);
     const newestFirst = [...monthGames].sort((a, b) => b.end_time - a.end_time);
 
     for (const game of newestFirst) {
-      chessComGames.push(game);
-      if (chessComGames.length >= safeLimit) break;
+      if (skipped < safeOffset) {
+        skipped += 1;
+        continue;
+      }
+
+      if (games.length === safeLimit) {
+        return { games, hasMore: true };
+      }
+
+      games.push(game);
     }
   }
 
-  return { games: chessComGames };
+  return { games, hasMore: false };
 }
 
 // ================================================================================================

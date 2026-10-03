@@ -14,6 +14,8 @@ import { useChessComGames } from "@/features/game-analysis/hooks/use-chesscom-ga
 export default function GameAnalysisPage() {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const { chessComGames, setChessComGames } = useChessComGames(); // Provider context ile bütün çocuklara, setGames ve içindeki findGame aktarılır.
 
   // ================================================================================================
@@ -26,12 +28,31 @@ export default function GameAnalysisPage() {
 
     setIsLoading(true);
     try {
-      setChessComGames(await requestChessComGames(username));
+      const page = await requestChessComGames(username);
+      setChessComGames(page.games);
+      setHasMore(page.hasMore);
     } catch (error) {
       console.error(error);
       setChessComGames([]);
+      setHasMore(false);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleLoadMore() {
+    if (!username || isLoadingMore || !hasMore) return;
+
+    setIsLoadingMore(true);
+    try {
+      const page = await requestChessComGames(username, chessComGames.length);
+      const seen = new Set(chessComGames.map((game) => game.uuid));
+      setChessComGames([...chessComGames, ...page.games.filter((game) => !seen.has(game.uuid))]);
+      setHasMore(page.hasMore);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoadingMore(false);
     }
   }
 
@@ -72,6 +93,14 @@ export default function GameAnalysisPage() {
             {chessComGames.map((game) => (
               <UserPlayedGamesBoard key={game.uuid} game={game} searchedUsername={username.trim().toLowerCase()} />
             ))}
+          </div>
+        ) : null}
+        {hasMore ? (
+          <div className="flex justify-center">
+            <Button type="button" variant="volt" onClick={() => void handleLoadMore()} disabled={isLoadingMore}>
+              {isLoadingMore ? <Spinner data-icon="inline-start" /> : null}
+              {isLoadingMore ? "Loading…" : "Load more"}
+            </Button>
           </div>
         ) : null}
       </div>
