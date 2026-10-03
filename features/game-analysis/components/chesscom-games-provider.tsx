@@ -15,14 +15,17 @@ export const ChesscomGamesContext = createContext<ChessComGamesContextValue | nu
 // ====================================================================================================
 export function ChesscomGamesProvider({ children }: { children: ReactNode }) {
   const [chessComGames, setChessComGames] = useState<ChessComGame[]>([]);
+  const [chessComUsername, setChessComUsername] = useState("");
 
   const value = useMemo<ChessComGamesContextValue>(
     () => ({
       chessComGames,
       setChessComGames,
+      chessComUsername,
+      setChessComUsername,
       findGame: (uuid) => chessComGames.find((game) => game.uuid === uuid),
     }),
-    [chessComGames],
+    [chessComGames, chessComUsername],
   );
 
   return <ChesscomGamesContext.Provider value={value}>{children}</ChesscomGamesContext.Provider>;

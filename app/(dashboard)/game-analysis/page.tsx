@@ -4,31 +4,31 @@ import { useState } from "react";
 
 import { PageHeader } from "@/components/page-header/page-header";
 import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { requestChessComGames } from "@/features/game-analysis/api/chesscom-games";
+import { ChessComUsernameForm } from "@/features/game-analysis/components/chess-com-username-form";
+import { LichessUsernameForm } from "@/features/game-analysis/components/lichess-username-form";
 import { UserPlayedGamesBoard } from "@/features/game-analysis/components/user-played-games-board";
 import { useChessComGames } from "@/features/game-analysis/hooks/use-chesscom-games";
 
 export default function GameAnalysisPage() {
-  const [username, setUsername] = useState("");
+  const [lichessUsername, setLichessUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
-  const { chessComGames, setChessComGames } = useChessComGames(); // Provider context ile bütün çocuklara, setGames ve içindeki findGame aktarılır.
+  const { chessComGames, setChessComGames, chessComUsername, setChessComUsername } = useChessComGames();
 
   // ================================================================================================
   // Chess.com oyunlarını çeker.
   // requestChessComGames /http/game-analysis/chesscom-games üzerinden oyunları çeker.
   // ================================================================================================
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleChessComSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!username || isLoading) return;
+    if (!chessComUsername || isLoading) return;
 
     setIsLoading(true);
     try {
-      const page = await requestChessComGames(username);
+      const page = await requestChessComGames(chessComUsername);
       setChessComGames(page.games);
       setHasMore(page.hasMore);
     } catch (error) {
@@ -41,11 +41,11 @@ export default function GameAnalysisPage() {
   }
 
   async function handleLoadMore() {
-    if (!username || isLoadingMore || !hasMore) return;
+    if (!chessComUsername || isLoadingMore || !hasMore) return;
 
     setIsLoadingMore(true);
     try {
-      const page = await requestChessComGames(username, chessComGames.length);
+      const page = await requestChessComGames(chessComUsername, chessComGames.length);
       const seen = new Set(chessComGames.map((game) => game.uuid));
       setChessComGames([...chessComGames, ...page.games.filter((game) => !seen.has(game.uuid))]);
       setHasMore(page.hasMore);
@@ -65,33 +65,40 @@ export default function GameAnalysisPage() {
           description="Analyze your chess.com and lichess.org games and find your mistakes."
         />
 
-        {/* ====== Chess.com Form ====== */}
-        <form
-          onSubmit={(event) => {
-            void handleSubmit(event);
-          }}
-        >
-          <FieldGroup className="flex max-w-md flex-col gap-4 sm:flex-row sm:items-end">
-            <Field className="min-w-0 flex-1">
-              <FieldLabel htmlFor="test-chesscom-username">Chess.com</FieldLabel>
-              <Input
-                id="test-chesscom-username"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                placeholder="username"
-                autoComplete="off"
-              />
-            </Field>
-            <Button type="submit" variant="volt" disabled={isLoading}>
-              {isLoading ? <Spinner data-icon="inline-start" /> : null}
-              {isLoading ? "Loading…" : "Load"}
-            </Button>
-          </FieldGroup>
-        </form>
+        {/* ====== Platform Form Cards ====== */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="card-border-bottom-shadow p-4">
+            <ChessComUsernameForm
+              image="/images/form/chess-com-logo.png"
+              title="Chess.com"
+              description="Load your recent Chess.com games."
+              chessComUsername={chessComUsername}
+              isLoading={isLoading}
+              setChessComUsername={setChessComUsername}
+              onSubmit={handleChessComSubmit}
+            />
+          </div>
+          <div className="card-border-bottom-shadow p-4">
+            <LichessUsernameForm
+              image="/images/form/lichess-logo.png"
+              title="Lichess"
+              description="Load your recent Lichess games."
+              lichessUsername={lichessUsername}
+              isLoading={false}
+              setLichessUsername={setLichessUsername}
+            />
+          </div>
+        </div>
+
+        {/* ====== Chess.com Oyunları ====== */}
         {chessComGames.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {chessComGames.map((game) => (
-              <UserPlayedGamesBoard key={game.uuid} game={game} searchedUsername={username.trim().toLowerCase()} />
+              <UserPlayedGamesBoard
+                key={game.uuid}
+                game={game}
+                searchedUsername={chessComUsername.trim().toLowerCase()}
+              />
             ))}
           </div>
         ) : null}

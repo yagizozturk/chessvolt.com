@@ -32,6 +32,7 @@ import {
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getPlayerColorFromPgn } from "@/lib/chess/getPlayerColorFromPgn";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
@@ -39,10 +40,16 @@ import animationData from "@/public/images/animations/animation-rocjet-launch.js
 type GameAnalysisControllerProps = {
   gameId: string;
   game?: ChessComGame;
+  username?: string;
   initialMistakeId?: string | null;
 };
 
-export default function GameAnalysisController({ gameId, game, initialMistakeId }: GameAnalysisControllerProps) {
+export default function GameAnalysisController({
+  gameId,
+  game,
+  username = "",
+  initialMistakeId,
+}: GameAnalysisControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const isMobile = useIsMobile();
@@ -203,7 +210,8 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
 
   // Seçili hatanın tam çifti: kayıtlı hata ve ona karşılık gelen kritik an.
   const activeMistake = mistakesByPly.find((item) => item.mistake.id === activeMistakeId) ?? null;
-  const youAreBlack = mistakesByPly[0]?.moment.turn === "b"; // Oyuncu rengi hataya göre belirlenir.
+  const playerColor = game ? getPlayerColorFromPgn(game.pgn, username) : null;
+  const youAreBlack = playerColor === "b" || (playerColor === null && mistakesByPly[0]?.moment.turn === "b");
   const bottomPlayer = youAreBlack ? game?.black : game?.white; // Alt oyuncu.
   const topPlayer = youAreBlack ? game?.white : game?.black; // Üst oyuncu.
   const playSessionId = activeMistake ? `${activeMistake.mistake.id}:${boardKey}` : "game-analysis"; // Board'a bağlı olan ID.

@@ -8,8 +8,15 @@ import { useChessComGames } from "@/features/game-analysis/hooks/use-chesscom-ga
 export default function GameAnalysisGamePage() {
   const params = useParams<{ id: string }>();
   const initialMistakeId = useSearchParams().get("mistakeId");
-  const { findGame } = useChessComGames();
+  const { findGame, chessComUsername } = useChessComGames();
   const game = findGame(params.id);
 
-  return <GameAnalysisController gameId={params.id} game={game} initialMistakeId={initialMistakeId} />;
+  return (
+    <GameAnalysisController
+      gameId={params.id}
+      game={game}
+      username={chessComUsername}
+      initialMistakeId={initialMistakeId}
+    />
+  );
 }
