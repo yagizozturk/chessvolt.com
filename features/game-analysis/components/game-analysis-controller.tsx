@@ -60,7 +60,7 @@ export default function GameAnalysisController({
   const [isLoading, setIsLoading] = useState(true);
   const [analysisEngine, setAnalysisEngine] = useState<"local" | null>(null);
   const [analysisProgress, setAnalysisProgress] = useState<{ completed: number; total: number } | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>("Getting critical moments from server");
   const localAbortRef = useRef<AbortController | null>(null);
 
   // ================================================================================================
@@ -105,7 +105,8 @@ export default function GameAnalysisController({
     let cancelled = false; // Eğer sayfada sonuç gelmeden sayfadan çıkarsa oyuncu(unmount) bu durumda request devam etmez. setAnalysis kısmına boş yere girmez.
 
     async function getSavedGameAnalysis() {
-      setIsLoading(true); // spinner için
+      setIsLoading(true);
+      setStatus("Getting critical moments from server");
       let redirecting = false;
       try {
         const response = await requestGameAnalysis(gameId); // api dosyasına gönderir isteği. Oradan http ye gidecek.
@@ -122,7 +123,10 @@ export default function GameAnalysisController({
       } catch (error) {
         if (!cancelled) console.error(error);
       } finally {
-        if (!cancelled && !redirecting) setIsLoading(false);
+        if (!cancelled && !redirecting) {
+          setIsLoading(false);
+          setStatus(null);
+        }
       }
     }
 
