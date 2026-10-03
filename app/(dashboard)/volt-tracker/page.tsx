@@ -108,7 +108,7 @@ export default async function VoltTracker({ searchParams }: { searchParams: Sear
         {showMergedEmptyState ? (
           <EmptyDataMessage message={mergedEmptyMessage} />
         ) : (
-          <div className="flex flex-col gap-8">
+          <div className="mt-[-1.5rem] flex flex-col gap-8">
             {(view === "all" || view === "openings") && (
               <UserFavoriteOpeningVariants
                 favorites={visibleFavorites}

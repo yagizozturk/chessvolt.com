@@ -17,6 +17,7 @@ import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/type
 import { requestGameAnalysis, requestGameAnalysisInsert } from "@/features/game-analysis/api/analyze-game";
 import { BoardPlayerName } from "@/features/game-analysis/components/board-player-name";
 import { GameAnalysisMistakeStepper } from "@/features/game-analysis/components/game-analysis-mistake-stepper";
+import { GameAnalysisStatus } from "@/features/game-analysis/components/game-analysis-status";
 import type { ChessComGame } from "@/features/game-analysis/types/chesscom-game";
 import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import { analyzePgnWithStockfish } from "@/features/game-analysis/utilities/analyze-pgn-with-stockfish";
@@ -98,16 +99,23 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
 
     async function getSavedGameAnalysis() {
       setIsLoading(true); // spinner için
+      let redirecting = false;
       try {
         const response = await requestGameAnalysis(gameId); // api dosyasına gönderir isteği. Oradan http ye gidecek.
         if (cancelled) return;
         if (response.success && response.data) {
           applyAnalysis(response.data);
+          return;
+        }
+        // Refresh drops the in-memory Chess.com game. With no saved row there is no PGN or FEN, so leave the dead page.
+        if (!game) {
+          redirecting = true;
+          router.replace("/game-analysis");
         }
       } catch (error) {
         if (!cancelled) console.error(error);
       } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled && !redirecting) setIsLoading(false);
       }
     }
 
@@ -115,7 +123,7 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
     return () => {
       cancelled = true; // Burası cleanup artık. Browser kapanırsa devam etmesin diye.
     };
-  }, [gameId]);
+  }, [game, gameId, router]);
 
   // ================================================================================================
   // Stockfish analizini iptal etmek için sayfadan çıkıldığında.
@@ -136,7 +144,7 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
     localAbortRef.current = controller;
     setAnalysisEngine("local");
     setAnalysisProgress({ completed: 0, total: 0 });
-    setStatus("Starting Stockfish…");
+    setStatus("Evaluating via Stockfish. Large games can take a while...");
 
     try {
       const localAnalysis = await analyzePgnWithStockfish(game.pgn, {
@@ -412,9 +420,7 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
           {analysisProgress ? (
             <Progress
               value={
-                analysisProgress.total > 0
-                  ? Math.round((analysisProgress.completed / analysisProgress.total) * 100)
-                  : 0
+                analysisProgress.total > 0 ? Math.round((analysisProgress.completed / analysisProgress.total) * 100) : 0
               }
               className="h-4 w-full"
               aria-label={`Stockfish analysis progress ${analysisProgress.completed} of ${analysisProgress.total}`}
@@ -431,6 +437,9 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
               </div>
             </div>
           ) : null}
+
+          {/* ====== Game Analysis Status ====== */}
+          <GameAnalysisStatus message={status} />
 
           {/* ====== Stepper ====== */}
           {analysis || analysisEngine ? (
@@ -458,7 +467,6 @@ export default function GameAnalysisController({ gameId, game, initialMistakeId 
                 {analysisEngine === "local" ? <Spinner data-icon="inline-start" /> : null}
                 {analysisEngine === "local" ? "Analyzing Game…" : "Analyze Game"}
               </Button>
-              {status ? <p className="text-muted-foreground text-sm">{status}</p> : null}
             </div>
           ) : null}
 

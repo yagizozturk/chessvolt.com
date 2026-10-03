@@ -1,13 +1,13 @@
 "use client";
 
 import Lottie from "lottie-react";
+import { AlertCircleIcon } from "lucide-react";
 import Image from "next/image";
 
-import { AnimatedShinyText } from "@/components/ui/animated-shiny-text";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
 import { cn } from "@/lib/utils";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
-import loaderAnimationData from "@/public/images/animations/animation-loading.json";
 
 type GameAnalysisMistakeStepperProps = {
   mistakes: GameAnalysisMistake[];
@@ -45,25 +45,6 @@ export function GameAnalysisMistakeStepper({
   return (
     <div className="flex flex-col gap-4">
       {error ? <p className="text-destructive text-sm">{error}</p> : null}
-
-      {isLoading ? (
-        <div className="flex flex-col items-center gap-3" role="status" aria-live="polite">
-          <div className="text-muted-foreground flex items-center justify-center gap-3 text-sm">
-            <Lottie
-              animationData={loaderAnimationData}
-              loop
-              autoplay
-              aria-hidden="true"
-              className="bg-foreground/90 border-primary size-28 shrink-0 rounded-full border border-5"
-            />
-          </div>
-          <div className="px-4 text-center text-base">
-            <AnimatedShinyText>
-              <span className="text-white">Evaluating via Stockfish. Large games can take a while...</span>
-            </AnimatedShinyText>
-          </div>
-        </div>
-      ) : null}
 
       {!isLoading && mistakes.length > 0 ? (
         <div className="min-w-0 pb-2">
@@ -137,7 +118,11 @@ export function GameAnalysisMistakeStepper({
       ) : null}
 
       {!isLoading && !error && hasResult && mistakes.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No review mistakes found for this game.</p>
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle>No mistakes</AlertTitle>
+          <AlertDescription>No review mistakes found for this game.</AlertDescription>
+        </Alert>
       ) : null}
     </div>
   );
