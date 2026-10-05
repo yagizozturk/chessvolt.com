@@ -6,13 +6,17 @@ import { PageHeader } from "@/components/page-header/page-header";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { requestChessComGames } from "@/features/game-analysis/api/chesscom-games";
+import { requestLichessGames } from "@/features/game-analysis/api/lichess-games";
 import { ChessComUsernameForm } from "@/features/game-analysis/components/chess-com-username-form";
 import { LichessUsernameForm } from "@/features/game-analysis/components/lichess-username-form";
 import { UserPlayedGamesBoard } from "@/features/game-analysis/components/user-played-games-board";
 import { useChessComGames } from "@/features/game-analysis/hooks/use-chesscom-games";
+import type { LichessGame } from "@/lib/lichess/types";
 
 export default function GameAnalysisPage() {
   const [lichessUsername, setLichessUsername] = useState("");
+  const [lichessGames, setLichessGames] = useState<LichessGame[]>([]);
+  const [lichessHasMore, setLichessHasMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
@@ -35,6 +39,24 @@ export default function GameAnalysisPage() {
       console.error(error);
       setChessComGames([]);
       setHasMore(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleLichessSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!lichessUsername.trim() || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const page = await requestLichessGames(lichessUsername);
+      setLichessGames(page.games);
+      setLichessHasMore(page.hasMore);
+    } catch (error) {
+      console.error(error);
+      setLichessGames([]);
+      setLichessHasMore(false);
     } finally {
       setIsLoading(false);
     }
@@ -84,8 +106,9 @@ export default function GameAnalysisPage() {
               title="Lichess"
               description="Load your recent Lichess games."
               lichessUsername={lichessUsername}
-              isLoading={false}
+              isLoading={isLoading}
               setLichessUsername={setLichessUsername}
+              onSubmit={handleLichessSubmit}
             />
           </div>
         </div>
