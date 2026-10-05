@@ -1,5 +1,4 @@
-import DiamondStats from "@/components/diamond-stats/diamond-stats";
-import { Curve } from "@/features/landing/components/curve";
+import { DiamondStats } from "@/features/landing/components/diamond-stats";
 import { Features } from "@/features/landing/components/features";
 import { Footer } from "@/features/landing/components/footer";
 import { Hero } from "@/features/landing/components/hero";
@@ -13,7 +12,7 @@ export default function HomePage() {
     <div className="bg-brand">
       <Navbar />
       <Hero />
-      <Curve />
+      <Features />
       <DiamondStats />
       <Rocket />
       <LandingCarousel />

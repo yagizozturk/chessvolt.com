@@ -6,23 +6,22 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 const slides = [
   {
-    title: "Solve Puzzles & Repeat",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+    title: "Solve Openings, Puzzles & Repeat",
+    description: "Solve a puzzle, then play it again. A few repeats in a row is the fastest way for the idea to stick.",
     imageSrc: "/images/cards/bg-arrows-game.png",
     imageAlt: "Move explanations while you play",
   },
   {
     title: "Earn max 220 Volt in 4 days",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+      "Your Volt Score shows how well you remember each puzzle or opening. You can earn up to 220 Volt across any 4 days, with a daily max of 55.",
     imageSrc: "/images/cards/bg-earn-volt.png",
     imageAlt: "Earn up to 220 Volt in any 4 days",
   },
   {
     title: "Reach Your Target Rating",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.",
+      "Keep training the games and puzzles you want to master. Steady practice is how you climb toward the rating you set.",
     imageSrc: "/images/cards/bg-masters-game.png",
     imageAlt: "Reach your target rating",
   },

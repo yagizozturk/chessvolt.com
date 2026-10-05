@@ -60,7 +60,7 @@ export function Hero() {
         </div>
         <div className="order-1 flex-1 md:order-2 md:mt-[-50px]">
           <Image
-            src="/images/hero/bg-volt-coach-playing-chess.png"
+            src="/images/hero/bg-volt-playing-chess.png"
             alt="ChessVolt Dashboard Preview"
             width={963}
             height={800}

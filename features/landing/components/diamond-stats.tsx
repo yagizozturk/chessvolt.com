@@ -81,7 +81,7 @@ const stats = [
   },
 ];
 
-export default function DiamondStats() {
+export function DiamondStats() {
   return (
     <section
       aria-label="Stats"
