@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 import DisplayBoard from "@/components/boards/display-board/display-board";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import type { ChessComGame } from "@/features/game-analysis/types/chesscom-game";
+import type { PlatformGame } from "@/features/game-analysis/types/platform-game";
 import { formatPlayedAt } from "@/features/game-analysis/utilities/format-played-at";
 import { getGameResult } from "@/features/game-analysis/utilities/get-game-result";
 import {
@@ -18,14 +18,16 @@ import { getPlayerUsernames } from "@/features/game-analysis/utilities/get-playe
 import { cn } from "@/lib/utils";
 
 type UserPlayedGamesBoardProps = {
-  game: ChessComGame;
+  game: PlatformGame;
   searchedUsername: string;
+  platformLabel?: string;
   boardWrapperClassName?: string;
 };
 
 export function UserPlayedGamesBoard({
   game,
   searchedUsername,
+  platformLabel = "Chess.com",
   boardWrapperClassName = "aspect-square w-full md:w-[240px] shrink-0",
 }: UserPlayedGamesBoardProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -57,10 +59,10 @@ export function UserPlayedGamesBoard({
         {/* ====== Oyun Tahtası ====== */}
         <div className={cn("self-start", boardWrapperClassName)}>
           <DisplayBoard
-            sourceId={`user-game-chesscom-${game.uuid}`}
+            sourceId={`user-game-${platformLabel === "Lichess" ? "lichess" : "chesscom"}-${game.uuid}`}
             initialFen={fen}
             coordinates={false}
-            playerOrientation={searchedUsername === game.white.username ? "white" : "black"}
+            playerOrientation={searchedUsername === game.white.username.toLowerCase() ? "white" : "black"}
           />
         </div>
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
@@ -76,7 +78,9 @@ export function UserPlayedGamesBoard({
             {/* ====== Oyun Tarihi ====== */}
             <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">
               <ChessPawn className="text-emerald-500" />
-              <span>Chess.com &#8226; {playedAt ? <span className="text-primary">{playedAt}</span> : null}</span>
+              <span>
+                {platformLabel} &#8226; {playedAt ? <span className="text-primary">{playedAt}</span> : null}
+              </span>
             </Badge>
           </div>
           <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">

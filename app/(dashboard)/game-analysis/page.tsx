@@ -10,17 +10,24 @@ import { requestLichessGames } from "@/features/game-analysis/api/lichess-games"
 import { ChessComUsernameForm } from "@/features/game-analysis/components/chess-com-username-form";
 import { LichessUsernameForm } from "@/features/game-analysis/components/lichess-username-form";
 import { UserPlayedGamesBoard } from "@/features/game-analysis/components/user-played-games-board";
-import { useChessComGames } from "@/features/game-analysis/hooks/use-chesscom-games";
-import type { LichessGame } from "@/lib/lichess/types";
+import { usePlatformGames } from "@/features/game-analysis/hooks/use-platform-games";
+import { mapLichessGame } from "@/features/game-analysis/utilities/map-lichess-game";
 
 export default function GameAnalysisPage() {
-  const [lichessUsername, setLichessUsername] = useState("");
-  const [lichessGames, setLichessGames] = useState<LichessGame[]>([]);
-  const [lichessHasMore, setLichessHasMore] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLichessLoading, setIsLichessLoading] = useState(false);
+  const [isChessComLoading, setIsChessComLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
-  const { chessComGames, setChessComGames, chessComUsername, setChessComUsername } = useChessComGames();
+  const {
+    chessComGames,
+    setChessComGames,
+    chessComUsername,
+    setChessComUsername,
+    lichessGames,
+    setLichessGames,
+    lichessUsername,
+    setLichessUsername,
+  } = usePlatformGames();
 
   // ================================================================================================
   // Chess.com oyunlarını çeker.
@@ -28,9 +35,9 @@ export default function GameAnalysisPage() {
   // ================================================================================================
   async function handleChessComSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!chessComUsername || isLoading) return;
+    if (!chessComUsername || isChessComLoading) return;
 
-    setIsLoading(true);
+    setIsChessComLoading(true);
     try {
       const page = await requestChessComGames(chessComUsername);
       setChessComGames(page.games);
@@ -40,25 +47,28 @@ export default function GameAnalysisPage() {
       setChessComGames([]);
       setHasMore(false);
     } finally {
-      setIsLoading(false);
+      setIsChessComLoading(false);
     }
   }
 
   async function handleLichessSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!lichessUsername.trim() || isLoading) return;
+    if (!lichessUsername.trim() || isLichessLoading) return;
 
-    setIsLoading(true);
+    setIsLichessLoading(true);
     try {
       const page = await requestLichessGames(lichessUsername);
-      setLichessGames(page.games);
-      setLichessHasMore(page.hasMore);
+      setLichessGames(
+        page.games.flatMap((game) => {
+          const mapped = mapLichessGame(game);
+          return mapped ? [mapped] : [];
+        }),
+      );
     } catch (error) {
       console.error(error);
       setLichessGames([]);
-      setLichessHasMore(false);
     } finally {
-      setIsLoading(false);
+      setIsLichessLoading(false);
     }
   }
 
@@ -95,7 +105,7 @@ export default function GameAnalysisPage() {
               title="Chess.com"
               description="Load your recent Chess.com games."
               chessComUsername={chessComUsername}
-              isLoading={isLoading}
+              isLoading={isChessComLoading}
               setChessComUsername={setChessComUsername}
               onSubmit={handleChessComSubmit}
             />
@@ -106,7 +116,7 @@ export default function GameAnalysisPage() {
               title="Lichess"
               description="Load your recent Lichess games."
               lichessUsername={lichessUsername}
-              isLoading={isLoading}
+              isLoading={isLichessLoading}
               setLichessUsername={setLichessUsername}
               onSubmit={handleLichessSubmit}
             />
@@ -118,9 +128,21 @@ export default function GameAnalysisPage() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {chessComGames.map((game) => (
               <UserPlayedGamesBoard
-                key={game.uuid}
+                key={`${game.source}-${game.uuid}`}
                 game={game}
                 searchedUsername={chessComUsername.trim().toLowerCase()}
+              />
+            ))}
+          </div>
+        ) : null}
+        {lichessGames.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {lichessGames.map((game) => (
+              <UserPlayedGamesBoard
+                key={`${game.source}-${game.uuid}`}
+                game={game}
+                platformLabel="Lichess"
+                searchedUsername={lichessUsername.trim().toLowerCase()}
               />
             ))}
           </div>

@@ -18,7 +18,7 @@ import { requestGameAnalysis, requestGameAnalysisInsert } from "@/features/game-
 import { BoardPlayerName } from "@/features/game-analysis/components/board-player-name";
 import { GameAnalysisMistakeStepper } from "@/features/game-analysis/components/game-analysis-mistake-stepper";
 import { GameAnalysisStatus } from "@/features/game-analysis/components/game-analysis-status";
-import type { ChessComGame } from "@/features/game-analysis/types/chesscom-game";
+import type { PlatformGame } from "@/features/game-analysis/types/platform-game";
 import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import { analyzePgnWithStockfish } from "@/features/game-analysis/utilities/analyze-pgn-with-stockfish";
 import { getMistakesByPly } from "@/features/game-analysis/utilities/get-mistakes-by-ply";
@@ -39,7 +39,7 @@ import animationData from "@/public/images/animations/animation-rocjet-launch.js
 
 type GameAnalysisControllerProps = {
   gameId: string;
-  game?: ChessComGame;
+  game?: PlatformGame;
   username?: string;
   initialMistakeId?: string | null;
 };

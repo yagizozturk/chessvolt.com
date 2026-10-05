@@ -1,7 +1,7 @@
-import type { ChessComGame } from "@/features/game-analysis/types/chesscom-game";
+import type { PlatformGame } from "@/features/game-analysis/types/platform-game";
 import type { GamePlayer } from "@/features/game-analysis/types/game-player";
 
-export function getPlayerUsernames(game: ChessComGame, usernameSearched: string) {
+export function getPlayerUsernames(game: PlatformGame, usernameSearched: string) {
   const searched = usernameSearched.trim().toLowerCase();
   const youAreWhite = Boolean(searched) && game.white.username.toLowerCase() === searched;
   const youAreBlack = Boolean(searched) && game.black.username.toLowerCase() === searched;

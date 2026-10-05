@@ -1,7 +1,9 @@
 import type { ChessComGameAccuracies } from "@/features/game-analysis/types/chesscom-game-accuracies";
+import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 import type { GamePlayer } from "@/features/game-analysis/types/game-player";
 
-export type ChessComGame = {
+export type PlatformGame = {
+  source: GameAnalysisSource;
   url: string;
   pgn: string;
   time_control: string;

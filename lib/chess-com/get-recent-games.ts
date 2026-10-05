@@ -1,6 +1,6 @@
 import type { ChessGamesArchivesResponse } from "@/features/game-analysis/types/chess-games-archives-response";
 import type { ChessGamesByMonthResponse } from "@/features/game-analysis/types/chess-games-by-month-response";
-import type { ChessComGame } from "@/features/game-analysis/types/chesscom-game";
+import type { PlatformGame } from "@/features/game-analysis/types/platform-game";
 import { chessComFetch } from "@/lib/chess-com/client";
 import { CHESS_COM_BASE_URL } from "@/lib/chess-com/constants";
 
@@ -12,7 +12,7 @@ export async function getRecentGames(
   username: string,
   limit = 10,
   offset = 0,
-): Promise<{ games: ChessComGame[]; hasMore: boolean }> {
+): Promise<{ games: PlatformGame[]; hasMore: boolean }> {
   const safeLimit = Math.min(Math.max(1, Math.floor(limit)), 50);
   const safeOffset = Math.max(0, Math.floor(offset));
   const archives = await getPlayerMonthlyArchives(username);
@@ -20,7 +20,7 @@ export async function getRecentGames(
     return { games: [], hasMore: false };
   }
 
-  const games: ChessComGame[] = [];
+  const games: PlatformGame[] = [];
   let skipped = 0;
 
   for (let i = archives.length - 1; i >= 0; i--) {
@@ -37,7 +37,7 @@ export async function getRecentGames(
         return { games, hasMore: true };
       }
 
-      games.push(game);
+      games.push({ ...game, source: "chesscom" });
     }
   }
 
@@ -62,7 +62,7 @@ export async function getPlayerMonthlyArchives(username: string): Promise<string
 // Chess.com fetch metodunu aylara göre ağırır.
 // Dönen cevabı JSON a çevirir ChessGamesByMonthResponse tipinde.
 // ================================================================================================
-export async function getGamesByMonth(archiveUrl: string): Promise<ChessComGame[]> {
+export async function getGamesByMonth(archiveUrl: string): Promise<PlatformGame[]> {
   const response = await chessComFetch(archiveUrl.trim());
   const data = (await response.json()) as ChessGamesByMonthResponse;
 

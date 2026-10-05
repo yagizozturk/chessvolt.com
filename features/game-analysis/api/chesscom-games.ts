@@ -1,9 +1,9 @@
 import { apiClient } from "@/api-client/client";
 import type { ApiResponse } from "@/api-client/route-handler";
-import type { ChessComGame } from "@/features/game-analysis/types/chesscom-game";
+import type { PlatformGame } from "@/features/game-analysis/types/platform-game";
 
 export type ChessComGamesPage = {
-  games: ChessComGame[];
+  games: PlatformGame[];
   hasMore: boolean;
 };
 
