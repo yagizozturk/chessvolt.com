@@ -15,10 +15,16 @@ export async function requestGameAnalysis(gameId: string) {
 // ================================================================================================
 // Oyun analizini http ye göndererek DB'ye girecek client API'si
 // ================================================================================================
-export async function requestGameAnalysisInsert(pgn: string, gameId: string, analysis: GameAnalysisResponseData) {
+export async function requestGameAnalysisInsert(
+  pgn: string,
+  gameId: string,
+  analysis: GameAnalysisResponseData,
+  username: string,
+) {
   return apiClient.post<ApiResponse<GameAnalysisWithMistakes>>("/game-analysis/analyze-game/stockfish", {
     pgn,
     gameId,
     analysis,
+    username,
   });
 }

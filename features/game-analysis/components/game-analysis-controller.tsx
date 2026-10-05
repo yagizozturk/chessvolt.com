@@ -158,6 +158,7 @@ export default function GameAnalysisController({
     setStatus("Evaluating via Stockfish. Large games can take a while...");
 
     try {
+      // analyzePgnWithStockfish: Stockfish analiz sonucu. Her iki oyuncu içinde criticalMoments datasını içerir.
       const localAnalysis = await analyzePgnWithStockfish(game.pgn, {
         signal: controller.signal, // controller setlenir
         onProgress: (completed, total) => {
@@ -168,7 +169,8 @@ export default function GameAnalysisController({
       if (controller.signal.aborted) return; // Eğer iptal edilirse return eder. Etmezse devam eder.
 
       setStatus("Saving analysis results…");
-      const response = await requestGameAnalysisInsert(game.pgn, game.uuid, localAnalysis);
+
+      const response = await requestGameAnalysisInsert(game.pgn, game.uuid, localAnalysis, username);
       if (!response.success || !response.data) {
         setStatus("Local analysis failed");
         return;

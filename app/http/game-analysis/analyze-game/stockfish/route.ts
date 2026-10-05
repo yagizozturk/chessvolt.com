@@ -4,7 +4,6 @@ import { getFavoritedMistakeIds } from "@/features/game-analysis/services/get-fa
 import { saveGameAnalysis } from "@/features/game-analysis/services/save-game-analysis.service";
 import { saveReviewQuestions } from "@/features/game-analysis/services/save-review-questions.service";
 import { parseAnalysis } from "@/features/game-analysis/utilities/parse-analysis";
-import { getProfileByUserId } from "@/features/profile/repository/profile.repository";
 import { getMovesFromPgn } from "@/lib/chess/getMovesFromPgn";
 
 const SOURCE = "chesscom" as const;
@@ -18,9 +17,11 @@ async function handlePOST(req: Request) {
     pgn?: string;
     gameId?: string;
     analysis?: unknown;
+    username?: string;
   };
   const pgn = typeof body.pgn === "string" ? body.pgn.trim() : "";
   const gameId = typeof body.gameId === "string" ? body.gameId.trim() : "";
+  const username = typeof body.username === "string" ? body.username.trim() : "";
 
   // Kontroller
   if (!gameId) return errorResponse("gameId is required", 400);
@@ -44,13 +45,6 @@ async function handlePOST(req: Request) {
 
   if (!saved) return errorResponse("Failed to save game analysis", 500);
 
-  const profile = await getProfileByUserId(auth.supabase, auth.user.id);
-  const username = profile?.chesscomUsername?.trim() ?? "";
-
-  // ================================================================================================
-  // Chess.com kullanıcı adı kontrolü. Sadece hangi tarafın hatalarının review question olacağına
-  // karar vermek için gerekir. Kaydedilen analiz her iki rengi de kapsadığı için kullanıcı adını kullanmaz.
-  // ================================================================================================
   const mistakesToSave = username
     ? await saveReviewQuestions({
         supabase: auth.supabase,
