@@ -13,7 +13,7 @@ export function GameAnalysisStatus({ message }: GameAnalysisStatusProps) {
   if (!message) return null;
 
   return (
-    <div className="flex flex-col items-center gap-3" role="status" aria-live="polite">
+    <div className="flex shrink-0 flex-col items-center gap-3" role="status" aria-live="polite">
       <div className="text-muted-foreground flex items-center justify-center gap-3 text-sm">
         <Lottie
           animationData={loaderAnimationData}

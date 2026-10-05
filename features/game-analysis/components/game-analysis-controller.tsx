@@ -340,7 +340,7 @@ export default function GameAnalysisController({
   }
 
   return (
-    <div className="page-container">
+    <div className="page-container md:flex md:h-svh md:min-h-0 md:flex-col">
       {/* ====== Dialog ====== */}
       <SolveSuccessDialog
         open={successOpen}
@@ -355,7 +355,7 @@ export default function GameAnalysisController({
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
       ) : null}
 
-      <div className="page-container-controller-layout">
+      <div className="page-container-controller-layout md:min-h-0 md:flex-1">
         <div className="relative flex w-full min-w-0 shrink-0 flex-col gap-2 self-start md:flex-[3]">
           <div className="relative aspect-square w-full">
             {/* ====== Board ====== */}
@@ -392,8 +392,8 @@ export default function GameAnalysisController({
           />
         </div>
 
-        <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
-          <div className="flex justify-between">
+        <div className="bg-card relative flex min-h-0 min-w-0 flex-col gap-4 overflow-hidden rounded-xl p-4 md:h-full md:flex-[2]">
+          <div className="flex shrink-0 justify-between">
             {/* ====== Back Button ====== */}
             <div>
               <Button variant="voltIcon" onClick={handleBack} disabled={isPending} aria-label="Back">
@@ -426,7 +426,7 @@ export default function GameAnalysisController({
           </div>
 
           {/* ====== Coach ====== */}
-          <div className="card-border-bottom-shadow p-4">
+          <div className="card-border-bottom-shadow shrink-0 p-4">
             <VoltCoach title={coachTitle} message={coachMessage} ttsKey={playSessionId} />
           </div>
 
@@ -436,11 +436,11 @@ export default function GameAnalysisController({
               value={
                 analysisProgress.total > 0 ? Math.round((analysisProgress.completed / analysisProgress.total) * 100) : 0
               }
-              className="h-4 w-full"
+              className="h-4 w-full shrink-0"
               aria-label={`Stockfish analysis progress ${analysisProgress.completed} of ${analysisProgress.total}`}
             />
           ) : mistakes.length > 0 ? (
-            <div className="flex items-center">
+            <div className="flex shrink-0 items-center">
               <Progress
                 value={progressValue}
                 className="h-4 flex-1 rounded-r-none"
@@ -457,21 +457,23 @@ export default function GameAnalysisController({
 
           {/* ====== Stepper ====== */}
           {analysis || analysisEngine ? (
-            <GameAnalysisMistakeStepper
-              mistakes={mistakes}
-              originalMoveByPly={userMoveByPlyWithSan}
-              activeMistakeId={activeMistake?.mistake.id ?? null}
-              completedMistakeIds={completedMistakeIds}
-              isLoading={analysisEngine !== null}
-              error={null}
-              hasResult={analysis !== null}
-              onSelectMistake={handleSelectMistake}
-            />
+            <div className="max-h-[50vh] min-h-0 overflow-y-auto overscroll-y-contain md:max-h-none md:flex-1">
+              <GameAnalysisMistakeStepper
+                mistakes={mistakes}
+                originalMoveByPly={userMoveByPlyWithSan}
+                activeMistakeId={activeMistake?.mistake.id ?? null}
+                completedMistakeIds={completedMistakeIds}
+                isLoading={analysisEngine !== null}
+                error={null}
+                hasResult={analysis !== null}
+                onSelectMistake={handleSelectMistake}
+              />
+            </div>
           ) : null}
 
           {/* ====== Analyze Button ====== */}
           {!isLoading && !analysis ? (
-            <div className="mt-auto flex flex-col gap-2">
+            <div className="mt-auto flex shrink-0 flex-col gap-2">
               <Button
                 type="button"
                 variant="volt"
@@ -486,7 +488,7 @@ export default function GameAnalysisController({
 
           {/* ====== Hint Button ====== */}
           {activeMistake && !solved ? (
-            <div className="mt-auto flex gap-2">
+            <div className="mt-auto flex shrink-0 gap-2">
               <Button
                 type="button"
                 variant="voltGreen"
