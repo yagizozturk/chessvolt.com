@@ -1,33 +1,23 @@
 import { notFound } from "next/navigation";
 
+import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { calculateVoltScore } from "@/components/calculator/volt-calculator/build-volt-score";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
-import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import OpeningVariantController from "@/features/openings/components/opening-variant-controller";
-import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import {
   getOpeningById,
   getOpeningVariantById,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
 import { getUserFavoriteByUserAndOpeningVariant } from "@/features/user-favorites/services/user-favorite.service";
+import { getAttemptsByUserAndSequence } from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
-type Params = {
+type OpeningVariantPageProps = {
   params: Promise<{ id: string }>;
 };
 
-/**
- * Fonksyon Bilgisi ✅
- * 1. Public kullanıcı yetkisi ile variant detayı çekilir.
- * 2. Opening için tüm varyant bilgisi çekilir. bir sonraki varyanta geçebilmek için.
- * 3. Index leme ile sonraki varyant bulunur
- * 4. Oyuncu auth ise çözdüğü variantId lerine bakılır. Yoksa boş döner
- * 5. Opening bilgisi çekilip, slug bilgisi alınıp, returnUrl hesaplanır. Next variant yoksa ana opening e gider.
- * TODO: Opening i tekrar çekmeden buraya bilgi geçilebilirm?
- * 6. Progress percantege hesaplanır ve contoller a geçilir
- */
-export default async function OpeningVariantPage({ params }: Params) {
+export default async function OpeningVariantPage({ params }: OpeningVariantPageProps) {
   const { id } = await params;
   const { user, supabase } = await getPublicUser();
   const variant = await getOpeningVariantById(supabase, id);
@@ -36,53 +26,58 @@ export default async function OpeningVariantPage({ params }: Params) {
     notFound();
   }
 
-  // ======================================================================
-  // Get all the variants for the opening
-  // Get the next variant if it exists
-  // ======================================================================
-  const variants = await getOpeningVariantsByOpeningId(supabase, variant.openingId);
+  // Paralel çalışabilecek metodlar
+  const [variants, opening, favoriteRow] = await Promise.all([
+    // ======================================================================
+    // Açılışın tüm varyantlarını çekeriz.
+    // ======================================================================
+    getOpeningVariantsByOpeningId(supabase, variant.openingId),
+
+    // ======================================================================
+    // Id bazlı açılış bilgilerini çekeriz.
+    // Ana URL geri buttonu için
+    // ======================================================================
+    getOpeningById(supabase, variant.openingId),
+
+    // ======================================================================
+    // Kullanıcının favori açılışı olup olmadığını kontrol ederiz.
+    // ======================================================================
+    user ? getUserFavoriteByUserAndOpeningVariant(supabase, user.id, variant.id) : Promise.resolve(null),
+  ]);
 
   // ======================================================================
-  // 3. Get the next variant
+  // CurrentIndex den sonraki varyantı çekeriz. Next buttonuna basınca çalışır.
   // ======================================================================
   const currentIndex = variants.findIndex((v) => v.id === variant.id);
-  const nextVariant = currentIndex >= 0 && currentIndex < variants.length - 1 ? variants[currentIndex + 1] : null;
+  const nextVariantId = currentIndex >= 0 ? (variants[currentIndex + 1]?.id ?? null) : null;
 
   // ======================================================================
-  // 5. Get the opening
-  // Get the return URL and progress stats
+  // Ana URL geri buttonu için
   // ======================================================================
-  const opening = await getOpeningById(supabase, variant.openingId);
   const parentOpeningUrl = opening?.slug && opening?.id ? `/openings/${opening.slug}/${opening.id}` : "/openings";
 
-  const favoriteRow = user
-    ? await getUserFavoriteByUserAndOpeningVariant(supabase, user.id, variant.id)
-    : null;
   const isFavorited = Boolean(favoriteRow);
 
+  // ======================================================================
+  // Volt puanını hesaplarız.
+  // ======================================================================
   const voltScore =
     user && isFavorited
       ? calculateVoltScore({
-          attempts: await attemptService.getAttemptsByUserAndSequence(
-            supabase,
-            user.id,
-            variant.moveSequence.id,
-          ),
+          attempts: await getAttemptsByUserAndSequence(supabase, user.id, variant.moveSequence.id),
           totalMoveCount: getPlayerMoveCount(variant.moveSequence.moves),
           rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
         })
       : null;
 
   return (
-    <>
-      <OpeningVariantController
-        variant={variant}
-        nextVariantId={nextVariant?.id ?? null}
-        parentOpeningUrl={parentOpeningUrl}
-        canFavorite={Boolean(user)}
-        isFavorited={isFavorited}
-        voltScore={voltScore}
-      />
-    </>
+    <OpeningVariantController
+      variant={variant}
+      nextVariantId={nextVariantId}
+      parentOpeningUrl={parentOpeningUrl}
+      canFavorite={Boolean(user)}
+      isFavorited={isFavorited}
+      voltScore={voltScore}
+    />
   );
 }
