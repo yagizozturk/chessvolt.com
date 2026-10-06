@@ -21,6 +21,13 @@ function parseStatus(raw: FormDataEntryValue | null): BlogPostStatus | null {
   return null;
 }
 
+function readDescription(formData: FormData): string | null {
+  const value = formData.get("description");
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed || null;
+}
+
 function readCoverFile(formData: FormData): File | null {
   const value = formData.get("cover");
   if (!value || typeof value === "string") return null;
@@ -37,6 +44,7 @@ function revalidateBlog(slug?: string) {
 export async function createBlogPostAction(formData: FormData) {
   const { supabase, user } = await getAdminUser();
   const title = (formData.get("title") as string)?.trim() ?? "";
+  const description = readDescription(formData);
   const requestedSlug = ((formData.get("slug") as string) || "").trim();
   const status = parseStatus(formData.get("status"));
   const content = parseBlogContent(String(formData.get("content") ?? ""));
@@ -67,6 +75,7 @@ export async function createBlogPostAction(formData: FormData) {
     id,
     title,
     slug: resolved.slug,
+    description,
     content,
     coverImagePath,
     status,
@@ -94,6 +103,7 @@ export async function updateBlogPostAction(formData: FormData) {
   }
 
   const title = (formData.get("title") as string)?.trim() ?? "";
+  const description = readDescription(formData);
   const requestedSlug = ((formData.get("slug") as string) || "").trim();
   const status = parseStatus(formData.get("status"));
   const content = parseBlogContent(String(formData.get("content") ?? ""));
@@ -125,6 +135,7 @@ export async function updateBlogPostAction(formData: FormData) {
   const post = await updateBlogPost(supabase, existing.id, {
     title,
     slug: resolved.slug,
+    description,
     content,
     coverImagePath,
     status,

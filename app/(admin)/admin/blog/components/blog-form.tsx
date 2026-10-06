@@ -7,6 +7,7 @@ import { BlogEditor } from "@/app/(admin)/admin/blog/components/blog-editor";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import type { BlogPost, BlogPostStatus } from "@/features/blog/types/blog-post";
 import { slugifyBlogTitle } from "@/features/blog/utilities/blog-slug";
 
@@ -20,6 +21,7 @@ const EMPTY_DOC = { type: "doc", content: [{ type: "paragraph" }] };
 
 export function BlogForm({ action, post, submitLabel }: Props) {
   const [title, setTitle] = useState(post?.title ?? "");
+  const [description, setDescription] = useState(post?.description ?? "");
   const [slug, setSlug] = useState(post?.slug ?? "");
   const [slugEdited, setSlugEdited] = useState(Boolean(post));
   const [status, setStatus] = useState<BlogPostStatus>(post?.status ?? "draft");
@@ -41,6 +43,17 @@ export function BlogForm({ action, post, submitLabel }: Props) {
               setTitle(nextTitle);
               if (!slugEdited) setSlug(slugifyBlogTitle(nextTitle));
             }}
+          />
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="blog-description">Description</FieldLabel>
+          <Textarea
+            id="blog-description"
+            name="description"
+            value={description}
+            placeholder="Short summary shown on the blog list"
+            rows={3}
+            onChange={(event) => setDescription(event.target.value)}
           />
         </Field>
         <Field>

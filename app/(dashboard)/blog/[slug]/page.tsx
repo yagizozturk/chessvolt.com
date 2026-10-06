@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { getPublishedBlogPostBySlug } from "@/features/blog/services/blog.service";
-import { truncateBlogPreview } from "@/features/blog/utilities/blog-content";
 import { renderBlogHtml } from "@/features/blog/utilities/blog-html";
 import { getPublicUser } from "@/lib/supabase/auth";
 
@@ -25,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${post.title} | ChessVolt`,
-    description: truncateBlogPreview(post.content) || post.title,
+    description: post.description ?? undefined,
   };
 }
 
@@ -43,10 +42,9 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <div className="page-container">
       <article className="mx-auto flex max-w-3xl flex-col gap-8">
-        <Button variant="ghost" className="w-fit" asChild>
-          <Link href="/blog">
-            <ArrowLeft className="h-4 w-4" />
-            Back
+        <Button variant="voltIcon" className="w-fit" asChild>
+          <Link href="/blog" aria-label="Back">
+            <ChevronLeft className="size-5" />
           </Link>
         </Button>
         <div className="relative aspect-video w-full overflow-hidden rounded-xl">
@@ -60,8 +58,9 @@ export default async function BlogPostPage({ params }: Props) {
           />
         </div>
         <h1 className="section-header-title">{post.title}</h1>
+        {post.description ? <p className="text-muted-foreground text-lg leading-relaxed">{post.description}</p> : null}
         <div
-          className="space-y-4 text-base leading-relaxed [&_a]:text-primary [&_a]:underline [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-bold [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6"
+          className="[&_a]:text-primary space-y-4 text-lg leading-relaxed [&_a]:underline [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-bold [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6"
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </article>

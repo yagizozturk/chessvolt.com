@@ -11,7 +11,7 @@ import type { CreateBlogPostPayload, UpdateBlogPostPayload } from "@/features/bl
 import type { BlogPost, BlogSitemapEntry, PublishedBlogPage } from "@/features/blog/types/blog-post";
 import { getBlogCoverPublicUrl } from "@/features/blog/utilities/blog-cover";
 
-const PUBLISHED_CARD_COLUMNS = "id, slug, title, content, cover_image_path, published_at";
+const PUBLISHED_CARD_COLUMNS = "id, slug, title, description, content, cover_image_path, published_at";
 
 function mapPost(supabase: SupabaseClient, row: DbBlogPost): BlogPost {
   return toBlogPost(row, getBlogCoverPublicUrl(supabase, row.cover_image_path));
@@ -37,7 +37,7 @@ export async function findPublishedBlogPage(
 
   const rows = (data ?? []) as unknown as Pick<
     DbBlogPost,
-    "id" | "slug" | "title" | "content" | "cover_image_path" | "published_at"
+    "id" | "slug" | "title" | "description" | "content" | "cover_image_path" | "published_at"
   >[];
 
   return {
@@ -116,6 +116,7 @@ export async function createBlogPost(supabase: SupabaseClient, payload: CreateBl
       id: payload.id,
       title: payload.title,
       slug: payload.slug,
+      description: payload.description,
       content: payload.content,
       cover_image_path: payload.coverImagePath,
       status: payload.status,
@@ -143,6 +144,7 @@ export async function updateBlogPost(
     .update({
       title: payload.title,
       slug: payload.slug,
+      description: payload.description,
       content: payload.content,
       cover_image_path: payload.coverImagePath,
       status: payload.status,

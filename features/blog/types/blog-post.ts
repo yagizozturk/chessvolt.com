@@ -6,6 +6,7 @@ export type BlogPost = {
   id: string;
   slug: string;
   title: string;
+  description: string | null;
   content: JSONContent;
   coverImagePath: string;
   coverImageUrl: string;

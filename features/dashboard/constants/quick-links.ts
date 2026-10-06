@@ -40,4 +40,11 @@ export const QUICK_LINKS = [
     icon: "/images/icons/icon-user-profile.png",
     alt: "Profile",
   },
+  {
+    title: "Blog",
+    description: "Read the latest blog posts.",
+    href: "/blog",
+    icon: "/images/icons/icon-blog.png",
+    alt: "Blog",
+  },
 ] as const;

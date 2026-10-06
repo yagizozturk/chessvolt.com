@@ -6,6 +6,7 @@ export type CreateBlogPostPayload = {
   id: string;
   title: string;
   slug: string;
+  description: string | null;
   content: JSONContent;
   coverImagePath: string;
   status: BlogPostStatus;
@@ -16,6 +17,7 @@ export type CreateBlogPostPayload = {
 export type UpdateBlogPostPayload = {
   title: string;
   slug: string;
+  description: string | null;
   content: JSONContent;
   coverImagePath: string;
   status: BlogPostStatus;

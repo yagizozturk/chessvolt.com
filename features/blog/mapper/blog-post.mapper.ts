@@ -7,6 +7,7 @@ export type DbBlogPost = {
   id: string;
   slug: string;
   title: string;
+  description: string | null;
   content: JSONContent;
   cover_image_path: string;
   status: BlogPostStatus;
@@ -21,6 +22,7 @@ export function toBlogPost(db: DbBlogPost, coverImageUrl: string): BlogPost {
     id: db.id,
     slug: db.slug,
     title: db.title,
+    description: db.description,
     content: db.content,
     coverImagePath: db.cover_image_path,
     coverImageUrl,
@@ -37,7 +39,7 @@ export function toBlogPostCard(db: DbBlogPost, coverImageUrl: string): BlogPostC
     id: db.id,
     slug: db.slug,
     title: db.title,
-    preview: truncateBlogPreview(db.content),
+    preview: db.description?.trim() || truncateBlogPreview(db.content),
     coverImageUrl,
   };
 }
