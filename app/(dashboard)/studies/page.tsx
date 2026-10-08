@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { PageHeader } from "@/components/page-header/page-header";
 import { StudyCard } from "@/features/study/components/study-card";
@@ -18,6 +20,11 @@ import {
   parseStudyPage,
 } from "@/features/study/utilities/study-pagination.utils";
 import { getPublicUser } from "@/lib/supabase/auth";
+
+export const metadata: Metadata = {
+  title: "Studies | ChessVolt",
+  description: "Explore curated puzzle studies.",
+};
 
 export default async function StudyPage({ searchParams }: { searchParams: StudyPageSearchParams }) {
   const { supabase } = await getPublicUser();

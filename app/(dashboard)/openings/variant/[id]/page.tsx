@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
@@ -16,6 +17,21 @@ import { getPublicUser } from "@/lib/supabase/auth";
 type OpeningVariantPageProps = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: OpeningVariantPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const { supabase } = await getPublicUser();
+  const variant = await getOpeningVariantById(supabase, id);
+
+  if (!variant) {
+    return { title: "Opening Variant | ChessVolt" };
+  }
+
+  return {
+    title: `${variant.title ?? "Opening variant"} | ChessVolt`,
+    description: variant.description ?? "Practice this opening variation move by move.",
+  };
+}
 
 export default async function OpeningVariantPage({ params }: OpeningVariantPageProps) {
   const { id } = await params;

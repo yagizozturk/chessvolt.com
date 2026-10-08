@@ -1,9 +1,12 @@
+import type { Metadata } from "next";
+
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeader } from "@/components/page-header/page-header";
 import { PuzzleBoardCard } from "@/features/puzzle/components/puzzle-board-card";
 import { buildThemePuzzlesUrl } from "@/features/puzzle/utilities/build-puzzle-url";
 import { ThemePuzzlesPagination } from "@/features/theme/components/theme-puzzles-pagination";
 import { loadThemePuzzles } from "@/features/theme/loaders/theme-puzzles-page.loader";
+import { getThemeBySlug } from "@/features/theme/services/theme.service";
 import { getThemePuzzlesPageParam } from "@/features/theme/utilities/theme-puzzles-pagination.utils";
 import { getPublicUser } from "@/lib/supabase/auth";
 
@@ -11,6 +14,21 @@ type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const { supabase } = await getPublicUser();
+  const theme = await getThemeBySlug(supabase, slug);
+
+  if (!theme) {
+    return { title: "Puzzle Theme | ChessVolt" };
+  }
+
+  return {
+    title: `${theme.title} | ChessVolt`,
+    description: theme.description ?? "Practice chess puzzles in this theme.",
+  };
+}
 
 export default async function ThemePuzzlesPage({ params, searchParams }: Props) {
   const { user, supabase } = await getPublicUser();

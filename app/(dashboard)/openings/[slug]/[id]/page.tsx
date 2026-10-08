@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
@@ -18,6 +19,21 @@ import { getPublicUser } from "@/lib/supabase/auth";
 type Params = {
   params: Promise<{ slug: string; id: string }>;
 };
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { id } = await params;
+  const { supabase } = await getPublicUser();
+  const opening = await getOpeningById(supabase, id);
+
+  if (!opening) {
+    return { title: "Opening | ChessVolt" };
+  }
+
+  return {
+    title: `${opening.name} | ChessVolt`,
+    description: opening.description ?? "Learn this opening and its variations.",
+  };
+}
 
 export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const { id } = await params;

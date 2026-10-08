@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeaderWithImage } from "@/components/page-header/page-header";
 import { StudyPuzzlesPagination } from "@/features/study/components/study-puzzles-pagination";
@@ -5,12 +7,28 @@ import { loadStudyPuzzles } from "@/features/study/loaders/study-puzzles-page.lo
 import { getStudyCoverImageSrc } from "@/features/study/utilities/study-cover-image.utils";
 import { getPaginationParams } from "@/features/study/utilities/study-puzzles-pagination.utils";
 import { PuzzleBoardCard } from "@/features/puzzle/components/puzzle-board-card";
+import { getStudyBySlug } from "@/features/study/services/study.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Props = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ page?: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const { supabase } = await getPublicUser();
+  const study = await getStudyBySlug(supabase, slug);
+
+  if (!study) {
+    return { title: "Study | ChessVolt" };
+  }
+
+  return {
+    title: `${study.title} | ChessVolt`,
+    description: study.description,
+  };
+}
 
 export default async function StudyDetailPage({ params, searchParams }: Props) {
   const { user, supabase } = await getPublicUser();

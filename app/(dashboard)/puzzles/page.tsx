@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
+
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeader } from "@/components/page-header/page-header";
 import PuzzleController from "@/features/puzzle/components/puzzle-controller";
 import { loadStandalonePuzzlePage } from "@/features/puzzle/loaders/standalone-puzzle-page.loader";
 import { getRandomActivePuzzleId } from "@/features/puzzle/services/puzzle.service";
 import { getPublicUser } from "@/lib/supabase/auth";
+
+export const metadata: Metadata = {
+  title: "Puzzles | ChessVolt",
+  description: "Solve a random puzzle.",
+};
 
 export const dynamic = "force-dynamic";
 

@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { PageHeader } from "@/components/page-header/page-header";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { OpeningTypeFilter } from "@/features/openings/components/opening-type-filter";
@@ -6,6 +8,11 @@ import {
   getOpeningsWithVariantCountByType,
 } from "@/features/openings/services/openings.service";
 import { getPublicUser } from "@/lib/supabase/auth";
+
+export const metadata: Metadata = {
+  title: "Openings | ChessVolt",
+  description: "Learn openings from e4 and d4 to Indian setups.",
+};
 
 type SearchParams = Promise<{ type?: string }>;
 
