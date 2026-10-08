@@ -6,30 +6,31 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 const slides = [
   {
-    title: "Solve Openings, Puzzles & Repeat",
-    description: "Solve a puzzle, then play it again. A few repeats in a row is the fastest way for the idea to stick.",
+    title: "Turn Your Chess Mistakes into Progress",
+    description:
+      "Import your Chess.com or Lichess games and discover where you went wrong. Replay critical positions and practice finding better moves.",
     imageSrc: "/images/cards/bg-arrows-game.png",
-    imageAlt: "Move explanations while you play",
+    imageAlt: "Turn Your Chess Mistakes into Progress",
   },
   {
-    title: "Earn max 220 Volt in 4 days",
+    title: "Learn Chess Openings with Spaced Repetition",
     description:
-      "Your Volt Score shows how well you remember each puzzle or opening. You can earn up to 220 Volt across any 4 days, with a daily max of 55.",
+      "Practice opening variations move by move. Revisit them across different days to build a repertoire you can recall when it matters.",
     imageSrc: "/images/cards/bg-earn-volt.png",
-    imageAlt: "Earn up to 220 Volt in any 4 days",
+    imageAlt: "Learn Chess Openings with Spaced Repetition",
   },
   {
-    title: "Reach Your Target Rating",
+    title: "Your Next Practice, Already Saved",
     description:
-      "Keep training the games and puzzles you want to master. Steady practice is how you climb toward the rating you set.",
+      "Keep mistakes, opening variations, and chess puzzles together in Volt Tracker. Return to your saved content and follow each item’s Volt Score.",
     imageSrc: "/images/cards/bg-masters-game.png",
-    imageAlt: "Reach your target rating",
+    imageAlt: "Your Next Practice, Already Saved",
   },
 ];
 
 export function LandingCarousel() {
   return (
-    <section className="w-full bg-white px-4 py-20 md:px-6">
+    <section className="w-full bg-[#FDFDFD] px-4 py-20 md:px-6">
       <Carousel opts={{ loop: true }} className="mx-auto max-w-4xl">
         <CarouselContent>
           {slides.map((slide) => (

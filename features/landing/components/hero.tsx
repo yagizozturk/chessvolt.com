@@ -21,7 +21,7 @@ export function Hero() {
       <div className="flex flex-col gap-8 md:flex-row">
         <div className="order-2 flex flex-1 flex-col items-center gap-6 text-center md:order-1 md:items-end md:text-right">
           <h2 className="w-full text-center text-2xl leading-tight font-extrabold tracking-tighter text-neutral-100 md:text-right md:text-6xl">
-            Repeat & Master <br /> Your <span className="text-primary">Blunders</span>
+            Learn. Repeat. <br /> <span className="text-primary">Play Better Chess</span>
           </h2>
           <p className="w-full text-center text-xl leading-relaxed text-neutral-300 md:text-right">
             Learn openings, solve puzzles, play real famous games, <br /> and train with interactive chess games that{" "}
@@ -32,13 +32,13 @@ export function Hero() {
             <TwoColCard
               imageSrc="/images/form/chess-com-pawn-logo.png"
               imageAlt="Chess.com"
-              text="Import your Chess.com games"
+              text="Analyze your Chess.com games"
               className="rounded-xl border-1 border-[#5638ea] bg-[#5434e2]"
             />
             <TwoColCard
               imageSrc="/images/form/lichess-logo.png"
               imageAlt="Chess.com"
-              text="Play your lichess.org games"
+              text="Analyze your Lichess games"
               className="rounded-xl border-1 border-[#5638ea] bg-[#5434e2]"
             />
           </div>

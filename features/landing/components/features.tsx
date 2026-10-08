@@ -7,44 +7,44 @@ const steps: { imageSrc: string; imageAlt: string; title: ReactNode; description
     imageAlt: "Connect your chess.com and lichess.org accounts",
     title: (
       <>
-        <span className="text-primary">Connect</span> Your Accounts
+        <span className="text-primary">Import </span>Your Games
       </>
     ),
     description:
-      "Connect your Chess.com and Lichess accounts so ChessVolt can learn from your games and turn key mistakes into practice positions.",
+      "Enter your Chess.com or Lichess username to import and analyze your games. Discover mistakes you can turn into practice.",
   },
   {
     imageSrc: "/images/volt-explain/how_to_step_2.png",
     imageAlt: "Volt coaching you while you practice chess",
     title: (
       <>
-        Practice <span className="text-primary">Chess Patterns</span>
+        Practice <span className="text-primary">Key Positions</span>
       </>
     ),
     description:
-      "Solve puzzles, train openings, and play curated studies or famous games while Volt coaches you through the ideas.",
+      "Replay your mistakes, explore chess openings, and solve puzzles. Practice finding better moves, one position at a time.",
   },
   {
     imageSrc: "/images/volt-explain/how_to_step_3.png",
     imageAlt: "Adding a game to Volt Tracker",
     title: (
       <>
-        Add Items To <span className="text-primary">Volt Tracker</span>
+        Save To <span className="text-primary">Volt Tracker</span>
       </>
     ),
     description:
-      "Use the Volt button on a game panel to add content you want to master, then track its score on the Volt Tracker page.",
+      "Save mistakes, opening variations, and puzzles for quick access. Build your own collection of content to revisit.",
   },
   {
     imageSrc: "/images/volt-explain/how_to_step_4.png",
     imageAlt: "How Volt Score measures memory with the forgetting curve",
     title: (
       <>
-        Build Long-Term <span className="text-primary">Memory</span>
+        Repeat & <span className="text-primary">Track Progress</span>
       </>
     ),
     description:
-      "Volt Score uses the forgetting curve to measure how well you remember each item across accuracy, timing, and streak.",
+      "Practice across different days to strengthen your recall. Track your recent practice performance with up to 220 Volt for each item.",
   },
 ];
 
@@ -55,13 +55,12 @@ export function Features() {
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-4 text-center">
             <h2 className="text-3xl font-extrabold tracking-tight text-neutral-100 sm:text-4xl">
-              How ChessVolt Helps You Practice
+              How ChessVolt Helps You Improve
             </h2>
             <p className="mx-auto max-w-2xl text-lg leading-relaxed text-neutral-300">
-              ChessVolt is built on the{" "}
-              <span className="text-primary font-medium">forgetting curve of Hermann Ebbinghaus</span>. First 3
-              repetition will be the most effective, so we recommend you to play the same game 3 times in a row. These
-              repetitions will increase your Volt Score.
+              Inspired by <span className="text-primary font-medium">Hermann Ebbinghaus's</span> work on the{" "}
+              <span className="text-primary font-medium">forgetting curve</span>, ChessVolt encourages you to revisit
+              what you learn and practice across different days.
             </p>
           </div>
           <div className="flex flex-col gap-16 lg:grid lg:grid-cols-4 lg:grid-rows-[auto_auto_auto] lg:gap-x-6 lg:gap-y-4">

@@ -3,7 +3,7 @@ export function Rocket() {
     <section className="flex justify-center pt-30">
       <div className="@container relative w-full max-w-[800px]">
         <img
-          src="/images/hero/bg-rocket-rise.png"
+          src="/images/hero/bg-boost-chess-rocket.png"
           alt="ChessVolt Dashboard Preview"
           width={1775}
           height={996}
@@ -13,7 +13,7 @@ export function Rocket() {
           Boost Chess
         </p>
         <p className="absolute top-[26%] left-[60.5%] max-w-[7ch] -translate-y-1/2 text-[11cqw] leading-tight font-extrabold tracking-tighter text-neutral-100 uppercase">
-          Your Skill
+          Your Skills
         </p>
       </div>
     </section>
