@@ -35,57 +35,66 @@ export function clearVoltExplainDialogSeen(dialogId: string) {
 export const DEFAULT_VOLT_EXPLAIN_DIALOG_SLIDES: CarouselDialogSlide[] = [
   {
     imageSrc: "/images/volt-explain/slide-1.png",
-    imageAlt: "Chess puzzle board",
-    title: "Introducing Hermann Ebbinghaus",
+    imageAlt: "Volt with Hermann Ebbinghaus and a forgetting curve chart",
+    title: "Why Repetition Matters",
     description: [
+      "ChessVolt's approach to practice is inspired by ",
       <span key="ebbinghaus" className="text-primary font-medium">
         Hermann Ebbinghaus
       </span>,
-      " was a German psychologist who studied memory and learning. He is best known for his work on the ",
+      " and his work on the ",
       <span key="forgetting-curve" className="text-primary font-medium">
         forgetting curve
       </span>,
-      ". ChessVolt is using his work to help you learn chess.",
+      ". Revisit the same positions across different days to reinforce what you learn and practice recalling the moves.",
     ] satisfies ReactNode,
   },
   {
     imageSrc: "/images/volt-explain/slide-2-3.png",
-    imageAlt: "The Forgetting Curve",
-    title: "The Forgetting Curve",
+    imageAlt: "A diagram showing memory retention reinforced by repeated practice",
+    title: "What Your Volt Score Shows",
     description: [
       "Your ",
       <span key="volt-score" className="text-primary font-medium">
         Volt Score
       </span>,
-      " shows how well you remember each piece of content based on your performance over the ",
-      <span key="lookback" className="text-primary font-medium">
-        last 3 months
+      " reflects your recent practice performance for each item. It adds up the points from your ",
+      <span key="scored-days" className="text-primary font-medium">
+        four most recent practice days
       </span>,
-      ". The higher your score, the better you know it.",
+      " within the ",
+      <span key="lookback" className="text-primary font-medium">
+        last three months
+      </span>,
+      ". These days do not need to be consecutive. Your score can rise or fall as new practice days replace older ones or earlier results leave this window.",
     ] satisfies ReactNode,
   },
   {
     imageSrc: "/images/volt-explain/slide-3a.png",
-    imageAlt: "How Volt Score Is Calculated",
-    title: "How Volt Score Is Calculated",
+    imageAlt: "Volt Score showing accuracy, timing, streak, and four days of practice",
+    title: "How to Earn Up to 220 Volt",
     description: [
-      "Volt Score is based on accuracy (60%), timing (30%), and streak (10%). Earn up to ",
-      <span key="max-volt" className="text-primary font-medium">
-        220 Volt
+      "Each attempt is scored on ",
+      <span key="metrics" className="text-primary font-medium">
+        accuracy (60%), timing (30%), and streak (10%)
       </span>,
-      " across ",
-      <span key="scored-days" className="text-primary font-medium">
-        any 4 days
+      ". Streak means your longest run of correct moves within that attempt. Only your ",
+      <span key="counted-attempts" className="text-primary font-medium">
+        first three attempts per item each day
       </span>,
-      " in the ",
-      <span key="lookback" className="text-primary font-medium">
-        last 3 months
+      " count, weighted ",
+      <span key="attempt-weights" className="text-primary font-medium">
+        50%, 30%, and 20%
       </span>,
-      ", with a daily maximum of ",
+      ". All three are needed to reach the daily maximum of ",
       <span key="day-max-volt" className="text-primary font-medium">
         55 Volt
       </span>,
-      ". Only your first 3 practices each day count: 1st practice 60%, 2nd 25%, and 3rd 15%.",
+      ". Across the four counted days, each item's score can reach ",
+      <span key="max-volt" className="text-primary font-medium">
+        220 Volt
+      </span>,
+      ".",
     ] satisfies ReactNode,
   },
 ];

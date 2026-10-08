@@ -16,31 +16,31 @@ import { cn } from "@/lib/utils";
 const SLIDES = [
   {
     imageSrc: "/images/volt-explain/how_to_step_1.png",
-    imageAlt: "Connect your chess.com and lichess.org accounts",
-    title: "Connect your Chess.com and Lichess accounts",
+    imageAlt: "A player importing Chess.com and Lichess games for analysis",
+    title: "Import and analyze your chess games",
     description:
-      "Volt finds mistakes from your own games and turns them into practice positions, so you can review the moments that need the most work.",
+      "Enter your Chess.com or Lichess username to import and analyze your games. ChessVolt highlights your mistakes and lets you replay those positions, giving you a chance to find better moves and learn from situations you have actually faced.",
   },
   {
     imageSrc: "/images/volt-explain/how_to_step_2.png",
-    imageAlt: "Volt coaching you while you practice chess",
-    title: "Play openings and solve puzzles",
+    imageAlt: "Volt Coach guiding a player through chess practice",
+    title: "Practice openings, puzzles, and chess ideas",
     description:
-      "Start by solving puzzles, training openings, and playing curated studies or famous games. Volt coaches you through the ideas as you go, so you are not just guessing moves — you are learning why they work. The more you practice the same material, the more those patterns stay with you.",
+      "Explore opening variations, solve chess puzzles, and work through curated studies and famous games. Volt Coach guides you through the ideas behind the moves as you practice. Revisit the same material over time to strengthen your understanding and make important patterns easier to recall.",
   },
   {
     imageSrc: "/images/volt-explain/how_to_step_3.png",
-    imageAlt: "Adding a game to Volt Tracker",
-    title: "Add games to Volt Tracker",
+    imageAlt: "A player saving chess content to Volt Tracker",
+    title: "Save what you want to practice in Volt Tracker",
     description:
-      "When you find an opening or puzzle you want to master, tap the Volt button on the top right of the game panel to add it to Volt Tracker. That is how ChessVolt knows which content to score. Your Volt Score for each item then appears on the Volt Tracker page, so you can see what you know well and what still needs review.",
+      "Use the Volt button at the top right of the game panel to save a mistake from your games, an opening variation, or a puzzle to Volt Tracker. Your saved content stays within easy reach for future practice. Each item has its own Volt Score, so you can follow your recent performance and decide what to revisit.",
   },
   {
     imageSrc: "/images/volt-explain/how_to_step_4.png",
-    imageAlt: "How Volt Score measures memory with the forgetting curve",
-    title: "Volt tracks what you remember",
+    imageAlt: "A forgetting curve chart and a 220 Volt score",
+    title: "Repeat, remember, and track your progress",
     description:
-      "Volt Score is built on Hermann Ebbinghaus's forgetting curve: it measures how well you remember each piece of content, not just whether you got it right once. Scoring weights accuracy (60%), timing (30%), and streak (10%). You can earn up to 220 Volt across any 4 days in the last 3 months, with a daily max of 55. Only your first 3 practices each day count, and repeating the same game a few times in a row is the fastest way to raise your score.",
+      "Inspired by Hermann Ebbinghaus's work on the forgetting curve, ChessVolt encourages practice across different days. Each item's Volt Score reflects recent practice performance, up to 220 Volt. It combines your four most recent practice days within the last three months, with up to 55 Volt per day. These days do not need to be consecutive. Scores combine accuracy (60%), timing (30%), and your longest run of correct moves within an attempt (10%). Only your first three attempts per item each day count, weighted 50%, 30%, and 20%. All three are needed to reach the daily maximum.",
   },
 ] as const;
 
