@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeaderWithImage } from "@/components/page-header/page-header";
@@ -8,6 +9,7 @@ import { getStudyCoverImageSrc } from "@/features/study/utilities/study-cover-im
 import { getPaginationParams } from "@/features/study/utilities/study-puzzles-pagination.utils";
 import { PuzzleBoardCard } from "@/features/puzzle/components/puzzle-board-card";
 import { getStudyBySlug } from "@/features/study/services/study.service";
+import { studyDocumentDescription, studyDocumentTitle } from "@/lib/metadata/training-page-metadata";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Props = {
@@ -20,13 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { supabase } = await getPublicUser();
   const study = await getStudyBySlug(supabase, slug);
 
-  if (!study) {
-    return { title: "Study | ChessVolt" };
+  if (!study || !study.isActive) {
+    notFound();
   }
 
   return {
-    title: `${study.title} | ChessVolt`,
-    description: study.description,
+    title: studyDocumentTitle(study.title),
+    description: studyDocumentDescription(study.title, study.description),
   };
 }
 

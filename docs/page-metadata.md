@@ -1,77 +1,62 @@
 # Page titles and meta descriptions
 
-Pattern: `Title | ChessVolt`.
+`| ChessVolt` is part of each title once. There is no `title.template`.
 
-These are the current values. Rewrite the title and description for each page.
+Filled `study.description`, `theme.description`, `opening.description`, and `variant.description` are kept. The fallback is used only when that field is empty.
+
+Missing or inactive studies and themes, and missing openings and variants, call `notFound()`. The dashboard 404 title is `Page Not Found | ChessVolt`.
 
 ## Static pages
 
 ### `/`
 
-Set in `app/layout.tsx`. The homepage has no metadata of its own.
-
-- Title: ChessVolt | Chess Game Analysis & Opening Training
-- Description: Analyze your Chess.com and Lichess games, replay mistakes, and practice chess openings and puzzles. Track your progress with Volt Tracker.
-- On-page heading: Learn. Repeat. Play Better Chess
-- On-page text: Learn openings, solve puzzles, play real famous games, and train with interactive chess games that aims to teach you the idea behind the moves.
+- Title: Chess Training: Openings, Puzzles & Game Analysis | ChessVolt
+- Description: Learn chess openings, solve puzzles and analyze your games. Replay mistakes and reinforce what you learn with spaced repetition.
 
 ### `/studies`
 
-- Title: Studies | ChessVolt
-- Description: Explore curated puzzle studies.
-- On-page heading: Studies
-- On-page text: Explore curated puzzle studies.
+- Title: Chess Studies & Puzzle Collections | ChessVolt
+- Description: Explore curated chess puzzle studies. Work through instructive positions, practice finding the best moves and understand the ideas behind them.
 
 ### `/puzzles`
 
-- Title: Puzzles | ChessVolt
-- Description: Solve a random puzzle.
-- On-page heading: Puzzles
-- On-page text: Solve a random puzzle.
-- What it does: Loads one random active puzzle.
+- Title: Chess Puzzles: Find the Best Move | ChessVolt
+- Description: Solve a random chess puzzle and practice finding the best move. Test your calculation and sharpen your ability to spot tactical opportunities.
 
 ### `/openings`
 
-- Title: Openings | ChessVolt
-- Description: Learn openings from e4 and d4 to Indian setups.
-- On-page heading: Learn Openings To Master The Game
-- On-page text: From e4 openings to d4, indian setups
+- Title: Learn Chess Openings & Key Variations | ChessVolt
+- Description: Learn chess openings from 1.e4 and 1.d4 to Indian defenses. Practice key variations move by move and understand the ideas behind your opening moves.
 
 ### `/game-analysis`
 
-- Title: Game Analysis | ChessVolt
-- Description: Analyze your Chess.com and Lichess games and find your mistakes.
-- On-page heading: Analyze Your Chess.com and LichessGames
-- On-page text: Analyze your chess.com and lichess.org games and find your mistakes.
+- Title: Chess Game Analysis for Chess.com & Lichess | ChessVolt
+- Description: Analyze your Chess.com and Lichess games to find mistakes and missed opportunities. Review critical positions and learn from your own play.
 
 ## Dynamic pages
 
-Title and description come from the record. Fallbacks are used when that field is empty, or when the record is missing.
-
 ### `/studies/[slug]`
 
-- Title: `{study.title} | ChessVolt`
-- Description: `{study.description}`
-- Missing record title: Study | ChessVolt
+- Title: `{study.title}: Chess Study | ChessVolt`
+- Empty title: Chess Study | ChessVolt
+- Empty description: Explore {study.title}, an interactive chess study. Work through instructive positions and understand the ideas behind the moves.
 
 ### `/puzzles/theme/[slug]`
 
-- Title: `{theme.title} | ChessVolt`
-- Description: `{theme.description}`
-- Fallback description: Practice chess puzzles in this theme.
-- Missing record title: Puzzle Theme | ChessVolt
+- Title: `{theme.title} Chess Puzzles | ChessVolt`
+- Empty title: Themed Chess Puzzles | ChessVolt
+- Empty description: Solve chess puzzles from the {theme.title} collection. Practice calculating moves and recognizing patterns you can use in your own games.
 
 ### `/openings/[slug]/[id]`
 
-- Title: `{opening.name} | ChessVolt`
-- Description: `{opening.description}`
-- Fallback description: Learn this opening and its variations.
-- Missing record title: Opening | ChessVolt
+- Title: `{opening.name}: Moves & Variations | ChessVolt`
+- Empty name: Chess Opening Training | ChessVolt
+- Empty description: Learn the {opening.name} with interactive opening practice. Explore key variations, rehearse the moves and understand the ideas behind them.
 
 ### `/openings/variant/[id]`
 
 - Title: `{variant.title} | ChessVolt`
-- Description: `{variant.description}`
-- Fallback title: Opening variant | ChessVolt
-- Fallback description: Practice this opening variation move by move.
-- Missing record title: Opening Variant | ChessVolt
+- Generic title such as Main Line, when the parent opening name is known and not already in the variant title: `{opening.name}: {variant.title} | ChessVolt`
+- Empty variant title with an opening name: `{opening.name}: Opening Practice | ChessVolt`
+- Empty variant title and no opening name: Chess Opening Variation | ChessVolt
+- Empty description: Practice {variant.title} move by move. Understand the key ideas behind this chess opening variation and reinforce the moves through repetition.

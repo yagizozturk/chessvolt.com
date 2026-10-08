@@ -22,8 +22,9 @@ import {
 import { getPublicUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
-  title: "Studies | ChessVolt",
-  description: "Explore curated puzzle studies.",
+  title: "Chess Studies & Puzzle Collections | ChessVolt",
+  description:
+    "Explore curated chess puzzle studies. Work through instructive positions, practice finding the best moves and understand the ideas behind them.",
 };
 
 export default async function StudyPage({ searchParams }: { searchParams: StudyPageSearchParams }) {

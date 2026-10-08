@@ -12,6 +12,7 @@ import {
 } from "@/features/openings/services/openings.service";
 import { getUserFavoriteByUserAndOpeningVariant } from "@/features/user-favorites/services/user-favorite.service";
 import { getAttemptsByUserAndSequence } from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
+import { variantDocumentDescription, variantDocumentTitle } from "@/lib/metadata/training-page-metadata";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type OpeningVariantPageProps = {
@@ -24,12 +25,14 @@ export async function generateMetadata({ params }: OpeningVariantPageProps): Pro
   const variant = await getOpeningVariantById(supabase, id);
 
   if (!variant) {
-    return { title: "Opening Variant | ChessVolt" };
+    notFound();
   }
 
+  const opening = await getOpeningById(supabase, variant.openingId);
+
   return {
-    title: `${variant.title ?? "Opening variant"} | ChessVolt`,
-    description: variant.description ?? "Practice this opening variation move by move.",
+    title: variantDocumentTitle(variant.title, opening?.name),
+    description: variantDocumentDescription(variant.title, variant.description),
   };
 }
 

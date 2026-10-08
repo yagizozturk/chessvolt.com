@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeader } from "@/components/page-header/page-header";
@@ -8,6 +9,7 @@ import { ThemePuzzlesPagination } from "@/features/theme/components/theme-puzzle
 import { loadThemePuzzles } from "@/features/theme/loaders/theme-puzzles-page.loader";
 import { getThemeBySlug } from "@/features/theme/services/theme.service";
 import { getThemePuzzlesPageParam } from "@/features/theme/utilities/theme-puzzles-pagination.utils";
+import { themeDocumentDescription, themeDocumentTitle } from "@/lib/metadata/training-page-metadata";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Props = {
@@ -20,13 +22,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { supabase } = await getPublicUser();
   const theme = await getThemeBySlug(supabase, slug);
 
-  if (!theme) {
-    return { title: "Puzzle Theme | ChessVolt" };
+  if (!theme || !theme.isActive) {
+    notFound();
   }
 
   return {
-    title: `${theme.title} | ChessVolt`,
-    description: theme.description ?? "Practice chess puzzles in this theme.",
+    title: themeDocumentTitle(theme.title),
+    description: themeDocumentDescription(theme.title, theme.description),
   };
 }
 

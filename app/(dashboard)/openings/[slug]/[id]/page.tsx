@@ -14,6 +14,7 @@ import * as attemptService from "@/features/user-sequence-attempt/services/user-
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { computeSequenceAttemptAccuracy } from "@/features/user-sequence-attempt/utilities/compute-sequence-attempt-accuracy";
 import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-attempt/utilities/create-attempt-stats-by-sequence-id-map";
+import { openingDocumentDescription, openingDocumentTitle } from "@/lib/metadata/training-page-metadata";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
@@ -26,12 +27,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const opening = await getOpeningById(supabase, id);
 
   if (!opening) {
-    return { title: "Opening | ChessVolt" };
+    notFound();
   }
 
   return {
-    title: `${opening.name} | ChessVolt`,
-    description: opening.description ?? "Learn this opening and its variations.",
+    title: openingDocumentTitle(opening.name),
+    description: openingDocumentDescription(opening.name, opening.description),
   };
 }
 
@@ -39,16 +40,40 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   const { id } = await params;
   const { user, supabase } = await getPublicUser();
 
+  // ================================================================================================
+  // Id ye göre açılış çekilir.
+  // ================================================================================================
   const opening = await getOpeningById(supabase, id);
   if (!opening) {
     notFound();
   }
 
+  // ================================================================================================
+  // Açılışın tüm varyantları çekilir. Açılış ID ye göre.
+  // ================================================================================================
   const variants = await getOpeningVariantsByOpeningId(supabase, opening.id);
 
-  const sequenceIds = [...new Set(variants.map((v) => v.moveSequence.id))];
+  // ================================================================================================
+  // Varyant IDleri ve sequence IDleri değişkene atanır.
+  // ================================================================================================
   const variantIds = variants.map((v) => v.id);
 
+  // ================================================================================================
+  // map ile variants daki tüm nesnelerin sadece moveSequence.id değerleri yeni diziye atanır.
+  // Set, içinde aynı değerden sadece 1 tane barındıran veri yapısıdır. Duplicate engeller.
+  // Set nesnesi (Dizi değildir!): const mySet = new Set([101, 102, 101]); // Set { 101, 102 }
+  // Spread ile Set'i Diziye dönüştürme: const myArray = [...mySet]; // [101, 102]
+  // ================================================================================================
+  const sequenceIds = [...new Set(variants.map((v) => v.moveSequence.id))];
+
+  // ================================================================================================
+  // Promise.all ile iki farklı işlem paralel olarak yapılır.
+  // getLatestAttemptStatsForSequences: sequenceIds dizisindeki IDlerin attemptleri çekilir.
+  // getFavoritedOpeningVariantIds: hangi variantlar favorilenmiş o çekilir.
+  // kullanıcı user oluşturmamışsa bu servisler çekilmez.
+  // user olmadığı durumda Promise.all yapısını bozmamak için geriye anında tamamlanmış yapay bir
+  // Promise döndürmek gerekir.Promise.resolve(değer) hazır bir Promise verir, sıra bozulmaz.
+  // ================================================================================================
   const [stats, favoritedVariantIds] = await Promise.all([
     user ? attemptService.getLatestAttemptStatsForSequences(supabase, user.id, sequenceIds) : Promise.resolve([]),
     user ? getFavoritedOpeningVariantIds(supabase, user.id, variantIds) : Promise.resolve(new Set<string>()),

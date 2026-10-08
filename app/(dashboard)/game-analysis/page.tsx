@@ -93,7 +93,7 @@ export default function GameAnalysisPage() {
       <div className="page-container-children-layout">
         {/* ====== Page Header ====== */}
         <PageHeader
-          title="Analyze Your Chess.com and LichessGames"
+          title="Analyze Your Chess.com and Lichess Games"
           description="Analyze your chess.com and lichess.org games and find your mistakes."
         />
 

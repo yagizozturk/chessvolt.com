@@ -8,8 +8,9 @@ import { getRandomActivePuzzleId } from "@/features/puzzle/services/puzzle.servi
 import { getPublicUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
-  title: "Puzzles | ChessVolt",
-  description: "Solve a random puzzle.",
+  title: "Chess Puzzles: Find the Best Move | ChessVolt",
+  description:
+    "Solve a random chess puzzle and practice finding the best move. Test your calculation and sharpen your ability to spot tactical opportunities.",
 };
 
 export const dynamic = "force-dynamic";

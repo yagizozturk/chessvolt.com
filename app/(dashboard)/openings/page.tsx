@@ -10,8 +10,9 @@ import {
 import { getPublicUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
-  title: "Openings | ChessVolt",
-  description: "Learn openings from e4 and d4 to Indian setups.",
+  title: "Learn Chess Openings & Key Variations | ChessVolt",
+  description:
+    "Learn chess openings from 1.e4 and 1.d4 to Indian defenses. Practice key variations move by move and understand the ideas behind your opening moves.",
 };
 
 type SearchParams = Promise<{ type?: string }>;
