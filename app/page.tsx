@@ -3,8 +3,8 @@ import { Features } from "@/features/landing/components/features";
 import { Footer } from "@/features/landing/components/footer";
 import { Hero } from "@/features/landing/components/hero";
 import { Information } from "@/features/landing/components/information";
-import { Navbar } from "@/features/landing/components/navbar";
 import { LandingCarousel } from "@/features/landing/components/landing-carousel";
+import { Navbar } from "@/features/landing/components/navbar";
 import { Rocket } from "@/features/landing/components/rocket";
 
 export default function HomePage() {
@@ -13,7 +13,6 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <Features />
-      <DiamondStats />
       <Rocket />
       <LandingCarousel />
       <Footer />
