@@ -5,6 +5,7 @@ import * as puzzleRepo from "@/features/puzzle/repository/puzzle.repository";
 import { parsePuzzleRating } from "@/features/puzzle/types/puzzle-rating";
 import type { ThemeLinkWeight } from "@/features/theme-link/types/theme-link-weight";
 import type { Theme } from "@/features/theme/types/theme";
+import { buildStubGoalsFromMoves } from "@/lib/move-sequence-goals/build-stub-goals";
 
 import { applyLichessSetupMove } from "./apply-lichess-setup-move";
 import { ensureTheme } from "./ensure-theme";
@@ -117,7 +118,7 @@ export async function importLichessPuzzlesFromCsv(
         initialFen: prepared.fen,
         displayFen: prepared.fen,
         pgn: null,
-        goals: null,
+        goals: buildStubGoalsFromMoves(prepared.fen, prepared.moves),
         gameId: null,
         isActive: true,
       });

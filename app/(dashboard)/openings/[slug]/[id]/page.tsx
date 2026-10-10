@@ -10,7 +10,10 @@ import { OpeningBoardCard } from "@/features/openings/components/opening-board-c
 import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
 import { getOpeningCoverImageSrc } from "@/features/openings/utilities/opening-cover-image.utils";
 import { getFavoritedOpeningVariantIds } from "@/features/user-favorites/services/user-favorite.service";
-import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
+import {
+  getAttemptsByUserAndSequenceIds,
+  getLatestAttemptStatsForSequences,
+} from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { attemptStatusToIsComplete } from "@/features/user-sequence-attempt/utilities/attempt-status";
 import { computeSequenceAttemptAccuracy } from "@/features/user-sequence-attempt/utilities/compute-sequence-attempt-accuracy";
 import { createAttemptStatsBySequenceIdMap } from "@/features/user-sequence-attempt/utilities/create-attempt-stats-by-sequence-id-map";
@@ -73,33 +76,51 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
   // kullanıcı user oluşturmamışsa bu servisler çekilmez.
   // user olmadığı durumda Promise.all yapısını bozmamak için geriye anında tamamlanmış yapay bir
   // Promise döndürmek gerekir.Promise.resolve(değer) hazır bir Promise verir, sıra bozulmaz.
+  // Ek açıklama: Promise.all normal değerleri de kabul eder; Promise.resolve zorunlu değildir.
+  // Kullanıcı yoksa veya ilgili ID dizisi boşsa servis çağrılmaz.
   // ================================================================================================
   const [stats, favoritedVariantIds] = await Promise.all([
-    user ? attemptService.getLatestAttemptStatsForSequences(supabase, user.id, sequenceIds) : Promise.resolve([]),
-    user ? getFavoritedOpeningVariantIds(supabase, user.id, variantIds) : Promise.resolve(new Set<string>()),
+    user && sequenceIds.length > 0
+      ? getLatestAttemptStatsForSequences(supabase, user.id, sequenceIds)
+      : Promise.resolve([]),
+    user && variantIds.length > 0
+      ? getFavoritedOpeningVariantIds(supabase, user.id, variantIds)
+      : Promise.resolve(new Set<string>()),
   ]);
 
   const favoritedVariants = variants.filter((variant) => favoritedVariantIds.has(variant.id));
-  const favoritedSequenceIds = [...new Set(favoritedVariants.map((variant) => variant.moveSequence.id))];
 
+  // ================================================================================================
+  // Aynı sequence birden fazla varyantta kullanılıyorsa yalnızca bir kez hesaba katılır.
+  // ================================================================================================
+  const favoritedSequencesById = new Map(
+    favoritedVariants.map((variant) => [variant.moveSequence.id, variant.moveSequence]),
+  );
+  const favoritedSequenceIds = [...favoritedSequencesById.keys()];
+
+  // ================================================================================================
+  // Favorilen varyantların attemptleri çekilir. Volt score hesaplaması yapacağız.
+  // ================================================================================================
   const favoritedAttempts =
     user && favoritedSequenceIds.length > 0
-      ? await attemptService.getAttemptsByUserAndSequenceIds(supabase, user.id, favoritedSequenceIds)
+      ? await getAttemptsByUserAndSequenceIds(supabase, user.id, favoritedSequenceIds)
       : [];
 
-  const voltScoresBySequenceId =
-    favoritedSequenceIds.length > 0
-      ? getVoltScoresBySequenceId(
-          favoritedAttempts,
-          favoritedVariants.map((variant) => ({
-            sequenceId: variant.moveSequence.id,
-            totalMoveCount: getPlayerMoveCount(variant.moveSequence.moves),
-            rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
-          })),
-        )
-      : {};
+  // ================================================================================================
+  // Volt score hesaplaması için context bilgileri hazırlanır.
+  // ================================================================================================
+  const voltContexts = [...favoritedSequencesById.values()].map((sequence) => ({
+    sequenceId: sequence.id,
+    totalMoveCount: getPlayerMoveCount(sequence.moves),
+    rating: RATING_TIMING_CONFIG.defaultOpeningVariantRating,
+  }));
 
-  const mapAttemptStatsBySequenceId = createAttemptStatsBySequenceIdMap(stats);
+  // ================================================================================================
+  // Favorilen varyantların volt scoreleri hesaplanır.
+  // ================================================================================================
+  const voltScoresBySequenceId = getVoltScoresBySequenceId(favoritedAttempts, voltContexts);
+
+  const attemptStatsBySequenceId = createAttemptStatsBySequenceIdMap(stats);
   const coverImageSrc = opening.coverImageUrl
     ? getOpeningCoverImageSrc(opening.coverImageUrl)
     : "/images/openings/bg-opening-default-cover-image.png";
@@ -108,6 +129,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
     <div className="page-container">
       <div className="page-container-children-layout">
         <div className="md:hidden">
+          {/* ====== Sayfa Başlığı Mobilde  ====== */}
           <PageHeaderWithImage
             title={opening.name}
             description={opening.description ?? ""}
@@ -115,6 +137,8 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             imageAlt={opening.name}
           />
         </div>
+
+        {/* ====== Sayfa Başlığı Desktopta  ====== */}
         <div
           className="hidden gap-4 rounded-lg md:flex"
           style={opening.coverImageColor ? { background: opening.coverImageColor } : undefined}
@@ -127,9 +151,14 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
             <Image src={coverImageSrc} alt={opening.name} width={265} height={150} className="object-contain" />
           </div>
         </div>
+
+        {/* ====== Sayfa İçeriği ve Varyantlar ====== */}
         <div className="page-container-grid-data-layout">
+          {variants.length === 0 && (
+            <p className="text-muted-foreground col-span-full text-center text-sm">No variations available yet.</p>
+          )}
           {variants.map((variant) => {
-            const attemptStats = mapAttemptStatsBySequenceId[variant.moveSequence.id];
+            const attemptStats = attemptStatsBySequenceId[variant.moveSequence.id];
             const isFavorited = favoritedVariantIds.has(variant.id);
 
             return (
