@@ -1,7 +1,5 @@
-import type { Puzzle } from "@/features/puzzle/types/puzzle";
-
 export function getNextPuzzleUrl(
-  puzzles: Puzzle[],
+  puzzles: { id: string }[],
   currentPuzzleId: string,
   buildPath: (puzzleId: string) => string,
 ): string | null {

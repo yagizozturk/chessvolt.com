@@ -40,28 +40,6 @@ export function studyDocumentDescription(
   return `Explore ${name}, an interactive chess study. Work through instructive positions and understand the ideas behind the moves.`;
 }
 
-export function themeDocumentTitle(title: string | null | undefined): string {
-  const name = plainName(title);
-  if (!name) return "Themed Chess Puzzles | ChessVolt";
-  if (hasPhrase(name, "chess puzzles")) return withBrand(name);
-  return withBrand(`${name} Chess Puzzles`);
-}
-
-export function themeDocumentDescription(
-  title: string | null | undefined,
-  description: string | null | undefined,
-): string {
-  const text = filledText(description);
-  if (text) return text;
-
-  const name = plainName(title);
-  if (!name) {
-    return "Practice chess puzzles grouped by theme. Build your calculation skills and learn to recognize patterns in your own games.";
-  }
-
-  return `Solve chess puzzles from the ${name} collection. Practice calculating moves and recognizing patterns you can use in your own games.`;
-}
-
 export function openingDocumentTitle(name: string | null | undefined): string {
   const openingName = plainName(name);
   if (!openingName) return "Chess Opening Training | ChessVolt";

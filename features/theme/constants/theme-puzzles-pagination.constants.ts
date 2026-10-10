@@ -1,1 +1,0 @@
-export const THEME_PUZZLES_PAGE_SIZE = 10;

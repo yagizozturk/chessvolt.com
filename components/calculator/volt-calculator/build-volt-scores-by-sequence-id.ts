@@ -8,6 +8,10 @@ export type SequenceVoltContext = {
   rating: number;
 };
 
+// ================================================================================================
+// Attempt ler alınır. Attempt, duration, wrong count, hint count gibi değerleri içerir.
+//
+// ================================================================================================
 export function getVoltScoresBySequenceId(
   attempts: UserSequenceAttempt[],
   contexts: SequenceVoltContext[],

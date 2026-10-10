@@ -18,7 +18,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { MainIdeaButton } from "@/features/openings/components/main-idea-button";
 import { updateProfileRatingAction } from "@/features/profile/actions/update-profile-rating";
-import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import { usePuzzleTour } from "@/features/puzzle/hooks/use-puzzle-tour";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 import { getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
@@ -39,19 +38,17 @@ import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload
 type PuzzleControllerProps = {
   puzzle: Puzzle;
   nextPuzzleUrl?: string | null;
-  backUrl?: string;
+  backUrl?: string | null;
   isUserLoggedIn?: boolean; // Checks for the persist events
   isFavorited?: boolean;
-  theme?: PuzzlePrimaryTheme | null;
 };
 
 export default function PuzzleController({
   puzzle,
   nextPuzzleUrl = null,
-  backUrl = "/",
+  backUrl = null,
   isUserLoggedIn = false,
   isFavorited = false,
-  theme = null,
 }: PuzzleControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
@@ -277,6 +274,7 @@ export default function PuzzleController({
   // Handle the continue click and redirect to the next puzzle or back to the study
   // ================================================================================================
   const handleBackClick = () => {
+    if (!backUrl) return;
     startTransition(() => {
       router.push(backUrl);
     });
@@ -342,9 +340,13 @@ export default function PuzzleController({
           {/* Controller header */}
           <div className="flex justify-between">
             <div>
-              <Button variant="voltIcon" onClick={handleBackClick} disabled={isPending} aria-label="Back">
-                {isPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
-              </Button>
+              {backUrl ? (
+                <Button variant="voltIcon" onClick={handleBackClick} disabled={isPending} aria-label="Back">
+                  {isPending ? <Spinner className="size-5" /> : <ChevronLeft className="size-5" />}
+                </Button>
+              ) : (
+                <div className="h-9 w-10 shrink-0" aria-hidden />
+              )}
             </div>
             <div className="flex items-center gap-2 text-xl font-bold">
               <Image
@@ -395,7 +397,6 @@ export default function PuzzleController({
             turnLabel={turnLabel}
             mainIdea={mainIdea}
             showMainIdea={effectiveBoardMode === "learn" && showMainIdea}
-            theme={theme}
           />
 
           {/* Footer Buttons */}

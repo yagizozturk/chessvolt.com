@@ -29,22 +29,6 @@ export async function findAll(supabase: SupabaseClient): Promise<Theme[]> {
   return toThemes((data ?? []) as DbTheme[]);
 }
 
-export async function findAllActive(supabase: SupabaseClient): Promise<Theme[]> {
-  const { data, error } = await supabase
-    .from("themes")
-    .select("*")
-    .eq("is_active", true)
-    .order("sort_order", { ascending: true })
-    .order("title", { ascending: true });
-
-  if (error) {
-    console.error("theme.repository.findAllActive error:", error);
-    return [];
-  }
-
-  return toThemes((data ?? []) as DbTheme[]);
-}
-
 export async function findAllActiveWithCoverImage(supabase: SupabaseClient): Promise<Theme[]> {
   const { data, error } = await supabase
     .from("themes")

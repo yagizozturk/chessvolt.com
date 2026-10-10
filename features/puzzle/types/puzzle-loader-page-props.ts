@@ -1,6 +1,5 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
-import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 
 export type PuzzleLoaderPageProps = {
@@ -20,8 +19,7 @@ export type StandalonePuzzleLoaderPageProps = {
 export type PuzzlePageData = {
   puzzle: Puzzle;
   nextPuzzleUrl: string | null;
-  backUrl: string;
+  backUrl: string | null;
   isUserLoggedIn: boolean;
   isFavorited: boolean;
-  theme?: PuzzlePrimaryTheme | null;
 };

@@ -12,21 +12,6 @@ import { toPuzzle } from "@/features/puzzle/mapper/puzzle.mapper";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 import { normalizeUuid, normalizeUuidList } from "@/features/puzzle/utilities/normalize-uuid";
 
-export async function findAllActive(supabase: SupabaseClient): Promise<Puzzle[]> {
-  const { data, error } = await supabase
-    .from("puzzles")
-    .select("*, move_sequences (*)")
-    .eq("is_active", true)
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    console.error("puzzle.repository.findAllActive error:", error);
-    return [];
-  }
-
-  return (data ?? []).map(toPuzzle);
-}
-
 export type RandomActivePuzzleFilter = {
   excludePuzzleId?: string;
   excludeSequenceIds?: string[];

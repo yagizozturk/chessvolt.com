@@ -7,19 +7,13 @@ export function parseStandalonePuzzleSource(from?: string | null): "favorites" |
   return undefined;
 }
 
-export function parseStandaloneThemeSlug(theme?: string | null): string | undefined {
-  const trimmed = theme?.trim();
-  return trimmed ? trimmed : undefined;
-}
-
 // ==================================================================
 // Building standalone puzzle URLs according to from page params
 // Puzzle can be routed from favorites or puzzles if standalone, if not study
 // ==================================================================
-export function getStandalonePuzzleBackUrl(from?: "favorites" | "puzzles" | null): string {
+export function getStandalonePuzzleBackUrl(from?: "favorites" | "puzzles" | null): string | null {
   if (from === "favorites") return "/volt-tracker";
-  if (from === "puzzles") return "/dashboard";
-  return "/puzzles";
+  return null;
 }
 
 // ==================================================================
@@ -38,21 +32,6 @@ export function buildStandalonePuzzleUrl(
   }
   const query = params.toString();
   return query ? `${path}?${query}` : path;
-}
-
-// ==================================================================
-// Building theme puzzle list and play URLs
-// ==================================================================
-export function buildThemePuzzlesUrl(themeSlug: string): string {
-  return `/puzzles/theme/${themeSlug}`;
-}
-
-export function buildThemePuzzleUrl(puzzleId: string, { themeSlug }: { themeSlug: string }): string {
-  return `/puzzles/theme/${themeSlug}/${puzzleId}`;
-}
-
-export function getParentThemeUrl(themeSlug: string): string {
-  return buildThemePuzzlesUrl(themeSlug);
 }
 
 // ==================================================================

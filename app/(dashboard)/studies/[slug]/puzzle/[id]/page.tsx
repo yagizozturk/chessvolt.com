@@ -1,5 +1,5 @@
 import PuzzleController from "@/features/puzzle/components/puzzle-controller";
-import { loadStudyPuzzlePage } from "@/features/puzzle/loaders/puzzle-page.loader";
+import { loadStudyPuzzlePage } from "@/features/puzzle/loaders/study-puzzle-page-loader";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type PageProps = {

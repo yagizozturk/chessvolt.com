@@ -11,20 +11,12 @@ export async function getAllThemes(supabase: SupabaseClient): Promise<Theme[]> {
   return themeRepo.findAll(supabase);
 }
 
-export async function getAllActiveThemes(supabase: SupabaseClient): Promise<Theme[]> {
-  return themeRepo.findAllActive(supabase);
-}
-
 export async function getAllActiveThemesWithCoverImage(supabase: SupabaseClient): Promise<Theme[]> {
   return themeRepo.findAllActiveWithCoverImage(supabase);
 }
 
 export async function getThemeById(supabase: SupabaseClient, id: string): Promise<Theme | null> {
   return themeRepo.findById(supabase, id);
-}
-
-export async function getThemeBySlug(supabase: SupabaseClient, slug: string): Promise<Theme | null> {
-  return themeRepo.findBySlug(supabase, slug);
 }
 
 export async function createTheme(

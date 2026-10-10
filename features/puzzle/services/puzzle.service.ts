@@ -17,16 +17,19 @@ export async function getPuzzleById(supabase: SupabaseClient, id: string): Promi
   return puzzleRepo.findById(supabase, id);
 }
 
-export async function getAllActivePuzzles(supabase: SupabaseClient): Promise<Puzzle[]> {
-  return puzzleRepo.findAllActive(supabase);
-}
-
-// Skips the puzzle on screen and, for a logged-in user, their most recent solved puzzles.
-// If that filter matches nothing, the oldest solved id is dropped until a puzzle remains.
+// ================================================================================================
+// Ekranda aktif gözüken ve son çözülen puzzle ları eleyerek oyuncuya random bir puzzle çekilir.
+// Eğer bulunmassa en çözülenlerden biri düşürülür ve tekrar onu çözer.
+// RandomActivePuzzleOptions ile userId ve alınmayacak puzzleId ler tutulur.
+// ================================================================================================
 export async function getRandomActivePuzzleId(
   supabase: SupabaseClient,
   options?: RandomActivePuzzleOptions,
 ): Promise<string | null> {
+  // ================================================================================================
+  // Son çözülen puzzle ların sequenceIds alınır.
+  // RECENT_SOLVED_PUZZLE_COUNT ile son 10 çözülen puzzle exclude edilir, onların sequenceId si alınır
+  // ================================================================================================
   const excludeSequenceIds = options?.userId
     ? await userSequenceAttemptService.getRecentCompletedSequenceIds(
         supabase,
@@ -35,14 +38,16 @@ export async function getRandomActivePuzzleId(
       )
     : [];
 
-  for (let solvedWindow = excludeSequenceIds.length; solvedWindow >= 0; solvedWindow -= 1) {
+  const sequenceIdsToSkip = [...excludeSequenceIds];
+  while (true) {
     const puzzleId = await puzzleRepo.findRandomActiveId(supabase, {
-      excludePuzzleId: options?.excludePuzzleId,
-      excludeSequenceIds: excludeSequenceIds.slice(0, solvedWindow),
+      excludePuzzleId: options?.activePuzzleIdtoExlude, // Mevcutta ekrandaki puzzle
+      excludeSequenceIds: sequenceIdsToSkip,
     });
     if (puzzleId) return puzzleId;
+    if (sequenceIdsToSkip.length === 0) break;
+    sequenceIdsToSkip.pop();
   }
-
   return null;
 }
 

@@ -41,12 +41,6 @@ Missing or inactive studies and themes, and missing openings and variants, call 
 - Empty title: Chess Study | ChessVolt
 - Empty description: Explore {study.title}, an interactive chess study. Work through instructive positions and understand the ideas behind the moves.
 
-### `/puzzles/theme/[slug]`
-
-- Title: `{theme.title} Chess Puzzles | ChessVolt`
-- Empty title: Themed Chess Puzzles | ChessVolt
-- Empty description: Solve chess puzzles from the {theme.title} collection. Practice calculating moves and recognizing patterns you can use in your own games.
-
 ### `/openings/[slug]/[id]`
 
 - Title: `{opening.name}: Moves & Variations | ChessVolt`

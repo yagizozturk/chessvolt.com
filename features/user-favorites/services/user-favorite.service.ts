@@ -53,6 +53,13 @@ export async function getFavoritedPuzzleIds(
   return userFavoriteRepo.findFavoritedPuzzleIds(supabase, userId, puzzleIds);
 }
 
+export async function getOrderedActiveFavoritePuzzleIds(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<string[]> {
+  return userFavoriteRepo.findOrderedActiveFavoritePuzzleIds(supabase, userId);
+}
+
 // ================================================================================================
 // Oyun analizindeki favorilenmiş hataların idsini hata tablosundan getirmek için repoya gider.
 // ================================================================================================

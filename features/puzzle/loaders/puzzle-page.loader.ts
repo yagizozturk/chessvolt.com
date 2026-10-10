@@ -1,61 +1,61 @@
 import { notFound } from "next/navigation";
 
-import { getPuzzleById } from "@/features/puzzle/services/puzzle.service";
-import type { PuzzleLoaderPageProps, PuzzlePageData } from "@/features/puzzle/types/puzzle-loader-page-props";
-import { buildStudyPuzzleUrl } from "@/features/puzzle/utilities/build-puzzle-url";
+import { getPuzzleById, getRandomActivePuzzleId } from "@/features/puzzle/services/puzzle.service";
+import type { PuzzlePageData, StandalonePuzzleLoaderPageProps } from "@/features/puzzle/types/puzzle-loader-page-props";
+import { buildStandalonePuzzleUrl, getStandalonePuzzleBackUrl } from "@/features/puzzle/utilities/build-puzzle-url";
 import { getNextPuzzleUrl } from "@/features/puzzle/utilities/get-next-puzzle-url";
-import { getParentStudyUrl } from "@/features/puzzle/utilities/get-parent-study-url";
-import { getActivePuzzlesByStudyId } from "@/features/study-puzzles/services/study-puzzles.service";
-import { getStudyBySlug } from "@/features/study/services/study.service";
-import { getFavoriteByPuzzleId } from "@/features/user-favorites/services/user-favorite.service";
+import {
+  getFavoriteByPuzzleId,
+  getOrderedActiveFavoritePuzzleIds,
+} from "@/features/user-favorites/services/user-favorite.service";
 
-// ==================================================================
-// This is a orchestration component. Helps to create puzzle pages
-// by calling multiple methods of different domains
-// ==================================================================
-export async function loadStudyPuzzlePage(props: PuzzleLoaderPageProps): Promise<PuzzlePageData> {
-  const { supabase, user, slug, puzzleId } = props;
+// ================================================================================================
+// PuzzleId page.tsx de çekilip buraya yollanır props olarak. Puzzle çekilir.
+// ================================================================================================
+export async function loadPuzzlePage(props: StandalonePuzzleLoaderPageProps): Promise<PuzzlePageData> {
+  const { supabase, user, puzzleId, from } = props;
 
-  // ==================================================================
-  // Getting basic study data by Slug
-  // ==================================================================
-  const study = await getStudyBySlug(supabase, slug);
-  if (!study || !study.isActive) {
-    notFound();
-  }
-
-  // ==================================================================
-  // Getting puzzle by Id
-  // ==================================================================
+  // ================================================================================================
+  // Puzzle çekilir.
+  // ================================================================================================
   const puzzle = await getPuzzleById(supabase, puzzleId);
   if (!puzzle || !puzzle.isActive) {
     notFound();
   }
 
-  // ==================================================================
-  // Getting active puzzles in study by study Id in order to find
-  // the next ordered puzzle so after game ends, a navigation button shows up.
-  // Also confirms the puzzle belongs to this study.
-  // ==================================================================
-  const puzzles = await getActivePuzzlesByStudyId(supabase, study.id);
-  if (!puzzles.some((item) => item.id === puzzle.id)) {
-    notFound();
+  // ================================================================================================
+  // Next puzzleUrl çekilir.
+  // Favorilerden geliyorsa, onun sırasına göre voltTracker daki bir sonrakine gider.
+  // from="puzzles" gibi senaryoda random bir tane daha yükler.
+  // activePuzzleIdtoExlude: ekranda aktif olan mevcut puzzle.
+  // ================================================================================================
+  let nextPuzzleUrl: string | null = null;
+  if (from === "favorites") {
+    // Favorilen puzzle ların idsini çekilir. Pinned ler önce sonra newest. Sırayla gitmek için
+    const favoritePuzzleIds = user ? await getOrderedActiveFavoritePuzzleIds(supabase, user.id) : [];
+    // Mevcut index i bilip, tüm sırayaı bilip bir sonraki puzzle ın URL ini getireceğiz.
+    nextPuzzleUrl = getNextPuzzleUrl(
+      favoritePuzzleIds.map((id) => ({ id })),
+      puzzle.id,
+      (id) => buildStandalonePuzzleUrl(id, { from: "favorites" }),
+    );
+  } else {
+    // from="puzzles" ya da direk puzzles/[id] hardcoded şekilde.
+    const nextPuzzleId = await getRandomActivePuzzleId(supabase, {
+      userId: user?.id,
+      activePuzzleIdtoExlude: puzzle.id,
+    });
+    if (nextPuzzleId) {
+      nextPuzzleUrl = buildStandalonePuzzleUrl(nextPuzzleId, from === "puzzles" ? { from: "puzzles" } : undefined);
+    }
   }
 
-  // ==================================================================
-  // We have the current page URL. Get the next one based on sort order in the study
-  // ==================================================================
-  const nextPuzzleUrl = getNextPuzzleUrl(puzzles, puzzle.id, (id) => buildStudyPuzzleUrl(id, { studySlug: slug }));
-
-  // ==================================================================
-  // Check if the puzzle is favorited by the user
-  // ==================================================================
   const isFavoritedPuzzle = user ? await getFavoriteByPuzzleId(supabase, user.id, puzzle.id) : null;
 
   return {
     puzzle,
     nextPuzzleUrl,
-    backUrl: getParentStudyUrl(study),
+    backUrl: getStandalonePuzzleBackUrl(from),
     isUserLoggedIn: Boolean(user),
     isFavorited: Boolean(isFavoritedPuzzle),
   };

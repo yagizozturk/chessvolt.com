@@ -154,6 +154,29 @@ export async function findFavoritedPuzzleIds(
   );
 }
 
+// Pinned first, then newest. Same default order as Volt Tracker puzzle cards.
+export async function findOrderedActiveFavoritePuzzleIds(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("user_favorites")
+    .select("puzzle_id, puzzles!inner(is_active)")
+    .eq("user_id", userId)
+    .eq("puzzles.is_active", true)
+    .order("is_pinned", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("user-favorites.repository.findOrderedActiveFavoritePuzzleIds error:", error);
+    return [];
+  }
+
+  return (data ?? [])
+    .map((row) => row.puzzle_id as string | null)
+    .filter((id): id is string => id != null);
+}
+
 export async function findFavoritedGameAnalysisMistakeIds(
   supabase: SupabaseClient,
   userId: string,

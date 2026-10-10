@@ -3,10 +3,14 @@ import type { Metadata } from "next";
 import { EmptyState } from "@/components/empty-state/empty-state";
 import { PageHeader } from "@/components/page-header/page-header";
 import PuzzleController from "@/features/puzzle/components/puzzle-controller";
-import { loadStandalonePuzzlePage } from "@/features/puzzle/loaders/standalone-puzzle-page.loader";
+import { loadPuzzlePage } from "@/features/puzzle/loaders/puzzle-page.loader";
 import { getRandomActivePuzzleId } from "@/features/puzzle/services/puzzle.service";
 import { getPublicUser } from "@/lib/supabase/auth";
 
+// ================================================================================================
+// dynamic, metadata, route segment config isimleri. Çağrılmadan Next okuyor.
+// dynamic cached bir sayfa olmasını engelleyip her seferinde yüklüyor
+// ================================================================================================
 export const metadata: Metadata = {
   title: "Chess Puzzles: Find the Best Move | ChessVolt",
   description:
@@ -15,6 +19,9 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
+// ================================================================================================
+// Random bir puzzle ın sadece Id si çekilr. LoadPuzzlePage e yollanır.
+// ================================================================================================
 export default async function PuzzlesPage() {
   const { user, supabase } = await getPublicUser();
   const puzzleId = await getRandomActivePuzzleId(supabase, { userId: user?.id });
@@ -30,12 +37,15 @@ export default async function PuzzlesPage() {
     );
   }
 
-  const pageData = await loadStandalonePuzzlePage({
+  // ================================================================================================
+  // Loader set edilir.
+  // ================================================================================================
+  const puzzlePageData = await loadPuzzlePage({
     supabase,
     user,
     puzzleId,
     from: "puzzles",
   });
 
-  return <PuzzleController {...pageData} />;
+  return <PuzzleController {...puzzlePageData} />;
 }
