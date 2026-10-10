@@ -19,7 +19,9 @@ export async function loadStandalonePuzzlePage(props: StandalonePuzzleLoaderPage
   }
 
   const nextPuzzleId =
-    from === "puzzles" ? await getRandomActivePuzzleId(supabase, { userId: user?.id, excludePuzzleId: puzzle.id }) : null;
+    from === "puzzles"
+      ? await getRandomActivePuzzleId(supabase, { userId: user?.id, excludePuzzleId: puzzle.id })
+      : null;
   const nextPuzzleUrl =
     from === "puzzles"
       ? nextPuzzleId

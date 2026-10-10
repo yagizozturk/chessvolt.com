@@ -18,10 +18,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { MainIdeaButton } from "@/features/openings/components/main-idea-button";
 import { updateProfileRatingAction } from "@/features/profile/actions/update-profile-rating";
+import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import { usePuzzleTour } from "@/features/puzzle/hooks/use-puzzle-tour";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 import { getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
-import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
@@ -303,9 +303,7 @@ export default function PuzzleController({
         voltScore={completionVoltScore}
         isVoltScoreShowing={isVoltScoreShowing}
         onPlayAgain={handlePlayAgain}
-        footerExtra={
-          <FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
-        }
+        footerExtra={<FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />}
       />
 
       {/* Confetti */}
@@ -364,11 +362,7 @@ export default function PuzzleController({
                 <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
               ) : null}
               <div data-tour="favorite-button">
-                <FavoriteButton
-                  puzzleId={puzzle.id}
-                  isFavorited={favorited}
-                  onFavoritedChange={setFavorited}
-                />
+                <FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
               </div>
             </div>
           </div>
