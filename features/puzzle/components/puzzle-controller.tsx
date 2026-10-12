@@ -39,7 +39,7 @@ type PuzzleControllerProps = {
   puzzle: Puzzle;
   nextPuzzleUrl?: string | null;
   backUrl?: string | null;
-  isUserLoggedIn?: boolean; // Checks for the persist events
+  isUserLoggedIn?: boolean; // Persist event'lerinin yazılıp yazılmayacağını kontrol eder
   isFavorited?: boolean;
 };
 
@@ -53,16 +53,16 @@ export default function PuzzleController({
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
   const isMobile = useIsMobile();
-  const sequenceId = puzzle.moveSequence.id; // Every sequence has its own moves and PGN. Every Puzzle has sequenceId
-  const [replayKey, setReplayKey] = useState(0); // Replay key is to be unique. It is to change sessionId so to reset vars in play again option
-  const sessionId = `${puzzle.id}:${replayKey}`;
-  const turnLabel = getTurnLabel(puzzle.moveSequence.initialFen); // Gets the player turn label, w or b
+  const sequenceId = puzzle.moveSequence.id; // Her sequence'in kendi hamleleri ve PGN'i vardır. Her puzzle'ın bir sequenceId'si vardır.
+  const [replayKey, setReplayKey] = useState(0); // Replay key tekil olsun diye. Play again'de sessionId değişir, değişkenler sıfırlanır.
+  const sessionId = `${puzzle.id}:${replayKey}`; // tekil olması için.
+  const turnLabel = getTurnLabel(puzzle.moveSequence.initialFen); // Sıranın kimde olduğunu alır, w veya b
   const hasNextPuzzle = nextPuzzleUrl != null;
   const successDestinationPath = hasNextPuzzle ? nextPuzzleUrl : null;
   const successButtonLabel = hasNextPuzzle ? "Next puzzle" : null;
-  const [isCompleted, setIsCompleted] = useState(false); // Whether the puzzle is completed
+  const [isCompleted, setIsCompleted] = useState(false); // Puzzle tamamlandı mı
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
-  const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null); // TS allows null state, default is null. CompletionStats is not set on default.
+  const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null); // TS null state'e izin verir, varsayılan null. CompletionStats başlangıçta set edilmez.
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
@@ -73,8 +73,8 @@ export default function PuzzleController({
   const { playLevelUpSound } = useBoardSounds();
 
   // ================================================================================================
-  // Ref counters for the puzzle. Refs are invisible to React’s update cycle.
-  // These attempt numbers are stored in refs
+  // Puzzle için ref sayaçları. Ref'ler React'in güncelleme döngüsünde görünmez.
+  // Bu deneme sayıları ref'lerde tutulur.
   // ================================================================================================
   const correctMoveCountRef = useRef(0);
   const wrongMoveCountRef = useRef(0);
@@ -83,7 +83,7 @@ export default function PuzzleController({
   const maxCorrectStreakRef = useRef(0);
 
   // ================================================================================================
-  // Use the useMoveSequenceController HOOK to handle the move sequence
+  // Hamle dizisini yönetmek için useMoveSequenceController hook'u
   // ================================================================================================
   const {
     handleMoveCheck,
@@ -119,7 +119,7 @@ export default function PuzzleController({
   }, [puzzle.id, isFavorited]);
 
   // ================================================================================================
-  // Reset the puzzle state when the puzzle id or replay key changes
+  // Puzzle id veya replay key değişince puzzle state'i sıfırlanır
   // ================================================================================================
   useEffect(() => {
     setIsCompleted(false);
@@ -137,7 +137,7 @@ export default function PuzzleController({
   }, [puzzle.id, replayKey]);
 
   // ================================================================================================
-  // Set the puzzle as completed and persist attempt data to the db
+  // Puzzle tamamlandı olarak işaretlenir ve deneme verisi db'ye yazılır
   // ================================================================================================
   useEffect(() => {
     if (expectedCurrentCorrectMoveUci != null || isCompleted) return;
@@ -152,7 +152,7 @@ export default function PuzzleController({
       getTimeFromStartMs(),
     );
 
-    // Setting the completion stats for UI Dialog show
+    // Dialog'da göstermek için tamamlanma istatistikleri set edilir
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(favorited);
@@ -162,12 +162,12 @@ export default function PuzzleController({
   }, [expectedCurrentCorrectMoveUci, favorited, getTimeFromStartMs, isCompleted, playLevelUpSound]);
 
   // ================================================================================================
-  // Insert the completion attempt to the db
+  // Tamamlanma denemesi db'ye yazılır
   // ================================================================================================
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
 
-    // Rate before persisting complete so this attempt does not self-block eligibility.
+    // Complete kaydedilmeden önce puanla ki bu deneme kendi uygunluğunu engellemesin.
     if (isUserLoggedIn && attemptPayload.wrongMoveCount === 0) {
       await updateProfileRatingAction({
         sequenceId: puzzle.moveSequence.id,
@@ -185,12 +185,12 @@ export default function PuzzleController({
   }
 
   // ================================================================================================
-  // Handle the board check move
+  // Tahtadaki hamle kontrolü
   // ================================================================================================
   const handleBoardCheckMove = (move: MoveAttemptPayload) => {
     const { isCorrect } = handleMoveCheck(move);
 
-    // With a right move (Early Return)
+    // Doğru hamlede erken dönüş
     if (isCorrect) {
       correctMoveCountRef.current += 1;
       updateCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
@@ -205,7 +205,7 @@ export default function PuzzleController({
       return true;
     }
 
-    // With wrong move and puzzle continues
+    // Yanlış hamle ve puzzle devam eder
     if (!isCompleted) {
       wrongMoveCountRef.current += 1;
       currentCorrectStreakRef.current = 0;
@@ -218,7 +218,7 @@ export default function PuzzleController({
       });
 
       void (async () => {
-        // Rate before persisting fail so the first wrong does not self-block eligibility.
+        // Fail kaydedilmeden önce puanla ki ilk yanlış hamle kendi uygunluğunu engellemesin.
         if (isUserLoggedIn && wrongMoveCountRef.current === 1) {
           await updateProfileRatingAction({
             sequenceId: puzzle.moveSequence.id,
@@ -243,7 +243,7 @@ export default function PuzzleController({
   };
 
   // ================================================================================================
-  // Handle the hint click and communicate with HOOK
+  // Hint tıklaması ve hook ile iletişim
   // ================================================================================================
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
@@ -259,9 +259,9 @@ export default function PuzzleController({
   };
 
   // ================================================================================================
-  // Handle the continue click and redirect to the next puzzle
-  // Use router hook already have transition state
-  // Using transition to manage loading state.
+  // Continue tıklaması ve sonraki puzzle'a yönlendirme
+  // Router hook'unun transition state'i zaten var
+  // Loading state transition ile yönetilir.
   // ================================================================================================
   const handleContinueClick = () => {
     if (!successDestinationPath) return;
@@ -271,7 +271,7 @@ export default function PuzzleController({
   };
 
   // ================================================================================================
-  // Handle the continue click and redirect to the next puzzle or back to the study
+  // Geri tıklaması ve sonraki puzzle'a veya study'ye yönlendirme
   // ================================================================================================
   const handleBackClick = () => {
     if (!backUrl) return;
@@ -281,7 +281,7 @@ export default function PuzzleController({
   };
 
   // ================================================================================================
-  // Play again button in dialog, sets the replay key for a new session
+  // Dialog'daki play again butonu, yeni session için replay key'i artırır
   // ================================================================================================
   const handlePlayAgain = () => {
     setSuccessDialogOpen(false);
@@ -291,7 +291,7 @@ export default function PuzzleController({
   return (
     <div className="page-container">
       {Tour}
-      {/* Success Dialog */}
+      {/* Başarı dialogu */}
       <SolveSuccessDialog
         open={successDialogOpen}
         onOpenChange={setSuccessDialogOpen}
@@ -304,18 +304,18 @@ export default function PuzzleController({
         footerExtra={<FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />}
       />
 
-      {/* Confetti */}
+      {/* Konfeti */}
       {successDialogOpen ? (
         <Confetti aria-hidden className="pointer-events-none fixed inset-0 z-[60] size-full max-h-none max-w-none" />
       ) : null}
 
-      {/* Notifier */}
+      {/* Bildirim */}
       <Notifier goals={sortedGoals} />
 
       <div className="page-container-controller-layout">
-        {/* Board wrapper: aspect-square sets the square; .board-wrapper in volt.css fills it */}
-        {/* self-start is critical! It makes board container not shrink when neighbour elements gets bigger in size. self-start = “this child only, align to cross-axis start” */}
-        {/* TODO: Refactor HTML structure */}
+        {/* Tahta sarmalayıcı: aspect-square kareyi belirler; volt.css içindeki .board-wrapper onu doldurur */}
+        {/* self-start kritik. Komşu elemanlar büyüyünce tahta küçülmesin diye. self-start = sadece bu child, cross-axis başa hizalanır */}
+        {/* TODO: HTML yapısını yeniden düzenle */}
         <div
           key={sessionId}
           className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]"
@@ -330,14 +330,14 @@ export default function PuzzleController({
             drawHintMove={expectedCurrentCorrectMoveUci}
             activeGoalVisuals={nextGoal?.visuals}
             onCheckMove={handleBoardCheckMove}
-            onSuccessMovePlayed={handleSuccessMovePlayed} // directly communicating with hook
-            onNextMoveRequest={handleNextMoveRequest} // directly communicating with hook
+            onSuccessMovePlayed={handleSuccessMovePlayed} // doğrudan hook ile iletişim
+            onNextMoveRequest={handleNextMoveRequest} // doğrudan hook ile iletişim
           />
         </div>
 
-        {/* Controller */}
+        {/* Kontrol paneli */}
         <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
-          {/* Controller header */}
+          {/* Kontrol paneli başlığı */}
           <div className="flex justify-between">
             <div>
               {backUrl ? (
@@ -389,7 +389,7 @@ export default function PuzzleController({
             </Tabs>
           ) : null}
 
-          {/* Goal Viewer */}
+          {/* Hedef görüntüleyici */}
           <GoalViewer
             goals={sortedGoals}
             progressValue={progressValue}
@@ -399,7 +399,7 @@ export default function PuzzleController({
             showMainIdea={effectiveBoardMode === "learn" && showMainIdea}
           />
 
-          {/* Footer Buttons */}
+          {/* Alt butonlar */}
           <div className="mt-auto">
             <div className="flex gap-2">
               {!isCompleted ? (
