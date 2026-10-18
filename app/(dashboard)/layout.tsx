@@ -1,16 +1,11 @@
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { VoltExplainDialog } from "@/components/volt-explain-dialog/volt-explain-dialog";
-import { getAllOpenings } from "@/features/openings/services/openings.service";
-import { getPublicUser } from "@/lib/supabase/auth";
 
-export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { supabase } = await getPublicUser();
-  const openings = await getAllOpenings(supabase);
-
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider open={false}>
-      <AppSidebar openings={openings} />
+      <AppSidebar />
       {/* 
         Note:
         overflow-auto keeps the sidebar fixed while content is scrollable. 

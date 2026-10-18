@@ -16,16 +16,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useVoltExplainMenuAction } from "@/components/volt-explain-dialog/use-volt-explain-dialog";
-import type { Opening } from "@/features/openings/types/opening";
 import { useProfile } from "@/features/profile/hooks/use-profile";
 import { getDisplayName } from "@/features/profile/utilities/user-avatar";
 import { createClient } from "@/lib/supabase/client";
-import { slugify } from "@/lib/utils/slugify";
-
-function getOpeningHref(opening: Pick<Opening, "id" | "name" | "slug">) {
-  const slug = opening.slug ?? slugify(opening.name);
-  return `/openings/${slug}/${opening.id}`;
-}
 
 // Static nav config: link-based submenu items only.
 // Profile actions are injected at runtime in AppSidebar because they need React hooks.
@@ -60,14 +53,8 @@ const data = {
     },
     {
       title: "Openings",
-      url: "#",
+      url: "/openings",
       icon: "/images/icons/icon-openings.png",
-      items: [
-        {
-          title: "All Openings",
-          url: "/openings",
-        },
-      ],
     },
     {
       title: "Studies",
@@ -101,11 +88,9 @@ const data = {
   ],
 };
 
-type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
-  openings?: Pick<Opening, "id" | "name" | "slug">[];
-};
+type AppSidebarProps = React.ComponentProps<typeof Sidebar>;
 
-export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
+export function AppSidebar(props: AppSidebarProps) {
   const router = useRouter();
   const { profile, isLoading: isProfileLoading } = useProfile();
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
@@ -158,22 +143,9 @@ export function AppSidebar({ openings = [], ...props }: AppSidebarProps) {
           };
         }
 
-        if (section.title === "Openings") {
-          return {
-            ...section,
-            items: [
-              ...(section.items ?? []),
-              ...openings.map((opening) => ({
-                title: opening.name,
-                url: getOpeningHref(opening),
-              })),
-            ],
-          };
-        }
-
         return section;
       }),
-    [openVoltExplainDialog, openings],
+    [openVoltExplainDialog],
   );
 
   return (
