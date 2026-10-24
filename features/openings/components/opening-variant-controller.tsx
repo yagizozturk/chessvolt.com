@@ -79,7 +79,6 @@ export default function OpeningVariantController({
     handleNextMoveRequest,
     sortedGoals,
     nextGoal,
-    progressValue,
     hintCount,
     hintRequested,
     expectedCurrentCorrectMoveUci,
@@ -317,7 +316,6 @@ export default function OpeningVariantController({
           </Tabs>
           <GoalViewer
             goals={sortedGoals}
-            progressValue={progressValue}
             mode={boardMode}
             turnLabel={turnLabel}
             mainIdea={mainIdea}

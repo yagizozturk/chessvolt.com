@@ -190,14 +190,14 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
           <div
             aria-hidden
             className={cn(
-              "from-card pointer-events-none absolute top-0 left-0 z-10 h-12 w-8 bg-gradient-to-r to-transparent transition-opacity duration-200",
+              "from-card pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r to-transparent transition-opacity duration-200",
               canScrollStart ? "opacity-100" : "opacity-0",
             )}
           />
           <div
             aria-hidden
             className={cn(
-              "from-card pointer-events-none absolute top-0 right-0 z-10 h-12 w-8 bg-gradient-to-l to-transparent transition-opacity duration-200",
+              "from-card pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l to-transparent transition-opacity duration-200",
               canScrollEnd ? "opacity-100" : "opacity-0",
             )}
           />
@@ -206,11 +206,21 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
             ref={scrollRef}
             role="list"
             aria-label="Goal progress"
-            className="relative z-[1] flex snap-x snap-mandatory items-center gap-2 overflow-x-auto overflow-y-hidden scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="relative z-[1] flex snap-x snap-mandatory items-center overflow-x-auto overflow-y-hidden scroll-smooth p-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             onScroll={updateScrollEdges}
           >
             {goals.map((goal, index) => {
               const hasTakeaway = Boolean(goal.takeaway.trim());
+              const connectorLine =
+                index > 0 ? (
+                  <div
+                    aria-hidden
+                    className={cn(
+                      "h-1.5 min-w-6 flex-1 transition-colors duration-300",
+                      goals[index - 1].isCompleted ? "bg-primary" : "bg-muted",
+                    )}
+                  />
+                ) : null;
 
               const completedButton = (
                 <button
@@ -219,7 +229,7 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
                   role="listitem"
                   className={cn(
                     GOAL_ITEM_CLASS,
-                    "bg-muted relative size-8 cursor-default overflow-hidden rounded-full border-0 p-0",
+                    "bg-muted relative size-10 cursor-default overflow-hidden rounded-full border-0 p-0",
                   )}
                   aria-label={`Goal ${index + 1} completed`}
                   onMouseEnter={
@@ -242,10 +252,11 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
                 </button>
               );
 
-              return goal.isCompleted ? (
+              const isActive = activeGoalIndex === index;
+
+              const stepItem = goal.isCompleted ? (
                 hasTakeaway ? (
                   <Popover
-                    key={index}
                     modal={false}
                     open={openIndex === index}
                     onOpenChange={(open) => handlePopoverOpenChange(open, index)}
@@ -271,24 +282,32 @@ export function GoalStepper({ goals, mode = "practice" }: GoalStepperProps) {
                     </PopoverContent>
                   </Popover>
                 ) : (
-                  <Fragment key={index}>{completedButton}</Fragment>
+                  completedButton
                 )
               ) : (
                 <div
-                  key={index}
                   ref={(node) => setItemRef(index, node)}
                   role="listitem"
                   className={cn(
                     GOAL_ITEM_CLASS,
-                    "relative grid size-8 place-items-center rounded-full text-xs font-bold",
-                    activeGoalIndex === index ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground",
+                    "relative grid size-10 place-items-center rounded-full text-base font-bold transition-colors duration-300",
+                    isActive
+                      ? "bg-primary text-primary-foreground ring-primary/30 ring-4"
+                      : "bg-muted text-muted-foreground border-border border-4",
                   )}
                   aria-label={`Goal ${index + 1}`}
-                  aria-current={activeGoalIndex === index ? "step" : undefined}
+                  aria-current={isActive ? "step" : undefined}
                 >
                   {hasTakeaway ? <ShineBorder shineColor={TAKEAWAY_SHINE_COLORS} borderWidth={2} /> : null}
                   {index + 1}
                 </div>
+              );
+
+              return (
+                <Fragment key={index}>
+                  {connectorLine}
+                  {stepItem}
+                </Fragment>
               );
             })}
           </div>

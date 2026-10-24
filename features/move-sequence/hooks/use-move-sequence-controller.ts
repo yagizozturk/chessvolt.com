@@ -54,12 +54,6 @@ export function useMoveSequenceController({
     return sortedGoals.find((goal) => !goal.isCompleted) ?? null;
   }, [sortedGoals]);
 
-  const progressValue = useMemo(() => {
-    if (!sortedGoals.length) return 0;
-    const completedGoalsCount = sortedGoals.filter((goal) => goal.isCompleted).length;
-    return Math.round((completedGoalsCount / sortedGoals.length) * 100);
-  }, [sortedGoals]);
-
   const isAllGoalsCompleted = sortedGoals.length > 0 && sortedGoals.every((goal) => goal.isCompleted);
 
   useEffect(() => {
@@ -117,7 +111,6 @@ export function useMoveSequenceController({
     mainIdea: goals?.mainIdea ?? "",
     isAllGoalsCompleted,
     hintCount,
-    progressValue,
     handleMoveCheck,
     handleSuccessMovePlayed,
     handleNextMoveRequest,

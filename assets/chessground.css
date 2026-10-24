@@ -161,16 +161,19 @@ cg-board piece.fading {
   position: absolute;
   display: flex;
   pointer-events: none;
-  opacity: 0.8;
+  opacity: 1;
   font-size: 9px;
+  line-height: 1;
+  z-index: 3;
 }
 
 .cg-wrap coords.ranks {
   top: 0 !important;
-  left: -20px !important;
+  left: 0 !important;
   flex-flow: column-reverse;
   height: 100%;
-  width: 12px;
+  width: 12.5%;
+  align-items: stretch;
   font-weight: 800;
   font-size: 12px;
   text-transform: lowercase;
@@ -182,11 +185,12 @@ cg-board piece.fading {
 }
 
 .cg-wrap coords.files {
-  bottom: -20px !important;
+  bottom: 0 !important;
   left: 0 !important;
   flex-flow: row;
   width: 100%;
-  height: 16px;
+  height: 12.5%;
+  align-items: flex-end;
   text-transform: lowercase !important;
   text-align: center;
   font-weight: 600;
@@ -202,35 +206,36 @@ cg-board piece.fading {
 }
 
 .cg-wrap coords.ranks coord {
-  transform: translateY(39%);
+  flex: 0 0 12.5%;
+  box-sizing: border-box;
+  transform: none;
+  text-align: left;
+  padding: 3px 0 0 3px;
 }
 
-.orientation-white .ranks :nth-child(odd),
-.orientation-white .ranks :nth-child(even),
-.orientation-white .files :nth-child(odd),
-.orientation-white .files :nth-child(even),
-.orientation-black .ranks :nth-child(odd),
-.orientation-black .ranks :nth-child(even),
-.orientation-black .files :nth-child(odd),
-.orientation-black .files :nth-child(even),
-coords.squares:nth-of-type(odd) :nth-child(even),
-coords.squares:nth-of-type(odd) :nth-child(even),
-coords.squares:nth-of-type(even) :nth-child(odd) {
-  color: rgba(0, 0, 0, 0.8) !important;
+.cg-wrap coords.files coord {
+  flex: 0 0 12.5%;
+  box-sizing: border-box;
+  text-align: right;
+  padding: 0 3px 3px 0;
 }
 
-.dark .orientation-white .ranks :nth-child(odd),
-.dark .orientation-white .ranks :nth-child(even),
-.dark .orientation-white .files :nth-child(odd),
-.dark .orientation-white .files :nth-child(even),
-.dark .orientation-black .ranks :nth-child(odd),
-.dark .orientation-black .ranks :nth-child(even),
-.dark .orientation-black .files :nth-child(odd),
-.dark .orientation-black .files :nth-child(even),
-.dark coords.squares:nth-of-type(odd) :nth-child(even),
-.dark coords.squares:nth-of-type(odd) :nth-child(even),
-.dark coords.squares:nth-of-type(even) :nth-child(odd) {
-  color: rgba(255, 255, 255, 0.8) !important;
+/* Coordinates are placed on the left and bottom edges.
+ * Contrast follows the square color, independently of the page theme.
+ * DOM order stays 1–8 / a–h when the board is flipped.
+ */
+.cg-wrap.orientation-white coords.ranks > coord:nth-child(odd),
+.cg-wrap.orientation-white coords.files > coord:nth-child(odd),
+.cg-wrap.orientation-black coords.ranks > coord:nth-child(even),
+.cg-wrap.orientation-black coords.files > coord:nth-child(even) {
+  color: #ffffff !important;
+}
+
+.cg-wrap.orientation-white coords.ranks > coord:nth-child(even),
+.cg-wrap.orientation-white coords.files > coord:nth-child(even),
+.cg-wrap.orientation-black coords.ranks > coord:nth-child(odd),
+.cg-wrap.orientation-black coords.files > coord:nth-child(odd) {
+  color: #344923 !important;
 }
 
 /*

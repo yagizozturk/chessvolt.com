@@ -6,7 +6,6 @@ type GoalsProps = {
 };
 
 export type GoalViewerProps = GoalsProps & {
-  progressValue: number;
   mode?: VoltBoardMode;
   turnLabel: string;
   mainIdea?: string;

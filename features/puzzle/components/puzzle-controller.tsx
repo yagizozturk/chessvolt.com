@@ -1,7 +1,6 @@
 "use client";
 
 import { Bot, ChevronLeft, ChevronRight, Eye, Gauge, RotateCcw, Swords, Tags } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
@@ -95,7 +94,6 @@ export default function PuzzleController({
     handleNextMoveRequest,
     sortedGoals,
     nextGoal,
-    progressValue,
     hintCount,
     hintRequested,
     expectedCurrentCorrectMoveUci,
@@ -346,6 +344,9 @@ export default function PuzzleController({
               </Badge>
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-2">
+              {effectiveBoardMode === "learn" ? (
+                <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
+              ) : null}
               <div data-tour="favorite-button" className="shrink-0">
                 <FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
               </div>
@@ -373,7 +374,7 @@ export default function PuzzleController({
 
         {/* Kontrol paneli */}
         <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
-          {/* Kontrol paneli başlığı */}
+          {/* Kontrol paneli başlığı
           <div className="flex justify-between">
             <div>
               {backUrl ? (
@@ -384,26 +385,8 @@ export default function PuzzleController({
                 <div className="h-9 w-10 shrink-0" aria-hidden />
               )}
             </div>
-            <div className="flex items-center gap-2 text-xl font-bold">
-              <Image
-                src="/images/icons/icon-puzzle.png"
-                alt=""
-                aria-hidden
-                width={30}
-                height={30}
-                className="size-7 shrink-0"
-              />
-              Puzzles
-            </div>
-            <div className="flex items-center gap-2">
-              {effectiveBoardMode === "learn" ? (
-                <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
-              ) : null}
-              <div data-tour="favorite-button">
-                <FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
-              </div>
-            </div>
           </div>
+          */}
 
           {hasMainIdea ? (
             <Tabs
@@ -428,7 +411,6 @@ export default function PuzzleController({
           {/* Hedef görüntüleyici */}
           <GoalViewer
             goals={sortedGoals}
-            progressValue={progressValue}
             mode={effectiveBoardMode}
             turnLabel={turnLabel}
             mainIdea={mainIdea}
