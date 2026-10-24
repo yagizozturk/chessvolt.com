@@ -46,8 +46,8 @@ export function GoalViewer({
         <GoalStepper goals={goals} mode={mode} />
         <div className="space-y-1.5">
           <div className="text-muted-foreground flex items-center justify-between text-sm font-medium">
-            <span>Puzzle score</span>
-            <span className="tabular-nums">{score} / 100</span>
+            <span>Progress</span>
+            <span className="tabular-nums">{score}%</span>
           </div>
           <div className="flex items-center gap-2">
             <Progress value={score} className="h-3" />

@@ -153,17 +153,23 @@
 
 .dark {
   --background: oklch(0.141 0.005 285.823); /* #09090B */
-  --brand: #3e1dad;
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885); /* #18181B */
-  --card-shadow: oklch(0.1642 0.0021 286.17); /* #0E0E0F */
+  /* Brand Color */
+  --brand: #3e1dad;
+  /* Card Colors */
+  --card: oklch(0.21 0.006 285.885); /* Koyu temadan bir tık daha açık farklı katman hissi veren */
   --card-foreground: oklch(0.985 0 0);
+  --card-shadow: oklch(0.1642 0.0021 286.17); /* #0E0E0F */
+  /* Popover Colors */
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
+  /* Primary Colors */
   --primary: oklch(0.795 0.184 86.047);
-  --primary-foreground: oklch(0.421 0.095 57.708);
+  --primary-foreground: oklch(0.421 0.095 57.708); /* Primary renk belli olsun diye bir arka plan */
+  /* Secondary Colors İkincil önemdeki butonlar, filtre etiketleri (badges) veya ana işlem olmayan yardımcı alanlar. */
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
+  /* İkincil açıklamalar, placeholder metinleri, pasif/devre dışı bırakılmış alanlar veya kart içi hafif arkaplan ayarları */
   --muted: oklch(0.274 0.006 286.033); /* #27272a, In Shadcn In Card child element bg is #202023 which is bg-muted/50 */
   --muted-foreground: oklch(0.705 0.015 286.067);
   --accent: oklch(0.274 0.006 286.033);
