@@ -21,28 +21,34 @@ export function VoltCoach({ title, message, ttsKey, ttsText }: VoltCoachProps) {
   const muted = !enabled;
 
   return (
-    <div className="relative flex gap-4">
+    <div className="flex flex-col gap-3">
       <TTSController key={ttsKey} text={ttsText ?? message} muted={muted} />
-      {/* min-w-0 needs to be refactored after max 2 words prompt */}
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <div className="flex">
-          <div className="flex-1 truncate text-lg font-semibold">{title}</div>
+      <div className="flex items-center justify-between">
+        <div className="text-lg font-semibold">Volt Coach</div>
+        <Button
+          type="button"
+          variant="voltIcon"
+          size="icon-sm"
+          aria-label={muted ? "Unmute coach" : "Mute coach"}
+          onClick={toggle}
+        >
+          {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+        </Button>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="shrink-0">
+          <Image src="/images/avatar/volt-robot.png" alt="Volt Coach" width={110} height={110} />
         </div>
-        <div className="text-muted-foreground w-full leading-normal">{message ? message : null}</div>
+        {/* min-w-0 needs to be refactored after max 2 words prompt */}
+        <div className="bg-card relative flex min-w-0 flex-1 flex-col gap-1 rounded-xl border px-4 py-3">
+          <span
+            aria-hidden
+            className="bg-card absolute top-1/2 -left-[7px] size-3 -translate-y-1/2 rotate-45 border-b border-l"
+          />
+          <div className="truncate text-lg font-semibold">{title}</div>
+          <div className="text-muted-foreground text-sm leading-normal">{message ? message : null}</div>
+        </div>
       </div>
-      <div className="shrink-0">
-        <Image src="/images/avatar/volt-coach.png" alt="Volt Coach" width={110} height={110} />
-      </div>
-      <Button
-        type="button"
-        variant="voltIcon"
-        size="icon-sm"
-        className="absolute right-2 bottom-0"
-        aria-label={muted ? "Unmute coach" : "Mute coach"}
-        onClick={toggle}
-      >
-        {muted ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
-      </Button>
     </div>
   );
 }
