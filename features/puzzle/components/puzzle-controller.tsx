@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, ChevronLeft, Eye, RotateCcw, Swords } from "lucide-react";
+import { Bot, ChevronLeft, ChevronRight, Eye, Gauge, RotateCcw, Swords, Tags } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -11,6 +11,7 @@ import type { VoltScoreResult } from "@/components/calculator/volt-calculator/vo
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
 import { Spinner } from "@/components/ui/spinner";
@@ -18,9 +19,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { MainIdeaButton } from "@/features/openings/components/main-idea-button";
 import { updateProfileRatingAction } from "@/features/profile/actions/update-profile-rating";
+import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import { usePuzzleTour } from "@/features/puzzle/hooks/use-puzzle-tour";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
-import { getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
+import { formatPuzzleRatingLabel, getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
 import { FavoriteButton } from "@/features/user-favorites/components/favorite-button";
 import { useSequenceAttempt } from "@/features/user-sequence-attempt/hooks/use-sequence-attempt";
 import type { MoveSequenceCompleteDialogStats } from "@/features/user-sequence-attempt/types/sequence-complete-dialog-stats";
@@ -41,6 +43,7 @@ type PuzzleControllerProps = {
   backUrl?: string | null;
   isUserLoggedIn?: boolean; // Persist event'lerinin yazılıp yazılmayacağını kontrol eder
   isFavorited?: boolean;
+  primaryTheme?: PuzzlePrimaryTheme | null;
 };
 
 export default function PuzzleController({
@@ -49,6 +52,7 @@ export default function PuzzleController({
   backUrl = null,
   isUserLoggedIn = false,
   isFavorited = false,
+  primaryTheme = null,
 }: PuzzleControllerProps) {
   const router = useRouter();
   const boardRef = useRef<VoltBoardHandle>(null);
@@ -315,24 +319,56 @@ export default function PuzzleController({
       <div className="page-container-controller-layout">
         {/* Tahta sarmalayıcı: aspect-square kareyi belirler; volt.css içindeki .board-wrapper onu doldurur */}
         {/* self-start kritik. Komşu elemanlar büyüyünce tahta küçülmesin diye. self-start = sadece bu child, cross-axis başa hizalanır */}
-        {/* TODO: HTML yapısını yeniden düzenle */}
-        <div
-          key={sessionId}
-          className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]"
-          data-tour="board"
-        >
-          <VoltBoard
-            ref={boardRef}
-            sourceId={sessionId}
-            mode={effectiveBoardMode}
-            initialFen={puzzle.moveSequence.initialFen}
-            coordinates={!isMobile}
-            drawHintMove={expectedCurrentCorrectMoveUci}
-            activeGoalVisuals={nextGoal?.visuals}
-            onCheckMove={handleBoardCheckMove}
-            onSuccessMovePlayed={handleSuccessMovePlayed} // doğrudan hook ile iletişim
-            onNextMoveRequest={handleNextMoveRequest} // doğrudan hook ile iletişim
-          />
+        <div className="bg-card flex w-full shrink-0 flex-col gap-3 self-start rounded-xl p-4 md:min-w-0 md:flex-[3]">
+          <div key={sessionId} className="relative aspect-square w-full" data-tour="board">
+            <VoltBoard
+              ref={boardRef}
+              sourceId={sessionId}
+              mode={effectiveBoardMode}
+              initialFen={puzzle.moveSequence.initialFen}
+              coordinates={!isMobile}
+              drawHintMove={expectedCurrentCorrectMoveUci}
+              activeGoalVisuals={nextGoal?.visuals}
+              onCheckMove={handleBoardCheckMove}
+              onSuccessMovePlayed={handleSuccessMovePlayed} // doğrudan hook ile iletişim
+              onNextMoveRequest={handleNextMoveRequest} // doğrudan hook ile iletişim
+            />
+          </div>
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="flex min-w-0 flex-1 flex-wrap gap-2">
+              <Badge variant="outline" className="max-w-full rounded-xl p-3 text-sm">
+                <Gauge className="text-primary" data-icon="inline-start" />
+                <span className="truncate">{formatPuzzleRatingLabel(puzzle.rating)}</span>
+              </Badge>
+              <Badge variant="outline" className="max-w-full rounded-xl p-3 text-sm">
+                <Tags className="text-primary" data-icon="inline-start" />
+                <span className="truncate">{primaryTheme?.title ?? "—"}</span>
+              </Badge>
+            </div>
+            <div className="ml-auto flex shrink-0 items-center gap-2">
+              <div data-tour="favorite-button" className="shrink-0">
+                <FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
+              </div>
+              <Button
+                size="icon-xs"
+                variant="outline"
+                aria-label="Back"
+                onClick={handleBackClick}
+                disabled={!backUrl || isPending}
+              >
+                <ChevronLeft />
+              </Button>
+              <Button
+                size="icon-xs"
+                variant="outline"
+                aria-label="Next puzzle"
+                onClick={handleContinueClick}
+                disabled={!hasNextPuzzle || isPending}
+              >
+                <ChevronRight />
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Kontrol paneli */}

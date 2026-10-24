@@ -31,6 +31,7 @@ export default async function StudyPuzzlePage({ params }: PageProps) {
       backUrl={puzzleData.backUrl}
       isUserLoggedIn={puzzleData.isUserLoggedIn}
       isFavorited={puzzleData.isFavorited}
+      primaryTheme={puzzleData.primaryTheme}
     />
   );
 }

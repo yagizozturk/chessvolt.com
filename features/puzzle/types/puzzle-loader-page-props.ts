@@ -1,5 +1,6 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
+import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 
 export type PuzzleLoaderPageProps = {
@@ -22,4 +23,5 @@ export type PuzzlePageData = {
   backUrl: string | null;
   isUserLoggedIn: boolean;
   isFavorited: boolean;
+  primaryTheme: PuzzlePrimaryTheme | null;
 };

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 
+import { getPrimaryThemesByPuzzleIds } from "@/features/puzzle-theme/services/puzzle-theme.service";
 import { getPuzzleById } from "@/features/puzzle/services/puzzle.service";
 import type { PuzzleLoaderPageProps, PuzzlePageData } from "@/features/puzzle/types/puzzle-loader-page-props";
 import { buildStudyPuzzleUrl } from "@/features/puzzle/utilities/build-puzzle-url";
@@ -50,7 +51,10 @@ export async function loadStudyPuzzlePage(props: PuzzleLoaderPageProps): Promise
   // ==================================================================
   // Check if the puzzle is favorited by the user
   // ==================================================================
-  const isFavoritedPuzzle = user ? await getFavoriteByPuzzleId(supabase, user.id, puzzle.id) : null;
+  const [isFavoritedPuzzle, primaryThemesByPuzzleId] = await Promise.all([
+    user ? getFavoriteByPuzzleId(supabase, user.id, puzzle.id) : Promise.resolve(null),
+    getPrimaryThemesByPuzzleIds(supabase, [puzzle.id]),
+  ]);
 
   return {
     puzzle,
@@ -58,5 +62,6 @@ export async function loadStudyPuzzlePage(props: PuzzleLoaderPageProps): Promise
     backUrl: getParentStudyUrl(study),
     isUserLoggedIn: Boolean(user),
     isFavorited: Boolean(isFavoritedPuzzle),
+    primaryTheme: primaryThemesByPuzzleId.get(puzzle.id) ?? null,
   };
 }
