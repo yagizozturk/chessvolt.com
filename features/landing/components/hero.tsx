@@ -9,7 +9,7 @@ export function Hero() {
       aria-label="Learn chess with ChessVolt"
       className="bg-brand overflow-hidden bg-[radial-gradient(ellipse_at_80%_47%,#4f2cba_0,transparent_48%)] px-5 text-white md:px-8 xl:px-[50px]"
     >
-      <div className="mx-auto grid w-full max-w-[1200px] items-center gap-10 pt-4 pb-3 md:min-h-[660px] md:grid-cols-2 md:gap-3 md:pt-16 md:pb-11 xl:min-h-[710px] xl:gap-5">
+      <div className="mx-auto grid w-full max-w-[1200px] items-center gap-10 pt-4 pb-3 md:min-h-[660px] md:grid-cols-2 md:gap-3 md:pt-16 md:pb-10 xl:min-h-[710px] xl:gap-5">
         <div className="max-w-xl min-w-0 md:max-w-none">
           <p className="text-secondary-foreground mb-4 flex items-center gap-2.5 text-xs font-bold tracking-widest md:mb-4">
             <ChessKnight aria-hidden="true" className="text-primary size-6" />
