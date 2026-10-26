@@ -7,6 +7,7 @@ import { useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { ShineBorder } from "@/components/ui/shine-border";
 import { Spinner } from "@/components/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { toggleFavoriteAction } from "@/features/user-favorites/actions/toggle-favorite";
@@ -70,13 +71,15 @@ export function FavoriteButton({ isFavorited, onFavoritedChange, ...target }: Fa
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          size="icon-xs"
+          size="icon"
           variant="outline"
+          className="relative overflow-hidden"
           onClick={handleClick}
           disabled={isPending}
           aria-label={label}
           aria-pressed={isFavorited}
         >
+          <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
           {isPending ? <Spinner /> : <Star className={cn(isFavorited && "fill-primary text-primary")} />}
         </Button>
       </TooltipTrigger>

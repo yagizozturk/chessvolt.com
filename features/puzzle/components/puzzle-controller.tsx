@@ -1,6 +1,6 @@
 "use client";
 
-import { Bot, ChevronLeft, ChevronRight, Eye, Gauge, RotateCcw, Swords, Tags } from "lucide-react";
+import { Bot, Eye, Gauge, RotateCcw, Swords, Tags } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
@@ -51,7 +51,6 @@ type PuzzleControllerProps = {
 export default function PuzzleController({
   puzzle,
   nextPuzzleUrl = null,
-  backUrl = null,
   isUserLoggedIn = false,
   isFavorited = false,
   primaryTheme = null,
@@ -273,28 +272,6 @@ export default function PuzzleController({
   };
 
   // ================================================================================================
-  // Continue tıklaması ve sonraki puzzle'a yönlendirme
-  // Router hook'unun transition state'i zaten var
-  // Loading state transition ile yönetilir.
-  // ================================================================================================
-  const handleContinueClick = () => {
-    if (!successDestinationPath) return;
-    startTransition(() => {
-      router.push(successDestinationPath);
-    });
-  };
-
-  // ================================================================================================
-  // Geri tıklaması ve sonraki puzzle'a veya study'ye yönlendirme
-  // ================================================================================================
-  const handleBackClick = () => {
-    if (!backUrl) return;
-    startTransition(() => {
-      router.push(backUrl);
-    });
-  };
-
-  // ================================================================================================
   // Dialog'daki play again butonu, yeni session için replay key'i artırır
   // ================================================================================================
   const handlePlayAgain = () => {
@@ -363,24 +340,6 @@ export default function PuzzleController({
               <div data-tour="favorite-button" className="shrink-0">
                 <FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
               </div>
-              <Button
-                size="icon-xs"
-                variant="outline"
-                aria-label="Back"
-                onClick={handleBackClick}
-                disabled={!backUrl || isPending}
-              >
-                <ChevronLeft />
-              </Button>
-              <Button
-                size="icon-xs"
-                variant="outline"
-                aria-label="Next puzzle"
-                onClick={handleContinueClick}
-                disabled={!hasNextPuzzle || isPending}
-              >
-                <ChevronRight />
-              </Button>
             </div>
           </div>
         </div>
@@ -452,7 +411,12 @@ export default function PuzzleController({
                   {hasNextPuzzle ? (
                     <Button
                       variant="volt"
-                      onClick={handleContinueClick}
+                      onClick={() => {
+                        if (!successDestinationPath) return;
+                        startTransition(() => {
+                          router.push(successDestinationPath);
+                        });
+                      }}
                       disabled={isPending}
                       className="min-w-0 flex-1"
                     >

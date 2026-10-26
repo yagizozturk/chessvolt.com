@@ -1,10 +1,19 @@
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { VoltExplainDialog } from "@/components/volt-explain-dialog/volt-explain-dialog";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider open={false}>
+    <SidebarProvider defaultOpen={false}>
       <AppSidebar />
       {/* 
         Note:
@@ -12,8 +21,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         Shadcn standart is like that. no position-fixed for the sidebar. TODO: Check Shadcn
       */}
       <SidebarInset className="overflow-auto">
-        <header className="flex h-12 shrink-0 items-center px-4 md:hidden">
-          <SidebarTrigger className="-ml-1" />
+        <header className="flex h-12 shrink-0 items-center gap-2">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Puzzles</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
         </header>
         {children}
       </SidebarInset>

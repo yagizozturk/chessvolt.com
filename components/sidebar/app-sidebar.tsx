@@ -14,6 +14,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar";
 import { useVoltExplainMenuAction } from "@/components/volt-explain-dialog/use-volt-explain-dialog";
 import { useProfile } from "@/features/profile/hooks/use-profile";
@@ -177,6 +178,7 @@ export function AppSidebar(props: AppSidebarProps) {
       <SidebarFooter>
         <NavMain items={[navProfile]} />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

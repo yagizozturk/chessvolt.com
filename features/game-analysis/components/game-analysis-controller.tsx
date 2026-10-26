@@ -340,7 +340,7 @@ export default function GameAnalysisController({
   }
 
   return (
-    <div className="page-container md:flex md:h-svh md:min-h-0 md:flex-col">
+    <div className="page-container md:flex md:h-[calc(100svh-3rem)] md:min-h-0 md:flex-col">
       {/* ====== Dialog ====== */}
       <SolveSuccessDialog
         open={successOpen}
