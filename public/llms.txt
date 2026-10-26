@@ -11,21 +11,19 @@ Understand Why. Practice. Improve. Volt Coach is ChessVolt's virtual chess coach
 - Analysis of users real games in chess.com and lichess.org. Shows blunders and mistakes and guides for the correct moves
 
 ## Main public pages
-- https://chessvolt.com: Home page and primary entry point
-- https://chessvolt.com/puzzles: Puzzles and tactical training resources
-- https://chessvolt.com/openings: Openings and variations learning resources
-- https://chessvolt.com/studies: Famous chess games and various exercises
-- https://chessvolt.com/login: Login page
-- https://chessvolt.com/signup: Sign-up page
-- https://chessvolt.com/privacy: Privacy policy
-- https://chessvolt.com/terms: Terms of service
-- https://chessvolt.com/contact: Contact
-- https://chessvolt.com/dashboard: Dashboard for logged in user
-- https://chessvolt.com/volt-tracker: List of openings and puzzles tracked by Volt scores 
-- https://chessvolt.com/profile: Profile page for logged in user
-- https://chessvolt.com/analysis: Analysis page for recent Chess.com and Lichess.org games
-
-
+- https://www.chessvolt.com: Home page and primary entry point
+- https://www.chessvolt.com/volt-tracker: List of analyzed games, openings, puzzles and studies tracked by Volt scores 
+- https://www.chessvolt.com/game-analysis: Analysis page for recent chess.com and lichess.org games
+- https://www.chessvolt.com/puzzles: Puzzles and tactical training resources
+- https://www.chessvolt.com/openings: Openings and variations learning resources
+- https://www.chessvolt.com/studies: Famous chess games and various exercises
+- https://www.chessvolt.com/login: Login page
+- https://www.chessvolt.com/signup: Sign-up page
+- https://www.chessvolt.com/privacy: Privacy policy
+- https://www.chessvolt.com/terms: Terms of service
+- https://www.chessvolt.com/contact: Contact
+- https://www.chessvolt.com/dashboard: Dashboard for logged in user
+- https://www.chessvolt.com/profile: Profile page for logged in user
 
 ## Content types
 - Chess puzzles
@@ -33,13 +31,14 @@ Understand Why. Practice. Improve. Volt Coach is ChessVolt's virtual chess coach
 - Famous chess games
 - User-facing learning and improvement resources
 - Personalized training and progress tracking
+- Analyzed chess.com / lichess.org games
 
 ## Restricted areas
 - Admin panel
 - User-only dashboards
 - Private account pages
 - Volt tracker page
-- Analysis
+- Game analysis
 - Internal management and operational interfaces
 
 ## Technical resources
