@@ -75,7 +75,7 @@ export function LandingPuzzleController({ puzzle }: LandingPuzzleControllerProps
         <Confetti aria-hidden className="pointer-events-none absolute inset-0 z-10 size-full max-h-none max-w-none" />
       ) : null}
 
-      <div className="bg-card flex w-full shrink-0 flex-col self-start rounded-xl p-4 md:min-w-0 md:flex-[3]">
+      <div className="flex w-full shrink-0 flex-col self-start rounded-xl border border-zinc-200 bg-zinc-100 p-4 md:min-w-0 md:flex-[3]">
         <div key={sessionId} className="relative aspect-square w-full">
           <VoltBoard
             ref={boardRef}

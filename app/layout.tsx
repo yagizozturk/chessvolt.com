@@ -1,6 +1,6 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
-import { Geist_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Geist_Mono, IBM_Plex_Sans, Outfit } from "next/font/google";
 
 import { ThemeProvider } from "@/components/theme-provider/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 import "./globals.css";
 
-const ibmPlexSans = IBM_Plex_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const outfit = Outfit({subsets:['latin'],variable:'--font-sans'});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn(ibmPlexSans.variable, geistMono.variable, "dark font-sans")}>
+    <html lang="en" suppressHydrationWarning className={cn( geistMono.variable, "dark font-sans", "font-sans", outfit.variable)}>
       <body suppressHydrationWarning className="bg-background min-h-svh antialiased">
         {/* Dark mode is forced site-wide for now; re-enable light/system when ready. */}
         <ThemeProvider

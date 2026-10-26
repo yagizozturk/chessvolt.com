@@ -341,18 +341,18 @@ export function WhatIsVoltSection({
       />
 
       <div className="relative mx-auto max-w-5xl">
-        <header className="relative z-10 mx-auto max-w-xl text-center">
-          <p className="text-muted-foreground mb-4 flex items-center justify-center gap-2 text-xs font-semibold tracking-[0.22em] uppercase">
-            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[var(--cv-accent)]" />
+        <header className="relative z-10 mx-auto max-w-3xl text-center">
+          <p className="mb-4 flex items-center justify-center gap-2 text-xs font-semibold tracking-[0.22em] text-zinc-300 uppercase">
+            <span aria-hidden="true" className="bg-primary h-2 w-2 rounded-full" />
             KEEP YOUR PRACTICE CHARGED
           </p>
           <h2
             id={`${id}-heading`}
-            className="text-[42px] leading-[1.08] font-semibold tracking-[-0.045em] sm:text-[64px] lg:text-[72px]"
+            className="text-[42px] leading-[1.08] font-semibold tracking-[-0.045em] text-zinc-100 sm:text-[64px] lg:text-[72px]"
           >
             What is <span className="text-primary">Volt?</span>
           </h2>
-          <p className="text-muted-foreground mx-auto mt-5 mb-0 max-w-[690px] text-sm leading-7 sm:max-w-[730px] sm:text-base">
+          <p className="mx-auto mt-5 mb-0 max-w-[690px] text-sm leading-7 text-zinc-300 sm:max-w-[730px] sm:text-base">
             Volt reflects your recent practice on each item in your Volt Tracker. Return on different days to build its
             score toward 220V—and keep what you learn fresh. A little practice. A stronger habit. Inspired by Hermann
             Ebbinghaus’s work on the forgetting curve, ChessVolt encourages you to revisit what you learn across
