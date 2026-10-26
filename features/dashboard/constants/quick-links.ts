@@ -3,7 +3,7 @@ export const QUICK_LINKS = [
     title: "Volt Tracker",
     description: "Track mistakes, openings, puzzles, and Volt scores for memory.",
     href: "/volt-tracker",
-    icon: "/images/icons/icon-circle-volt.png",
+    icon: "/images/icons/icon-favorite.png",
     alt: "Volt Tracker",
   },
   {
