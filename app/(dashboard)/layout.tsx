@@ -6,7 +6,7 @@ import { VoltExplainDialog } from "@/components/volt-explain-dialog/volt-explain
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider defaultOpen={true}>
       <AppSidebar />
       {/* 
         Note:
