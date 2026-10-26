@@ -19,6 +19,10 @@ const geistMono = Geist_Mono({
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.chessvolt.com'),
+  alternates: {
+    canonical: './',
+  },
   title: "Chess Training: Openings, Puzzles & Game Analysis | ChessVolt",
   description:
     "Learn chess openings, solve puzzles and analyze your games. Replay mistakes and reinforce what you learn with spaced repetition.",
