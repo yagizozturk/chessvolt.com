@@ -110,7 +110,7 @@ export default function VoltBoardNavigator({
         />
       </div>
 
-      <div className="flex items-center justify-center gap-3 md:hidden">
+      <div className="flex items-center justify-center gap-3">
         <Button
           variant="voltIcon"
           onClick={() => setPly((prev) => Math.max(prev - 1, 0))}

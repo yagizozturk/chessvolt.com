@@ -103,9 +103,12 @@ export function useMoveSequenceController({
   };
 
   const expectedCurrentCorrectMoveUci = moves[nextExpectedMoveIndex] ?? null;
+  // Oyuncunun ulaştığı ply (rakip cevabı dahil). Bunun ilerisi oyuncuya gösterilmemeli.
+  const revealedPly = Math.min(nextExpectedMoveIndex, moves.length);
 
   return {
     moves,
+    revealedPly,
     sortedGoals,
     nextGoal,
     mainIdea: goals?.mainIdea ?? "",

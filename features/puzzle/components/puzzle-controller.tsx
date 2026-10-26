@@ -4,7 +4,8 @@ import { Bot, ChevronLeft, ChevronRight, Eye, Gauge, RotateCcw, Swords, Tags } f
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
-import VoltBoard, { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
+import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
+import VoltBoardUtilities from "@/components/boards/volt-board-utilities/volt-board-utilities";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
@@ -98,6 +99,8 @@ export default function PuzzleController({
     hintRequested,
     expectedCurrentCorrectMoveUci,
     mainIdea,
+    moves,
+    revealedPly,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: puzzle.moveSequence.moves,
@@ -318,9 +321,11 @@ export default function PuzzleController({
         {/* Tahta sarmalayıcı: aspect-square kareyi belirler; volt.css içindeki .board-wrapper onu doldurur */}
         {/* self-start kritik. Komşu elemanlar büyüyünce tahta küçülmesin diye. self-start = sadece bu child, cross-axis başa hizalanır */}
         <div className="bg-card flex w-full shrink-0 flex-col gap-3 self-start rounded-xl p-4 md:min-w-0 md:flex-[3]">
-          <div key={sessionId} className="relative aspect-square w-full" data-tour="board">
-            <VoltBoard
+          <div key={sessionId} className="w-full" data-tour="board">
+            <VoltBoardUtilities
               ref={boardRef}
+              moves={moves}
+              revealedPly={revealedPly}
               sourceId={sessionId}
               mode={effectiveBoardMode}
               initialFen={puzzle.moveSequence.initialFen}

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import VoltBoard, { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
+import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
+import VoltBoardUtilities from "@/components/boards/volt-board-utilities/volt-board-utilities";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
@@ -83,6 +84,8 @@ export default function OpeningVariantController({
     hintRequested,
     expectedCurrentCorrectMoveUci,
     mainIdea,
+    moves,
+    revealedPly,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: variant.moveSequence.moves,
@@ -258,9 +261,11 @@ export default function OpeningVariantController({
       ) : null}
       <Notifier goals={sortedGoals} />
       <div className="page-container-controller-layout">
-        <div key={sessionId} className="relative aspect-square w-full shrink-0 self-start md:min-w-0 md:flex-[3]">
-          <VoltBoard
+        <div key={sessionId} className="w-full shrink-0 self-start md:min-w-0 md:flex-[3]">
+          <VoltBoardUtilities
             ref={boardRef}
+            moves={moves}
+            revealedPly={revealedPly}
             sourceId={sessionId}
             mode={boardMode}
             initialFen={variant.moveSequence.initialFen}
