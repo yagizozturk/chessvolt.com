@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
+import { BoardHistoryControls } from "@/components/boards/volt-board-utilities/board-history-controls";
+import { useBoardHistory } from "@/components/boards/volt-board-utilities/use-board-history";
 import VoltBoardUtilities from "@/components/boards/volt-board-utilities/volt-board-utilities";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
@@ -92,6 +94,12 @@ export default function OpeningVariantController({
     goals: variant.moveSequence.goals,
     // Moves/goals are already relative to initialFen (goals start at ply 1).
     // Do not pass absolute board initialPly or early goals get auto-completed.
+  });
+  const boardHistory = useBoardHistory({
+    sourceId: sessionId,
+    initialFen: variant.moveSequence.initialFen,
+    moves,
+    revealedPly,
   });
   const { Tour } = useOpeningVariantTour({ variantId: variant.id });
   const voltScoreScoring = {
@@ -208,6 +216,7 @@ export default function OpeningVariantController({
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
     if (nextHintCount == null || !expectedCurrentCorrectMoveUci) return;
+    boardHistory.reset();
     boardRef.current?.showHint(nextHintCount);
     totalHintCountRef.current += 1;
 
@@ -264,8 +273,7 @@ export default function OpeningVariantController({
         <div key={sessionId} className="w-full shrink-0 self-start md:min-w-0 md:flex-[3]">
           <VoltBoardUtilities
             ref={boardRef}
-            moves={moves}
-            revealedPly={revealedPly}
+            historyFen={boardHistory.historyFen}
             sourceId={sessionId}
             mode={boardMode}
             initialFen={variant.moveSequence.initialFen}
@@ -354,6 +362,7 @@ export default function OpeningVariantController({
                 </Button>
               </>
             )}
+            <BoardHistoryControls history={boardHistory} />
           </div>
         </div>
       </div>

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
 import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
+import { BoardHistoryControls } from "@/components/boards/volt-board-utilities/board-history-controls";
+import { useBoardHistory } from "@/components/boards/volt-board-utilities/use-board-history";
 import VoltBoardUtilities from "@/components/boards/volt-board-utilities/volt-board-utilities";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
@@ -107,6 +109,12 @@ export default function PuzzleController({
     goals: puzzle.moveSequence.goals,
   });
 
+  const boardHistory = useBoardHistory({
+    sourceId: sessionId,
+    initialFen: puzzle.moveSequence.initialFen,
+    moves,
+    revealedPly,
+  });
   const { Tour } = usePuzzleTour({ puzzleId: puzzle.id });
   const hasMainIdea = Boolean(mainIdea?.trim());
   const effectiveBoardMode = hasMainIdea ? boardMode : "practice";
@@ -253,6 +261,7 @@ export default function PuzzleController({
   const handleHintClick = () => {
     const nextHintCount = hintRequested();
     if (nextHintCount == null || !expectedCurrentCorrectMoveUci) return;
+    boardHistory.reset();
     boardRef.current?.showHint(nextHintCount);
     totalHintCountRef.current += 1;
 
@@ -324,8 +333,7 @@ export default function PuzzleController({
           <div key={sessionId} className="w-full" data-tour="board">
             <VoltBoardUtilities
               ref={boardRef}
-              moves={moves}
-              revealedPly={revealedPly}
+              historyFen={boardHistory.historyFen}
               sourceId={sessionId}
               mode={effectiveBoardMode}
               initialFen={puzzle.moveSequence.initialFen}
@@ -454,6 +462,7 @@ export default function PuzzleController({
                   ) : null}
                 </>
               )}
+              <BoardHistoryControls history={boardHistory} />
             </div>
           </div>
         </div>
