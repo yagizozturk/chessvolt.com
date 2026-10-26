@@ -15,6 +15,11 @@ export async function getAllOpenings(supabase: SupabaseClient): Promise<Opening[
   return openingRepo.findAll(supabase);
 }
 
+export async function getAllOpeningVariants(supabase: SupabaseClient): Promise<OpeningVariant[]> {
+  return openingVariantRepo.findAll(supabase);
+}
+
+
 export async function getOpeningsWithVariantCount(supabase: SupabaseClient): Promise<OpeningWithVariantCount[]> {
   return openingRepo.findAllWithVariantCount(supabase);
 }
