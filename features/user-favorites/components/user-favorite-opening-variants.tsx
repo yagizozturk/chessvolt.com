@@ -5,6 +5,7 @@ import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculat
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { EmptyDataMessage } from "@/components/empty-data-message/empty-data-message";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
+import { getOpeningVariantPath } from "@/features/openings/utilities/opening-variant-path.utils";
 import type { UserFavoriteWithDetails } from "@/features/user-favorites/types/user-favorite";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 
@@ -65,13 +66,17 @@ export async function UserFavoriteOpeningVariants({
       <h2 className="mb-3 text-lg font-bold">Openings</h2>
       <div className="page-container-grid-data-layout">
         {openingFavorites.map((favorite) => {
-          const { openingVariant } = favorite;
+          const { openingVariant, opening } = favorite;
           return (
             <OpeningBoardCard
               key={favorite.id}
               id={openingVariant.id}
               name={openingVariant.title ?? "Untitled variant"}
-              href={`/openings/variant/${openingVariant.id}`}
+              href={
+                opening
+                  ? getOpeningVariantPath(opening, openingVariant)
+                  : `/openings/variant/${openingVariant.id}`
+              }
               fen={openingVariant.moveSequence.displayFen ?? openingVariant.moveSequence.initialFen}
               description={openingVariant.description}
               moves={openingVariant.moveSequence.moves}

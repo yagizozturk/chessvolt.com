@@ -9,6 +9,7 @@ import { PageHeaderWithImage } from "@/components/page-header/page-header";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
 import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
 import { getOpeningCoverImageSrc } from "@/features/openings/utilities/opening-cover-image.utils";
+import { getOpeningVariantPath } from "@/features/openings/utilities/opening-variant-path.utils";
 import { getFavoritedOpeningVariantIds } from "@/features/user-favorites/services/user-favorite.service";
 import {
   getAttemptsByUserAndSequenceIds,
@@ -166,7 +167,7 @@ export default async function OpeningBySlugAndIdPage({ params }: Params) {
                 key={variant.id}
                 id={variant.id}
                 name={variant.title ?? ""}
-                href={`/openings/variant/${variant.id}`}
+                href={getOpeningVariantPath(opening, variant)}
                 fen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}
                 isComplete={attemptStatusToIsComplete(attemptStats?.status)}
                 accuracyPercent={attemptStats ? computeSequenceAttemptAccuracy(attemptStats) : null}

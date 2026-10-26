@@ -4,10 +4,10 @@ import { Bot, Eye, Gauge, RotateCcw, Swords, Tags } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 
-import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { BoardHistoryControls } from "@/components/boards/volt-board-utilities/board-history-controls";
 import { useBoardHistory } from "@/components/boards/volt-board-utilities/use-board-history";
 import VoltBoardUtilities from "@/components/boards/volt-board-utilities/volt-board-utilities";
+import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
@@ -306,7 +306,7 @@ export default function PuzzleController({
       <div className="page-container-controller-layout">
         {/* Tahta sarmalayıcı: aspect-square kareyi belirler; volt.css içindeki .board-wrapper onu doldurur */}
         {/* self-start kritik. Komşu elemanlar büyüyünce tahta küçülmesin diye. self-start = sadece bu child, cross-axis başa hizalanır */}
-        <div className="bg-card flex w-full shrink-0 flex-col gap-3 self-start rounded-xl p-4 md:min-w-0 md:flex-[3]">
+        <div className="flex w-full shrink-0 flex-col gap-3 self-start rounded-xl md:min-w-0 md:flex-[3]">
           <div key={sessionId} className="w-full" data-tour="board">
             <VoltBoardUtilities
               ref={boardRef}
@@ -323,6 +323,7 @@ export default function PuzzleController({
             />
           </div>
           <div className="flex min-w-0 items-center gap-2">
+            <BoardHistoryControls history={boardHistory} />
             <div className="flex min-w-0 flex-1 flex-wrap gap-2">
               <Badge variant="outline" className="max-w-full rounded-xl p-3 text-sm">
                 <Gauge className="text-primary" data-icon="inline-start" />
@@ -426,7 +427,6 @@ export default function PuzzleController({
                   ) : null}
                 </>
               )}
-              <BoardHistoryControls history={boardHistory} />
             </div>
           </div>
         </div>

@@ -10,19 +10,20 @@ import {
   getOpeningVariantById,
   getOpeningVariantsByOpeningId,
 } from "@/features/openings/services/openings.service";
+import { getOpeningPath, getOpeningVariantPath } from "@/features/openings/utilities/opening-variant-path.utils";
 import { getUserFavoriteByUserAndOpeningVariant } from "@/features/user-favorites/services/user-favorite.service";
 import { getAttemptsByUserAndSequence } from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import { variantDocumentDescription, variantDocumentTitle } from "@/lib/metadata/training-page-metadata";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type OpeningVariantPageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ variantId: string }>;
 };
 
 export async function generateMetadata({ params }: OpeningVariantPageProps): Promise<Metadata> {
-  const { id } = await params;
+  const { variantId } = await params;
   const { supabase } = await getPublicUser();
-  const variant = await getOpeningVariantById(supabase, id);
+  const variant = await getOpeningVariantById(supabase, variantId);
 
   if (!variant) {
     notFound();
@@ -37,9 +38,9 @@ export async function generateMetadata({ params }: OpeningVariantPageProps): Pro
 }
 
 export default async function OpeningVariantPage({ params }: OpeningVariantPageProps) {
-  const { id } = await params;
+  const { variantId } = await params;
   const { user, supabase } = await getPublicUser();
-  const variant = await getOpeningVariantById(supabase, id);
+  const variant = await getOpeningVariantById(supabase, variantId);
 
   if (!variant) {
     notFound();
@@ -68,12 +69,13 @@ export default async function OpeningVariantPage({ params }: OpeningVariantPageP
   // CurrentIndex den sonraki varyantı çekeriz. Next buttonuna basınca çalışır.
   // ======================================================================
   const currentIndex = variants.findIndex((v) => v.id === variant.id);
-  const nextVariantId = currentIndex >= 0 ? (variants[currentIndex + 1]?.id ?? null) : null;
+  const nextVariant = currentIndex >= 0 ? variants[currentIndex + 1] : undefined;
+  const nextVariantPath = opening && nextVariant ? getOpeningVariantPath(opening, nextVariant) : null;
 
   // ======================================================================
   // Ana URL geri buttonu için
   // ======================================================================
-  const parentOpeningUrl = opening?.slug && opening?.id ? `/openings/${opening.slug}/${opening.id}` : "/openings";
+  const parentOpeningUrl = opening ? getOpeningPath(opening) : "/openings";
 
   const isFavorited = Boolean(favoriteRow);
 
@@ -92,7 +94,7 @@ export default async function OpeningVariantPage({ params }: OpeningVariantPageP
   return (
     <OpeningVariantController
       variant={variant}
-      nextVariantId={nextVariantId}
+      nextVariantPath={nextVariantPath}
       parentOpeningUrl={parentOpeningUrl}
       canFavorite={Boolean(user)}
       isFavorited={isFavorited}

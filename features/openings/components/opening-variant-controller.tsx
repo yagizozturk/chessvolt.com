@@ -1,7 +1,6 @@
 "use client";
 
-import { Bot, ChevronLeft, Eye, RotateCcw, Swords } from "lucide-react";
-import Link from "next/link";
+import { Bot, Eye, RotateCcw, Swords } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -40,7 +39,7 @@ import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload
 
 type OpeningVariantControllerProps = {
   variant: OpeningVariant;
-  nextVariantId: string | null;
+  nextVariantPath: string | null;
   parentOpeningUrl: string;
   canFavorite?: boolean;
   isFavorited?: boolean;
@@ -49,7 +48,7 @@ type OpeningVariantControllerProps = {
 
 export default function OpeningVariantController({
   variant,
-  nextVariantId,
+  nextVariantPath,
   parentOpeningUrl,
   canFavorite = false,
   isFavorited = false,
@@ -227,8 +226,8 @@ export default function OpeningVariantController({
     });
   };
 
-  const successDestinationPath = nextVariantId ? `/openings/variant/${nextVariantId}` : parentOpeningUrl;
-  const successButtonLabel = nextVariantId ? "Next variant" : "Back to opening";
+  const successDestinationPath = nextVariantPath ?? parentOpeningUrl;
+  const successButtonLabel = nextVariantPath ? "Next variant" : "Back to opening";
 
   const handleContinueClick = () => {
     setIsContinuePending(true);
@@ -270,7 +269,7 @@ export default function OpeningVariantController({
       ) : null}
       <Notifier goals={sortedGoals} />
       <div className="page-container-controller-layout">
-        <div key={sessionId} className="w-full shrink-0 self-start md:min-w-0 md:flex-[3]">
+        <div key={sessionId} className="flex w-full shrink-0 flex-col gap-3 self-start md:min-w-0 md:flex-[3]">
           <VoltBoardUtilities
             ref={boardRef}
             historyFen={boardHistory.historyFen}
@@ -284,32 +283,25 @@ export default function OpeningVariantController({
             onSuccessMovePlayed={handleBoardSuccessMovePlayed}
             onNextMoveRequest={handleBoardNextMoveRequest}
           />
+          <div className="flex min-w-0 items-center gap-2">
+            <BoardHistoryControls history={boardHistory} />
+            {canFavorite ? (
+              <div data-tour="favorite-button" className="ml-auto shrink-0">
+                <FavoriteButton
+                  openingVariantId={variant.id}
+                  isFavorited={favorited}
+                  onFavoritedChange={setFavorited}
+                />
+              </div>
+            ) : null}
+          </div>
         </div>
         <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
-          <div className="flex justify-between">
-            <div>
-              <Button variant="voltIcon" asChild>
-                <Link href={parentOpeningUrl} aria-label="Back to opening">
-                  <ChevronLeft className="size-5" />
-                </Link>
-              </Button>
+          {boardMode === "learn" ? (
+            <div className="flex justify-end">
+              <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
             </div>
-            <div className="flex items-center gap-2 px-2 text-xl font-bold">{variant.title ?? "Untitled variant"}</div>
-            <div className="flex items-center gap-2">
-              {boardMode === "learn" ? (
-                <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
-              ) : null}
-              <div data-tour="favorite-button">
-                {canFavorite ? (
-                  <FavoriteButton
-                    openingVariantId={variant.id}
-                    isFavorited={favorited}
-                    onFavoritedChange={setFavorited}
-                  />
-                ) : null}
-              </div>
-            </div>
-          </div>
+          ) : null}
           <Tabs
             value={boardMode}
             onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
@@ -362,7 +354,6 @@ export default function OpeningVariantController({
                 </Button>
               </>
             )}
-            <BoardHistoryControls history={boardHistory} />
           </div>
         </div>
       </div>

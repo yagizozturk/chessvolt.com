@@ -33,8 +33,12 @@ export type DbGameAnalysisMistakeWithAnalysis = DbGameAnalysisMistake & {
   game_analyses?: DbGameAnalysisEmbed;
 };
 
+type DbOpeningVariantWithOpening = DbOpeningVariant & {
+  openings?: { id: string; slug: string | null; name: string } | null;
+};
+
 export type DbUserFavoriteWithDetails = DbUserFavorite & {
-  opening_variants: DbOpeningVariant | null;
+  opening_variants: DbOpeningVariantWithOpening | null;
   puzzles: DbPuzzle | null;
   game_analysis_mistakes: DbGameAnalysisMistakeWithAnalysis | null;
 };
@@ -62,6 +66,7 @@ export function toUserFavoriteWithDetails(
 ): UserFavoriteWithDetails | null {
   const row = toUserFavorite(db);
   const openingVariant = db.opening_variants ? toOpeningVariant(db.opening_variants) : null;
+  const opening = db.opening_variants?.openings ?? null;
   const puzzle = db.puzzles ? toPuzzle(db.puzzles) : null;
   const gameAnalysisMistake = db.game_analysis_mistakes ? toGameAnalysisMistake(db.game_analysis_mistakes) : null;
   const positionFen = gameAnalysisMistake
@@ -73,6 +78,7 @@ export function toUserFavoriteWithDetails(
   return {
     ...row,
     openingVariant,
+    opening,
     puzzle,
     gameAnalysisMistake,
     positionFen,
