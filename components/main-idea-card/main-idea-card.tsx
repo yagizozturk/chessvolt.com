@@ -1,9 +1,6 @@
 "use client";
 
 import Image from "next/image";
-
-import { Highlighter } from "@/components/ui/highlighter";
-
 const DEFAULT_IMAGE_SRC = "/images/avatar/main-idea-avatar-2.png";
 
 type MainIdeaCardProps = {
@@ -21,11 +18,7 @@ export function MainIdeaCard({ mainIdea, imageSrc = DEFAULT_IMAGE_SRC, imageAlt 
     <div className="relative flex gap-4 rounded-xl p-4">
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex">
-          <div className="flex-1 truncate text-lg font-semibold">
-            <Highlighter action="underline" color="#FF9800">
-              Main Idea Of The Variant
-            </Highlighter>
-          </div>
+          <div className="flex-1 truncate text-lg font-semibold">Main Idea Of The Variant</div>
         </div>
         <div className="text-muted-foreground w-full leading-normal text-pretty">{trimmedMainIdea}</div>
       </div>

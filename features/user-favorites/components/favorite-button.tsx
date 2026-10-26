@@ -71,8 +71,8 @@ export function FavoriteButton({ isFavorited, onFavoritedChange, ...target }: Fa
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          size="icon"
-          variant="outline"
+          type="button"
+          variant="voltIcon"
           className="relative overflow-hidden"
           onClick={handleClick}
           disabled={isPending}

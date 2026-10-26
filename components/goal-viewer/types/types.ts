@@ -8,8 +8,6 @@ type GoalsProps = {
 export type GoalViewerProps = GoalsProps & {
   mode?: VoltBoardMode;
   turnLabel: string;
-  mainIdea?: string;
-  showMainIdea?: boolean;
 };
 
 export type ActiveGoalCardProps = {

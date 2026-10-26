@@ -84,7 +84,7 @@ export function OpeningBoardCard({
           {/* Name */}
           <span className="text-xl font-bold">{name}</span>
           {/* Description */}
-          {description ? <p className="text-muted-foreground hidden text-base md:block">{description}</p> : null}
+          {description ? <p className="text-muted-foreground text-base">{description}</p> : null}
           {/* Move count badge */}
           {moveCountLabel ? (
             <Badge variant="secondary" className="w-fit rounded-xl px-2 py-3">

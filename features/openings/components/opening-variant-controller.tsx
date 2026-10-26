@@ -66,7 +66,6 @@ export default function OpeningVariantController({
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
-  const [showMainIdea, setShowMainIdea] = useState(false);
   const [favorited, setFavorited] = useState(isFavorited);
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
   const { playLevelUpSound } = useBoardSounds();
@@ -122,7 +121,6 @@ export default function OpeningVariantController({
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(false);
     setBoardMode("practice");
-    setShowMainIdea(false);
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -285,23 +283,23 @@ export default function OpeningVariantController({
           />
           <div className="flex min-w-0 items-center gap-2">
             <BoardHistoryControls history={boardHistory} />
-            {canFavorite ? (
-              <div data-tour="favorite-button" className="ml-auto shrink-0">
-                <FavoriteButton
-                  openingVariantId={variant.id}
-                  isFavorited={favorited}
-                  onFavoritedChange={setFavorited}
-                />
-              </div>
-            ) : null}
+            <div className="ml-auto flex shrink-0 items-center gap-2">
+              {boardMode === "learn" ? (
+                <MainIdeaButton mainIdea={mainIdea} />
+              ) : null}
+              {canFavorite ? (
+                <div data-tour="favorite-button" className="shrink-0">
+                  <FavoriteButton
+                    openingVariantId={variant.id}
+                    isFavorited={favorited}
+                    onFavoritedChange={setFavorited}
+                  />
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
         <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
-          {boardMode === "learn" ? (
-            <div className="flex justify-end">
-              <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
-            </div>
-          ) : null}
           <Tabs
             value={boardMode}
             onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
@@ -319,13 +317,7 @@ export default function OpeningVariantController({
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          <GoalViewer
-            goals={sortedGoals}
-            mode={boardMode}
-            turnLabel={turnLabel}
-            mainIdea={mainIdea}
-            showMainIdea={boardMode === "learn" && showMainIdea}
-          />
+          <GoalViewer goals={sortedGoals} mode={boardMode} turnLabel={turnLabel} />
           <div className="mt-auto flex gap-2" data-tour="hint-button">
             {!isCompleted ? (
               <Button

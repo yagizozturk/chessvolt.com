@@ -71,7 +71,6 @@ export default function PuzzleController({
   const [completionVoltScore, setCompletionVoltScore] = useState<VoltScoreResult | null>(null);
   const [isVoltScoreShowing, setIsVoltScoreShowing] = useState(false);
   const [boardMode, setBoardMode] = useState<VoltBoardMode>("practice");
-  const [showMainIdea, setShowMainIdea] = useState(false);
   const [favorited, setFavorited] = useState(isFavorited);
   const [isPending, startTransition] = useTransition();
   const { updateAttemptResults, recordEvent, getTimeFromStartMs } = useSequenceAttempt(sequenceId, replayKey);
@@ -140,7 +139,6 @@ export default function PuzzleController({
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(false);
     setBoardMode("practice");
-    setShowMainIdea(false);
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
     totalHintCountRef.current = 0;
@@ -336,7 +334,7 @@ export default function PuzzleController({
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-2">
               {effectiveBoardMode === "learn" ? (
-                <MainIdeaButton mainIdea={mainIdea} active={showMainIdea} onActiveChange={setShowMainIdea} />
+                <MainIdeaButton mainIdea={mainIdea} />
               ) : null}
               <div data-tour="favorite-button" className="shrink-0">
                 <FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
@@ -382,13 +380,7 @@ export default function PuzzleController({
           ) : null}
 
           {/* Hedef görüntüleyici */}
-          <GoalViewer
-            goals={sortedGoals}
-            mode={effectiveBoardMode}
-            turnLabel={turnLabel}
-            mainIdea={mainIdea}
-            showMainIdea={effectiveBoardMode === "learn" && showMainIdea}
-          />
+          <GoalViewer goals={sortedGoals} mode={effectiveBoardMode} turnLabel={turnLabel} />
 
           {/* Alt butonlar */}
           <div className="mt-auto">

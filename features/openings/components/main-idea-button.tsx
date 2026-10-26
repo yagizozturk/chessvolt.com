@@ -1,41 +1,41 @@
 "use client";
 
 import { Lightbulb } from "lucide-react";
+import { useState } from "react";
 
+import { MainIdeaCard } from "@/components/main-idea-card/main-idea-card";
 import { Button } from "@/components/ui/button";
-import { ShineBorder } from "@/components/ui/shine-border";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 type MainIdeaButtonProps = {
   mainIdea: string;
-  active: boolean;
-  onActiveChange: (active: boolean) => void;
 };
 
-export function MainIdeaButton({ mainIdea, active, onActiveChange }: MainIdeaButtonProps) {
+export function MainIdeaButton({ mainIdea }: MainIdeaButtonProps) {
+  const [open, setOpen] = useState(false);
   const trimmedMainIdea = mainIdea.trim();
 
   if (!trimmedMainIdea) return null;
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          type="button"
-          variant="voltIcon"
-          className="relative"
-          aria-label="Main idea"
-          aria-pressed={active}
-          onClick={() => onActiveChange(!active)}
-        >
-          <ShineBorder shineColor={["#FFE566", "#F0D148", "#D4A017"]} borderWidth={2} />
-          <Lightbulb className={cn("size-5", active && "fill-primary text-primary")} />
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent side="bottom" sideOffset={4}>
-        {active ? "Hide the main idea" : "View the main idea"}
-      </TooltipContent>
-    </Tooltip>
+    <Popover open={open} onOpenChange={setOpen}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <PopoverTrigger asChild>
+            <Button type="button" variant="voltIcon" aria-label="Main idea">
+              <Lightbulb className={cn("size-5", open && "fill-primary text-primary")} />
+            </Button>
+          </PopoverTrigger>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" sideOffset={4}>
+          {open ? "Hide the main idea" : "View the main idea"}
+        </TooltipContent>
+      </Tooltip>
+      <PopoverContent side="top" align="end" className="w-[min(28rem,calc(100vw-2rem))] p-0">
+        <MainIdeaCard mainIdea={trimmedMainIdea} />
+      </PopoverContent>
+    </Popover>
   );
 }

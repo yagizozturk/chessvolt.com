@@ -40,7 +40,6 @@ export function LandingPuzzleController({ puzzle }: LandingPuzzleControllerProps
     hintCount,
     hintRequested,
     expectedCurrentCorrectMoveUci,
-    mainIdea,
   } = useMoveSequenceController({
     sourceId: sessionId,
     moves: puzzle.moveSequence.moves,
@@ -93,13 +92,7 @@ export function LandingPuzzleController({ puzzle }: LandingPuzzleControllerProps
       </div>
 
       <div className="bg-card flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
-        <GoalViewer
-          goals={sortedGoals}
-          mode="practice"
-          turnLabel={turnLabel}
-          mainIdea={mainIdea}
-          showMainIdea={false}
-        />
+        <GoalViewer goals={sortedGoals} mode="practice" turnLabel={turnLabel} />
 
         <div className="mt-auto flex gap-2">
           {!isCompleted ? (
