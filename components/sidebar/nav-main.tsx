@@ -84,7 +84,7 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
 
   return (
     <SidebarGroup>
-      <SidebarMenu className="gap-3 group-data-[collapsible=icon]:items-center">
+      <SidebarMenu className="gap-3 px-2 group-data-[collapsible=icon]:items-center">
         {items.map((item) => {
           const groupActive = isGroupActive(pathname, item);
           const activeSubUrl = getMostSpecificMatchingSubUrl(pathname, item.items);
@@ -99,11 +99,13 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                   isActive={groupActive}
                   aria-label={item.title}
                   aria-current={groupActive ? "page" : undefined}
-                  className="text-lg group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0 data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] md:text-sm"
+                  className="text-lg text-zinc-300 group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0 data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] md:text-base"
                 >
                   <Link href={item.url} onClick={() => setOpenMobile(false)}>
                     <NavItemIcon item={item} />
-                    <span className="text-lg group-data-[collapsible=icon]:hidden md:text-sm">{item.title}</span>
+                    <span className="ml-2 text-lg font-semibold group-data-[collapsible=icon]:hidden md:text-base">
+                      {item.title}
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -119,10 +121,12 @@ export function NavMain({ items }: { items: NavMainItem[] }) {
                     isActive={groupActive}
                     aria-label={item.title}
                     aria-current={groupActive ? "true" : undefined}
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground text-lg group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0 data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] md:text-sm"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground text-lg text-zinc-300 group-data-[collapsible=icon]:!size-12 group-data-[collapsible=icon]:justify-center focus-visible:ring-0 data-active:shadow-[0_0_0_2px_var(--sidebar-primary)] md:text-base"
                   >
                     <NavItemIcon item={item} />
-                    <span className="text-lg group-data-[collapsible=icon]:hidden md:text-sm">{item.title}</span>
+                    <span className="ml-2 text-lg font-semibold group-data-[collapsible=icon]:hidden md:text-base">
+                      {item.title}
+                    </span>
                     <MoreHorizontalIcon className="ml-auto group-data-[collapsible=icon]:hidden" />
                   </SidebarMenuButton>
                 </DropdownMenuTrigger>
