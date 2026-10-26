@@ -4,30 +4,30 @@ const steps: { imageSrc: string; imageAlt: string; title: string; description: s
   {
     imageSrc: "/images/volt-explain/how_to_step_1.png",
     imageAlt: "Connect your chess.com and lichess.org accounts",
-    title: "Import Your Games",
+    title: "Turn Your Mistakes into Practice",
     description:
-      "Enter your Chess.com or Lichess username to import and analyze your games. Discover mistakes you can turn into practice.",
+      "Import your games using your Chess.com or Lichess username. Discover where you went wrong, revisit those positions, and try to find the best move yourself.",
   },
   {
     imageSrc: "/images/volt-explain/how_to_step_2.png",
     imageAlt: "Volt coaching you while you practice chess",
-    title: "Practice Key Positions",
+    title: "Explore Openings, Puzzles & Studies",
     description:
-      "Replay your mistakes, explore chess openings, and solve puzzles. Practice finding better moves, one position at a time.",
+      "Practice opening variations, challenge yourself with chess puzzles, and work through curated studies. Choose what you want to improve and learn by playing through positions.",
   },
   {
     imageSrc: "/images/volt-explain/how_to_step_3.png",
     imageAlt: "Adding a game to Volt Tracker",
-    title: "Save To Volt Tracker",
+    title: "Build Your Volt Tracker",
     description:
-      "Save mistakes, opening variations, and puzzles for quick access. Build your own collection of content to revisit.",
+      "Save games, opening variations, puzzles, and studies to your personal practice collection. Keep the things you want to revisit together, ready for your next session.",
   },
   {
     imageSrc: "/images/volt-explain/how_to_step_4.png",
     imageAlt: "How Volt Score measures memory with the forgetting curve",
-    title: "Repeat & Track Progress",
+    title: "Return, Repeat & Improve",
     description:
-      "Practice across different days to strengthen your recall. Track your recent practice performance with up to 220 Volt for each item.",
+      "Come back to saved items on different days. Revisit tricky positions, practice what you have learned, and build each item’s Volt Score as you go.",
   },
 ];
 
@@ -37,20 +37,19 @@ export function Features() {
       <div className="container mx-auto max-w-7xl px-4 md:px-6">
         <div className="flex flex-col gap-10">
           <header className="mx-auto max-w-3xl text-center">
-            <p className="mb-4 flex items-center justify-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#6c5d88] uppercase sm:text-xs">
+            <p className="text-muted mb-4 flex items-center justify-center gap-2 text-sm font-semibold tracking-widest uppercase sm:text-xs">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[#ffd04b]" />
-              How it works
+              YOUR PERSONAL CHESS PRACTICE
             </p>
             <h2
               id="how-chessvolt-helps"
-              className="text-muted m-0 text-[42px] leading-[1.08] font-semibold tracking-[-0.045em] sm:text-[64px] lg:text-[72px]"
+              className="text-secondary text-[42px] leading-[1.08] font-semibold tracking-[-0.045em] sm:text-[64px] lg:text-[72px]"
             >
-              ChessVolt helps you <span className="text-primary">improve</span>
+              More ways to practice. More chances to <span className="text-primary">improve</span>
             </h2>
             <p className="text-muted mx-auto mt-5 mb-0 max-w-xl text-sm leading-7 sm:text-base">
-              Inspired by <span className="text-primary font-medium">Hermann Ebbinghaus&apos;s</span> work on the{" "}
-              <span className="text-primary font-medium">forgetting curve</span>, ChessVolt encourages you to revisit
-              what you learn and practice across different days.
+              Learn from your own games or explore something new. ChessVolt brings game analysis, opening training,
+              puzzles, and curated studies into one place.
             </p>
           </header>
           <div className="flex flex-col gap-16 lg:grid lg:grid-cols-4 lg:grid-rows-[auto_auto_auto] lg:gap-x-6 lg:gap-y-4">
@@ -66,7 +65,7 @@ export function Features() {
                   />
                 </div>
                 <h3 className="text-secondary mt-4 text-center text-2xl font-bold tracking-tight">{step.title}</h3>
-                <p className="text-center text-lg leading-relaxed text-zinc-600">{step.description}</p>
+                <p className="text-muted text-center text-lg leading-relaxed">{step.description}</p>
               </div>
             ))}
           </div>

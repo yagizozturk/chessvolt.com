@@ -342,20 +342,21 @@ export function WhatIsVoltSection({
 
       <div className="relative mx-auto max-w-5xl">
         <header className="relative z-10 mx-auto max-w-xl text-center">
-          <p className="mb-4 flex items-center justify-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[var(--cv-muted)] uppercase sm:text-xs">
-            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[var(--cv-accent)]" />A little practice. A
-            lasting habit.
+          <p className="text-muted-foreground mb-4 flex items-center justify-center gap-2 text-xs font-semibold tracking-[0.22em] uppercase">
+            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[var(--cv-accent)]" />
+            KEEP YOUR PRACTICE CHARGED
           </p>
           <h2
             id={`${id}-heading`}
-            className="m-0 text-[42px] leading-[1.08] font-semibold tracking-[-0.045em] sm:text-[64px] lg:text-[72px]"
+            className="text-[42px] leading-[1.08] font-semibold tracking-[-0.045em] sm:text-[64px] lg:text-[72px]"
           >
-            What is <span className="text-[var(--cv-accent-text)]">Volt</span>
-            <span className="text-[var(--cv-accent-text)]">?</span>
+            What is <span className="text-primary">Volt?</span>
           </h2>
-          <p className="mx-auto mt-5 mb-0 max-w-[390px] text-sm leading-7 text-[var(--cv-muted)] sm:max-w-[430px] sm:text-base">
-            Practice day by day to charge your Volt up to 220V.
-            <br className="hidden sm:block" /> Take a break, and it gradually fades.
+          <p className="text-muted-foreground mx-auto mt-5 mb-0 max-w-[690px] text-sm leading-7 sm:max-w-[730px] sm:text-base">
+            Volt reflects your recent practice on each item in your Volt Tracker. Return on different days to build its
+            score toward 220V—and keep what you learn fresh. A little practice. A stronger habit. Inspired by Hermann
+            Ebbinghaus’s work on the forgetting curve, ChessVolt encourages you to revisit what you learn across
+            different days.
           </p>
         </header>
 
@@ -422,7 +423,7 @@ export function WhatIsVoltSection({
 
         <div className="relative z-10 mx-auto w-full max-w-[310px] text-center">
           <label htmlFor={`${id}-range`} className="text-xs font-medium tracking-wide text-[var(--cv-muted)]">
-            Try it. Give your Volt a little charge.
+            Try the preview: add a practice day and watch the lightning charge.
           </label>
           <input
             id={`${id}-range`}
@@ -455,7 +456,7 @@ export function WhatIsVoltSection({
                 "Fully charged"
               ) : (
                 <>
-                  Practice a day <span className="border-l border-current/20 pl-3 opacity-70">+55 V</span>
+                  Add a Practice Day <span className="border-l border-current/20 pl-3 opacity-70">Up to +55 V</span>
                 </>
               )}
             </button>
@@ -469,7 +470,7 @@ export function WhatIsVoltSection({
             </button>
           </div>
           <p className="mt-4 mb-0 text-[11px] leading-5 text-[var(--cv-muted)]">
-            An interactive preview of your practice energy.
+            This is a preview. Your actual Volt depends on your recent practice.
           </p>
         </div>
       </div>

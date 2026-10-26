@@ -16,11 +16,11 @@ export function Hero() {
             CHESS TRAINING THAT STICKS
           </p>
           <h1 className="mb-6 max-w-2xl text-4xl leading-none font-extrabold tracking-tight sm:text-5xl md:text-6xl xl:text-7xl">
-            Turn your mistakes into <span className="text-primary">better moves.</span>
+            Learn from your games. Make <span className="text-primary">better moves.</span>
           </h1>
           <p className="text-secondary-foreground mb-7 max-w-md text-base leading-relaxed md:text-lg">
-            Your games are full of lessons. Find the moves you missed, understand the ideas, and revisit them until they
-            stick.
+            Analyze your Chess.com and Lichess games and practice the moves you missed. Explore chess openings, puzzles,
+            and curated studies. Save what you want to master in Volt Tracker and return to it across different days.
           </p>
           {/* ====== Get Started button  ====== */}
           <VoltButton href="/dashboard" label="Get Started" />
@@ -80,7 +80,7 @@ export function Hero() {
           {/* ====== Volt un söylediği sözlerin ikinci  ====== */}
           <div className="absolute right-0 bottom-0 z-30 flex rotate-3 items-center gap-2.5 rounded-xl border border-white/15 bg-purple-700/90 px-4 py-3 text-xs shadow-[0_8px_28px_#24106038] md:right-4 md:bottom-2">
             <Zap aria-hidden="true" className="text-primary size-6 shrink-0" />
-            Meet your next good move.
+            Your next step forward.
           </div>
         </div>
       </div>

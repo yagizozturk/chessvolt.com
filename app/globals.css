@@ -166,12 +166,13 @@
   /* Primary Colors */
   --primary: oklch(0.795 0.184 86.047);
   --primary-foreground: oklch(0.421 0.095 57.708); /* Primary renk belli olsun diye bir arka plan */
-  /* Secondary Colors İkincil önemdeki butonlar, filtre etiketleri (badges) veya ana işlem olmayan yardımcı alanlar. */
+  /* Secondary Colors İkincil önemdeki butonlar, filtre etiketleri (badges) veya ana işlem olmayan yardımcı alanlar. Başlıklar daha light renkler */
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
   /* İkincil açıklamalar, placeholder metinleri, pasif/devre dışı bırakılmış alanlar veya kart içi hafif arkaplan ayarları */
   --muted: oklch(0.274 0.006 286.033); /* #27272a, In Shadcn In Card child element bg is #202023 which is bg-muted/50 */
   --muted-foreground: oklch(0.705 0.015 286.067);
+  /* bir butona veya menü elemanına odaklanıldığında (hover/focus) veya o eleman aktif/seçili (active) hale geldiğinde üzerindeki metnin ve ikonların alacağı rengi belirler */
   --accent: oklch(0.274 0.006 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
