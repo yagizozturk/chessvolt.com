@@ -44,5 +44,5 @@ export default function DisplayBoard({
     updateBoard();
   }, [initialFen, playerOrientation, updateBoard]);
 
-  return <div ref={boardRef} className="cardinal green size-full" />;
+  return <div ref={boardRef} className="cases green size-full" />;
 }

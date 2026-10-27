@@ -77,8 +77,8 @@ export function OpeningBoardCard({
         <div className="relative flex min-w-0 flex-1 flex-col gap-2">
           {/* Volt score */}
           {isShowingVoltScore ? (
-            <div className="absolute right-[-40px] bottom-[-40px] z-10">
-              <VoltCalculator result={voltScore} chartSize={130} className="w-fit" />
+            <div className="absolute right-[-10px] bottom-[-10px] z-10">
+              <VoltCalculator result={voltScore} chartSize={72} className="w-fit" />
             </div>
           ) : null}
           {/* Name */}

@@ -2,11 +2,12 @@
 
 import Lottie from "lottie-react";
 
-import { VoltScoreChart } from "@/components/calculator/volt-calculator/volt-score-chart";
 import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
+import { Badge } from "@/components/ui/badge";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { LightningProgress } from "@/components/volt-progress/volt-progress";
 import { cn } from "@/lib/utils";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
 
@@ -169,8 +170,19 @@ export function VoltCalculator({
       {showDetails ? (
         <HoverCard openDelay={150} closeDelay={100}>
           <HoverCardTrigger asChild>
-            <div className="cursor-default">
-              <VoltScoreChart result={result} chartSize={chartSize} />
+            <div className="relative flex cursor-default flex-col items-center gap-2">
+              <LightningProgress
+                value={result.volt}
+                max={Math.max(result.maxVolt, 1)}
+                color="var(--primary)"
+                trackColor="var(--muted)"
+                style={{ height: chartSize, width: "auto" }}
+              />
+              <div className="absolute right-[-8px] bottom-[-22px] z-10">
+                <Badge variant="secondary" className="tabular-nums">
+                  %{Math.round((result.volt / Math.max(result.maxVolt, 1)) * 100)}
+                </Badge>
+              </div>
             </div>
           </HoverCardTrigger>
           <HoverCardContent
