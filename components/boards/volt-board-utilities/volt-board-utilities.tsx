@@ -30,7 +30,7 @@ function VoltBoardUtilities(
       </div>
 
       {isBrowsing ? (
-        <div className="absolute inset-0 opacity-85">
+        <div className="absolute inset-0 opacity-80">
           <VoltBoard
             sourceId={`${sourceId}-history`}
             initialFen={historyFen}

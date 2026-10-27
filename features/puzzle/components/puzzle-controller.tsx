@@ -278,7 +278,7 @@ export default function PuzzleController({
   };
 
   return (
-    <div className="page-container">
+    <div className="page-container pb-0">
       {Tour}
       {/* Başarı dialogu */}
       <SolveSuccessDialog
@@ -333,9 +333,7 @@ export default function PuzzleController({
               </Badge>
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-2">
-              {effectiveBoardMode === "learn" ? (
-                <MainIdeaButton mainIdea={mainIdea} />
-              ) : null}
+              {effectiveBoardMode === "learn" ? <MainIdeaButton mainIdea={mainIdea} /> : null}
               <div data-tour="favorite-button" className="shrink-0">
                 <FavoriteButton puzzleId={puzzle.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
               </div>

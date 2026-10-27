@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+import { Flag } from "lucide-react";
 
 import { Progress } from "@/components/ui/progress";
 
@@ -37,7 +37,7 @@ export function GoalViewer({ goals, mode = "practice", turnLabel }: GoalViewerPr
           </div>
           <div className="flex items-center gap-2">
             <Progress value={score} className="h-3" />
-            <Star className="size-5 shrink-0 fill-yellow-400 text-yellow-500" aria-hidden />
+            <Flag className="fill-primary text-primary size-5 shrink-0" aria-hidden />
           </div>
         </div>
       </div>

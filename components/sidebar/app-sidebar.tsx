@@ -43,7 +43,7 @@ const data = {
       icon: "/images/icons/icon-favorite.png",
     },
     {
-      title: "Play Your Blunders",
+      title: "Analyze",
       url: "/game-analysis",
       icon: "/images/icons/icon-blunder-double.png",
     },

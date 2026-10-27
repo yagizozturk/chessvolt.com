@@ -72,7 +72,7 @@ function NavItemIcon({ item }: { item: NavMainItem }) {
   }
 
   if (item.icon) {
-    return <Image src={item.icon} alt="" aria-hidden width={32} height={32} className="size-8 shrink-0" />;
+    return <Image src={item.icon} alt="" aria-hidden width={28} height={28} className="size-7 shrink-0" />;
   }
 
   return null;

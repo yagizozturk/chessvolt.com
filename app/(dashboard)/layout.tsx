@@ -8,26 +8,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider defaultOpen={true}>
       <AppSidebar />
-      {/* 
-        Note:
-        overflow-auto keeps the sidebar fixed while content is scrollable. 
-        Shadcn standart is like that. no position-fixed for the sidebar. TODO: Check Shadcn
-      */}
+      {/* ====== İçerik alanı. overflow-auto içerik taştığında kaydırmayı yönetir. İçerik boyuttan daha büüyk olursa scroll koyarak kaydırma sağlar ====== */}
       <SidebarInset className="overflow-auto">
-        <header className="flex h-12 shrink-0 items-center gap-2">
+        <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-8" />
             <CustomBreadcrumb />
           </div>
         </header>
         {children}
       </SidebarInset>
-      {/*
-        Note: Volt Explain Dialog 
-        Single dialog instance for the whole dashboard — opened by auto-start
-        (study first visit after onboarding) or by sidebar "How Volt Works" (any time). 
-      */}
+      {/* ====== Volt anlatımı. Onboarding sonrası ilk ziyarette açılır ====== */}
       <VoltExplainDialog />
     </SidebarProvider>
   );

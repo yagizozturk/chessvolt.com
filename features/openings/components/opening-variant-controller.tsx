@@ -4,10 +4,10 @@ import { Bot, Eye, RotateCcw, Swords } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { BoardHistoryControls } from "@/components/boards/volt-board-utilities/board-history-controls";
 import { useBoardHistory } from "@/components/boards/volt-board-utilities/use-board-history";
 import VoltBoardUtilities from "@/components/boards/volt-board-utilities/volt-board-utilities";
+import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
@@ -240,7 +240,7 @@ export default function OpeningVariantController({
   const turnLabel = getTurnLabel(variant.moveSequence.initialFen);
 
   return (
-    <div className="page-container">
+    <div className="page-container pb-0">
       {Tour}
       <SolveSuccessDialog
         open={successDialogOpen}
@@ -254,11 +254,7 @@ export default function OpeningVariantController({
         onPlayAgain={handlePlayAgain}
         footerExtra={
           canFavorite ? (
-            <FavoriteButton
-              openingVariantId={variant.id}
-              isFavorited={favorited}
-              onFavoritedChange={setFavorited}
-            />
+            <FavoriteButton openingVariantId={variant.id} isFavorited={favorited} onFavoritedChange={setFavorited} />
           ) : null
         }
       />
@@ -284,9 +280,7 @@ export default function OpeningVariantController({
           <div className="flex min-w-0 items-center gap-2">
             <BoardHistoryControls history={boardHistory} />
             <div className="ml-auto flex shrink-0 items-center gap-2">
-              {boardMode === "learn" ? (
-                <MainIdeaButton mainIdea={mainIdea} />
-              ) : null}
+              {boardMode === "learn" ? <MainIdeaButton mainIdea={mainIdea} /> : null}
               {canFavorite ? (
                 <div data-tour="favorite-button" className="shrink-0">
                   <FavoriteButton
