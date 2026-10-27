@@ -128,3 +128,51 @@
 .cardinal cg-board piece.king.black {
   background-image: url("../images/pieces/cardinal/bK.svg");
 }
+
+.cases cg-board piece.pawn.white {
+  background-image: url("../images/pieces/cases/wp.png");
+}
+
+.cases cg-board piece.bishop.white {
+  background-image: url("../images/pieces/cases/wb.png");
+}
+
+.cases cg-board piece.knight.white {
+  background-image: url("../images/pieces/cases/wn.png");
+}
+
+.cases cg-board piece.rook.white {
+  background-image: url("../images/pieces/cases/wr.png");
+}
+
+.cases cg-board piece.queen.white {
+  background-image: url("../images/pieces/cases/wq.png");
+}
+
+.cases cg-board piece.king.white {
+  background-image: url("../images/pieces/cases/wk.png");
+}
+
+.cases cg-board piece.pawn.black {
+  background-image: url("../images/pieces/cases/bp.png");
+}
+
+.cases cg-board piece.bishop.black {
+  background-image: url("../images/pieces/cases/bb.png");
+}
+
+.cases cg-board piece.knight.black {
+  background-image: url("../images/pieces/cases/bn.png");
+}
+
+.cases cg-board piece.rook.black {
+  background-image: url("../images/pieces/cases/br.png");
+}
+
+.cases cg-board piece.queen.black {
+  background-image: url("../images/pieces/cases/bq.png");
+}
+
+.cases cg-board piece.king.black {
+  background-image: url("../images/pieces/cases/bk.png");
+}
