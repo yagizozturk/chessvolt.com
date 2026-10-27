@@ -10,6 +10,19 @@ import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { toOpeningVariant } from "@/features/openings/mapper/opening-variant.mapper";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 
+export async function findAll(supabase: SupabaseClient): Promise<OpeningVariant[]> {
+  const { data, error } = await supabase
+    .from("opening_variants")
+    .select("*, move_sequences (*)");
+
+  if (error) {
+    console.error("opening-variant.repository.findAll error:", error);
+    return [];
+  }
+
+  return (data ?? []).map(toOpeningVariant);
+}
+
 export async function findById(supabase: SupabaseClient, id: string): Promise<OpeningVariant | null> {
   const { data, error } = await supabase
     .from("opening_variants")
