@@ -2,14 +2,21 @@ import type { Opening } from "@/features/openings/types/opening";
 import type { OpeningVariant } from "@/features/openings/types/opening-variant";
 import { slugify } from "@/lib/utils/slugify";
 
-export function getOpeningPath(opening: Pick<Opening, "id" | "slug" | "name">): string {
-  return `/openings/${opening.slug ?? slugify(opening.name)}/${opening.id}`;
+function getOpeningSlug(opening: Pick<Opening, "slug" | "name">): string {
+  return opening.slug ?? slugify(opening.name);
+}
+
+export function getOpeningVariantSlug(variant: Pick<OpeningVariant, "title">): string {
+  return variant.title ? slugify(variant.title) : "variant";
+}
+
+export function getOpeningPath(opening: Pick<Opening, "slug" | "name">): string {
+  return `/openings/${getOpeningSlug(opening)}`;
 }
 
 export function getOpeningVariantPath(
-  opening: Pick<Opening, "id" | "slug" | "name">,
-  variant: Pick<OpeningVariant, "id" | "title">,
+  opening: Pick<Opening, "slug" | "name">,
+  variant: Pick<OpeningVariant, "title">,
 ): string {
-  const variantSlug = variant.title ? slugify(variant.title) : "variant";
-  return `${getOpeningPath(opening)}/${variantSlug}/${variant.id}`;
+  return `${getOpeningPath(opening)}/${getOpeningVariantSlug(variant)}`;
 }

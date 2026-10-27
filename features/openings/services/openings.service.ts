@@ -35,6 +35,10 @@ export async function getOpeningById(supabase: SupabaseClient, id: string): Prom
   return openingRepo.findById(supabase, id);
 }
 
+export async function getOpeningBySlug(supabase: SupabaseClient, slug: string): Promise<Opening | null> {
+  return openingRepo.findBySlug(supabase, slug);
+}
+
 export async function createOpening(
   supabase: SupabaseClient,
   input: openingRepo.CreateOpeningInput,

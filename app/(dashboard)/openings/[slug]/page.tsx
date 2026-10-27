@@ -7,7 +7,7 @@ import { getVoltScoresBySequenceId } from "@/components/calculator/volt-calculat
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import { PageHeaderWithImage } from "@/components/page-header/page-header";
 import { OpeningBoardCard } from "@/features/openings/components/opening-board-card";
-import { getOpeningById, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
+import { getOpeningBySlug, getOpeningVariantsByOpeningId } from "@/features/openings/services/openings.service";
 import { getOpeningCoverImageSrc } from "@/features/openings/utilities/opening-cover-image.utils";
 import { getOpeningVariantPath } from "@/features/openings/utilities/opening-variant-path.utils";
 import { getFavoritedOpeningVariantIds } from "@/features/user-favorites/services/user-favorite.service";
@@ -22,13 +22,13 @@ import { openingDocumentDescription, openingDocumentTitle } from "@/lib/metadata
 import { getPublicUser } from "@/lib/supabase/auth";
 
 type Params = {
-  params: Promise<{ slug: string; id: string }>;
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const { id } = await params;
+  const { slug } = await params;
   const { supabase } = await getPublicUser();
-  const opening = await getOpeningById(supabase, id);
+  const opening = await getOpeningBySlug(supabase, slug);
 
   if (!opening) {
     notFound();
@@ -40,14 +40,14 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-export default async function OpeningBySlugAndIdPage({ params }: Params) {
-  const { id } = await params;
+export default async function OpeningBySlugPage({ params }: Params) {
+  const { slug } = await params;
   const { user, supabase } = await getPublicUser();
 
   // ================================================================================================
-  // Id ye göre açılış çekilir.
+  // Slug a göre açılış çekilir.
   // ================================================================================================
-  const opening = await getOpeningById(supabase, id);
+  const opening = await getOpeningBySlug(supabase, slug);
   if (!opening) {
     notFound();
   }

@@ -26,7 +26,7 @@ export async function toggleFavoriteAction(
   });
 
   if (result.ok && "openingVariantId" in target && target.openingVariantId) {
-    revalidatePath("/openings/[slug]/[id]/[variantSlug]/[variantId]", "page");
+    revalidatePath("/openings/[slug]/[variantSlug]", "page");
   }
 
   return result;

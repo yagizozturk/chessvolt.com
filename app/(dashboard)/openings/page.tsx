@@ -7,6 +7,7 @@ import {
   getOpeningsWithVariantCount,
   getOpeningsWithVariantCountByType,
 } from "@/features/openings/services/openings.service";
+import { getOpeningPath } from "@/features/openings/utilities/opening-variant-path.utils";
 import { getPublicUser } from "@/lib/supabase/auth";
 
 export const metadata: Metadata = {
@@ -53,7 +54,7 @@ export default async function OpeningsPage({ searchParams }: { searchParams: Sea
               name={opening.name}
               description={opening.description}
               variantCount={opening.variantCount}
-              href={`/openings/${opening.slug}/${opening.id}`}
+              href={getOpeningPath(opening)}
               fen={opening.displayFen}
             />
           ))}

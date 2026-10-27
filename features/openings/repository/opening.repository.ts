@@ -126,6 +126,23 @@ export async function findById(supabase: SupabaseClient, id: string): Promise<Op
   return toOpening(data);
 }
 
+export async function findBySlug(supabase: SupabaseClient, slug: string): Promise<Opening | null> {
+  const { data, error } = await supabase
+    .from("openings")
+    .select(OPENING_COLUMNS)
+    .eq("slug", slug)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("opening.repository.findBySlug error:", error);
+    return null;
+  }
+  if (!data) return null;
+  return toOpening(data);
+}
+
 export type CreateOpeningInput = {
   name: string;
   slug?: string | null;
