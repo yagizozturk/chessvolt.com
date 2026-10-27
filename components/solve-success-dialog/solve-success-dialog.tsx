@@ -50,7 +50,7 @@ function VoltScoreHelp() {
             play it {extraSolvesToFillDay} more {extraSolvesToFillDay === 1 ? "time" : "times"} the same day to fill the
             rest. After that, extra solves don&apos;t count.
           </p>
-          <p className="text-muted-foreground">Each solve itself is mostly accuracy, then speed, then streak.</p>
+          <p className="text-muted-foreground">Each solve is scored on accuracy, speed, and streak.</p>
         </div>
       </HoverCardContent>
     </HoverCard>

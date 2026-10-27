@@ -199,7 +199,7 @@ export function VoltCalculator({
                 {result.scoredDayCount} days, and they add up to the chart. Each day can reach {dayMaxVolt} Volt. The
                 first solve is worth {firstSolveShare}% of that day — play it {extraSolvesToFillDay} more{" "}
                 {extraSolvesToFillDay === 1 ? "time" : "times"} the same day to fill the rest. After that, extra solves
-                don&apos;t count.
+                don&apos;t count. Each solve is scored on accuracy, speed, and streak.
               </p>
             </div>
             <VoltDayBreakdown result={result} />
