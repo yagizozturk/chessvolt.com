@@ -7,8 +7,8 @@ export const QUICK_LINKS = [
     alt: "Volt Tracker",
   },
   {
-    title: "Game Analysis",
-    description: "Review recent Chess.com and Lichess games.",
+    title: "Analyze",
+    description: "Analyze your chess.com and lichess.org games.",
     href: "/game-analysis",
     icon: "/images/icons/icon-blunder-double.png",
     alt: "Game Analysis",

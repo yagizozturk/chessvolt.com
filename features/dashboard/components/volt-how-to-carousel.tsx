@@ -17,7 +17,7 @@ const SLIDES = [
   {
     imageSrc: "/images/volt-explain/how_to_step_1.png",
     imageAlt: "A player importing Chess.com and Lichess games for analysis",
-    title: "Import and analyze your chess games",
+    title: "Fetch and analyze your chess games",
     description:
       "Enter your Chess.com or Lichess username to import and analyze your games. ChessVolt highlights your mistakes and lets you replay those positions, giving you a chance to find better moves and learn from situations you have actually faced.",
   },
