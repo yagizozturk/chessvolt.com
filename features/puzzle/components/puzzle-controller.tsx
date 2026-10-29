@@ -330,10 +330,10 @@ export default function PuzzleController({
                 <Gauge className="text-primary" data-icon="inline-start" />
                 <span className="truncate">{formatPuzzleRatingLabel(puzzle.rating)}</span>
               </Badge>
-              <Badge variant="outline" className="max-w-full rounded-xl p-3 text-sm">
+              {/*<Badge variant="outline" className="max-w-full rounded-xl p-3 text-sm">
                 <Tags className="text-primary" data-icon="inline-start" />
                 <span className="truncate">{primaryTheme?.title ?? "—"}</span>
-              </Badge>
+              </Badge>*/}
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-2">
               {effectiveBoardMode === "learn" ? <MainIdeaButton mainIdea={mainIdea} /> : null}
