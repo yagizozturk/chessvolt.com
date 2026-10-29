@@ -232,7 +232,7 @@
 │   ├── actions.ts
 │   └── page.tsx
 ├── dashboard
-│   └── page.tsx
+│   └── page.tsx ✅
 ├── game-analysis
 │   ├── [id]
 │   │   └── page.tsx

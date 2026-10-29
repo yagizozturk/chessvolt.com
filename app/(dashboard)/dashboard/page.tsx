@@ -15,7 +15,7 @@ import { getAuthenticatedUser } from "@/lib/supabase/auth";
 // ================================================================================================
 export const metadata: Metadata = {
   title: "Dashboard | ChessVolt",
-  description: "Your ChessVolt dashboard for studies, puzzles, and openings.",
+  description: "Your ChessVolt dashboard for studies, puzzles, your own game analysis and openings.",
 };
 
 export default async function Page() {
@@ -50,7 +50,7 @@ export default async function Page() {
         {/* ====== Ortak kullanılan sayfa başlık komponenti ====== */}
         <PageHeader
           title={`Hi, ${displayName}`}
-          description="Pick up where you left off with your studies, puzzles, and openings."
+          description="Pick up where you left off with your studies, puzzles, your own game analysis and openings."
         />
 
         {/* ====== Nasıl Kullanılır kartlarının dialog gösterimi ====== */}
@@ -67,7 +67,7 @@ export default async function Page() {
                 <ChevronRight className="text-muted-foreground size-5 transition-transform group-hover:translate-x-0.5" />
               }
             >
-              <h2 className="text-lg font-bold">{link.title}</h2>
+              <p className="text-foreground text-lg font-bold">{link.title}</p>
               <p className="text-muted-foreground text-sm">{link.description}</p>
             </ThreeColCard>
           ))}

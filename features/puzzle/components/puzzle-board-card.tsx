@@ -17,6 +17,7 @@ import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-th
 import { PUZZLE_DESCRIPTION_TEMPLATES } from "@/features/puzzle/constants/puzzle-description.constants";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
 import { formatPuzzleRatingLabel } from "@/features/puzzle/types/puzzle-rating";
+import { trackEvent, type AnalyticsEvent } from "@/lib/analytics/analytics";
 import { formatMoveCountLabel } from "@/lib/chess/getFullMoveCountFromMoves";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,7 @@ type PuzzleBoardCardProps = {
   primaryTheme?: PuzzlePrimaryTheme | null;
   /** true = solved, false = wrong, undefined = not attempted */
   isComplete?: boolean;
+  clickEvent?: AnalyticsEvent;
 };
 
 function formatDate(dateStr: string) {
@@ -77,6 +79,7 @@ export function PuzzleBoardCard({
   accuracyPercent,
   primaryTheme = null,
   isComplete,
+  clickEvent,
 }: PuzzleBoardCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const moveCountLabel = formatMoveCountLabel(puzzle.moveSequence.moves);
@@ -87,7 +90,10 @@ export function PuzzleBoardCard({
     <TooltipProvider>
       <Link
         href={href}
-        onClick={() => setIsLoading(true)}
+        onClick={() => {
+          setIsLoading(true);
+          if (clickEvent) trackEvent(clickEvent);
+        }}
         aria-busy={isLoading}
         className={cn(
           "bg-card border-b-card-shadow text-foreground relative flex flex-col rounded-lg border-b-[6px] no-underline",

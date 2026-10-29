@@ -77,6 +77,7 @@ export async function UserFavoritePuzzles({
               showVoltScore
               voltScore={voltScoresBySequenceId[puzzle.moveSequence.id] ?? null}
               isComplete={attemptStatusToIsComplete(attemptStatsBySequenceIdMap[puzzle.moveSequence.id]?.status)}
+              clickEvent="volt_tracker_favorite_puzzle_clicked"
             />
           );
         })}
