@@ -32,6 +32,7 @@ import {
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { trackEvent } from "@/lib/analytics/analytics";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
@@ -107,6 +108,7 @@ export default function OpeningVariantController({
 
   useEffect(() => {
     setReplayKey(0);
+    trackEvent("opening_game_selected", { variant_id: variant.id });
   }, [variant.id]);
 
   useEffect(() => {
@@ -141,13 +143,14 @@ export default function OpeningVariantController({
       getTimeFromStartMs(),
     );
 
+    trackEvent("opening_game_completed", { variant_id: variant.id, wrong_move_count: attemptPayload.wrongMoveCount });
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(favorited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, favorited, getTimeFromStartMs, isCompleted, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, favorited, getTimeFromStartMs, isCompleted, playLevelUpSound, variant.id]);
 
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
@@ -296,7 +299,10 @@ export default function OpeningVariantController({
         <div className="bg-card relative flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
           <Tabs
             value={boardMode}
-            onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
+            onValueChange={(value) => {
+              setBoardMode(value as VoltBoardMode);
+              trackEvent("game_mode_switched", { source: "opening_variant", mode: value });
+            }}
             aria-label="Board mode"
             data-tour="board-mode"
           >

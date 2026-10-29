@@ -12,6 +12,7 @@ import { LichessUsernameForm } from "@/features/game-analysis/components/lichess
 import { UserPlayedGamesBoard } from "@/features/game-analysis/components/user-played-games-board";
 import { usePlatformGames } from "@/features/game-analysis/hooks/use-platform-games";
 import { mapLichessGame } from "@/features/game-analysis/utilities/map-lichess-game";
+import { trackEvent } from "@/lib/analytics/analytics";
 
 export default function GameAnalysisPage() {
   const [isLichessLoading, setIsLichessLoading] = useState(false);
@@ -38,6 +39,7 @@ export default function GameAnalysisPage() {
     if (!chessComUsername || isChessComLoading) return;
 
     setIsChessComLoading(true);
+    trackEvent("game_analysis_searched", { platform: "chesscom" });
     try {
       const page = await requestChessComGames(chessComUsername);
       setChessComGames(page.games);
@@ -56,6 +58,7 @@ export default function GameAnalysisPage() {
     if (!lichessUsername.trim() || isLichessLoading) return;
 
     setIsLichessLoading(true);
+    trackEvent("game_analysis_searched", { platform: "lichess" });
     try {
       const page = await requestLichessGames(lichessUsername);
       setLichessGames(

@@ -15,6 +15,7 @@ import {
   getImportedGameMoveCountLabel,
 } from "@/features/game-analysis/utilities/get-imported-game-display-info";
 import { getPlayerUsernames } from "@/features/game-analysis/utilities/get-player-usernames";
+import { trackEvent } from "@/lib/analytics/analytics";
 import { cn } from "@/lib/utils";
 
 type UserPlayedGamesBoardProps = {
@@ -42,7 +43,10 @@ export function UserPlayedGamesBoard({
   return (
     <Link
       href={href}
-      onClick={() => setIsLoading(true)}
+      onClick={() => {
+        setIsLoading(true);
+        trackEvent("game_analysis_clicked", { platform: game.source });
+      }}
       aria-busy={isLoading}
       className={cn(
         "bg-card border-b-card-shadow text-foreground relative flex flex-col rounded-lg border-b-[6px] no-underline",

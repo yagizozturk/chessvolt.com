@@ -35,6 +35,7 @@ import {
 } from "@/features/user-sequence-attempt/utilities/create-attempt-payload";
 import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/update-correct-streak";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { trackEvent } from "@/lib/analytics/analytics";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
@@ -144,6 +145,7 @@ export default function PuzzleController({
     totalHintCountRef.current = 0;
     currentCorrectStreakRef.current = 0;
     maxCorrectStreakRef.current = 0;
+    trackEvent("puzzle_started", { puzzle_id: puzzle.id });
   }, [puzzle.id, replayKey]);
 
   // ================================================================================================
@@ -163,13 +165,14 @@ export default function PuzzleController({
     );
 
     // Dialog'da göstermek için tamamlanma istatistikleri set edilir
+    trackEvent("puzzle_completed", { puzzle_id: puzzle.id, wrong_move_count: attemptPayload.wrongMoveCount });
     setCompletionStats(createSequenceCompleteStats(attemptPayload));
     setCompletionVoltScore(null);
     setIsVoltScoreShowing(favorited);
     setSuccessDialogOpen(true);
     playLevelUpSound();
     void insertAttemptResults(attemptPayload);
-  }, [expectedCurrentCorrectMoveUci, favorited, getTimeFromStartMs, isCompleted, playLevelUpSound]);
+  }, [expectedCurrentCorrectMoveUci, favorited, getTimeFromStartMs, isCompleted, playLevelUpSound, puzzle.id]);
 
   // ================================================================================================
   // Tamamlanma denemesi db'ye yazılır
@@ -360,7 +363,10 @@ export default function PuzzleController({
           {hasMainIdea ? (
             <Tabs
               value={boardMode}
-              onValueChange={(value) => setBoardMode(value as VoltBoardMode)}
+              onValueChange={(value) => {
+                setBoardMode(value as VoltBoardMode);
+                trackEvent("game_mode_switched", { source: "puzzle", mode: value });
+              }}
               aria-label="Game Mode"
               data-tour="game-mode"
             >

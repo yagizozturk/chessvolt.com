@@ -14,6 +14,7 @@ import { getStudyCoverImageSrc } from "@/features/study/utilities/study-cover-im
 import { formatStudyDifficultyLabel } from "@/features/study/utilities/study-difficulty.utils";
 import { formatStudyPuzzleCount } from "@/features/study/utilities/study-puzzle-count-format.utils";
 import { ThemeBadge } from "@/features/theme/components/theme-badge";
+import { trackEvent } from "@/lib/analytics/analytics";
 import { cn } from "@/lib/utils";
 
 type StudyCardProps = {
@@ -24,6 +25,11 @@ export function StudyCard({ study }: StudyCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const imageSrc = getStudyCoverImageSrc(study.coverImageUrl);
   const href = `/studies/${study.slug}`;
+
+  function handleStudyClick() {
+    setIsLoading(true);
+    trackEvent("study_selected", { study_slug: study.slug });
+  }
 
   return (
     <div
@@ -65,7 +71,7 @@ export function StudyCard({ study }: StudyCardProps) {
         </div>
         {/* This overflow-hidden is there because the image should not override rounded corners of parent div */}
         {/* Object contain keeps the original image ratio, width is the reference */}
-        <Link href={href} onClick={() => setIsLoading(true)} className="overflow-hidden">
+        <Link href={href} onClick={handleStudyClick} className="overflow-hidden">
           <Image src={imageSrc} alt={study.title} className="object-contain" width={275} height={155} />
         </Link>
       </div>
@@ -74,7 +80,7 @@ export function StudyCard({ study }: StudyCardProps) {
       {/* If flex-1 is not used then mt-auto was not going to work for play button */}
       <div className="flex flex-1 flex-col gap-2 p-6">
         <h2 className="sub-section-header-title">
-          <Link href={href} onClick={() => setIsLoading(true)}>
+          <Link href={href} onClick={handleStudyClick}>
             {study.title}
           </Link>
         </h2>
@@ -83,7 +89,7 @@ export function StudyCard({ study }: StudyCardProps) {
           {/* shrink-0 keeps the size of the button no matter what sizes changeds through the parent size */}
           <Link
             href={href}
-            onClick={() => setIsLoading(true)}
+            onClick={handleStudyClick}
             className={cn(buttonVariants({ variant: "voltCompact", size: "xs" }), "ml-auto shrink-0")}
           >
             See Games

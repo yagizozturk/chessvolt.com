@@ -20,6 +20,7 @@ import { GoogleSignInButton } from "@/components/ui/google-sign-in-button";
 import { Spinner } from "@/components/ui/spinner";
 import { TermsAndConditionsDialog } from "@/features/auth/components/terms-and-conditions-dialog";
 import { POST_LOGIN_URL } from "@/features/onboarding/constants/onboarding-routes";
+import { trackEvent } from "@/lib/analytics/analytics";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -92,6 +93,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<typeof 
     }
 
     setLoading(false);
+    trackEvent("sign_up_completed", { method: "email" });
 
     // Supabase may require email confirmation - check auth config
     if (data.session) {
