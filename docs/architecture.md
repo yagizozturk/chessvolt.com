@@ -259,8 +259,8 @@
 │   ├── [id]
 │   │   ├── loading.tsx
 │   │   └── page.tsx
-│   ├── loading.tsx
-│   └── page.tsx
+│   ├── loading.tsx ✅
+│   └── page.tsx ✅
 ├── studies
 │   ├── [slug]
 │   │   ├── page.tsx

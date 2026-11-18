@@ -18,6 +18,7 @@ import { requestGameAnalysis, requestGameAnalysisInsert } from "@/features/game-
 import { BoardPlayerName } from "@/features/game-analysis/components/board-player-name";
 import { GameAnalysisMistakeStepper } from "@/features/game-analysis/components/game-analysis-mistake-stepper";
 import { GameAnalysisStatus } from "@/features/game-analysis/components/game-analysis-status";
+import { SAVED_ANALYSIS_STATUS } from "@/features/game-analysis/constants/game-analysis-status.constants";
 import type { PlatformGame } from "@/features/game-analysis/types/platform-game";
 import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import { analyzePgnWithStockfish } from "@/features/game-analysis/utilities/analyze-pgn-with-stockfish";
@@ -60,7 +61,7 @@ export default function GameAnalysisController({
   const [isLoading, setIsLoading] = useState(true);
   const [analysisEngine, setAnalysisEngine] = useState<"local" | null>(null);
   const [analysisProgress, setAnalysisProgress] = useState<{ completed: number; total: number } | null>(null);
-  const [status, setStatus] = useState<string | null>("Getting critical moments from server");
+  const [status, setStatus] = useState<string | null>(SAVED_ANALYSIS_STATUS);
   const localAbortRef = useRef<AbortController | null>(null);
 
   // ================================================================================================
@@ -106,7 +107,7 @@ export default function GameAnalysisController({
 
     async function getSavedGameAnalysis() {
       setIsLoading(true);
-      setStatus("Getting critical moments from server");
+      setStatus(SAVED_ANALYSIS_STATUS);
       let redirecting = false;
       try {
         const response = await requestGameAnalysis(gameId); // api dosyasına gönderir isteği. Oradan http ye gidecek.
@@ -453,7 +454,7 @@ export default function GameAnalysisController({
           ) : null}
 
           {/* ====== Game Analysis Status ====== */}
-          <GameAnalysisStatus message={status} />
+          <GameAnalysisStatus message={status} pending={isLoading || analysisEngine !== null} />
 
           {/* ====== Stepper ====== */}
           {analysis || analysisEngine ? (

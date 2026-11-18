@@ -9,7 +9,7 @@ import { getPublicUser } from "@/lib/supabase/auth";
 
 // ================================================================================================
 // dynamic, metadata, route segment config isimleri. Çağrılmadan Next okuyor.
-// dynamic cached bir sayfa olmasını engelleyip her seferinde yüklüyor
+// dynamic cached bir sayfa olmasını engelleyip her seferinde yüklüyor.
 // ================================================================================================
 export const metadata: Metadata = {
   title: "Chess Puzzles: Find the Best Move | ChessVolt",
@@ -38,7 +38,7 @@ export default async function PuzzlesPage() {
   }
 
   // ================================================================================================
-  // Loader set edilir.
+  // Seçilen puzzle için controller'ın ihtiyaç duyduğu veriler hazırlanır.
   // ================================================================================================
   const puzzlePageData = await loadPuzzlePage({
     supabase,

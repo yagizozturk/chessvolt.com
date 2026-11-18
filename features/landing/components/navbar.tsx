@@ -46,7 +46,7 @@ function BrandLogo({ onNavigate, variant = "header" }: { onNavigate?: () => void
       href="/"
       onClick={onNavigate}
       className={cn(
-        "flex items-center gap-2 font-bold transition-opacity hover:opacity-90 text-white",
+        "flex items-center gap-2 font-bold text-white transition-opacity hover:opacity-90",
         sheet ? "text-xl text-white" : "text-foreground text-2xl tracking-tighter text-white",
       )}
       aria-label={sheet ? "ChessVolt - Go to home" : "ChessVolt - Home"}
@@ -62,11 +62,7 @@ function NavLinkContent({ item, isNavigating }: { item: NavItem; isNavigating?: 
   const pos = item.iconPosition ?? "left";
   return (
     <>
-      {isNavigating ? (
-        <Spinner data-icon="inline-start" />
-      ) : (
-        Icon && pos === "left" && <Icon className="h-4 w-4" />
-      )}
+      {isNavigating ? <Spinner data-icon="inline-start" /> : Icon && pos === "left" && <Icon className="h-4 w-4" />}
       {item.label}
       {!isNavigating && Icon && pos === "right" && <Icon className="h-4 w-4" />}
     </>

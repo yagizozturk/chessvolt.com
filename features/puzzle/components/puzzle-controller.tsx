@@ -62,7 +62,7 @@ export default function PuzzleController({
   const sequenceId = puzzle.moveSequence.id; // Her sequence'in kendi hamleleri ve PGN'i vardır. Her puzzle'ın bir sequenceId'si vardır.
   const [replayKey, setReplayKey] = useState(0); // Replay key tekil olsun diye. Play again'de sessionId değişir, değişkenler sıfırlanır.
   const sessionId = `${puzzle.id}:${replayKey}`; // tekil olması için.
-  const turnLabel = getTurnLabel(puzzle.moveSequence.initialFen); // Sıranın kimde olduğunu alır, w veya b
+  const turnLabel = getTurnLabel(puzzle.moveSequence.initialFen); // Başlangıç pozisyonunda sıranın kimde olduğunu alır, w veya b
   const hasNextPuzzle = nextPuzzleUrl != null;
   const successDestinationPath = hasNextPuzzle ? nextPuzzleUrl : null;
   const successButtonLabel = hasNextPuzzle ? "Next puzzle" : null;
@@ -80,6 +80,8 @@ export default function PuzzleController({
   // ================================================================================================
   // Puzzle için ref sayaçları. Ref'ler React'in güncelleme döngüsünde görünmez.
   // Bu deneme sayıları ref'lerde tutulur.
+  // Kalıcılık: Bileşen her yeniden render olduğunda useState sıfırlanabilir veya güncel değeri alabilir
+  // ancak useRef içindeki değer (.current) kaybolmaz, hafızada korunur.
   // ================================================================================================
   const correctMoveCountRef = useRef(0);
   const wrongMoveCountRef = useRef(0);
@@ -108,13 +110,24 @@ export default function PuzzleController({
     goals: puzzle.moveSequence.goals,
   });
 
+  // ================================================================================================
+  // Hamleler arasında dolaşmaya yarayan history okları. useBoardHistory hook.
+  // ================================================================================================
   const boardHistory = useBoardHistory({
     sourceId: sessionId,
     initialFen: puzzle.moveSequence.initialFen,
     moves,
     revealedPly,
   });
+
+  // ================================================================================================
+  // Puzzle tour hook'u. Puzzle tour'u göstermek için kullanılır.
+  // ================================================================================================
   const { Tour } = usePuzzleTour({ puzzleId: puzzle.id });
+
+  // ================================================================================================
+  // Puzzle'ın ana fikri, mode, voltScore
+  // ================================================================================================
   const hasMainIdea = Boolean(mainIdea?.trim());
   const effectiveBoardMode = hasMainIdea ? boardMode : "practice";
   const voltScore = {
@@ -126,6 +139,9 @@ export default function PuzzleController({
     setReplayKey(0);
   }, [puzzle.id]);
 
+  // ================================================================================================
+  // Ürünü favorileme Effecti
+  // ================================================================================================
   useEffect(() => {
     setFavorited(isFavorited);
   }, [puzzle.id, isFavorited]);

@@ -49,26 +49,30 @@ function rowFromFields(fields: Record<string, string>): LichessCsvRow | null {
   };
 }
 
+const LICHESS_COLUMNS = [
+  "PuzzleId",
+  "FEN",
+  "Moves",
+  "Rating",
+  "RatingDeviation",
+  "Popularity",
+  "NbPlays",
+  "Themes",
+  "GameUrl",
+  "OpeningTags",
+] as const;
+
 function rowFromPositions(fields: string[]): LichessCsvRow | null {
-  const rating = Number(fields[3]);
-  const popularity = Number(fields[4]);
-
-  if (!fields[0]?.trim() || !fields[1]?.trim() || !fields[2]?.trim()) return null;
-  if (!Number.isFinite(rating) || !Number.isFinite(popularity)) return null;
-
-  return {
-    puzzleId: fields[0].trim(),
-    fen: fields[1].trim(),
-    moves: fields[2].trim(),
-    rating,
-    popularity,
-    themes: fields[5]?.trim() ?? "",
-    openingTags: fields[6]?.trim() ?? "",
-  };
+  const byName: Record<string, string> = {};
+  LICHESS_COLUMNS.forEach((name, i) => {
+    byName[name] = fields[i] ?? "";
+  });
+  return rowFromFields(byName);
 }
 
 export function parseLichessCsv(text: string): LichessCsvRow[] {
   const lines = text
+    .replace(/^\uFEFF/, "")
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
