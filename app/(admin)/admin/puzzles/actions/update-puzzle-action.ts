@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { parsePuzzleMetadataFromForm } from "@/app/(admin)/admin/puzzles/lib/parse-puzzle-metadata";
-import { persistPuzzleUpdate } from "@/app/(admin)/admin/puzzles/lib/persist-puzzle";
-import { resolveFromPlySelection } from "@/app/(admin)/admin/puzzles/lib/resolve-puzzle-sequence";
 import type { PuzzleFormState } from "@/app/(admin)/admin/puzzles/lib/puzzle-form-state";
+import { persistPuzzleUpdate } from "@/features/puzzle/services/persist-puzzle.service";
+import { resolveFromPlySelection } from "@/features/puzzle/utilities/resolve-puzzle-sequence";
 import { getAdminUser } from "@/lib/supabase/auth";
 
 function parsePly(formData: FormData, key: string): number {

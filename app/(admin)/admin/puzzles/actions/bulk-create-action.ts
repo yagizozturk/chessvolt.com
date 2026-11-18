@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 
 import { buildSourceIdFromPgn } from "@/app/(admin)/admin/puzzles/lib/build-source-id-from-pgn";
-import { persistNewPuzzle } from "@/app/(admin)/admin/puzzles/lib/persist-puzzle";
-import { resolveFromPgnDefaultPlies } from "@/app/(admin)/admin/puzzles/lib/resolve-puzzle-sequence";
 import type { BulkCreateFormState } from "@/app/(admin)/admin/puzzles/lib/puzzle-form-state";
+import { persistNewPuzzle } from "@/features/puzzle/services/persist-puzzle.service";
+import { resolveFromPgnDefaultPlies } from "@/features/puzzle/utilities/resolve-puzzle-sequence";
 import { splitPgnGames } from "@/lib/chess/parsePgn";
 import { buildStubGoalsFromMoves } from "@/lib/move-sequence-goals/build-stub-goals";
 import { getAdminUser } from "@/lib/supabase/auth";
