@@ -23,6 +23,7 @@ import {
 import { useBoardSounds } from "@/lib/shared/hooks/sound/use-board-sounds";
 import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
+import { type MoveQuality, getMoveFeedbackClass } from "@/lib/utils/getMoveFeedbackClass";
 
 import "@lichess-org/chessground/assets/chessground.base.css";
 import "@lichess-org/chessground/assets/chessground.brown.css";
@@ -47,6 +48,7 @@ type VoltBoardProps = {
   playerOrientation?: "white" | "black";
   drawHintMove?: string | null;
   playedMoveArrow?: string | null;
+  playedMoveQuality?: MoveQuality | null;
   activeGoalVisuals?: MoveGoal["visuals"];
   onCheckMove: (payload: MoveAttemptPayload) => boolean;
   onSuccessMovePlayed: (move: Move) => void;
@@ -70,6 +72,7 @@ function VoltBoard(
     playerOrientation,
     drawHintMove,
     playedMoveArrow,
+    playedMoveQuality,
     activeGoalVisuals,
     mode = "practice",
     onCheckMove,
@@ -311,12 +314,15 @@ function VoltBoard(
     updateBoard();
 
     const parsedUci = playedMoveArrow ? parseUci(playedMoveArrow) : null;
-    if (parsedUci) setSquareCustomHighlight(parsedUci.to, "custom-blunder-move");
+    if (parsedUci && playedMoveQuality) {
+      setSquareCustomHighlight(parsedUci.to, getMoveFeedbackClass(playedMoveQuality));
+    }
   }, [
     sourceId,
     initialFen,
     playerOrientation,
     playedMoveArrow,
+    playedMoveQuality,
     updateBoard,
     clearSquareCustomHighlights,
     setSquareCustomHighlight,

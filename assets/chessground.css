@@ -319,6 +319,115 @@ cg-board > square.custom-blunder-move::after {
   background-image: url("/images/icons/icon-blunder-double.png") !important;
 }
 
+/*
+ * Blunder intro: the square fills red, a "Blunder" label pops in the middle,
+ * then the label shrinks into the top-right corner where the icon takes over.
+ * The square sits above pieces (z-index 11), so the fill stays translucent.
+ */
+cg-board > square.custom-blunder-move {
+  animation: blunder-square-fill 1.8s ease-out forwards;
+}
+
+cg-board > square.custom-blunder-move::before {
+  content: "Blunder";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.4;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+  animation: blunder-label 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+cg-board > square.custom-blunder-move::after {
+  opacity: 0;
+  transform: scale(0);
+  animation: blunder-icon 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes blunder-square-fill {
+  0% {
+    background-color: rgba(220, 38, 38, 0);
+  }
+  15%,
+  65% {
+    background-color: rgba(220, 38, 38, 0.6);
+  }
+  100% {
+    background-color: rgba(220, 38, 38, 0.35);
+  }
+}
+
+@keyframes blunder-label {
+  0%,
+  15% {
+    top: 50%;
+    left: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+  32%,
+  60% {
+    top: 50%;
+    left: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  80%,
+  100% {
+    top: 0;
+    left: 100%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+}
+
+@keyframes blunder-icon {
+  0%,
+  65% {
+    opacity: 0;
+    transform: scale(0) rotate(-90deg);
+  }
+  85% {
+    opacity: 1;
+    transform: scale(1.2) rotate(10deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  cg-board > square.custom-blunder-move {
+    animation: none;
+    background-color: rgba(220, 38, 38, 0.35);
+  }
+
+  cg-board > square.custom-blunder-move::before {
+    display: none;
+  }
+
+  cg-board > square.custom-blunder-move::after {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 cg-board > square.custom-bg-move::after {
   content: "";
   position: absolute;

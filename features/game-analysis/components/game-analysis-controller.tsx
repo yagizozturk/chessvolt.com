@@ -371,6 +371,7 @@ export default function GameAnalysisController({
                 playerOrientation={youAreBlack ? "black" : "white"}
                 drawHintMove={activeMistake?.moment.bestUci}
                 playedMoveArrow={activeMistake?.moment.playedUci}
+                playedMoveQuality={activeMistake?.mistake.quality}
                 onCheckMove={handleCheckMove}
                 onSuccessMovePlayed={handleSuccess}
                 onNextMoveRequest={() => undefined}
