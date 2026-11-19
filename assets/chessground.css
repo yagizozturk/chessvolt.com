@@ -316,7 +316,7 @@ cg-board > square.custom-mistake-move::after {
 }
 
 cg-board > square.custom-blunder-move::after {
-  background-image: url("/images/icons/icon-blunder.png") !important;
+  background-image: url("/images/icons/icon-blunder-double.png") !important;
 }
 
 cg-board > square.custom-bg-move::after {

@@ -309,7 +309,19 @@ function VoltBoard(
     ground.current?.setAutoShapes([]);
     lastMoveRef.current = undefined;
     updateBoard();
-  }, [sourceId, initialFen, playerOrientation, updateBoard, clearSquareCustomHighlights, ground]);
+
+    const parsedUci = playedMoveArrow ? parseUci(playedMoveArrow) : null;
+    if (parsedUci) setSquareCustomHighlight(parsedUci.to, "custom-blunder-move");
+  }, [
+    sourceId,
+    initialFen,
+    playerOrientation,
+    playedMoveArrow,
+    updateBoard,
+    clearSquareCustomHighlights,
+    setSquareCustomHighlight,
+    ground,
+  ]);
 
   // ============================================================================
   // Aktif otomatik oklar:
