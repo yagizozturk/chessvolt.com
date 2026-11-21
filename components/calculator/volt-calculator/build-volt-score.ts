@@ -1,7 +1,4 @@
-import {
-  computeVoltScore,
-  type VoltAttemptRecord,
-} from "@/components/calculator/volt-calculator/compute-volt";
+import { type VoltAttemptRecord, computeVoltScore } from "@/components/calculator/volt-calculator/compute-volt";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import type { UserSequenceAttempt } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 

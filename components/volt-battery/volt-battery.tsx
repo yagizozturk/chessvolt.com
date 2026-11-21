@@ -97,9 +97,7 @@ export function VoltBattery({
   const targets = cells.map(clampPercent);
   const displayed = useAnimatedFills(targets, initialCells);
   const overall = Math.round(
-    clampPercent(
-      percent ?? (targets.length > 0 ? targets.reduce((sum, value) => sum + value, 0) / targets.length : 0),
-    ),
+    clampPercent(percent ?? (targets.length > 0 ? targets.reduce((sum, value) => sum + value, 0) / targets.length : 0)),
   );
   const milliseconds = Number.isFinite(duration) ? Math.max(0, duration) : 900;
 

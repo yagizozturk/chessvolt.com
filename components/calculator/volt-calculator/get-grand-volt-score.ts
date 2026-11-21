@@ -13,23 +13,24 @@
  *
  * Sequences with attempts but no matching puzzle/variant row are skipped (orphaned data).
  */
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { isVoltCountedAttempt } from "@/components/calculator/volt-calculator/build-volt-score";
 import {
-  getVoltScoresBySequenceId,
   type SequenceVoltContext,
+  getVoltScoresBySequenceId,
 } from "@/components/calculator/volt-calculator/build-volt-scores-by-sequence-id";
+import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import {
   EMPTY_GRAND_VOLT_SCORE,
   type GrandVoltScoreResult,
 } from "@/components/calculator/volt-calculator/grand-volt.types";
-import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
-import { getVoltLookbackStart, VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
+import { VOLT_CONFIG, getVoltLookbackStart } from "@/components/calculator/volt-calculator/volt.config";
 import * as openingVariantRepo from "@/features/openings/repository/opening-variant.repository";
 import * as puzzleRepo from "@/features/puzzle/repository/puzzle.repository";
 import { getPuzzleRatingForScoring } from "@/features/puzzle/types/puzzle-rating";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Maps DB rows to SequenceVoltContext inputs required by calculateVoltScore.
@@ -75,19 +76,12 @@ function buildSequenceContexts(
   return { contexts, puzzleSequenceIds, openingVariantSequenceIds };
 }
 
-export async function getGrandVoltScore(
-  supabase: SupabaseClient,
-  userId: string,
-): Promise<GrandVoltScoreResult> {
+export async function getGrandVoltScore(supabase: SupabaseClient, userId: string): Promise<GrandVoltScoreResult> {
   // ================================================================================================
   // Step 1: Load all attempts within the Volt lookback window (default: last 3 calendar months).
   // ================================================================================================
   const lookbackStart = getVoltLookbackStart();
-  const allAttempts = await attemptService.getAttemptsByUserSince(
-    supabase,
-    userId,
-    lookbackStart.toISOString(),
-  );
+  const allAttempts = await attemptService.getAttemptsByUserSince(supabase, userId, lookbackStart.toISOString());
   const attempts = allAttempts.filter(isVoltCountedAttempt);
 
   // ================================================================================================

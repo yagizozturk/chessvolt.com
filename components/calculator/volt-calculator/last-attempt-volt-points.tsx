@@ -3,8 +3,8 @@
 import { Clock, Flame, Target } from "lucide-react";
 import { useEffect } from "react";
 
-import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
 import { findLatestVoltAttempt } from "@/components/calculator/volt-calculator/volt-latest-solve";
+import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltAttemptBreakdown, VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";

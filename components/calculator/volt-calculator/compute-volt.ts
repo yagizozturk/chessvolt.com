@@ -2,9 +2,9 @@ import { computeVoltAccuracy } from "@/components/calculator/accuracy-calculator
 import { computeRatingTimingPercent } from "@/components/calculator/rating-timing-calculator/compute-rating-timing";
 import { computeStreakPercent } from "@/components/calculator/streak-calculator/compute-streak";
 import {
+  VOLT_CONFIG,
   getBestAttemptsCounted,
   getVoltLookbackStart,
-  VOLT_CONFIG,
 } from "@/components/calculator/volt-calculator/volt.config";
 import type {
   VoltAttemptBreakdown,

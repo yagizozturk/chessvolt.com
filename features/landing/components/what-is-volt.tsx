@@ -1,21 +1,25 @@
 "use client";
 
+import { Zap } from "lucide-react";
 import { type CSSProperties, useId, useState } from "react";
 
+import { VOLT_CONFIG, getVoltMaxScore } from "@/components/calculator/volt-calculator/volt.config";
 import LightningProgress from "@/components/volt-progress/volt-progress";
 
 export type WhatIsVoltSectionProps = {
   className?: string;
   /** Matches the purple/yellow ChessVolt Hero by default. */
   theme?: "dark" | "light" | "auto";
-  /** Starting value for the interactive demo, from 0 to 220. */
+  /** Starting value for the interactive demo, from 0 to the max Volt (getVoltMaxScore()). */
   initialValue?: number;
   /** Optional controlled value. Use together with onValueChange. */
   value?: number;
   onValueChange?: (value: number) => void;
 };
 
-const MAX_VOLT = 220;
+// Demo scale follows the real Volt config: max Volt, and one full practice day per correct repetition.
+const MAX_VOLT = getVoltMaxScore();
+const REPETITION_VOLT = VOLT_CONFIG.dayMaxVolt;
 const clampVolt = (value: number) => (Number.isFinite(value) ? Math.round(Math.max(0, Math.min(MAX_VOLT, value))) : 0);
 
 // A few scoped animation and input rules complement Tailwind's layout utilities.
@@ -311,7 +315,7 @@ function BoardIllustration() {
 export function WhatIsVoltSection({
   className = "",
   theme = "dark",
-  initialValue = 110,
+  initialValue = REPETITION_VOLT * 2,
   value,
   onValueChange,
 }: WhatIsVoltSectionProps) {
@@ -319,6 +323,9 @@ export function WhatIsVoltSection({
   const [demoValue, setDemoValue] = useState(() => clampVolt(initialValue));
   const current = clampVolt(value ?? demoValue);
   const percent = (current / MAX_VOLT) * 100;
+  // The UI only ever shows the charge as a percentage, never Volt amounts.
+  const chargePercent = Math.round(percent);
+  const chargeText = `${chargePercent}% charged`;
 
   function updateValue(next: number) {
     const clamped = clampVolt(next);
@@ -353,10 +360,9 @@ export function WhatIsVoltSection({
             What is <span className="text-primary">Volt?</span>
           </h2>
           <p className="mx-auto mt-5 mb-0 max-w-[690px] text-sm leading-7 text-zinc-300 sm:max-w-[730px] sm:text-base">
-            Volt reflects your recent practice on each item in your Volt Tracker. Return on different days to build its
-            score toward 220V—and keep what you learn fresh. A little practice. A stronger habit. Inspired by Hermann
-            Ebbinghaus’s work on the forgetting curve, ChessVolt encourages you to revisit what you learn across
-            different days.
+            Volt reflects your recent practice on each item in your Volt Tracker. Return on different days to charge it
+            up—and keep what you learn fresh. A little practice. A stronger habit. Inspired by Hermann Ebbinghaus’s work
+            on the forgetting curve, ChessVolt encourages you to revisit what you learn across different days.
           </p>
         </header>
 
@@ -407,15 +413,13 @@ export function WhatIsVoltSection({
                 duration={750}
                 className="relative h-[234px] w-auto sm:h-[290px]"
                 label="Demo Volt charge"
-                aria-valuetext={`${current} out of 220 Volt`}
+                aria-valuetext={chargeText}
               />
             </div>
-            <div className="mt-3 flex items-baseline justify-center gap-2 sm:mt-4" aria-hidden="true">
-              <span className="min-w-[3ch] text-right text-[42px] leading-none font-medium tracking-[-0.04em] tabular-nums sm:text-[48px]">
-                {current}
-              </span>
-              <span className="text-base font-medium text-[var(--cv-muted)]">
-                / 220 <span className="text-[var(--cv-accent-text)]">V</span>
+            <div className="mt-3 flex items-baseline justify-center sm:mt-4" aria-hidden="true">
+              <span className="min-w-[4ch] text-center text-[42px] leading-none font-medium tracking-[-0.04em] tabular-nums sm:text-[48px]">
+                <span className="text-[var(--cv-accent-text)]">%</span>
+                {chargePercent}
               </span>
             </div>
           </div>
@@ -423,7 +427,7 @@ export function WhatIsVoltSection({
 
         <div className="relative z-10 mx-auto w-full max-w-[310px] text-center">
           <label htmlFor={`${id}-range`} className="text-xs font-medium tracking-wide text-[var(--cv-muted)]">
-            Try the preview: add a practice day and watch the lightning charge.
+            Try the preview: log a correct repetition and watch the lightning charge.
           </label>
           <input
             id={`${id}-range`}
@@ -434,29 +438,26 @@ export function WhatIsVoltSection({
             value={current}
             onChange={(event) => updateValue(Number(event.target.value))}
             aria-label="Try a Volt score"
-            aria-valuetext={`${current} out of 220 Volt`}
+            aria-valuetext={chargeText}
             className="cv-range cursor-interaction"
             style={{ "--range-fill": `${percent}%` } as CSSProperties}
           />
           <output htmlFor={`${id}-range`} className="sr-only" aria-live="polite" aria-atomic="true">
-            {current} out of 220 Volt
+            {chargeText}
           </output>
-          <div className="-mt-1 mb-5 flex justify-between text-[11px] text-[var(--cv-muted)]" aria-hidden="true">
-            <span>0 V</span>
-            <span>220 V</span>
-          </div>
-          <div className="flex items-center justify-center gap-4">
+          <div className="mt-4 flex items-center justify-center gap-4">
             <button
               type="button"
-              onClick={() => updateValue(current + 55)}
+              onClick={() => updateValue(current + REPETITION_VOLT)}
               disabled={current === MAX_VOLT}
-              className="cursor-interaction inline-flex min-h-11 items-center justify-center gap-3 rounded-full bg-[var(--cv-accent)] px-5 py-2.5 text-xs font-semibold text-[var(--cv-on-accent)] shadow-[0_3px_0_#00000024] transition-transform duration-150 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0.5 disabled:opacity-70"
+              className="cursor-interaction inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[var(--cv-accent)] px-5 py-2.5 text-xs font-semibold text-[var(--cv-on-accent)] shadow-[0_3px_0_#00000024] transition-transform duration-150 enabled:hover:-translate-y-0.5 enabled:active:translate-y-0.5 disabled:opacity-70"
             >
               {current === MAX_VOLT ? (
                 "Fully charged"
               ) : (
                 <>
-                  Add a Practice Day <span className="border-l border-current/20 pl-3 opacity-70">Up to +55 V</span>
+                  <Zap aria-hidden="true" className="size-4 fill-current" />
+                  Correct Repetition
                 </>
               )}
             </button>

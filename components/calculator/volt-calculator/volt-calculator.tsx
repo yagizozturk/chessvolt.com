@@ -2,11 +2,8 @@
 
 import Lottie from "lottie-react";
 
+import { VoltScoreBattery, getDayFillPercent } from "@/components/calculator/volt-calculator/volt-score-battery";
 import { VOLT_CONFIG, getFillPercent, isLowFillPercent } from "@/components/calculator/volt-calculator/volt.config";
-import {
-  VoltScoreBattery,
-  getDayFillPercent,
-} from "@/components/calculator/volt-calculator/volt-score-battery";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -156,23 +153,10 @@ export function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
                 </span>
               ) : null}
             </div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex shrink-0 cursor-default items-center gap-2">
-                  <VoltBattery
-                    cells={[fillPercent]}
-                    width={ROW_BATTERY_WIDTH}
-                    glow={false}
-                    aria-hidden
-                    label={`${label} battery`}
-                  />
-                  <FillPercentLabel percent={fillPercent} className="w-[4.75rem] text-right" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="top" sideOffset={6}>
-                {day.dayVolt} / {day.dayMaxVolt} Volt
-              </TooltipContent>
-            </Tooltip>
+            <div className="flex shrink-0 items-center gap-2">
+              <VoltBattery cells={[fillPercent]} width={ROW_BATTERY_WIDTH} glow={false} aria-hidden />
+              <FillPercentLabel percent={fillPercent} className="w-[4.75rem] text-right" />
+            </div>
           </li>
         );
       })}
@@ -190,7 +174,7 @@ export function VoltCalculator({
     return null;
   }
 
-  const dayMaxVolt = result.days[0]?.dayMaxVolt ?? VOLT_CONFIG.dayMaxVolt;
+  const totalPercent = getFillPercent(result.volt, result.maxVolt);
   const bestWeightsLabel = formatPercentList(VOLT_CONFIG.bestAttemptWeights);
 
   // Portaled HoverCard content still bubbles React click events to ancestors (e.g. a parent Link).
@@ -222,20 +206,20 @@ export function VoltCalculator({
             <div className="mb-3 flex flex-col gap-1">
               <div className="flex items-baseline justify-between gap-2">
                 <p className="font-medium">How this Volt adds up</p>
-                <FillPercentLabel percent={getFillPercent(result.volt, result.maxVolt)} className="text-sm" />
+                <FillPercentLabel percent={totalPercent} className="text-sm" />
               </div>
               <p className="text-muted-foreground text-xs leading-relaxed">
                 Your last {result.scoredDayCount} practice days from the past {result.lookbackMonths} months fill the
-                battery — one cell per day, each worth {dayMaxVolt} Volt. Solve as often as you like: your best{" "}
-                {result.bestAttemptsCounted} solves of the day count, weighted {bestWeightsLabel}. Each solve is scored
-                on accuracy, speed, and streak.
+                battery — one cell per day. Solve as often as you like: your best {result.bestAttemptsCounted} solves of
+                the day fill {bestWeightsLabel} of that day&apos;s cell. Each solve is scored on accuracy, speed, and
+                streak.
               </p>
             </div>
             <VoltDayBreakdown result={result} />
           </HoverCardContent>
         </HoverCard>
       ) : (
-        <p className="text-sm font-bold tabular-nums">{result.volt}v</p>
+        <p className="text-sm font-bold tabular-nums">%{totalPercent}</p>
       )}
     </div>
   );

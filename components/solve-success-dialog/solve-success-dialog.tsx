@@ -9,7 +9,7 @@ import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-val
 import { LastAttemptVoltPoints } from "@/components/calculator/volt-calculator/last-attempt-volt-points";
 import { VoltDayBreakdown } from "@/components/calculator/volt-calculator/volt-calculator";
 import { VoltScoreBattery } from "@/components/calculator/volt-calculator/volt-score-battery";
-import { VOLT_CONFIG, getVoltMaxScore } from "@/components/calculator/volt-calculator/volt.config";
+import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
@@ -24,9 +24,7 @@ import infoAnimationData from "@/public/images/animations/animation-info-questio
 import animationData from "@/public/images/animations/animation-trophy.json";
 
 function VoltScoreHelp() {
-  const [bestShare, secondShare, thirdShare] = VOLT_CONFIG.bestAttemptWeights.map((weight) =>
-    Math.round(weight * 100),
-  );
+  const [bestShare, secondShare, thirdShare] = VOLT_CONFIG.bestAttemptWeights.map((weight) => Math.round(weight * 100));
 
   return (
     <HoverCard openDelay={150} closeDelay={100}>
@@ -43,13 +41,12 @@ function VoltScoreHelp() {
         <div className="flex flex-col gap-2">
           <p className="font-medium">This is not just this solve</p>
           <p className="text-muted-foreground">
-            Your Volt is the sum of your last {VOLT_CONFIG.scoredDayCount} practice days in the past{" "}
-            {VOLT_CONFIG.lookbackMonths} months, up to {getVoltMaxScore()} Volt.
+            Your Volt battery holds your last {VOLT_CONFIG.scoredDayCount} practice days from the past{" "}
+            {VOLT_CONFIG.lookbackMonths} months — one cell per day.
           </p>
           <p className="text-muted-foreground">
-            A day can reach {VOLT_CONFIG.dayMaxVolt} Volt. Solve as often as you like — your best solve of the day is
-            worth {bestShare}%, the second best {secondShare}%, and the third best {thirdShare}%. Three perfect solves
-            fill the day.
+            Solve as often as you like — your best solve of the day fills {bestShare}% of that day&apos;s cell, the
+            second best {secondShare}%, and the third best {thirdShare}%. Three perfect solves fill the cell.
           </p>
           <p className="text-muted-foreground">Each solve is scored on accuracy, speed, and streak.</p>
         </div>
@@ -176,7 +173,7 @@ export function SolveSuccessDialog({
                 <div className="flex flex-col gap-4">
                   <div className="card-border-bottom-shadow relative flex flex-col items-center justify-center gap-2 px-4 py-3">
                     <p className="text-muted-foreground text-center text-sm font-medium">Total Volt Score</p>
-                    <VoltScoreBattery result={voltScore} width={160} showCaption chargeLatestSolve />
+                    <VoltScoreBattery result={voltScore} width={160} chargeLatestSolve />
                     <div className="absolute top-1 right-1 hidden sm:block">
                       <VoltScoreHelp />
                     </div>
