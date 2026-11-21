@@ -165,7 +165,7 @@ export function SolveSuccessDialog({
           </DialogTitle>
         </DialogHeader>
 
-        {/* Attempt stats (always when present; volt UI may replace this with scored metrics) */}
+        {/* Attempt stats (always when present; volt UI may replace this with scored metrics)  */}
         {hasVoltScore ? (
           <div className="mt-4 flex flex-col gap-4">
             {isVoltScoreShowing ? (
