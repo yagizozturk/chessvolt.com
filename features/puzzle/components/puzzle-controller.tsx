@@ -10,6 +10,7 @@ import VoltBoardUtilities from "@/components/boards/volt-board-utilities/volt-bo
 import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/volt-board/volt-board";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
+import { ControllerActions, controllerActionButtonClassName } from "@/components/controller-actions/controller-actions";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
@@ -404,7 +405,7 @@ export default function PuzzleController({
 
           {/* Alt butonlar */}
           <div className="mt-auto">
-            <div className="flex gap-2">
+            <ControllerActions>
               {!isCompleted ? (
                 <Button
                   variant="voltGreen"
@@ -417,7 +418,7 @@ export default function PuzzleController({
                 </Button>
               ) : (
                 <>
-                  <Button variant="voltGreen" onClick={handlePlayAgain} className="min-w-0 flex-1">
+                  <Button variant="voltGreen" onClick={handlePlayAgain} className={controllerActionButtonClassName}>
                     <RotateCcw data-icon="inline-start" />
                     Play again
                   </Button>
@@ -431,7 +432,7 @@ export default function PuzzleController({
                         });
                       }}
                       disabled={isPending}
-                      className="min-w-0 flex-1"
+                      className={controllerActionButtonClassName}
                     >
                       {isPending && <Spinner data-icon="inline-start" />}
                       {successButtonLabel}
@@ -439,7 +440,7 @@ export default function PuzzleController({
                   ) : null}
                 </>
               )}
-            </div>
+            </ControllerActions>
           </div>
         </div>
       </div>

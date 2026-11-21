@@ -3,7 +3,12 @@
 import Lottie from "lottie-react";
 
 import { VoltScoreBattery, getDayFillPercent } from "@/components/calculator/volt-calculator/volt-score-battery";
-import { VOLT_CONFIG, getFillPercent, isLowFillPercent } from "@/components/calculator/volt-calculator/volt.config";
+import {
+  VOLT_CONFIG,
+  getFillPercent,
+  isLowFillPercent,
+  roundPercent,
+} from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -24,7 +29,7 @@ type VoltCalculatorProps = {
 };
 
 function formatPercentList(weights: readonly number[]): string {
-  const parts = weights.map((weight) => `${Math.round(weight * 100)}%`);
+  const parts = weights.map((weight) => `%${roundPercent(weight * 100)}`);
   if (parts.length <= 1) return parts.join("");
   return `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
 }
@@ -154,7 +159,7 @@ export function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
               ) : null}
             </div>
             <div className="flex shrink-0 items-center gap-2">
-              <VoltBattery cells={[fillPercent]} width={ROW_BATTERY_WIDTH} glow={false} aria-hidden />
+              <VoltBattery percent={fillPercent} width={ROW_BATTERY_WIDTH} showReadout={false} aria-hidden />
               <FillPercentLabel percent={fillPercent} className="w-[4.75rem] text-right" />
             </div>
           </li>
@@ -175,6 +180,7 @@ export function VoltCalculator({
   }
 
   const totalPercent = getFillPercent(result.volt, result.maxVolt);
+  const dayChargePercent = getFillPercent(result.days[0]?.dayMaxVolt ?? VOLT_CONFIG.dayMaxVolt, result.maxVolt);
   const bestWeightsLabel = formatPercentList(VOLT_CONFIG.bestAttemptWeights);
 
   // Portaled HoverCard content still bubbles React click events to ancestors (e.g. a parent Link).
@@ -209,10 +215,10 @@ export function VoltCalculator({
                 <FillPercentLabel percent={totalPercent} className="text-sm" />
               </div>
               <p className="text-muted-foreground text-xs leading-relaxed">
-                Your last {result.scoredDayCount} practice days from the past {result.lookbackMonths} months fill the
-                battery — one cell per day. Solve as often as you like: your best {result.bestAttemptsCounted} solves of
-                the day fill {bestWeightsLabel} of that day&apos;s cell. Each solve is scored on accuracy, speed, and
-                streak.
+                Your last {result.scoredDayCount} practice days from the past {result.lookbackMonths} months charge the
+                battery — each day can add up to %{dayChargePercent}. Solve as often as you like: your best{" "}
+                {result.bestAttemptsCounted} solves of the day count for {bestWeightsLabel} of that day. Each solve is
+                scored on accuracy, speed, and streak.
               </p>
             </div>
             <VoltDayBreakdown result={result} />

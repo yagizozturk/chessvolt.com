@@ -3,7 +3,7 @@
 import { Zap } from "lucide-react";
 import { type CSSProperties, useId, useState } from "react";
 
-import { VOLT_CONFIG, getVoltMaxScore } from "@/components/calculator/volt-calculator/volt.config";
+import { VOLT_CONFIG, getVoltMaxScore, roundPercent } from "@/components/calculator/volt-calculator/volt.config";
 import LightningProgress from "@/components/volt-progress/volt-progress";
 
 export type WhatIsVoltSectionProps = {
@@ -324,7 +324,7 @@ export function WhatIsVoltSection({
   const current = clampVolt(value ?? demoValue);
   const percent = (current / MAX_VOLT) * 100;
   // The UI only ever shows the charge as a percentage, never Volt amounts.
-  const chargePercent = Math.round(percent);
+  const chargePercent = roundPercent(percent);
   const chargeText = `${chargePercent}% charged`;
 
   function updateValue(next: number) {

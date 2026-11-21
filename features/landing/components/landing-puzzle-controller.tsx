@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import VoltBoard, { type VoltBoardHandle } from "@/components/boards/volt-board/volt-board";
+import { ControllerActions, controllerActionButtonClassName } from "@/components/controller-actions/controller-actions";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/ui/confetti";
@@ -94,7 +95,7 @@ export function LandingPuzzleController({ puzzle }: LandingPuzzleControllerProps
       <div className="bg-card flex min-w-0 flex-col gap-4 rounded-xl p-4 md:flex-[2]">
         <GoalViewer goals={sortedGoals} mode="practice" turnLabel={turnLabel} />
 
-        <div className="mt-auto flex gap-2">
+        <ControllerActions className="mt-auto">
           {!isCompleted ? (
             <Button
               variant="voltGreen"
@@ -107,16 +108,16 @@ export function LandingPuzzleController({ puzzle }: LandingPuzzleControllerProps
             </Button>
           ) : (
             <>
-              <Button variant="voltGreen" onClick={handlePlayAgain} className="min-w-0 flex-1">
+              <Button variant="voltGreen" onClick={handlePlayAgain} className={controllerActionButtonClassName}>
                 <RotateCcw data-icon="inline-start" />
                 Play again
               </Button>
-              <Button variant="volt" asChild className="min-w-0 flex-1">
+              <Button variant="volt" asChild className={controllerActionButtonClassName}>
                 <Link href="/puzzles">More puzzles</Link>
               </Button>
             </>
           )}
-        </div>
+        </ControllerActions>
       </div>
     </div>
   );

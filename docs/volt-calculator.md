@@ -29,8 +29,8 @@ Volt composes the three sub-calculators: **accuracy**, **rating–timing**, and 
 | Key                      | Default           | Meaning                                                  |
 | ------------------------ | ----------------- | -------------------------------------------------------- |
 | `lookbackMonths`         | `3`               | Only attempts with `startedAt` in this window            |
-| `scoredDayCount`         | `5`               | Always **5 slots** in the sum (one battery cell each)    |
-| `dayMaxVolt`             | `200`             | Max points per played day                                |
+| `scoredDayCount`         | `4`               | Always **4 slots** in the sum                            |
+| `dayMaxVolt`             | `250`             | Max points per played day (%25 of the battery)           |
 | `bestAttemptWeights`     | `[0.5, 0.3, 0.2]` | Weights for the day's **best** solves by score           |
 | `lowFillPercent`         | `30`              | Day fill % at or below this is shown red, above is green |
 | `metricWeights.accuracy` | `0.6`             | Per-attempt composite                                    |
@@ -40,7 +40,7 @@ Volt composes the three sub-calculators: **accuracy**, **rating–timing**, and 
 **Max Volt:**
 
 ```
-maxVolt = scoredDayCount × dayMaxVolt   // default 5 × 200 = 1000
+maxVolt = scoredDayCount × dayMaxVolt   // default 4 × 250 = 1000
 ```
 
 Helpers: `getVoltMaxScore()`, `getVoltLookbackStart(now?)`, `getBestAttemptsCounted()`, `getFillPercent(value, max)`, `isLowFillPercent(percent)`.
@@ -107,13 +107,13 @@ Per-attempt Volt contribution (internal; the UI converts it to a battery %):
 attemptVoltPoints = round(weightedContribution × dayMaxVolt / 100)
 ```
 
-### Day max examples (all attempt scores = 100, `dayMaxVolt = 200`)
+### Day max examples (all attempt scores = 100, `dayMaxVolt = 250`)
 
-| Solves that day | rawDayScore        | dayVolt | Cell   |
-| --------------- | ------------------ | ------- | ------ |
-| 1               | 100 × 0.50 = 50    | **100** | 50%    |
-| 2               | 50 + 30 = 80       | **160** | 80%    |
-| 3+              | 50 + 30 + 20 = 100 | **200** | 100%   |
+| Solves that day | rawDayScore        | dayVolt | Day   |
+| --------------- | ------------------ | ------- | ----- |
+| 1               | 100 × 0.50 = 50    | **125** | 50%   |
+| 2               | 50 + 30 = 80       | **200** | 80%   |
+| 3+              | 50 + 30 + 20 = 100 | **250** | 100%  |
 
 **Full day credit requires 3 strong solves.** A weak solve never lowers the day: it only counts if it is among the best 3.
 
@@ -132,7 +132,7 @@ volt = Σ days[i].dayVolt
 display: "%{round(volt / maxVolt × 100)}" — percentages only (see UI)
 ```
 
-Example: 3 full play days (200 each) + 2 padding slots → **600/1000 Volt**.
+Example: 3 full play days (250 each) + 1 padding slot → **750/1000 Volt** (%75).
 
 ---
 
@@ -170,7 +170,7 @@ VoltDaySlot = {
   slotIndex: number;         // 1..N, newest play day = 1
   date: string | null;       // YYYY-MM-DD or null if padding
   dayVolt: number;
-  dayMaxVolt: number;        // 200
+  dayMaxVolt: number;        // 250
   isPlayed: boolean;
   attempts: VoltAttemptBreakdown[]; // every completed solve that day, chronological
 }
@@ -218,13 +218,16 @@ Use the same `calculateVoltScore` with:
 
 ## UI
 
-**Rule: the UI shows charge only as percentages** (`%62`, `%12 Full`). Volt amounts like `200 / 1000 Volt` are never displayed; `volt`, `dayVolt` and `maxVolt` are internal and only used to compute percentages (`getFillPercent`).
+**Rule: the UI shows charge only as whole percentages** (`%62`, `%12 Full`). Volt amounts like `250 / 1000 Volt` are never displayed; `volt`, `dayVolt` and `maxVolt` are internal and only used to compute percentages (`getFillPercent`).
 
-- **Battery gauge** (`VoltScoreBattery` → `VoltBatteryGauge` in `components/volt-battery/volt-battery.tsx`): Zap + `%{total}` above a horizontal battery with one cell per scored day. Cells run oldest played day → newest, then empty slots; each fills bottom-up to `dayFill%` with an animation.
-- Cell colors: full = light green, partial above `lowFillPercent` = green, at or below = red.
-- **Cards:** gauge in the card corner; hover opens the day breakdown with the total `%{total} Full` (red ≤ 30%, green above).
-- **Solve success dialog:** headline "You Charged +%X" = the latest solve's own share (`weightedContribution × dayMaxVolt / 100`) as a % of the whole battery (`getChargeGainPercent(share, maxVolt)`, one decimal so small gains don't round to %0). The Accuracy / Max streak / Time tiles show that share split by metric as `+%{charge}`. The gauge (`chargeLatestSolve`) starts from the state before that solve and charges that day's cell to its new level, with a "Today %{dayFill} Full" counter (`getLatestSolveCharge` in `volt-latest-solve.ts`).
-- **Day breakdown:** each slot shows date, "Solved N times", a mini battery and `%{dayFill} Full` (red ≤ 30%, green above).
+- Rounding (`roundPercent`): a fraction above .5 rounds up, .5 or below rounds down (9.1 → 9, 5.5 → 5, 5.51 → 6). Results are clamped to 0–100, so nothing ever shows above 100%.
+- Breakdowns (`splitPercent`): a whole total is split across parts so they always add up to exactly the total (largest-remainder method).
+
+- **Battery** (`VoltScoreBattery` → `VoltBattery` in `components/volt-battery/volt-battery.tsx`): one flat, pure-CSS battery icon for the **total** charge (`volt / maxVolt`): grey outline with a rounded terminal bump, an inset fill growing left → right, and Zap + `%{total}` written inside. The readout is drawn twice: in the theme text color over the empty part and in dark, clipped to the fill width, over the fill. Row icons use `showReadout={false}`.
+- Fill color: above `lowFillPercent` = green, at or below = red.
+- **Cards:** battery in the card corner; hover opens the day breakdown with the total `%{total} Full` (red ≤ 30%, green above).
+- **Solve success dialog:** headline "You Charged +%X" = the latest solve's own share (`weightedContribution × dayMaxVolt / 100`) as a whole % of the battery (`getFillPercent(share, maxVolt)`). The Accuracy / Max streak / Time tiles split that total by metric with `splitPercent`, so the three tiles always add up to the headline. Below them, the battery (`chargeLatestSolve`) and the day breakdown sit side by side; the battery starts from the total before that solve and charges to the new total (`getLatestSolveCharge` in `volt-latest-solve.ts`).
+- **Day breakdown:** each slot shows date, "Solved N times", a mini battery icon (`showReadout={false}`) and `%{dayFill} Full` (red ≤ 30%, green above).
 - **List cards:** compact `%{total}` when `showDetails={false}`.
 - **Landing demo** (`features/landing/components/what-is-volt.tsx`): the lightning charges by one full day (`dayMaxVolt`) per "Correct Repetition" click, out of `getVoltMaxScore()`; the counter shows `%{charge}`.
 

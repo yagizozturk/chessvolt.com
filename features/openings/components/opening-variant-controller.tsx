@@ -11,6 +11,7 @@ import { type VoltBoardHandle, type VoltBoardMode } from "@/components/boards/vo
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
 import { getPlayerMoveCount } from "@/components/calculator/volt-calculator/get-sequence-move-count";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
+import { ControllerActions, controllerActionButtonClassName } from "@/components/controller-actions/controller-actions";
 import { GoalViewer } from "@/components/goal-viewer/goal-viewer";
 import { Notifier } from "@/components/notifier/notifier";
 import { SolveSuccessDialog } from "@/components/solve-success-dialog/solve-success-dialog";
@@ -318,7 +319,7 @@ export default function OpeningVariantController({
             </TabsList>
           </Tabs>
           <GoalViewer goals={sortedGoals} mode={boardMode} turnLabel={turnLabel} />
-          <div className="mt-auto flex gap-2" data-tour="hint-button">
+          <ControllerActions className="mt-auto" data-tour="hint-button">
             {!isCompleted ? (
               <Button
                 variant="voltGreen"
@@ -331,7 +332,7 @@ export default function OpeningVariantController({
               </Button>
             ) : (
               <>
-                <Button variant="voltGreen" onClick={handlePlayAgain} className="min-w-0 flex-1">
+                <Button variant="voltGreen" onClick={handlePlayAgain} className={controllerActionButtonClassName}>
                   <RotateCcw data-icon="inline-start" />
                   Play again
                 </Button>
@@ -339,14 +340,14 @@ export default function OpeningVariantController({
                   variant="volt"
                   onClick={handleContinueClick}
                   disabled={isContinuePending}
-                  className="min-w-0 flex-1"
+                  className={controllerActionButtonClassName}
                 >
                   {isContinuePending && <Spinner data-icon="inline-start" />}
                   {successButtonLabel}
                 </Button>
               </>
             )}
-          </div>
+          </ControllerActions>
         </div>
       </div>
     </div>

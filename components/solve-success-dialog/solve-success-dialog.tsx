@@ -9,7 +9,12 @@ import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-val
 import { LastAttemptVoltPoints } from "@/components/calculator/volt-calculator/last-attempt-volt-points";
 import { VoltDayBreakdown } from "@/components/calculator/volt-calculator/volt-calculator";
 import { VoltScoreBattery } from "@/components/calculator/volt-calculator/volt-score-battery";
-import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
+import {
+  VOLT_CONFIG,
+  getFillPercent,
+  getVoltMaxScore,
+  roundPercent,
+} from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
@@ -24,7 +29,10 @@ import infoAnimationData from "@/public/images/animations/animation-info-questio
 import animationData from "@/public/images/animations/animation-trophy.json";
 
 function VoltScoreHelp() {
-  const [bestShare, secondShare, thirdShare] = VOLT_CONFIG.bestAttemptWeights.map((weight) => Math.round(weight * 100));
+  const [bestShare, secondShare, thirdShare] = VOLT_CONFIG.bestAttemptWeights.map((weight) =>
+    roundPercent(weight * 100),
+  );
+  const dayChargePercent = getFillPercent(VOLT_CONFIG.dayMaxVolt, getVoltMaxScore());
 
   return (
     <HoverCard openDelay={150} closeDelay={100}>
@@ -41,12 +49,12 @@ function VoltScoreHelp() {
         <div className="flex flex-col gap-2">
           <p className="font-medium">This is not just this solve</p>
           <p className="text-muted-foreground">
-            Your Volt battery holds your last {VOLT_CONFIG.scoredDayCount} practice days from the past{" "}
-            {VOLT_CONFIG.lookbackMonths} months — one cell per day.
+            Your Volt battery is charged by your last {VOLT_CONFIG.scoredDayCount} practice days from the past{" "}
+            {VOLT_CONFIG.lookbackMonths} months — each day can add up to %{dayChargePercent}.
           </p>
           <p className="text-muted-foreground">
-            Solve as often as you like — your best solve of the day fills {bestShare}% of that day&apos;s cell, the
-            second best {secondShare}%, and the third best {thirdShare}%. Three perfect solves fill the cell.
+            Solve as often as you like — your best solve of the day counts for %{bestShare} of that day, the second best
+            %{secondShare}, and the third best %{thirdShare}. Three perfect solves complete the day.
           </p>
           <p className="text-muted-foreground">Each solve is scored on accuracy, speed, and streak.</p>
         </div>
@@ -134,7 +142,8 @@ export function SolveSuccessDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      {/* Wider when the Volt battery and day breakdown sit side by side. */}
+      <DialogContent className={hasVoltScore ? "sm:max-w-lg" : undefined}>
         <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} borderWidth={2} />
 
         {/* Trophy Animation */}
@@ -170,15 +179,15 @@ export function SolveSuccessDialog({
             ) : isValidVoltScore(voltScore) ? (
               <>
                 <LastAttemptVoltPoints result={voltScore} stats={stats} onChargeGainChange={setLastAttemptCharge} />
-                <div className="flex flex-col gap-4">
-                  <div className="card-border-bottom-shadow relative flex flex-col items-center justify-center gap-2 px-4 py-3">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
+                  <div className="card-border-bottom-shadow relative flex flex-col items-center justify-center gap-3 px-3 py-4 sm:w-44 sm:shrink-0">
                     <p className="text-muted-foreground text-center text-sm font-medium">Total Volt Score</p>
-                    <VoltScoreBattery result={voltScore} width={160} chargeLatestSolve />
-                    <div className="absolute top-1 right-1 hidden sm:block">
+                    <VoltScoreBattery result={voltScore} width={150} chargeLatestSolve />
+                    <div className="absolute -top-3 -right-3 hidden sm:block">
                       <VoltScoreHelp />
                     </div>
                   </div>
-                  <div className="card-border-bottom-shadow p-2">
+                  <div className="card-border-bottom-shadow min-w-0 flex-1 p-2">
                     <VoltDayBreakdown result={voltScore} />
                   </div>
                 </div>
@@ -186,13 +195,13 @@ export function SolveSuccessDialog({
             ) : null}
           </div>
         ) : stats ? (
-          <div className="mt-4">
+          <div className="mt-2">
             <AttemptStatsGrid stats={stats} />
           </div>
         ) : null}
 
         {/* Dialog Footer */}
-        <DialogFooter className="mt-4 flex-col gap-2 sm:flex-row sm:justify-center">
+        <DialogFooter className="mt-2 flex-col gap-2 sm:flex-row sm:justify-center">
           {onPlayAgain ? (
             <Button variant="voltGreen" type="button" onClick={onPlayAgain} className="w-full sm:w-auto">
               <RotateCcw data-icon="inline-start" />

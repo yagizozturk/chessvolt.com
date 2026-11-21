@@ -4,7 +4,7 @@ import { Clock, Flame, Target } from "lucide-react";
 import { useEffect } from "react";
 
 import { findLatestVoltAttempt } from "@/components/calculator/volt-calculator/volt-latest-solve";
-import { VOLT_CONFIG, getChargeGainPercent } from "@/components/calculator/volt-calculator/volt.config";
+import { VOLT_CONFIG, getFillPercent, splitPercent } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltAttemptBreakdown, VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
@@ -29,8 +29,8 @@ type MetricChargePercents = {
 };
 
 /**
- * The solve's own Volt share (weightedContribution × dayMaxVolt / 100), split by metric,
- * expressed as a % of the whole battery (maxVolt).
+ * The solve's own Volt share (weightedContribution × dayMaxVolt / 100) as a whole % of the
+ * battery (maxVolt), then split by metric so the three tiles always add up to the total.
  */
 function getMetricChargePercents(
   attempt: VoltAttemptBreakdown,
@@ -38,14 +38,18 @@ function getMetricChargePercents(
   maxVolt: number,
 ): MetricChargePercents {
   const { accuracy, timing, streak } = VOLT_CONFIG.metricWeights;
-  const toCharge = (metricShare: number) =>
-    getChargeGainPercent((metricShare * attempt.attemptWeight * dayMaxVolt) / 100, maxVolt);
+  const total = getFillPercent((attempt.weightedContribution * dayMaxVolt) / 100, maxVolt);
+  const [accuracyPart, timingPart, streakPart] = splitPercent(total, [
+    attempt.accuracyPercent * accuracy,
+    attempt.timingPercent * timing,
+    attempt.streakPercent * streak,
+  ]);
 
   return {
-    accuracy: toCharge(attempt.accuracyPercent * accuracy),
-    timing: toCharge(attempt.timingPercent * timing),
-    streak: toCharge(attempt.streakPercent * streak),
-    total: getChargeGainPercent((attempt.weightedContribution * dayMaxVolt) / 100, maxVolt),
+    accuracy: accuracyPart ?? 0,
+    timing: timingPart ?? 0,
+    streak: streakPart ?? 0,
+    total,
   };
 }
 
