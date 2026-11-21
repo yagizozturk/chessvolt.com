@@ -5,7 +5,7 @@
  * within the standard Volt lookback window (VOLT_CONFIG.lookbackMonths, default 3 months).
  *
  * Pipeline:
- * 1. Load all user_sequence_attempts since lookback start.
+ * 1. Load all user_sequence_attempts since lookback start (only completed solves count).
  * 2. Collect distinct sequence_id values from those attempts.
  * 3. Resolve each sequence to a puzzle or opening variant (for move count + rating).
  * 4. Reuse getVoltScoresBySequenceId (same logic as study / practice-list pages).
@@ -14,6 +14,7 @@
  * Sequences with attempts but no matching puzzle/variant row are skipped (orphaned data).
  */
 import { RATING_TIMING_CONFIG } from "@/components/calculator/rating-timing-calculator/rating-timing.config";
+import { isVoltCountedAttempt } from "@/components/calculator/volt-calculator/build-volt-score";
 import {
   getVoltScoresBySequenceId,
   type SequenceVoltContext,
@@ -82,14 +83,15 @@ export async function getGrandVoltScore(
   // Step 1: Load all attempts within the Volt lookback window (default: last 3 calendar months).
   // ================================================================================================
   const lookbackStart = getVoltLookbackStart();
-  const attempts = await attemptService.getAttemptsByUserSince(
+  const allAttempts = await attemptService.getAttemptsByUserSince(
     supabase,
     userId,
     lookbackStart.toISOString(),
   );
+  const attempts = allAttempts.filter(isVoltCountedAttempt);
 
   // ================================================================================================
-  // Step 2: Derive unique sequence IDs — only sequences the user actually played count.
+  // Step 2: Derive unique sequence IDs — only sequences the user actually solved count.
   // ================================================================================================
   const sequenceIds = [...new Set(attempts.map((attempt) => attempt.sequenceId))];
   if (sequenceIds.length === 0) {

@@ -118,7 +118,7 @@ export function PuzzleBoardCard({
             {/* Volt Score */}
             {isShowingVoltScore ? (
               <div className="absolute right-[-10px] bottom-[-10px] z-10">
-                <VoltCalculator result={voltScore} chartSize={72} className="w-fit" />
+                <VoltCalculator result={voltScore} batteryWidth={110} className="w-fit" />
               </div>
             ) : null}
             <span className="text-xl font-bold">{puzzle.title}</span>

@@ -2,25 +2,49 @@
 
 import Lottie from "lottie-react";
 
-import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
+import { VOLT_CONFIG, getFillPercent, isLowFillPercent } from "@/components/calculator/volt-calculator/volt.config";
+import {
+  VoltScoreBattery,
+  getDayFillPercent,
+} from "@/components/calculator/volt-calculator/volt-score-battery";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
-import { Badge } from "@/components/ui/badge";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { LightningProgress } from "@/components/volt-progress/volt-progress";
+import { VoltBattery } from "@/components/volt-battery/volt-battery";
 import { cn } from "@/lib/utils";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
 
-const DEFAULT_CHART_SIZE = 220;
+const DEFAULT_BATTERY_WIDTH = 200;
+const ROW_BATTERY_WIDTH = 30;
 
 type VoltCalculatorProps = {
   result: VoltScoreResult | null;
   className?: string;
-  /** Radial chart size in px. */
-  chartSize?: number;
+  /** Battery width in px (height follows the battery proportions). */
+  batteryWidth?: number;
   /** When false, only shows the total (e.g. on list cards). */
   showDetails?: boolean;
 };
+
+function formatPercentList(weights: readonly number[]): string {
+  const parts = weights.map((weight) => `${Math.round(weight * 100)}%`);
+  if (parts.length <= 1) return parts.join("");
+  return `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
+}
+
+function FillPercentLabel({ percent, className }: { percent: number; className?: string }) {
+  return (
+    <span
+      className={cn(
+        "font-medium tabular-nums",
+        isLowFillPercent(percent) ? "text-red-500" : "text-emerald-600 dark:text-emerald-400",
+        className,
+      )}
+    >
+      %{percent} Full
+    </span>
+  );
+}
 
 function toCalendarDayKey(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -108,6 +132,7 @@ export function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
       {result.days.map((day) => {
         const label = formatSlotLabel(day.slotIndex, day.date);
         const tryCount = day.attempts.length;
+        const fillPercent = getDayFillPercent(day);
 
         return (
           <li key={day.slotIndex} className="flex items-center gap-1 px-1 py-1">
@@ -131,9 +156,23 @@ export function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
                 </span>
               ) : null}
             </div>
-            <div className="text-primary shrink-0 font-medium tabular-nums">
-              {day.dayVolt}/{day.dayMaxVolt}
-            </div>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex shrink-0 cursor-default items-center gap-2">
+                  <VoltBattery
+                    cells={[fillPercent]}
+                    width={ROW_BATTERY_WIDTH}
+                    glow={false}
+                    aria-hidden
+                    label={`${label} battery`}
+                  />
+                  <FillPercentLabel percent={fillPercent} className="w-[4.75rem] text-right" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" sideOffset={6}>
+                {day.dayVolt} / {day.dayMaxVolt} Volt
+              </TooltipContent>
+            </Tooltip>
           </li>
         );
       })}
@@ -144,16 +183,15 @@ export function VoltDayBreakdown({ result }: { result: VoltScoreResult }) {
 export function VoltCalculator({
   result,
   className,
-  chartSize = DEFAULT_CHART_SIZE,
+  batteryWidth = DEFAULT_BATTERY_WIDTH,
   showDetails = true,
 }: VoltCalculatorProps) {
   if (!result || result.volt === 0) {
     return null;
   }
 
-  const firstSolveShare = Math.round(VOLT_CONFIG.attemptSlotWeights[0] * 100);
-  const extraSolvesToFillDay = result.attemptsPerDayCounted - 1;
   const dayMaxVolt = result.days[0]?.dayMaxVolt ?? VOLT_CONFIG.dayMaxVolt;
+  const bestWeightsLabel = formatPercentList(VOLT_CONFIG.bestAttemptWeights);
 
   // Portaled HoverCard content still bubbles React click events to ancestors (e.g. a parent Link).
   const stopLinkActivation = (event: React.MouseEvent | React.PointerEvent) => {
@@ -170,19 +208,8 @@ export function VoltCalculator({
       {showDetails ? (
         <HoverCard openDelay={150} closeDelay={100}>
           <HoverCardTrigger asChild>
-            <div className="relative flex cursor-default flex-col items-center gap-2">
-              <LightningProgress
-                value={result.volt}
-                max={Math.max(result.maxVolt, 1)}
-                color="var(--primary)"
-                trackColor="var(--muted)"
-                style={{ height: chartSize, width: "auto" }}
-              />
-              <div className="absolute right-[-8px] bottom-[-22px] z-10">
-                <Badge variant="secondary" className="tabular-nums">
-                  %{Math.round((result.volt / Math.max(result.maxVolt, 1)) * 100)}
-                </Badge>
-              </div>
+            <div className="flex cursor-default flex-col items-center">
+              <VoltScoreBattery result={result} width={batteryWidth} />
             </div>
           </HoverCardTrigger>
           <HoverCardContent
@@ -193,13 +220,15 @@ export function VoltCalculator({
             onPointerDown={stopLinkActivation}
           >
             <div className="mb-3 flex flex-col gap-1">
-              <p className="font-medium">How this Volt adds up</p>
+              <div className="flex items-baseline justify-between gap-2">
+                <p className="font-medium">How this Volt adds up</p>
+                <FillPercentLabel percent={getFillPercent(result.volt, result.maxVolt)} className="text-sm" />
+              </div>
               <p className="text-muted-foreground text-xs leading-relaxed">
-                These rows are your most recent practice days from the last {result.lookbackMonths} months, up to{" "}
-                {result.scoredDayCount} days, and they add up to the chart. Each day can reach {dayMaxVolt} Volt. The
-                first solve is worth {firstSolveShare}% of that day — play it {extraSolvesToFillDay} more{" "}
-                {extraSolvesToFillDay === 1 ? "time" : "times"} the same day to fill the rest. After that, extra solves
-                don&apos;t count. Each solve is scored on accuracy, speed, and streak.
+                Your last {result.scoredDayCount} practice days from the past {result.lookbackMonths} months fill the
+                battery — one cell per day, each worth {dayMaxVolt} Volt. Solve as often as you like: your best{" "}
+                {result.bestAttemptsCounted} solves of the day count, weighted {bestWeightsLabel}. Each solve is scored
+                on accuracy, speed, and streak.
               </p>
             </div>
             <VoltDayBreakdown result={result} />

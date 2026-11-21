@@ -4,6 +4,7 @@ import { Clock, Flame, Target } from "lucide-react";
 import { useEffect } from "react";
 
 import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
+import { findLatestVoltAttempt } from "@/components/calculator/volt-calculator/volt-latest-solve";
 import type { VoltAttemptBreakdown, VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
@@ -18,31 +19,12 @@ type LastAttemptVoltPointsProps = {
   onTotalVoltsChange?: (totalVolts: number | null) => void;
 };
 
-type LatestAttemptContext = {
-  attempt: VoltAttemptBreakdown;
-  dayMaxVolt: number;
-};
-
 type MetricVoltPoints = {
   accuracy: number;
   timing: number;
   streak: number;
   total: number;
 };
-
-function getLatestAttempt(result: VoltScoreResult): LatestAttemptContext | null {
-  let latest: LatestAttemptContext | null = null;
-
-  for (const day of result.days) {
-    for (const attempt of day.attempts) {
-      if (!latest || new Date(attempt.startedAt).getTime() > new Date(latest.attempt.startedAt).getTime()) {
-        latest = { attempt, dayMaxVolt: day.dayMaxVolt };
-      }
-    }
-  }
-
-  return latest;
-}
 
 /** Same scale as day-breakdown attempt volt: weightedContribution × dayMaxVolt / 100. */
 function getMetricVoltPoints(attempt: VoltAttemptBreakdown, dayMaxVolt: number): MetricVoltPoints {
@@ -63,8 +45,8 @@ export function LastAttemptVoltPoints({
   className,
   onTotalVoltsChange,
 }: LastAttemptVoltPointsProps) {
-  const latest = result ? getLatestAttempt(result) : null;
-  const points = latest ? getMetricVoltPoints(latest.attempt, latest.dayMaxVolt) : null;
+  const latest = result ? findLatestVoltAttempt(result) : null;
+  const points = latest ? getMetricVoltPoints(latest.attempt, latest.day.dayMaxVolt) : null;
 
   useEffect(() => {
     onTotalVoltsChange?.(points?.total ?? null);

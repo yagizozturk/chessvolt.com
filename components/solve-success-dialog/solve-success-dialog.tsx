@@ -8,7 +8,7 @@ import { type ReactNode, useEffect, useState } from "react";
 import { isValidVoltScore } from "@/components/calculator/volt-calculator/is-valid-volt-score";
 import { LastAttemptVoltPoints } from "@/components/calculator/volt-calculator/last-attempt-volt-points";
 import { VoltDayBreakdown } from "@/components/calculator/volt-calculator/volt-calculator";
-import { VoltScoreChart } from "@/components/calculator/volt-calculator/volt-score-chart";
+import { VoltScoreBattery } from "@/components/calculator/volt-calculator/volt-score-battery";
 import { VOLT_CONFIG, getVoltMaxScore } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
@@ -24,8 +24,9 @@ import infoAnimationData from "@/public/images/animations/animation-info-questio
 import animationData from "@/public/images/animations/animation-trophy.json";
 
 function VoltScoreHelp() {
-  const firstSolveShare = Math.round(VOLT_CONFIG.attemptSlotWeights[0] * 100);
-  const extraSolvesToFillDay = VOLT_CONFIG.attemptsPerDayCounted - 1;
+  const [bestShare, secondShare, thirdShare] = VOLT_CONFIG.bestAttemptWeights.map((weight) =>
+    Math.round(weight * 100),
+  );
 
   return (
     <HoverCard openDelay={150} closeDelay={100}>
@@ -42,13 +43,13 @@ function VoltScoreHelp() {
         <div className="flex flex-col gap-2">
           <p className="font-medium">This is not just this solve</p>
           <p className="text-muted-foreground">
-            Your Volt is the sum of your best {VOLT_CONFIG.scoredDayCount} practice days in the last{" "}
+            Your Volt is the sum of your last {VOLT_CONFIG.scoredDayCount} practice days in the past{" "}
             {VOLT_CONFIG.lookbackMonths} months, up to {getVoltMaxScore()} Volt.
           </p>
           <p className="text-muted-foreground">
-            A day can reach {VOLT_CONFIG.dayMaxVolt} Volt. The first solve is worth {firstSolveShare}% of that day —
-            play it {extraSolvesToFillDay} more {extraSolvesToFillDay === 1 ? "time" : "times"} the same day to fill the
-            rest. After that, extra solves don&apos;t count.
+            A day can reach {VOLT_CONFIG.dayMaxVolt} Volt. Solve as often as you like — your best solve of the day is
+            worth {bestShare}%, the second best {secondShare}%, and the third best {thirdShare}%. Three perfect solves
+            fill the day.
           </p>
           <p className="text-muted-foreground">Each solve is scored on accuracy, speed, and streak.</p>
         </div>
@@ -172,15 +173,15 @@ export function SolveSuccessDialog({
             ) : isValidVoltScore(voltScore) ? (
               <>
                 <LastAttemptVoltPoints result={voltScore} stats={stats} onTotalVoltsChange={setLastAttemptVolts} />
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-stretch">
-                  <div className="card-border-bottom-shadow relative flex min-h-30 flex-1 flex-col items-center justify-center gap-2 px-4 py-3">
+                <div className="flex flex-col gap-4">
+                  <div className="card-border-bottom-shadow relative flex flex-col items-center justify-center gap-2 px-4 py-3">
                     <p className="text-muted-foreground text-center text-sm font-medium">Total Volt Score</p>
-                    <VoltScoreChart result={voltScore} chartSize={150} />
-                    <div className="absolute top-[-10px] right-[-27px] hidden sm:block">
+                    <VoltScoreBattery result={voltScore} width={160} showCaption chargeLatestSolve />
+                    <div className="absolute top-1 right-1 hidden sm:block">
                       <VoltScoreHelp />
                     </div>
                   </div>
-                  <div className="card-border-bottom-shadow flex-2 p-2">
+                  <div className="card-border-bottom-shadow p-2">
                     <VoltDayBreakdown result={voltScore} />
                   </div>
                 </div>

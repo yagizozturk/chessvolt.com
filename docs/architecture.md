@@ -368,7 +368,8 @@
 │       ├── is-valid-volt-score.ts
 │       ├── last-attempt-volt-points.tsx
 │       ├── volt-calculator.tsx
-│       ├── volt-score-chart.tsx
+│       ├── volt-latest-solve.ts
+│       ├── volt-score-battery.tsx
 │       ├── volt.config.ts
 │       └── volt.types.ts
 ├── carousel-dialog
@@ -398,8 +399,6 @@
 │   └── page-header.tsx
 ├── page-loading
 │   └── page-skeletons.tsx
-├── radial-chart
-│   └── radial-chart.tsx
 ├── sidebar
 │   ├── app-sidebar.tsx
 │   └── nav-main.tsx
@@ -470,6 +469,8 @@
 │   ├── theme-toggle.tsx
 │   ├── tooltip.tsx
 │   └── typing-animation.tsx
+├── volt-battery
+│   └── volt-battery.tsx
 ├── volt-button
 │   └── volt-button.tsx
 ├── volt-coach

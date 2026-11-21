@@ -1,13 +1,18 @@
 import { computeVoltAccuracy } from "@/components/calculator/accuracy-calculator/compute-volt-accuracy";
 import { computeRatingTimingPercent } from "@/components/calculator/rating-timing-calculator/compute-rating-timing";
 import { computeStreakPercent } from "@/components/calculator/streak-calculator/compute-streak";
-import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
+import {
+  getBestAttemptsCounted,
+  getVoltLookbackStart,
+  VOLT_CONFIG,
+} from "@/components/calculator/volt-calculator/volt.config";
 import type {
   VoltAttemptBreakdown,
   VoltDaySlot,
   VoltScoreResult,
 } from "@/components/calculator/volt-calculator/volt.types";
 
+/** A completed solve. Callers must pass only completed attempts (see `isVoltCountedAttempt`). */
 export type VoltAttemptRecord = {
   id: string;
   startedAt: string;
@@ -27,14 +32,20 @@ export type ComputeVoltInput = {
   now?: Date;
 };
 
+type ScoredAttempt = Pick<
+  VoltAttemptBreakdown,
+  "accuracyPercent" | "timingPercent" | "streakPercent" | "attemptScore"
+> & {
+  attempt: VoltAttemptRecord;
+  attemptIndex: number;
+};
+
 function toCalendarDayKey(iso: string): string {
   return iso.slice(0, 10);
 }
 
-function getLookbackStart(now: Date, lookbackMonths: number): Date {
-  const start = new Date(now);
-  start.setMonth(start.getMonth() - lookbackMonths);
-  return start;
+function roundTo2(value: number): number {
+  return Math.round(value * 100) / 100;
 }
 
 function computeAttemptScore(
@@ -66,10 +77,38 @@ function computeAttemptScore(
     accuracyPercent,
     timingPercent,
     streakPercent,
-    attemptScore: Math.round(attemptScore * 100) / 100,
+    attemptScore: roundTo2(attemptScore),
   };
 }
 
+/**
+ * Day Volt from a day's attempt scores (any order): the best N are weighted by
+ * VOLT_CONFIG.bestAttemptWeights, then scaled to dayMaxVolt. Shared by the server
+ * calculation and the client "before this solve" charge animation.
+ */
+export function computeDayVoltFromScores(scores: number[], dayMaxVolt: number = VOLT_CONFIG.dayMaxVolt): number {
+  const weights = VOLT_CONFIG.bestAttemptWeights;
+  const rawDayScore = [...scores]
+    .sort((a, b) => b - a)
+    .slice(0, weights.length)
+    .reduce((sum, score, index) => sum + roundTo2(score * (weights[index] ?? 0)), 0);
+
+  return Math.round(Math.min(dayMaxVolt, (rawDayScore * dayMaxVolt) / 100));
+}
+
+/** Best score first; ties go to the earlier solve so ranks are stable. */
+function compareByScoreDesc(a: ScoredAttempt, b: ScoredAttempt): number {
+  if (b.attemptScore !== a.attemptScore) {
+    return b.attemptScore - a.attemptScore;
+  }
+  return a.attemptIndex - b.attemptIndex;
+}
+
+// ================================================================================================
+// A day's Volt: every solve is scored, then the best N (by attemptScore) are weighted
+// 50% / 30% / 20% (VOLT_CONFIG.bestAttemptWeights). Remaining solves are kept in the
+// breakdown with weight 0 so the UI can still show them ("Solved 5 times").
+// ================================================================================================
 function computeDayVolt(
   attempts: VoltAttemptRecord[],
   totalMoveCount: number,
@@ -78,28 +117,39 @@ function computeDayVolt(
   dayVolt: number;
   attempts: VoltAttemptBreakdown[];
 } {
-  const weights = VOLT_CONFIG.attemptSlotWeights;
-  const slots = VOLT_CONFIG.attemptsPerDayCounted;
-  const sorted = [...attempts].sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
-  const counted = sorted.slice(0, slots);
+  const weights = VOLT_CONFIG.bestAttemptWeights;
+  const countedLimit = getBestAttemptsCounted();
 
-  const breakdowns: VoltAttemptBreakdown[] = counted.map((attempt, index) => {
-    const scores = computeAttemptScore(attempt, totalMoveCount, rating);
-    const attemptWeight = weights[index] ?? 0;
-    const weightedContribution = scores.attemptScore * attemptWeight;
+  const chronological: ScoredAttempt[] = [...attempts]
+    .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime())
+    .map((attempt, index) => ({
+      attempt,
+      attemptIndex: index + 1,
+      ...computeAttemptScore(attempt, totalMoveCount, rating),
+    }));
+
+  const rankById = new Map(
+    [...chronological].sort(compareByScoreDesc).map((scored, index) => [scored.attempt.id, index + 1]),
+  );
+
+  const breakdowns: VoltAttemptBreakdown[] = chronological.map(({ attempt, attemptIndex, ...scores }) => {
+    const rank = rankById.get(attempt.id) ?? chronological.length;
+    const isCounted = rank <= countedLimit;
+    const attemptWeight = isCounted ? (weights[rank - 1] ?? 0) : 0;
 
     return {
       attemptId: attempt.id,
-      attemptIndex: index + 1,
+      attemptIndex,
+      rank,
+      isCounted,
       startedAt: attempt.startedAt,
       ...scores,
       attemptWeight,
-      weightedContribution: Math.round(weightedContribution * 100) / 100,
+      weightedContribution: roundTo2(scores.attemptScore * attemptWeight),
     };
   });
 
-  const rawDayScore = breakdowns.reduce((sum, row) => sum + row.weightedContribution, 0);
-  const dayVolt = Math.round(Math.min(VOLT_CONFIG.dayMaxVolt, (rawDayScore * VOLT_CONFIG.dayMaxVolt) / 100));
+  const dayVolt = computeDayVoltFromScores(chronological.map((scored) => scored.attemptScore));
 
   return { dayVolt, attempts: breakdowns };
 }
@@ -141,7 +191,7 @@ export function computeVoltScore({
   scoredDayCount = VOLT_CONFIG.scoredDayCount,
   now = new Date(),
 }: ComputeVoltInput): VoltScoreResult {
-  const lookbackStart = getLookbackStart(now, lookbackMonths);
+  const lookbackStart = getVoltLookbackStart(now, lookbackMonths);
   const byDay = groupAttemptsByDay(attempts, lookbackStart);
 
   const playedDayKeys = [...byDay.keys()].sort((a, b) => b.localeCompare(a));
@@ -173,7 +223,7 @@ export function computeVoltScore({
     maxVolt,
     lookbackMonths,
     scoredDayCount,
-    attemptsPerDayCounted: VOLT_CONFIG.attemptsPerDayCounted,
+    bestAttemptsCounted: getBestAttemptsCounted(),
     days,
   };
 }

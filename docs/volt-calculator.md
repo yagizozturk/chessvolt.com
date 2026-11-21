@@ -1,6 +1,6 @@
 # Volt calculator
 
-Aggregates a user’s **historical attempts** on one puzzle or opening variant into a single **Volt** score (e.g. **110/220 Volt**), with a per-day breakdown for detail views.
+Aggregates a user’s **historical attempts** on one puzzle or opening variant into a single **Volt** score (e.g. **620/1000 Volt**), with a per-day breakdown for detail views.
 
 Volt composes the three sub-calculators: **accuracy**, **rating–timing**, and **streak**.
 
@@ -13,41 +13,44 @@ Volt composes the three sub-calculators: **accuracy**, **rating–timing**, and 
 | `compute-volt.ts`            | Core aggregation logic                                      |
 | `build-volt-score.ts`        | Maps `UserSequenceAttempt[]` → score (`calculateVoltScore`) |
 | `get-sequence-move-count.ts` | `getPlayerMoveCount` for scoring denominators               |
-| `volt-calculator.tsx`        | UI: radial chart + hover day breakdown                      |
+| `volt-calculator.tsx`        | UI: battery gauge + hover day breakdown                     |
+| `volt-score-battery.tsx`     | `VoltScoreResult` → battery cells + gauge (`VoltScoreBattery`) |
+| `volt-latest-solve.ts`       | Latest solve lookup + its day's before/after charge          |
 
 ## Scope
 
 - **One move sequence** = one puzzle or one opening variant (`sequenceId`).
 - **Logged-in user** only; guests get `result: null`.
 - Data source: `user_sequence_attempt` rows (`getAttemptsByUserAndSequence`).
+- **Only `status = "completed"` attempts count** (`isVoltCountedAttempt`). `started` / `abandoned` / `failed` rows are ignored.
 
 ## Config (`VOLT_CONFIG`)
 
-| Key                      | Default           | Meaning                                               |
-| ------------------------ | ----------------- | ----------------------------------------------------- |
-| `lookbackMonths`         | `3`               | Only attempts with `startedAt` in this window         |
-| `scoredDayCount`         | `4`               | Always **4 slots** in the sum                         |
-| `dayMaxVolt`             | `55`              | Max points per played day                             |
-| `attemptsPerDayCounted`  | `3`               | 1st–3rd tries per day; **4th+ ignored**               |
-| `attemptSlotWeights`     | `[0.5, 0.3, 0.2]` | Per-try weights within a day (**no renormalization**) |
-| `metricWeights.accuracy` | `0.6`             | Per-attempt composite                                 |
-| `metricWeights.timing`   | `0.3`             | Per-attempt composite                                 |
-| `metricWeights.streak`   | `0.1`             | Per-attempt composite                                 |
+| Key                      | Default           | Meaning                                                  |
+| ------------------------ | ----------------- | -------------------------------------------------------- |
+| `lookbackMonths`         | `3`               | Only attempts with `startedAt` in this window            |
+| `scoredDayCount`         | `5`               | Always **5 slots** in the sum (one battery cell each)    |
+| `dayMaxVolt`             | `200`             | Max points per played day                                |
+| `bestAttemptWeights`     | `[0.5, 0.3, 0.2]` | Weights for the day's **best** solves by score           |
+| `lowFillPercent`         | `30`              | Day fill % at or below this is shown red, above is green |
+| `metricWeights.accuracy` | `0.6`             | Per-attempt composite                                    |
+| `metricWeights.timing`   | `0.3`             | Per-attempt composite                                    |
+| `metricWeights.streak`   | `0.1`             | Per-attempt composite                                    |
 
 **Max Volt:**
 
 ```
-maxVolt = scoredDayCount × dayMaxVolt   // default 4 × 55 = 220
+maxVolt = scoredDayCount × dayMaxVolt   // default 5 × 200 = 1000
 ```
 
-Helpers: `getVoltMaxScore()`, `getVoltLookbackStart(now?)`.
+Helpers: `getVoltMaxScore()`, `getVoltLookbackStart(now?)`, `getBestAttemptsCounted()`, `getFillPercent(value, max)`, `isLowFillPercent(percent)`.
 
 ---
 
 ## High-level pipeline
 
 ```
-1. Filter attempts to last lookbackMonths
+1. Keep completed attempts in the last lookbackMonths
 2. Group by calendar day (UTC date from startedAt ISO string)
 3. Sort play days newest first
 4. Take top scoredDayCount play days
@@ -62,7 +65,7 @@ Helpers: `getVoltMaxScore()`, `getVoltLookbackStart(now?)`.
 
 ## Layer 1 — Attempt score (0–100)
 
-For each counted attempt on a day:
+For every completed attempt on a day:
 
 ```
 accuracyPercent = computeVoltAccuracy({ wrongMoveCount, hintCount, totalMoveCount })
@@ -81,22 +84,21 @@ attemptScore = accuracyPercent × 0.6
 
 ## Layer 2 — Day Volt (0–dayMaxVolt)
 
-Attempts on the same calendar day only. Sorted by `startedAt` ascending (1st try = earliest).
+Attempts on the same calendar day only. The player may solve **any number of times**; every solve is scored, then ranked by `attemptScore` (best first, ties → earlier solve).
 
-| Try that day | Weight | Included    |
-| ------------ | ------ | ----------- |
-| 1st          | 50%    | Yes         |
-| 2nd          | 30%    | Yes         |
-| 3rd          | 20%    | Yes         |
-| 4th+         | —      | **Ignored** |
+| Rank that day | Weight | Included                       |
+| ------------- | ------ | ------------------------------ |
+| Best          | 50%    | Yes                            |
+| 2nd best      | 30%    | Yes                            |
+| 3rd best      | 20%    | Yes                            |
+| 4th+          | 0      | Shown in breakdown, no Volt    |
 
-**No renormalization.** Missing 2nd/3rd tries leave that weight as **0**.
-
-First compute a 0–100 composite, then scale to day points:
+**No renormalization.** Fewer than 3 solves leave the missing weights as **0**.
 
 ```
-rawDayScore = Σ (attemptScoreᵢ × weightᵢ)          // 0–100
+rawDayScore = Σ (attemptScoreᵢ × weightᵢ)          // 0–100, top 3 only
 dayVolt     = round(min(dayMaxVolt, rawDayScore × dayMaxVolt / 100))
+dayFill%    = round(dayVolt / dayMaxVolt × 100)    // battery cell height
 ```
 
 Per-attempt Volt contribution (used in UI):
@@ -105,15 +107,15 @@ Per-attempt Volt contribution (used in UI):
 attemptVoltPoints = round(weightedContribution × dayMaxVolt / 100)
 ```
 
-### Day max examples (all attempt scores = 100, `dayMaxVolt = 55`)
+### Day max examples (all attempt scores = 100, `dayMaxVolt = 200`)
 
-| Tries that day | rawDayScore        | dayVolt |
-| -------------- | ------------------ | ------- |
-| 1              | 100 × 0.50 = 50    | **28**  |
-| 2              | 50 + 30 = 80       | **44**  |
-| 3              | 50 + 30 + 20 = 100 | **55**  |
+| Solves that day | rawDayScore        | dayVolt | Cell   |
+| --------------- | ------------------ | ------- | ------ |
+| 1               | 100 × 0.50 = 50    | **100** | 50%    |
+| 2               | 50 + 30 = 80       | **160** | 80%    |
+| 3+              | 50 + 30 + 20 = 100 | **200** | 100%   |
 
-**Full day credit requires 3 attempts** when weights are `[0.5, 0.3, 0.2]`.
+**Full day credit requires 3 strong solves.** A weak solve never lowers the day: it only counts if it is among the best 3.
 
 ---
 
@@ -130,7 +132,7 @@ volt = Σ days[i].dayVolt
 display: "{volt}/{maxVolt} Volt" (detail) or "{volt}v" (compact list cards)
 ```
 
-Example: 3 strong play days (55 each) + 1 padding slot → **165/220 Volt**.
+Example: 3 full play days (200 each) + 2 padding slots → **600/1000 Volt**.
 
 ---
 
@@ -156,11 +158,11 @@ Used for UI and detail views:
 
 ```ts
 {
-  volt: number;              // e.g. 132
-  maxVolt: number;           // e.g. 220
+  volt: number;              // e.g. 620
+  maxVolt: number;           // e.g. 1000
   lookbackMonths: number;
   scoredDayCount: number;
-  attemptsPerDayCounted: number;
+  bestAttemptsCounted: number; // 3
   days: VoltDaySlot[];       // always length === scoredDayCount
 }
 
@@ -168,16 +170,18 @@ VoltDaySlot = {
   slotIndex: number;         // 1..N, newest play day = 1
   date: string | null;       // YYYY-MM-DD or null if padding
   dayVolt: number;
-  dayMaxVolt: number;        // 55
+  dayMaxVolt: number;        // 200
   isPlayed: boolean;
-  attempts: VoltAttemptBreakdown[];
+  attempts: VoltAttemptBreakdown[]; // every completed solve that day, chronological
 }
 
 VoltAttemptBreakdown = {
   attemptId, attemptIndex, startedAt,
+  rank,                       // 1 = best score that day
+  isCounted,                  // rank <= bestAttemptsCounted
   accuracyPercent, timingPercent, streakPercent,
   attemptScore,
-  attemptWeight,              // 0.5 | 0.3 | 0.2
+  attemptWeight,              // 0.5 | 0.3 | 0.2 | 0
   weightedContribution,       // attemptScore × attemptWeight (0–100 scale)
 }
 ```
@@ -214,10 +218,12 @@ Use the same `calculateVoltScore` with:
 
 ## UI
 
-- **Detail view:** radial chart (`RadialChart`) showing `{volt}/{maxVolt}`; hover opens day breakdown
-- **List cards:** compact `{volt}v` when `showDetails={false}`
-- **Day breakdown:** each slot shows date, `dayVolt/dayMaxVolt`, per-try metrics and `+attemptVoltPoints`
-- Padding slots: “No attempts for this slot”
+- **Battery gauge** (`VoltScoreBattery` → `VoltBatteryGauge` in `components/volt-battery/volt-battery.tsx`): Zap + `%{total}` above a horizontal battery with one cell per scored day. Cells run oldest played day → newest, then empty slots; each fills bottom-up to `dayFill%` with an animation.
+- Cell colors: full = light green, partial above `lowFillPercent` = green, at or below = red.
+- **Cards:** gauge in the card corner; hover opens the day breakdown.
+- **Solve success dialog:** headline "You Won X" = the latest solve's own share (`weightedContribution × dayMaxVolt / 100`). The gauge (`chargeLatestSolve`) starts from the state before that solve and charges that day's cell to its new level, with a "Today {dayVolt} / {dayMaxVolt} Volt" counter and `{volt} / {maxVolt} Volt total` (`getLatestSolveCharge` in `volt-latest-solve.ts`). The headline and the day increase can differ: a new best solve pushes older solves down to lower weights.
+- **Day breakdown:** each slot shows date, "Solved N times", a mini battery and `%{dayFill} Full` (red ≤ 30%, green above); tooltip shows `dayVolt / dayMaxVolt Volt`.
+- **List cards:** compact `{volt}v` when `showDetails={false}`.
 
 ---
 
@@ -226,8 +232,9 @@ Use the same `calculateVoltScore` with:
 | Goal                            | Change                                             |
 | ------------------------------- | -------------------------------------------------- |
 | Higher max Volt                 | Raise `scoredDayCount` and/or `dayMaxVolt`         |
+| Red / green threshold           | `lowFillPercent`                                   |
 | Longer history                  | `lookbackMonths`                                   |
-| Easier full day                 | Adjust `attemptSlotWeights` or require fewer tries |
+| Easier full day                 | Adjust `bestAttemptWeights` (fewer / larger weights) |
 | Stricter per-try mix            | `metricWeights` in `volt.config.ts`                |
 | Accuracy/timing/streak behavior | Edit respective sub-calculator configs             |
 
