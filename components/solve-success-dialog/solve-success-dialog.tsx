@@ -112,13 +112,13 @@ export function SolveSuccessDialog({
 }: SolveSuccessDialogProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
-  const [lastAttemptVolts, setLastAttemptVolts] = useState<number | null>(null);
+  const [lastAttemptCharge, setLastAttemptCharge] = useState<number | null>(null);
   const hasContinueButton = (destinationPath != null || onContinue != null) && buttonLabel != null;
   const hasVoltScore = isVoltScoreShowing || isValidVoltScore(voltScore);
 
   useEffect(() => {
     if (!open || isVoltScoreShowing || !isValidVoltScore(voltScore)) {
-      setLastAttemptVolts(null);
+      setLastAttemptCharge(null);
     }
   }, [open, isVoltScoreShowing, voltScore]);
 
@@ -145,9 +145,9 @@ export function SolveSuccessDialog({
         {/* Dialog Header */}
         <DialogHeader className="mt-[-30px] items-center text-center">
           <DialogTitle className="text-2xl font-bold">
-            {lastAttemptVolts != null ? (
+            {lastAttemptCharge != null ? (
               <span className="inline-flex items-center gap-1.5">
-                Wow, You Won <span className="text-primary">{lastAttemptVolts}</span>
+                Wow, You Charged <span className="text-primary tabular-nums">+%{lastAttemptCharge}</span>
                 <Zap className="fill-primary text-primary size-6 shrink-0" aria-label="Volt" />
               </span>
             ) : (
@@ -169,7 +169,7 @@ export function SolveSuccessDialog({
               </div>
             ) : isValidVoltScore(voltScore) ? (
               <>
-                <LastAttemptVoltPoints result={voltScore} stats={stats} onTotalVoltsChange={setLastAttemptVolts} />
+                <LastAttemptVoltPoints result={voltScore} stats={stats} onChargeGainChange={setLastAttemptCharge} />
                 <div className="flex flex-col gap-4">
                   <div className="card-border-bottom-shadow relative flex flex-col items-center justify-center gap-2 px-4 py-3">
                     <p className="text-muted-foreground text-center text-sm font-medium">Total Volt Score</p>

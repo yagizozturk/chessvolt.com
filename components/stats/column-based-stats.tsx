@@ -10,6 +10,7 @@ type ColumnBasedStatsProps = {
   icon: LucideIcon;
   label: string;
   value: string;
+  /** Battery charge % this metric added (rendered as +%{points}). */
   points?: number | null;
   backgroundClassName?: string;
   className?: string;
@@ -53,11 +54,11 @@ export function ColumnBasedStats({
               <TooltipTrigger asChild>
                 <div className="text-primary flex min-w-0 flex-1 cursor-default flex-col items-center text-lg font-bold tabular-nums">
                   <Zap className="size-5 shrink-0 fill-current" aria-hidden />
-                  <span>+{points}</span>
+                  <span>+%{points}</span>
                 </div>
               </TooltipTrigger>
               <TooltipContent side="top" sideOffset={4}>
-                Volt points for {label.toLowerCase()}
+                Battery charge from {label.toLowerCase()}
               </TooltipContent>
             </Tooltip>
           </>

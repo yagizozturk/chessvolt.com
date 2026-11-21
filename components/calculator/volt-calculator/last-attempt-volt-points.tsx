@@ -4,7 +4,7 @@ import { Clock, Flame, Target } from "lucide-react";
 import { useEffect } from "react";
 
 import { findLatestVoltAttempt } from "@/components/calculator/volt-calculator/volt-latest-solve";
-import { VOLT_CONFIG } from "@/components/calculator/volt-calculator/volt.config";
+import { VOLT_CONFIG, getChargeGainPercent } from "@/components/calculator/volt-calculator/volt.config";
 import type { VoltAttemptBreakdown, VoltScoreResult } from "@/components/calculator/volt-calculator/volt.types";
 import { ColumnBasedStats } from "@/components/stats/column-based-stats";
 import { NumberTickerStats } from "@/components/stats/number-ticker-stats";
@@ -16,26 +16,36 @@ type LastAttemptVoltPointsProps = {
   result: VoltScoreResult | null;
   stats?: MoveSequenceCompleteDialogStats | null;
   className?: string;
-  onTotalVoltsChange?: (totalVolts: number | null) => void;
+  /** Battery charge % the latest solve added (its own share), or null when there is none. */
+  onChargeGainChange?: (chargePercent: number | null) => void;
 };
 
-type MetricVoltPoints = {
+/** Battery charge % per metric — the player only ever sees percentages, never Volt amounts. */
+type MetricChargePercents = {
   accuracy: number;
   timing: number;
   streak: number;
   total: number;
 };
 
-/** Same scale as day-breakdown attempt volt: weightedContribution × dayMaxVolt / 100. */
-function getMetricVoltPoints(attempt: VoltAttemptBreakdown, dayMaxVolt: number): MetricVoltPoints {
+/**
+ * The solve's own Volt share (weightedContribution × dayMaxVolt / 100), split by metric,
+ * expressed as a % of the whole battery (maxVolt).
+ */
+function getMetricChargePercents(
+  attempt: VoltAttemptBreakdown,
+  dayMaxVolt: number,
+  maxVolt: number,
+): MetricChargePercents {
   const { accuracy, timing, streak } = VOLT_CONFIG.metricWeights;
-  const toVolt = (metricShare: number) => Math.round((metricShare * attempt.attemptWeight * dayMaxVolt) / 100);
+  const toCharge = (metricShare: number) =>
+    getChargeGainPercent((metricShare * attempt.attemptWeight * dayMaxVolt) / 100, maxVolt);
 
   return {
-    accuracy: toVolt(attempt.accuracyPercent * accuracy),
-    timing: toVolt(attempt.timingPercent * timing),
-    streak: toVolt(attempt.streakPercent * streak),
-    total: Math.round((attempt.weightedContribution * dayMaxVolt) / 100),
+    accuracy: toCharge(attempt.accuracyPercent * accuracy),
+    timing: toCharge(attempt.timingPercent * timing),
+    streak: toCharge(attempt.streakPercent * streak),
+    total: getChargeGainPercent((attempt.weightedContribution * dayMaxVolt) / 100, maxVolt),
   };
 }
 
@@ -43,14 +53,15 @@ export function LastAttemptVoltPoints({
   result,
   stats = null,
   className,
-  onTotalVoltsChange,
+  onChargeGainChange,
 }: LastAttemptVoltPointsProps) {
   const latest = result ? findLatestVoltAttempt(result) : null;
-  const points = latest ? getMetricVoltPoints(latest.attempt, latest.day.dayMaxVolt) : null;
+  const points =
+    result && latest ? getMetricChargePercents(latest.attempt, latest.day.dayMaxVolt, result.maxVolt) : null;
 
   useEffect(() => {
-    onTotalVoltsChange?.(points?.total ?? null);
-  }, [onTotalVoltsChange, points?.total]);
+    onChargeGainChange?.(points?.total ?? null);
+  }, [onChargeGainChange, points?.total]);
 
   if (!result || !latest || !points) {
     return null;

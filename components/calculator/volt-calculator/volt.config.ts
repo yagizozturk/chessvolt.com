@@ -42,6 +42,18 @@ export function getFillPercent(value: number, max: number): number {
   return Math.round(Math.min(100, Math.max(0, (value / max) * 100)));
 }
 
+/**
+ * How much of the battery (`max`) a Volt gain charges, as a percentage with one decimal,
+ * so small gains (e.g. a streak share) show as %0.4 instead of rounding to %0.
+ */
+export function getChargeGainPercent(value: number, max: number): number {
+  if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) {
+    return 0;
+  }
+
+  return Math.round((Math.max(0, value) / max) * 1000) / 10;
+}
+
 export function isLowFillPercent(percent: number): boolean {
   return percent <= VOLT_CONFIG.lowFillPercent;
 }

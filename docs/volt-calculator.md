@@ -101,7 +101,7 @@ dayVolt     = round(min(dayMaxVolt, rawDayScore × dayMaxVolt / 100))
 dayFill%    = round(dayVolt / dayMaxVolt × 100)    // battery cell height
 ```
 
-Per-attempt Volt contribution (used in UI):
+Per-attempt Volt contribution (internal; the UI converts it to a battery %):
 
 ```
 attemptVoltPoints = round(weightedContribution × dayMaxVolt / 100)
@@ -223,7 +223,7 @@ Use the same `calculateVoltScore` with:
 - **Battery gauge** (`VoltScoreBattery` → `VoltBatteryGauge` in `components/volt-battery/volt-battery.tsx`): Zap + `%{total}` above a horizontal battery with one cell per scored day. Cells run oldest played day → newest, then empty slots; each fills bottom-up to `dayFill%` with an animation.
 - Cell colors: full = light green, partial above `lowFillPercent` = green, at or below = red.
 - **Cards:** gauge in the card corner; hover opens the day breakdown with the total `%{total} Full` (red ≤ 30%, green above).
-- **Solve success dialog:** headline "You Won X" = the latest solve's own share (`weightedContribution × dayMaxVolt / 100`). The gauge (`chargeLatestSolve`) starts from the state before that solve and charges that day's cell to its new level, with a "Today %{dayFill} Full" counter (`getLatestSolveCharge` in `volt-latest-solve.ts`).
+- **Solve success dialog:** headline "You Charged +%X" = the latest solve's own share (`weightedContribution × dayMaxVolt / 100`) as a % of the whole battery (`getChargeGainPercent(share, maxVolt)`, one decimal so small gains don't round to %0). The Accuracy / Max streak / Time tiles show that share split by metric as `+%{charge}`. The gauge (`chargeLatestSolve`) starts from the state before that solve and charges that day's cell to its new level, with a "Today %{dayFill} Full" counter (`getLatestSolveCharge` in `volt-latest-solve.ts`).
 - **Day breakdown:** each slot shows date, "Solved N times", a mini battery and `%{dayFill} Full` (red ≤ 30%, green above).
 - **List cards:** compact `%{total}` when `showDetails={false}`.
 - **Landing demo** (`features/landing/components/what-is-volt.tsx`): the lightning charges by one full day (`dayMaxVolt`) per "Correct Repetition" click, out of `getVoltMaxScore()`; the counter shows `%{charge}`.
