@@ -1,22 +1,27 @@
 import { Chess } from "chess.js";
 
-import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
-import { getMovesFromPgn } from "@/lib/chess/getMovesFromPgn";
+import { getCriticalMoments, type ScoredPosition } from "@/features/game-analysis/utilities/get-critical-moments";
+import { getMovesFromPgn, type NormalizedPgnMove } from "@/lib/chess/getMovesFromPgn";
+import { getPlayerRatingsFromPgn } from "@/lib/chess/getPlayerRatingsFromPgn";
 import { analyzeTerminalFen, getTurnFromFen, mateToWhiteCp, toSideToMoveCp } from "@/lib/chess-api/normalize";
 import { parseEngine } from "@/lib/engine/parse-engine";
 import type { EngineInfo } from "@/lib/shared/types/engine-info";
-import { getMoveQuality } from "@/lib/utils/getMoveQuality";
+import { getWinPercent } from "@/lib/utils/getMoveQuality";
 
-const DEPTH = 12;
+// Stockfish 19 NNUE (lite, single-threaded): runs without cross-origin isolation headers.
+const ENGINE_URL = "/stockfish/stockfish-19-lite-single.js";
+const HASH_MB = 64;
 const POSITION_TIMEOUT_MS = 20_000;
 
-type PositionScore = {
-  whiteCp: number;
-  mate: number | null;
-  bestUci: string | null;
-  bestSan: string | null;
-};
+type SearchLimit = { depth: number; movetimeMs: number };
+
+const SCAN: SearchLimit = { depth: 14, movetimeMs: 3_000 };
+const VERIFY: SearchLimit = { depth: 20, movetimeMs: 8_000 };
+/** Win-percent drop (inaccuracy line) that sends both ends of a move to the deep search. */
+const VERIFY_DROP = 5;
+/** Progress weight of one deep search relative to one scan search. */
+const VERIFY_COST = 6;
 
 export type AnalyzePgnWithStockfishOptions = {
   signal?: AbortSignal;
@@ -33,7 +38,7 @@ function createStockfish(signal: AbortSignal | undefined): Promise<Worker> {
   throwIfAborted(signal);
 
   return new Promise((resolve, reject) => {
-    const worker = new Worker("/stockfish.js");
+    const worker = new Worker(ENGINE_URL);
 
     const fail = (error: Error) => {
       cleanup();
@@ -42,7 +47,7 @@ function createStockfish(signal: AbortSignal | undefined): Promise<Worker> {
     };
 
     const onAbort = () => fail(new DOMException("Analysis aborted", "AbortError"));
-    const timeoutId = window.setTimeout(() => fail(new Error("Stockfish failed to start")), 8_000);
+    const timeoutId = window.setTimeout(() => fail(new Error("Stockfish failed to start")), 15_000);
 
     const onMessage = (event: MessageEvent) => {
       if (String(event.data) !== "readyok") return;
@@ -62,6 +67,7 @@ function createStockfish(signal: AbortSignal | undefined): Promise<Worker> {
     worker.onerror = () => fail(new Error("Stockfish failed to start"));
     worker.addEventListener("message", onMessage);
     worker.postMessage("uci");
+    worker.postMessage(`setoption name Hash value ${HASH_MB}`);
     worker.postMessage("isready");
   });
 }
@@ -83,7 +89,7 @@ function sanFromUci(fen: string, uci: string | null): string | null {
   }
 }
 
-function whiteScoreFromEngine(info: EngineInfo, turn: "w" | "b"): Pick<PositionScore, "whiteCp" | "mate"> | null {
+function whiteScoreFromEngine(info: EngineInfo, turn: "w" | "b"): Pick<ScoredPosition, "whiteCp" | "mate"> | null {
   if (info.mateIn != null) {
     const mate = turn === "w" ? info.mateIn : -info.mateIn;
     return { whiteCp: mateToWhiteCp(mate), mate };
@@ -96,10 +102,15 @@ function whiteScoreFromEngine(info: EngineInfo, turn: "w" | "b"): Pick<PositionS
   return null;
 }
 
-function analyzeFen(worker: Worker, fen: string, signal: AbortSignal | undefined): Promise<PositionScore> {
+function analyzeFen(
+  worker: Worker,
+  fen: string,
+  limit: SearchLimit,
+  signal: AbortSignal | undefined,
+): Promise<ScoredPosition> {
   throwIfAborted(signal);
 
-  const terminal = analyzeTerminalFen(fen, DEPTH);
+  const terminal = analyzeTerminalFen(fen, limit.depth);
   if (terminal) {
     return Promise.resolve({
       whiteCp: terminal.whiteCp,
@@ -170,66 +181,24 @@ function analyzeFen(worker: Worker, fen: string, signal: AbortSignal | undefined
     };
 
     worker.postMessage(`position fen ${fen}`);
-    worker.postMessage(`go depth ${DEPTH}`);
+    worker.postMessage(`go depth ${limit.depth} movetime ${limit.movetimeMs}`);
   });
 }
 
-/**
- * A missed mate is a blunder even when the centipawn swing stays above the blunder line.
- * Mate signs are white-perspective, matching chess-api.
- */
-function adjustDeltaForMateMiss(
-  beforeMate: number | null,
-  afterMate: number | null,
-  turn: "w" | "b",
-  deltaCp: number,
-): number {
-  if (beforeMate == null) return deltaCp;
-
-  const mateForSide = turn === "w" ? beforeMate > 0 : beforeMate < 0;
-  if (!mateForSide) return deltaCp;
-
-  const stillMating = afterMate != null && (turn === "w" ? afterMate > 0 : afterMate < 0);
-  if (!stillMating && deltaCp > -300) return -400;
-
-  return deltaCp;
-}
-
-function criticalMomentsFromScores(
-  moves: NonNullable<ReturnType<typeof getMovesFromPgn>>,
-  scores: PositionScore[],
-): CriticalMoment[] {
-  const moments: CriticalMoment[] = [];
+/** Positions on either side of a move that lost enough to matter, not yet searched deeply. Latest first. */
+function getUnverifiedSuspects(moves: NormalizedPgnMove[], scores: ScoredPosition[], verified: Set<number>): number[] {
+  const suspects = new Set<number>();
 
   for (let i = 0; i < moves.length; i++) {
-    const move = moves[i];
-    const before = scores[i];
-    const after = scores[i + 1];
-    const beforeCp = toSideToMoveCp(before.whiteCp, move.turn);
-    const afterCp = toSideToMoveCp(after.whiteCp, move.turn);
-    const deltaCp = adjustDeltaForMateMiss(before.mate, after.mate, move.turn, afterCp - beforeCp);
-    const quality = getMoveQuality(deltaCp);
-
-    if (quality !== "mistake" && quality !== "blunder") continue;
-    if (before.bestUci && before.bestUci === move.playedUci) continue;
-
-    moments.push({
-      ply: move.ply,
-      fen: move.fenBefore,
-      playedUci: move.playedUci,
-      playedSan: move.playedSan,
-      bestUci: before.bestUci ?? "",
-      bestSan: before.bestSan ?? before.bestUci ?? "",
-      beforeCp,
-      afterCp,
-      deltaCp,
-      quality,
-      mate: before.mate,
-      turn: move.turn,
-    });
+    const turn = moves[i].turn;
+    const winBefore = getWinPercent(toSideToMoveCp(scores[i].whiteCp, turn));
+    const winAfter = getWinPercent(toSideToMoveCp(scores[i + 1].whiteCp, turn));
+    if (winBefore - winAfter < VERIFY_DROP) continue;
+    if (!verified.has(i)) suspects.add(i);
+    if (!verified.has(i + 1)) suspects.add(i + 1);
   }
 
-  return moments;
+  return [...suspects].sort((a, b) => b - a);
 }
 
 export async function analyzePgnWithStockfish(
@@ -242,23 +211,47 @@ export async function analyzePgnWithStockfish(
   }
 
   const fens = [moves[0].fenBefore, ...moves.map((move) => move.fenAfter)];
+  const scores: ScoredPosition[] = new Array(fens.length);
+  const verified = new Set<number>();
+
+  // Deep-search count is unknown until the scan ends; assume about a third of the positions.
+  let completed = 0;
+  let total = fens.length + Math.ceil(fens.length / 3) * VERIFY_COST;
+  const reportProgress = () => options.onProgress?.(Math.min(completed, total), total);
+
   const worker = await createStockfish(options.signal);
-  const scores: PositionScore[] = [];
 
   try {
-    for (let i = 0; i < fens.length; i++) {
-      options.onProgress?.(i, fens.length);
-      scores.push(await analyzeFen(worker, fens[i], options.signal));
+    // Backward, so each search reuses the hash of the position after it and sees the game's refutations sooner.
+    for (let i = fens.length - 1; i >= 0; i--) {
+      reportProgress();
+      scores[i] = await analyzeFen(worker, fens[i], SCAN, options.signal);
+      completed += 1;
     }
 
-    options.onProgress?.(fens.length, fens.length);
+    // A deeper eval can turn a neighbouring move into a suspect, so repeat until nothing new shows up.
+    for (
+      let pending = getUnverifiedSuspects(moves, scores, verified);
+      pending.length > 0;
+      pending = getUnverifiedSuspects(moves, scores, verified)
+    ) {
+      total = completed + pending.length * VERIFY_COST;
+      for (const i of pending) {
+        reportProgress();
+        scores[i] = await analyzeFen(worker, fens[i], VERIFY, options.signal);
+        verified.add(i);
+        completed += VERIFY_COST;
+      }
+    }
+
+    options.onProgress?.(total, total);
   } finally {
     worker.terminate();
   }
 
   return {
     moveCount: moves.length,
-    depth: DEPTH,
-    criticalMoments: criticalMomentsFromScores(moves, scores),
+    depth: VERIFY.depth,
+    criticalMoments: getCriticalMoments(moves, scores, getPlayerRatingsFromPgn(pgn)),
   };
 }

@@ -15,7 +15,7 @@ function isCriticalMoment(value: unknown): value is CriticalMoment {
     typeof moment.beforeCp === "number" &&
     typeof moment.afterCp === "number" &&
     typeof moment.deltaCp === "number" &&
-    (moment.quality === "mistake" || moment.quality === "blunder") &&
+    (moment.quality === "mistake" || moment.quality === "miss" || moment.quality === "blunder") &&
     (moment.mate === null || typeof moment.mate === "number") &&
     (moment.turn === "w" || moment.turn === "b")
   );
@@ -26,7 +26,7 @@ export function parseAnalysis(value: unknown, moveCount: number): GameAnalysisRe
 
   const analysis = value as GameAnalysisResponseData;
   if (analysis.moveCount !== moveCount) return null;
-  if (typeof analysis.depth !== "number" || analysis.depth < 1 || analysis.depth > 18) return null;
+  if (typeof analysis.depth !== "number" || analysis.depth < 1 || analysis.depth > 30) return null;
   if (!Array.isArray(analysis.criticalMoments) || analysis.criticalMoments.length > moveCount) return null;
   if (!analysis.criticalMoments.every(isCriticalMoment)) return null;
 

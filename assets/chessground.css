@@ -245,34 +245,38 @@ cg-board piece.fading {
  */
 cg-board > square.custom-correct-move,
 cg-board > square.custom-wrong-move,
+cg-board > square.custom-brilliant-move,
+cg-board > square.custom-excellent-move,
+cg-board > square.custom-great-move,
+cg-board > square.custom-best-move,
+cg-board > square.custom-book-move,
 cg-board > square.custom-good-move,
 cg-board > square.custom-inaccuracy-move,
 cg-board > square.custom-mistake-move,
+cg-board > square.custom-miss-move,
 cg-board > square.custom-blunder-move,
-cg-board > square.custom-king-move,
-cg-board > square.custom-bishop-move,
-cg-board > square.custom-knight-move,
-cg-board > square.custom-pawn-move,
 cg-board > square.custom-bg-move {
   z-index: 11;
 }
 
 cg-board > square.custom-correct-move::after,
 cg-board > square.custom-wrong-move::after,
+cg-board > square.custom-brilliant-move::after,
+cg-board > square.custom-excellent-move::after,
+cg-board > square.custom-great-move::after,
+cg-board > square.custom-best-move::after,
+cg-board > square.custom-book-move::after,
 cg-board > square.custom-good-move::after,
 cg-board > square.custom-inaccuracy-move::after,
 cg-board > square.custom-mistake-move::after,
-cg-board > square.custom-blunder-move::after,
-cg-board > square.custom-king-move::after,
-cg-board > square.custom-bishop-move::after,
-cg-board > square.custom-knight-move::after,
-cg-board > square.custom-pawn-move::after {
+cg-board > square.custom-miss-move::after,
+cg-board > square.custom-blunder-move::after {
   content: "";
   position: absolute;
-  top: -25px;
-  right: -25px;
-  width: 60px; /* ikon boyutu */
-  height: 60px;
+  top: -20px;
+  right: -20px;
+  width: 45px; /* ikon boyutu */
+  height: 45px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -280,62 +284,152 @@ cg-board > square.custom-pawn-move::after {
 }
 
 cg-board > square.custom-correct-move::after {
-  background-image: url("/images/animations/animation-success-150px.gif") !important;
+  background-image: url("/images/tag/icon-good.png") !important;
 }
 
 cg-board > square.custom-wrong-move::after {
-  background-image: url("/images/animations/animation-fail-150px-120px.gif") !important;
+  background-image: url("/images/tag/icon-miss.png") !important;
 }
 
-cg-board > square.custom-bishop-move::after {
-  background-image: url("/images/icons/icon-bishop.png") !important;
+cg-board > square.custom-brilliant-move::after {
+  background-image: url("/images/tag/icon-brilliant.png") !important;
 }
 
-cg-board > square.custom-king-move::after {
-  background-image: url("/images/icons/icon-king.png") !important;
+cg-board > square.custom-excellent-move::after {
+  background-image: url("/images/tag/icon-excellent.png") !important;
 }
 
-cg-board > square.custom-knight-move::after {
-  background-image: url("/images/icons/icon-knight.png") !important;
+cg-board > square.custom-great-move::after {
+  background-image: url("/images/tag/icon-great.png") !important;
 }
 
-cg-board > square.custom-pawn-move::after {
-  background-image: url("/images/icons/icon-pawn.png") !important;
+cg-board > square.custom-best-move::after {
+  background-image: url("/images/tag/icon-best.png") !important;
+}
+
+cg-board > square.custom-book-move::after {
+  background-image: url("/images/tag/icon-book-move.png") !important;
 }
 
 cg-board > square.custom-good-move::after {
-  background-image: url("/images/icons/icon-checkmark.png") !important;
+  background-image: url("/images/tag/icon-good.png") !important;
 }
 
 cg-board > square.custom-inaccuracy-move::after {
-  background-image: url("/images/icons/icon-warning.png") !important;
+  background-image: url("/images/tag/icon-inaccuracy.png") !important;
 }
 
 cg-board > square.custom-mistake-move::after {
-  background-image: url("/images/icons/icon-warning.png") !important;
+  background-image: url("/images/tag/icon-mistake.png") !important;
+}
+
+cg-board > square.custom-miss-move::after {
+  background-image: url("/images/tag/icon-miss.png") !important;
 }
 
 cg-board > square.custom-blunder-move::after {
-  background-image: url("/images/icons/icon-blunder-double.png") !important;
+  background-image: url("/images/tag/icon-blunder.png") !important;
 }
 
 /*
- * Blunder intro: the square fills red, a "Blunder" label pops in the middle,
+ * Feedback intro: the square fills with the feedback color, a label pops in the middle,
  * then the label shrinks into the top-right corner where the icon takes over.
  * The square sits above pieces (z-index 11), so the fill stays translucent.
  */
-cg-board > square.custom-blunder-move {
-  animation: blunder-square-fill 1.8s ease-out forwards;
+cg-board > square.custom-correct-move {
+  --feedback-rgb: 22 163 74;
+  --feedback-label: "Correct";
 }
 
+cg-board > square.custom-wrong-move {
+  --feedback-rgb: 220 38 38;
+  --feedback-label: "Wrong";
+}
+
+cg-board > square.custom-brilliant-move {
+  --feedback-rgb: 20 184 166;
+  --feedback-label: "Brilliant";
+}
+
+cg-board > square.custom-excellent-move {
+  --feedback-rgb: 16 185 129;
+  --feedback-label: "Excellent";
+}
+
+cg-board > square.custom-great-move {
+  --feedback-rgb: 59 130 246;
+  --feedback-label: "Great";
+}
+
+cg-board > square.custom-best-move {
+  --feedback-rgb: 22 163 74;
+  --feedback-label: "Best";
+}
+
+cg-board > square.custom-book-move {
+  --feedback-rgb: 180 83 9;
+  --feedback-label: "Book";
+}
+
+cg-board > square.custom-good-move {
+  --feedback-rgb: 34 197 94;
+  --feedback-label: "Good";
+}
+
+cg-board > square.custom-inaccuracy-move {
+  --feedback-rgb: 234 179 8;
+  --feedback-label: "Inaccuracy";
+}
+
+cg-board > square.custom-mistake-move {
+  --feedback-rgb: 249 115 22;
+  --feedback-label: "Mistake";
+}
+
+cg-board > square.custom-miss-move {
+  --feedback-rgb: 244 63 94;
+  --feedback-label: "Miss";
+}
+
+cg-board > square.custom-blunder-move {
+  --feedback-rgb: 220 38 38;
+  --feedback-label: "Blunder";
+}
+
+cg-board > square.custom-correct-move,
+cg-board > square.custom-wrong-move,
+cg-board > square.custom-brilliant-move,
+cg-board > square.custom-excellent-move,
+cg-board > square.custom-great-move,
+cg-board > square.custom-best-move,
+cg-board > square.custom-book-move,
+cg-board > square.custom-good-move,
+cg-board > square.custom-inaccuracy-move,
+cg-board > square.custom-mistake-move,
+cg-board > square.custom-miss-move,
+cg-board > square.custom-blunder-move {
+  animation: feedback-square-fill 1.8s ease-out forwards;
+}
+
+cg-board > square.custom-correct-move::before,
+cg-board > square.custom-wrong-move::before,
+cg-board > square.custom-brilliant-move::before,
+cg-board > square.custom-excellent-move::before,
+cg-board > square.custom-great-move::before,
+cg-board > square.custom-best-move::before,
+cg-board > square.custom-book-move::before,
+cg-board > square.custom-good-move::before,
+cg-board > square.custom-inaccuracy-move::before,
+cg-board > square.custom-mistake-move::before,
+cg-board > square.custom-miss-move::before,
 cg-board > square.custom-blunder-move::before {
-  content: "Blunder";
+  content: var(--feedback-label);
   position: absolute;
   top: 50%;
   left: 50%;
   padding: 2px 10px;
   border-radius: 9999px;
-  background: #dc2626;
+  background: rgb(var(--feedback-rgb));
   color: #ffffff;
   font-size: 14px;
   font-weight: 800;
@@ -345,29 +439,40 @@ cg-board > square.custom-blunder-move::before {
   pointer-events: none;
   opacity: 0;
   transform: translate(-50%, -50%) scale(0.4);
-  animation: blunder-label 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: feedback-label 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
+cg-board > square.custom-correct-move::after,
+cg-board > square.custom-wrong-move::after,
+cg-board > square.custom-brilliant-move::after,
+cg-board > square.custom-excellent-move::after,
+cg-board > square.custom-great-move::after,
+cg-board > square.custom-best-move::after,
+cg-board > square.custom-book-move::after,
+cg-board > square.custom-good-move::after,
+cg-board > square.custom-inaccuracy-move::after,
+cg-board > square.custom-mistake-move::after,
+cg-board > square.custom-miss-move::after,
 cg-board > square.custom-blunder-move::after {
   opacity: 0;
   transform: scale(0);
-  animation: blunder-icon 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation: feedback-icon 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-@keyframes blunder-square-fill {
+@keyframes feedback-square-fill {
   0% {
-    background-color: rgba(220, 38, 38, 0);
+    background-color: rgb(var(--feedback-rgb) / 0);
   }
   15%,
   65% {
-    background-color: rgba(220, 38, 38, 0.6);
+    background-color: rgb(var(--feedback-rgb) / 0.6);
   }
   100% {
-    background-color: rgba(220, 38, 38, 0.35);
+    background-color: rgb(var(--feedback-rgb) / 0.35);
   }
 }
 
-@keyframes blunder-label {
+@keyframes feedback-label {
   0%,
   15% {
     top: 50%;
@@ -395,7 +500,7 @@ cg-board > square.custom-blunder-move::after {
   }
 }
 
-@keyframes blunder-icon {
+@keyframes feedback-icon {
   0%,
   65% {
     opacity: 0;
@@ -412,32 +517,51 @@ cg-board > square.custom-blunder-move::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  cg-board > square.custom-correct-move,
+  cg-board > square.custom-wrong-move,
+  cg-board > square.custom-brilliant-move,
+  cg-board > square.custom-excellent-move,
+  cg-board > square.custom-great-move,
+  cg-board > square.custom-best-move,
+  cg-board > square.custom-book-move,
+  cg-board > square.custom-good-move,
+  cg-board > square.custom-inaccuracy-move,
+  cg-board > square.custom-mistake-move,
+  cg-board > square.custom-miss-move,
   cg-board > square.custom-blunder-move {
     animation: none;
-    background-color: rgba(220, 38, 38, 0.35);
+    background-color: rgb(var(--feedback-rgb) / 0.35);
   }
 
+  cg-board > square.custom-correct-move::before,
+  cg-board > square.custom-wrong-move::before,
+  cg-board > square.custom-brilliant-move::before,
+  cg-board > square.custom-excellent-move::before,
+  cg-board > square.custom-great-move::before,
+  cg-board > square.custom-best-move::before,
+  cg-board > square.custom-book-move::before,
+  cg-board > square.custom-good-move::before,
+  cg-board > square.custom-inaccuracy-move::before,
+  cg-board > square.custom-mistake-move::before,
+  cg-board > square.custom-miss-move::before,
   cg-board > square.custom-blunder-move::before {
     display: none;
   }
 
+  cg-board > square.custom-correct-move::after,
+  cg-board > square.custom-wrong-move::after,
+  cg-board > square.custom-brilliant-move::after,
+  cg-board > square.custom-excellent-move::after,
+  cg-board > square.custom-great-move::after,
+  cg-board > square.custom-best-move::after,
+  cg-board > square.custom-book-move::after,
+  cg-board > square.custom-good-move::after,
+  cg-board > square.custom-inaccuracy-move::after,
+  cg-board > square.custom-mistake-move::after,
+  cg-board > square.custom-miss-move::after,
   cg-board > square.custom-blunder-move::after {
     animation: none;
     opacity: 1;
     transform: none;
   }
-}
-
-cg-board > square.custom-bg-move::after {
-  content: "";
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 66px; /* ikon boyutu */
-  height: 66px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  pointer-events: none;
-  background-image: url("/images/icons/icon-target.png") !important;
 }

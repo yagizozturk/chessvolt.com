@@ -2,7 +2,7 @@
 
 import type { DrawShape } from "@lichess-org/chessground/draw";
 import type { Key } from "@lichess-org/chessground/types";
-import { type Ref, forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from "react";
+import { type Ref, forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 
 import "@/assets/chessground.css";
 import "@/assets/theme/theme.css";
@@ -109,12 +109,15 @@ function VoltBoard(
       ...(visual.brush ? { brush: visual.brush } : {}),
     }));
   }, [activeGoalVisuals, mode]);
+  // İlk doğru hamleden sonra oynanan hatalı hamle oku gizlenir. sourceId değişince ok tekrar görünür.
+  const [playedMoveClearedSourceId, setPlayedMoveClearedSourceId] = useState<string | null>(null);
   const playedMoveShapes = useMemo<DrawShape[]>(() => {
+    if (playedMoveClearedSourceId === sourceId) return [];
     const parsedUci = playedMoveArrow ? parseUci(playedMoveArrow) : null;
     if (!parsedUci) return [];
 
     return [{ orig: parsedUci.from as Key, dest: parsedUci.to as Key, brush: "red" }];
-  }, [playedMoveArrow]);
+  }, [playedMoveArrow, playedMoveClearedSourceId, sourceId]);
   const baseAutoShapes = useMemo<DrawShape[]>(() => {
     return [...activeGoalShapes, ...playedMoveShapes];
   }, [activeGoalShapes, playedMoveShapes]);
@@ -239,6 +242,10 @@ function VoltBoard(
     // Bu satır parent callback'inden önce olmalıdır.
     // Çünkü callback goal'u ilerletir ve yeni activeGoalShapes hemen VoltBoard'a gelebilir.
     isOpponentMovePendingRefLock.current = true;
+    if (playedMoveArrow) {
+      ground.current?.setAutoShapes(activeGoalShapes);
+      setPlayedMoveClearedSourceId(sourceId);
+    }
 
     onSuccessMovePlayed({ ...move, uci }); // Parent doğru hamleyi kaydeder ve sıradaki goal'u aktif eder.
     playCorrectSound();

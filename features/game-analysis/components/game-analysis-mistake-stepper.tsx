@@ -6,12 +6,14 @@ import Image from "next/image";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { GameAnalysisMistake } from "@/features/game-analysis-mistakes/types/game-analysis-mistake";
+import type { CriticalMomentQuality } from "@/features/game-analysis/types/critical-moment";
 import { cn } from "@/lib/utils";
 import completeAnimationData from "@/public/images/animations/animation-complete.json";
 
 type GameAnalysisMistakeStepperProps = {
   mistakes: GameAnalysisMistake[];
   originalMoveByPly: Record<number, string>;
+  qualityByPly: Record<number, CriticalMomentQuality>;
   activeMistakeId: string | null;
   completedMistakeIds: Set<string>;
   isLoading: boolean;
@@ -20,8 +22,16 @@ type GameAnalysisMistakeStepperProps = {
   onSelectMistake: (mistake: GameAnalysisMistake) => void;
 };
 
-function qualityLabel(quality: GameAnalysisMistake["quality"]) {
-  return quality === "blunder" ? "Blunder" : "Mistake";
+function qualityLabel(quality: CriticalMomentQuality) {
+  if (quality === "blunder") return "Blunder";
+  if (quality === "miss") return "Miss";
+  return "Mistake";
+}
+
+function qualityIcon(quality: CriticalMomentQuality) {
+  if (quality === "blunder") return "/images/tag/icon-blunder.png";
+  if (quality === "miss") return "/images/tag/icon-miss.png";
+  return "/images/tag/icon-mistake.png";
 }
 
 function mistakeTitle(mistake: GameAnalysisMistake, originalMoveByPly: Record<number, string>) {
@@ -35,6 +45,7 @@ function mistakeTitle(mistake: GameAnalysisMistake, originalMoveByPly: Record<nu
 export function GameAnalysisMistakeStepper({
   mistakes,
   originalMoveByPly,
+  qualityByPly,
   activeMistakeId,
   completedMistakeIds,
   isLoading,
@@ -52,10 +63,8 @@ export function GameAnalysisMistakeStepper({
             {mistakes.map((mistake, index) => {
               const active = mistake.id === activeMistakeId;
               const completed = completedMistakeIds.has(mistake.id);
-              const iconSrc =
-                mistake.quality === "blunder"
-                  ? "/images/icons/icon-blunder-double.png"
-                  : "/images/icons/icon-mistake.png";
+              const quality = qualityByPly[mistake.ply] ?? mistake.quality;
+              const iconSrc = qualityIcon(quality);
               const title = mistakeTitle(mistake, originalMoveByPly);
               const moveNumber = Math.floor(mistake.ply / 2);
 
@@ -99,12 +108,9 @@ export function GameAnalysisMistakeStepper({
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span
-                      className={cn(
-                        "text-xs font-bold",
-                        mistake.quality === "blunder" ? "text-destructive" : "text-primary",
-                      )}
+                      className={cn("text-xs font-bold", quality === "blunder" ? "text-destructive" : "text-primary")}
                     >
-                      {qualityLabel(mistake.quality)}
+                      {qualityLabel(quality)}
                     </span>
                     <span className="line-clamp-2 text-sm leading-tight font-medium">{title}</span>
                     <span className="text-muted-foreground text-xs">Move {moveNumber}</span>

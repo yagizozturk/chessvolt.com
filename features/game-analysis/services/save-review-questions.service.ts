@@ -16,8 +16,11 @@ import { createMoveSequences } from "@/features/move-sequence/services/move-sequ
 import { getPlayerColorFromPgn } from "@/lib/chess/getPlayerColorFromPgn";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-function isQuestionQuality(quality: CriticalMoment["quality"]): quality is GameAnalysisMistakeQuality {
-  return quality === "mistake" || quality === "blunder";
+// The DB check constraint only allows mistake | blunder; the miss label lives in the analysis JSON.
+function toQuestionQuality(quality: CriticalMoment["quality"]): GameAnalysisMistakeQuality | null {
+  if (quality === "blunder") return "blunder";
+  if (quality === "mistake" || quality === "miss") return "mistake";
+  return null;
 }
 
 export async function saveReviewQuestions(input: {
@@ -49,7 +52,8 @@ export async function saveReviewQuestions(input: {
   // ================================================================================================
   for (const moment of input.moments) {
     const bestUci = moment.bestUci.trim();
-    if (moment.turn !== userColor || !bestUci || !isQuestionQuality(moment.quality)) continue;
+    const quality = toQuestionQuality(moment.quality);
+    if (moment.turn !== userColor || !bestUci || !quality) continue;
 
     let moveSequenceId = sequenceIdByPly.get(moment.ply);
     if (!moveSequenceId) {
@@ -70,7 +74,7 @@ export async function saveReviewQuestions(input: {
       source: input.source,
       title: moment.playedSan ? `Played ${moment.playedSan}` : "Original game move",
       ply: moment.ply,
-      quality: moment.quality,
+      quality,
     });
   }
 

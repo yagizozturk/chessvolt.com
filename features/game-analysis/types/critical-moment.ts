@@ -1,6 +1,6 @@
 import type { MoveQuality } from "@/lib/utils/getMoveFeedbackClass";
 
-export type CriticalMomentQuality = Extract<MoveQuality, "inaccuracy" | "mistake" | "blunder">;
+export type CriticalMomentQuality = Extract<MoveQuality, "inaccuracy" | "mistake" | "miss" | "blunder">;
 
 export type CriticalMoment = {
   ply: number;

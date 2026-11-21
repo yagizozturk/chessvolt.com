@@ -19,8 +19,8 @@ import { BoardPlayerName } from "@/features/game-analysis/components/board-playe
 import { GameAnalysisMistakeStepper } from "@/features/game-analysis/components/game-analysis-mistake-stepper";
 import { GameAnalysisStatus } from "@/features/game-analysis/components/game-analysis-status";
 import { SAVED_ANALYSIS_STATUS } from "@/features/game-analysis/constants/game-analysis-status.constants";
-import type { PlatformGame } from "@/features/game-analysis/types/platform-game";
 import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
+import type { PlatformGame } from "@/features/game-analysis/types/platform-game";
 import { analyzePgnWithStockfish } from "@/features/game-analysis/utilities/analyze-pgn-with-stockfish";
 import { getMistakesByPly } from "@/features/game-analysis/utilities/get-mistakes-by-ply";
 import { getRatingLabel } from "@/features/game-analysis/utilities/get-rating-label";
@@ -35,6 +35,7 @@ import { updateCorrectStreak } from "@/features/user-sequence-attempt/utilities/
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getPlayerColorFromPgn } from "@/lib/chess/getPlayerColorFromPgn";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
+import { CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS } from "@/lib/shared/constants/chess";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
 
@@ -77,6 +78,8 @@ export default function GameAnalysisController({
   const [solved, setSolved] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null);
+  const [nextMistakeId, setNextMistakeId] = useState<string | null>(null);
+  const successDialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Hataları ply ye göre gruplar. Analiz yokken boş kalır.
   const mistakesByPly = useMemo(() => (analysis ? getMistakesByPly(analysis) : []), [analysis]);
@@ -88,6 +91,12 @@ export default function GameAnalysisController({
   const userMoveByPlyWithSan = useMemo(() => {
     if (!analysis) return {};
     return Object.fromEntries(analysis.criticalMoments.map((moment) => [moment.ply, moment.playedSan]));
+  }, [analysis]);
+
+  // Miss sadece analiz JSON'unda tutulur, DB'de mistake olarak kayıtlıdır. Etiket buradan okunur.
+  const qualityByPly = useMemo(() => {
+    if (!analysis) return {};
+    return Object.fromEntries(analysis.criticalMoments.map((moment) => [moment.ply, moment.quality]));
   }, [analysis]);
 
   // Aktif hangi pozisyonla başlanacağına karar verir. Analiz gelince applyAnalysis set eder.
@@ -209,10 +218,34 @@ export default function GameAnalysisController({
     setFavoritedMistakeIds(new Set(next.favoritedMistakeIds));
     setCompletedMistakeIds(new Set());
     setActiveMistakeId(nextMistakeId);
+    resetMistakeAttempt();
+    setBoardKey((key) => key + 1);
+  }
+
+  // ================================================================================================
+  // Her hata ayrı bir deneme sayılır. Stats ve dialog state'i sıfırlanır.
+  // ================================================================================================
+  function resetMistakeAttempt() {
+    clearSuccessDialogTimeout();
     solvedRef.current = false;
     setSolved(false);
     setHintCount(0);
-    setBoardKey((key) => key + 1);
+    setSuccessOpen(false);
+    setCompletionStats(null);
+    setNextMistakeId(null);
+    startedAtRef.current = Date.now();
+    correctMoveCountRef.current = 0;
+    wrongMoveCountRef.current = 0;
+    totalHintCountRef.current = 0;
+    currentCorrectStreakRef.current = 0;
+    maxCorrectStreakRef.current = 0;
+  }
+
+  function clearSuccessDialogTimeout() {
+    if (successDialogTimeoutRef.current) {
+      clearTimeout(successDialogTimeoutRef.current);
+      successDialogTimeoutRef.current = null;
+    }
   }
 
   // Seçili hatanın tam çifti: kayıtlı hata ve ona karşılık gelen kritik an.
@@ -233,9 +266,10 @@ export default function GameAnalysisController({
   const progressValue = mistakes.length > 0 ? Math.round((completedMistakeIds.size / mistakes.length) * 100) : 0;
   const isActiveMistakeFavorited = activeMistake ? favoritedMistakeIds.has(activeMistake.mistake.id) : false; // Seçili hatanın favori mi değil mi bilgisini tutar. Button için
 
-  // Timer için kullanılır.
+  // Timer ve bekleyen dialog timeout'u için kullanılır.
   useEffect(() => {
     startedAtRef.current = Date.now();
+    return () => clearSuccessDialogTimeout();
   }, []);
 
   // Geri butonu için kullanılır.
@@ -256,9 +290,7 @@ export default function GameAnalysisController({
   // Seçili hatayı oynatmak için kullanılır. Aktif mistakeId yi değiştirir.
   // ================================================================================================
   function selectMistakeToPlay(mistakeId: string) {
-    solvedRef.current = false;
-    setSolved(false);
-    setHintCount(0);
+    resetMistakeAttempt();
     setActiveMistakeId(mistakeId);
     setBoardKey((key) => key + 1);
   }
@@ -310,23 +342,32 @@ export default function GameAnalysisController({
     const earlier = mistakesByPly.slice(0, activeIndex);
     const remaining = [...later, ...earlier].filter((item) => !nextCompleted.has(item.mistake.id));
 
-    if (remaining.length === 0) {
-      setCompletionStats(
-        createSequenceCompleteStats(
-          createAttemptPayload(
-            correctMoveCountRef.current,
-            wrongMoveCountRef.current,
-            totalHintCountRef.current,
-            maxCorrectStreakRef.current,
-            startedAtRef.current == null ? null : Date.now() - startedAtRef.current,
-          ),
+    setNextMistakeId(remaining[0]?.mistake.id ?? null);
+    setCompletionStats(
+      createSequenceCompleteStats(
+        createAttemptPayload(
+          correctMoveCountRef.current,
+          wrongMoveCountRef.current,
+          totalHintCountRef.current,
+          maxCorrectStreakRef.current,
+          startedAtRef.current == null ? null : Date.now() - startedAtRef.current,
         ),
-      );
-      setSuccessOpen(true);
-      return;
-    }
+      ),
+    );
 
-    selectMistakeToPlay(remaining[0].mistake.id);
+    // Dialog, karedeki doğru hamle animasyonu bitince açılır.
+    clearSuccessDialogTimeout();
+    successDialogTimeoutRef.current = setTimeout(() => {
+      successDialogTimeoutRef.current = null;
+      setSuccessOpen(true);
+    }, CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS);
+  }
+
+  // ================================================================================================
+  // Dialog'daki next mistake butonu.
+  // ================================================================================================
+  function handleNextMistake() {
+    if (nextMistakeId) selectMistakeToPlay(nextMistakeId);
   }
 
   // ================================================================================================
@@ -346,9 +387,10 @@ export default function GameAnalysisController({
       <SolveSuccessDialog
         open={successOpen}
         onOpenChange={setSuccessOpen}
-        title="Game review complete!"
-        destinationPath="/game-analysis"
-        buttonLabel="Back to analysis"
+        title={nextMistakeId ? "Mistake solved!" : "Game review complete!"}
+        destinationPath={nextMistakeId ? null : "/game-analysis"}
+        buttonLabel={nextMistakeId ? "Next mistake" : "Back to analysis"}
+        onContinue={nextMistakeId ? handleNextMistake : undefined}
         stats={completionStats}
       />
 
@@ -371,7 +413,7 @@ export default function GameAnalysisController({
                 playerOrientation={youAreBlack ? "black" : "white"}
                 drawHintMove={activeMistake?.moment.bestUci}
                 playedMoveArrow={activeMistake?.moment.playedUci}
-                playedMoveQuality={activeMistake?.mistake.quality}
+                playedMoveQuality={activeMistake?.moment.quality}
                 onCheckMove={handleCheckMove}
                 onSuccessMovePlayed={handleSuccess}
                 onNextMoveRequest={() => undefined}
@@ -463,6 +505,7 @@ export default function GameAnalysisController({
               <GameAnalysisMistakeStepper
                 mistakes={mistakes}
                 originalMoveByPly={userMoveByPlyWithSan}
+                qualityByPly={qualityByPly}
                 activeMistakeId={activeMistake?.mistake.id ?? null}
                 completedMistakeIds={completedMistakeIds}
                 isLoading={analysisEngine !== null}

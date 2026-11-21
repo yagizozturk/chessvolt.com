@@ -95,6 +95,7 @@ export type SolveSuccessDialogProps = {
   voltScore?: VoltScoreResult | null;
   isVoltScoreShowing?: boolean;
   onPlayAgain?: () => void;
+  onContinue?: () => void;
   footerExtra?: ReactNode;
 };
 
@@ -108,12 +109,13 @@ export function SolveSuccessDialog({
   voltScore = null,
   isVoltScoreShowing = false,
   onPlayAgain,
+  onContinue,
   footerExtra,
 }: SolveSuccessDialogProps) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [lastAttemptVolts, setLastAttemptVolts] = useState<number | null>(null);
-  const hasContinueButton = destinationPath != null && buttonLabel != null;
+  const hasContinueButton = (destinationPath != null || onContinue != null) && buttonLabel != null;
   const hasVoltScore = isVoltScoreShowing || isValidVoltScore(voltScore);
 
   useEffect(() => {
@@ -123,6 +125,10 @@ export function SolveSuccessDialog({
   }, [open, isVoltScoreShowing, voltScore]);
 
   const handleContinue = async () => {
+    if (onContinue) {
+      onContinue();
+      return;
+    }
     if (!destinationPath) return;
     setIsPending(true);
     router.push(destinationPath);
