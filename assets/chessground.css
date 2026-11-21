@@ -255,6 +255,7 @@ cg-board > square.custom-inaccuracy-move,
 cg-board > square.custom-mistake-move,
 cg-board > square.custom-miss-move,
 cg-board > square.custom-blunder-move,
+cg-board > square.custom-alternative-move,
 cg-board > square.custom-bg-move {
   z-index: 11;
 }
@@ -270,7 +271,8 @@ cg-board > square.custom-good-move::after,
 cg-board > square.custom-inaccuracy-move::after,
 cg-board > square.custom-mistake-move::after,
 cg-board > square.custom-miss-move::after,
-cg-board > square.custom-blunder-move::after {
+cg-board > square.custom-blunder-move::after,
+cg-board > square.custom-alternative-move::after {
   content: "";
   position: absolute;
   top: -20px;
@@ -312,6 +314,10 @@ cg-board > square.custom-book-move::after {
 }
 
 cg-board > square.custom-good-move::after {
+  background-image: url("/images/tag/icon-good.png") !important;
+}
+
+cg-board > square.custom-alternative-move::after {
   background-image: url("/images/tag/icon-good.png") !important;
 }
 
@@ -376,6 +382,12 @@ cg-board > square.custom-good-move {
   --feedback-label: "Good";
 }
 
+/* Second good move shown after a solve: good-move colors, but its label stays (see feedback-label-stay). */
+cg-board > square.custom-alternative-move {
+  --feedback-rgb: 34 197 94;
+  --feedback-label: "Alternative";
+}
+
 cg-board > square.custom-inaccuracy-move {
   --feedback-rgb: 234 179 8;
   --feedback-label: "Inaccuracy";
@@ -407,7 +419,8 @@ cg-board > square.custom-good-move,
 cg-board > square.custom-inaccuracy-move,
 cg-board > square.custom-mistake-move,
 cg-board > square.custom-miss-move,
-cg-board > square.custom-blunder-move {
+cg-board > square.custom-blunder-move,
+cg-board > square.custom-alternative-move {
   animation: feedback-square-fill 1.8s ease-out forwards;
 }
 
@@ -422,7 +435,8 @@ cg-board > square.custom-good-move::before,
 cg-board > square.custom-inaccuracy-move::before,
 cg-board > square.custom-mistake-move::before,
 cg-board > square.custom-miss-move::before,
-cg-board > square.custom-blunder-move::before {
+cg-board > square.custom-blunder-move::before,
+cg-board > square.custom-alternative-move::before {
   content: var(--feedback-label);
   position: absolute;
   top: 50%;
@@ -453,7 +467,8 @@ cg-board > square.custom-good-move::after,
 cg-board > square.custom-inaccuracy-move::after,
 cg-board > square.custom-mistake-move::after,
 cg-board > square.custom-miss-move::after,
-cg-board > square.custom-blunder-move::after {
+cg-board > square.custom-blunder-move::after,
+cg-board > square.custom-alternative-move::after {
   opacity: 0;
   transform: scale(0);
   animation: feedback-icon 1.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
@@ -516,6 +531,32 @@ cg-board > square.custom-blunder-move::after {
   }
 }
 
+/*
+ * The alternative label pops like the others, then stays in the middle of the square instead of fading out.
+ * On small boards it is wider than the square, so it paints above the corner icon to stay readable.
+ */
+cg-board > square.custom-alternative-move::before {
+  z-index: 1;
+  animation-name: feedback-label-stay;
+}
+
+@keyframes feedback-label-stay {
+  0%,
+  15% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+  32%,
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   cg-board > square.custom-correct-move,
   cg-board > square.custom-wrong-move,
@@ -528,7 +569,8 @@ cg-board > square.custom-blunder-move::after {
   cg-board > square.custom-inaccuracy-move,
   cg-board > square.custom-mistake-move,
   cg-board > square.custom-miss-move,
-  cg-board > square.custom-blunder-move {
+  cg-board > square.custom-blunder-move,
+  cg-board > square.custom-alternative-move {
     animation: none;
     background-color: rgb(var(--feedback-rgb) / 0.35);
   }
@@ -559,9 +601,17 @@ cg-board > square.custom-blunder-move::after {
   cg-board > square.custom-inaccuracy-move::after,
   cg-board > square.custom-mistake-move::after,
   cg-board > square.custom-miss-move::after,
-  cg-board > square.custom-blunder-move::after {
+  cg-board > square.custom-blunder-move::after,
+  cg-board > square.custom-alternative-move::after {
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  /* Other labels are hidden here, but the alternative's is its only distinction, so it shows at rest. */
+  cg-board > square.custom-alternative-move::before {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, -50%);
   }
 }

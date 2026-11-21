@@ -1,5 +1,14 @@
 import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
+import { getSanFromUci } from "@/lib/chess/getSanFromUci";
+
+// Optional; when present it must be a legal move other than the best and the played one, with matching SAN.
+function hasValidAlternative(moment: CriticalMoment): boolean {
+  if (moment.alternativeUci === undefined && moment.alternativeSan === undefined) return true;
+  if (typeof moment.alternativeUci !== "string" || typeof moment.alternativeSan !== "string") return false;
+  if (moment.alternativeUci === moment.bestUci || moment.alternativeUci === moment.playedUci) return false;
+  return getSanFromUci(moment.fen, moment.alternativeUci) === moment.alternativeSan;
+}
 
 function isCriticalMoment(value: unknown): value is CriticalMoment {
   if (!value || typeof value !== "object") return false;
@@ -17,7 +26,8 @@ function isCriticalMoment(value: unknown): value is CriticalMoment {
     typeof moment.deltaCp === "number" &&
     (moment.quality === "mistake" || moment.quality === "miss" || moment.quality === "blunder") &&
     (moment.mate === null || typeof moment.mate === "number") &&
-    (moment.turn === "w" || moment.turn === "b")
+    (moment.turn === "w" || moment.turn === "b") &&
+    hasValidAlternative(moment)
   );
 }
 

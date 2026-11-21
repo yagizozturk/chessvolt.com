@@ -49,6 +49,8 @@ type VoltBoardProps = {
   drawHintMove?: string | null;
   playedMoveArrow?: string | null;
   playedMoveQuality?: MoveQuality | null;
+  // Çözümden sonra gösterilen diğer iyi hamle (UCI). Yeşil ok, hedef karede Good ikonu ve kalıcı "Alternative" etiketi.
+  revealMove?: string | null;
   activeGoalVisuals?: MoveGoal["visuals"];
   onCheckMove: (payload: MoveAttemptPayload) => boolean;
   onSuccessMovePlayed: (move: Move) => void;
@@ -73,6 +75,7 @@ function VoltBoard(
     drawHintMove,
     playedMoveArrow,
     playedMoveQuality,
+    revealMove,
     activeGoalVisuals,
     mode = "practice",
     onCheckMove,
@@ -118,9 +121,16 @@ function VoltBoard(
 
     return [{ orig: parsedUci.from as Key, dest: parsedUci.to as Key, brush: "red" }];
   }, [playedMoveArrow, playedMoveClearedSourceId, sourceId]);
+  // Ok, oyuncunun hamlesinden sonraki pozisyonda orijinal kareden çizilir (taş yerinden oynamış olsa bile).
+  const revealMoveShapes = useMemo<DrawShape[]>(() => {
+    const parsedUci = revealMove ? parseUci(revealMove) : null;
+    if (!parsedUci) return [];
+
+    return [{ orig: parsedUci.from as Key, dest: parsedUci.to as Key, brush: "green" }];
+  }, [revealMove]);
   const baseAutoShapes = useMemo<DrawShape[]>(() => {
-    return [...activeGoalShapes, ...playedMoveShapes];
-  }, [activeGoalShapes, playedMoveShapes]);
+    return [...activeGoalShapes, ...playedMoveShapes, ...revealMoveShapes];
+  }, [activeGoalShapes, playedMoveShapes, revealMoveShapes]);
 
   // 2. Custom Hooks (Dış servisleri/mantığı bağlayanlar). İlk render da tanımlananlar
   // chess.js hamle yapabilsin die makeMove methodu kullnaır ve oyunu tutar.
@@ -335,6 +345,20 @@ function VoltBoard(
     setSquareCustomHighlight,
     ground,
   ]);
+
+  // ============================================================================
+  // Diğer iyi hamlenin hedef kare ikonu:
+  // Doğru hamle ikonunu temizleyen timer beklemede olabilir. Önce o iptal edilir,
+  // yoksa timer bu ikonu da siler. Timer önce çalıştıysa temizleme zaten yapılmıştır.
+  // ============================================================================
+  useEffect(() => {
+    const parsedUci = revealMove ? parseUci(revealMove) : null;
+    if (!parsedUci) return;
+
+    clearCustomHighlightsTimeout();
+    clearSquareCustomHighlights();
+    setSquareCustomHighlight(parsedUci.to, "custom-alternative-move");
+  }, [revealMove, clearSquareCustomHighlights, setSquareCustomHighlight]);
 
   // ============================================================================
   // Aktif otomatik oklar:

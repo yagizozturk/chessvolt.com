@@ -19,6 +19,7 @@ import { BoardPlayerName } from "@/features/game-analysis/components/board-playe
 import { GameAnalysisMistakeStepper } from "@/features/game-analysis/components/game-analysis-mistake-stepper";
 import { GameAnalysisStatus } from "@/features/game-analysis/components/game-analysis-status";
 import { SAVED_ANALYSIS_STATUS } from "@/features/game-analysis/constants/game-analysis-status.constants";
+import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 import type { GameAnalysisWithMistakes } from "@/features/game-analysis/types/game-analysis-with-mistakes";
 import type { PlatformGame } from "@/features/game-analysis/types/platform-game";
 import { analyzePgnWithStockfish } from "@/features/game-analysis/utilities/analyze-pgn-with-stockfish";
@@ -36,8 +37,26 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { getPlayerColorFromPgn } from "@/lib/chess/getPlayerColorFromPgn";
 import { getTurnLabel } from "@/lib/chess/getTurnLabel";
 import { CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS } from "@/lib/shared/constants/chess";
+import type { Move } from "@/lib/shared/types/move";
 import type { MoveAttemptPayload } from "@/lib/shared/types/move-attempt-payload";
 import animationData from "@/public/images/animations/animation-rocjet-launch.json";
+
+// Diğer iyi hamle success dialog açılmadan önce bu süre kadar board'da kalır.
+const ALTERNATIVE_REVEAL_DURATION_MS = 2500;
+
+// Oyuncu iki iyi hamleden birini bulunca gösterilecek diğeri.
+type AlternativeReveal = { foundSan: string; uci: string; san: string };
+
+function getCoachMessage(moment: CriticalMoment | null, playedMove: string, reveal: AlternativeReveal | null) {
+  if (reveal) return `You found ${reveal.foundSan}. ${reveal.san} was also a good move here.`;
+  if (!moment) return "Analyze this game to find the moves you missed.";
+  if (!playedMove) return "Solve the original game position on the board.";
+
+  const task = moment.alternativeUci
+    ? "There are 2 good moves here, find one of them."
+    : "Find the best move to play here.";
+  return `You played ${playedMove} in the game. ${task}`;
+}
 
 type GameAnalysisControllerProps = {
   gameId: string;
@@ -79,6 +98,7 @@ export default function GameAnalysisController({
   const [successOpen, setSuccessOpen] = useState(false);
   const [completionStats, setCompletionStats] = useState<MoveSequenceCompleteDialogStats | null>(null);
   const [nextMistakeId, setNextMistakeId] = useState<string | null>(null);
+  const [alternativeReveal, setAlternativeReveal] = useState<AlternativeReveal | null>(null);
   const successDialogTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Hataları ply ye göre gruplar. Analiz yokken boş kalır.
@@ -171,6 +191,7 @@ export default function GameAnalysisController({
       // analyzePgnWithStockfish: Stockfish analiz sonucu. Her iki oyuncu içinde criticalMoments datasını içerir.
       const localAnalysis = await analyzePgnWithStockfish(game.pgn, {
         signal: controller.signal, // controller setlenir
+        playerColor: getPlayerColorFromPgn(game.pgn, username), // Alternatif hamle aramasını sadece oyuncunun hatalarında yapar.
         onProgress: (completed, total) => {
           if (!controller.signal.aborted) setAnalysisProgress({ completed, total });
         },
@@ -233,6 +254,7 @@ export default function GameAnalysisController({
     setSuccessOpen(false);
     setCompletionStats(null);
     setNextMistakeId(null);
+    setAlternativeReveal(null);
     startedAtRef.current = Date.now();
     correctMoveCountRef.current = 0;
     wrongMoveCountRef.current = 0;
@@ -257,11 +279,8 @@ export default function GameAnalysisController({
   const playSessionId = activeMistake ? `${activeMistake.mistake.id}:${boardKey}` : "game-analysis"; // Board'a bağlı olan ID.
   const playedMove = activeMistake ? (userMoveByPlyWithSan[activeMistake.mistake.ply]?.trim() ?? "") : ""; // Koç bu durumda ne oynadığını söyler. Played Nf3 gibi.
   const coachTitle = activeMistake ? getTurnLabel(activeMistake.moment.fen) : "Game review"; // Koç başlığı.
-  const coachMessage = activeMistake // Koç mesajı.
-    ? playedMove
-      ? `You played ${playedMove} in the game. Find the best move to play here.`
-      : "Solve the original game position on the board."
-    : "Analyze this game to find the moves you missed.";
+  const coachMessage = getCoachMessage(activeMistake?.moment ?? null, playedMove, alternativeReveal); // Koç mesajı.
+  const coachTtsKey = alternativeReveal ? `${playSessionId}:alternative` : playSessionId; // Diğer hamle gösterilince koç yeniden konuşur.
   const boardFen = activeMistake?.moment.fen ?? game?.fen ?? null;
   const progressValue = mistakes.length > 0 ? Math.round((completedMistakeIds.size / mistakes.length) * 100) : 0;
   const isActiveMistakeFavorited = activeMistake ? favoritedMistakeIds.has(activeMistake.mistake.id) : false; // Seçili hatanın favori mi değil mi bilgisini tutar. Button için
@@ -313,7 +332,9 @@ export default function GameAnalysisController({
   function handleCheckMove(move: MoveAttemptPayload) {
     if (!activeMistake || solvedRef.current) return false;
 
-    if (move.uci === activeMistake.moment.bestUci) {
+    // En iyi hamle veya ona yakın puanlı alternatif, ikisi de doğru sayılır.
+    const { bestUci, alternativeUci } = activeMistake.moment;
+    if (move.uci === bestUci || (alternativeUci != null && move.uci === alternativeUci)) {
       correctMoveCountRef.current += 1;
       updateCorrectStreak(currentCorrectStreakRef, maxCorrectStreakRef);
       return true;
@@ -327,7 +348,7 @@ export default function GameAnalysisController({
   // ================================================================================================
   // Başarılı hamlede tetiklenir.
   // ================================================================================================
-  function handleSuccess() {
+  function handleSuccess(move: Move) {
     if (!activeMistake || solvedRef.current) return;
 
     solvedRef.current = true;
@@ -355,11 +376,30 @@ export default function GameAnalysisController({
       ),
     );
 
-    // Dialog, karedeki doğru hamle animasyonu bitince açılır.
+    // İki iyi hamleden biri bulunduysa diğeri dialog'dan önce gösterilir.
+    const { bestUci, bestSan, alternativeUci, alternativeSan } = activeMistake.moment;
+    const foundAlternative = move.uci === alternativeUci;
+    const reveal: AlternativeReveal | null =
+      alternativeUci && alternativeSan
+        ? foundAlternative
+          ? { foundSan: alternativeSan, uci: bestUci, san: bestSan }
+          : { foundSan: bestSan, uci: alternativeUci, san: alternativeSan }
+        : null;
+
+    // Dialog, karedeki doğru hamle animasyonu bitince açılır. Alternatif varsa önce o gösterilir.
     clearSuccessDialogTimeout();
     successDialogTimeoutRef.current = setTimeout(() => {
       successDialogTimeoutRef.current = null;
-      setSuccessOpen(true);
+      if (!reveal) {
+        setSuccessOpen(true);
+        return;
+      }
+
+      setAlternativeReveal(reveal);
+      successDialogTimeoutRef.current = setTimeout(() => {
+        successDialogTimeoutRef.current = null;
+        setSuccessOpen(true);
+      }, ALTERNATIVE_REVEAL_DURATION_MS);
     }, CORRECT_MOVE_HIGHLIGHT_CLEAR_DELAY_MS);
   }
 
@@ -414,6 +454,7 @@ export default function GameAnalysisController({
                 drawHintMove={activeMistake?.moment.bestUci}
                 playedMoveArrow={activeMistake?.moment.playedUci}
                 playedMoveQuality={activeMistake?.moment.quality}
+                revealMove={alternativeReveal?.uci}
                 onCheckMove={handleCheckMove}
                 onSuccessMovePlayed={handleSuccess}
                 onNextMoveRequest={() => undefined}
@@ -426,7 +467,7 @@ export default function GameAnalysisController({
             name={topPlayer?.username ?? null}
             elo={getRatingLabel(topPlayer?.rating)}
             color={youAreBlack ? "white" : "black"}
-            className="absolute top-[-30px] left-0"
+            className="absolute top-[-30px] right-0"
           />
           <BoardPlayerName
             name={bottomPlayer?.username ?? null}
@@ -453,7 +494,7 @@ export default function GameAnalysisController({
                 height={30}
                 className="size-7 shrink-0"
               />
-              Play Your Missings
+              Review Your Game
             </div>
             <div className="flex items-center gap-2">
               {/* ====== Favorite Button ====== */}
@@ -471,7 +512,7 @@ export default function GameAnalysisController({
 
           {/* ====== Coach ====== */}
           <div className="card-border-bottom-shadow shrink-0 p-4">
-            <VoltCoach title={coachTitle} message={coachMessage} ttsKey={playSessionId} />
+            <VoltCoach title={coachTitle} message={coachMessage} ttsKey={coachTtsKey} />
           </div>
 
           {/* ====== Progress Bar ====== */}
