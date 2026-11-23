@@ -34,9 +34,14 @@ export function ProfileDeleteAccountButton() {
 
     try {
       await requestDeleteAccount();
-    } catch {
+    } catch (error) {
       setIsDeleting(false);
-      toast.error("Could not delete your account. Please try again.");
+      // Sunucunun mesajı gösterilir (ör. admin hesapları silinemez).
+      const message =
+        error && typeof error === "object" && "error" in error && typeof error.error === "string"
+          ? error.error
+          : "Could not delete your account. Please try again.";
+      toast.error(message);
       return;
     }
 

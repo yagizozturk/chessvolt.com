@@ -36,6 +36,20 @@ export async function getProfileByUserId(
 }
 
 // ======================================================================
+// The user's role; null when the profile row does not exist. Throws when the query fails, so callers that guard on
+// the role (account deletion) never treat an error as "not an admin".
+// ======================================================================
+export async function getProfileRole(supabase: SupabaseClient, userId: string): Promise<string | null> {
+  const { data, error } = await supabase.from("profiles").select("role").eq("id", userId).maybeSingle();
+
+  if (error) {
+    throw new Error(`profile.repository.getProfileRole error: ${error.message}`);
+  }
+
+  return data?.role ?? null;
+}
+
+// ======================================================================
 // Gets the onboarding status of the user from the PROFILES(own DB) table
 // Onboarding is set to true once it is done in first visit
 // ======================================================================

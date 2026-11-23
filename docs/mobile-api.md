@@ -668,7 +668,7 @@ curl -s -X POST "$API/http/user-sequence-attempt/$ATTEMPT_ID/event" -H "Authoriz
 
 Permanently deletes the user and all of their data: profile, rating, Volt Tracker, analyses, mistakes and attempts.
 This cannot be undone, so ask the user to confirm first. Afterwards the access and refresh tokens no longer work; call
-`supabase.auth.signOut({ scope: "local" })` and go back to the sign-in screen.
+`supabase.auth.signOut({ scope: "local" })` and go back to the sign-in screen. Admin accounts cannot be deleted.
 
 - **Auth:** required
 - **Request:** none
@@ -677,7 +677,9 @@ This cannot be undone, so ask the user to confirm first. Afterwards the access a
 | Status | `error`                                                                                                    |
 | ------ | ---------------------------------------------------------------------------------------------------------- |
 | 401    | `Unauthorized`                                                                                             |
+| 403    | `Admin accounts cannot be deleted. Remove the admin role from this account first.`                         |
 | 500    | `Could not delete your account. Please try again.` (also when the database blocks it; see the notes below) |
+| 503    | `Account deletion is not available right now.` (the server is missing its Supabase service key)            |
 
 ```bash
 curl -s -X DELETE "$API/http/account" -H "Authorization: Bearer $TOKEN"
@@ -971,8 +973,8 @@ type OpeningVariant = {
 
 - **Account deletion needs a database migration.** `DELETE /http/account` relies on
   `supabase/migrations/20261123140000_cascade_user_data_on_account_delete.sql` (ON DELETE CASCADE on the user
-  tables). Until that migration is applied, the call answers `500`. A user who authored blog posts (admins) cannot be
-  deleted either, because `blog_posts.author_id` is `RESTRICT`.
+  tables). Until that migration is applied, the call answers `500`. Admin accounts are refused with `403`; only admins
+  write blog posts, and `blog_posts.author_id` stays `RESTRICT`.
 - **The rating only changes through puzzles.** Game mistakes do not change it; see `PATCH /http/profile/rating`.
 - **The web's page cache is not refreshed by the API.** The web Server Actions call `revalidatePath` after changes;
   the API routes do not. The only page this affects is an opening variant page after an opening favorite is toggled
