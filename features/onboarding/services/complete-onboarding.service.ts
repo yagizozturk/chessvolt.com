@@ -5,12 +5,18 @@ import {
   type OnboardingPlatformUsernames,
   hasPlatformUsername,
 } from "@/features/onboarding/types/onboarding-platform-usernames";
+import { MAX_INITIAL_RATING, MIN_INITIAL_RATING } from "@/features/profile/constants/profile-limits";
 import { completeProfileOnboarding, getProfileOnboardingStatus } from "@/features/profile/services/profile.service";
 import { resolvePlayerRating } from "@/lib/chess-platform/resolve-player-rating";
 
 export type { CompleteOnboardingResult } from "@/features/onboarding/types/complete-onboarding-result";
 
 const DEFAULT_INITIAL_RATING = 1500;
+
+// Platform rating'i DB'nin kabul ettiği aralığa çekilir; yoksa 3000+ hesaplarda onboarding kaydı düşer.
+function clampInitialRating(rating: number): number {
+  return Math.min(MAX_INITIAL_RATING, Math.max(MIN_INITIAL_RATING, rating));
+}
 
 // ============================================================================
 // Complete Onboarding
@@ -37,7 +43,7 @@ export async function completeOnboarding(
   // Complete profile with initial rating and optional platform usernames
   // ============================================================================
   const profileUpdated = await completeProfileOnboarding(supabase, userId, {
-    initialRating: ratingResult.initialRating,
+    initialRating: clampInitialRating(ratingResult.initialRating),
     chesscomUsername: ratingResult.chesscomUsername,
     lichessUsername: ratingResult.lichessUsername,
   });
