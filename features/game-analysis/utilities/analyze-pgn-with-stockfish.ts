@@ -1,10 +1,10 @@
 import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
-import { getCriticalMoments, type ScoredPosition } from "@/features/game-analysis/utilities/get-critical-moments";
-import { getMovesFromPgn, type NormalizedPgnMove } from "@/lib/chess/getMovesFromPgn";
+import { type ScoredPosition, getCriticalMoments } from "@/features/game-analysis/utilities/get-critical-moments";
+import { type NormalizedPgnMove, getMovesFromPgn } from "@/lib/chess/getMovesFromPgn";
 import { getPlayerRatingsFromPgn } from "@/lib/chess/getPlayerRatingsFromPgn";
 import { getSanFromUci } from "@/lib/chess/getSanFromUci";
-import { analyzeTerminalFen, getTurnFromFen, mateToWhiteCp, toSideToMoveCp } from "@/lib/chess-api/normalize";
+import { getTerminalScore, getTurnFromFen, mateToWhiteCp, toSideToMoveCp } from "@/lib/engine/engine-score";
 import { parseEngine } from "@/lib/engine/parse-engine";
 import type { EngineInfo } from "@/lib/shared/types/engine-info";
 import { getWinPercent } from "@/lib/utils/getMoveQuality";
@@ -106,7 +106,7 @@ function analyzeFen(
 ): Promise<ScoredPosition> {
   throwIfAborted(signal);
 
-  const terminal = analyzeTerminalFen(fen, limit.depth);
+  const terminal = getTerminalScore(fen);
   if (terminal) {
     return Promise.resolve({
       whiteCp: terminal.whiteCp,

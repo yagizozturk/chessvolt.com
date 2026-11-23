@@ -617,7 +617,6 @@
 ├── repository
 │   └── game-analysis.repository.ts
 ├── services
-│   ├── analyze-game.service.ts
 │   ├── get-favorited-mistake-ids.service.ts
 │   ├── get-game-analysis-with-mistakes.service.ts
 │   ├── save-game-analysis.service.ts
@@ -1083,11 +1082,6 @@
 │   ├── parsePgn.ts
 │   ├── parseUci.ts
 │   └── toDests.ts
-├── chess-api
-│   ├── client.ts
-│   ├── errors.ts
-│   ├── normalize.ts
-│   └── types.ts
 ├── chess-com
 │   ├── client.ts
 │   ├── constants.ts
@@ -1103,6 +1097,7 @@
 │       └── use-chessgroud.ts
 ├── engine
 │   ├── create-engine.ts
+│   ├── engine-score.ts
 │   ├── hooks
 │   │   └── use-stockfish-engine.ts
 │   └── parse-engine.ts

@@ -1,7 +1,7 @@
 import type { GameAnalysisResponseData } from "@/features/game-analysis/types/game-analysis-response-data";
 import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 
-// Saved in game_analyses after chess-api analyzes a game.
+// Saved in game_analyses after Stockfish analyzes a game on the user's device.
 // source is chesscom or lichess. gameId is the platform game id. data is the analysis result.
 export type GameAnalysis = {
   id: string;

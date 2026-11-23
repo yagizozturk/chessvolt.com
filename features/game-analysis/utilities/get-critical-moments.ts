@@ -1,7 +1,7 @@
 import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 import type { NormalizedPgnMove } from "@/lib/chess/getMovesFromPgn";
 import type { PlayerRatings } from "@/lib/chess/getPlayerRatingsFromPgn";
-import { toSideToMoveCp } from "@/lib/chess-api/normalize";
+import { toSideToMoveCp } from "@/lib/engine/engine-score";
 import { classifyMove } from "@/lib/utils/getMoveQuality";
 
 export type ScoredPosition = {

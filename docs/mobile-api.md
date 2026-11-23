@@ -43,17 +43,17 @@ flag inside `data`; their sections show it.
 
 ### Status codes
 
-| Status | Meaning                                                                                        |
-| ------ | ---------------------------------------------------------------------------------------------- |
-| 200    | Success                                                                                        |
-| 400    | Invalid input; `error` says which field                                                        |
-| 401    | Missing, invalid or expired access token (`error: "Unauthorized"`)                             |
-| 404    | The resource does not exist or belongs to someone else                                         |
-| 409    | Conflict with the current state (onboarding already done)                                      |
-| 422    | Valid input that cannot be used (for example an unknown Chess.com username)                    |
-| 429    | Chess.com / Lichess / chess-api.com rate limit; retry later                                    |
-| 500    | Server or database error                                                                       |
-| 502    | Upstream (Chess.com, Lichess, chess-api.com) unreachable; other upstream statuses pass through |
+| Status | Meaning                                                                         |
+| ------ | ------------------------------------------------------------------------------- |
+| 200    | Success                                                                         |
+| 400    | Invalid input; `error` says which field                                         |
+| 401    | Missing, invalid or expired access token (`error: "Unauthorized"`)              |
+| 404    | The resource does not exist or belongs to someone else                          |
+| 409    | Conflict with the current state (onboarding already done)                       |
+| 422    | Valid input that cannot be used (for example an unknown Chess.com username)     |
+| 429    | Chess.com / Lichess rate limit; retry later                                     |
+| 500    | Server or database error                                                        |
+| 502    | Upstream (Chess.com, Lichess) unreachable; other upstream statuses pass through |
 
 ### Authentication
 
@@ -100,7 +100,6 @@ All endpoints require a signed-in user.
 | GET    | [`/http/game-analysis/lichess-games`](#get-httpgame-analysislichess-games)                       | Recent Lichess games of a username                     |
 | GET    | [`/http/game-analysis/{gameId}`](#get-httpgame-analysisgameid)                                   | Saved analysis of one game                             |
 | POST   | [`/http/game-analysis/analyze-game/stockfish`](#post-httpgame-analysisanalyze-gamestockfish)     | Save an on-device engine analysis                      |
-| POST   | [`/http/game-analysis/analyze-game`](#post-httpgame-analysisanalyze-game)                        | Analyze on the server (chess-api.com) as a fallback    |
 | GET    | [`/http/game-analysis/analyze-game?gameId=`](#get-httpgame-analysisanalyze-gamegameid)           | Same as `GET /http/game-analysis/{gameId}`             |
 | GET    | [`/http/volt-tracker`](#get-httpvolt-tracker)                                                    | Volt Tracker items with their Volt scores              |
 | POST   | [`/http/favorites/toggle`](#post-httpfavoritestoggle)                                            | Add or remove a Volt Tracker item                      |
@@ -124,9 +123,8 @@ All endpoints require a signed-in user.
    `GET /http/game-analysis/lichess-games?username=…`, using `chesscomUsername` / `lichessUsername` from the profile.
 2. Open a game: `GET /http/game-analysis/{gameId}` with the Chess.com `uuid` or the Lichess `id`.
    - `data` is not `null`: show it. It was analyzed before, on web or mobile.
-   - `data` is `null`: analyze it, then save the result:
-     - on-device Stockfish: `POST /http/game-analysis/analyze-game/stockfish` (preferred), or
-     - fallback: `POST /http/game-analysis/analyze-game`, where the server analyzes with chess-api.com (slow).
+   - `data` is `null`: analyze it with Stockfish on the device, then save the result with
+     `POST /http/game-analysis/analyze-game/stockfish`. The server does not analyze games.
    - Always send `username` = the player's name on that platform. Mistakes are only created for that player's moves.
 3. Each mistake (`questions[i]`) has a favorite toggle: `POST /http/favorites/toggle` with `gameAnalysisMistakeId`.
    `favoritedMistakeIds` says which ones are already in Volt Tracker.
@@ -414,6 +412,10 @@ The server validates the analysis strictly. For results that match the web, port
 - `lib/utils/getMoveQuality.ts`: win-percent based mistake / miss / blunder classification
 - `lib/chess/getMovesFromPgn.ts`: move list, `ply` and `fenBefore`
 
+There is no server-side engine. The web runs Stockfish 19 lite (WASM, single-threaded) from the web repo's
+`public/stockfish/` folder, served at `/stockfish/stockfish-19-lite-single.js` and `.wasm`. The app can run the same
+files in a hidden WebView or ship a native Stockfish build.
+
 - **Auth:** required
 - **Body:**
 
@@ -475,43 +477,6 @@ curl -s -X POST "$API/http/game-analysis/analyze-game/stockfish" -H "Authorizati
   }
 }
 JSON
-```
-
-### POST /http/game-analysis/analyze-game
-
-Fallback when the device cannot run Stockfish: the server analyzes the PGN with chess-api.com at depth 12. This is
-slow, can take minutes (the server allows up to 300 s), and depends on chess-api.com being up. Use a long client
-timeout.
-
-- If the game was already analyzed, the saved analysis is returned and no engine runs. If it has no mistakes yet and
-  `pgn` is sent, they are created.
-- Mistakes are created for `username`. Without it, the profile's Chess.com username is used, which finds nothing in a
-  Lichess game.
-
-- **Auth:** required
-- **Body:**
-
-```ts
-type ServerAnalysisBody = {
-  gameId: string;
-  pgn?: string; // required unless the game was analyzed before
-  username?: string; // the player's name in this PGN (send the Lichess username for Lichess games)
-};
-```
-
-- **Success `data`:** [`GameAnalysisWithMistakes`](#gameanalysiswithmistakes)
-
-| Status      | `error`                                                                                               |
-| ----------- | ----------------------------------------------------------------------------------------------------- |
-| 400         | `gameId is required` · `pgn is required`                                                              |
-| 401         | `Unauthorized`                                                                                        |
-| 429/502/504 | chess-api.com error passed through (for example `chess-api.com request failed: 504 Gateway Time-out`) |
-| 500         | `Failed to save game analysis`                                                                        |
-
-```bash
-curl -s --max-time 320 -X POST "$API/http/game-analysis/analyze-game" -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"gameId":"example-game-2","username":"MyLichessName","pgn":"<full PGN>"}'
 ```
 
 ### GET /http/game-analysis/analyze-game?gameId=
