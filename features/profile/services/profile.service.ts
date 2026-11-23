@@ -7,6 +7,7 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 
 import * as profileRepo from "@/features/profile/repository/profile.repository";
+import type { ProfileOnboardingStatus } from "@/features/profile/types/profile-onboarding-status";
 import type { UserProfileData } from "@/features/profile/types/user-profile";
 import { getAvatarUrlFromUser } from "@/features/profile/utilities/user-avatar";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
@@ -31,6 +32,13 @@ export async function getUserProfile(supabase: SupabaseClient, user: User): Prom
     email: user.email ?? null,
     avatarUrl: getAvatarUrlFromUser(user),
   };
+}
+
+export async function getProfileOnboardingStatus(
+  supabase: SupabaseClient,
+  userId: string,
+): Promise<ProfileOnboardingStatus | null> {
+  return profileRepo.getProfileOnboardingStatus(supabase, userId);
 }
 
 export async function completeProfileOnboarding(

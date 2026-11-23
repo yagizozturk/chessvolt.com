@@ -2,10 +2,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { CompleteOnboardingResult } from "@/features/onboarding/types/complete-onboarding-result";
 import {
-  hasPlatformUsername,
   type OnboardingPlatformUsernames,
+  hasPlatformUsername,
 } from "@/features/onboarding/types/onboarding-platform-usernames";
-import { completeProfileOnboarding } from "@/features/profile/services/profile.service";
+import { completeProfileOnboarding, getProfileOnboardingStatus } from "@/features/profile/services/profile.service";
 import { resolvePlayerRating } from "@/lib/chess-platform/resolve-player-rating";
 
 export type { CompleteOnboardingResult } from "@/features/onboarding/types/complete-onboarding-result";
@@ -30,7 +30,7 @@ export async function completeOnboarding(
       };
 
   if (!ratingResult.ok) {
-    return { success: false, error: ratingResult.error };
+    return { success: false, code: ratingResult.code, error: ratingResult.error };
   }
 
   // ============================================================================
@@ -46,8 +46,27 @@ export async function completeOnboarding(
   // If profile update fails, return an error
   // ============================================================================
   if (!profileUpdated) {
-    return { success: false, error: "Could not finish onboarding. Please try again." };
+    return { success: false, code: "save_failed", error: "Could not finish onboarding. Please try again." };
   }
 
   return { success: true };
+}
+
+// ============================================================================
+// Complete Onboarding only once (API / mobile)
+// completeOnboarding tekrar çağrılırsa current_rating yeni initial rating'e sıfırlanır.
+// Web'de onboarding sayfası tamamlanmış kullanıcıyı yönlendirdiği için bu koruma sadece API'de.
+// ============================================================================
+export async function completeOnboardingIfPending(
+  supabase: SupabaseClient,
+  userId: string,
+  platformUsernames: OnboardingPlatformUsernames = {},
+): Promise<CompleteOnboardingResult> {
+  const status = await getProfileOnboardingStatus(supabase, userId);
+
+  if (status?.onboardingCompleted) {
+    return { success: false, code: "already_completed", error: "Onboarding is already completed." };
+  }
+
+  return completeOnboarding(supabase, userId, platformUsernames);
 }
