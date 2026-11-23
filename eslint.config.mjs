@@ -13,6 +13,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored, prebuilt Stockfish engine bundles (not our source code):
+    "public/stockfish.js",
+    "public/stockfish/**",
   ]),
 ]);
 
