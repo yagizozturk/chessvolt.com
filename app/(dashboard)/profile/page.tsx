@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProfileDeleteAccountButton } from "@/features/profile/components/profile-delete-account-button";
 import { ProfileLogoutButton } from "@/features/profile/components/profile-logout-button";
 import { ProfilePlatformUsernamesForm } from "@/features/profile/components/profile-platform-usernames-form";
 import { ProfileSoundsSwitch } from "@/features/profile/components/profile-sounds-switch";
@@ -84,6 +85,18 @@ export default async function Page() {
           </CardHeader>
           <CardContent className="flex flex-col gap-6">
             <ProfileSoundsSwitch />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Delete Account</CardTitle>
+            <CardDescription>
+              Permanently delete your account and all of your data. This cannot be undone.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ProfileDeleteAccountButton />
           </CardContent>
         </Card>
       </div>
