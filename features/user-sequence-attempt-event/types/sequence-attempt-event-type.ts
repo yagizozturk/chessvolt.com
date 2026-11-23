@@ -1,12 +1,13 @@
 /** Matches Postgres enum `public.sequence_attempt_event_type`. */
-export type SequenceAttemptEventType = "start" | "move" | "hint" | "complete" | "abandoned";
+export type SequenceAttemptEventType = "start" | "move" | "hint" | "complete" | "fail" | "abandon";
 
 export const SEQUENCE_ATTEMPT_EVENT_TYPES: SequenceAttemptEventType[] = [
   "start",
   "move",
   "hint",
   "complete",
-  "abandoned",
+  "fail",
+  "abandon",
 ];
 
 export function isSequenceAttemptEventType(value: string): value is SequenceAttemptEventType {

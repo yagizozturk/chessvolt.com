@@ -644,7 +644,7 @@ Optional analytics log of what happened inside an attempt. Volt does not use it.
 
 ```ts
 type AttemptEventBody = {
-  eventType: "start" | "move" | "hint" | "complete" | "abandoned";
+  eventType: "start" | "move" | "hint" | "complete" | "fail" | "abandon";
   moveUci?: string | null; // for "move": the move played
   expectedUci?: string | null; // the correct move at that point
   isCorrect?: boolean | null; // for "move"
