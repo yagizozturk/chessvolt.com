@@ -10,48 +10,68 @@ import * as moveSequenceService from "@/features/move-sequence/services/move-seq
 import type { MoveGoals } from "@/features/move-sequence/types/move-goal";
 import { toPuzzle } from "@/features/puzzle/mapper/puzzle.mapper";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
+import type { PuzzleRatingRange } from "@/features/puzzle/types/puzzle-rating";
 import { normalizeUuid, normalizeUuidList } from "@/features/puzzle/utilities/normalize-uuid";
 
 export type RandomActivePuzzleFilter = {
   excludePuzzleId?: string;
   excludeSequenceIds?: string[];
+  /** When set, only puzzles rated inside the range (unrated puzzles are skipped). */
+  ratingRange?: PuzzleRatingRange;
 };
 
-// Picks one active puzzle id with an indexed UUID pivot. Avoids loading every puzzle row.
-export async function findRandomActiveId(
+export type RandomPuzzleCandidate = {
+  id: string;
+  moveSequenceId: string;
+};
+
+// Picks up to `limit` active puzzles after a random, indexed UUID pivot (wrapping around to the start).
+// Avoids loading every puzzle row.
+export async function findRandomActiveCandidates(
   supabase: SupabaseClient,
-  filter?: RandomActivePuzzleFilter,
-): Promise<string | null> {
-  const excludePuzzleId = normalizeUuid(filter?.excludePuzzleId);
-  const excludeSequenceIds = normalizeUuidList(filter?.excludeSequenceIds);
+  filter: RandomActivePuzzleFilter = {},
+  limit = 1,
+): Promise<RandomPuzzleCandidate[]> {
+  const excludePuzzleId = normalizeUuid(filter.excludePuzzleId);
+  const excludeSequenceIds = normalizeUuidList(filter.excludeSequenceIds);
   const pivot = crypto.randomUUID();
 
-  const selectActiveIds = () => {
-    let query = supabase.from("puzzles").select("id").eq("is_active", true);
+  const selectActive = () => {
+    let query = supabase.from("puzzles").select("id, move_sequence_id").eq("is_active", true);
     if (excludePuzzleId) query = query.neq("id", excludePuzzleId);
     if (excludeSequenceIds.length > 0) {
       query = query.not("move_sequence_id", "in", `(${excludeSequenceIds.join(",")})`);
     }
+    if (filter.ratingRange) {
+      query = query.gte("rating", filter.ratingRange.min).lte("rating", filter.ratingRange.max);
+    }
     return query;
   };
 
-  const { data, error } = await selectActiveIds().gt("id", pivot).order("id", { ascending: true }).limit(1);
+  const { data, error } = await selectActive().gt("id", pivot).order("id", { ascending: true }).limit(limit);
   if (error) {
-    console.error("puzzle.repository.findRandomActiveId error:", error);
-    return null;
+    console.error("puzzle.repository.findRandomActiveCandidates error:", error);
+    return [];
   }
 
-  const pivotedId = data?.[0]?.id;
-  if (typeof pivotedId === "string") return pivotedId;
-
-  const wrapped = await selectActiveIds().order("id", { ascending: true }).limit(1);
-  if (wrapped.error) {
-    console.error("puzzle.repository.findRandomActiveId error:", wrapped.error);
-    return null;
+  const rows = [...(data ?? [])];
+  if (rows.length < limit) {
+    const wrapped = await selectActive()
+      .lte("id", pivot)
+      .order("id", { ascending: true })
+      .limit(limit - rows.length);
+    if (wrapped.error) {
+      console.error("puzzle.repository.findRandomActiveCandidates error:", wrapped.error);
+    } else {
+      rows.push(...(wrapped.data ?? []));
+    }
   }
 
-  const wrappedId = wrapped.data?.[0]?.id;
-  return typeof wrappedId === "string" ? wrappedId : null;
+  return rows.flatMap((row) =>
+    typeof row.id === "string" && typeof row.move_sequence_id === "string"
+      ? [{ id: row.id, moveSequenceId: row.move_sequence_id }]
+      : [],
+  );
 }
 
 // ================================================================================================

@@ -6,6 +6,9 @@ import {
 
 export type PuzzleRatingBand = "all" | "beginner" | "intermediate" | "advanced" | "master" | "grandmaster";
 
+/** Inclusive puzzle rating range. */
+export type PuzzleRatingRange = { min: number; max: number };
+
 export function isPuzzleRating(value: unknown): value is number {
   return (
     typeof value === "number" && Number.isInteger(value) && value >= MIN_PUZZLE_RATING && value <= MAX_PUZZLE_RATING
