@@ -7,6 +7,10 @@ import type {
   UpdateMoveSequenceInput,
 } from "@/features/move-sequence/types/move-sequence";
 
+export async function getMoveSequencesByIds(supabase: SupabaseClient, ids: string[]): Promise<MoveSequence[]> {
+  return moveSequenceRepo.findByIds(supabase, ids);
+}
+
 export async function createMoveSequence(
   supabase: SupabaseClient,
   input: CreateMoveSequenceInput,

@@ -28,6 +28,19 @@ export async function create(supabase: SupabaseClient, input: CreateMoveSequence
   return toMoveSequence(data);
 }
 
+export async function findByIds(supabase: SupabaseClient, ids: string[]): Promise<MoveSequence[]> {
+  if (ids.length === 0) return [];
+
+  const { data, error } = await supabase.from("move_sequences").select("*").in("id", ids);
+
+  if (error) {
+    console.error("move-sequence.repository.findByIds error:", error);
+    return [];
+  }
+
+  return (data ?? []).map((row) => toMoveSequence(row));
+}
+
 export async function createMany(
   supabase: SupabaseClient,
   inputs: CreateMoveSequenceInput[],
