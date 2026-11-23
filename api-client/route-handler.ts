@@ -55,6 +55,19 @@ export function errorResponse(error: string, status = 500): NextResponse<ApiResp
 }
 
 // ============================================================================
+// Request Helpers
+// ============================================================================
+
+/**
+ * Parse a JSON object body. Invalid JSON, arrays and primitives become `{}`,
+ * so the route's field checks answer with 400 instead of throwing.
+ */
+export async function readJsonBody(req: Request): Promise<Record<string, unknown>> {
+  const body: unknown = await req.json().catch(() => null);
+  return body !== null && typeof body === "object" && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+}
+
+// ============================================================================
 // Auth Helper
 // ============================================================================
 
