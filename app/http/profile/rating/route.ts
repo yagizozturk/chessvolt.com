@@ -15,8 +15,8 @@ function isProfileRatingOutcome(value: unknown): value is ProfileRatingOutcome {
 
 // ================================================================================================
 // PATCH /http/profile/rating
-// updateProfileRatingAction ile aynı service. Bir sequence rating'i en fazla bir kez etkiler;
-// bu yüzden attempt "completed"/"failed" olarak kaydedilmeden ÖNCE çağrılmalı.
+// updateProfileRatingAction ile aynı service. Sadece puzzle sekansları rating'i değiştirir ve her
+// puzzle en fazla bir kez; bu yüzden attempt "completed"/"failed" kaydedilmeden ÖNCE çağrılmalı.
 // ================================================================================================
 async function handlePATCH(req: Request) {
   const auth = await requireAuth();
@@ -32,6 +32,10 @@ async function handlePATCH(req: Request) {
     sequenceId,
     body.outcome,
   );
+
+  if (result.skippedReason === "not_a_puzzle") {
+    return errorResponse("No puzzle uses this sequence; only puzzles change the rating.", 404);
+  }
 
   return successResponse(result);
 }

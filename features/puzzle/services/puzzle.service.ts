@@ -17,6 +17,13 @@ export async function getPuzzleById(supabase: SupabaseClient, id: string): Promi
   return puzzleRepo.findById(supabase, id);
 }
 
+export async function getPuzzleIdByMoveSequenceId(
+  supabase: SupabaseClient,
+  moveSequenceId: string,
+): Promise<string | null> {
+  return puzzleRepo.findIdByMoveSequenceId(supabase, moveSequenceId);
+}
+
 // ================================================================================================
 // Ekranda aktif gözüken ve son çözülen puzzle ları eleyerek oyuncuya random bir puzzle çekilir.
 // Eğer bulunmassa en çözülenlerden biri düşürülür ve tekrar onu çözer.

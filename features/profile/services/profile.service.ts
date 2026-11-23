@@ -10,6 +10,7 @@ import * as profileRepo from "@/features/profile/repository/profile.repository";
 import type { ProfileOnboardingStatus } from "@/features/profile/types/profile-onboarding-status";
 import type { UserProfileData } from "@/features/profile/types/user-profile";
 import { getAvatarUrlFromUser } from "@/features/profile/utilities/user-avatar";
+import { getPuzzleIdByMoveSequenceId } from "@/features/puzzle/services/puzzle.service";
 import * as attemptService from "@/features/user-sequence-attempt/services/user-sequence-attempt.service";
 import type { UserSequenceAttempt } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 
@@ -21,6 +22,8 @@ export type ProfileRatingOutcome = "success" | "failure";
 export type UpdateProfileRatingResult = {
   updated: boolean;
   currentRating: number | null;
+  /** Why the rating did not change: the sequence is not a puzzle, or it already counted once. */
+  skippedReason?: "not_a_puzzle" | "already_rated";
 };
 
 export async function getUserProfile(supabase: SupabaseClient, user: User): Promise<UserProfileData | null> {
@@ -101,11 +104,19 @@ export async function updateProfileRatingForSequence(
   sequenceId: string,
   outcome: ProfileRatingOutcome,
 ): Promise<UpdateProfileRatingResult> {
-  const attempts = await attemptService.getAttemptsByUserAndSequence(supabase, userId, sequenceId);
-  const currentRating = await profileRepo.getProfileCurrentRating(supabase, userId);
+  const [puzzleId, attempts, currentRating] = await Promise.all([
+    getPuzzleIdByMoveSequenceId(supabase, sequenceId),
+    attemptService.getAttemptsByUserAndSequence(supabase, userId, sequenceId),
+    profileRepo.getProfileCurrentRating(supabase, userId),
+  ]);
+
+  // Sadece puzzle'lar rating taşır; opening, oyun hatası ya da var olmayan bir sequence rating'i oynatmaz.
+  if (!puzzleId) {
+    return { updated: false, currentRating, skippedReason: "not_a_puzzle" };
+  }
 
   if (hasSequenceAlreadyBeenRated(attempts)) {
-    return { updated: false, currentRating };
+    return { updated: false, currentRating, skippedReason: "already_rated" };
   }
 
   const delta = outcome === "success" ? PUZZLE_SOLVE_RATING_INCREMENT : -PUZZLE_FAIL_RATING_DECREMENT;

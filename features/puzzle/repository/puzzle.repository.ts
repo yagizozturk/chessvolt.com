@@ -54,6 +54,25 @@ export async function findRandomActiveId(
   return typeof wrappedId === "string" ? wrappedId : null;
 }
 
+// ================================================================================================
+// Bir move sequence'i kullanan puzzle'ın id'si; puzzle değilse (opening, oyun hatası vb.) null.
+// ================================================================================================
+export async function findIdByMoveSequenceId(supabase: SupabaseClient, moveSequenceId: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("puzzles")
+    .select("id")
+    .eq("move_sequence_id", moveSequenceId)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("puzzle.repository.findIdByMoveSequenceId error:", error);
+    return null;
+  }
+
+  return typeof data?.id === "string" ? data.id : null;
+}
+
 export async function findById(supabase: SupabaseClient, id: string): Promise<Puzzle | null> {
   const { data, error } = await supabase.from("puzzles").select("*, move_sequences (*)").eq("id", id).maybeSingle();
 
