@@ -34,6 +34,18 @@ export async function getUserProfile(supabase: SupabaseClient, user: User): Prom
   };
 }
 
+/**
+ * getUserProfile, but creates the profiles row first when it is missing. The web creates it in
+ * /auth/callback; a mobile sign-in never hits that route, so the API uses this instead.
+ */
+export async function getOrCreateUserProfile(supabase: SupabaseClient, user: User): Promise<UserProfileData | null> {
+  const profile = await getUserProfile(supabase, user);
+  if (profile) return profile;
+
+  await profileRepo.ensureProfileExists(supabase, user);
+  return getUserProfile(supabase, user);
+}
+
 export async function getProfileOnboardingStatus(
   supabase: SupabaseClient,
   userId: string,
