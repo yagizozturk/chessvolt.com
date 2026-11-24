@@ -3,17 +3,17 @@
  *
  * Responsibility: Business logic for user_sequence_attempt_events.
  */
-import type { SupabaseClient } from "@supabase/supabase-js";
-
 import * as eventRepo from "@/features/user-sequence-attempt-event/repository/user-sequence-attempt-event.repository";
 import type {
   CreateUserSequenceAttemptEventInput,
-  UserSequenceAttemptEvent,
+  RecordAttemptEventResult,
 } from "@/features/user-sequence-attempt-event/types/user-sequence-attempt-event";
+import { createAdminClient } from "@/lib/supabase/admin";
 
+// Only the server writes events, through the service role. `userId` must be the verified session's.
 export async function recordEvent(
-  supabase: SupabaseClient,
+  userId: string,
   input: CreateUserSequenceAttemptEventInput,
-): Promise<UserSequenceAttemptEvent | null> {
-  return eventRepo.create(supabase, input);
+): Promise<RecordAttemptEventResult> {
+  return eventRepo.record(createAdminClient(), userId, input);
 }

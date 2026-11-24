@@ -156,7 +156,7 @@ export async function loadStudyPuzzles({
         displayFen: puzzle.moveSequence.displayFen,
         accuracyPercent: attemptStats.accuracyPercent,
         primaryTheme: primaryThemesByPuzzleId.get(puzzle.id) ?? null,
-        isComplete: attemptStatusToIsComplete(rawAttemptStats?.status),
+        isComplete: attemptStatusToIsComplete(rawAttemptStats),
         showVoltScore,
         voltScore: showVoltScore ? (voltScoresBySequenceId[puzzle.moveSequence.id] ?? null) : null,
       };

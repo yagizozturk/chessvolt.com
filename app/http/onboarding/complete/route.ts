@@ -5,7 +5,7 @@ import {
   successResponse,
   withErrorHandler,
 } from "@/api-client/route-handler";
-import { completeOnboardingIfPending } from "@/features/onboarding/services/complete-onboarding.service";
+import { completeOnboarding } from "@/features/onboarding/services/complete-onboarding.service";
 import type { CompleteOnboardingErrorCode } from "@/features/onboarding/types/complete-onboarding-result";
 import { MAX_PLATFORM_USERNAME_LENGTH } from "@/features/profile/constants/profile-limits";
 import { getUserProfile } from "@/features/profile/services/profile.service";
@@ -44,7 +44,7 @@ async function handlePOST(req: Request) {
     );
   }
 
-  const result = await completeOnboardingIfPending(auth.supabase, auth.user.id, {
+  const result = await completeOnboarding(auth.supabase, auth.user.id, {
     chesscomUsername: body.chesscomUsername,
     lichessUsername: body.lichessUsername,
   });

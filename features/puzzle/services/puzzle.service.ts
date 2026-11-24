@@ -23,13 +23,6 @@ export async function getPuzzleById(supabase: SupabaseClient, id: string): Promi
   return puzzleRepo.findById(supabase, id);
 }
 
-export async function getPuzzleIdByMoveSequenceId(
-  supabase: SupabaseClient,
-  moveSequenceId: string,
-): Promise<string | null> {
-  return puzzleRepo.findIdByMoveSequenceId(supabase, moveSequenceId);
-}
-
 type RandomPuzzleSearch = {
   userId: string | null;
   excludePuzzleId?: string;

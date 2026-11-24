@@ -29,7 +29,6 @@ export default async function StudyPuzzlePage({ params }: PageProps) {
       puzzle={puzzleData.puzzle}
       nextPuzzleUrl={puzzleData.nextPuzzleUrl}
       backUrl={puzzleData.backUrl}
-      isUserLoggedIn={puzzleData.isUserLoggedIn}
       isFavorited={puzzleData.isFavorited}
       primaryTheme={puzzleData.primaryTheme}
     />

@@ -17,6 +17,7 @@ export type DbUserSequenceAttempt = {
   wrong_move_count: number;
   hint_count: number;
   max_correct_streak: number;
+  rating_delta?: number | null;
   created_at: string;
   updated_at: string;
 };
@@ -41,6 +42,7 @@ export function toUserSequenceAttempt(db: DbUserSequenceAttempt): UserSequenceAt
     wrongMoveCount: db.wrong_move_count,
     hintCount: db.hint_count,
     maxCorrectStreak: db.max_correct_streak,
+    ratingDelta: db.rating_delta ?? null,
     createdAt: db.created_at,
     updatedAt: db.updated_at,
   };

@@ -169,7 +169,7 @@ export default async function OpeningBySlugPage({ params }: Params) {
                 name={variant.title ?? ""}
                 href={getOpeningVariantPath(opening, variant)}
                 fen={variant.moveSequence.displayFen ?? variant.moveSequence.initialFen}
-                isComplete={attemptStatusToIsComplete(attemptStats?.status)}
+                isComplete={attemptStatusToIsComplete(attemptStats)}
                 accuracyPercent={attemptStats ? computeSequenceAttemptAccuracy(attemptStats) : null}
                 description={variant.description}
                 moves={variant.moveSequence.moves}

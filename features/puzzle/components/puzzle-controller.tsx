@@ -21,7 +21,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MAX_HINT_COUNT, useMoveSequenceController } from "@/features/move-sequence/hooks/use-move-sequence-controller";
 import { MainIdeaButton } from "@/features/openings/components/main-idea-button";
-import { updateProfileRatingAction } from "@/features/profile/actions/update-profile-rating";
 import type { PuzzlePrimaryTheme } from "@/features/puzzle-theme/types/puzzle-theme";
 import { usePuzzleTour } from "@/features/puzzle/hooks/use-puzzle-tour";
 import type { Puzzle } from "@/features/puzzle/types/puzzle";
@@ -45,7 +44,6 @@ type PuzzleControllerProps = {
   puzzle: Puzzle;
   nextPuzzleUrl?: string | null;
   backUrl?: string | null;
-  isUserLoggedIn?: boolean; // Persist event'lerinin yazılıp yazılmayacağını kontrol eder
   isFavorited?: boolean;
   primaryTheme?: PuzzlePrimaryTheme | null;
 };
@@ -53,7 +51,6 @@ type PuzzleControllerProps = {
 export default function PuzzleController({
   puzzle,
   nextPuzzleUrl = null,
-  isUserLoggedIn = false,
   isFavorited = false,
   primaryTheme = null,
 }: PuzzleControllerProps) {
@@ -192,18 +189,10 @@ export default function PuzzleController({
   }, [expectedCurrentCorrectMoveUci, favorited, getTimeFromStartMs, isCompleted, playLevelUpSound, puzzle.id]);
 
   // ================================================================================================
-  // Tamamlanma denemesi db'ye yazılır
+  // Tamamlanma denemesi db'ye yazılır. Temiz çözümün +5 rating'ini sunucu aynı kayıtta verir.
   // ================================================================================================
   async function insertAttemptResults(attemptPayload: AttemptPayload) {
     await recordEvent({ eventType: "complete" });
-
-    // Complete kaydedilmeden önce puanla ki bu deneme kendi uygunluğunu engellemesin.
-    if (isUserLoggedIn && attemptPayload.wrongMoveCount === 0) {
-      await updateProfileRatingAction({
-        sequenceId: puzzle.moveSequence.id,
-        outcome: "success",
-      });
-    }
 
     const voltScoreResult = await updateAttemptResults("completed", {
       ...attemptPayload,
@@ -247,26 +236,18 @@ export default function PuzzleController({
         isCorrect: false,
       });
 
-      void (async () => {
-        // Fail kaydedilmeden önce puanla ki ilk yanlış hamle kendi uygunluğunu engellemesin.
-        if (isUserLoggedIn && wrongMoveCountRef.current === 1) {
-          await updateProfileRatingAction({
-            sequenceId: puzzle.moveSequence.id,
-            outcome: "failure",
-          });
-        }
-
-        await updateAttemptResults(
-          "failed",
-          createAttemptPayload(
-            correctMoveCountRef.current,
-            wrongMoveCountRef.current,
-            totalHintCountRef.current,
-            maxCorrectStreakRef.current,
-            getTimeFromStartMs(),
-          ),
-        );
-      })();
+      // Yanlış hamle attempt'i bitirmez (puzzle devam eder); sayaçlar ara kayıt olarak yazılır.
+      // İlk hatanın -5 rating'ini sunucu bu kayıtta bir kez uygular.
+      void updateAttemptResults(
+        "started",
+        createAttemptPayload(
+          correctMoveCountRef.current,
+          wrongMoveCountRef.current,
+          totalHintCountRef.current,
+          maxCorrectStreakRef.current,
+          getTimeFromStartMs(),
+        ),
+      );
     }
 
     return false;

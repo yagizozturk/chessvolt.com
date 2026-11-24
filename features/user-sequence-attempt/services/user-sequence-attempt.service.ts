@@ -8,10 +8,13 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { toSequenceAttemptStatsFromAttempt } from "@/features/user-sequence-attempt/mapper/user-sequence-attempt.mapper";
 import * as userSequenceAttemptRepo from "@/features/user-sequence-attempt/repository/user-sequence-attempt.repository";
 import type {
+  SaveSequenceAttemptInput,
+  SavedSequenceAttempt,
   SequenceAttemptStats,
-  UpdateUserSequenceAttemptInput,
+  SequenceAttemptWriteResult,
   UserSequenceAttempt,
 } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function getAttemptById(supabase: SupabaseClient, id: string): Promise<UserSequenceAttempt | null> {
   return userSequenceAttemptRepo.findById(supabase, id);
@@ -106,44 +109,22 @@ export async function getLatestAttemptStatsForSequences(
   return userSequenceAttemptRepo.findLatestAttemptStatsForSequences(supabase, userId, sequenceIds);
 }
 
+// ================================================================================================
+// Writes: only the server writes attempts, through the service role. `userId` must be the verified session's.
+// ================================================================================================
 export async function startAttempt(
-  supabase: SupabaseClient,
   userId: string,
   sequenceId: string,
-): Promise<UserSequenceAttempt | null> {
-  return userSequenceAttemptRepo.create(supabase, {
-    userId,
-    sequenceId,
-    status: "started",
-  });
+): Promise<SequenceAttemptWriteResult<UserSequenceAttempt>> {
+  return userSequenceAttemptRepo.start(createAdminClient(), userId, sequenceId);
 }
 
-export async function updateAttempt(
-  supabase: SupabaseClient,
-  id: string,
-  input: UpdateUserSequenceAttemptInput,
-): Promise<UserSequenceAttempt | null> {
-  return userSequenceAttemptRepo.update(supabase, id, input);
-}
-
-export async function completeAttempt(
-  supabase: SupabaseClient,
-  id: string,
-  options?: {
-    durationMs?: number | null;
-    correctMoveCount?: number;
-    wrongMoveCount?: number;
-    hintCount?: number;
-    maxCorrectStreak?: number;
-  },
-): Promise<UserSequenceAttempt | null> {
-  return userSequenceAttemptRepo.update(supabase, id, {
-    status: "completed",
-    completedAt: new Date().toISOString(),
-    durationMs: options?.durationMs,
-    correctMoveCount: options?.correctMoveCount,
-    wrongMoveCount: options?.wrongMoveCount,
-    hintCount: options?.hintCount,
-    maxCorrectStreak: options?.maxCorrectStreak,
-  });
+// "started" records progress; "completed" / "failed" / "abandoned" finish the attempt for good. A puzzle attempt
+// changes the rating in the same transaction: -5 on the first recorded mistake or a failure, +5 on a clean solve,
+// once per attempt and once per puzzle.
+export async function saveAttempt(
+  userId: string,
+  input: SaveSequenceAttemptInput,
+): Promise<SequenceAttemptWriteResult<SavedSequenceAttempt>> {
+  return userSequenceAttemptRepo.save(createAdminClient(), userId, input);
 }

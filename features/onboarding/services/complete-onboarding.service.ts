@@ -13,19 +13,30 @@ export type { CompleteOnboardingResult } from "@/features/onboarding/types/compl
 
 const DEFAULT_INITIAL_RATING = 1500;
 
+const ALREADY_COMPLETED: CompleteOnboardingResult = {
+  success: false,
+  code: "already_completed",
+  error: "Onboarding is already completed.",
+};
+
 // Platform rating'i DB'nin kabul ettiği aralığa çekilir; yoksa 3000+ hesaplarda onboarding kaydı düşer.
 function clampInitialRating(rating: number): number {
   return Math.min(MAX_INITIAL_RATING, Math.max(MIN_INITIAL_RATING, rating));
 }
 
 // ============================================================================
-// Complete Onboarding
+// Complete Onboarding (web action and POST /http/onboarding/complete)
+// Bir kez yapılır: tekrar çağrılırsa rating sıfırlanmaz, already_completed döner. Kontrol veritabanında da
+// var (complete_onboarding); buradaki ön kontrol gereksiz Chess.com / Lichess isteğini önler.
 // ============================================================================
 export async function completeOnboarding(
   supabase: SupabaseClient,
   userId: string,
   platformUsernames: OnboardingPlatformUsernames = {},
 ): Promise<CompleteOnboardingResult> {
+  const status = await getProfileOnboardingStatus(supabase, userId);
+  if (status?.onboardingCompleted) return ALREADY_COMPLETED;
+
   const ratingResult = hasPlatformUsername(platformUsernames)
     ? await resolvePlayerRating(platformUsernames)
     : {
@@ -40,39 +51,19 @@ export async function completeOnboarding(
   }
 
   // ============================================================================
-  // Complete profile with initial rating and optional platform usernames
+  // Complete profile with initial rating and optional platform usernames (server only)
   // ============================================================================
-  const profileUpdated = await completeProfileOnboarding(supabase, userId, {
+  const saved = await completeProfileOnboarding(userId, {
     initialRating: clampInitialRating(ratingResult.initialRating),
     chesscomUsername: ratingResult.chesscomUsername,
     lichessUsername: ratingResult.lichessUsername,
   });
 
-  // ============================================================================
-  // If profile update fails, return an error
-  // ============================================================================
-  if (!profileUpdated) {
-    return { success: false, code: "save_failed", error: "Could not finish onboarding. Please try again." };
+  if (!saved.ok) {
+    return saved.code === "already_completed"
+      ? ALREADY_COMPLETED
+      : { success: false, code: "save_failed", error: "Could not finish onboarding. Please try again." };
   }
 
   return { success: true };
-}
-
-// ============================================================================
-// Complete Onboarding only once (API / mobile)
-// completeOnboarding tekrar çağrılırsa current_rating yeni initial rating'e sıfırlanır.
-// Web'de onboarding sayfası tamamlanmış kullanıcıyı yönlendirdiği için bu koruma sadece API'de.
-// ============================================================================
-export async function completeOnboardingIfPending(
-  supabase: SupabaseClient,
-  userId: string,
-  platformUsernames: OnboardingPlatformUsernames = {},
-): Promise<CompleteOnboardingResult> {
-  const status = await getProfileOnboardingStatus(supabase, userId);
-
-  if (status?.onboardingCompleted) {
-    return { success: false, code: "already_completed", error: "Onboarding is already completed." };
-  }
-
-  return completeOnboarding(supabase, userId, platformUsernames);
 }

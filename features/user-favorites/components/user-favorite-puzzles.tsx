@@ -76,7 +76,7 @@ export async function UserFavoritePuzzles({
               displayFen={puzzle.moveSequence.displayFen}
               showVoltScore
               voltScore={voltScoresBySequenceId[puzzle.moveSequence.id] ?? null}
-              isComplete={attemptStatusToIsComplete(attemptStatsBySequenceIdMap[puzzle.moveSequence.id]?.status)}
+              isComplete={attemptStatusToIsComplete(attemptStatsBySequenceIdMap[puzzle.moveSequence.id])}
               clickEvent="volt_tracker_favorite_puzzle_clicked"
             />
           );

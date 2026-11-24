@@ -89,23 +89,22 @@ export TOKEN='<supabase access_token>'
 
 All endpoints require a signed-in user.
 
-| Method | Path                                                                                             | Purpose                                                |
-| ------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
-| GET    | [`/http/profile`](#get-httpprofile)                                                              | Current user's profile and onboarding state            |
-| PATCH  | [`/http/profile/username`](#patch-httpprofileusername)                                           | Change the display name                                |
-| PATCH  | [`/http/profile/platform-usernames`](#patch-httpprofileplatform-usernames)                       | Link or unlink Chess.com and Lichess accounts          |
-| PATCH  | [`/http/profile/rating`](#patch-httpprofilerating)                                               | ±5 rating after a puzzle (web puzzles; not used in v1) |
-| POST   | [`/http/onboarding/complete`](#post-httponboardingcomplete)                                      | Finish onboarding and set the initial rating           |
-| GET    | [`/http/game-analysis/chesscom-games`](#get-httpgame-analysischesscom-games)                     | Recent Chess.com games of a username                   |
-| GET    | [`/http/game-analysis/lichess-games`](#get-httpgame-analysislichess-games)                       | Recent Lichess games of a username                     |
-| GET    | [`/http/game-analysis/{gameId}`](#get-httpgame-analysisgameid)                                   | Saved analysis of one game                             |
-| POST   | [`/http/game-analysis/analyze-game/stockfish`](#post-httpgame-analysisanalyze-gamestockfish)     | Save an on-device engine analysis                      |
-| GET    | [`/http/game-analysis/analyze-game?gameId=`](#get-httpgame-analysisanalyze-gamegameid)           | Same as `GET /http/game-analysis/{gameId}`             |
-| GET    | [`/http/volt-tracker`](#get-httpvolt-tracker)                                                    | Volt Tracker items with their Volt scores              |
-| POST   | [`/http/favorites/toggle`](#post-httpfavoritestoggle)                                            | Add or remove a Volt Tracker item                      |
-| POST   | [`/http/move-sequence/{sequenceId}/attempt`](#post-httpmove-sequencesequenceidattempt)           | Start, update or complete a practice attempt           |
-| POST   | [`/http/user-sequence-attempt/{attemptId}/event`](#post-httpuser-sequence-attemptattemptidevent) | Log a move or hint (optional)                          |
-| DELETE | [`/http/account`](#delete-httpaccount)                                                           | Delete the account and all of its data                 |
+| Method | Path                                                                                             | Purpose                                               |
+| ------ | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| GET    | [`/http/profile`](#get-httpprofile)                                                              | Current user's profile and onboarding state           |
+| PATCH  | [`/http/profile/username`](#patch-httpprofileusername)                                           | Change the display name                               |
+| PATCH  | [`/http/profile/platform-usernames`](#patch-httpprofileplatform-usernames)                       | Link or unlink Chess.com and Lichess accounts         |
+| POST   | [`/http/onboarding/complete`](#post-httponboardingcomplete)                                      | Finish onboarding and set the initial rating          |
+| GET    | [`/http/game-analysis/chesscom-games`](#get-httpgame-analysischesscom-games)                     | Recent Chess.com games of a username                  |
+| GET    | [`/http/game-analysis/lichess-games`](#get-httpgame-analysislichess-games)                       | Recent Lichess games of a username                    |
+| GET    | [`/http/game-analysis/{gameId}`](#get-httpgame-analysisgameid)                                   | Saved analysis of one game                            |
+| POST   | [`/http/game-analysis/analyze-game/stockfish`](#post-httpgame-analysisanalyze-gamestockfish)     | Save an on-device engine analysis                     |
+| GET    | [`/http/game-analysis/analyze-game?gameId=`](#get-httpgame-analysisanalyze-gamegameid)           | Same as `GET /http/game-analysis/{gameId}`            |
+| GET    | [`/http/volt-tracker`](#get-httpvolt-tracker)                                                    | Volt Tracker items with their Volt scores             |
+| POST   | [`/http/favorites/toggle`](#post-httpfavoritestoggle)                                            | Add or remove a Volt Tracker item                     |
+| POST   | [`/http/move-sequence/{sequenceId}/attempt`](#post-httpmove-sequencesequenceidattempt)           | Start, save or finish a practice attempt (and rating) |
+| POST   | [`/http/user-sequence-attempt/{attemptId}/event`](#post-httpuser-sequence-attemptattemptidevent) | Log a move or hint (optional)                         |
+| DELETE | [`/http/account`](#delete-httpaccount)                                                           | Delete the account and all of its data                |
 
 ---
 
@@ -138,12 +137,12 @@ All endpoints require a signed-in user.
    `alternativeUci` when it exists (`GET /http/game-analysis/{gameId}`, moment with the same `ply`).
 3. Record the attempt against `volt.sequenceId`. This is the same flow the web uses for puzzles:
    - start: `POST /http/move-sequence/{sequenceId}/attempt` `{ "status": "started" }` → `attemptId`
-   - first wrong move: same route with `status: "failed"` and the counters so far. The attempt stays open.
+   - wrong move: same route with `status: "started"` and the counters so far. The attempt stays open.
    - solved: same route with `status: "completed"`, the final counters and
      `voltScore: { totalMoveCount: volt.totalMoveCount, rating: volt.rating }`. The response contains the new
      `VoltScoreResult`; replace `volt.score` with it.
    - left without solving: `status: "abandoned"`.
-4. Do not call `PATCH /http/profile/rating` for mistakes. Only puzzles change the rating (that route answers `404`).
+4. Game mistakes never change the rating; only puzzle attempts do.
 
 ### Deleting the account
 
@@ -227,49 +226,8 @@ curl -s -X PATCH "$API/http/profile/platform-usernames" -H "Authorization: Beare
   -H "Content-Type: application/json" -d '{"chesscomUsername":"hikaru","lichessUsername":null}'
 ```
 
-### PATCH /http/profile/rating
-
-Moves `currentRating` by **+5** (`success`) or **−5** (`failure`) after a puzzle. Not part of mobile v1; it exists for
-puzzles.
-
-Rules:
-
-- Only puzzle sequences change the rating. Other sequences, including game mistakes, answer `404`.
-- Each puzzle changes the rating at most once per user. A puzzle counts as rated once any attempt on it has a wrong
-  move, or has been completed without one.
-- Call it **before** saving the attempt as `failed` / `completed`. Otherwise the saved attempt blocks the rating.
-  The web calls it on the first wrong move (`failure`), or on a solve without wrong moves (`success`).
-
-- **Auth:** required
-- **Body:**
-
-```ts
-type UpdateRatingBody = {
-  sequenceId: string; // UUID of the puzzle's move sequence (puzzle.moveSequence.id)
-  outcome: "success" | "failure";
-};
-```
-
-- **Success `data`:**
-
-```ts
-type UpdateProfileRatingResult = {
-  updated: boolean; // false when nothing changed
-  currentRating: number | null; // rating after the call
-  skippedReason?: "already_rated"; // set when updated is false because the puzzle already counted
-};
-```
-
-| Status | `error`                                                                |
-| ------ | ---------------------------------------------------------------------- |
-| 400    | `sequenceId must be a UUID` · `outcome must be "success" or "failure"` |
-| 401    | `Unauthorized`                                                         |
-| 404    | `No puzzle uses this sequence; only puzzles change the rating.`        |
-
-```bash
-curl -s -X PATCH "$API/http/profile/rating" -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" -d '{"sequenceId":"<puzzle moveSequence.id>","outcome":"success"}'
-```
+There is no endpoint that changes the rating. The server changes it while it saves a puzzle attempt; see
+[Practice attempts](#practice-attempts).
 
 ---
 
@@ -566,10 +524,25 @@ curl -s -X POST "$API/http/favorites/toggle" -H "Authorization: Bearer $TOKEN" \
 ## Practice attempts
 
 An attempt is one try at a move sequence: a puzzle, an opening variant or a game mistake. Volt is built from
-completed attempts. The usual lifecycle is `started` → (`failed` on the first wrong move) → `completed` or
-`abandoned`, always updating the same `attemptId`.
+completed attempts.
 
-Counters, all optional and sent as totals for the attempt so far:
+Lifecycle, always on the same `attemptId`:
+
+1. `started` creates the attempt. Saving `started` again records progress, for example the counters after a wrong
+   move; the attempt stays open and the player keeps going.
+2. `completed` (solved), `failed` (given up) or `abandoned` (left) finish it. A finished attempt never changes again:
+   any later save answers `409`. Play again with a new attempt.
+
+Only puzzles change the rating, and the server does it while saving the attempt:
+
+- the first save that records a mistake (`wrongMoveCount > 0`), or a `failed` save: **−5**
+- a `completed` save without mistakes: **+5**
+- at most once per attempt, and once per puzzle per user: later attempts on the same puzzle do not change it.
+
+The response says what happened (`ratingDelta`, `currentRating`). There is no other way to change the rating.
+
+Counters, all optional and sent as totals for the attempt so far. They only grow: a smaller value than the one stored
+is ignored.
 
 | Field              | Meaning                                                     |
 | ------------------ | ----------------------------------------------------------- |
@@ -589,12 +562,12 @@ Counters, all optional and sent as totals for the attempt so far:
 // Start a new attempt
 type StartAttemptBody = { status: "started" };
 
-// Update or finish an existing attempt
+// Save progress ("started") or finish an existing attempt
 type UpdateAttemptBody = {
   attemptId: string;
-  status: "started" | "failed" | "completed" | "abandoned"; // failed / completed / abandoned set completedAt
-  durationMs?: number | null;
-  correctMoveCount?: number;
+  status: "started" | "completed" | "failed" | "abandoned"; // the last three finish the attempt
+  durationMs?: number | null; // integer ≥ 0, at most one day
+  correctMoveCount?: number; // integers ≥ 0, at most 10 000
   wrongMoveCount?: number;
   hintCount?: number;
   maxCorrectStreak?: number;
@@ -612,16 +585,21 @@ type StartAttemptData = { success: true; attemptId: string };
 type UpdateAttemptData = {
   success: true;
   attemptId: string;
+  status: "started" | "completed" | "failed" | "abandoned";
+  ratingDelta: number | null; // -5, +5, or null when this save did not change the rating
+  currentRating: number | null; // the profile's rating after the save
   voltScore?: VoltScoreResult | null; // only for "completed"; null when voltScore was not sent
 };
 ```
 
-| Status | `error`                                                                                                                      |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| 400    | `attemptId is required to update a sequence attempt` · `Invalid attempt status` · `Sequence attempt does not match sequence` |
-| 401    | `Unauthorized`                                                                                                               |
-| 404    | `Sequence attempt not found` (unknown id or another user's attempt)                                                          |
-| 500    | `Failed to start sequence attempt` · `Failed to complete sequence attempt` · `Failed to update sequence attempt`             |
+| Status | `error`                                                                                                                                                          |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 400    | `sequenceId must be a UUID` · `Invalid attempt status` · `attemptId is required to update a sequence attempt` · `Attempt counters must be non-negative integers` |
+| 400    | `Attempt counters are out of range` · `Sequence attempt does not match sequence`                                                                                 |
+| 401    | `Unauthorized`                                                                                                                                                   |
+| 404    | `Sequence not found` (start; unknown id or another user's game mistake) · `Sequence attempt not found` (unknown id or another user's attempt)                    |
+| 409    | `This attempt is already finished; start a new one`                                                                                                              |
+| 500    | `Failed to save sequence attempt`                                                                                                                                |
 
 ```bash
 # start
@@ -645,22 +623,23 @@ Optional analytics log of what happened inside an attempt. Volt does not use it.
 ```ts
 type AttemptEventBody = {
   eventType: "start" | "move" | "hint" | "complete" | "fail" | "abandon";
-  moveUci?: string | null; // for "move": the move played
-  expectedUci?: string | null; // the correct move at that point
+  moveUci?: string | null; // for "move": the move played, in UCI (e2e4, e7e8q)
+  expectedUci?: string | null; // the correct move at that point, in UCI
   isCorrect?: boolean | null; // for "move"
-  hintLevel?: 1 | 2 | 3 | null; // for "hint"
-  timeFromStartMs?: number | null;
+  hintLevel?: 1 | 2 | null; // for "hint"
+  timeFromStartMs?: number | null; // integer ≥ 0, at most one day
 };
 ```
 
 - **Success `data`:** `{ success: true; eventId: string }` (nested `success`, as above)
 
-| Status | `error`                                     |
-| ------ | ------------------------------------------- |
-| 400    | `Invalid event type` · `Invalid hint level` |
-| 401    | `Unauthorized`                              |
-| 404    | `Sequence attempt not found`                |
-| 500    | `Failed to record sequence attempt event`   |
+| Status | `error`                                                                                                                                            |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 400    | `attemptId must be a UUID` · `Invalid event type` · `Invalid hint level` · `moveUci and expectedUci must be UCI moves (for example e2e4 or e7e8q)` |
+| 400    | `isCorrect must be a boolean` · `timeFromStartMs must be a non-negative integer` · `Event values are out of range`                                 |
+| 401    | `Unauthorized`                                                                                                                                     |
+| 404    | `Sequence attempt not found` (unknown id or another user's attempt)                                                                                |
+| 500    | `Failed to record sequence attempt event`                                                                                                          |
 
 ```bash
 curl -s -X POST "$API/http/user-sequence-attempt/$ATTEMPT_ID/event" -H "Authorization: Bearer $TOKEN" \
@@ -982,7 +961,8 @@ type OpeningVariant = {
   `supabase/migrations/20261123140000_cascade_user_data_on_account_delete.sql` (ON DELETE CASCADE on the user
   tables). Until that migration is applied, the call answers `500`. Admin accounts are refused with `403`; only admins
   write blog posts, and `blog_posts.author_id` stays `RESTRICT`.
-- **The rating only changes through puzzles.** Game mistakes do not change it; see `PATCH /http/profile/rating`.
+- **The rating only changes when a puzzle attempt is saved.** Game mistakes and openings never change it, and no
+  endpoint sets it directly; see [Practice attempts](#practice-attempts).
 - **The web's page cache is not refreshed by the API.** The web Server Actions call `revalidatePath` after changes;
   the API routes do not. The only page this affects is an opening variant page after an opening favorite is toggled
   from mobile, and mobile v1 does not toggle openings.

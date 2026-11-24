@@ -21,3 +21,7 @@ export type CreateUserSequenceAttemptEventInput = {
   hintLevel?: 1 | 2 | 3 | null;
   timeFromStartMs?: number | null;
 };
+
+export type RecordAttemptEventResult =
+  | { ok: true; event: UserSequenceAttemptEvent }
+  | { ok: false; code: "attempt_not_found" | "invalid_attempt_event" | "failed" };

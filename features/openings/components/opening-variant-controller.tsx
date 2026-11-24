@@ -179,8 +179,9 @@ export default function OpeningVariantController({
           expectedUci: expectedCurrentCorrectMoveUci ?? undefined,
           isCorrect: false,
         });
+        // Yanlış hamle attempt'i bitirmez; sayaçlar ara kayıt olarak yazılır, varyant tamamlanınca "completed".
         await updateAttemptResults(
-          "failed",
+          "started",
           createAttemptPayload(
             correctMoveCountRef.current,
             wrongMoveCountRef.current,

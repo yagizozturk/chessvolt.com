@@ -1,13 +1,16 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 
 import {
+  type DbUserSequenceAttempt,
   mapDbToSequenceAttemptStats,
   toUserSequenceAttempt,
 } from "@/features/user-sequence-attempt/mapper/user-sequence-attempt.mapper";
 import type {
-  CreateUserSequenceAttemptInput,
+  SaveSequenceAttemptInput,
+  SavedSequenceAttempt,
   SequenceAttemptStats,
-  UpdateUserSequenceAttemptInput,
+  SequenceAttemptWriteError,
+  SequenceAttemptWriteResult,
   UserSequenceAttempt,
 } from "@/features/user-sequence-attempt/types/user-sequence-attempt";
 
@@ -204,53 +207,68 @@ export async function findLatestAttemptStatsForSequences(
   return sequenceAttemptStats;
 }
 
-export async function create(
-  supabase: SupabaseClient,
-  input: CreateUserSequenceAttemptInput,
-): Promise<UserSequenceAttempt | null> {
-  const row: Record<string, unknown> = {
-    user_id: input.userId,
-    sequence_id: input.sequenceId,
-    status: input.status ?? "started",
-    completed_at: input.completedAt ?? null,
-    duration_ms: input.durationMs ?? 0,
-    correct_move_count: input.correctMoveCount ?? 0,
-    wrong_move_count: input.wrongMoveCount ?? 0,
-    hint_count: input.hintCount ?? 0,
-    max_correct_streak: input.maxCorrectStreak ?? 0,
-  };
-  if (input.startedAt !== undefined) row.started_at = input.startedAt;
+// ================================================================================================
+// Writes. Clients cannot write user_sequence_attempts; these call SECURITY DEFINER functions that only the
+// service role may execute. Pass the admin client and the user id of the verified session, never one from a request.
+// ================================================================================================
+const WRITE_ERRORS: SequenceAttemptWriteError[] = [
+  "sequence_not_found",
+  "attempt_not_found",
+  "attempt_sequence_mismatch",
+  "attempt_already_finished",
+  "invalid_attempt_counters",
+];
 
-  const { data, error } = await supabase.from("user_sequence_attempts").insert(row).select().single();
+function toWriteError(source: string, error: PostgrestError): SequenceAttemptWriteError {
+  const code = WRITE_ERRORS.find((known) => known === error.message);
+  if (code) return code;
 
-  if (error) {
-    console.error("user-sequence-attempt.repository.create error:", error);
-    return null;
-  }
-
-  return toUserSequenceAttempt(data);
+  console.error(`user-sequence-attempt.repository.${source} error:`, error);
+  return "failed";
 }
 
-export async function update(
-  supabase: SupabaseClient,
-  id: string,
-  input: UpdateUserSequenceAttemptInput,
-): Promise<UserSequenceAttempt | null> {
-  const updates: Record<string, unknown> = {};
-  if (input.status !== undefined) updates.status = input.status;
-  if (input.completedAt !== undefined) updates.completed_at = input.completedAt;
-  if (input.durationMs !== undefined) updates.duration_ms = input.durationMs;
-  if (input.correctMoveCount !== undefined) updates.correct_move_count = input.correctMoveCount;
-  if (input.wrongMoveCount !== undefined) updates.wrong_move_count = input.wrongMoveCount;
-  if (input.hintCount !== undefined) updates.hint_count = input.hintCount;
-  if (input.maxCorrectStreak !== undefined) updates.max_correct_streak = input.maxCorrectStreak;
+export async function start(
+  admin: SupabaseClient,
+  userId: string,
+  sequenceId: string,
+): Promise<SequenceAttemptWriteResult<UserSequenceAttempt>> {
+  const { data, error } = await admin.rpc("start_sequence_attempt", {
+    p_user_id: userId,
+    p_sequence_id: sequenceId,
+  });
 
-  const { data, error } = await supabase.from("user_sequence_attempts").update(updates).eq("id", id).select().single();
+  if (error) return { ok: false, code: toWriteError("start", error) };
 
-  if (error) {
-    console.error("user-sequence-attempt.repository.update error:", error);
-    return null;
-  }
+  return { ok: true, value: toUserSequenceAttempt(data as DbUserSequenceAttempt) };
+}
 
-  return toUserSequenceAttempt(data);
+// Progress ("started") or finish. The rating changes in the same transaction; see save_sequence_attempt.
+export async function save(
+  admin: SupabaseClient,
+  userId: string,
+  input: SaveSequenceAttemptInput,
+): Promise<SequenceAttemptWriteResult<SavedSequenceAttempt>> {
+  const { data, error } = await admin.rpc("save_sequence_attempt", {
+    p_user_id: userId,
+    p_attempt_id: input.attemptId,
+    p_sequence_id: input.sequenceId,
+    p_status: input.status,
+    p_duration_ms: input.durationMs ?? null,
+    p_correct_move_count: input.correctMoveCount ?? null,
+    p_wrong_move_count: input.wrongMoveCount ?? null,
+    p_hint_count: input.hintCount ?? null,
+    p_max_correct_streak: input.maxCorrectStreak ?? null,
+  });
+
+  if (error) return { ok: false, code: toWriteError("save", error) };
+
+  const result = data as { attempt: DbUserSequenceAttempt; rating_delta: number | null; current_rating: number | null };
+  return {
+    ok: true,
+    value: {
+      attempt: toUserSequenceAttempt(result.attempt),
+      ratingDelta: result.rating_delta,
+      currentRating: result.current_rating,
+    },
+  };
 }

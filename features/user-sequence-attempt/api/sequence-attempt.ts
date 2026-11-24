@@ -12,6 +12,10 @@ export type StartSequenceAttemptResponse = {
 export type UpdateSequenceAttemptResponse = {
   success: boolean;
   attemptId: string;
+  status: PuzzleAttemptStatus;
+  /** Rating change this save applied (puzzles only); null when none. */
+  ratingDelta: number | null;
+  currentRating: number | null;
   voltScore?: VoltScoreResult | null;
 };
 

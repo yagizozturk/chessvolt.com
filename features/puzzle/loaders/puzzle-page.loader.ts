@@ -60,7 +60,6 @@ export async function loadPuzzlePage(props: StandalonePuzzleLoaderPageProps): Pr
     puzzle,
     nextPuzzleUrl,
     backUrl: getStandalonePuzzleBackUrl(from),
-    isUserLoggedIn: Boolean(user),
     isFavorited: Boolean(isFavoritedPuzzle),
     primaryTheme: primaryThemesByPuzzleId.get(puzzle.id) ?? null,
   };

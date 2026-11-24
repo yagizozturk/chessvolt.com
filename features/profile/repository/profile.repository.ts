@@ -74,36 +74,38 @@ export async function getProfileOnboardingStatus(
   };
 }
 
+// ======================================================================
+// Users cannot write initial_rating, current_rating or onboarding_completed. The complete_onboarding database
+// function sets them once (it refuses when onboarding is already done, so the rating is never reset) and only the
+// service role may call it. Pass the admin client and the verified session's user id.
+// ======================================================================
 export async function completeProfileOnboarding(
-  supabase: SupabaseClient,
+  admin: SupabaseClient,
   userId: string,
   input: {
     initialRating: number;
     chesscomUsername?: string | null;
     lichessUsername?: string | null;
   },
-): Promise<boolean> {
-  const { error } = await supabase
-    .from("profiles")
-    .update({
-      initial_rating: input.initialRating,
-      // First signup: current rating starts equal to the onboarding initial rating.
-      current_rating: input.initialRating,
-      onboarding_completed: true,
-      chesscom_username: input.chesscomUsername?.trim() || null,
-      lichess_username: input.lichessUsername?.trim() || null,
-    })
-    .eq("id", userId);
+): Promise<{ ok: true } | { ok: false; code: "already_completed" | "failed" }> {
+  const { error } = await admin.rpc("complete_onboarding", {
+    p_user_id: userId,
+    p_initial_rating: input.initialRating,
+    p_chesscom_username: input.chesscomUsername?.trim() || null,
+    p_lichess_username: input.lichessUsername?.trim() || null,
+  });
 
   if (error) {
+    if (error.message === "onboarding_already_completed") return { ok: false, code: "already_completed" };
+
     console.error("profile.repository.completeProfileOnboarding error:", {
       message: error.message,
       code: error.code,
     });
-    return false;
+    return { ok: false, code: "failed" };
   }
 
-  return true;
+  return { ok: true };
 }
 
 export async function getProfileCurrentRating(supabase: SupabaseClient, userId: string): Promise<number | null> {
@@ -118,61 +120,6 @@ export async function getProfileCurrentRating(supabase: SupabaseClient, userId: 
   }
 
   return data?.current_rating ?? null;
-}
-
-export async function adjustProfileCurrentRating(
-  supabase: SupabaseClient,
-  userId: string,
-  delta: number,
-): Promise<number | null> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("current_rating, initial_rating")
-    .eq("id", userId)
-    .maybeSingle();
-
-  if (error) {
-    console.error("profile.repository.adjustProfileCurrentRating error:", {
-      message: error.message,
-      code: error.code,
-    });
-    return null;
-  }
-
-  if (!data) return null;
-
-  const baseRating = data.current_rating ?? data.initial_rating ?? 0;
-  const newRating = Math.max(0, baseRating + delta);
-
-  const { error: updateError } = await supabase.from("profiles").update({ current_rating: newRating }).eq("id", userId);
-
-  if (updateError) {
-    console.error("profile.repository.adjustProfileCurrentRating update error:", {
-      message: updateError.message,
-      code: updateError.code,
-    });
-    return null;
-  }
-
-  return newRating;
-}
-
-export async function updateProfileCurrentRating(
-  supabase: SupabaseClient,
-  userId: string,
-  currentRating: number,
-): Promise<boolean> {
-  const { error } = await supabase.from("profiles").update({ current_rating: currentRating }).eq("id", userId);
-
-  if (error) {
-    console.error("profile.repository.updateProfileCurrentRating error:", {
-      message: error.message,
-      code: error.code,
-    });
-    return false;
-  }
-
-  return true;
 }
 
 export async function updateProfileUsername(

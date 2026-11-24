@@ -21,7 +21,6 @@ export type PuzzlePageData = {
   puzzle: Puzzle;
   nextPuzzleUrl: string | null;
   backUrl: string | null;
-  isUserLoggedIn: boolean;
   isFavorited: boolean;
   primaryTheme: PuzzlePrimaryTheme | null;
 };
