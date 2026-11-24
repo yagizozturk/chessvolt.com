@@ -11,6 +11,7 @@ export async function create(supabase: SupabaseClient, input: CreateMoveSequence
   const { data, error } = await supabase
     .from("move_sequences")
     .insert({
+      ...(input.userId ? { user_id: input.userId } : {}),
       initial_fen: input.initialFen ?? DEFAULT_INITIAL_FEN,
       moves: input.moves,
       pgn: input.pgn ?? null,
@@ -52,6 +53,7 @@ export async function createMany(
     .insert(
       inputs.map((input) => ({
         ...(input.id ? { id: input.id } : {}),
+        ...(input.userId ? { user_id: input.userId } : {}),
         initial_fen: input.initialFen ?? DEFAULT_INITIAL_FEN,
         moves: input.moves,
         pgn: input.pgn ?? null,

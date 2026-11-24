@@ -421,38 +421,44 @@ files in a hidden WebView or ship a native Stockfish build.
 
 ```ts
 type SaveLocalAnalysisBody = {
-  gameId: string; // Chess.com uuid or Lichess id
-  pgn: string; // full PGN of the game
+  gameId: string; // Chess.com uuid or Lichess id, at most 100 characters
+  pgn: string; // full PGN of the game, at most 100 000 characters and 1 000 half-moves
   analysis: GameAnalysisResponseData;
-  username?: string; // the player's name in this PGN; without it no mistakes are created
+  username?: string; // the player's name in this PGN, at most 50 characters; without it no mistakes are created
 };
 
 // features/game-analysis/types/game-analysis-response-data.ts
 type GameAnalysisResponseData = {
   moveCount: number; // must equal the number of half-moves in the PGN
   depth: number; // 1–30
-  criticalMoments: CriticalMoment[]; // at most moveCount items
+  criticalMoments: CriticalMoment[]; // at most moveCount and at most 200 items, one per ply
 };
 ```
 
-Each critical moment must have:
+Each critical moment must describe a move of this PGN:
 
-- integer `ply`
+- integer `ply` of a move in the PGN (0-based half-move index), at most one moment per `ply`
+- `fen`: the position before that move. Board, side to move and castling rights must match the PGN; the en passant
+  field may differ. The server stores the PGN's own FEN.
+- `playedUci`: the move played at that `ply`, and `turn` the side that played it
+- `bestUci`: a legal UCI move in that position (`e2e4`, `e7e8q`), or `""` when the engine had none (no mistake is
+  created then)
 - `quality` of `"mistake"`, `"miss"` or `"blunder"`. **`"inaccuracy"` is rejected.**
-- `turn` of `"w"` or `"b"`
-- `mate` as a number or `null`
-- string `fen` / `playedUci` / `playedSan` / `bestUci` / `bestSan`, and numeric `beforeCp` / `afterCp` / `deltaCp`
+- `mate` as a number or `null`; numeric `beforeCp` / `afterCp` / `deltaCp`
+- `playedSan` / `bestSan` of at most 10 characters
 
-`alternativeUci` and `alternativeSan` are optional. When sent, both must be present, the move must be legal in `fen`,
-it must differ from `bestUci` and `playedUci`, and the SAN must match. See [`CriticalMoment`](#criticalmoment).
+`alternativeUci` and `alternativeSan` are optional. When sent, both must be present, the move must be legal in the
+position, it must differ from `bestUci` and `playedUci`, and the SAN must match. Other fields are dropped. See
+[`CriticalMoment`](#criticalmoment).
 
 - **Success `data`:** [`GameAnalysisWithMistakes`](#gameanalysiswithmistakes)
 
-| Status | `error`                                                                                      |
-| ------ | -------------------------------------------------------------------------------------------- |
-| 400    | `gameId is required` · `pgn is required` · `Invalid or empty PGN` · `Invalid local analysis` |
-| 401    | `Unauthorized`                                                                               |
-| 500    | `Failed to save game analysis`                                                               |
+| Status | `error`                                                                                                                                          |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 400    | `gameId is required` · `gameId must be 100 characters or fewer` · `pgn is required` · `pgn must be 100000 characters or fewer`                   |
+| 400    | `username must be 50 characters or fewer` · `Invalid or empty PGN` · `Games longer than 1000 plies are not supported` · `Invalid local analysis` |
+| 401    | `Unauthorized`                                                                                                                                   |
+| 500    | `Failed to save game analysis`                                                                                                                   |
 
 ```bash
 curl -s -X POST "$API/http/game-analysis/analyze-game/stockfish" -H "Authorization: Bearer $TOKEN" \

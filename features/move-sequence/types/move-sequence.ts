@@ -13,6 +13,8 @@ export type MoveSequence = {
 
 export type CreateMoveSequenceInput = {
   id?: string;
+  /** Owner of a sequence made from the user's own data (game mistakes). Null for shared content (puzzles, openings). */
+  userId?: string | null;
   initialFen?: string;
   moves: string;
   pgn?: string | null;

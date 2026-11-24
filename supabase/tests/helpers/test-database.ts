@@ -116,12 +116,19 @@ export async function createEmptyDatabase(): Promise<TestDatabase> {
   return url ? createPostgresDatabase(url) : createPgliteDatabase();
 }
 
-/** Applies the shim and the migrations whose file name sorts before `before` (all of them by default). */
-export async function applyMigrations(db: TestDatabase, options: { before?: string } = {}): Promise<string[]> {
-  await db.exec(readFileSync(SHIM_PATH, "utf8"));
+/**
+ * Applies the shim (unless `shim: false`) and, in file-name order, the migrations from `from` (inclusive) up to
+ * `before` (exclusive); all of them by default. Two calls let a test add rows between two migrations.
+ */
+export async function applyMigrations(
+  db: TestDatabase,
+  options: { from?: string; before?: string; shim?: boolean } = {},
+): Promise<string[]> {
+  if (options.shim !== false) await db.exec(readFileSync(SHIM_PATH, "utf8"));
 
   const applied: string[] = [];
   for (const file of listMigrations()) {
+    if (options.from && file < options.from) continue;
     if (options.before && file >= options.before) break;
     try {
       await db.exec(readFileSync(join(MIGRATIONS_DIR, file), "utf8"));

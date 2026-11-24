@@ -13,6 +13,7 @@ import type {
 import type { CriticalMoment } from "@/features/game-analysis/types/critical-moment";
 import type { GameAnalysisSource } from "@/features/game-analysis/types/game-analysis-source";
 import { createMoveSequences } from "@/features/move-sequence/services/move-sequence.service";
+import type { CreateMoveSequenceInput } from "@/features/move-sequence/types/move-sequence";
 import { getPlayerColorFromPgn } from "@/lib/chess/getPlayerColorFromPgn";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -45,7 +46,7 @@ export async function saveReviewQuestions(input: {
   );
 
   const mistakesToSave: GameAnalysisMistakePayload[] = [];
-  const sequencesToCreate: { id: string; initialFen: string; displayFen: string; moves: string }[] = []; // Her bir hatadaki hamle için moveSequence üretiriz ünkü volt-score larını takip etmek için. moveSequenceId si ile attempt yazıcaz.
+  const sequencesToCreate: CreateMoveSequenceInput[] = []; // Her bir hatadaki hamle için moveSequence üretiriz ünkü volt-score larını takip etmek için. moveSequenceId si ile attempt yazıcaz.
 
   // ================================================================================================
   // moveSequence ve mistakes datası arraylere eklenir.
@@ -60,6 +61,8 @@ export async function saveReviewQuestions(input: {
       moveSequenceId = randomUUID();
       sequencesToCreate.push({
         id: moveSequenceId,
+        // Service role ile yazılır: sahip, istekteki veriden değil oturumdaki kullanıcıdan (route'un auth.user.id'si) gelir.
+        userId: input.userId,
         initialFen: moment.fen,
         displayFen: moment.fen,
         moves: bestUci,
