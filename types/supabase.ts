@@ -812,6 +812,7 @@ export type Database = {
           hint_count: number;
           id: string;
           max_correct_streak: number;
+          rating_delta: number | null;
           sequence_id: string;
           started_at: string;
           status: Database["public"]["Enums"]["puzzle_attempt_status"];
@@ -828,6 +829,7 @@ export type Database = {
           hint_count?: number;
           id?: string;
           max_correct_streak?: number;
+          rating_delta?: number | null;
           sequence_id: string;
           started_at?: string;
           status?: Database["public"]["Enums"]["puzzle_attempt_status"];
@@ -843,6 +845,7 @@ export type Database = {
           hint_count?: number;
           id?: string;
           max_correct_streak?: number;
+          rating_delta?: number | null;
           sequence_id?: string;
           started_at?: string;
           status?: Database["public"]["Enums"]["puzzle_attempt_status"];
@@ -857,7 +860,101 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      complete_onboarding: {
+        Args: {
+          p_chesscom_username?: string;
+          p_initial_rating: number;
+          p_lichess_username?: string;
+          p_user_id: string;
+        };
+        Returns: {
+          chesscom_username: string | null;
+          created_at: string | null;
+          current_rating: number | null;
+          id: string;
+          initial_rating: number | null;
+          lichess_username: string | null;
+          onboarding_completed: boolean;
+          role: string;
+          username: string | null;
+          volt_score: number;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "profiles";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
+      record_sequence_attempt_event: {
+        Args: {
+          p_attempt_id: string;
+          p_event_type: Database["public"]["Enums"]["sequence_attempt_event_type"];
+          p_expected_uci?: string;
+          p_hint_level?: number;
+          p_is_correct?: boolean;
+          p_move_uci?: string;
+          p_time_from_start_ms?: number;
+          p_user_id: string;
+        };
+        Returns: {
+          attempt_id: string;
+          created_at: string;
+          event_type: Database["public"]["Enums"]["sequence_attempt_event_type"];
+          expected_uci: string | null;
+          hint_level: number | null;
+          id: string;
+          is_correct: boolean | null;
+          move_uci: string | null;
+          time_from_start_ms: number | null;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "user_sequence_attempt_events";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      save_sequence_attempt: {
+        Args: {
+          p_attempt_id: string;
+          p_correct_move_count?: number;
+          p_duration_ms?: number;
+          p_hint_count?: number;
+          p_max_correct_streak?: number;
+          p_sequence_id: string;
+          p_status: Database["public"]["Enums"]["puzzle_attempt_status"];
+          p_user_id: string;
+          p_wrong_move_count?: number;
+        };
+        Returns: Json;
+      };
+      start_sequence_attempt: {
+        Args: { p_sequence_id: string; p_user_id: string };
+        Returns: {
+          completed_at: string | null;
+          correct_move_count: number;
+          created_at: string;
+          duration_ms: number | null;
+          hint_count: number;
+          id: string;
+          max_correct_streak: number;
+          rating_delta: number | null;
+          sequence_id: string;
+          started_at: string;
+          status: Database["public"]["Enums"]["puzzle_attempt_status"];
+          updated_at: string;
+          user_id: string;
+          wrong_move_count: number;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "user_sequence_attempts";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
     };
     Enums: {
       difficulty: "beginner" | "intermediate" | "advanced" | "master" | "grandmaster";
