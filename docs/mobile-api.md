@@ -309,7 +309,7 @@ The `422`, `429` and `502` messages are written for the user and can be shown as
 
 | Status | `error`                                                                                               |
 | ------ | ----------------------------------------------------------------------------------------------------- |
-| 400    | `chesscomUsername and lichessUsername must be strings or null`                                        |
+| 400    | `chesscomUsername and lichessUsername must be strings of 50 characters or fewer, or null`             |
 | 401    | `Unauthorized`                                                                                        |
 | 409    | `Onboarding is already completed.`                                                                    |
 | 422    | `We could not find that Chess.com username. Check the spelling or skip this step.` (same for Lichess) |
@@ -390,10 +390,10 @@ The saved analysis of one game: the same data the web game-analysis page loads.
 - **Success `data`:** [`GameAnalysisWithMistakes`](#gameanalysiswithmistakes), or `null` when the game has not been
   analyzed yet. That `null` is still a `200`.
 
-| Status | `error`              |
-| ------ | -------------------- |
-| 400    | `gameId is required` |
-| 401    | `Unauthorized`       |
+| Status | `error`                                                         |
+| ------ | --------------------------------------------------------------- |
+| 400    | `gameId is required` · `gameId must be 100 characters or fewer` |
+| 401    | `Unauthorized`                                                  |
 
 ```bash
 curl -s "$API/http/game-analysis/1f0a2c3e-4b5d-11ef-8a7b-6cfe544c0428" -H "Authorization: Bearer $TOKEN"
@@ -553,7 +553,8 @@ type ToggleFavoriteData = {
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------- |
 | 400    | `Provide exactly one of openingVariantId, puzzleId or gameAnalysisMistakeId (UUID)` · `This item could not be added to Volt Tracker.` |
 | 401    | `Unauthorized`                                                                                                                        |
-| 500    | `Could not update Volt Tracker. Please try again.` (also when the id does not exist)                                                  |
+| 404    | `This item does not exist.` (unknown id, or a game mistake of another user)                                                           |
+| 500    | `Could not update Volt Tracker. Please try again.`                                                                                    |
 
 ```bash
 curl -s -X POST "$API/http/favorites/toggle" -H "Authorization: Bearer $TOKEN" \
@@ -985,5 +986,4 @@ type OpeningVariant = {
 - **The web's page cache is not refreshed by the API.** The web Server Actions call `revalidatePath` after changes;
   the API routes do not. The only page this affects is an opening variant page after an opening favorite is toggled
   from mobile, and mobile v1 does not toggle openings.
-- **Toggling a favorite with an id that does not exist answers `500`, not `404`.**
 - **The game lists accept any username.** They are not limited to the user's linked accounts.

@@ -7,6 +7,7 @@ import {
 } from "@/api-client/route-handler";
 import { completeOnboardingIfPending } from "@/features/onboarding/services/complete-onboarding.service";
 import type { CompleteOnboardingErrorCode } from "@/features/onboarding/types/complete-onboarding-result";
+import { MAX_PLATFORM_USERNAME_LENGTH } from "@/features/profile/constants/profile-limits";
 import { getUserProfile } from "@/features/profile/services/profile.service";
 
 const ERROR_STATUS: Record<CompleteOnboardingErrorCode, number> = {
@@ -19,8 +20,12 @@ const ERROR_STATUS: Record<CompleteOnboardingErrorCode, number> = {
   save_failed: 500,
 };
 
-function isOptionalNullableString(value: unknown): value is string | null | undefined {
-  return value === undefined || value === null || typeof value === "string";
+function isOptionalUsername(value: unknown): value is string | null | undefined {
+  return (
+    value === undefined ||
+    value === null ||
+    (typeof value === "string" && value.trim().length <= MAX_PLATFORM_USERNAME_LENGTH)
+  );
 }
 
 // ================================================================================================
@@ -32,8 +37,11 @@ async function handlePOST(req: Request) {
   const auth = await requireAuth();
   const body = await readJsonBody(req);
 
-  if (!isOptionalNullableString(body.chesscomUsername) || !isOptionalNullableString(body.lichessUsername)) {
-    return errorResponse("chesscomUsername and lichessUsername must be strings or null", 400);
+  if (!isOptionalUsername(body.chesscomUsername) || !isOptionalUsername(body.lichessUsername)) {
+    return errorResponse(
+      `chesscomUsername and lichessUsername must be strings of ${MAX_PLATFORM_USERNAME_LENGTH} characters or fewer, or null`,
+      400,
+    );
   }
 
   const result = await completeOnboardingIfPending(auth.supabase, auth.user.id, {

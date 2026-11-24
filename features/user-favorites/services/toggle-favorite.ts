@@ -5,7 +5,7 @@ import type { ToggleFavoriteTarget, UserFavorite } from "@/features/user-favorit
 
 export type ToggleFavoriteResult =
   | { ok: true; favorited: boolean; row: UserFavorite | null }
-  | { ok: false; reason: "invalid_target" | "failed" };
+  | { ok: false; reason: "invalid_target" | "not_found" | "failed" };
 
 type ParsedTarget =
   | { kind: "opening_variant"; openingVariantId: string }
@@ -52,6 +52,25 @@ export async function toggleFavorite(
       return { ok: false, reason: "failed" };
     }
     return { ok: true, favorited: false, row: null };
+  }
+
+  // Sadece eklerken: hedef var mı, oyun hatasıysa kullanıcının kendi hatası mı?
+  const targetExists = await userFavoriteRepo.favoriteTargetExists(supabase, input.userId, {
+    kind: target.kind,
+    id:
+      target.kind === "opening_variant"
+        ? target.openingVariantId
+        : target.kind === "puzzle"
+          ? target.puzzleId
+          : target.gameAnalysisMistakeId,
+  });
+
+  if (targetExists === null) {
+    return { ok: false, reason: "failed" };
+  }
+
+  if (!targetExists) {
+    return { ok: false, reason: "not_found" };
   }
 
   const row = await userFavoriteRepo.create(supabase, {

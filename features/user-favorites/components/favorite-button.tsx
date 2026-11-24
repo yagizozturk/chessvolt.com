@@ -22,6 +22,7 @@ type FavoriteButtonProps = ToggleFavoriteTarget & {
 
 const ERROR_MESSAGES: Record<string, string> = {
   invalid_target: "This item could not be added to Volt Tracker.",
+  not_found: "This item is no longer available.",
   failed: "Could not update Volt Tracker. Please try again.",
 };
 

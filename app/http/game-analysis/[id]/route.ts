@@ -1,4 +1,5 @@
 import { errorResponse, requireAuth, successResponse, withErrorHandler } from "@/api-client/route-handler";
+import { MAX_GAME_ID_LENGTH } from "@/features/game-analysis/constants/analysis-limits";
 import { getGameAnalysisWithMistakes } from "@/features/game-analysis/services/get-game-analysis-with-mistakes.service";
 
 // Mevcut analyze-game route'larıyla aynı: tüm analizler bu kaynakla kaydediliyor.
@@ -19,6 +20,9 @@ async function handleGET(_req: Request, { params }: RouteParams) {
   const gameId = (await params).id.trim();
 
   if (!gameId) return errorResponse("gameId is required", 400);
+  if (gameId.length > MAX_GAME_ID_LENGTH) {
+    return errorResponse(`gameId must be ${MAX_GAME_ID_LENGTH} characters or fewer`, 400);
+  }
 
   const analysis = await getGameAnalysisWithMistakes(auth.supabase, auth.user.id, SOURCE, gameId);
   return successResponse(analysis);

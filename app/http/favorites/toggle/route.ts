@@ -43,9 +43,9 @@ async function handlePOST(req: Request) {
   const result = await toggleFavorite(auth.supabase, { userId: auth.user.id, ...target });
 
   if (!result.ok) {
-    return result.reason === "invalid_target"
-      ? errorResponse("This item could not be added to Volt Tracker.", 400)
-      : errorResponse("Could not update Volt Tracker. Please try again.", 500);
+    if (result.reason === "invalid_target") return errorResponse("This item could not be added to Volt Tracker.", 400);
+    if (result.reason === "not_found") return errorResponse("This item does not exist.", 404);
+    return errorResponse("Could not update Volt Tracker. Please try again.", 500);
   }
 
   return successResponse({ favorited: result.favorited, favorite: result.row });

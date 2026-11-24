@@ -202,6 +202,35 @@ export async function findFavoritedGameAnalysisMistakeIds(
   );
 }
 
+const FAVORITE_TARGET_TABLES = {
+  opening_variant: "opening_variants",
+  puzzle: "puzzles",
+  game_analysis_mistake: "game_analysis_mistakes",
+} as const;
+
+// ================================================================================================
+// Is the favorite target there for this user? Game mistakes must be the user's own; puzzles and opening variants
+// are shared. The foreign key alone accepts another user's mistake and answers a missing id with an error.
+// Null when the lookup fails.
+// ================================================================================================
+export async function favoriteTargetExists(
+  supabase: SupabaseClient,
+  userId: string,
+  target: { kind: keyof typeof FAVORITE_TARGET_TABLES; id: string },
+): Promise<boolean | null> {
+  let query = supabase.from(FAVORITE_TARGET_TABLES[target.kind]).select("id").eq("id", target.id);
+  if (target.kind === "game_analysis_mistake") query = query.eq("user_id", userId);
+
+  const { data, error } = await query.maybeSingle();
+
+  if (error) {
+    console.error("user-favorites.repository.favoriteTargetExists error:", error);
+    return null;
+  }
+
+  return data != null;
+}
+
 export async function create(supabase: SupabaseClient, input: SaveUserFavoriteInput): Promise<UserFavorite | null> {
   const { data, error } = await supabase
     .from("user_favorites")
