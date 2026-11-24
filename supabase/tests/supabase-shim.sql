@@ -7,17 +7,22 @@
 -- Not a migration. Never run it against a Supabase project.
 -- =============================================================================
 
+-- Roles are shared by every database of a server, and test files run in parallel: another file may create them
+-- between the check and the create.
 do $$
 begin
-  if not exists (select 1 from pg_roles where rolname = 'anon') then
+  begin
     create role anon nologin noinherit;
-  end if;
-  if not exists (select 1 from pg_roles where rolname = 'authenticated') then
+  exception when duplicate_object or unique_violation then null;
+  end;
+  begin
     create role authenticated nologin noinherit;
-  end if;
-  if not exists (select 1 from pg_roles where rolname = 'service_role') then
+  exception when duplicate_object or unique_violation then null;
+  end;
+  begin
     create role service_role nologin noinherit bypassrls;
-  end if;
+  exception when duplicate_object or unique_violation then null;
+  end;
 end
 $$;
 
